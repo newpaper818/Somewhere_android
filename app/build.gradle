@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
 android {
@@ -47,13 +49,78 @@ android {
 }
 
 dependencies {
+    // Import the Compose BOM
+    implementation platform('androidx.compose:compose-bom:2023.01.00')
 
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
-    implementation 'androidx.activity:activity-compose:1.3.1'
-    implementation "androidx.compose.ui:ui:$compose_ui_version"
-    implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
-    implementation 'androidx.compose.material:material:1.2.0'
+    implementation "androidx.compose.ui:ui"
+    implementation "androidx.compose.ui:ui-tooling"
+    implementation "androidx.compose.ui:ui-tooling-preview"
+    implementation "androidx.compose.material:material"
+    implementation "androidx.compose.material:material-icons-extended"
+    implementation "androidx.compose.material3:material3"
+    implementation "androidx.compose.material3:material3-window-size-class"
+
+    //core
+    implementation 'androidx.core:core-ktx:1.10.1'
+
+    //lifecycle
+    //def lifecycle_version = "2.5.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+
+    //activity
+    //def activity_version = "1.7.1"
+    implementation "androidx.activity:activity-compose:$activity_version"
+
+    //room
+    //def room_version = "2.5.1"
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+    //moshi serialization json
+    implementation("com.squareup.moshi:moshi:$moshi_version")
+    //implementation("com.squareup.moshi:moshi-kotlin-codegen:$moshi_version")
+    kapt("com.squareup.moshi:moshi-kotlin-codegen:$moshi_version")
+    //implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+
+
+    //dialog
+    //def dialog_version = "1.1.1"
+    implementation "com.maxkeppeler.sheets-compose-dialogs:core:$dialog_version"
+    implementation "com.maxkeppeler.sheets-compose-dialogs:calendar:$dialog_version"
+    implementation "com.maxkeppeler.sheets-compose-dialogs:clock:$dialog_version"
+    implementation "com.maxkeppeler.sheets-compose-dialogs:color:$dialog_version"
+
+    //status bar color
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.30.1"
+
+    //navigation
+    //def accompanist_version = "1.4.3"
+    implementation "androidx.navigation:navigation-compose:2.5.3"
+    implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_version"
+
+    //pager
+    implementation "com.google.accompanist:accompanist-pager:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-pager-indicators:$accompanist_version"
+
+    //permission
+    implementation "com.google.accompanist:accompanist-permissions:$accompanist_version"
+
+    //google map
+    implementation 'com.google.maps.android:maps-compose:2.11.0'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+
+    //image coil
+    implementation "io.coil-kt:coil-compose:2.4.0"
+
+
+
+
+    //
+    //def compose_ui_version = "1.4.3"
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'

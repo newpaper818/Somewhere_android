@@ -1,3 +1,55 @@
 <resources>
     <string name="app_name">Somewhere</string>
+
+    <!--floating button-->
+    <string name="new_trip">New Trip</string>
+    <string name="see_on_map">See on Map</string>
+
+    <!--Spot Type Text-->
+    <string name="tour">Tour</string>
+    <string name="move">Move</string>
+    <string name="food">Food</string>
+    <string name="accommodation">Accommodation</string>
+    <string name="etc">Etc</string>
+
+    <!--icon description-->
+    <string name="delete">Delete</string>
+    <string name="new_">New</string>
+
+    <string name="menu">Menu</string>
+    <string name="back">Back</string>
+    <string name="edit">Edit</string>
+    <string name="more">More</string>
+    <string name="save">Save</string>
+
+    <string name="previous_date">Previous date</string>
+    <string name="next_date">Next date</string>
+    <string name="to_first_date">To first date</string>
+    <string name="to_last_date">To last date</string>
+    <string name="disabled_previous_date">Disabled previous date</string>
+    <string name="disabled_next_date">Disabled next date</string>
+    <string name="disabled_to_first_date">Disabled to first date</string>
+    <string name="disabled_to_last_date">Disabled to last date</string>
+
+    <string name="expand">Expand</string>
+    <string name="collapse">Collapse</string>
+
+    <string name="date">Date</string>
+    <string name="period">Travel period</string>
+    <string name="budget">Budget</string>
+    <string name="travel_distance">Travel distance</string>
+    <string name="time">Time</string>
+    <string name="category">Category</string>
+
+    <string name="map">Map</string>
+    <string name="focus_on_to_target">Focus on to target</string>
+    <string name="disabled_focus_on_to_target">Focus on to target disabled</string>
+    <string name="fullscreen_map">Fullscreen map</string>
+    <string name="my_location">My location</string>
+    <string name="disabled_my_location">My location disabled</string>
+    <string name="expand_control_box">Expand control box</string>
+    <string name="collapse_control_box">Collapse control box</string>
+
+    <!--    -->
+
 </resources>
