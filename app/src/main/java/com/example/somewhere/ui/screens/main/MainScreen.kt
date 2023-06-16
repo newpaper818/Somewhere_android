@@ -4,9 +4,13 @@ import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,8 +31,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FabPosition
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -39,10 +45,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
+import com.example.somewhere.R
 import com.example.somewhere.model.Trip
+import com.example.somewhere.typeUtils.AppShowingType
 import com.example.somewhere.ui.navigation.NavigationDestination
 import com.example.somewhere.ui.screenUtils.BottomSaveCancelBar
 import com.example.somewhere.ui.screenUtils.DisplayIcon
@@ -50,6 +59,12 @@ import com.example.somewhere.ui.screenUtils.MyIcons
 import com.example.somewhere.ui.screenUtils.MySpacerColumn
 import com.example.somewhere.ui.screenUtils.MySpacerRow
 import com.example.somewhere.ui.screens.SomewhereViewModelProvider
+import com.example.somewhere.ui.screens.date.DateDestination
+import com.example.somewhere.ui.screens.somewhere.SomewhereTopAppBar
+import com.example.somewhere.ui.screens.somewhere.SomewhereViewModel
+import com.example.somewhere.ui.screens.spotMap.SpotMapDestination
+import com.example.somewhere.ui.screens.trip.TripDestination
+import com.example.somewhere.ui.screens.tripMap.TripMapDestination
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
@@ -61,81 +76,103 @@ object MainDestination : NavigationDestination {
 @Composable
 fun MainScreen(
     isEditMode: Boolean,
+    changeEditMode: (Boolean?) -> Unit,
+
     onTripClicked: (Trip) -> Unit,
-    changeEditMode: (Boolean) -> Unit,
 
     modifier: Modifier = Modifier,
-    mainViewModel: MainViewModel = viewModel(factory = SomewhereViewModelProvider.Factory)
+    mainViewModel: MainViewModel = viewModel(factory = SomewhereViewModelProvider.Factory),
 ){
-
     val mainUiState by mainViewModel.mainUiState.collectAsState()
     val tripList = mainUiState.tripList
 
     val coroutineScope = rememberCoroutineScope()
 
+    Scaffold (
+        //top app bar
+        topBar = {
+            SomewhereTopAppBar(
+                isEditMode = isEditMode,
+                title = if (!isEditMode) MainDestination.title
+                        else "Edit Trips",
 
-    //display trips list
-    Column {
-        LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(16.dp, 16.dp, 16.dp, 200.dp),
-            modifier = modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .background(MaterialTheme.colors.background)
-        ) {
-            if (tripList != emptyList<Trip>()) {
-                items(tripList) {
-                    TripListItem(
-                        trip = it,
-                        isEditMode = isEditMode,
-                        onTripClick = onTripClicked,
-                        deleteTrip = {
-                            //TODO add dialog: Are you sure to delete this trip? cancel / delete
-                            coroutineScope.launch {
-                                mainViewModel.deleteTrip(it)
+                navigationIcon = MyIcons.menu,
+                navigationIconOnClick = {/*TODO*/},
+
+                actionIcon1 = if (!isEditMode) MyIcons.edit
+                                else MyIcons.done,
+                actionIcon1Onclick = {
+                    changeEditMode(null)
+                },
+
+                actionIcon2 = null,
+                actionIcon2Onclick = {}
+            )
+        }
+    ) { i ->
+        val a = i
+
+        //display trips list
+        Column {
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                contentPadding = PaddingValues(16.dp, 16.dp, 16.dp, 200.dp),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .background(MaterialTheme.colors.background)
+            ) {
+                if (tripList != emptyList<Trip>()) {
+                    items(tripList) {
+                        TripListItem(
+                            trip = it,
+                            isEditMode = isEditMode,
+                            onTripClick = onTripClicked,
+                            deleteTrip = {
+                                //TODO add dialog: Are you sure to delete this trip? cancel / delete
+                                coroutineScope.launch {
+                                    mainViewModel.deleteTrip(it)
+                                }
                             }
-                        }
-                    )
+                        )
 
-                    MySpacerColumn(height = 16.dp)
-                }
-            }
-            else {
-                //TODO prettier img / text
-                item {
-                    Text(
-                        text = "No Trip...\nLet's create a new trip!",
-                        style = MaterialTheme.typography.h3
-                    )
-                    MySpacerColumn(height = 16.dp)
-                }
-            }
-
-            //new trip button
-            item{
-                NewTripButton{
-                    //add new trip view model
-                    coroutineScope.launch {
-                        val newTrip = mainViewModel.addAndGetNewTrip()
-
-                        if (newTrip != null) {
-                            onTripClicked(newTrip)
-                            changeEditMode(true)
-                        }
-                        else
-                            Log.d("test", "Can't find new trip")
+                        MySpacerColumn(height = 16.dp)
+                    }
+                } else {
+                    //TODO prettier img / text
+                    item {
+                        Text(
+                            text = "No Trip...\nLet's create a new trip!",
+                            style = MaterialTheme.typography.h3
+                        )
+                        MySpacerColumn(height = 16.dp)
                     }
                 }
+
+                //new trip button
+                item {
+                    NewTripButton {
+                        //add new trip view model
+                        coroutineScope.launch {
+                            val newTrip = mainViewModel.addAndGetNewTrip()
+
+                            if (newTrip != null) {
+                                onTripClicked(newTrip)
+                                changeEditMode(true)
+                            } else
+                                Log.d("test", "Can't find new trip")
+                        }
+                    }
+                }
+
+                //TODO remove item{} before release!
+                item {
+                    MySpacerColumn(height = 60.dp)
+                    Test()
+                }
             }
 
-            //TODO remove item{} before release!
-            item {
-                MySpacerColumn(height = 60.dp)
-                Test()
-            }
         }
-
     }
 }
 

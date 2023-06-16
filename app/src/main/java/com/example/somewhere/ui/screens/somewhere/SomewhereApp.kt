@@ -20,6 +20,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -117,99 +118,23 @@ fun SomewhereApp(
 
     val coroutineScope = rememberCoroutineScope()
 
-    Scaffold (
-        //top app bar
-        topBar = {
-            AnimatedVisibility(
-                visible = !(currentScreen == TripMapDestination ||
-                        currentScreen == SpotMapDestination),
-                enter = expandVertically(
-                    animationSpec = tween(durationMillis = 300),
-                    expandFrom = Alignment.Bottom
-                ),
-                exit = shrinkVertically(
-                    animationSpec = tween(durationMillis = 300),
-                    shrinkTowards = Alignment.Bottom
-                )
-            ) {
-                SomewhereTopAppBar(
-                    title = topAppBarTitle,
-                    contentType = contentType,
-                    canNavigateBack = navController.previousBackStackEntry != null,
-                    isEditMode = somewhereUiState.isEditMode,
-                    onBackButtonClicked = {
-                        navController.navigateUp()
-                    },
-                    onEditButtonClicked = {
-                        somewhereViewModel.changeEditMode()
-                    },
-                    currentScreen = currentScreen
-                )
-            }
 
-        },
 
-        //bottom floating button
-        floatingActionButtonPosition = FabPosition.Center,
-        floatingActionButton = {
+    //page animation
+    val enterTransition = slideInHorizontally(animationSpec = tween(300), initialOffsetX = { it })
+    val exitTransition = fadeOut(tween(300)) + scaleOut(animationSpec = tween(300), targetScale = 0.7f)
+    val popEnterTransition = fadeIn(tween(300)) + scaleIn(animationSpec = tween(300), initialScale = 0.7f)
+    val popExitTransition = slideOutHorizontally(animationSpec = tween(300), targetOffsetX = { it })
 
-            //new trip floating button
-//            AnimatedVisibility(
-//                visible = somewhereUiState.isEditMode && currentScreen == MainDestination,
-//                enter = slideInVertically(animationSpec = tween(500), initialOffsetY = {(it*1.5).toInt()}),
-//                exit = slideOutVertically(animationSpec = tween(500), targetOffsetY = {(it*1.5).toInt()})
-//            ) {
-//                SomewhereFloatingButton(
-//                    text = stringResource(id = R.string.new_trip),
-//                    icon = MyIcons.new,
-//                    onButtonClicked = {
-//                        coroutineScope.launch {
-//                            val nowTime = LocalDateTime.now()
-//                            somewhereViewModel.addNewTrip(nowTime)
-//
-//                            val newTrip = somewhereViewModel.getTrip(nowTime)
-//
-//
-//                            if (newTrip != null){
-//                                navController.navigate("${TripDestination.route}/${newTrip.id}")
-//                            }
-//
-//                            //TODO get id and navigate to trip???
-//                        }
-//                    }
-//                )
-//            }
-
-            //trip map floating button
-            AnimatedVisibility(
-                visible = (currentScreen == TripDestination ||
-                        currentScreen == DateDestination) &&
-                        //uiState.currentTrip != null &&
-                        //uiState.currentTrip?.getFirstLocation() != null &&
-                        !somewhereUiState.isEditMode,
-                enter = slideInVertically(animationSpec = tween(500), initialOffsetY = {(it*1.5).toInt()}),
-                exit = slideOutVertically(animationSpec = tween(500), targetOffsetY = {(it*1.5).toInt()})
-            ) {
-                SomewhereFloatingButton(
-                    text = stringResource(id = R.string.see_on_map),
-                    icon = MyIcons.map,
-                    onButtonClicked = { navController.navigate(AppShowingType.TRIP_MAP.name)}
-                )
-            }
-        }
-    ) {i ->
-        val a = i
-
-        //page animation
-        val enterTransition = slideInHorizontally(animationSpec = tween(300), initialOffsetX = { it })
-        val exitTransition = fadeOut(tween(300)) + scaleOut(animationSpec = tween(300), targetScale = 0.7f)
-        val popEnterTransition = fadeIn(tween(300)) + scaleIn(animationSpec = tween(300), initialScale = 0.7f)
-        val popExitTransition = slideOutHorizontally(animationSpec = tween(300), targetOffsetX = { it })
-
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background)
+    ) {
         AnimatedNavHost(
             navController = navController,
             startDestination = MainDestination.route,
-        ){
+        ) {
 
             // MAIN ================================================================================
             composable(
@@ -218,26 +143,26 @@ fun SomewhereApp(
                 exitTransition = { exitTransition },
                 popEnterTransition = { popEnterTransition },
                 popExitTransition = { popExitTransition }
-            ){
+            ) {
                 //update current screen
                 somewhereViewModel.updateCurrentScreen(MainDestination)
 
                 //update top app bar title
-                somewhereViewModel.updateTopAppBarTitle(
-                    if (somewhereUiState.isEditMode) "Edit trips"
-                    else stringResource(id = R.string.app_name)
-                )
+//            somewhereViewModel.updateTopAppBarTitle(
+//                if (somewhereUiState.isEditMode) "Edit trips"
+//                else stringResource(id = R.string.app_name)
+//            )
 
                 if (!checkPermissionsIsGranted(userLocationPermissionState))
                     requestUserLocationPermission()
 
                 MainScreen(
                     isEditMode = somewhereUiState.isEditMode,
-                    onTripClicked = {
-                        navController.navigate("${TripDestination.route}/${it.id}")
-                    },
                     changeEditMode = {
                         somewhereViewModel.changeEditMode(it)
+                    },
+                    onTripClicked = {
+                        navController.navigate("${TripDestination.route}/${it.id}")
                     }
                 )
             }
@@ -249,7 +174,7 @@ fun SomewhereApp(
                 exitTransition = { exitTransition },
                 popEnterTransition = { popEnterTransition },
                 popExitTransition = { popExitTransition }
-            ){
+            ) {
                 //update current screen
                 somewhereViewModel.updateCurrentScreen(TripMapDestination)
 
@@ -258,14 +183,14 @@ fun SomewhereApp(
             // TRIP ================================================================================
             composable(
                 route = TripDestination.routeWithArgs,
-                arguments = listOf(navArgument(TripDestination.tripIdArg){
+                arguments = listOf(navArgument(TripDestination.tripIdArg) {
                     type = NavType.IntType
                 }),
                 enterTransition = { enterTransition },
                 exitTransition = { exitTransition },
                 popEnterTransition = { popEnterTransition },
                 popExitTransition = { popExitTransition }
-            ){
+            ) {
                 //update current screen
                 somewhereViewModel.updateCurrentScreen(TripDestination)
 
@@ -277,8 +202,11 @@ fun SomewhereApp(
                     changeEditMode = {
                         somewhereViewModel.changeEditMode()
                     },
-                    updateTopAppBarTitle = {
-                        somewhereViewModel.updateTopAppBarTitle(it)
+                    navigateUp = {
+                        navController.navigateUp()
+                    },
+                    navigateToTripMap = {
+                        navController.navigate(TripMapDestination.route)
                     }
                 )
             }
@@ -290,7 +218,7 @@ fun SomewhereApp(
                 exitTransition = { exitTransition },
                 popEnterTransition = { popEnterTransition },
                 popExitTransition = { popExitTransition }
-            ){
+            ) {
                 //update current screen
                 somewhereViewModel.updateCurrentScreen(DateDestination)
 
@@ -304,7 +232,7 @@ fun SomewhereApp(
                 exitTransition = { exitTransition },
                 popEnterTransition = { popEnterTransition },
                 popExitTransition = { popExitTransition }
-            ){
+            ) {
                 //update current screen
                 somewhereViewModel.updateCurrentScreen(SpotDetailDestination)
 
@@ -317,7 +245,7 @@ fun SomewhereApp(
                 exitTransition = { exitTransition },
                 popEnterTransition = { popEnterTransition },
                 popExitTransition = { popExitTransition }
-            ){
+            ) {
                 //update current screen
                 somewhereViewModel.updateCurrentScreen(SpotImageDestination)
 
@@ -331,33 +259,35 @@ fun SomewhereApp(
                 exitTransition = { exitTransition },
                 popEnterTransition = { popEnterTransition },
                 popExitTransition = { popExitTransition }
-            ){
+            ) {
                 //update current screen
                 somewhereViewModel.updateCurrentScreen(SpotMapDestination)
 
 
             }
         }
-
-
-
-        // for tablet
-
-        //for phone
     }
+
+
+    // for tablet
+
+    //for phone
+
 }
 
 @Composable
-private fun SomewhereTopAppBar(
+fun SomewhereTopAppBar(
+    isEditMode: Boolean,
     title: String,
 
-    contentType: AppContentType,
-    canNavigateBack: Boolean,
-    isEditMode: Boolean,
-    currentScreen: NavigationDestination,
+    navigationIcon: MyIcon? = null,
+    navigationIconOnClick: () -> Unit = {},
 
-    onBackButtonClicked: () -> Unit = {},
-    onEditButtonClicked: () -> Unit = {}
+    actionIcon1: MyIcon? = null,
+    actionIcon1Onclick: () -> Unit = {},
+
+    actionIcon2: MyIcon? = null,
+    actionIcon2Onclick: () -> Unit = {}
 ){
     Column {
         //status bar padding
@@ -374,33 +304,22 @@ private fun SomewhereTopAppBar(
                 )
             },
             navigationIcon = {
-                if (contentType == AppContentType.LIST_ONLY &&
-                    canNavigateBack){
-
-                    IconButton(onClick = onBackButtonClicked) {
-                        DisplayIcon(icon = MyIcons.back)
+                if (navigationIcon != null){
+                    IconButton(onClick = navigationIconOnClick) {
+                        DisplayIcon(icon = navigationIcon)
                     }
-
-                }
-                else {
-                    IconButton(onClick = { /*TODO*/}) {
-                        DisplayIcon(icon = MyIcons.menu)
-                    }
-
                 }
             },
             actions = {
-                if (!isEditMode)
-                    IconButton(onClick = onEditButtonClicked) {
-                        DisplayIcon(icon = MyIcons.edit)
+                if (actionIcon1 != null){
+                    IconButton(onClick = actionIcon1Onclick) {
+                        DisplayIcon(icon = actionIcon1)
                     }
-                else if(currentScreen == MainDestination)
-                    IconButton(onClick = onEditButtonClicked) {
-                        DisplayIcon(icon = MyIcons.done)
+                }
+                if(actionIcon2 != null){
+                    IconButton(onClick = actionIcon2Onclick) {
+                        DisplayIcon(icon = actionIcon2)
                     }
-
-                IconButton(onClick = { /*TODO*/ }) {
-                    DisplayIcon(icon = MyIcons.more)
                 }
             }
         )
@@ -423,7 +342,7 @@ private fun SomewhereTopAppBar(
 }
 
 @Composable
-private fun SomewhereFloatingButton(
+fun SomewhereFloatingButton(
     text: String,
     icon: MyIcon,
     onButtonClicked: () -> Unit
