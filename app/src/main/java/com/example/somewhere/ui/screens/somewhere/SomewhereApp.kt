@@ -37,6 +37,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -70,6 +71,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.location.FusedLocationProviderClient
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalAnimationApi::class)
 @Composable
@@ -102,6 +104,13 @@ fun SomewhereApp(
 
     //Nav
     val backStackEntry by navController.currentBackStackEntryAsState()
+
+    val navigateUp = {
+        if (navController.previousBackStackEntry != null)
+            navController.navigateUp()
+        else
+            Log.d("test", "Can't navigate back - empty stack")
+    }
 
     //system ui controller for status bar icon color
     val systemUiController = rememberSystemUiController()
@@ -147,12 +156,6 @@ fun SomewhereApp(
                 //update current screen
                 somewhereViewModel.updateCurrentScreen(MainDestination)
 
-                //update top app bar title
-//            somewhereViewModel.updateTopAppBarTitle(
-//                if (somewhereUiState.isEditMode) "Edit trips"
-//                else stringResource(id = R.string.app_name)
-//            )
-
                 if (!checkPermissionsIsGranted(userLocationPermissionState))
                     requestUserLocationPermission()
 
@@ -162,6 +165,13 @@ fun SomewhereApp(
                         somewhereViewModel.changeEditMode(it)
                     },
                     onTripClicked = {
+                        somewhereViewModel.updateId(tripId = it.id)
+                        somewhereViewModel.changeIsNewTrip(false)
+                        navController.navigate("${TripDestination.route}/${it.id}")
+                    },
+                    navigateToNewTrip = {
+                        somewhereViewModel.updateId(tripId = it.id)
+                        somewhereViewModel.changeIsNewTrip(true)
                         navController.navigate("${TripDestination.route}/${it.id}")
                     }
                 )
@@ -195,18 +205,31 @@ fun SomewhereApp(
                 somewhereViewModel.updateCurrentScreen(TripDestination)
 
                 TripScreen(
+                    isNewTrip = somewhereUiState.isNewTrip,
                     isEditMode = somewhereUiState.isEditMode,
                     onDateClicked = {
                         navController.navigate("${DateDestination.route}/${it.id}")
+                        somewhereViewModel.changeIsNewTrip(false)
                     },
                     changeEditMode = {
-                        somewhereViewModel.changeEditMode()
+                        somewhereViewModel.changeEditMode(it)
+                    },
+                    changeIsNewTrip = {
+                        somewhereViewModel.changeIsNewTrip(it)
                     },
                     navigateUp = {
-                        navController.navigateUp()
+                        navigateUp()
+                        somewhereViewModel.changeIsNewTrip(false)
                     },
                     navigateToTripMap = {
                         navController.navigate(TripMapDestination.route)
+                        somewhereViewModel.changeIsNewTrip(false)
+                    },
+                    navigateUpAndDeleteTrip = {deleteTrip ->
+                        navigateUp()
+                        coroutineScope.launch {
+                            somewhereViewModel.deleteTrip(deleteTrip)
+                        }
                     }
                 )
             }
@@ -300,7 +323,9 @@ fun SomewhereTopAppBar(
             title = {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.h1
+                    style = MaterialTheme.typography.h1,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             },
             navigationIcon = {

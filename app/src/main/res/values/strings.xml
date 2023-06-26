@@ -1,10 +1,6 @@
 <resources>
     <string name="app_name">Somewhere</string>
 
-    <!--floating button-->
-    <string name="new_trip">New Trip</string>
-    <string name="see_on_map">See on Map</string>
-
     <!--Spot Type Text-->
     <string name="tour">Tour</string>
     <string name="move">Move</string>
@@ -12,9 +8,10 @@
     <string name="accommodation">Accommodation</string>
     <string name="etc">Etc</string>
 
-    <!--icon description-->
+    <!--use at MyIcons.kt - icon description-->
     <string name="delete">Delete</string>
     <string name="new_">New</string>
+    <string name="delete_image">Delete image</string>
 
     <string name="menu">Menu</string>
     <string name="back">Back</string>
@@ -50,6 +47,60 @@
     <string name="expand_control_box">Expand control box</string>
     <string name="collapse_control_box">Collapse control box</string>
 
-    <!--    -->
+    <!--use at Cards.kt-->
+    <string name="image_card_title">Images %1$d/10</string>
+    <string name="image_card_subtitle_add_images">+ Add images</string>
+    <string name="image_card_image_limit_toast">You can add images up to 10</string>
+    <string name="image_card_body_no_image">No Image</string>
+    <string name="image_card_display_image_description">Displayed Image</string>
+
+    <string name="title_card_title">Trip Title</string>
+    <string name="title_card_body_add_a_title">Add a Title</string>
+
+    <string name="trip_duration_card_title">Trip Duration</string>
+    <string name="trip_duration_card_body_start_date">Start Date</string>
+    <string name="trip_duration_card_body_end_date">End Date</string>
+    <string name="trip_duration_card_body_no_start_date">No Start Date</string>
+    <string name="trip_duration_card_body_no_end_date">No End Date</string>
+
+    <string name="memo_card_title">Memo</string>
+    <string name="memo_card_body_no_memo">No Memo</string>
+    <string name="memo_card_body_add_a_memo">Add a Memo</string>
+
+    <!--use at MainScreen.kt-->
+    <string name="top_bar_title_edit_trips">Edit Trips</string>
+    <string name="no_trip">No Trip…\nLet\'s create a new trip!</string>
+    <string name="trip_item_no_title">No Title</string>
+    <string name="trip_item_no_date">No Date</string>
+    <string name="new_trip">New Trip</string>
+
+    <!--use at TripScreen.kt-->
+    <string name="dialog_body">"Are you sure to exit?\nUnsaved data will be delete"</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_exit">Exit</string>
+
+    <string name="top_bar_title_edit_trip">Edit Trip</string>
+    <string name="top_bar_title_no_title">No Title</string>
+
+    <string name="see_on_map">See on Map</string>
+
+    <string name="dates_set_trip_duration">Set Trip Duration</string>
+    <string name="dates_no_plan">No Plan</string>
+
+
 
 </resources>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

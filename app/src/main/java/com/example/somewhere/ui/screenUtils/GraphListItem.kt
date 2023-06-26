@@ -1,5 +1,6 @@
 package com.example.somewhere.ui.screenUtils
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
@@ -9,6 +10,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,24 +24,27 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun GraphListItem(
     isEditMode: Boolean,
@@ -50,10 +55,12 @@ fun GraphListItem(
     mainText: String?,
     expandedText: String,
 
+    onTitleTextChange: (Int, String) -> Unit,
+
     isFirstItem: Boolean,
     isLastItem: Boolean,
 
-    onItemClick: (Int) -> Unit, /**return [itemId] (Date's id / Spot's id)*/
+    onItemClick: (Int) -> Unit,/**return [itemId] (Date's id / Spot's id)*/
     onExpandedButtonClicked: (Int) -> Unit,
 
     modifier: Modifier = Modifier,
@@ -69,6 +76,7 @@ fun GraphListItem(
     lineColor: Color = MaterialTheme.colors.secondaryVariant,
 
     mainTextStyle: TextStyle = MaterialTheme.typography.h4,
+    mainNullTextStyle: TextStyle = MaterialTheme.typography.subtitle1,
     sideTextStyle: TextStyle = MaterialTheme.typography.h5,
     expandedTextStyle: TextStyle = MaterialTheme.typography.h6
 ) {
@@ -85,12 +93,21 @@ fun GraphListItem(
     if (isLastItem)
         lowerLineColor = Color.Transparent
 
+    val mainText1 = if(mainText == null || mainText == "") "No Title"
+                    else mainText
+
+    val mainTextStyle1 = if(mainText == null || mainText == "") mainNullTextStyle
+                            else mainTextStyle
+
 
     Card(
         backgroundColor = MaterialTheme.colors.surface,
         modifier = modifier,
         elevation = 0.dp,
-        onClick = { onItemClick(itemId) }
+        onClick = {
+            if (!isEditMode)
+                onItemClick(itemId)
+        }
     ) {
         Column(
             modifier = Modifier
@@ -167,24 +184,53 @@ fun GraphListItem(
 
                 Spacer(modifier = Modifier.width(20.dp))
 
+                Box(modifier = Modifier.weight(1f)) {
                 //main text
-                Text(
-                    text = mainText ?: "No Title",
-                    style = mainTextStyle
-                )
+                    if (!isEditMode) {
+                        Text(
+                            text = mainText1,
+                            style = mainTextStyle1,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                    else{
+                        val focusManager = LocalFocusManager.current
+                        val context = LocalContext.current
 
-                Spacer(modifier = Modifier.weight(1f))
+                        MyTextField(
+                            inputText = mainText ?: "",
+                            inputTextStyle = mainTextStyle,
+                            placeholderText = "Edit Title",
+                            placeholderTextStyle = mainNullTextStyle,
+                            onValueChange = {
+                                var text = it
+                                if(it.length > 25) {
+                                    Toast.makeText(context, "over 25", Toast.LENGTH_SHORT).show()
+                                    text = text.substring(0, 25)
+                                }
 
-                //delete icon
-                AnimatedVisibility(
-                    visible = isEditMode,
-                    enter = scaleIn(tween(300)),
-                    exit = scaleOut(tween(400)) + fadeOut(tween(300))
-                ) {
-                    IconButton(onClick = { /*TODO delete trip? dialog and delete*/ }) {
-                        DisplayIcon(MyIcons.delete)
+                                onTitleTextChange(itemId, text)
+                            },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(onDone = {
+                                focusManager.clearFocus()
+                            })
+                        )
                     }
                 }
+
+                //delete icon
+//                AnimatedVisibility(
+//                    visible = isEditMode,
+//                    enter = scaleIn(tween(300)),
+//                    exit = scaleOut(tween(400)) + fadeOut(tween(300))
+//                ) {
+//                    IconButton(onClick = { /*TODO delete trip? dialog and delete*/ }) {
+//                        DisplayIcon(MyIcons.delete)
+//                    }
+//                }
 
                 //expand / collapse icon
                 IconButton(onClick = {

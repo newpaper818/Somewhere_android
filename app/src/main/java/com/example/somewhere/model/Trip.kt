@@ -6,8 +6,6 @@ import com.example.somewhere.typeUtils.CurrencyType
 import com.example.somewhere.utils.getDateText
 import com.example.somewhere.utils.getNumToText
 import com.google.android.gms.maps.model.LatLng
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
 import java.time.LocalDateTime
 import java.time.Period
 
@@ -22,23 +20,36 @@ data class Trip(
 
     val dateList: List<Date> = listOf(),
     val memoText: String? = null,
-    val imagePath: String? = null,
+    val imagePathList: List<String> = listOf(),
 
     val firstCreatedTime: LocalDateTime = LocalDateTime.now(),
     val lastModifiedTime: LocalDateTime = LocalDateTime.now()
 ){
-    fun getStartDateText(): String?{
+    fun getStartDateText(includeYear: Boolean): String?{
         return if (dateList.isNotEmpty())
-            getDateText(dateList.first().date, true)
+            getDateText(dateList.first().date, includeYear)
         else
             null
     }
 
-    fun getEndDateText(): String?{
+    fun getEndDateText(includeYear: Boolean): String?{
         return if (dateList.isNotEmpty())
-            getDateText(dateList.last().date, true)
+            getDateText(dateList.last().date, includeYear)
         else
             null
+    }
+
+    fun getStartEndDateText(includeYear: Boolean): String?{
+        val startDateText = getStartDateText(includeYear)
+        val endDateText = getEndDateText(includeYear)
+
+        return if (startDateText == null || endDateText == null)
+            null
+        else
+            if (startDateText == endDateText)
+                startDateText
+            else
+                "$startDateText - $endDateText"
     }
 
     fun getDurationText(): String?{

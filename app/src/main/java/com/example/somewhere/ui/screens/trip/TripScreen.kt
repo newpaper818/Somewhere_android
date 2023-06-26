@@ -1,9 +1,12 @@
 package com.example.somewhere.ui.screens.trip
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -17,34 +20,46 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Card
 import androidx.compose.material.FabPosition
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.somewhere.R
 import com.example.somewhere.model.Date
+import com.example.somewhere.model.Trip
 import com.example.somewhere.ui.navigation.NavigationDestination
 import com.example.somewhere.ui.screenUtils.BottomSaveCancelBar
+import com.example.somewhere.ui.screenUtils.DeleteOrNotDialog
 import com.example.somewhere.ui.screenUtils.GraphListItem
+import com.example.somewhere.ui.screenUtils.ImageCard
 import com.example.somewhere.ui.screenUtils.InformationCard
 import com.example.somewhere.ui.screenUtils.MemoCard
 import com.example.somewhere.ui.screenUtils.MyIcons
+import com.example.somewhere.ui.screenUtils.MySpacerColumn
 import com.example.somewhere.ui.screenUtils.StartEndDummySpaceWithRoundedCorner
 import com.example.somewhere.ui.screenUtils.TitleCard
 import com.example.somewhere.ui.screenUtils.TripDurationCard
 import com.example.somewhere.ui.screens.SomewhereViewModelProvider
 import com.example.somewhere.ui.screens.somewhere.SomewhereFloatingButton
 import com.example.somewhere.ui.screens.somewhere.SomewhereTopAppBar
+import com.maxkeppeker.sheets.core.CoreDialog
+import com.maxkeppeker.sheets.core.models.CoreSelection
+import com.maxkeppeker.sheets.core.models.base.ButtonStyle
+import com.maxkeppeker.sheets.core.models.base.SelectionButton
+import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import kotlinx.coroutines.launch
 
 object TripDestination : NavigationDestination {
@@ -54,14 +69,18 @@ object TripDestination : NavigationDestination {
     val routeWithArgs = "$route/{$tripIdArg}"
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TripScreen(
+    isNewTrip: Boolean,
     isEditMode: Boolean,
     onDateClicked: (Date) -> Unit,
     changeEditMode: (Boolean?) -> Unit,
+    changeIsNewTrip: (Boolean?) -> Unit,
 
     navigateUp: () -> Unit,
     navigateToTripMap: () -> Unit,
+    navigateUpAndDeleteTrip: (Trip) -> Unit,
 
     modifier: Modifier = Modifier,
     tripViewModel: TripViewModel = viewModel(factory = SomewhereViewModelProvider.Factory)
@@ -72,22 +91,60 @@ fun TripScreen(
         if (isEditMode) tripUiState.tempTrip
         else tripUiState.trip
 
+    val context = LocalContext.current
+    val dialogState = rememberUseCaseState(visible = false)
 
-    val onCancelButtonClicked = {
-        TripDestination.title = showingTrip.titleText ?: "No title"
-        changeEditMode(false)
-    }
+    CoreDialog(
+        state = dialogState,
+        selection = CoreSelection(
+            withButtonView = true,
+            negativeButton = SelectionButton(
+                text = stringResource(id = R.string.dialog_cancel),
+                type = ButtonStyle.OUTLINED
+            ),
+            onNegativeClick = {},
+            positiveButton = SelectionButton(
+                text = stringResource(id = R.string.dialog_exit),
+                type = ButtonStyle.FILLED
+            ),
+            onPositiveClick = {
+                changeEditMode(false)
+
+                tripViewModel.updateTripUiState(true, tripUiState.trip)
+
+                if (isNewTrip){
+                    navigateUpAndDeleteTrip(tripUiState.trip)
+                }
+            }
+        ),
+        onPositiveValid = true,
+        body = {
+            Text(text = stringResource(id = R.string.dialog_body))
+        },
+    )
 
     if (isEditMode)
         BackHandler {
-            onCancelButtonClicked()
+            if (tripViewModel.tripUiState.trip != tripViewModel.tripUiState.tempTrip)
+                dialogState.show()
+            else {
+                changeEditMode(false)
+
+                if (isNewTrip){
+                    navigateUpAndDeleteTrip(tripUiState.trip)
+                }
+            }
         }
 
 
     TripDestination.title =
-        if (isEditMode) "Edit trip"
-        else showingTrip.titleText ?: "No title"
-
+        if (isEditMode) stringResource(id = R.string.top_bar_title_edit_trip)
+        else {
+            if (showingTrip.titleText == null || showingTrip.titleText == "")
+                stringResource(id = R.string.top_bar_title_no_title)
+            else
+                showingTrip.titleText
+        }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -101,7 +158,17 @@ fun TripScreen(
                 navigationIcon = MyIcons.back,
                 navigationIconOnClick = {
                     if (!isEditMode) navigateUp()
-                    else onCancelButtonClicked()
+                    else {
+                        if (tripViewModel.tripUiState.trip != tripViewModel.tripUiState.tempTrip)
+                            dialogState.show()
+                        else{
+                            changeEditMode(false)
+
+                            if (isNewTrip){
+                                navigateUpAndDeleteTrip(tripUiState.trip)
+                            }
+                        }
+                    }
                 },
 
                 actionIcon1 =
@@ -147,25 +214,63 @@ fun TripScreen(
                     .weight(1f)
                     .background(MaterialTheme.colors.background)
             ) {
+
                 item {
-                    TitleCard(
+                    val toastText = stringResource(id = R.string.image_card_image_limit_toast)
+
+                    ImageCard(
                         isEditMode = isEditMode,
-                        titleText = showingTrip.titleText,
-                        onTitleChange = { titleText ->
+                        imgList = showingTrip.imagePathList,
+                        onAddImages = {
+
+                            var addImageList: List<String> = it
+
+                            if (showingTrip.imagePathList.size + it.size > 10){
+                                addImageList = it.subList(0, 10 - showingTrip.imagePathList.size)
+                                Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show()
+                            }
+
                             tripViewModel.updateTripUiState(
                                 true,
-                                showingTrip.copy(titleText = titleText)
+                                showingTrip.copy(imagePathList = showingTrip.imagePathList + addImageList)
+                            )
+                        },
+                        deleteImage = {
+                            val newList: MutableList<String> = showingTrip.imagePathList.toMutableList()
+                            newList.remove(it)
+
+                            tripViewModel.updateTripUiState(
+                                true,
+                                showingTrip.copy(imagePathList = newList.toList())
                             )
                         }
                     )
                 }
 
                 item {
+                    TitleCard(
+                        isEditMode = isEditMode,
+                        titleText = showingTrip.titleText,
+                        onTitleChange = { titleText ->
+                            val newTitleText: String? =
+                                if (titleText == "") null
+                                else titleText
+
+                            tripViewModel.updateTripUiState(
+                                true,
+                                showingTrip.copy(titleText = newTitleText)
+                            )
+                        }
+                    )
+                }
+
+                //trip duration card
+                item {
                     TripDurationCard(
-                        currentTrip = showingTrip,
+                        dateList = showingTrip.dateList,
                         isDateListEmpty = showingTrip.dateList.isEmpty(),
-                        startDateText = showingTrip.getStartDateText(),
-                        endDateText = showingTrip.getEndDateText(),
+                        startDateText = showingTrip.getStartDateText(true),
+                        endDateText = showingTrip.getEndDateText(true),
                         durationText = showingTrip.getDurationText(),
 
                         isEditMode = isEditMode,
@@ -193,9 +298,13 @@ fun TripScreen(
                         isEditMode = isEditMode,
                         memoText = showingTrip.memoText,
                         onMemoChanged = { memoText ->
+                            val newMemoText: String? =
+                                if (memoText == "") null
+                                else memoText
+
                             tripViewModel.updateTripUiState(
                                 true,
-                                showingTrip.copy(memoText = memoText)
+                                showingTrip.copy(memoText = newMemoText)
                             )
                         }
                     )
@@ -239,6 +348,7 @@ fun TripScreen(
                 }
 
                 if (showingTrip.dateList.isNotEmpty()) {
+
                     items(showingTrip.dateList) {
 
                         var isExpanded by rememberSaveable { mutableStateOf(false) }
@@ -250,7 +360,11 @@ fun TripScreen(
 
                             sideText = it.getDateText(false),
                             mainText = it.titleText,
-                            expandedText = it.getExpandedText(showingTrip),
+                            expandedText = it.getExpandedText(showingTrip, isEditMode),
+
+                            onTitleTextChange = {id, titleText ->
+                                tripViewModel.updateDateTitle(true, id, titleText)
+                            },
 
                             isFirstItem = it == showingTrip.dateList.first(),
                             isLastItem = it == showingTrip.dateList.last(),
@@ -269,11 +383,11 @@ fun TripScreen(
                         )
                     }
                 } else {
-                    //empty dates
-                    val text = if (isEditMode) "Set Trip Duration!"
-                    else "No Plan..."
-
                     item {
+                        //empty dates
+                        val text = if (isEditMode) stringResource(id = R.string.dates_set_trip_duration)
+                                    else stringResource(id = R.string.dates_no_plan)
+
                         Card(
                             backgroundColor = MaterialTheme.colors.surface,
                             modifier = Modifier.fillMaxWidth(),
@@ -296,18 +410,32 @@ fun TripScreen(
                 }
             }
 
-            //TODO animation
-            if (isEditMode)
+            AnimatedVisibility(
+                visible = isEditMode,
+                enter = expandVertically(animationSpec = tween(300)),
+                exit = shrinkVertically(animationSpec = tween(300))
+            ) {
                 BottomSaveCancelBar(
-                    onCancelClick = onCancelButtonClicked,
+                    onCancelClick = {
+                        if (tripViewModel.tripUiState.trip != tripViewModel.tripUiState.tempTrip)
+                            dialogState.show()
+                        else{
+                            changeEditMode(false)
+
+                            if (isNewTrip){
+                                navigateUpAndDeleteTrip(tripUiState.trip)
+                            }
+                        }
+                    },
                     onSaveClick = {
                         coroutineScope.launch {
                             tripViewModel.saveTrip()
                         }
-                        TripDestination.title = "Edit Trip"
                         changeEditMode(false)
+                        changeIsNewTrip(false)
                     }
                 )
+            }
         }
     }
 }

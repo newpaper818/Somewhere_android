@@ -1,6 +1,8 @@
 package com.example.somewhere.db
 
 import android.content.Context
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -14,7 +16,9 @@ import java.time.LocalDate
 @Database(entities = [Trip::class], version = 1, exportSchema = false)
 @TypeConverters(value = [
     DateListTypeConverter::class,
-    LocalDateTimeTypeConverter::class
+    LocalDateTimeTypeConverter::class,
+    StringListTypeConverter::class
+    //UriTypeConverter::class
 ])
 abstract class TripDatabase : RoomDatabase() {
 
@@ -28,6 +32,7 @@ abstract class TripDatabase : RoomDatabase() {
             //.addLast(KotlinJsonAdapterFactory())
             .add(LocalDateAdapter())
             .add(LocalTimeAdapter())
+            //.add(UriAdapter())
             .build()
 
         @Volatile
@@ -45,6 +50,8 @@ abstract class TripDatabase : RoomDatabase() {
                     .fallbackToDestructiveMigration()
                     .addTypeConverter(DateListTypeConverter(moshi))
                     .addTypeConverter(LocalDateTimeTypeConverter())
+                    .addTypeConverter(StringListTypeConverter(moshi))
+                    //.addTypeConverter(UriTypeConverter())
                     .build()
                     .also { Instance = it }
             }

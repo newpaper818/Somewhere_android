@@ -1,8 +1,6 @@
 package com.example.somewhere.ui.screens.main
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.somewhere.db.TripRepository
 import com.example.somewhere.model.Trip
@@ -44,8 +42,8 @@ class MainViewModel(
         tripsRepository.insertTrip(Trip(firstCreatedTime = nowTime, lastModifiedTime = nowTime))
     }
 
-    suspend fun getTrip(time: LocalDateTime): Trip?{
-        return tripsRepository.getTripStream(time)
+    suspend fun getTrip(firstCreatedTime: LocalDateTime): Trip?{
+        return tripsRepository.getTripStream(firstCreatedTime)
             .first()
     }
 

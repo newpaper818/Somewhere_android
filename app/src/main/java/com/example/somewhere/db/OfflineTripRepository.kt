@@ -9,7 +9,7 @@ class OfflineTripRepository(private val tripDao: TripDao): TripRepository {
 
     override fun getTripStream(id: Int): Flow<Trip?> = tripDao.getTrip(id)
 
-    override fun getTripStream(time: LocalDateTime): Flow<Trip?> = tripDao.getTrip(time)
+    override fun getTripStream(firstCreatedTime: LocalDateTime): Flow<Trip?> = tripDao.getTrip(firstCreatedTime)
 
     override suspend fun insertTrip(trip: Trip) = tripDao.insert(trip)
 

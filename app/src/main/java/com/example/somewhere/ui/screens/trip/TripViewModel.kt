@@ -21,11 +21,6 @@ data class TripUiState(
     val tempTrip: Trip = Trip()
 )
 
-data class DatePair(
-    val date: Date,
-    val isExpanded: Boolean = false
-)
-
 class TripViewModel(
     savedStateHandle: SavedStateHandle,
     private val tripsRepository: TripRepository,
@@ -61,11 +56,6 @@ class TripViewModel(
 
         tripUiState = TripUiState(trip = tempTrip, tempTrip = tempTrip)
         tripsRepository.updateTrip(tripUiState.trip)
-
-//        Log.d("test", "$tripUiState")
-//        val trip = tripsRepository.getTripStream(tripUiState.trip.id).first()
-//        Log.d("test", "${trip?.titleText}")
-//        Log.d("test", "${trip?.dateList}")
     }
 
     fun cancelTrip(){
@@ -75,6 +65,20 @@ class TripViewModel(
     fun updateTripUiState(toTempTrip: Boolean, trip: Trip){
         tripUiState = if (toTempTrip) TripUiState(trip = tripUiState.trip, tempTrip = trip)
                         else TripUiState(trip = trip, tempTrip = tripUiState.tempTrip)
+    }
+
+    fun updateDateTitle(toTempTrip: Boolean, id: Int, titleText: String){
+        val newTitleText: String? = if (titleText == "") null
+                                    else titleText
+
+        val currentTrip = if (toTempTrip) tripUiState.tempTrip
+                            else tripUiState.trip
+
+        val newDate = currentTrip.dateList[id].copy(titleText = newTitleText)
+        val newDateList = currentTrip.dateList.toMutableList()
+        newDateList[id] = newDate
+
+        updateTripUiState(toTempTrip, currentTrip.copy(dateList = newDateList.toList()))
     }
 
     fun updateTripDurationAndTripUiState(
@@ -120,16 +124,22 @@ class TripViewModel(
             //sort
             dateList.sortBy { it.date }
 
+            for (id in 0 until dateList.size){
+                dateList[id].id = id
+            }
+
             updateTripUiState(toTempTrip, currentTrip.copy(dateList = dateList))
         }
         else{
             val dateList: MutableList<Date> = mutableListOf()
             var currDate = startDate
+            var id = 0
+
             while (currDate != endDate.plusDays(1)){
 
                 //add Date in dateList
-                dateList.add(Date(date = currDate))
-
+                dateList.add(Date(id = id, date = currDate))
+                id++
                 currDate = currDate.plusDays(1)
             }
             updateTripUiState(toTempTrip, currentTrip.copy(dateList = dateList))

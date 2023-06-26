@@ -4,14 +4,9 @@ import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +15,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,7 +25,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FabPosition
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -44,28 +37,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.rememberAsyncImagePainter
 import com.example.somewhere.R
 import com.example.somewhere.model.Trip
-import com.example.somewhere.typeUtils.AppShowingType
 import com.example.somewhere.ui.navigation.NavigationDestination
-import com.example.somewhere.ui.screenUtils.BottomSaveCancelBar
 import com.example.somewhere.ui.screenUtils.DisplayIcon
+import com.example.somewhere.ui.screenUtils.DisplayImage
 import com.example.somewhere.ui.screenUtils.MyIcons
 import com.example.somewhere.ui.screenUtils.MySpacerColumn
 import com.example.somewhere.ui.screenUtils.MySpacerRow
 import com.example.somewhere.ui.screens.SomewhereViewModelProvider
-import com.example.somewhere.ui.screens.date.DateDestination
 import com.example.somewhere.ui.screens.somewhere.SomewhereTopAppBar
-import com.example.somewhere.ui.screens.somewhere.SomewhereViewModel
-import com.example.somewhere.ui.screens.spotMap.SpotMapDestination
-import com.example.somewhere.ui.screens.trip.TripDestination
-import com.example.somewhere.ui.screens.tripMap.TripMapDestination
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 object MainDestination : NavigationDestination {
@@ -79,12 +65,14 @@ fun MainScreen(
     changeEditMode: (Boolean?) -> Unit,
 
     onTripClicked: (Trip) -> Unit,
+    navigateToNewTrip: (Trip) -> Unit,
 
     modifier: Modifier = Modifier,
     mainViewModel: MainViewModel = viewModel(factory = SomewhereViewModelProvider.Factory),
 ){
     val mainUiState by mainViewModel.mainUiState.collectAsState()
     val tripList = mainUiState.tripList
+
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -94,7 +82,7 @@ fun MainScreen(
             SomewhereTopAppBar(
                 isEditMode = isEditMode,
                 title = if (!isEditMode) MainDestination.title
-                        else "Edit Trips",
+                        else stringResource(id = R.string.top_bar_title_edit_trips),
 
                 navigationIcon = MyIcons.menu,
                 navigationIconOnClick = {/*TODO*/},
@@ -142,7 +130,7 @@ fun MainScreen(
                     //TODO prettier img / text
                     item {
                         Text(
-                            text = "No Trip...\nLet's create a new trip!",
+                            text = stringResource(id = R.string.no_trip),
                             style = MaterialTheme.typography.h3
                         )
                         MySpacerColumn(height = 16.dp)
@@ -157,10 +145,10 @@ fun MainScreen(
                             val newTrip = mainViewModel.addAndGetNewTrip()
 
                             if (newTrip != null) {
-                                onTripClicked(newTrip)
+                                navigateToNewTrip(newTrip)
                                 changeEditMode(true)
                             } else
-                                Log.d("test", "Can't find new trip")
+                                Log.d("debug", "New Trip Button onClick - navigate to new trip - Can't find new trip")
                         }
                     }
                 }
@@ -183,8 +171,20 @@ private fun TripListItem(
     isEditMode: Boolean,
     onTripClick: (Trip) -> Unit,
     deleteTrip: (Trip) -> Unit,
-    modifier: Modifier = Modifier
-){
+
+    modifier: Modifier = Modifier,
+    titleTextStyle: TextStyle = MaterialTheme.typography.h2,
+    titleNullTextStyle: TextStyle = MaterialTheme.typography.h2.copy(color = Color.Gray),
+    subtitleTextStyle: TextStyle = MaterialTheme.typography.h6
+    ){
+
+    val titleText = if (trip.titleText == null || trip.titleText == "") stringResource(id = R.string.trip_item_no_title)
+                    else trip.titleText
+    val titleTextStyle1 = if (trip.titleText == null || trip.titleText == "") titleNullTextStyle
+                            else titleTextStyle
+
+    val subTitleText = trip.getStartEndDateText(true) ?: stringResource(id = R.string.trip_item_no_date)
+
 
     Card(
         modifier = modifier
@@ -198,26 +198,49 @@ private fun TripListItem(
         Row (
             modifier = Modifier
                 .fillMaxWidth()
-                .height(100.dp)
-                .padding(10.dp),
+                .height(120.dp)
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ){
-            Image(
-                painter = rememberAsyncImagePainter(model = trip.imagePath),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.size(80.dp),
-                contentDescription = ""
-            )
 
-            Spacer(modifier = Modifier.width(10.dp))
+            //image
+            if (trip.imagePathList.isNotEmpty()) {
+                Card(
+                    modifier = Modifier
+                        .size(98.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    elevation = 0.dp
+                ) {
+                    DisplayImage(imagePath = trip.imagePathList.first())
+                }
 
-            Text(
-                text = trip.titleText?: "No Title",
-                style = MaterialTheme.typography.h2
-            )
+                MySpacerRow(width = 12.dp)
+            }
+            
+            MySpacerRow(width = 4.dp)
+            
+            //text title & trip date
+            Column() {
+                //trip title
+                Text(
+                    text = titleText,
+                    style = titleTextStyle1,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                MySpacerColumn(height = 8.dp)
+
+                //trip start date - end date
+                Text(
+                    text = subTitleText,
+                    style = subtitleTextStyle
+                )
+            }
 
             Spacer(modifier = Modifier.weight(1f))
 
+            //delete icon when edit mode
             AnimatedVisibility(
                 visible = isEditMode,
                 enter = scaleIn(tween(300)),
@@ -252,10 +275,10 @@ private fun NewTripButton(
             horizontalArrangement = Arrangement.Center
         ) {
             MySpacerRow(12.dp)
-            DisplayIcon(icon = MyIcons.new)
+            DisplayIcon(icon = MyIcons.add)
             MySpacerRow(4.dp)
             Column() {
-                Text(text = "New Trip")
+                Text(text = stringResource(id = R.string.new_trip))
                 MySpacerColumn(2.dp)
             }
             MySpacerRow(18.dp)

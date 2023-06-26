@@ -1,6 +1,7 @@
 package com.example.somewhere.model
 
 import android.location.Location
+import android.net.Uri
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable

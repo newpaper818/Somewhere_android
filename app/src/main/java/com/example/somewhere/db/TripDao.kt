@@ -19,8 +19,8 @@ interface TripDao {
     @Query("SELECT * from trips WHERE id = :id")
     fun getTrip(id: Int): Flow<Trip>
 
-    @Query("SELECT * from trips WHERE firstCreatedTime = :time")
-    fun getTrip(time: LocalDateTime): Flow<Trip>
+    @Query("SELECT * from trips WHERE firstCreatedTime = :firstCreatedTime")
+    fun getTrip(firstCreatedTime: LocalDateTime): Flow<Trip>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(trip: Trip)

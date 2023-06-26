@@ -10,7 +10,7 @@ interface TripRepository {
 
     fun getTripStream(id: Int): Flow<Trip?>
 
-    fun getTripStream(time: LocalDateTime): Flow<Trip?>
+    fun getTripStream(firstCreatedTime: LocalDateTime): Flow<Trip?>
 
     suspend fun insertTrip(trip: Trip)
 

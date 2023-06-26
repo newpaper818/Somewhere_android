@@ -29,7 +29,8 @@ object MyIcons {
 
     //
     val delete = MyIcon(Icons.Filled.Delete,  22.dp, IconColor.gray, R.string.delete)
-    val new = MyIcon(Icons.Filled.Add,        22.dp, null, R.string.new_)
+    val add = MyIcon(Icons.Filled.Add,        22.dp, null, R.string.new_)
+    val deleteImage = MyIcon(Icons.Filled.Close,        16.dp, null, R.string.delete_image)
 
     //app bar
     val menu = MyIcon(Icons.Filled.Menu,      22.dp, null, R.string.menu)

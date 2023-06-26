@@ -10,7 +10,7 @@ import java.time.LocalDate
 
 @JsonClass(generateAdapter = true)
 data class Date(
-    val id: Int = 0,
+    var id: Int = 0,
 
     @ColorInt
     val iconColor: Int = 0xffff0000.toInt(),
@@ -22,15 +22,18 @@ data class Date(
     val spotList: List<Spot> = listOf(),
     val memo: String? = null
 ){
-    fun getExpandedText(trip: Trip):String{
+    fun getExpandedText(trip: Trip, isEditMode: Boolean):String{
         val budgetText = getTotalBudgetText(trip)
         val spotCountText = "${getSpotTypeCount(SpotType.TOUR) + getSpotTypeCount(SpotType.FOOD)} Spot"
         val totalDistanceText = getTotalTravelDistanceText(trip)
 
-        var expandedText = "$spotCountText | $budgetText | $totalDistanceText\nSee more"
+        var expandedText = "$spotCountText | $budgetText | $totalDistanceText"
 
         if (spotList == emptyList<Spot>())
-            expandedText = "Empty Plan\nSee more"
+            expandedText = "Empty Plan"
+
+        if(!isEditMode)
+            expandedText += "\nSee more"
 
         return expandedText
     }

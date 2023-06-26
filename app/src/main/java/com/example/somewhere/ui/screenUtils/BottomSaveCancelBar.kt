@@ -2,6 +2,7 @@ package com.example.somewhere.ui.screenUtils
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,7 +32,7 @@ fun BottomSaveCancelBar(
         modifier = modifier
             .fillMaxWidth()
             .height(70.dp)
-            .background(MaterialTheme.colors.secondary),
+            .background(MaterialTheme.colors.background),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -70,16 +71,11 @@ private fun MyButton(
         backgroundColor = buttonColor,
         elevation = 0.dp
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
+        Box(contentAlignment = Alignment.Center) {
             Text(
                 text = text,
-                style = MaterialTheme.typography.h4,
-
+                style = MaterialTheme.typography.h4
             )
-
         }
     }
 }
