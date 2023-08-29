@@ -10,10 +10,10 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -43,6 +44,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.somewhere.ui.theme.ColorType
+import com.example.somewhere.ui.theme.TextType
+import com.example.somewhere.ui.theme.getTextStyle
+import com.example.somewhere.ui.theme.getColor
+
+private val dummySpaceHeight:   Dp = 10.dp
+private val minCardHeight:      Dp = 40.dp
+private val additionalHeight:   Dp = 40.dp
+private val pointCircleSize:    Dp = 22.dp
+private val lineWidth:          Dp = 7.dp
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @Composable
@@ -53,32 +64,30 @@ fun GraphListItem(
 
     sideText: String,
     mainText: String?,
-    expandedText: String,
+    expandedText: String?,
 
-    onTitleTextChange: (Int, String) -> Unit,
+    onTitleTextChange: (itemId: Int, titleText: String) -> Unit,
 
     isFirstItem: Boolean,
     isLastItem: Boolean,
+    availableDelete: Boolean,
 
     onItemClick: (Int) -> Unit,/**return [itemId] (Date's id / Spot's id)*/
     onExpandedButtonClicked: (Int) -> Unit,
 
     modifier: Modifier = Modifier,
+    onDeleteClick: (itemId: Int) -> Unit = { },
+
     isShown: Boolean = true,
 
-    dummySpaceHeight: Dp = 10.dp,
-    minCardHeight: Dp = 40.dp,
-    additionalHeight: Dp = 40.dp,
-    pointCircleSize: Dp = 22.dp,
-    lineWidth: Dp = 7.dp,
+    itemColor: Color = MaterialTheme.colors.surface,
+    pointColor: Color = getColor(ColorType.GRAPH__POINT),
+    lineColor: Color = getColor(ColorType.GRAPH__LINE),
 
-    pointColor: Color = MaterialTheme.colors.primaryVariant,
-    lineColor: Color = MaterialTheme.colors.secondaryVariant,
-
-    mainTextStyle: TextStyle = MaterialTheme.typography.h4,
-    mainNullTextStyle: TextStyle = MaterialTheme.typography.subtitle1,
-    sideTextStyle: TextStyle = MaterialTheme.typography.h5,
-    expandedTextStyle: TextStyle = MaterialTheme.typography.h6
+    mainTextStyle: TextStyle = getTextStyle(TextType.GRAPH_LIST_ITEM__MAIN),
+    mainNullTextStyle: TextStyle = getTextStyle(TextType.GRAPH_LIST_ITEM__MAIN_NULL),
+    sideTextStyle: TextStyle = getTextStyle(TextType.GRAPH_LIST_ITEM__SIDE),
+    expandedTextStyle: TextStyle = getTextStyle(TextType.GRAPH_LIST_ITEM__EXPAND)
 ) {
 
     if (!isShown)
@@ -101,7 +110,7 @@ fun GraphListItem(
 
 
     Card(
-        backgroundColor = MaterialTheme.colors.surface,
+        backgroundColor = itemColor,
         modifier = modifier,
         elevation = 0.dp,
         onClick = {
@@ -115,12 +124,7 @@ fun GraphListItem(
         ) {
 
             //upper dummy space
-            DummySpaceWithLine(
-                dummySpaceHeight = dummySpaceHeight,
-                pointCircleSize = pointCircleSize,
-                lineWidth = lineWidth,
-                lineColor = upperLineColor,
-            )
+            DummySpaceWithLine(lineColor = upperLineColor)
 
             //side text / point, line / main text / expand icon
             Row(
@@ -185,7 +189,7 @@ fun GraphListItem(
                 Spacer(modifier = Modifier.width(20.dp))
 
                 Box(modifier = Modifier.weight(1f)) {
-                //main text
+                    //main text
                     if (!isEditMode) {
                         Text(
                             text = mainText1,
@@ -199,7 +203,7 @@ fun GraphListItem(
                         val context = LocalContext.current
 
                         MyTextField(
-                            inputText = mainText ?: "",
+                            inputText = mainText,
                             inputTextStyle = mainTextStyle,
                             placeholderText = "Edit Title",
                             placeholderTextStyle = mainNullTextStyle,
@@ -222,73 +226,65 @@ fun GraphListItem(
                 }
 
                 //delete icon
-//                AnimatedVisibility(
-//                    visible = isEditMode,
-//                    enter = scaleIn(tween(300)),
-//                    exit = scaleOut(tween(400)) + fadeOut(tween(300))
-//                ) {
-//                    IconButton(onClick = { /*TODO delete trip? dialog and delete*/ }) {
-//                        DisplayIcon(MyIcons.delete)
-//                    }
-//                }
+                AnimatedVisibility(
+                    visible = isEditMode && availableDelete,
+                    enter = scaleIn(tween(300)),
+                    exit = scaleOut(tween(400)) + fadeOut(tween(300))
+                ) {
+                    IconButton(onClick = {
+                        onDeleteClick(itemId)
+                    }) {
+                        DisplayIcon(MyIcons.delete)
+                    }
+                }
 
                 //expand / collapse icon
-                IconButton(onClick = {
-                    onExpandedButtonClicked(itemId)
-                }) {
-                    if (!isExpanded)
-                        DisplayIcon(icon = MyIcons.expand)
-                    else
-                        DisplayIcon(icon = MyIcons.collapse)
+                if (expandedText != null)
+                    IconButton(onClick = {
+                        onExpandedButtonClicked(itemId)
+                    }) {
+                        if (!isExpanded)
+                            DisplayIcon(icon = MyIcons.expand)
+                        else
+                            DisplayIcon(icon = MyIcons.collapse)
+                    }
+            }
+
+            //expanded text animate
+            if (expandedText != null) {
+                AnimatedVisibility(
+                    visible = isExpanded,
+                    enter =
+                    expandVertically(
+                        animationSpec = tween(durationMillis = 300),
+                        expandFrom = Alignment.Bottom
+                    ),
+                    exit =
+                    shrinkVertically(
+                        animationSpec = tween(durationMillis = 300),
+                        shrinkTowards = Alignment.Bottom
+                    )
+                ) {
+                    //expanded space
+                    ExpandedTextWithLine(
+                        expandedText = expandedText,
+                        lineColor = lowerLineColor
+                    )
                 }
             }
 
-            AnimatedVisibility(
-                visible = isExpanded,
-                enter =
-                expandVertically(
-                    animationSpec = tween(durationMillis = 300),
-                    expandFrom = Alignment.Bottom
-                )
-                ,
-                exit =
-                shrinkVertically(
-                    animationSpec = tween(durationMillis = 300),
-                    shrinkTowards = Alignment.Bottom
-                )
-            ) {
-                //expanded space
-                ExpandedTextWithLine(
-                    additionalHeight = additionalHeight,
-                    expandedText = expandedText,
-                    expandedTextStyle = expandedTextStyle,
-                    pointCircleSize = pointCircleSize,
-                    lineWidth = lineWidth,
-                    lineColor = lowerLineColor
-                )
-            }
-
             //lower dummy space
-            DummySpaceWithLine(
-                dummySpaceHeight = dummySpaceHeight,
-                pointCircleSize = pointCircleSize,
-                lineWidth = lineWidth,
-                lineColor = lowerLineColor,
-            )
+            DummySpaceWithLine(lineColor = lowerLineColor)
         }
     }
 }
 
 @Composable
 private fun ExpandedTextWithLine(
-    additionalHeight: Dp,
-
     expandedText: String,
-    expandedTextStyle: TextStyle,
 
-    pointCircleSize: Dp,
-    lineWidth: Dp,
-    lineColor: Color
+    expandedTextStyle: TextStyle = getTextStyle(TextType.GRAPH_LIST_ITEM__EXPAND),
+    lineColor: Color = getColor(ColorType.GRAPH__LINE)
 ){
     val dummyPointHalfWidth = (pointCircleSize - lineWidth)/2
 
@@ -329,19 +325,14 @@ private fun ExpandedTextWithLine(
 
 
 @Composable
-private fun DummySpaceWithLine(
-    dummySpaceHeight: Dp,
-    pointCircleSize: Dp,
-    lineWidth: Dp,
-
-    lineColor: Color
+fun DummySpaceWithLine(
+    height: Dp = dummySpaceHeight,
+    lineColor: Color = getColor(ColorType.GRAPH__LINE)
 ){
     val dummyPointHalfWidth = (pointCircleSize - lineWidth)/2
 
     Row (
-        modifier = Modifier
-            .height(dummySpaceHeight)
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().height(height)
     ){
         //dummy date
         Spacer(modifier = Modifier.width(80.dp))
@@ -368,15 +359,15 @@ fun StartEndDummySpaceWithRoundedCorner(
     isLast: Boolean,
 
     modifier: Modifier = Modifier,
-    dummySpaceHeight: Dp = 16.dp
+    showLine: Boolean = false
 ){
     val upperRoundedCornerValue =
-        if (isFirst) 16.dp
-        else    0.dp
+        if (isFirst)    16.dp
+        else            0.dp
 
     val lowerRoundedCornerValue =
-        if (isLast) 16.dp
-        else 0.dp
+        if (isLast)     16.dp
+        else            0.dp
 
 
     Card(
@@ -384,7 +375,7 @@ fun StartEndDummySpaceWithRoundedCorner(
         elevation = 0.dp,
         modifier = modifier
             .fillMaxWidth()
-            .height(dummySpaceHeight)
+            .height(16.dp)
             .clip(
                 RoundedCornerShape(
                     topStart = upperRoundedCornerValue,
@@ -394,6 +385,7 @@ fun StartEndDummySpaceWithRoundedCorner(
                 )
             )
     ){
-
+        if(showLine)
+            DummySpaceWithLine()
     }
 }

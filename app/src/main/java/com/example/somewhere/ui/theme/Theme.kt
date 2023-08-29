@@ -11,9 +11,9 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val LightColorPalette = lightColors(
     primary = primary,
-    primaryVariant = point,
+    primaryVariant = primaryVariant,
     secondary = secondary,
-    secondaryVariant = line,
+    secondaryVariant = secondaryVariant,
     background = background,
     surface = surface,
     error = error,
@@ -27,9 +27,9 @@ private val LightColorPalette = lightColors(
 
 private val DarkColorPalette = darkColors(
     primary = primary_,
-    primaryVariant = point,
+    primaryVariant = primaryVariant_,
     secondary = secondary_,
-    secondaryVariant = line,
+    secondaryVariant = secondaryVariant_,
     background = background_,
     surface = surface_,
     error = error_,

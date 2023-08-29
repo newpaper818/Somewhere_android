@@ -9,22 +9,23 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -32,7 +33,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,13 +49,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.somewhere.R
 import com.example.somewhere.model.Trip
 import com.example.somewhere.ui.navigation.NavigationDestination
+import com.example.somewhere.ui.screenUtils.DeleteOrNotDialog
 import com.example.somewhere.ui.screenUtils.DisplayIcon
-import com.example.somewhere.ui.screenUtils.DisplayImage
+import com.example.somewhere.ui.screenUtils.cards.DisplayImage
 import com.example.somewhere.ui.screenUtils.MyIcons
 import com.example.somewhere.ui.screenUtils.MySpacerColumn
 import com.example.somewhere.ui.screenUtils.MySpacerRow
+import com.example.somewhere.ui.screenUtils.NewItemButton
 import com.example.somewhere.ui.screens.SomewhereViewModelProvider
 import com.example.somewhere.ui.screens.somewhere.SomewhereTopAppBar
+import com.example.somewhere.ui.theme.TextType
+import com.example.somewhere.ui.theme.getTextStyle
 import kotlinx.coroutines.launch
 
 object MainDestination : NavigationDestination {
@@ -62,17 +70,15 @@ object MainDestination : NavigationDestination {
 @Composable
 fun MainScreen(
     isEditMode: Boolean,
-    changeEditMode: (Boolean?) -> Unit,
+    changeEditMode: (editMode: Boolean?) -> Unit,
 
-    onTripClicked: (Trip) -> Unit,
-    navigateToNewTrip: (Trip) -> Unit,
+    navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
 
     modifier: Modifier = Modifier,
     mainViewModel: MainViewModel = viewModel(factory = SomewhereViewModelProvider.Factory),
 ){
     val mainUiState by mainViewModel.mainUiState.collectAsState()
     val tripList = mainUiState.tripList
-
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -104,23 +110,39 @@ fun MainScreen(
         Column {
             LazyColumn(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                contentPadding = PaddingValues(16.dp, 16.dp, 16.dp, 200.dp),
+                contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 200.dp),
                 modifier = modifier
                     .fillMaxWidth()
                     .weight(1f)
                     .background(MaterialTheme.colors.background)
             ) {
                 if (tripList != emptyList<Trip>()) {
-                    items(tripList) {
+                    items(tripList) { it ->
+
+                        var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
+
+                        if(showDeleteDialog){
+                            DeleteOrNotDialog(
+                                bodyText = stringResource(id = R.string.dialog_body_delete_trip),
+                                deleteText = stringResource(id = R.string.dialog_button_delete),
+                                onDismissRequest = { showDeleteDialog = false },
+                                onDeleteClick = {
+                                    showDeleteDialog = false
+                                    coroutineScope.launch {
+                                        mainViewModel.deleteTrip(it)
+                                    }
+                                }
+                            )
+                        }
+
                         TripListItem(
                             trip = it,
                             isEditMode = isEditMode,
-                            onTripClick = onTripClicked,
+                            onTripClick = { trip ->
+                                navigateToTrip(false, trip)
+                            },
                             deleteTrip = {
-                                //TODO add dialog: Are you sure to delete this trip? cancel / delete
-                                coroutineScope.launch {
-                                    mainViewModel.deleteTrip(it)
-                                }
+                                showDeleteDialog = true
                             }
                         )
 
@@ -131,7 +153,7 @@ fun MainScreen(
                     item {
                         Text(
                             text = stringResource(id = R.string.no_trip),
-                            style = MaterialTheme.typography.h3
+                            style = getTextStyle(TextType.CARD__BODY)
                         )
                         MySpacerColumn(height = 16.dp)
                     }
@@ -139,18 +161,23 @@ fun MainScreen(
 
                 //new trip button
                 item {
-                    NewTripButton {
-                        //add new trip view model
-                        coroutineScope.launch {
-                            val newTrip = mainViewModel.addAndGetNewTrip()
+                    MySpacerColumn(height = 16.dp)
 
-                            if (newTrip != null) {
-                                navigateToNewTrip(newTrip)
-                                changeEditMode(true)
-                            } else
-                                Log.d("debug", "New Trip Button onClick - navigate to new trip - Can't find new trip")
+                    NewItemButton(
+                        text = stringResource(id = R.string.new_trip),
+                        onClick = {
+                            //add new trip view model
+                            coroutineScope.launch {
+                                val newTrip = mainViewModel.addAndGetNewTrip()
+
+                                if (newTrip != null) {
+                                    navigateToTrip(true, newTrip)
+                                    changeEditMode(true)
+                                } else
+                                    Log.d("debug", "New Trip Button onClick - navigate to new trip - Can't find new trip")
+                            }
                         }
-                    }
+                    )
                 }
 
                 //TODO remove item{} before release!
@@ -173,12 +200,12 @@ private fun TripListItem(
     deleteTrip: (Trip) -> Unit,
 
     modifier: Modifier = Modifier,
-    titleTextStyle: TextStyle = MaterialTheme.typography.h2,
-    titleNullTextStyle: TextStyle = MaterialTheme.typography.h2.copy(color = Color.Gray),
-    subtitleTextStyle: TextStyle = MaterialTheme.typography.h6
+    titleTextStyle: TextStyle = getTextStyle(TextType.TRIP_LIST_ITEM__TITLE),
+    titleNullTextStyle: TextStyle = getTextStyle(TextType.TRIP_LIST_ITEM__TITLE_NULL),
+    subtitleTextStyle: TextStyle = getTextStyle(TextType.TRIP_LIST_ITEM__SUBTITLE)
     ){
 
-    val titleText = if (trip.titleText == null || trip.titleText == "") stringResource(id = R.string.trip_item_no_title)
+    val titleText = if (trip.titleText == null || trip.titleText == "") stringResource(id = R.string.no_title)
                     else trip.titleText
     val titleTextStyle1 = if (trip.titleText == null || trip.titleText == "") titleNullTextStyle
                             else titleTextStyle
@@ -188,10 +215,10 @@ private fun TripListItem(
 
     Card(
         modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
             .clickable(enabled = !isEditMode) {
                 onTripClick(trip)
-            }
-            .clip(RoundedCornerShape(16.dp)),
+            },
         backgroundColor = MaterialTheme.colors.surface,
         elevation = 0.dp
     ){
@@ -220,7 +247,7 @@ private fun TripListItem(
             MySpacerRow(width = 4.dp)
             
             //text title & trip date
-            Column() {
+            Column {
                 //trip title
                 Text(
                     text = titleText,
@@ -256,36 +283,6 @@ private fun TripListItem(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-private fun NewTripButton(
-    onClick: () -> Unit
-){
-    Card(
-        modifier = Modifier
-            .height(50.dp)
-            //.width(140.dp)
-            .clip(RoundedCornerShape(25.dp)),
-        onClick = onClick,
-        backgroundColor = MaterialTheme.colors.primaryVariant,
-        elevation = 0.dp
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            MySpacerRow(12.dp)
-            DisplayIcon(icon = MyIcons.add)
-            MySpacerRow(4.dp)
-            Column() {
-                Text(text = stringResource(id = R.string.new_trip))
-                MySpacerColumn(2.dp)
-            }
-            MySpacerRow(18.dp)
-        }
-    }
-}
-
 
 //test ======================================================================
 @Composable
@@ -304,20 +301,20 @@ private fun Test(){
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        ColorTest(MaterialTheme.colors.primary, "primary")
-        ColorTest(MaterialTheme.colors.primaryVariant, "primaryVariant")
-        ColorTest(MaterialTheme.colors.secondary, "secondary")
-        ColorTest(MaterialTheme.colors.secondaryVariant, "secondaryVariant")
-        ColorTest(MaterialTheme.colors.background, "background")
-        ColorTest(MaterialTheme.colors.surface, "surface")
-        ColorTest(MaterialTheme.colors.error, "error")
+        ColorTest(MaterialTheme.colors.primary,         "primary",          MaterialTheme.colors.onPrimary)
+        ColorTest(MaterialTheme.colors.primaryVariant,  "primaryVariant",   MaterialTheme.colors.onPrimary)
+        ColorTest(MaterialTheme.colors.secondary,       "secondary",        MaterialTheme.colors.onSecondary)
+        ColorTest(MaterialTheme.colors.secondaryVariant,"secondaryVariant", MaterialTheme.colors.onSecondary)
+        ColorTest(MaterialTheme.colors.background,      "background",       MaterialTheme.colors.onBackground)
+        ColorTest(MaterialTheme.colors.surface,         "surface",          MaterialTheme.colors.onSurface)
+        ColorTest(MaterialTheme.colors.error,           "error",            MaterialTheme.colors.onError)
     }
 }
 
 @Composable
 private fun TextTest(
     text: String,
-    textStyle: androidx.compose.ui.text.TextStyle
+    textStyle: TextStyle
 ){
     Text(
         text = "${textStyle.fontSize}   $text",
@@ -328,7 +325,8 @@ private fun TextTest(
 @Composable
 private fun ColorTest(
     color: Color,
-    text: String
+    text: String,
+    textColor: Color
 ){
     Row {
         Box(
@@ -338,7 +336,10 @@ private fun ColorTest(
                 .background(color),
             contentAlignment = Alignment.Center
         ){
-            Text(text = "On Text")
+            Text(
+                text = "On Text",
+                style = MaterialTheme.typography.body1.copy(color = textColor)
+            )
         }
 
         Spacer(modifier = Modifier.width(7.dp))

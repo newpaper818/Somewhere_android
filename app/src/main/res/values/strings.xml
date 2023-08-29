@@ -1,12 +1,76 @@
 <resources>
     <string name="app_name">Somewhere</string>
+    <string name="no_title">No Title</string>
 
     <!--Spot Type Text-->
     <string name="tour">Tour</string>
     <string name="move">Move</string>
+    <string name="move_point">Move Point</string>
     <string name="food">Food</string>
-    <string name="accommodation">Accommodation</string>
+    <string name="lodging">Lodging</string>
     <string name="etc">Etc</string>
+
+    <string name="airplane">Airplane</string>
+    <string name="helicopter">Helicopter</string>
+    <string name="hot_air_balloon">Hot Air Balloon</string>
+    <string name="train">Train</string>
+    <string name="subway">Subway</string>
+    <string name="tram">Tram</string>
+    <string name="bus">Bus</string>
+    <string name="taxi">Taxi</string>
+    <string name="car">Car</string>
+    <string name="bicycle">Bicycle</string>
+    <string name="electric_kickboard">Electric Kickboard</string>
+    <string name="walk">Walk</string>
+    <string name="running">Running</string>
+    <string name="hiking">Hiking</string>
+    <string name="ship">Ship</string>
+    <string name="yacht">Yacht</string>
+    <string name="terminal">Terminal</string>
+    <string name="airport">Airport</string>
+    <string name="bus_terminal">Bus Terminal</string>
+    <string name="bus_stop">Bus Stop</string>
+    <string name="subway_station">Subway Station</string>
+    <string name="train_station">Train Station</string>
+    <string name="port">Port</string>
+    <string name="tourist_attraction">Tourist Attraction</string>
+    <string name="historic_site">Historic Site</string>
+    <string name="architectural_building">Architectural Building</string>
+    <string name="landmark">Landmark</string>
+    <string name="religious_site">Religious Site</string>
+    <string name="monument_statue">Monument &amp; Statue</string>
+    <string name="activity">Activity</string>
+    <string name="leisure">Leisure</string>
+    <string name="sport">Sport</string>
+    <string name="outdoor">Outdoor</string>
+    <string name="adventure">Adventure</string>
+    <string name="entertainment">Entertainment</string>
+    <string name="festival">Festival</string>
+    <string name="art">Art</string>
+    <string name="music">Music</string>
+    <string name="movie">Movie</string>
+    <string name="museum">Museum</string>
+    <string name="exhibition">Exhibition</string>
+    <string name="park">Park</string>
+    <string name="garden">Garden</string>
+    <string name="beach">Beach</string>
+    <string name="street_market">Street Market</string>
+    <string name="gift_shop">Gift Shop</string>
+    <string name="shopping">Shopping</string>
+    <string name="coffee_tea">Coffee &amp; Tea</string>
+    <string name="restaurant">Restaurant</string>
+    <string name="fast_food">Fast Food</string>
+    <string name="dessert">Dessert</string>
+    <string name="snack">Snack</string>
+    <string name="bar_pub">Bar &amp; Pub</string>
+    <string name="hotel">Hotel</string>
+    <string name="motel">Motel</string>
+    <string name="guest_house">Guest House</string>
+    <string name="resort">Resort</string>
+    <string name="hostel">Hostel</string>
+    <string name="air_bnb">Air BnB</string>
+    <string name="pension">Pension</string>
+    <string name="camping">Camping</string>
 
     <!--use at MyIcons.kt - icon description-->
     <string name="delete">Delete</string>
@@ -28,14 +92,19 @@
     <string name="disabled_to_first_date">Disabled to first date</string>
     <string name="disabled_to_last_date">Disabled to last date</string>
 
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+
+    <string name="to">To</string>
+    <string name="from">From</string>
+
     <string name="expand">Expand</string>
     <string name="collapse">Collapse</string>
 
-    <string name="date">Date</string>
+
     <string name="period">Travel period</string>
     <string name="budget">Budget</string>
     <string name="travel_distance">Travel distance</string>
-    <string name="time">Time</string>
     <string name="category">Category</string>
 
     <string name="map">Map</string>
@@ -47,14 +116,32 @@
     <string name="expand_control_box">Expand control box</string>
     <string name="collapse_control_box">Collapse control box</string>
 
+    <string name="edit_location">Edit location</string>
+    <string name="delete_location">Delete location</string>
+    <string name="cancel_edit_location">Cancel edit location</string>
+    <string name="save_location">Save location</string>
+
+    <string name="zoom_out_more">Zoom out more</string>
+    <string name="zoom_out">Zoom out</string>
+    <string name="zoom_in">Zoom in</string>
+    <string name="zoom_in_more">Zoom in more</string>
+
+    <!--use at Toast-->
+    <string name="toast_image_limit">You can add images up to 10</string>
+    <string name="toast_invalid_budget">Invalid Budget text</string>
+    <string name="toast_invalid_travel_distance">Invalid Travel Distance text</string>
+    <string name="toast_location_permission_denied">User location permission denied</string>
+    <string name="toast_no_location">No location</string>
+    <string name="toast_no_user_location">Can\'t find your location</string>
+
+
     <!--use at Cards.kt-->
     <string name="image_card_title">Images %1$d/10</string>
     <string name="image_card_subtitle_add_images">+ Add images</string>
-    <string name="image_card_image_limit_toast">You can add images up to 10</string>
     <string name="image_card_body_no_image">No Image</string>
     <string name="image_card_display_image_description">Displayed Image</string>
 
-    <string name="title_card_title">Trip Title</string>
+    <string name="title_card_title">Title</string>
     <string name="title_card_body_add_a_title">Add a Title</string>
 
     <string name="trip_duration_card_title">Trip Duration</string>
@@ -67,25 +154,48 @@
     <string name="memo_card_body_no_memo">No Memo</string>
     <string name="memo_card_body_add_a_memo">Add a Memo</string>
 
+    <string name="location_card_title">Location</string>
+
+    <!--use at dialog-->
+    <string name="dialog_title_set_color">Set Color</string>
+    <string name="dialog_title_move_date">Move Date</string>
+    <string name="dialog_title_set_budget">Set Budget</string>
+    <string name="dialog_title_set_travel_distance">Set Travel Distance</string>
+    <string name="dialog_title_set_spot_type">Set Spot Type</string>
+    <string name="dialog_selected_color">Selected color</string>
+
+
+    <string name="dialog_body_are_you_sure_to_exit">Are you sure to exit?\nUnsaved data will be delete</string>
+    <string name="dialog_body_delete_trip">Delete this Trip?</string>
+    <string name="dialog_body_delete_spot">Delete this Spot?</string>
+
+    <string name="dialog_button_cancel">Cancel</string>
+    <string name="dialog_button_delete">Delete</string>
+    <string name="dialog_button_exit">Exit</string>
+    <string name="dialog_button_save">Save</string>
+    <string name="dialog_button_ok">OK</string>
+
     <!--use at MainScreen.kt-->
     <string name="top_bar_title_edit_trips">Edit Trips</string>
     <string name="no_trip">No Trip…\nLet\'s create a new trip!</string>
-    <string name="trip_item_no_title">No Title</string>
+
     <string name="trip_item_no_date">No Date</string>
     <string name="new_trip">New Trip</string>
 
     <!--use at TripScreen.kt-->
-    <string name="dialog_body">"Are you sure to exit?\nUnsaved data will be delete"</string>
-    <string name="dialog_cancel">Cancel</string>
-    <string name="dialog_exit">Exit</string>
-
     <string name="top_bar_title_edit_trip">Edit Trip</string>
-    <string name="top_bar_title_no_title">No Title</string>
 
     <string name="see_on_map">See on Map</string>
 
     <string name="dates_set_trip_duration">Set Trip Duration</string>
     <string name="dates_no_plan">No Plan</string>
+
+    <!--use at DateScreen.kt-->
+    <string name="top_bar_title_edit_date">Edit Date</string>
+
+    <!--use at SpotDetailScreen.kt-->
+    <string name="top_bar_title_edit_spot">Edit Spot</string>
+    <string name="top_bar_title_set_location">Set Location</string>
 
 
 

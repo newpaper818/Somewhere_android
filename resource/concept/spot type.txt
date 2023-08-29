@@ -1,0 +1,29 @@
+move - 
+	airplane, helicopter, hot air balloon
+	train, subway, tram
+	bus, taxi, car, 
+	ship, yacht
+	bicycle, electric kickboard
+	walk, running, hiking
+	
+
+move point - terminal, airport, bus termianl, bus stop, subway station, train station, port
+
+
+
+tour - 
+	tourist attraction, historic site, architectural building, landmark, religious site, Monuments & Statues
+	activity, leisure, sport, outdoor, adventure
+	entertainment, festival, art, music, movie
+	museum, exhibition
+ 	park, garden, beach
+	shopping, Street Markets, gift shop
+
+
+food - coffee & tea, restaurant, fast food, dessert, snack, bar & pub
+
+lodging - hotel, motel, guest house, resort, hostel, air bnb, pension, camping
+
+
+
+etc

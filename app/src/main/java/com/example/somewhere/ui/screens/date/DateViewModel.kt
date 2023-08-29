@@ -31,15 +31,6 @@ class DateViewModel(
     var dateUiState by mutableStateOf(DateUiState())
         private set
 
-    init{
-        viewModelScope.launch{
-            dateUiState = tripsRepository.getTripStream(dateId)
-                .first()
-                //if null make new Trip()
-                ?.toTripUiState() ?: Trip().toTripUiState()
-        }
-    }
-
 
 
 }

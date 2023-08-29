@@ -1,9 +1,8 @@
 package com.example.somewhere.model
 
 import androidx.annotation.ColorInt
-import com.example.somewhere.typeUtils.SpotType
+import com.example.somewhere.typeUtils.SpotTypeGroup
 import com.example.somewhere.utils.getNumToText
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import java.time.LocalDate
 
@@ -21,10 +20,19 @@ data class Date(
 
     val spotList: List<Spot> = listOf(),
     val memo: String? = null
-){
+): Cloneable {
+
+    public override fun clone(): Date{
+        return Date(
+            id, iconColor, date, titleText, spotList.map{ it.clone() }, memo
+        )
+    }
+
+    // get =========================================================================================
+
     fun getExpandedText(trip: Trip, isEditMode: Boolean):String{
         val budgetText = getTotalBudgetText(trip)
-        val spotCountText = "${getSpotTypeCount(SpotType.TOUR) + getSpotTypeCount(SpotType.FOOD)} Spot"
+        val spotCountText = "${getSpotTypeGroupCount(SpotTypeGroup.TOUR) + getSpotTypeGroupCount(SpotTypeGroup.FOOD)} Spot"
         val totalDistanceText = getTotalTravelDistanceText(trip)
 
         var expandedText = "$spotCountText | $budgetText | $totalDistanceText"
@@ -65,10 +73,10 @@ data class Date(
         return total
     }
 
-    fun getSpotTypeCount(spotType: SpotType): Int{
+    fun getSpotTypeGroupCount(spotTypeGroup: SpotTypeGroup): Int{
         var count = 0
         for (spot in spotList){
-            if (spot.spotType == spotType){
+            if (spot.spotType.group == spotTypeGroup){
                 count++
             }
         }
@@ -77,6 +85,19 @@ data class Date(
 
     fun getDateText(includeYear: Boolean = true): String{
         return com.example.somewhere.utils.getDateText(date, includeYear)
+    }
+
+    // set =========================================================================================
+
+
+    //sort =========================================================================================
+    fun sortSpotListId(){
+//        for ((id, spot) in spotList.withIndex()){
+//            spot.id = id
+//        }
+        spotList.forEachIndexed { index, value ->
+            value.id = index
+        }
     }
 
 }

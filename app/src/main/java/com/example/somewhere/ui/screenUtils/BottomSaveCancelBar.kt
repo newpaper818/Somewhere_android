@@ -1,26 +1,26 @@
 package com.example.somewhere.ui.screenUtils
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import java.time.format.TextStyle
+import com.example.somewhere.ui.theme.ColorType
+import com.example.somewhere.ui.theme.TextType
+import com.example.somewhere.ui.theme.getColor
+import com.example.somewhere.ui.theme.getTextStyle
+import com.example.somewhere.ui.theme.white
 
 @Composable
 fun BottomSaveCancelBar(
@@ -28,29 +28,24 @@ fun BottomSaveCancelBar(
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(70.dp)
-            .background(MaterialTheme.colors.background),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
+    Column(modifier = modifier) {
+        Row() {
+            MyButton(
+                onClick = onCancelClick,
+                text = "Cancel",
+                buttonColor = getColor(ColorType.BUTTON__NEGATIVE)
+            )
 
-        MyButton(
-            onClick = onCancelClick,
-            text = "Cancel",
-            buttonColor = MaterialTheme.colors.surface
-        )
-        
-        Spacer(modifier = Modifier.width(20.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
-        MyButton(
-            onClick = onSaveClick,
-            text = "Save",
-            buttonColor = MaterialTheme.colors.secondaryVariant
-        )
+            MyButton(
+                onClick = onSaveClick,
+                text = "Save",
+                buttonColor = getColor(ColorType.BUTTON__POSITIVE)
+            )
+        }
 
+        MySpacerColumn(height = 10.dp)
     }
 }
 
@@ -59,14 +54,13 @@ fun BottomSaveCancelBar(
 private fun MyButton(
     onClick: () -> Unit,
     text: String,
-    //textStyle: TextStyle,
     buttonColor: Color
 ){
     Card(
         modifier = Modifier
-            .height(50.dp)
-            .width(150.dp)
-            .clip(RoundedCornerShape(16.dp)),
+            .clip(RoundedCornerShape(16.dp))
+            .height(45.dp)
+            .width(150.dp),
         onClick = onClick,
         backgroundColor = buttonColor,
         elevation = 0.dp
@@ -74,7 +68,7 @@ private fun MyButton(
         Box(contentAlignment = Alignment.Center) {
             Text(
                 text = text,
-                style = MaterialTheme.typography.h4
+                style = getTextStyle(TextType.BUTTON).copy(color = white)
             )
         }
     }

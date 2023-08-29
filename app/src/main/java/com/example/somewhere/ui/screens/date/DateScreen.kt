@@ -1,5 +1,12 @@
 package com.example.somewhere.ui.screens.date
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,16 +18,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.IconButton
+import androidx.compose.material.FabPosition
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,26 +36,38 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.somewhere.R
 import com.example.somewhere.model.Date
-import com.example.somewhere.model.Spot
 import com.example.somewhere.model.Trip
-import com.example.somewhere.typeUtils.SpotType
+import com.example.somewhere.typeUtils.SpotTypeGroup
 import com.example.somewhere.ui.navigation.NavigationDestination
-import com.example.somewhere.ui.screenUtils.DisplayIcon
+import com.example.somewhere.ui.screenUtils.BottomSaveCancelBar
+import com.example.somewhere.ui.screenUtils.DateListProgressBar
+import com.example.somewhere.ui.screenUtils.DeleteOrNotDialog
+import com.example.somewhere.ui.screenUtils.DummySpaceWithLine
 import com.example.somewhere.ui.screenUtils.GraphListItem
-import com.example.somewhere.ui.screenUtils.InformationCard
-import com.example.somewhere.ui.screenUtils.MemoCard
-import com.example.somewhere.ui.screenUtils.MiniProgressBar
+import com.example.somewhere.ui.screenUtils.cards.InformationCard
+import com.example.somewhere.ui.screenUtils.cards.MemoCard
 import com.example.somewhere.ui.screenUtils.MyIcons
-import com.example.somewhere.ui.screenUtils.SpotTypeCard
+import com.example.somewhere.ui.screenUtils.MySpacerColumn
+import com.example.somewhere.ui.screenUtils.NewItemButton
+import com.example.somewhere.ui.screenUtils.SomewhereFloatingButton
 import com.example.somewhere.ui.screenUtils.StartEndDummySpaceWithRoundedCorner
-import com.example.somewhere.ui.screens.SomewhereViewModelProvider
-import com.example.somewhere.ui.screens.trip.TripDestination
+import com.example.somewhere.ui.screenUtils.cards.FilterCards
+import com.example.somewhere.ui.screenUtils.cards.TitleCard
+import com.example.somewhere.ui.screens.somewhere.SomewhereTopAppBar
+import com.example.somewhere.ui.theme.ColorType
+import com.example.somewhere.ui.theme.TextType
+import com.example.somewhere.ui.theme.getColor
+import com.example.somewhere.ui.theme.getTextStyle
 import kotlinx.coroutines.launch
 
 object DateDestination : NavigationDestination {
@@ -63,129 +81,281 @@ object DateDestination : NavigationDestination {
 @Composable
 fun DateScreen(
     isEditMode: Boolean,
-    currentTrip: Trip,
-    currentDate: Date,
 
-    updateCurrentDate: (Int) -> Unit,
-    onSpotClicked: (Spot) -> Unit,
+    originalTrip: Trip,
+    tempTrip: Trip,
+    dateId: Int,
 
-    modifier: Modifier = Modifier,
-    dateViewModel: DateViewModel = viewModel(factory = SomewhereViewModelProvider.Factory)
+    changeEditMode: (editMode: Boolean?) -> Unit,
+
+    updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
+    updateDateTitle: (dateId: Int, dateTitleText: String) -> Unit,
+    updateSpotTitle: (dateId: Int, spotId: Int, spotTitleText: String) -> Unit,
+
+    addNewSpot: (dateId: Int) -> Unit,
+    deleteSpot: (dateId: Int, spotId: Int) -> Unit,
+    saveTrip: () -> Unit,
+
+    navigateUp: () -> Unit,
+    navigateToSpot: (dateId: Int, spotId: Int) -> Unit,
+    navigateToDateMap: () -> Unit,
+
+    modifier: Modifier = Modifier
 ){
-    val dateList = currentTrip.dateList
     val coroutineScope = rememberCoroutineScope()
 
-    val pageCount = currentTrip.dateList.size
-    val pagerState = rememberPagerState(
-        initialPage = currentTrip.dateList.indexOf(currentDate)
+    val focusManager = LocalFocusManager.current
+
+    val showingTrip = if (isEditMode) tempTrip
+                      else            originalTrip
+
+    val dateList = showingTrip.dateList
+
+    val datePageCount = showingTrip.dateList.size
+    val datePagerState = rememberPagerState(
+        initialPage = dateId
     )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.background)
-    ) {
-        Spacer(modifier = Modifier.height(16.dp))
+    //dialog: delete trip? unsaved data will be deleted
+    var showExitDialog by rememberSaveable { mutableStateOf(false) }
 
-        Card(
-            modifier = modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp)),
-            elevation = 0.dp
-        ) {
-            Column() {
-                //progress bar
-                MiniProgressBar(
-                    pointCount = pageCount,
-                    currentIndex = pagerState.currentPage,
-                    isMove = false
-                )
+    val onBackButtonClick = {
+        if (originalTrip != tempTrip)
+            showExitDialog = true
+        else {
+            changeEditMode(false)
+        }
+    }
 
-                // |< <  2023.03.28  > >|
-                // date buttons
-                DateTextWithButtons(
-                    currentDate = currentDate,
-                    isFirstDate = dateList.first() == currentDate,
-                    isLastDate = dateList.last() == currentDate,
-                    onNextDateButtonClicked = {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                        }
-                    },
-                    onPrevDateButtonClicked = {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(pagerState.currentPage - 1)
-                        }
-                    },
-                    onFirstDateButtonClicked = {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(0)
-                        }
-                    },
-                    onLastDateButtonClicked = {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(pageCount - 1)
-                        }
-                    },
-                    modifier = modifier
-                )
-            }
+    //when back button click
+    if (isEditMode)
+        BackHandler {
+            onBackButtonClick()
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+    //set top bar title
+    DateDestination.title =
+        if (isEditMode) stringResource(id = R.string.top_bar_title_edit_date)
+        else {
+            if (showingTrip.titleText == null || showingTrip.titleText == "")
+                stringResource(id = R.string.no_title)
+            else
+                showingTrip.titleText
+        }
 
-
-        //spot page
-        HorizontalPager(
-            pageCount = pageCount,
-            state = pagerState
-        ) {pageIndex ->
-            updateCurrentDate(pagerState.currentPage)
-
-            DateInfo(
+    Scaffold(
+        //top app bar
+        topBar = {
+            SomewhereTopAppBar(
                 isEditMode = isEditMode,
-                currentTrip = currentTrip,
-                currentDate = dateList[pageIndex],
-                onSpotClicked = onSpotClicked,
-                modifier = modifier
+                title = DateDestination.title,
+
+                //back button
+                navigationIcon = MyIcons.back,
+                navigationIconOnClick = {
+                    if (!isEditMode) navigateUp()
+                    else             onBackButtonClick()
+
+                },
+
+                //edit button
+                actionIcon1 =
+                    if (!isEditMode) MyIcons.edit
+                    else             null,
+                actionIcon1Onclick = {
+                    changeEditMode(null)
+                },
+
+                actionIcon2 = null,
+                actionIcon2Onclick = { }
             )
+        },
+
+        //bottom floating button: see on map
+        floatingActionButtonPosition = FabPosition.Center,
+        floatingActionButton = {
+            if(showingTrip.getFirstLocation() != null) {
+
+                //trip map floating button
+                AnimatedVisibility(
+                    visible =
+                    //FIXME
+                    //uiState.currentTrip != null &&
+                    //uiState.currentTrip?.getFirstLocation() != null &&
+                    !isEditMode,
+                    enter = slideInVertically(
+                        animationSpec = tween(500),
+                        initialOffsetY = { (it * 1.5).toInt() }),
+                    exit = slideOutVertically(
+                        animationSpec = tween(500),
+                        targetOffsetY = { (it * 1.5).toInt() })
+                ) {
+                    SomewhereFloatingButton(
+                        text = stringResource(id = R.string.see_on_map),
+                        icon = MyIcons.map,
+                        onButtonClicked = navigateToDateMap
+                    )
+                }
+            }
+        }
+    ) { i ->
+        val a = i
+
+        if(showExitDialog){
+            DeleteOrNotDialog(
+                bodyText = stringResource(id = R.string.dialog_body_are_you_sure_to_exit),
+                deleteText = stringResource(id = R.string.dialog_button_exit),
+                onDismissRequest = { showExitDialog = false },
+                onDeleteClick = {
+                    showExitDialog = false
+                    changeEditMode(false)
+                    updateTripState(true, originalTrip)
+                }
+            )
+        }
+
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colors.background)
+            ) {
+
+                MySpacerColumn(height = 4.dp)
+
+                //progress bar
+                DateListProgressBar(
+                    dateList = dateList,
+                    currentDateIdx = datePagerState.currentPage,
+                    onClickDate = { toDateId ->
+                        coroutineScope.launch {
+                            datePagerState.animateScrollToPage(toDateId)
+                        }
+                    }
+                )
+
+                MySpacerColumn(height = 8.dp)
+
+                //spot pages
+                HorizontalPager(
+                    pageCount = datePageCount,
+                    state = datePagerState,
+                    modifier = Modifier.weight(1f)
+                ) { pageIndex ->    //pageIndex == dateId
+
+                    DatePage(
+                        isEditMode = isEditMode,
+                        showingTrip = showingTrip,
+                        dateId = pageIndex,
+                        currentDate = dateList[pageIndex],
+
+                        focusManager = focusManager,
+
+                        onDateTitleChange = { dateId, titleText ->
+                            updateDateTitle(dateId, titleText)
+                        },
+                        updateTripState = updateTripState,
+                        updateSpotTitle = { spotId, spotTitleText ->
+                            updateSpotTitle(pageIndex, spotId, spotTitleText)
+                        },
+                        addNewSpot = { dateId ->
+                            addNewSpot(dateId)
+                        },
+                        deleteSpot = { dateId, spotId ->
+                            deleteSpot(dateId, spotId)
+                        },
+                        navigateToSpot = navigateToSpot,
+                        modifier = modifier.padding(16.dp, 0.dp)
+                    )
+
+                }
+            }
+
+            //bottom save cancel bar
+            AnimatedVisibility(
+                visible = isEditMode,
+                enter = expandVertically(animationSpec = tween(300)),
+                exit = shrinkVertically(animationSpec = tween(300))
+            ) {
+                BottomSaveCancelBar(
+                    onCancelClick = {
+                        focusManager.clearFocus()
+                        onBackButtonClick()
+                    },
+                    onSaveClick = {
+                        coroutineScope.launch {
+                            saveTrip()
+                        }
+                    }
+                )
+            }
         }
     }
 }
 
 @Composable
-fun DateInfo(
+fun DatePage(
     isEditMode: Boolean,
-    currentTrip: Trip,
+    showingTrip: Trip,
+    dateId: Int,
     currentDate: Date,
 
-    onSpotClicked: (Spot) -> Unit,
+    focusManager: FocusManager,
 
-    modifier: Modifier = Modifier   //padding(L,R) 16.dp
+    onDateTitleChange: (dateId: Int, titleText: String) -> Unit,
+    updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
+    updateSpotTitle: (spotId: Int, spotTitleText: String) -> Unit,
+    addNewSpot: (dateId: Int) -> Unit,
+    deleteSpot: (dateId: Int, spotId: Int) -> Unit,
+
+    navigateToSpot: (dateId: Int, spotId: Int) -> Unit,
+
+    modifier: Modifier = Modifier
 ){
+    val dateList = showingTrip.dateList
     val spotList = currentDate.spotList
 
     var spotTypeWithShownList by rememberSaveable{
-        mutableStateOf(getSpotTypeListWithShownList(currentDate))
+        mutableStateOf(getSpotTypeGroupWithShownList(currentDate))
     }
 
+    //FIXME spotTypeWithShownList order problem
+    //왜 순서가 바뀌지??
+    //Log.d("test", "$spotTypeWithShownList")
 
     LazyColumn(
-        contentPadding = PaddingValues(top = 0.dp, bottom = 200.dp),
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Top
-
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top,
+        contentPadding = PaddingValues(top = 8.dp, bottom = 300.dp),
+        modifier = Modifier.fillMaxSize()
     ) {
+
+        //title card
         item {
-            //budget, travel distance info card
+            TitleCard(
+                isEditMode = isEditMode,
+                titleText = currentDate.titleText,
+                focusManager = focusManager,
+                onTitleChange = {titleText ->
+                    onDateTitleChange(dateId, titleText)
+                },
+                modifier = modifier,
+                date = currentDate
+            )
+        }
+
+        //budget, travel distance info card
+        item {
             InformationCard(
                 modifier = modifier,
                 list = listOf(
-                    //Pair(MyIcons.date, currentDate.getDateText()),
-                    Pair(MyIcons.budget, currentDate.getTotalBudgetText(currentTrip)),
+                    Pair(MyIcons.budget, currentDate.getTotalBudgetText(showingTrip)),
                     Pair(
                         MyIcons.travelDistance,
-                        currentDate.getTotalTravelDistanceText(currentTrip)
+                        currentDate.getTotalTravelDistanceText(showingTrip)
                     )
                 )
             )
@@ -193,28 +363,45 @@ fun DateInfo(
             Spacer(modifier = Modifier.height(16.dp))
         }
 
+        //memo card
         item {
-            //memo card
             MemoCard(
                 isEditMode = isEditMode,
                 memoText = currentDate.memo,
-                onMemoChanged = {
+                modifier = modifier,
+                onMemoChanged = {memoText ->
+                    val newMemoText: String? =
+                        if (memoText == "") null
+                        else memoText
 
+                    val newDateList = showingTrip.dateList.toMutableList()
+                    newDateList[dateId] = newDateList[dateId].copy(memo = newMemoText)
+
+                    updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
                 }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
         }
 
+        spotTypeWithShownList = updateSpotTypeGroupWithShownList(currentDate, spotTypeWithShownList)
+
         if (currentDate.spotList.isNotEmpty()) {
 
+            val firstSpotShowUpperLine = spotList.first().spotType.isMove()
+                || spotList[0].getPrevSpot(dateList, spotList, dateId)?.spotType?.isMove() ?: false
+
+            val lastSpotShowLowerLine = spotList.last().spotType.isMove()
+                    || spotList[spotList.indexOf(spotList.last())].getNextSpot(dateList, spotList, dateId)?.spotType?.isMove() ?: false
+
+            //spot type card list horizontal
+            // 3 Tour / 2 Food / 5 Move ...
             item{
-                //spot type card list horizontal
-                // 3 Tour / 2 Food / 5 Move ...
                 FilterCards(
                     date = currentDate,
                     spotTypeWithShownList = spotTypeWithShownList,
                     onCardClicked = {spotType ->
+
                         val newList = spotTypeWithShownList.map{
                             if (it.first == spotType) Pair (it.first, !it.second)
                             else it
@@ -232,51 +419,114 @@ fun DateInfo(
             if(checkSpotListIsShown(spotTypeWithShownList)) {
                 item {
                     StartEndDummySpaceWithRoundedCorner(
+                        showLine = firstSpotShowUpperLine,
                         isFirst = true,
                         isLast = false,
                         modifier = modifier
                     )
                 }
 
+                //spots title when edit mode
+                item {
+                    val textModifier =
+                        if (showingTrip.dateList.isNotEmpty())
+                            Modifier.padding(0.dp, 0.dp, 0.dp, 0.dp)
+                        else Modifier.padding(0.dp, 0.dp, 0.dp, 8.dp)
+
+                    var textHeight by rememberSaveable { mutableStateOf(0) }
+
+                    AnimatedVisibility(
+                        visible = isEditMode,
+                        enter = expandVertically(tween(400)),
+                        exit = shrinkVertically(tween(400))
+                    ) {
+                        Card(
+                            backgroundColor = MaterialTheme.colors.surface,
+                            modifier = modifier.fillMaxWidth(),
+                            elevation = 0.dp,
+                        ) {
+                            Box {
+                                Row(
+                                    modifier = Modifier.padding(16.dp, 0.dp)
+                                ) {
+                                    Text(
+                                        text = "Spots",
+                                        style = getTextStyle(TextType.CARD__TITLE),
+                                        modifier = textModifier.onGloballyPositioned {
+                                            textHeight = it.size.height
+                                        }
+                                    )
+                                }
+
+                                if(firstSpotShowUpperLine)
+                                    DummySpaceWithLine(height = (textHeight / LocalDensity.current.density).dp)
+                            }
+                        }
+                    }
+                }
+
+
                 //list with line
                 items(spotList) {
 
-                    //set point color
-                    val pointColor =
-                        if (it.spotType == SpotType.MOVE)
-                            Color.Transparent
-                        else
-                            MaterialTheme.colors.primaryVariant
+                    if (checkSpotTypeGroupIsShown(it.spotType.group, spotTypeWithShownList)) {
 
-                    //list item
-                    GraphListItem(
-                        isEditMode = isEditMode,
-                        isExpanded = false,
-                        itemId = 1,
+                        //set point color
+                        val pointColor =
+                            if (it.spotType.isMove())
+                                Color.Transparent
+                            else
+                                getColor(ColorType.GRAPH__POINT)
 
-                        sideText = it.getTimeText(false),
-                        mainText = it.titleText ?: "No Title",
-                        expandedText = it.getExpandedText(currentTrip),
+                        var isExpanded by rememberSaveable { mutableStateOf(false) }
 
-                        onTitleTextChange = { id, text ->
+                        //list item
+                        GraphListItem(
+                            isEditMode = isEditMode,
+                            isExpanded = isExpanded,
+                            itemId = it.id,
 
-                        },
+                            sideText = it.getStartTimeText() ?: "",
+                            mainText = it.titleText,
+                            expandedText = it.getExpandedText(showingTrip),
 
-                        isFirstItem = it == spotList.first(),
-                        isLastItem = it == spotList.last(),
+                            onTitleTextChange = { spotId, spotTitleText ->
+                                updateSpotTitle(spotId, spotTitleText)
+                            },
 
-                        onItemClick = onSpotClicked,
-                        onExpandedButtonClicked = {id ->
+                            isFirstItem = it.spotType.isNotMove()
+                                    && it == spotList.first()
+                                    && it.getPrevSpot(dateList, spotList, dateId)?.spotType?.isNotMove() ?: true,
 
-                        },
+                            isLastItem = it.spotType.isNotMove()
+                                    && it == spotList.last()
+                                    && it.getNextSpot(dateList, spotList, dateId)?.spotType?.isNotMove() ?: true,
 
-                        pointColor = pointColor,
-                        modifier = modifier
-                    )
+                            availableDelete = true,
+
+                            onItemClick = { spotId ->
+                                navigateToSpot(dateId, spotId)
+                            },
+                            onExpandedButtonClicked = { id ->
+                                isExpanded = !isExpanded
+                            },
+                            onDeleteClick = { spotId ->
+                                //dialog: ask delete
+                                deleteSpot(dateId, spotId)
+                                spotTypeWithShownList =
+                                    updateSpotTypeGroupWithShownList(currentDate, spotTypeWithShownList)
+
+                            },
+
+                            pointColor = pointColor,
+                            modifier = modifier
+                        )
+                    }
                 }
 
                 item {
                     StartEndDummySpaceWithRoundedCorner(
+                        showLine = lastSpotShowLowerLine,
                         isFirst = false,
                         isLast = true,
                         modifier = modifier
@@ -284,156 +534,101 @@ fun DateInfo(
                 }
             }
             else {
+                //no chosen spot type
                 item {
-                    NoChosenSpotTypeText()
+                    MySpacerColumn(height = 16.dp)
+                    
+                    NoChosenSpotTypeGroupText()
                 }
             }
         }
         else{
+            //no date
             // No plan... Let's create a new plan!
             item {
                 NoPlanText()
             }
         }
+
+        //new spot button
+        if(isEditMode){
+            item {
+                MySpacerColumn(height = 16.dp)
+
+                NewItemButton(
+                    text = "New Spot",
+                    onClick = {
+                        //add new spot
+                        addNewSpot(dateId)
+                        spotTypeWithShownList = updateSpotTypeGroupWithShownList(currentDate, spotTypeWithShownList)
+                    }
+                )
+            }
+        }
     }
 }
 
-private fun getSpotTypeListWithShownList(
+private fun getSpotTypeGroupWithShownList(
     date: Date
-):  List<Pair<SpotType, Boolean>>{
-    val list: MutableList<Pair<SpotType, Boolean>> = mutableListOf()
+):  List<Pair<SpotTypeGroup, Boolean>>{
+    val list: MutableList<Pair<SpotTypeGroup, Boolean>> = mutableListOf()
 
-    val spotTypeList = enumValues<SpotType>()
+    val spotTypeList = enumValues<SpotTypeGroup>()
 
     for (spotType in spotTypeList){
-        if (date.getSpotTypeCount(spotType = spotType) != 0)
+        val a = date.getSpotTypeGroupCount(spotTypeGroup = spotType)
+        if (a != 0)
             list.add(Pair(spotType, true))
     }
 
     return list
 }
 
+private fun updateSpotTypeGroupWithShownList(
+    date: Date,
+    spotTypeGroupWithShownList: List<Pair<SpotTypeGroup, Boolean>>
+):  List<Pair<SpotTypeGroup, Boolean>>{
+    val list: MutableList<Pair<SpotTypeGroup, Boolean>> = mutableListOf()
+
+    for (spot in date.spotList) {
+
+        if (Pair(spot.spotType.group, true) in spotTypeGroupWithShownList
+            && Pair(spot.spotType.group, true) !in list
+        ){
+            list.add(Pair(spot.spotType.group, true))
+        }
+
+        else if (Pair(spot.spotType.group, false) in spotTypeGroupWithShownList
+            && Pair(spot.spotType.group, false) !in list
+        ){
+            list.add(Pair(spot.spotType.group, false))
+        }
+
+        else if (Pair(spot.spotType.group, true) !in list && Pair(spot.spotType.group, false) !in list){
+            list.add(Pair(spot.spotType.group, true))
+        }
+    }
+
+    return list
+}
+
+//check at least one SpotType is true
 private fun checkSpotListIsShown(
-    spotTypeWithShownList: List<Pair<SpotType, Boolean>>
+    spotTypeGroupWithShownList: List<Pair<SpotTypeGroup, Boolean>>
 ): Boolean {
-    for (spotWithBoolean in spotTypeWithShownList){
+    for (spotWithBoolean in spotTypeGroupWithShownList){
         if (spotWithBoolean.second)
             return true
     }
     return false
 }
 
-//  <   3.28   >
-@Composable
-private fun DateTextWithButtons(
-    currentDate: Date,
-    isFirstDate: Boolean,
-    isLastDate: Boolean,
-    onNextDateButtonClicked: () -> Unit,
-    onPrevDateButtonClicked: () -> Unit,
-    onFirstDateButtonClicked: () -> Unit,
-    onLastDateButtonClicked: () -> Unit,
-    modifier: Modifier = Modifier
-){
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
 
-        // left buttons
-        if (isFirstDate) {
-            IconButton(onClick = {}) {
-                DisplayIcon(MyIcons.disabledToFirstPage)
-            }
-            IconButton(onClick = {}) {
-                DisplayIcon(MyIcons.disabledLeftArrow)
-            }
-        } else {
-            IconButton(onClick = onFirstDateButtonClicked) {
-                DisplayIcon(MyIcons.toFirstPage)
-            }
-            IconButton(onClick = onPrevDateButtonClicked) {
-                DisplayIcon(MyIcons.leftArrow)
-            }
-        }
-
-        //date text
-        Box(
-            modifier = Modifier.width(160.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = currentDate.getDateText(),
-                style = MaterialTheme.typography.h2
-            )
-        }
-
-        //right buttons
-        if (isLastDate) {
-            IconButton(onClick = {}) {
-                DisplayIcon(MyIcons.disabledRightArrow)
-            }
-            IconButton(onClick = {}) {
-                DisplayIcon(MyIcons.disabledToLastPage)
-            }
-        } else {
-            IconButton(onClick = onNextDateButtonClicked) {
-                DisplayIcon(MyIcons.rightArrow)
-            }
-            IconButton(onClick = onLastDateButtonClicked) {
-                DisplayIcon(MyIcons.toLastPage)
-            }
-        }
-    }
-}
-
-@Composable
-private fun FilterCards(
-    date: Date,
-    spotTypeWithShownList: List<Pair<SpotType, Boolean>>,
-    onCardClicked: (SpotType) -> Unit,
-
-    textStyle: TextStyle = MaterialTheme.typography.body2,
-    isShownColor: Color = MaterialTheme.colors.secondaryVariant,
-    isNotShownColor: Color = MaterialTheme.colors.surface,
-){
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(0.dp),
-        contentPadding = PaddingValues(16.dp, 0.dp, 4.dp, 0.dp),
-        modifier = Modifier.fillMaxWidth()
-    ){
-        items(spotTypeWithShownList){
-
-            val spotTypeCount = date.getSpotTypeCount(it.first)
-
-            if (spotTypeCount != 0) {
-                Row{
-                    SpotTypeCard(
-                        frontText = "$spotTypeCount ",
-                        spotType = it.first,
-                        textStyle = textStyle,
-                        isShown = it.second,
-                        isShownColor = isShownColor,
-                        isNotShownColor = isNotShownColor,
-                        onCardClicked = {spotType ->
-                            onCardClicked(spotType)
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.width(12.dp))
-                }
-            }
-        }
-    }
-
-}
 
 @Composable
 private fun NoPlanText(
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = MaterialTheme.typography.subtitle1
+    textStyle: TextStyle = getTextStyle(TextType.CARD__BODY_NULL)
 ){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -451,9 +646,9 @@ private fun NoPlanText(
 }
 
 @Composable
-private fun NoChosenSpotTypeText(
+private fun NoChosenSpotTypeGroupText(
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = MaterialTheme.typography.subtitle1
+    textStyle: TextStyle = getTextStyle(TextType.CARD__BODY_NULL)
 ){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -464,4 +659,16 @@ private fun NoChosenSpotTypeText(
             style = textStyle
         )
     }
+}
+
+fun checkSpotTypeGroupIsShown(
+    spotTypeGroup: SpotTypeGroup, spotTypeGroupWithShownList: List<Pair<SpotTypeGroup, Boolean>>
+): Boolean {
+    for (spotWithShown in spotTypeGroupWithShownList){
+        if (spotWithShown.first == spotTypeGroup  && spotWithShown.second)
+            return true
+        else if (spotWithShown.first == spotTypeGroup)
+            return false
+    }
+    return false
 }

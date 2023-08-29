@@ -1,5 +1,6 @@
 package com.example.somewhere.model
 
+import android.util.Log
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.somewhere.typeUtils.CurrencyType
@@ -24,7 +25,16 @@ data class Trip(
 
     val firstCreatedTime: LocalDateTime = LocalDateTime.now(),
     val lastModifiedTime: LocalDateTime = LocalDateTime.now()
-){
+): Cloneable {
+    public override fun clone(): Trip{
+        return Trip(
+            id, unitOfCurrencyType, titleText, dateList.map{ it.clone() }, memoText,
+            imagePathList, firstCreatedTime, lastModifiedTime
+        )
+    }
+
+    // get =========================================================================================
+
     fun getStartDateText(includeYear: Boolean): String?{
         return if (dateList.isNotEmpty())
             getDateText(dateList.first().date, includeYear)
@@ -127,5 +137,39 @@ data class Trip(
             }
         }
         return null
+    }
+
+    // set =========================================================================================
+
+    fun moveSpotToDate(
+        showingTrip: Trip,
+        dateId: Int,
+        spotId: Int,
+
+        newDateId: Int,
+        updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
+    ){
+        //set date
+        val originalSpotList = showingTrip.dateList[dateId].spotList.toMutableList()
+        originalSpotList[spotId] = originalSpotList[spotId].copy(date = showingTrip.dateList[newDateId].date)
+
+        //add spot to new date
+        val newSpotList = showingTrip.dateList[newDateId].spotList.toMutableList()
+        newSpotList.add(originalSpotList[spotId])
+
+        //remove spot from original
+        originalSpotList.removeAt(spotId)
+
+        //update spot list
+        val newDateList = showingTrip.dateList.toMutableList()
+        newDateList[dateId] = newDateList[dateId].copy(spotList = originalSpotList.toList())
+        newDateList[newDateId] = newDateList[newDateId].copy(spotList = newSpotList.toList())
+
+        //sort id
+        newDateList[dateId].sortSpotListId()
+        newDateList[newDateId].sortSpotListId()
+
+        //update state
+        updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
     }
 }

@@ -1,69 +1,55 @@
 package com.example.somewhere.ui.screens.somewhere
 
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material.ExtendedFloatingActionButton
-import androidx.compose.material.FabPosition
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.navArgument
-import com.example.somewhere.R
 import com.example.somewhere.typeUtils.AppContentType
-import com.example.somewhere.typeUtils.AppShowingType
-import com.example.somewhere.ui.navigation.NavigationDestination
 import com.example.somewhere.ui.screenUtils.DisplayIcon
 import com.example.somewhere.ui.screenUtils.MyIcon
-import com.example.somewhere.ui.screenUtils.MyIcons
 import com.example.somewhere.ui.screens.SomewhereViewModelProvider
 import com.example.somewhere.ui.screens.date.DateDestination
+import com.example.somewhere.ui.screens.date.DateScreen
 import com.example.somewhere.ui.screens.main.MainDestination
 import com.example.somewhere.ui.screens.main.MainScreen
 import com.example.somewhere.ui.screens.spotDetail.SpotDetailDestination
+import com.example.somewhere.ui.screens.spotDetail.SpotDetailScreen
 import com.example.somewhere.ui.screens.spotImage.SpotImageDestination
 import com.example.somewhere.ui.screens.spotMap.SpotMapDestination
 import com.example.somewhere.ui.screens.trip.TripDestination
 import com.example.somewhere.ui.screens.trip.TripScreen
 import com.example.somewhere.ui.screens.tripMap.TripMapDestination
+import com.example.somewhere.ui.screens.tripMap.TripMapScreen
+import com.example.somewhere.ui.theme.TextType
+import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.utils.USER_LOCATION_PERMISSION_LIST
-import com.example.somewhere.utils.checkPermissionsIsGranted
-import com.example.somewhere.utils.requestPermissions
+import com.example.somewhere.utils.checkPermissionUserLocation
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -84,23 +70,47 @@ fun SomewhereApp(
     somewhereViewModel: SomewhereViewModel = viewModel(factory = SomewhereViewModelProvider.Factory)
 ) {
 
+
+//    //permission launcher
+//    val permissionLauncher = rememberLauncherForActivityResult(
+//        ActivityResultContracts.RequestMultiplePermissions()
+//    ) { permissionsMap ->
+//        val areGranted = permissionsMap.values.reduce { acc, next -> acc && next }
+//        /** 권한 요청시 동의 했을 경우 **/
+//        if (areGranted) {
+//            Log.d("test", "권한이 동의되었습니다.")
+//        }
+//        /** 권한 요청시 거부 했을 경우 **/
+//        else {
+//            Log.d("test", "권한이 거부되었습니다.")
+//        }
+//    }
+
+    val context = LocalContext.current
+
     //user location permission
-    val userLocationPermissionState = rememberMultiplePermissionsState(permissions = USER_LOCATION_PERMISSION_LIST)
+    val userLocationPermissionState =
+        rememberMultiplePermissionsState(permissions = USER_LOCATION_PERMISSION_LIST)
 
-    var userLocationEnabled by rememberSaveable{ mutableStateOf(
-        checkPermissionsIsGranted(userLocationPermissionState))
+    var userLocationEnabled by rememberSaveable {
+        mutableStateOf(checkPermissionUserLocation(context))
     }
 
-    val requestUserLocationPermission = {
-        requestPermissions(userLocationPermissionState)
-        userLocationEnabled = checkPermissionsIsGranted(userLocationPermissionState)
-    }
+//    val toastText = stringResource(id = R.string.toast_location_permission_denied)
+
+//    val requestUserLocationPermission = {
+//        userLocationEnabled = requestPermissions(userLocationPermissionState)
+//
+//        //if location permission denied
+////        if (!userLocationEnabled){
+////            Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show()
+////        }
+//    }
 
     //uiState
     val somewhereUiState by somewhereViewModel.uiState.collectAsState()
 
     val currentScreen = somewhereUiState.currentScreen
-    val topAppBarTitle = somewhereUiState.topAppBarTitle
 
     //Nav
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -120,6 +130,7 @@ fun SomewhereApp(
         WindowWidthSizeClass.Expanded -> {
             AppContentType.LIST_AND_DETAIL
         }
+
         else -> {
             AppContentType.LIST_ONLY
         }
@@ -128,17 +139,26 @@ fun SomewhereApp(
     val coroutineScope = rememberCoroutineScope()
 
 
-
     //page animation
     val enterTransition = slideInHorizontally(animationSpec = tween(300), initialOffsetX = { it })
-    val exitTransition = fadeOut(tween(300)) + scaleOut(animationSpec = tween(300), targetScale = 0.7f)
-    val popEnterTransition = fadeIn(tween(300)) + scaleIn(animationSpec = tween(300), initialScale = 0.7f)
+    val exitTransition =
+        fadeOut(tween(300)) + scaleOut(animationSpec = tween(300), targetScale = 0.7f)
+    val popEnterTransition =
+        fadeIn(tween(300)) + scaleIn(animationSpec = tween(300), initialScale = 0.7f)
     val popExitTransition = slideOutHorizontally(animationSpec = tween(300), targetOffsetX = { it })
 
+    var useImePadding by rememberSaveable { mutableStateOf(true) }
+
+    val boxModifier = if(useImePadding) Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colors.background)
+        .imePadding()
+                        else Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colors.background)
+
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.background)
+        modifier = boxModifier
     ) {
         AnimatedNavHost(
             navController = navController,
@@ -156,23 +176,20 @@ fun SomewhereApp(
                 //update current screen
                 somewhereViewModel.updateCurrentScreen(MainDestination)
 
-                if (!checkPermissionsIsGranted(userLocationPermissionState))
-                    requestUserLocationPermission()
+//                if (!checkPermissionsIsGranted(userLocationPermissionState))
+//                    requestUserLocationPermission()
 
                 MainScreen(
                     isEditMode = somewhereUiState.isEditMode,
                     changeEditMode = {
-                        somewhereViewModel.changeEditMode(it)
+                        somewhereViewModel.toggleEditMode(it)
                     },
-                    onTripClicked = {
-                        somewhereViewModel.updateId(tripId = it.id)
-                        somewhereViewModel.changeIsNewTrip(false)
-                        navController.navigate("${TripDestination.route}/${it.id}")
-                    },
-                    navigateToNewTrip = {
-                        somewhereViewModel.updateId(tripId = it.id)
-                        somewhereViewModel.changeIsNewTrip(true)
-                        navController.navigate("${TripDestination.route}/${it.id}")
+                    navigateToTrip = { isNewTrip, trip ->
+                        coroutineScope.launch {
+                            somewhereViewModel.changeTrip(tripId = trip.id)
+                        }
+                        somewhereViewModel.toggleIsNewTrip(isNewTrip)
+                        navController.navigate(TripDestination.route)
                     }
                 )
             }
@@ -188,14 +205,25 @@ fun SomewhereApp(
                 //update current screen
                 somewhereViewModel.updateCurrentScreen(TripMapDestination)
 
+                if (somewhereUiState.trip != null) {
+                    TripMapScreen(
+                        currentTrip = somewhereUiState.trip!!,
+                        navigateUp = { navigateUp() },
+                        userLocationEnabled = userLocationEnabled,
+                        setUserLocationEnabled = {
+                            userLocationEnabled = it
+                        },
+                        fusedLocationClient = fusedLocationClient
+                    )
+                }
             }
 
             // TRIP ================================================================================
             composable(
-                route = TripDestination.routeWithArgs,
-                arguments = listOf(navArgument(TripDestination.tripIdArg) {
-                    type = NavType.IntType
-                }),
+                route = TripDestination.route,
+//                arguments = listOf(navArgument(TripDestination.tripIdArg) {
+//                    type = NavType.IntType
+//                }),
                 enterTransition = { enterTransition },
                 exitTransition = { exitTransition },
                 popEnterTransition = { popEnterTransition },
@@ -204,34 +232,57 @@ fun SomewhereApp(
                 //update current screen
                 somewhereViewModel.updateCurrentScreen(TripDestination)
 
-                TripScreen(
-                    isNewTrip = somewhereUiState.isNewTrip,
-                    isEditMode = somewhereUiState.isEditMode,
-                    onDateClicked = {
-                        navController.navigate("${DateDestination.route}/${it.id}")
-                        somewhereViewModel.changeIsNewTrip(false)
-                    },
-                    changeEditMode = {
-                        somewhereViewModel.changeEditMode(it)
-                    },
-                    changeIsNewTrip = {
-                        somewhereViewModel.changeIsNewTrip(it)
-                    },
-                    navigateUp = {
-                        navigateUp()
-                        somewhereViewModel.changeIsNewTrip(false)
-                    },
-                    navigateToTripMap = {
-                        navController.navigate(TripMapDestination.route)
-                        somewhereViewModel.changeIsNewTrip(false)
-                    },
-                    navigateUpAndDeleteTrip = {deleteTrip ->
-                        navigateUp()
-                        coroutineScope.launch {
-                            somewhereViewModel.deleteTrip(deleteTrip)
-                        }
-                    }
-                )
+                if (somewhereUiState.trip != null && somewhereUiState.tempTrip != null)
+                    TripScreen(
+                        isEditMode = somewhereUiState.isEditMode,
+
+                        originalTrip = somewhereUiState.trip!!,
+                        tempTrip = somewhereUiState.tempTrip!!,
+                        isNewTrip = somewhereUiState.isNewTrip,
+
+                        changeEditMode = {
+                            somewhereViewModel.toggleEditMode(it)
+                        },
+
+                        navigateUp = {
+                            navigateUp()
+                            somewhereViewModel.toggleIsNewTrip(false)
+                        },
+                        navigateToDate = { dateId ->
+                            somewhereViewModel.toggleIsNewTrip(false)
+                            somewhereViewModel.updateId(dateId = dateId)
+                            navController.navigate(DateDestination.route)
+                        },
+                        navigateToTripMap = {
+                            navController.navigate(TripMapDestination.route)
+                            somewhereViewModel.toggleIsNewTrip(false)
+                        },
+                        navigateUpAndDeleteTrip = { deleteTrip ->
+                            navigateUp()
+                            coroutineScope.launch {
+                                somewhereViewModel.deleteTrip(deleteTrip)
+                            }
+                        },
+
+                        updateTripState = { toTempTrip, trip ->
+                            somewhereViewModel.updateTripState(toTempTrip, trip)
+                        },
+                        updateTripDurationAndTripState = { toTempTrip, startDate, endDate ->
+                            somewhereViewModel.updateTripDurationAndTripState(
+                                toTempTrip,
+                                startDate,
+                                endDate
+                            )
+                        },
+                        updateDateTitle = { toTempTrip, dateId, dateTitleText ->
+                            somewhereViewModel.updateDateTitle(toTempTrip, dateId, dateTitleText)
+                        },
+                        saveTrip = {
+                            coroutineScope.launch {
+                                somewhereViewModel.saveTrip()
+                            }
+                        },
+                    )
             }
 
             // DATE ================================================================================
@@ -245,7 +296,53 @@ fun SomewhereApp(
                 //update current screen
                 somewhereViewModel.updateCurrentScreen(DateDestination)
 
+                if (somewhereUiState.trip != null && somewhereUiState.tempTrip != null) {
+                    DateScreen(
+                        isEditMode = somewhereUiState.isEditMode,
 
+                        originalTrip = somewhereUiState.trip!!,
+                        tempTrip = somewhereUiState.tempTrip!!,
+                        dateId = somewhereUiState.dateId ?: 0,
+
+                        changeEditMode = {
+                            somewhereViewModel.toggleEditMode(it)
+                        },
+
+                        updateTripState = { toTempTrip, trip ->
+                            somewhereViewModel.updateTripState(toTempTrip, trip)
+                        },
+                        updateDateTitle = { dateId, dateTitleText ->
+                            somewhereViewModel.updateDateTitle(true, dateId, dateTitleText)
+                        },
+                        updateSpotTitle = { dateId, spotId, spotTitleText ->
+                            somewhereViewModel.updateSpotTitle(true, dateId, spotId, spotTitleText)
+                        },
+
+                        addNewSpot = { dateId ->
+                            somewhereViewModel.addNewSpot(dateId)
+                        },
+                        deleteSpot = { dateId, spotId ->
+                            somewhereViewModel.deleteSpot(dateId, spotId)
+                        },
+                        saveTrip = {
+                            coroutineScope.launch {
+                                somewhereViewModel.saveTrip()
+                            }
+                        },
+
+                        navigateUp = {
+                            navigateUp()
+                        },
+                        navigateToSpot = { dateId, spotId ->
+                            somewhereViewModel.updateId(dateId = dateId, spotId = spotId)
+                            navController.navigate(SpotDetailDestination.route)
+                        },
+                        navigateToDateMap = {
+                            navController.navigate(TripMapDestination.route)
+                            somewhereViewModel.toggleIsNewTrip(false)
+                        }
+                    )
+                }
             }
 
             // SPOT DETAIL =========================================================================
@@ -259,49 +356,94 @@ fun SomewhereApp(
                 //update current screen
                 somewhereViewModel.updateCurrentScreen(SpotDetailDestination)
 
-            }
+                if (somewhereUiState.trip != null && somewhereUiState.tempTrip != null) {
+                    SpotDetailScreen(
+                        isEditMode = somewhereUiState.isEditMode,
+                        setUseImePadding = {
+                            useImePadding = it
+                        },
 
-            // SPOT IMAGE ==========================================================================
-            composable(
-                route = SpotImageDestination.route,
-                enterTransition = { enterTransition },
-                exitTransition = { exitTransition },
-                popEnterTransition = { popEnterTransition },
-                popExitTransition = { popExitTransition }
-            ) {
-                //update current screen
-                somewhereViewModel.updateCurrentScreen(SpotImageDestination)
+                        originalTrip = somewhereUiState.trip!!,
+                        tempTrip = somewhereUiState.tempTrip!!,
+                        dateId = somewhereUiState.dateId ?: 0,
+                        spotId = somewhereUiState.spotId ?: 0,
+                        changeEditMode = {
+                            somewhereViewModel.toggleEditMode(it)
+                        },
+                        updateTripState = { toTempTrip, trip ->
+                            somewhereViewModel.updateTripState(toTempTrip, trip)
+                        },
+                        updateSpotTitle = { dateId, spotId, spotTitleText ->
+                            somewhereViewModel.updateSpotTitle(true, dateId, spotId, spotTitleText)
+                        },
+                        addNewSpot = { dateId ->
+                            somewhereViewModel.addNewSpot(dateId)
+                        },
+                        deleteSpot = { dateId, spotId ->
+                            somewhereViewModel.deleteSpot(dateId, spotId)
+                        },
+                        saveTrip = {
+                            coroutineScope.launch {
+                                somewhereViewModel.saveTrip()
+                            }
+                        },
+
+                        fusedLocationClient = fusedLocationClient,
+                        onImageClicked = { /*TODO*/ },
+                        onMapClicked = { /*TODO*/ },
+                        userLocationEnabled = userLocationEnabled,
+                        setUserLocationEnabled = {
+                            userLocationEnabled = it
+                        },
+                        navigateUp = {
+                            navigateUp()
+                        }
+                    )
+                }
+
+                // SPOT IMAGE ==========================================================================
+                composable(
+                    route = SpotImageDestination.route,
+                    enterTransition = { enterTransition },
+                    exitTransition = { exitTransition },
+                    popEnterTransition = { popEnterTransition },
+                    popExitTransition = { popExitTransition }
+                ) {
+                    //update current screen
+                    somewhereViewModel.updateCurrentScreen(SpotImageDestination)
 
 
-            }
+                }
 
-            // SPOT MAP ============================================================================
-            composable(
-                route = SpotMapDestination.route,
-                enterTransition = { enterTransition },
-                exitTransition = { exitTransition },
-                popEnterTransition = { popEnterTransition },
-                popExitTransition = { popExitTransition }
-            ) {
-                //update current screen
-                somewhereViewModel.updateCurrentScreen(SpotMapDestination)
+                // SPOT MAP ============================================================================
+                composable(
+                    route = SpotMapDestination.route,
+                    enterTransition = { enterTransition },
+                    exitTransition = { exitTransition },
+                    popEnterTransition = { popEnterTransition },
+                    popExitTransition = { popExitTransition }
+                ) {
+                    //update current screen
+                    somewhereViewModel.updateCurrentScreen(SpotMapDestination)
 
 
+                }
             }
         }
+
+
+        // for tablet
+
+        //for phone
+
     }
-
-
-    // for tablet
-
-    //for phone
-
 }
 
 @Composable
 fun SomewhereTopAppBar(
     isEditMode: Boolean,
     title: String,
+    subTitle: String? = null,
 
     navigationIcon: MyIcon? = null,
     navigationIconOnClick: () -> Unit = {},
@@ -311,7 +453,7 @@ fun SomewhereTopAppBar(
 
     actionIcon2: MyIcon? = null,
     actionIcon2Onclick: () -> Unit = {}
-){
+) {
     Column {
         //status bar padding
         Box(modifier = Modifier.statusBarsPadding())
@@ -321,27 +463,38 @@ fun SomewhereTopAppBar(
             backgroundColor = MaterialTheme.colors.background,
             elevation = 0.dp,
             title = {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.h1,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Column{
+                    Text(
+                        text = title,
+                        style = getTextStyle(TextType.TOP_BAR__TITLE),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    if (subTitle != null){
+                        Text(
+                            text = subTitle,
+                            style = getTextStyle(TextType.TOP_BAR__SUBTITLE),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+
             },
             navigationIcon = {
-                if (navigationIcon != null){
+                if (navigationIcon != null) {
                     IconButton(onClick = navigationIconOnClick) {
                         DisplayIcon(icon = navigationIcon)
                     }
                 }
             },
             actions = {
-                if (actionIcon1 != null){
+                if (actionIcon1 != null) {
                     IconButton(onClick = actionIcon1Onclick) {
                         DisplayIcon(icon = actionIcon1)
                     }
                 }
-                if(actionIcon2 != null){
+                if (actionIcon2 != null) {
                     IconButton(onClick = actionIcon2Onclick) {
                         DisplayIcon(icon = actionIcon2)
                     }
@@ -350,32 +503,18 @@ fun SomewhereTopAppBar(
         )
 
 
-        val transition = updateTransition(targetState = isEditMode, label = "Color transition")
-        val color = transition.animateColor(label = "Background Color Transition") {
-            if (it) MaterialTheme.colors.error
-            else MaterialTheme.colors.background
-        }
-
-        //if edit mode
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(4.dp)
-                .background(color = color.value)
-        )
+//        val transition = updateTransition(targetState = isEditMode, label = "Color transition")
+//        val color = transition.animateColor(label = "Background Color Transition") {
+//            if (it) MaterialTheme.colors.error
+//            else MaterialTheme.colors.background
+//        }
+//
+//        //if edit mode
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(4.dp)
+//                .background(color = color.value)
+//        )
     }
-}
-
-@Composable
-fun SomewhereFloatingButton(
-    text: String,
-    icon: MyIcon,
-    onButtonClicked: () -> Unit
-){
-    ExtendedFloatingActionButton(
-        text = { Text(text = text) },
-        icon = { DisplayIcon(icon) },
-        onClick = onButtonClicked,
-        backgroundColor = MaterialTheme.colors.secondaryVariant
-    )
 }
