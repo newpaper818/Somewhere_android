@@ -1,9 +1,7 @@
-package com.example.somewhere.ui.screens.trip
+package com.example.somewhere.viewModel
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -11,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.somewhere.db.TripRepository
 import com.example.somewhere.model.Date
 import com.example.somewhere.model.Trip
+import com.example.somewhere.ui.screens.TripDestination
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -21,6 +20,7 @@ data class TripUiState(
     val tempTrip: Trip = Trip()
 )
 
+//FIXME DELETE this viewModel ?????????????????????????????????????????????????????????????????????????
 class TripViewModel(
     savedStateHandle: SavedStateHandle,
     private val tripsRepository: TripRepository,

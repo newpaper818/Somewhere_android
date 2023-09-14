@@ -27,6 +27,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
@@ -76,6 +78,9 @@ fun ImageCard(
         onAddImages(uriList.map { it.toString() })
     }
 
+    val modifier1 = if (isEditMode) modifier
+                    else modifier.sizeIn(maxWidth = 390.dp, maxHeight = 390.dp)
+
     AnimatedVisibility(
         visible = isEditMode || imgList.isNotEmpty(),
         enter = expandVertically(tween(300)),
@@ -87,7 +92,7 @@ fun ImageCard(
         ) {
             Card(
                 elevation = 0.dp,
-                modifier = Modifier
+                modifier = modifier1
                     .clip(RoundedCornerShape(16.dp))
                     .fillMaxWidth()
             ) {

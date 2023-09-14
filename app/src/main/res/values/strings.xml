@@ -76,6 +76,8 @@
     <string name="delete">Delete</string>
     <string name="new_">New</string>
     <string name="delete_image">Delete image</string>
+    <string name="drag_handle">Drag handle</string>
+
 
     <string name="menu">Menu</string>
     <string name="back">Back</string>
@@ -132,6 +134,7 @@
     <string name="toast_invalid_travel_distance">Invalid Travel Distance text</string>
     <string name="toast_location_permission_denied">User location permission denied</string>
     <string name="toast_no_location">No location</string>
+    <string name="toast_no_location_to_show">No location to show</string>
     <string name="toast_no_user_location">Can\'t find your location</string>
 
 
@@ -155,6 +158,7 @@
     <string name="memo_card_body_add_a_memo">Add a Memo</string>
 
     <string name="location_card_title">Location</string>
+    <string name="zoom_level">Zoom Level</string>
 
     <!--use at dialog-->
     <string name="dialog_title_set_color">Set Color</string>
@@ -196,6 +200,8 @@
     <!--use at SpotDetailScreen.kt-->
     <string name="top_bar_title_edit_spot">Edit Spot</string>
     <string name="top_bar_title_set_location">Set Location</string>
+    <string name="set_new_location">Set new location</string>
+
 
 
 

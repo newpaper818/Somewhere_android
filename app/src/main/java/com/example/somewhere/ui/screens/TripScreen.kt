@@ -1,4 +1,4 @@
-package com.example.somewhere.ui.screens.trip
+package com.example.somewhere.ui.screens
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -25,7 +25,6 @@ import androidx.compose.material.FabPosition
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +32,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -49,12 +49,10 @@ import com.example.somewhere.ui.screenUtils.cards.MemoCard
 import com.example.somewhere.ui.screenUtils.MyIcons
 import com.example.somewhere.ui.screenUtils.SomewhereFloatingButton
 import com.example.somewhere.ui.screenUtils.StartEndDummySpaceWithRoundedCorner
-import com.example.somewhere.ui.screenUtils.cards.TitleCard
+import com.example.somewhere.ui.screenUtils.cards.TitleWithColorCard
 import com.example.somewhere.ui.screenUtils.cards.TripDurationCard
-import com.example.somewhere.ui.screens.somewhere.SomewhereTopAppBar
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -82,7 +80,6 @@ fun TripScreen(
 
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     updateTripDurationAndTripState: (toTempTrip: Boolean, startDate: LocalDate, endDate: LocalDate) -> Unit,
-    updateDateTitle: (toTempTrip: Boolean, dateId: Int, dateTitleText: String) -> Unit,
     saveTrip: () -> Unit,
 
     modifier: Modifier = Modifier,
@@ -209,6 +206,7 @@ fun TripScreen(
         ) {
             LazyColumn(
                 state = scrollState,
+                horizontalAlignment = Alignment.CenterHorizontally,
                 contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 300.dp),
                 modifier = modifier
                     .fillMaxSize()
@@ -217,19 +215,12 @@ fun TripScreen(
 
                 //title card
                 item {
-                    TitleCard(
+                    TitleWithColorCard(
                         isEditMode = isEditMode,
                         titleText = showingTrip.titleText,
                         focusManager = focusManager,
-                        onTitleChange = { titleText ->
-                            val newTitleText: String? =
-                                if (titleText == "") null
-                                else titleText
-
-                            updateTripState(
-                                true,
-                                showingTrip.copy(titleText = newTitleText)
-                            )
+                        onTitleChange = { newTitleText ->
+                            showingTrip.setTitleText(updateTripState, newTitleText)
                         }
                     )
                 }
@@ -250,19 +241,13 @@ fun TripScreen(
                                 Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show()
                             }
 
-                            updateTripState(
-                                true,
-                                showingTrip.copy(imagePathList = showingTrip.imagePathList + addImageList)
-                            )
+                            showingTrip.setImage(updateTripState, showingTrip.imagePathList + addImageList)
                         },
                         deleteImage = {
                             val newList: MutableList<String> = showingTrip.imagePathList.toMutableList()
                             newList.remove(it)
 
-                            updateTripState(
-                                true,
-                                showingTrip.copy(imagePathList = newList.toList())
-                            )
+                            showingTrip.setImage(updateTripState, newList.toList())
                         }
                     )
                 }
@@ -300,15 +285,8 @@ fun TripScreen(
                     MemoCard(
                         isEditMode = isEditMode,
                         memoText = showingTrip.memoText,
-                        onMemoChanged = { memoText ->
-                            val newMemoText: String? =
-                                if (memoText == "") null
-                                else memoText
-
-                            updateTripState(
-                                true,
-                                showingTrip.copy(memoText = newMemoText)
-                            )
+                        onMemoChanged = { newMemoText ->
+                            showingTrip.setMemoText(updateTripState, newMemoText)
                         }
                     )
 
@@ -355,6 +333,7 @@ fun TripScreen(
                         var isExpanded by rememberSaveable { mutableStateOf(false) }
 
                         GraphListItem(
+                            pointColor = Color(it.color.color),
                             isEditMode = isEditMode,
                             isExpanded = isExpanded,
                             itemId = it.id,
@@ -364,7 +343,7 @@ fun TripScreen(
                             expandedText = it.getExpandedText(showingTrip, isEditMode),
 
                             onTitleTextChange = { dateId, dateTitleText ->
-                                updateDateTitle(true, dateId, dateTitleText)
+                                showingTrip.dateList[dateId].setTitleText(showingTrip, updateTripState, dateTitleText)
                             },
 
                             isFirstItem = it == showingTrip.dateList.first(),

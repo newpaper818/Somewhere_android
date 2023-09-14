@@ -1,5 +1,6 @@
 package com.example.somewhere.ui.screenUtils
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -63,8 +64,9 @@ import com.example.somewhere.model.Date
 import com.example.somewhere.typeUtils.SpotType
 import com.example.somewhere.typeUtils.SpotTypeGroup
 import com.example.somewhere.ui.theme.ColorType
+import com.example.somewhere.ui.theme.MyColor
 import com.example.somewhere.ui.theme.TextType
-import com.example.somewhere.ui.theme.dateColorList
+import com.example.somewhere.ui.theme.myColorLists
 import com.example.somewhere.ui.theme.getColor
 import com.example.somewhere.ui.theme.getTextStyle
 import com.maxkeppeker.sheets.core.models.base.Header
@@ -205,15 +207,14 @@ fun DeleteOrNotDialog(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SetColorDialog(
     currentDate: Date,
 
     onDismissRequest: () -> Unit,
-    onOkClick: (newColor: Int) -> Unit
+    onOkClick: (newMyColor: MyColor) -> Unit
 ){
-    var dateColor by rememberSaveable { mutableStateOf(currentDate.iconColor) }
+    var dateColor by remember { mutableStateOf(currentDate.color) }
 
 
     MyDialog(
@@ -221,29 +222,19 @@ fun SetColorDialog(
         titleText = stringResource(id = R.string.dialog_title_set_color),
         bodyContent = {
             LazyVerticalGrid(
-                columns = GridCells.Fixed(5),
-                modifier = Modifier.heightIn(0.dp, 400.dp).clip(RoundedCornerShape(16.dp))
+                columns = GridCells.Adaptive(60.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier
+                    .heightIn(0.dp, 400.dp)
+                    .clip(RoundedCornerShape(16.dp))
             ){
-                items(dateColorList){
-                    Card(
-                        elevation = 0.dp,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(16.dp))
-                            .size(67.dp),
-                        backgroundColor = Color(it),
-                        onClick = {
-                            dateColor = it
-                        }
-                    ){
-                        if (dateColor == it) {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                DisplayIcon(icon = MyIcons.selectedColor)
-                            }
-                        }
-                    }
+                items(myColorLists){
+                    OneColor(
+                        myColor = it,
+                        isSelected = it == dateColor,
+                        onClick = { dateColor = it }
+                    )
                 }
             }
         },
@@ -267,6 +258,32 @@ fun SetColorDialog(
             }
         }
     )
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun OneColor(
+    myColor: MyColor,
+    isSelected: Boolean,
+    onClick: () -> Unit
+){
+    Card(
+        elevation = 0.dp,
+        modifier = Modifier
+            .clip(RoundedCornerShape(16.dp))
+            .size(60.dp),
+        backgroundColor = Color(myColor.color),
+        onClick = onClick
+    ) {
+        if (isSelected) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                DisplayIcon(icon = MyIcons.selectedColor, color = Color(myColor.onColor))
+            }
+        }
+    }
 }
 
 @Composable
@@ -414,6 +431,14 @@ fun SetSpotTypeDialog(
                         elevation = 0.dp,
                         onClick = {
                             currentSpotTypeGroup = it
+
+                            for (spotType in spotTypeList) {
+                                if (spotType.group == it) {
+                                    currentSpotType = spotType
+                                    break
+                                }
+                            }
+                            Log.d("test", "$currentSpotTypeGroup $currentSpotType")
                         }
                     ) {
                         Row(

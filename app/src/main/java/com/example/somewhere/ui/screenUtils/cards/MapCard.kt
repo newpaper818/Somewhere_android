@@ -1,6 +1,6 @@
 package com.example.somewhere.ui.screenUtils.cards
 
-import android.widget.Toast
+import android.util.Log
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
@@ -15,19 +15,13 @@ import androidx.compose.material.Card
 import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import com.example.somewhere.R
 import com.example.somewhere.model.Date
 import com.example.somewhere.model.Spot
 import com.example.somewhere.ui.screenUtils.DisplayIcon
@@ -39,11 +33,7 @@ import com.example.somewhere.ui.screenUtils.UserLocationButton
 import com.example.somewhere.ui.theme.ColorType
 import com.example.somewhere.ui.theme.getColor
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.compose.CameraPositionState
-import kotlinx.coroutines.launch
 
 @Composable
 fun MapCard(
@@ -62,7 +52,7 @@ fun MapCard(
     onFullScreenClicked: () -> Unit,
 
     toggleIsEditLocation: () -> Unit,
-    setLocation: (newLocation: LatLng?) -> Unit,
+    deleteLocation: () -> Unit,
     setMapSize: (IntSize) -> Unit,
 
     modifier: Modifier = Modifier,
@@ -93,6 +83,7 @@ fun MapCard(
             context = context,
             cameraPositionState = cameraPositionState,
             userLocationEnabled = userLocationEnabled,
+            mapSize = mapSize,
             date = currentDate,
             spot = currentSpot,
             spotFrom = spotFrom,
@@ -114,7 +105,7 @@ fun MapCard(
                 setUserLocationEnabled = setUserLocationEnabled,
                 onFullScreenClicked = onFullScreenClicked,
                 toggleIsEditLocation = toggleIsEditLocation,
-                setLocationNotMove = setLocation
+                deleteLocation = deleteLocation
             )
             
             MySpacerColumn(height = 16.dp)
@@ -217,7 +208,7 @@ fun MapButtons(
 
     onFullScreenClicked: () -> Unit,
     toggleIsEditLocation: () -> Unit,
-    setLocationNotMove: (newLocation: LatLng?) -> Unit
+    deleteLocation: () -> Unit
 ){
 
     if (!(isEditMode && spot.spotType.isMove())) {
@@ -236,7 +227,7 @@ fun MapButtons(
                         MapButtonsEditNotMove(
                             deleteEnabled = spot.location != null,
                             toggleIsEditLocation = toggleIsEditLocation,
-                            setLocation = setLocationNotMove
+                            deleteLocation = deleteLocation
                         )
                 } else {
                     MapButtonsNotEdit(spot, spotFrom, spotTo, fusedLocationClient, mapSize, cameraPositionState, setUserLocationEnabled, onFullScreenClicked)
@@ -259,18 +250,17 @@ fun MapButtonsNotEdit(
     setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
     onFullScreenClicked: () -> Unit
 ){
-    val focusOnToSpotEnabled = (spot.spotType.isMove() && spotFrom != null && spotTo != null
+    val focusOnToSpotEnabled = (spot.spotType.isMove() && spotFrom?.location != null && spotTo?.location != null
                                     || spot.spotType.isNotMove() && spot.location != null)
 
-    val spotList = if (spot.spotType.isMove())  listOf(spotFrom!!, spotTo!!)
-                    else                        listOf(spot)
+    val spotList = if (spot.spotType.isMove() && spotFrom != null && spotTo != null)  listOf(spotFrom, spotTo)
+                    else                                                                listOf(spot)
 
     //user location
     UserLocationButton(fusedLocationClient, cameraPositionState, setUserLocationEnabled)
 
     //focus on to spot
-    FocusOnToSpotButton(mapSize, focusOnToSpotEnabled, cameraPositionState, spotList
-    )
+    FocusOnToSpotButton(mapSize, focusOnToSpotEnabled, cameraPositionState, spotList)
 
     //fullscreen map
     IconButton(onClick = onFullScreenClicked) {
@@ -283,7 +273,7 @@ fun MapButtonsNotEdit(
 fun MapButtonsEditNotMove(
     deleteEnabled: Boolean,
     toggleIsEditLocation: () -> Unit,
-    setLocation: (newLocation: LatLng?) -> Unit,
+    deleteLocation: () -> Unit,
 ){
     //edit location
     IconButton(onClick = toggleIsEditLocation) {
@@ -293,7 +283,7 @@ fun MapButtonsEditNotMove(
     //delete location
     IconButton(
         enabled = deleteEnabled,
-        onClick = { setLocation(null) }
+        onClick = deleteLocation
     ) {
         DisplayIcon(icon = MyIcons.deleteLocation, enabled = deleteEnabled)
     }

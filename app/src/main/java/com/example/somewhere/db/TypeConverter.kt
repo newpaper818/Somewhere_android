@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.example.somewhere.model.Date
+import com.example.somewhere.ui.theme.MyColor
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
@@ -59,10 +60,6 @@ class DateListTypeConverter(
         return adapter.fromJson(value)
     }
 }
-
-
-
-
 
 @ProvidedTypeConverter
 class LocalDateTimeTypeConverter(
@@ -121,6 +118,23 @@ class UriTypeConverter(
         } else {
             null
         }
+    }
+}
+
+class LocalDateColorAdapter{
+    @ToJson fun toJson(myColor: MyColor): String {
+        return myColor.color.toString() + "/" + myColor.onColor.toString()
+    }
+
+    @FromJson fun fromJson(json: String): MyColor? {
+        val parts = json.split("/")
+        return if (parts.size == 2) {
+            val color = parts[0].toInt()
+            val onColor = parts[1].toInt()
+
+            MyColor(color, onColor)
+        } else
+            null
     }
 }
 

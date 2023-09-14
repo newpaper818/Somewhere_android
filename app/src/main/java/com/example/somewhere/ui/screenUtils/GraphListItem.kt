@@ -1,6 +1,7 @@
 package com.example.somewhere.ui.screenUtils
 
 import android.widget.Toast
+import androidx.annotation.ColorInt
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
@@ -48,6 +49,7 @@ import com.example.somewhere.ui.theme.ColorType
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.ui.theme.getColor
+import com.example.somewhere.ui.theme.whiteInt
 
 private val dummySpaceHeight:   Dp = 10.dp
 private val minCardHeight:      Dp = 40.dp
@@ -77,6 +79,9 @@ fun GraphListItem(
 
     modifier: Modifier = Modifier,
     onDeleteClick: (itemId: Int) -> Unit = { },
+
+    iconText: String? = null,
+    @ColorInt iconTextColor: Int? = null,
 
     isShown: Boolean = true,
 
@@ -179,11 +184,20 @@ fun GraphListItem(
 
                     //point
                     Box(
+                        contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .size(pointCircleSize)
                             .clip(CircleShape)
                             .background(pointColor)
-                    )
+                    ){
+                        if (iconText != null){
+                            val textStyle = getTextStyle(TextType.GRAPH_LIST_ITEM__ICON).copy(color = Color(iconTextColor ?: whiteInt))
+                            Text(
+                                text = iconText,
+                                style = textStyle
+                            )
+                        }
+                    }
                 }
 
                 Spacer(modifier = Modifier.width(20.dp))
@@ -332,7 +346,9 @@ fun DummySpaceWithLine(
     val dummyPointHalfWidth = (pointCircleSize - lineWidth)/2
 
     Row (
-        modifier = Modifier.fillMaxWidth().height(height)
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(height)
     ){
         //dummy date
         Spacer(modifier = Modifier.width(80.dp))

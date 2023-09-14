@@ -1,6 +1,5 @@
 package com.example.somewhere.model
 
-import android.util.Log
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.somewhere.typeUtils.CurrencyType
@@ -13,7 +12,9 @@ import java.time.Period
 @Entity(tableName = "trips")
 data class Trip(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    var id: Int = 0,
+
+    var orderId: Int = 0,
 
     val unitOfCurrencyType: CurrencyType = CurrencyType.USD,
 
@@ -28,7 +29,7 @@ data class Trip(
 ): Cloneable {
     public override fun clone(): Trip{
         return Trip(
-            id, unitOfCurrencyType, titleText, dateList.map{ it.clone() }, memoText,
+            id, orderId, unitOfCurrencyType, titleText, dateList.map{ it.clone() }, memoText,
             imagePathList, firstCreatedTime, lastModifiedTime
         )
     }
@@ -140,7 +141,38 @@ data class Trip(
     }
 
     // set =========================================================================================
+    fun setTitleText(
+        updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
+        newTitleText: String?
+    ) {
+        val titleText: String? =
+            if (newTitleText == "") null
+            else newTitleText
 
+        updateTripState(true, this.copy(titleText = titleText))
+    }
+
+    fun setMemoText(
+        updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
+        newMemoText: String?
+    ) {
+        val memoText: String? =
+            if (newMemoText == "") null
+            else newMemoText
+
+        updateTripState(true, this.copy(memoText = memoText))
+    }
+
+    fun setImage(
+        updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
+        newImgList: List<String>
+    ) {
+        updateTripState(true, this.copy(imagePathList = newImgList))
+    }
+
+
+
+    // =============================================================================================
     fun moveSpotToDate(
         showingTrip: Trip,
         dateId: Int,

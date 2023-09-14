@@ -13,7 +13,7 @@ class OfflineTripRepository(private val tripDao: TripDao): TripRepository {
 
     override suspend fun insertTrip(trip: Trip) = tripDao.insert(trip)
 
-    override suspend fun deleteTrip(trip: Trip) = tripDao.delete(trip)
-
     override suspend fun updateTrip(trip: Trip) = tripDao.update(trip)
+
+    override suspend fun deleteTrip(trip: Trip) = tripDao.delete(trip)
 }

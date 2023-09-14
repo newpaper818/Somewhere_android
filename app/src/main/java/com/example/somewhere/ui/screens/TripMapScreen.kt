@@ -1,4 +1,4 @@
-package com.example.somewhere.ui.screens.tripMap
+package com.example.somewhere.ui.screens
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -43,9 +43,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.example.somewhere.R
 import com.example.somewhere.model.Date
 import com.example.somewhere.model.Spot
 import com.example.somewhere.model.Trip
@@ -468,6 +470,7 @@ private fun FocusOnToSpotButton(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val spotTypeShownList = mutableListOf<SpotTypeGroup>()
+    val toastText = stringResource(id = R.string.toast_no_location_to_show)
 
     for (spotType in spotTypeGroupWithShownIconList){
         if (spotType.second)
@@ -496,7 +499,7 @@ private fun FocusOnToSpotButton(
     else{
         IconButton(
             onClick = {
-                Toast.makeText(context, "No Spot to show", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show()
             }
         ) {
             DisplayIcon(icon = MyIcons.disabledFocusOnToTarget)
@@ -635,7 +638,7 @@ private fun DateItem(
     titleTextStyle: TextStyle = getTextStyle(TextType.GRAPH_LIST_ITEM__MAIN),
     titleNullTextStyle: TextStyle = getTextStyle(TextType.GRAPH_LIST_ITEM__MAIN_NULL)
 ){
-    val pointColor = if (isShown) Color(date.iconColor)
+    val pointColor = if (isShown) Color(date.color.color)
     else Color.Transparent
 
     Card(
@@ -682,7 +685,7 @@ private fun DateItem(
                     .weight(1f)
             ) {
                 Text(
-                    text = date.titleText ?: "no title",
+                    text = date.titleText ?: stringResource(id = R.string.no_title),
                     style = if(isShown) titleTextStyle
                             else        titleNullTextStyle
                 )

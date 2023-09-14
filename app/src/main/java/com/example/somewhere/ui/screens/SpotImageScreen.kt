@@ -1,15 +1,15 @@
-package com.example.somewhere.ui.screens.spotMap
+package com.example.somewhere.ui.screens
 
 import androidx.compose.runtime.Composable
 import com.example.somewhere.ui.navigation.NavigationDestination
 
-object SpotMapDestination : NavigationDestination {
-    override val route = "spot map"
+object SpotImageDestination : NavigationDestination {
+    override val route = "spot image"
     override var title = ""
 }
 
 @Composable
-fun SpotMapScreen(
+fun SpotImageScreen(
 
 ){
 

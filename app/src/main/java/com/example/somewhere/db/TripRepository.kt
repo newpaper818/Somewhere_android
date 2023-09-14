@@ -17,5 +17,4 @@ interface TripRepository {
     suspend fun deleteTrip(trip: Trip)
 
     suspend fun updateTrip(trip: Trip)
-
 }

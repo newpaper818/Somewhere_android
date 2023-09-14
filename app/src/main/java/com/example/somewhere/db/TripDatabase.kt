@@ -17,7 +17,8 @@ import java.time.LocalDate
 @TypeConverters(value = [
     DateListTypeConverter::class,
     LocalDateTimeTypeConverter::class,
-    StringListTypeConverter::class
+    StringListTypeConverter::class,
+    //DateColorConverter::class
     //UriTypeConverter::class
 ])
 abstract class TripDatabase : RoomDatabase() {
@@ -27,11 +28,11 @@ abstract class TripDatabase : RoomDatabase() {
 
     companion object {
 
-        @OptIn(ExperimentalStdlibApi::class)
-        private val moshi = Moshi.Builder()
+        val moshi = Moshi.Builder()
             //.addLast(KotlinJsonAdapterFactory())
             .add(LocalDateAdapter())
             .add(LocalTimeAdapter())
+            .add(LocalDateColorAdapter())
             //.add(UriAdapter())
             .build()
 
@@ -48,6 +49,7 @@ abstract class TripDatabase : RoomDatabase() {
                      * attempts to perform a migration with no defined migration path.
                      */
                     .fallbackToDestructiveMigration()
+
                     .addTypeConverter(DateListTypeConverter(moshi))
                     .addTypeConverter(LocalDateTimeTypeConverter())
                     .addTypeConverter(StringListTypeConverter(moshi))

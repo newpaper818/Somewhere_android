@@ -1,6 +1,5 @@
-package com.example.somewhere.ui.screens.spotDetail
+package com.example.somewhere.ui.screens
 
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -11,28 +10,22 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -45,13 +38,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -74,18 +67,20 @@ import com.example.somewhere.ui.screenUtils.MySpacerColumn
 import com.example.somewhere.ui.screenUtils.SetBudgetOrDistanceDialog
 import com.example.somewhere.ui.screenUtils.SpotListProgressBar
 import com.example.somewhere.ui.screenUtils.cards.DateTimeCard
-import com.example.somewhere.ui.screenUtils.cards.TitleCard
+import com.example.somewhere.ui.screenUtils.cards.TitleWithColorCard
 import com.example.somewhere.ui.screenUtils.cards.TitleCardMove
 import com.example.somewhere.ui.screenUtils.cards.ZoomCard
 import com.example.somewhere.ui.screenUtils.focusOnToSpot
-import com.example.somewhere.ui.screens.date.DateDestination
-import com.example.somewhere.ui.screens.somewhere.SomewhereTopAppBar
+import com.example.somewhere.ui.screenUtils.initialZoomLevel
+import com.example.somewhere.ui.screenUtils.seoulLocation
+import com.example.somewhere.ui.theme.TextType
+import com.example.somewhere.ui.theme.getTextStyle
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.compose.rememberCameraPositionState
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -108,17 +103,15 @@ fun SpotDetailScreen(
     changeEditMode: (editMode: Boolean?) -> Unit,
 
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
-    updateSpotTitle: (dateId: Int, spotId: Int, spotTitleText: String) -> Unit,
-
     addNewSpot: (dateId: Int) -> Unit,
     deleteSpot: (dateId: Int, spotId: Int) -> Unit,
     saveTrip: () -> Unit,
 
     fusedLocationClient: FusedLocationProviderClient,
-    onImageClicked: () -> Unit,
-    onMapClicked: () -> Unit,
     userLocationEnabled: Boolean,
     setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
+
+    onImageClicked: () -> Unit,
 
     navigateUp: () -> Unit,
 
@@ -130,6 +123,7 @@ fun SpotDetailScreen(
     val dateList = showingTrip.dateList
     val spotList = showingTrip.dateList[dateId].spotList
     var currentSpotId by rememberSaveable { mutableStateOf(spotId) }
+    //var prevSpotId by rememberSaveable { mutableStateOf(currentSpotId) }
 
     val currentDate = dateList[dateId]
     val currentSpot = spotList[currentSpotId]
@@ -152,7 +146,9 @@ fun SpotDetailScreen(
         initialPage = currentSpotId
     )
 
-    val progressBarState = rememberLazyListState()
+    val progressBarState = rememberLazyListState(
+        initialFirstVisibleItemIndex = currentSpotId
+    )
 
     //dialog: delete trip? unsaved data will be deleted
     var showExitDialog by rememberSaveable { mutableStateOf(false) }
@@ -187,14 +183,16 @@ fun SpotDetailScreen(
 
     val location =
         if (currentSpot.spotType.isNotMove())
-            currentSpot.location ?: LatLng(0.0,0.0)
+            currentSpot.location ?: seoulLocation
         else
-            spotFrom?.location ?: LatLng(0.0,0.0)
+            spotFrom?.location ?: seoulLocation
 
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(location, currentSpot.zoomLevel ?: 13f)
+        position = CameraPosition.fromLatLngZoom(location, currentSpot.zoomLevel ?: initialZoomLevel)
     }
+
+    val density = LocalDensity.current.density
 
     //animate map to spot
     val animateToSpot = {
@@ -203,7 +201,7 @@ fun SpotDetailScreen(
             //if spot is move
             if (currentSpot.spotType.isMove() && spotFrom?.location != null && spotTo?.location != null) {
                 coroutineScope.launch {
-                    focusOnToSpot(cameraPositionState, mapSize, listOf(spotFrom, spotTo))
+                    focusOnToSpot(cameraPositionState, mapSize, listOf(spotFrom, spotTo), density)
                 }
             }
             //if spot is not move
@@ -213,6 +211,10 @@ fun SpotDetailScreen(
                 }
             }
         }
+    }
+
+    if (spotPagerState.isScrollInProgress){
+        animateToSpot()
     }
 
     //set top bar title
@@ -301,6 +303,7 @@ fun SpotDetailScreen(
                 MySpacerColumn(height = 8.dp)
 
                 SpotListProgressBar(
+                    initialIdx = spotId,
                     progressBarState = progressBarState,
                     isEditMode = isEditMode,
 
@@ -342,7 +345,8 @@ fun SpotDetailScreen(
                 //
                 LazyColumn(
                     state = scrollState,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                         .onGloballyPositioned {
                             lazyColumnHeight = it.size.height
                         },
@@ -351,9 +355,13 @@ fun SpotDetailScreen(
                     userScrollEnabled = !isMapExpand
                 ) {
 
-                    if (spotPagerState.isScrollInProgress) {
-                        animateToSpot()
-                    }
+
+
+//                    if (currentSpotId != prevSpotId) {
+//                        Log.d("test", "--- $currentSpotId $prevSpotId")
+//                        animateToSpot()
+//                        prevSpotId = currentSpotId
+//                    }
 
                     //map card
                     item {
@@ -383,12 +391,12 @@ fun SpotDetailScreen(
                             toggleIsEditLocation = {
                                 isEditLocationMode = !isEditLocationMode
                             },
-                            setLocation = { newLocation ->
+                            deleteLocation = {
                                 currentSpot.setLocation(
                                     showingTrip,
                                     dateId,
                                     updateTripState,
-                                    newLocation,
+                                    null,
                                     null
                                 )
                             },
@@ -497,7 +505,9 @@ fun SpotDetailScreen(
                     },
                     animateToSpot = {
                         animateToSpot()
-                    }
+                    },
+                    fusedLocationClient = fusedLocationClient,
+                    setUserLocationEnabled = setUserLocationEnabled
                 )
             }
         }
@@ -551,21 +561,12 @@ fun SpotDetailPage(
             MySpacerColumn(height = 16.dp)
 
             if (currentSpot.spotType.isNotMove())
-                TitleCard(
+                TitleWithColorCard(
                     isEditMode = isEditMode,
                     titleText = currentSpot.titleText,
                     focusManager = focusManager,
-                    onTitleChange = { titleText ->
-                        val newTitleText: String? =
-                            if (titleText == "") null
-                            else titleText
-
-                        currentSpot.setTitleText(
-                            showingTrip,
-                            dateId,
-                            updateTripState,
-                            newTitleText
-                        )
+                    onTitleChange = { newTitleText ->
+                        currentSpot.setTitleText(showingTrip, dateId, updateTripState, newTitleText)
                     }
                 )
             else {
@@ -573,17 +574,8 @@ fun SpotDetailPage(
                     isEditMode = isEditMode,
                     titleText = currentSpot.titleText,
                     focusManager = focusManager,
-                    onTitleChange = { titleText ->
-                        val newTitleText: String? =
-                            if (titleText == "") null
-                            else titleText
-
-                        currentSpot.setTitleText(
-                            showingTrip,
-                            dateId,
-                            updateTripState,
-                            newTitleText
-                        )
+                    onTitleChange = { newTitleText ->
+                        currentSpot.setTitleText(showingTrip, dateId, updateTripState, newTitleText)
                     }
                 )
 
@@ -631,13 +623,7 @@ fun SpotDetailPage(
                 changeDate = { newDateId ->
                     if (dateId != newDateId) {
                         navigateUp()
-                        showingTrip.moveSpotToDate(
-                            showingTrip,
-                            dateId,
-                            spotId,
-                            newDateId,
-                            updateTripState
-                        )
+                        showingTrip.moveSpotToDate(showingTrip, dateId, spotId, newDateId, updateTripState)
                     }
                 },
                 setStartTime = { startTime ->
@@ -722,6 +708,7 @@ fun SpotDetailPage(
 
             InformationCard(
                 isEditMode = isEditMode,
+                spotTypeColor = currentSpot.spotType.group.color.color,
                 list = listOf(
                     Triple(MyIcons.category, currentSpot.getSpotTypeText()) {
                         showSpotTypeDialog = true
@@ -746,11 +733,7 @@ fun SpotDetailPage(
             MemoCard(
                 isEditMode = isEditMode,
                 memoText = currentSpot.memo,
-                onMemoChanged = { memoText ->
-                    val newMemoText: String? =
-                        if (memoText == "") null
-                        else memoText
-
+                onMemoChanged = { newMemoText ->
                     currentSpot.setMemoText(showingTrip, dateId, updateTripState, newMemoText)
                 }
             )
@@ -796,16 +779,19 @@ private fun SetLocationPage(
     dateList: List<Date>,
     dateId: Int,
 
+    fusedLocationClient: FusedLocationProviderClient,
+    setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
+
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     toggleIsEditLocationMode: () -> Unit,
     animateToSpot: () -> Unit
 ){
     val coroutineScope = rememberCoroutineScope()
 
-    val firstLocation = spotList[currentSpotId].location?: LatLng(37.55, 126.98)
+    val firstLocation = spotList[currentSpotId].location?: seoulLocation
     var newLocation: LatLng by rememberSaveable { mutableStateOf(firstLocation) }
 
-    var newZoomLevel: Float by rememberSaveable { mutableStateOf(spotList[currentSpotId].zoomLevel ?: 13.0f) }
+    var newZoomLevel: Float by rememberSaveable { mutableStateOf(spotList[currentSpotId].zoomLevel ?: initialZoomLevel) }
 
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(firstLocation, newZoomLevel)
@@ -839,11 +825,19 @@ private fun SetLocationPage(
             )
 
             //center marker
-            Icon(
-                painter = painterResource(R.drawable.icon_spot),
-                contentDescription = "New location",
-                tint = Color.Unspecified
-            )
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(26.dp)
+                    .clip(CircleShape)
+                    .background(Color(spotList[currentSpotId].spotType.group.color.color))
+            ){
+                Text(
+                    text = spotList[currentSpotId].orderId.toString(),
+                    style = getTextStyle(TextType.PROGRESS_BAR__TEXT_HIGHLIGHT)
+                        .copy(color = Color(spotList[currentSpotId].spotType.group.color.onColor))
+                )
+            }
         }
 
 
@@ -857,7 +851,10 @@ private fun SetLocationPage(
                         CameraUpdateFactory.zoomTo(newZoomLevel), 300
                     )
                 }
-            }
+            },
+            fusedLocationClient = fusedLocationClient,
+            cameraPositionState = cameraPositionState,
+            setUserLocationEnabled = setUserLocationEnabled
         )
 
         MySpacerColumn(height = 10.dp)
@@ -875,5 +872,18 @@ private fun SetLocationPage(
             },
             modifier = Modifier.background(MaterialTheme.colors.background)
         )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+suspend fun scrollToPage(
+    coroutineScope: CoroutineScope,
+    spotPagerState: PagerState,
+    progressBarState: LazyListState,
+    spotId: Int
+){
+    coroutineScope.launch {
+        spotPagerState.animateScrollToPage(spotId)
+        progressBarState.animateScrollToItem(spotId)
     }
 }

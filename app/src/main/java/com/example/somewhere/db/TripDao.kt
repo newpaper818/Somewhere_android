@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 @Dao
 interface TripDao {
 
-    @Query("SELECT * from trips")
+    @Query("SELECT * from trips ORDER BY orderId ASC")
     fun getAllTrips(): Flow<List<Trip>>
 
     @Query("SELECT * from trips WHERE id = :id")

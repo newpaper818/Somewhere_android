@@ -1,4 +1,4 @@
-package com.example.somewhere.ui.screens.somewhere
+package com.example.somewhere.ui.screens
 
 import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -33,23 +33,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.somewhere.typeUtils.AppContentType
 import com.example.somewhere.ui.screenUtils.DisplayIcon
 import com.example.somewhere.ui.screenUtils.MyIcon
-import com.example.somewhere.ui.screens.SomewhereViewModelProvider
-import com.example.somewhere.ui.screens.date.DateDestination
-import com.example.somewhere.ui.screens.date.DateScreen
-import com.example.somewhere.ui.screens.main.MainDestination
-import com.example.somewhere.ui.screens.main.MainScreen
-import com.example.somewhere.ui.screens.spotDetail.SpotDetailDestination
-import com.example.somewhere.ui.screens.spotDetail.SpotDetailScreen
-import com.example.somewhere.ui.screens.spotImage.SpotImageDestination
-import com.example.somewhere.ui.screens.spotMap.SpotMapDestination
-import com.example.somewhere.ui.screens.trip.TripDestination
-import com.example.somewhere.ui.screens.trip.TripScreen
-import com.example.somewhere.ui.screens.tripMap.TripMapDestination
-import com.example.somewhere.ui.screens.tripMap.TripMapScreen
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.utils.USER_LOCATION_PERMISSION_LIST
 import com.example.somewhere.utils.checkPermissionUserLocation
+import com.example.somewhere.viewModel.AppViewModel
+import com.example.somewhere.viewModel.SomewhereViewModel
+import com.example.somewhere.viewModel.SomewhereViewModelProvider
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -66,48 +56,24 @@ fun SomewhereApp(
     fusedLocationClient: FusedLocationProviderClient,
     navController: NavHostController = rememberAnimatedNavController(),
     darkTheme: Boolean = isSystemInDarkTheme(),
+    appViewModel: AppViewModel,
 
     somewhereViewModel: SomewhereViewModel = viewModel(factory = SomewhereViewModelProvider.Factory)
 ) {
-
-
-//    //permission launcher
-//    val permissionLauncher = rememberLauncherForActivityResult(
-//        ActivityResultContracts.RequestMultiplePermissions()
-//    ) { permissionsMap ->
-//        val areGranted = permissionsMap.values.reduce { acc, next -> acc && next }
-//        /** 권한 요청시 동의 했을 경우 **/
-//        if (areGranted) {
-//            Log.d("test", "권한이 동의되었습니다.")
-//        }
-//        /** 권한 요청시 거부 했을 경우 **/
-//        else {
-//            Log.d("test", "권한이 거부되었습니다.")
-//        }
-//    }
-
     val context = LocalContext.current
 
     //user location permission
     val userLocationPermissionState =
         rememberMultiplePermissionsState(permissions = USER_LOCATION_PERMISSION_LIST)
 
+    //is user location permission enabled
     var userLocationEnabled by rememberSaveable {
         mutableStateOf(checkPermissionUserLocation(context))
     }
 
-//    val toastText = stringResource(id = R.string.toast_location_permission_denied)
-
-//    val requestUserLocationPermission = {
-//        userLocationEnabled = requestPermissions(userLocationPermissionState)
-//
-//        //if location permission denied
-////        if (!userLocationEnabled){
-////            Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show()
-////        }
-//    }
 
     //uiState
+    val appUiState by appViewModel.appUiState.collectAsState()
     val somewhereUiState by somewhereViewModel.uiState.collectAsState()
 
     val currentScreen = somewhereUiState.currentScreen
@@ -176,11 +142,10 @@ fun SomewhereApp(
                 //update current screen
                 somewhereViewModel.updateCurrentScreen(MainDestination)
 
-//                if (!checkPermissionsIsGranted(userLocationPermissionState))
-//                    requestUserLocationPermission()
-
                 MainScreen(
                     isEditMode = somewhereUiState.isEditMode,
+//                    originalTripList = appUiState.tripList ?: listOf(),
+//                    tempTripList = appUiState.tempTripList ?: listOf(),
                     changeEditMode = {
                         somewhereViewModel.toggleEditMode(it)
                     },
@@ -190,7 +155,8 @@ fun SomewhereApp(
                         }
                         somewhereViewModel.toggleIsNewTrip(isNewTrip)
                         navController.navigate(TripDestination.route)
-                    }
+                    },
+                    appViewModel = appViewModel
                 )
             }
 
@@ -261,6 +227,7 @@ fun SomewhereApp(
                             navigateUp()
                             coroutineScope.launch {
                                 somewhereViewModel.deleteTrip(deleteTrip)
+                                appViewModel.updateAppUiStateFromRepository()
                             }
                         },
 
@@ -274,12 +241,11 @@ fun SomewhereApp(
                                 endDate
                             )
                         },
-                        updateDateTitle = { toTempTrip, dateId, dateTitleText ->
-                            somewhereViewModel.updateDateTitle(toTempTrip, dateId, dateTitleText)
-                        },
                         saveTrip = {
                             coroutineScope.launch {
-                                somewhereViewModel.saveTrip()
+                                somewhereViewModel.saveTrip{
+                                    coroutineScope.launch { appViewModel.updateAppUiStateFromRepository() }
+                                }
                             }
                         },
                     )
@@ -311,12 +277,6 @@ fun SomewhereApp(
                         updateTripState = { toTempTrip, trip ->
                             somewhereViewModel.updateTripState(toTempTrip, trip)
                         },
-                        updateDateTitle = { dateId, dateTitleText ->
-                            somewhereViewModel.updateDateTitle(true, dateId, dateTitleText)
-                        },
-                        updateSpotTitle = { dateId, spotId, spotTitleText ->
-                            somewhereViewModel.updateSpotTitle(true, dateId, spotId, spotTitleText)
-                        },
 
                         addNewSpot = { dateId ->
                             somewhereViewModel.addNewSpot(dateId)
@@ -326,7 +286,9 @@ fun SomewhereApp(
                         },
                         saveTrip = {
                             coroutineScope.launch {
-                                somewhereViewModel.saveTrip()
+                                somewhereViewModel.saveTrip{
+                                    coroutineScope.launch { appViewModel.updateAppUiStateFromRepository() }
+                                }
                             }
                         },
 
@@ -373,9 +335,6 @@ fun SomewhereApp(
                         updateTripState = { toTempTrip, trip ->
                             somewhereViewModel.updateTripState(toTempTrip, trip)
                         },
-                        updateSpotTitle = { dateId, spotId, spotTitleText ->
-                            somewhereViewModel.updateSpotTitle(true, dateId, spotId, spotTitleText)
-                        },
                         addNewSpot = { dateId ->
                             somewhereViewModel.addNewSpot(dateId)
                         },
@@ -384,13 +343,14 @@ fun SomewhereApp(
                         },
                         saveTrip = {
                             coroutineScope.launch {
-                                somewhereViewModel.saveTrip()
+                                somewhereViewModel.saveTrip{
+                                    coroutineScope.launch { appViewModel.updateAppUiStateFromRepository() }
+                                }
                             }
                         },
 
                         fusedLocationClient = fusedLocationClient,
                         onImageClicked = { /*TODO*/ },
-                        onMapClicked = { /*TODO*/ },
                         userLocationEnabled = userLocationEnabled,
                         setUserLocationEnabled = {
                             userLocationEnabled = it
@@ -411,20 +371,6 @@ fun SomewhereApp(
                 ) {
                     //update current screen
                     somewhereViewModel.updateCurrentScreen(SpotImageDestination)
-
-
-                }
-
-                // SPOT MAP ============================================================================
-                composable(
-                    route = SpotMapDestination.route,
-                    enterTransition = { enterTransition },
-                    exitTransition = { exitTransition },
-                    popEnterTransition = { popEnterTransition },
-                    popExitTransition = { popExitTransition }
-                ) {
-                    //update current screen
-                    somewhereViewModel.updateCurrentScreen(SpotMapDestination)
 
 
                 }

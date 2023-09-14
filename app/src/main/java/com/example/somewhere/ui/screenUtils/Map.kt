@@ -2,6 +2,8 @@ package com.example.somewhere.ui.screenUtils
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Paint
+import android.graphics.Rect
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
@@ -22,7 +24,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.core.content.ContextCompat
@@ -52,6 +56,9 @@ import com.google.maps.android.compose.MarkerState
 import kotlinx.coroutines.launch
 import kotlin.math.min
 
+val seoulLocation = LatLng(37.55, 126.98)
+val initialZoomLevel = 10f
+
 //map style dark / light
 fun getMapStyle(
     isDarkTheme: Boolean
@@ -71,13 +78,7 @@ fun MapForTrip(
     spotTypeGroupWithShownMarkerList: List<Pair<SpotTypeGroup, Boolean>>,
     firstFocusOnToSpot: () -> Unit
 ){
-//    val coroutineScope = rememberCoroutineScope()
     val isDarkTheme = isSystemInDarkTheme()
-
-//    var locationCnt by rememberSaveable { mutableStateOf(0) }
-//    var location by rememberSaveable { mutableStateOf(LatLng(0.0, 0.0)) }
-//    val latLngBounds = LatLngBounds.Builder()
-
 
     val uiSettings = remember {
         MapUiSettings(myLocationButtonEnabled = false, zoomControlsEnabled = false)
@@ -112,18 +113,13 @@ fun MapForTrip(
                         spot.spotType.isNotMove() &&
                         Pair(spot.spotType.group, true) in spotTypeGroupWithShownMarkerList
                     ) {
-                        //show map marker
                         MapMarker(
-                            context = context,
                             location = spot.location,
                             title = spot.titleText ?: stringResource(id = R.string.no_title),
-
-                            drawBackground = true,
-                            iconId = spot.iconId ?: R.drawable.icon_circle_hole,
-                            iconColor = date.first.iconColor,
-
-                            backgroundIconId = R.drawable.icon_background_circle,
-                            backgroundColor = 0xffffffff.toInt()
+                            isBigMarker = false,
+                            text = spot.orderId.toString(),
+                            iconColor = date.first.color.color,
+                            onIconColor = date.first.color.onColor
                         )
                     }
                 }
@@ -138,6 +134,8 @@ fun MapForSpot(
     cameraPositionState: CameraPositionState,
 
     userLocationEnabled: Boolean,
+
+    mapSize: IntSize,
 
     date: Date,
     spot: Spot,
@@ -165,55 +163,40 @@ fun MapForSpot(
         )
     }
 
+    val density = LocalDensity.current.density
+
     GoogleMap(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .onSizeChanged {
+
+            },
         cameraPositionState = cameraPositionState,
         properties = properties,
         uiSettings = uiSettings,
         onMapLoaded = {
-            //focus on to spot
-            if (spot.spotType.isMove() && spotFrom?.location != null && spotTo?.location != null) {
-                val latLngBounds = LatLngBounds.Builder()
-                    .include(spotFrom.location)
-                    .include(spotTo.location)
-                    .build()
+            val spotList: List<Spot> =
+                if (spot.spotType.isMove() && spotFrom?.location != null && spotTo?.location != null)
+                    listOf(spotFrom, spotTo)
+                else if (spot.spotType.isMove() && spot.location != null)    listOf(spot)
+                else listOf()
 
-                coroutineScope.launch {
-                    cameraPositionState.animate(
-                        CameraUpdateFactory.newLatLngBounds(latLngBounds, 200),500
-                    )
-                }
-            }
-            else {
-                if(spot.location != null)
-                    coroutineScope.launch {
-                        cameraPositionState.animate(
-                            CameraUpdateFactory.newLatLngZoom(spot.location, spot.zoomLevel ?: 13f),500
-                        )
-                    }
+            coroutineScope.launch {
+                focusOnToSpot(cameraPositionState, mapSize, spotList, density)
             }
         }
     ){
-        //show today's around marker
-        MapMarkerAround(
-            context = context,
-            spotList = date.spotList,
-            currentSpot = spot
-        )
-
-        //show spot map marker
-        if (spot.spotType.isMove()) {
-            MapMarkersMove(
-                context = context,
-                spotFrom = spotFrom,
-                spotTo = spotTo
-            )
-        }
-        else{
-            MapMarkerSpot(
-                context = context,
-                spot = spot
-            )
+        for(spot1 in date.spotList) {
+            if (spot1.spotType.isNotMove() && spot1.location != null) {
+                MapMarker(
+                    location = spot1.location,
+                    title = spot1.titleText ?: stringResource(id = R.string.no_title),
+                    isBigMarker = spot1 == spot || spot1 == spotFrom || spot1 == spotTo,
+                    text = spot1.orderId.toString(),
+                    iconColor = spot1.spotType.group.color.color,
+                    onIconColor = spot1.spotType.group.color.onColor
+                )
+            }
         }
     }
 }
@@ -242,7 +225,7 @@ fun MapChooseLocation(
         mutableStateOf(
             MapProperties(
                 isBuildingEnabled = true,
-                isMyLocationEnabled = false,
+                isMyLocationEnabled = myLocationEnabled,
                 mapStyleOptions = MapStyleOptions.loadRawResourceStyle(
                     context, getMapStyle(isDarkTheme)
                 )
@@ -250,7 +233,7 @@ fun MapChooseLocation(
     }
 
     val uiSettings = remember {
-        MapUiSettings(myLocationButtonEnabled = myLocationEnabled, zoomControlsEnabled = false)
+        MapUiSettings(myLocationButtonEnabled = false, zoomControlsEnabled = false)
     }
 
 
@@ -276,11 +259,18 @@ fun MapChooseLocation(
         }
     ){
         //show today's around marker
-        MapMarkerAround(
-            context = context,
-            spotList = date.spotList,
-            currentSpot = spot
-        )
+        for(spot1 in date.spotList) {
+            if (spot1.spotType.isNotMove() && spot1.location != null && spot1 != spot) {
+                MapMarker(
+                    location = spot1.location,
+                    title = spot1.titleText ?: stringResource(id = R.string.no_title),
+                    isBigMarker = false,
+                    text = spot1.orderId.toString(),
+                    iconColor = spot1.spotType.group.color.color,
+                    onIconColor = spot1.spotType.group.color.onColor
+                )
+            }
+        }
     }
 }
 
@@ -291,7 +281,7 @@ private fun MapMarkerSpot(
     spot: Spot
 ){
     //map marker at spot / if null don't show
-    if (spot.location != null)
+    if (spot.location != null) {
         MapMarker(
             context = context,
             location = spot.location,
@@ -299,6 +289,7 @@ private fun MapMarkerSpot(
             iconId = R.drawable.icon_spot,
             drawBackground = false
         )
+    }
 }
 
 
@@ -359,8 +350,10 @@ private fun MapMarkerAround(
 
                 drawBackground = true,
 
-                iconId = spot.iconId ?: R.drawable.icon_around,
-                iconColor = spot.iconColor,
+                iconId = spot.iconId ?: R.drawable.icon_circle,
+                iconColor = spot.spotType.group.color.color,
+                backgroundIconId = R.drawable.icon_background_circle,
+                backgroundColor = null
             )
     }
 }
@@ -384,17 +377,25 @@ private fun MapMarker(
     Marker(
         state = MarkerState(position = location),
         title = title,
-        icon = bitmapDescriptor(
-            context = context,
+        icon = bitmapDescriptor(context, drawBackground, iconId, iconColor, backgroundIconId, backgroundColor),
+        anchor = Offset(0.5f,0.5f)
+    )
+}
 
-            drawBackground = drawBackground,
-
-            vectorResId = iconId,
-            color = iconColor,
-
-            backgroundVectorResId = backgroundIconId,
-            backgroundColor = backgroundColor
-        ),
+@Composable
+private fun MapMarker(
+    location: LatLng,
+    title: String,
+    isBigMarker: Boolean,
+    text: String? = null,
+    @ColorInt iconColor: Int,
+    @ColorInt onIconColor: Int,
+){
+    //draw marker on map
+    Marker(
+        state = MarkerState(position = location),
+        title = title,
+        icon = bitmapDescriptor(isBigMarker, text, iconColor, onIconColor),
         anchor = Offset(0.5f,0.5f)
     )
 }
@@ -404,20 +405,20 @@ private fun bitmapDescriptor(
 
     drawBackground: Boolean,
 
-    @DrawableRes vectorResId: Int,
-    @ColorInt color: Int? = null,
+    @DrawableRes iconId: Int,
+    @ColorInt iconColor: Int? = null,
 
-    @DrawableRes backgroundVectorResId: Int = R.drawable.icon_circle,
+    @DrawableRes backgroundIconId: Int = R.drawable.icon_circle,
     @ColorInt backgroundColor: Int? = null
 
 ): BitmapDescriptor? {
 
     // retrieve the actual drawable
-    val drawable = ContextCompat.getDrawable(context, vectorResId) ?: return null
+    val drawable = ContextCompat.getDrawable(context, iconId) ?: return null
     drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
 
-    if (color != null)
-        drawable.setTint(color)
+    if (iconColor != null)
+        drawable.setTint(iconColor)
 
     val bm = Bitmap.createBitmap(
         drawable.intrinsicWidth,
@@ -429,7 +430,7 @@ private fun bitmapDescriptor(
     val canvas = android.graphics.Canvas(bm)
 
     if (drawBackground){
-        val backgroundDrawable = ContextCompat.getDrawable(context, backgroundVectorResId) ?: return null
+        val backgroundDrawable = ContextCompat.getDrawable(context, backgroundIconId) ?: return null
         backgroundDrawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
 
         if (backgroundColor != null)
@@ -439,6 +440,54 @@ private fun bitmapDescriptor(
     }
 
     drawable.draw(canvas)
+
+    return BitmapDescriptorFactory.fromBitmap(bm)
+}
+
+@Composable
+private fun bitmapDescriptor(
+    isBig: Boolean,
+    text: String?,
+    @ColorInt iconColor: Int,
+    @ColorInt onColor: Int,
+): BitmapDescriptor {
+
+    val density = LocalDensity.current.density
+
+    val iconDp = if(isBig) 30 else 24
+    val textDp = if(isBig) 16 else 12
+
+    //bitmap size 30.dp to int
+    val bitmapSize = (30 * density).toInt()
+
+    //icon & text size
+    val iconSize = (iconDp * density).toInt()
+    val textSize = textDp * density
+
+    // Create a bitmap
+    val bm = Bitmap.createBitmap(bitmapSize, bitmapSize, Bitmap.Config.ARGB_8888)
+    val canvas = android.graphics.Canvas(bm)
+
+    // Draw the circle background
+    val circlePaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    circlePaint.color = iconColor
+    canvas.drawCircle(bitmapSize / 2f, bitmapSize / 2f, iconSize / 2f, circlePaint)
+
+    // Draw the text
+    if (text != null){
+        val textPaint = Paint (Paint.ANTI_ALIAS_FLAG)
+        textPaint.color = onColor
+        textPaint.textSize = textSize
+        textPaint.isFakeBoldText = true
+        textPaint.textAlign = Paint.Align.CENTER
+
+        val textBounds = Rect()
+        textPaint.getTextBounds(text, 0, text.length, textBounds)
+        val textX = bitmapSize / 2f
+        val textY = (bitmapSize + textBounds.height()) / 2f
+
+        canvas.drawText(text, textX, textY, textPaint)
+    }
 
     return BitmapDescriptorFactory.fromBitmap(bm)
 }
@@ -453,12 +502,14 @@ fun FocusOnToSpotButton(
 ){
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    val density = LocalDensity.current.density
+    val toastText = stringResource(id = R.string.toast_no_location_to_show)
 
     if (focusOnToSpotEnabled){
         IconButton(
             onClick = {
                 coroutineScope.launch {
-                    focusOnToSpot(cameraPositionState, mapSize, spotList)
+                    focusOnToSpot(cameraPositionState, mapSize, spotList, density)
                 }
             }
         ) {
@@ -468,7 +519,7 @@ fun FocusOnToSpotButton(
     else{
         IconButton(
             onClick = {
-                Toast.makeText(context, "No Spot to show", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show()
             }
         ) {
             DisplayIcon(icon = MyIcons.disabledFocusOnToTarget)
@@ -506,11 +557,11 @@ fun UserLocationButton(
     ) { permissionsMap ->
         val areGranted = permissionsMap.values.reduce { acc, next -> acc && next }
         if (areGranted) {
-            Log.d("test", "agreeeeeeeeeeeeeeeee")
+            Log.d("permission", "agree")
             permissionRequestEnd = true
         }
         else {
-            Log.d("test", "denyyyyyyyyyyyyyyyyy")
+            Log.d("permission", "deny")
             permissionRequestEnd = true
         }
     }
@@ -641,7 +692,8 @@ private fun getUserLocation(
 suspend fun focusOnToSpot(
     cameraPositionState: CameraPositionState,
     mapSize: IntSize,
-    spotList: List<Spot>
+    spotList: List<Spot>,
+    density: Float? = null
 ){
     if (spotList.size == 1){
         val spot = spotList.first()
@@ -664,7 +716,17 @@ suspend fun focusOnToSpot(
         }
 
         if (spotCnt >= 2) {
-            val padding = min(min(mapSize.height, mapSize.width) / 2, 460) / 2
+            //button height + button bottom padding + icon height / 2 + padding
+            val bottomButtonHeight = 52 + 16 + 15 + 2
+            val defaultPadding = if (density != null) (bottomButtonHeight * density * 2).toInt()
+                                    else                230 * 2
+            val mapHeight = if (density != null) (mapSize.height - (bottomButtonHeight * density * 2)).toInt()
+                            else                 mapSize.height
+
+            var padding = min(min(mapHeight, mapSize.width) / 2, defaultPadding) / 2
+
+            if (density != null && padding < defaultPadding / 2) padding = defaultPadding / 2
+
             if (padding > 10) {
                 cameraPositionState.animate(
                     CameraUpdateFactory.newLatLngBounds(latLngBounds.build(), padding), 300

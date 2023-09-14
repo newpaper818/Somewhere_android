@@ -1,20 +1,16 @@
-package com.example.somewhere.ui.screens.somewhere
+package com.example.somewhere.viewModel
 
-import android.util.Log
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.somewhere.db.TripRepository
 import com.example.somewhere.model.Date
 import com.example.somewhere.model.Spot
 import com.example.somewhere.model.Trip
 import com.example.somewhere.ui.navigation.NavigationDestination
-import com.example.somewhere.ui.screens.main.MainDestination
+import com.example.somewhere.ui.screens.MainDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -104,7 +100,7 @@ class SomewhereViewModel(
     }
 
     //save tempTrip
-    suspend fun saveTrip(){
+    suspend fun saveTrip(updateAppUiState: () -> Unit){
         if (_uiState.value.tempTrip != null){
             val tempTrip = _uiState.value.tempTrip!!.copy(lastModifiedTime = LocalDateTime.now())
 
@@ -112,6 +108,9 @@ class SomewhereViewModel(
                 it.copy(trip = tempTrip, tempTrip = tempTrip)
             }
             tripsRepository.updateTrip(tempTrip)
+
+            //update appUiState tripList
+            updateAppUiState()
 
             toggleEditMode(false)
             toggleIsNewTrip(false)
@@ -128,22 +127,6 @@ class SomewhereViewModel(
     fun updateTripState(trip: Trip, tempTrip: Trip){
         _uiState.update {
             it.copy(trip = trip, tempTrip = tempTrip)
-        }
-    }
-
-    fun updateDateTitle(toTempTrip: Boolean, dateId: Int, dateTitleText: String){
-        if (_uiState.value.trip != null && _uiState.value.tempTrip != null) {
-            val newTitleText: String? = if (dateTitleText == "") null
-                                        else dateTitleText
-
-            val currentTrip: Trip = if (toTempTrip) _uiState.value.tempTrip!!
-                                    else            _uiState.value.trip!!
-
-            val newDate = currentTrip.dateList[dateId].copy(titleText = newTitleText)
-            val newDateList = currentTrip.dateList.toMutableList()
-            newDateList[dateId] = newDate
-
-            updateTripState(toTempTrip, currentTrip.copy(dateList = newDateList.toList()))
         }
     }
 
@@ -226,12 +209,18 @@ class SomewhereViewModel(
 
             val date = _uiState.value.tempTrip!!.dateList[dateId].date
 
+            //set id, orderId
             val lastId =
                 if (newSpotList.isNotEmpty()) newSpotList.last().id
                 else -1
 
-            newSpotList.add(Spot(id = lastId + 1, date = date))
+            val lastOrderId =
+                if (newSpotList.isNotEmpty()) newSpotList.last().orderId
+                else 0
 
+            newSpotList.add(Spot(id = lastId + 1, orderId = lastOrderId + 1, date = date))
+
+            //update
             val newDateList = _uiState.value.tempTrip!!.dateList.toMutableList()
 
             val newDate = newDateList[dateId].copy(spotList = newSpotList)
@@ -253,12 +242,19 @@ class SomewhereViewModel(
             //delete spot
             newSpotList.removeAt(spotId)
 
-            //index id
-            newSpotList.map {
-                it.id = newSpotList.indexOf(it)
-                //FIXME delete ======================================================
-                //it.titleText = newSpotList.indexOf(it).toString()
+            //index id, orderId
+            var newOrderId = if (spotId == 0) 0
+                            else newSpotList[spotId - 1].orderId
+
+            for (i in spotId until newSpotList.size){
+                newSpotList[i].id = i
+
+                if(newSpotList[i].spotType.isNotMove())
+                    newOrderId++
+
+                newSpotList[i].orderId = newOrderId
             }
+
 
             //tempTrip's dateList
             val newDateList = _uiState.value.tempTrip!!.clone().dateList.toMutableList()
@@ -271,31 +267,5 @@ class SomewhereViewModel(
             updateTripState(true, currentTrip.copy(dateList = newDateList.toList()))
         }
     }
-
-    fun updateSpotTitle(toTempTrip: Boolean, dateId: Int, spotId: Int, spotTitleText: String){
-        if (_uiState.value.trip != null && _uiState.value.tempTrip != null) {
-            val newTitleText: String? = if (spotTitleText == "") null
-                                        else                     spotTitleText
-
-            val currentTrip: Trip = if (toTempTrip) _uiState.value.tempTrip!!
-                                    else            _uiState.value.trip!!
-
-            val newSpot = currentTrip.dateList[dateId].spotList[spotId].copy(titleText = spotTitleText)
-
-            val newDateList = currentTrip.dateList.toMutableList()
-
-            val newSpotList = newDateList[dateId].spotList.toMutableList()
-
-            newSpotList[spotId] = newSpot
-
-            val newDate = newDateList[dateId].copy(spotList = newSpotList)
-
-            newDateList[dateId] = newDate
-
-            updateTripState(toTempTrip, currentTrip.copy(dateList = newDateList.toList()))
-        }
-    }
-
-
 }
 

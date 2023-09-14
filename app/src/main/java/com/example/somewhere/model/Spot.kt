@@ -17,6 +17,7 @@ import java.time.LocalTime
 @JsonClass(generateAdapter = true)
 data class Spot(
     var id: Int = 0,
+    var orderId: Int = 0,
 
     val spotType: SpotType = SpotType.TOUR,
     @DrawableRes
@@ -43,19 +44,20 @@ data class Spot(
 ): Cloneable {
     public override fun clone(): Spot {
         return Spot(
-            id, spotType, iconId, iconColor, iconBackgroundColor, date, location, zoomLevel,
+            id, orderId, spotType, iconId, iconColor, iconBackgroundColor, date, location, zoomLevel,
             titleText, imgPathList, startTime, endTime, budget, travelDistance, memo
         )
     }
 
     // get =========================================================================================
     @Composable
-    fun getExpandedText(trip: Trip): String {
+    fun getExpandedText(trip: Trip, isEditMode: Boolean): String {
         val categoryText = getSpotTypeText()
         val budgetText = getBudgetText(trip)
         val distanceText = getDistanceText()
 
-        return "$categoryText | $budgetText | $distanceText\nSee more"
+        return if (isEditMode) "$categoryText | $budgetText | $distanceText"
+                else "$categoryText | $budgetText | $distanceText\nSee more"
     }
 
     @Composable
@@ -168,10 +170,26 @@ data class Spot(
     ) {
         val newSpotList = showingTrip.dateList[dateId].spotList.toMutableList()
 
-        if (!newSpotType.isMove())
+        val reIndex = newSpotList[id].spotType.isMove() != newSpotType.isMove()
+
+        if (newSpotType.isNotMove())
             newSpotList[id] = newSpotList[id].copy(spotType = newSpotType)
         else
             newSpotList[id] = newSpotList[id].copy(spotType = newSpotType, location = null, zoomLevel = null)
+
+        //index orderId
+        if (reIndex) {
+            var newOrderId = if (id == 0) 0
+                            else newSpotList[id - 1].orderId
+
+            for (i in id until newSpotList.size) {
+                if(newSpotList[i].spotType.isNotMove())
+                    newOrderId++
+
+                newSpotList[i].orderId = newOrderId
+            }
+        }
+
 
         val newDateList = showingTrip.dateList.toMutableList()
         newDateList[dateId] = newDateList[dateId].copy(spotList = newSpotList.toList())
@@ -200,8 +218,12 @@ data class Spot(
 
         newTitleText: String?
     ) {
+        val titleText: String? =
+            if (newTitleText == "") null
+            else newTitleText
+
         val newSpotList = showingTrip.dateList[dateId].spotList.toMutableList()
-        newSpotList[id] = newSpotList[id].copy(titleText = newTitleText)
+        newSpotList[id] = newSpotList[id].copy(titleText = titleText)
         val newDateList = showingTrip.dateList.toMutableList()
         newDateList[dateId] = newDateList[dateId].copy(spotList = newSpotList.toList())
         updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
@@ -256,8 +278,12 @@ data class Spot(
 
         newMemoText: String?
     ) {
+        val memoText: String? =
+            if (newMemoText == "") null
+            else newMemoText
+
         val newSpotList = showingTrip.dateList[dateId].spotList.toMutableList()
-        newSpotList[id] = newSpotList[id].copy(memo = newMemoText)
+        newSpotList[id] = newSpotList[id].copy(memo = memoText)
         val newDateList = showingTrip.dateList.toMutableList()
         newDateList[dateId] = newDateList[dateId].copy(spotList = newSpotList.toList())
         updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))

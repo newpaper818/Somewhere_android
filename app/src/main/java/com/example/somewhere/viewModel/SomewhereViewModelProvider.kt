@@ -1,4 +1,4 @@
-package com.example.somewhere.ui.screens
+package com.example.somewhere.viewModel
 
 import android.app.Application
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
@@ -7,28 +7,32 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.somewhere.SomewhereApplication
-import com.example.somewhere.ui.screens.main.MainViewModel
-import com.example.somewhere.ui.screens.somewhere.SomewhereViewModel
-import com.example.somewhere.ui.screens.trip.TripViewModel
-import java.lang.IllegalStateException
 
 object SomewhereViewModelProvider {
     val Factory = viewModelFactory {
-        //Initializer for SomewhereViewModel
+        //Initializer for
+        //AppViewModel
+        initializer {
+            AppViewModel(
+                SomewhereApplication().container.tripsRepository
+            )
+        }
+
+        //SomewhereViewModel
         initializer {
             SomewhereViewModel(
                 SomewhereApplication().container.tripsRepository
             )
         }
 
-        //MainViewModel
+        //MainViewModel delete?
         initializer {
             MainViewModel(
                 SomewhereApplication().container.tripsRepository
             )
         }
 
-        //TripViewModel
+        //TripViewModel delete?
         initializer {
             TripViewModel(
                 this.createSavedStateHandle(),

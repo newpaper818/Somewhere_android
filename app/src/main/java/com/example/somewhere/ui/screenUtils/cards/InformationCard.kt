@@ -1,5 +1,7 @@
 package com.example.somewhere.ui.screenUtils.cards
 
+import android.util.Log
+import androidx.annotation.ColorInt
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -16,10 +18,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.example.somewhere.ui.screenUtils.DisplayIcon
 import com.example.somewhere.ui.screenUtils.MyIcon
+import com.example.somewhere.ui.screenUtils.MyIcons
 import com.example.somewhere.ui.screenUtils.MySpacerRow
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
@@ -65,6 +69,8 @@ fun InformationCard(
 
     modifier: Modifier = Modifier,
 
+    @ColorInt spotTypeColor: Int? = null,
+
     textStyle: TextStyle = getTextStyle(TextType.CARD__BODY)
 ){
     //information card
@@ -84,6 +90,7 @@ fun InformationCard(
                         icon = it.first,
                         text = it.second!!,
                         textStyle = textStyle,
+                        spotTypeColor = spotTypeColor,
                         onclick = it.third
                     )
                 }
@@ -100,25 +107,26 @@ private fun IconTextRow(
     text: String,
     textStyle: TextStyle,
 
+    @ColorInt spotTypeColor: Int? = null,
     onclick: () -> Unit = { }
-){
+) {
     val modifier =
-        if (isEditMode){
+        if (isEditMode) {
             Modifier
                 .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colors.surface)
                 .clickable {
                     onclick()
                 }
-        }
-        else Modifier
-            .background(MaterialTheme.colors.surface)
+        } else Modifier
             .clip(RoundedCornerShape(8.dp))
 
-
+    val cardColor = if (icon == MyIcons.category && spotTypeColor != null) Color(spotTypeColor)
+                    else                                                    Color.Transparent
 
     Card (
-        modifier = modifier
+        elevation = 0.dp,
+        modifier = modifier,
+        backgroundColor = cardColor
     ){
         Row(
             modifier

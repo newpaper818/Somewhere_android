@@ -4,57 +4,79 @@ import androidx.annotation.StringRes
 import com.example.somewhere.R
 
 import com.example.somewhere.typeUtils.SpotType.*
+import com.example.somewhere.ui.theme.MyColor
+import com.example.somewhere.ui.theme.blackInt
+import com.example.somewhere.ui.theme.whiteInt
 
 enum class SpotTypeGroup(
-    @StringRes val textId:Int,
+    @StringRes val textId: Int,
+    val color: MyColor,
     val memberList: List<SpotType>
 ) {
-    TOUR(R.string.tour, listOf(
-        SpotType.TOUR,
-        TOURIST_ATTRACTION, HISTORIC_SITE, ARCHITECTURAL_BUILDING, LANDMARK, RELIGIOUS_SITE, MONUMENT_STATUE,
-        ACTIVITY, LEISURE, SPORT, OUTDOOR, ADVENTURE,
-        ENTERTAINMENT, FESTIVAL, ART, MUSIC, MOVIE,
-        MUSEUM, EXHIBITION,
-        PARK, GARDEN, BEACH,
-        SHOPPING, STREET_MARKET, GIFT_SHOP
-    )),
+    TOUR(R.string.tour, MyColor(0xff493cfa.toInt(), whiteInt),
+        listOf(
+            SpotType.TOUR,
+            TOURIST_ATTRACTION, HISTORIC_SITE, ARCHITECTURAL_BUILDING, LANDMARK, RELIGIOUS_SITE, MONUMENT_STATUE,
+            ACTIVITY, LEISURE, SPORT, OUTDOOR, ADVENTURE,
+            ENTERTAINMENT, FESTIVAL, ART, MUSIC, MOVIE,
+            MUSEUM, EXHIBITION,
+            PARK, GARDEN, BEACH,
+            SHOPPING, STREET_MARKET, GIFT_SHOP
+        )
+    ),
 
-    MOVE(R.string.move, listOf(
-        SpotType.MOVE,
-        AIRPLANE, HELICOPTER, HOT_AIR_BALLOON,
-        TRAIN, SUBWAY, TRAM,
-        BUS, TAXI, CAR,
-        SHIP, YACHT,
-        BICYCLE, ELECTRIC_KICKBOARD,
-        WALK, RUNNING, HIKING
-    )),
+    MOVE(R.string.move, MyColor(0xff00ff60.toInt(), whiteInt),
+        listOf(
+            SpotType.MOVE,
+            AIRPLANE, HELICOPTER, HOT_AIR_BALLOON,
+            TRAIN, SUBWAY, TRAM,
+            BUS, TAXI, CAR,
+            SHIP, YACHT,
+            BICYCLE, ELECTRIC_KICKBOARD,
+            WALK, RUNNING, HIKING
+        )
+    ),
 
-    MOVE_POINT(R.string.move_point, listOf(
-        SpotType.MOVE_POINT,
-        TERMINAL, AIRPORT, BUS_TERMINAL, BUS_STOP, SUBWAY_STATION, TRAIN_STATION, PORT
-    )),
+    MOVE_POINT(R.string.move_point, MyColor(0xff00ff00.toInt(), whiteInt),
+        listOf(
+            SpotType.MOVE_POINT,
+            TERMINAL, AIRPORT, BUS_TERMINAL, BUS_STOP, SUBWAY_STATION, TRAIN_STATION, PORT
+        )
+    ),
 
-    FOOD(R.string.food, listOf(
-        SpotType.FOOD,
-        COFFEE_TEA, RESTAURANT, FAST_FOOD, DESSERT, SNACK, BAR_PUB
-    )),
+    FOOD(R.string.food, MyColor(0xffffb266.toInt(), whiteInt),
+        listOf(
+            SpotType.FOOD,
+            COFFEE_TEA, RESTAURANT, FAST_FOOD, DESSERT, SNACK, BAR_PUB
+        )
+    ),
 
-    LODGING(R.string.lodging, listOf(
-        SpotType.LODGING,
-        HOTEL, MOTEL, GUEST_HOUSE, RESORT, HOSTEL, AIR_BNB, PENSION, CAMPING
-    )),
+    LODGING(R.string.lodging, MyColor(0xffcc99ff.toInt(), whiteInt),
+        listOf(
+            SpotType.LODGING,
+            HOTEL, MOTEL, GUEST_HOUSE, RESORT, HOSTEL, AIR_BNB, PENSION, CAMPING
+        )
+    ),
 
-    ETC(R.string.etc, listOf(
-        SpotType.ETC
-    ))
+    ETC(R.string.etc, MyColor(0xff808080.toInt(), whiteInt),
+        listOf(
+            SpotType.ETC
+        )
+    )
 }
 
 enum class SpotType(
     @StringRes val textId:Int,
     val group: SpotTypeGroup
 ){
-    //MOVE
+    TOUR(R.string.tour, SpotTypeGroup.TOUR),
     MOVE(R.string.move, SpotTypeGroup.MOVE),
+    MOVE_POINT(R.string.move_point, SpotTypeGroup.MOVE_POINT),
+    FOOD(R.string.food, SpotTypeGroup.FOOD),
+    LODGING(R.string.lodging, SpotTypeGroup.LODGING),
+    ETC(R.string.etc, SpotTypeGroup.ETC),
+
+    //MOVE
     AIRPLANE(R.string.airplane, SpotTypeGroup.MOVE),
     HELICOPTER(R.string.helicopter, SpotTypeGroup.MOVE),
     HOT_AIR_BALLOON(R.string.hot_air_balloon, SpotTypeGroup.MOVE),
@@ -80,7 +102,6 @@ enum class SpotType(
 
 
     //MOVE POINT
-    MOVE_POINT(R.string.move_point, SpotTypeGroup.MOVE_POINT),
     TERMINAL(R.string.terminal, SpotTypeGroup.MOVE_POINT),
     AIRPORT(R.string.airport, SpotTypeGroup.MOVE_POINT),
     BUS_TERMINAL(R.string.bus_terminal, SpotTypeGroup.MOVE_POINT),
@@ -92,7 +113,6 @@ enum class SpotType(
 
 
     //TOUR
-    TOUR(R.string.tour, SpotTypeGroup.TOUR),
     TOURIST_ATTRACTION(R.string.tourist_attraction, SpotTypeGroup.TOUR),
     HISTORIC_SITE(R.string.historic_site, SpotTypeGroup.TOUR),
     ARCHITECTURAL_BUILDING(R.string.architectural_building, SpotTypeGroup.TOUR),
@@ -126,7 +146,6 @@ enum class SpotType(
 
 
     //FOOD
-    FOOD(R.string.food, SpotTypeGroup.FOOD),
     COFFEE_TEA(R.string.coffee_tea, SpotTypeGroup.FOOD),
     RESTAURANT(R.string.restaurant, SpotTypeGroup.FOOD),
     FAST_FOOD(R.string.fast_food, SpotTypeGroup.FOOD),
@@ -136,7 +155,6 @@ enum class SpotType(
 
 
     //LODGING
-    LODGING(R.string.lodging, SpotTypeGroup.LODGING),
     HOTEL(R.string.hotel, SpotTypeGroup.LODGING),
     MOTEL(R.string.motel, SpotTypeGroup.LODGING),
     GUEST_HOUSE(R.string.guest_house, SpotTypeGroup.LODGING),
@@ -144,13 +162,13 @@ enum class SpotType(
     HOSTEL(R.string.hostel, SpotTypeGroup.LODGING),
     AIR_BNB(R.string.air_bnb, SpotTypeGroup.LODGING),
     PENSION(R.string.pension, SpotTypeGroup.LODGING),
-    CAMPING(R.string.camping, SpotTypeGroup.LODGING),
+    CAMPING(R.string.camping, SpotTypeGroup.LODGING)
 
 
     //ETC
-    ETC(R.string.etc, SpotTypeGroup.ETC);
 
 
+    ;
 
     fun isMove():Boolean{
         return this.group == SpotTypeGroup.MOVE

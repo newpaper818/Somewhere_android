@@ -1,4 +1,4 @@
-package com.example.somewhere.ui.screens.date
+package com.example.somewhere.ui.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -62,11 +62,8 @@ import com.example.somewhere.ui.screenUtils.NewItemButton
 import com.example.somewhere.ui.screenUtils.SomewhereFloatingButton
 import com.example.somewhere.ui.screenUtils.StartEndDummySpaceWithRoundedCorner
 import com.example.somewhere.ui.screenUtils.cards.FilterCards
-import com.example.somewhere.ui.screenUtils.cards.TitleCard
-import com.example.somewhere.ui.screens.somewhere.SomewhereTopAppBar
-import com.example.somewhere.ui.theme.ColorType
+import com.example.somewhere.ui.screenUtils.cards.TitleWithColorCard
 import com.example.somewhere.ui.theme.TextType
-import com.example.somewhere.ui.theme.getColor
 import com.example.somewhere.ui.theme.getTextStyle
 import kotlinx.coroutines.launch
 
@@ -89,9 +86,6 @@ fun DateScreen(
     changeEditMode: (editMode: Boolean?) -> Unit,
 
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
-    updateDateTitle: (dateId: Int, dateTitleText: String) -> Unit,
-    updateSpotTitle: (dateId: Int, spotId: Int, spotTitleText: String) -> Unit,
-
     addNewSpot: (dateId: Int) -> Unit,
     deleteSpot: (dateId: Int, spotId: Int) -> Unit,
     saveTrip: () -> Unit,
@@ -228,6 +222,7 @@ fun DateScreen(
 
                 //progress bar
                 DateListProgressBar(
+                    initialIdx = dateId,
                     dateList = dateList,
                     currentDateIdx = datePagerState.currentPage,
                     onClickDate = { toDateId ->
@@ -254,13 +249,8 @@ fun DateScreen(
 
                         focusManager = focusManager,
 
-                        onDateTitleChange = { dateId, titleText ->
-                            updateDateTitle(dateId, titleText)
-                        },
                         updateTripState = updateTripState,
-                        updateSpotTitle = { spotId, spotTitleText ->
-                            updateSpotTitle(pageIndex, spotId, spotTitleText)
-                        },
+
                         addNewSpot = { dateId ->
                             addNewSpot(dateId)
                         },
@@ -305,9 +295,7 @@ fun DatePage(
 
     focusManager: FocusManager,
 
-    onDateTitleChange: (dateId: Int, titleText: String) -> Unit,
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
-    updateSpotTitle: (spotId: Int, spotTitleText: String) -> Unit,
     addNewSpot: (dateId: Int) -> Unit,
     deleteSpot: (dateId: Int, spotId: Int) -> Unit,
 
@@ -335,15 +323,18 @@ fun DatePage(
 
         //title card
         item {
-            TitleCard(
+            TitleWithColorCard(
                 isEditMode = isEditMode,
                 titleText = currentDate.titleText,
                 focusManager = focusManager,
                 onTitleChange = {titleText ->
-                    onDateTitleChange(dateId, titleText)
+                    currentDate.setTitleText(showingTrip, updateTripState, titleText)
                 },
                 modifier = modifier,
-                date = currentDate
+                date = currentDate,
+                onColorChange = {newDateColor ->
+                    currentDate.setColor(showingTrip, updateTripState, newDateColor)
+                }
             )
         }
 
@@ -369,15 +360,8 @@ fun DatePage(
                 isEditMode = isEditMode,
                 memoText = currentDate.memo,
                 modifier = modifier,
-                onMemoChanged = {memoText ->
-                    val newMemoText: String? =
-                        if (memoText == "") null
-                        else memoText
-
-                    val newDateList = showingTrip.dateList.toMutableList()
-                    newDateList[dateId] = newDateList[dateId].copy(memo = newMemoText)
-
-                    updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
+                onMemoChanged = { newMemoText ->
+                    currentDate.setMemoText(showingTrip, updateTripState, newMemoText)
                 }
             )
 
@@ -476,7 +460,7 @@ fun DatePage(
                             if (it.spotType.isMove())
                                 Color.Transparent
                             else
-                                getColor(ColorType.GRAPH__POINT)
+                                Color(it.spotType.group.color.color)
 
                         var isExpanded by rememberSaveable { mutableStateOf(false) }
 
@@ -486,12 +470,16 @@ fun DatePage(
                             isExpanded = isExpanded,
                             itemId = it.id,
 
+                            iconText = if (it.spotType.isNotMove()) it.orderId.toString()
+                                        else null,
+                            iconTextColor = it.spotType.group.color.onColor,
+
                             sideText = it.getStartTimeText() ?: "",
                             mainText = it.titleText,
-                            expandedText = it.getExpandedText(showingTrip),
+                            expandedText = it.getExpandedText(showingTrip, isEditMode),
 
                             onTitleTextChange = { spotId, spotTitleText ->
-                                updateSpotTitle(spotId, spotTitleText)
+                                spotList[spotId].setTitleText(showingTrip, dateId, updateTripState, spotTitleText)
                             },
 
                             isFirstItem = it.spotType.isNotMove()

@@ -42,39 +42,55 @@ import com.example.somewhere.ui.theme.ColorType
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getColor
 import com.example.somewhere.ui.theme.getTextStyle
+import com.example.somewhere.ui.theme.whiteInt
 import kotlinx.coroutines.launch
 
 private enum class Shape{
+    DEFAULT_POINT_NUM,
+    HIGHLIGHT_POINT_NUM,
     DEFAULT_POINT,
     HIGHLIGHT_POINT,
+
     DEFAULT_LINE,
     HIGHLIGHT_LINE
 }
 
 private fun getSize(shape: Shape): Dp {
     return when(shape){
-        Shape.DEFAULT_POINT ->      10.dp
-        Shape.HIGHLIGHT_POINT ->    16.dp
-        Shape.DEFAULT_LINE ->       6.dp
-        Shape.HIGHLIGHT_LINE ->     8.dp
+        Shape.DEFAULT_POINT_NUM     -> 22.dp
+        Shape.HIGHLIGHT_POINT_NUM   -> 25.dp
+        Shape.DEFAULT_POINT         -> 13.dp
+        Shape.HIGHLIGHT_POINT       -> 18.dp
+
+        Shape.DEFAULT_LINE          -> 6.dp
+        Shape.HIGHLIGHT_LINE        -> 8.dp
     }
 }
 
 @Composable
 fun DateListProgressBar(
+    initialIdx: Int,
     dateList: List<Date>,
     currentDateIdx: Int,
 
     onClickDate: (dateId: Int) -> Unit
 ){
-    val lazyRowState = rememberLazyListState()
+    val lazyRowState = rememberLazyListState(
+        initialFirstVisibleItemIndex = initialIdx
+    )
 
     val coroutineScope = rememberCoroutineScope()
 
+    var prevIdx by rememberSaveable{ mutableStateOf(initialIdx) }
 
-    coroutineScope.launch {
-        lazyRowState.animateScrollToItem(currentDateIdx)
+    if (prevIdx != currentDateIdx){
+        coroutineScope.launch {
+            lazyRowState.animateScrollToItem(currentDateIdx)
+        }
+        prevIdx = currentDateIdx
     }
+
+
 
     LazyRow(
         state = lazyRowState,
@@ -85,6 +101,7 @@ fun DateListProgressBar(
         items(dateList){
 
             OneProgressBar(
+                includeNum = false,
                 upperText = it.getDateText(includeYear = false),
                 titleText = it.titleText,
                 isHighlight = it == dateList[currentDateIdx],
@@ -95,7 +112,7 @@ fun DateListProgressBar(
                 onClickItem = {
                     onClickDate(it.id)
                 },
-                pointColor = it.iconColor
+                pointColor = it.color.color
             )
         }
 
@@ -106,6 +123,7 @@ fun DateListProgressBar(
 
 @Composable
 fun SpotListProgressBar(
+    initialIdx: Int,
     progressBarState: LazyListState,
     isEditMode: Boolean,
 
@@ -122,16 +140,22 @@ fun SpotListProgressBar(
 
     val coroutineScope = rememberCoroutineScope()
 
-    coroutineScope.launch {
-        val toIdx = if (
-                        currentSpotIdx >= 1 &&
-                        spotList[currentSpotIdx - 1].spotType.isMove()
-                        && spotList[currentSpotIdx].spotType.isNotMove()
-                    )
-                        currentSpotIdx -1
-                    else    currentSpotIdx
+    var prevIdx by rememberSaveable{ mutableStateOf(initialIdx) }
 
-        progressBarState.animateScrollToItem(toIdx)
+    if (prevIdx != currentSpotIdx) {
+
+        coroutineScope.launch {
+            val toIdx = if (
+                currentSpotIdx >= 1 &&
+                spotList[currentSpotIdx - 1].spotType.isMove()
+                && spotList[currentSpotIdx].spotType.isNotMove()
+            )
+                currentSpotIdx - 1
+            else currentSpotIdx
+
+            progressBarState.animateScrollToItem(toIdx)
+        }
+        prevIdx = currentSpotIdx
     }
 
     val moveIdx =
@@ -170,6 +194,10 @@ fun SpotListProgressBar(
             if (it.spotType.isNotMove()) {
 
                 OneProgressBar(
+                    includeNum = true,
+                    pointColor = it.spotType.group.color.color,
+                    iconText = it.orderId.toString(),
+                    iconTextColor = it.spotType.group.color.onColor,
                     upperText = it.getStartTimeText() ?: "",
                     titleText = it.titleText,
                     isHighlight = it == spot ||
@@ -241,7 +269,11 @@ fun OneProgressBar(
     isLast: Boolean,
     onClickItem: () -> Unit,
 
+    includeNum: Boolean = false,
     pointColor: Int? = null,
+    iconText: String? = null,
+    @ColorInt iconTextColor: Int? = whiteInt,
+
     upperHighlightTextStyle: TextStyle = getTextStyle(TextType.PROGRESS_BAR__UPPER_HIGHLIGHT),
     upperDefaultTextStyle: TextStyle = getTextStyle(TextType.PROGRESS_BAR__UPPER),
     lowerHighlightTextStyle: TextStyle = getTextStyle(TextType.PROGRESS_BAR__LOWER_HIGHLIGHT),
@@ -314,7 +346,13 @@ fun OneProgressBar(
             }
 
             //point line
-            Point(isHighlightPoint = isHighlight, color = pointColor)
+            Point(
+                isHighlightPoint = isHighlight,
+                color = pointColor,
+                text = iconText,
+                textColor = iconTextColor,
+                includeNum = includeNum
+            )
         }
 
         Text(
@@ -332,21 +370,44 @@ fun OneProgressBar(
 @Composable
 private fun Point(
     isHighlightPoint: Boolean,
-    @ColorInt color: Int? = null
+    @ColorInt color: Int? = null,
+    text: String? = null,
+    @ColorInt textColor: Int? = null,
+
+    includeNum: Boolean = false
 ){
-    val pointSize = if (isHighlightPoint)   getSize(Shape.HIGHLIGHT_POINT)
-                    else                    getSize(Shape.DEFAULT_POINT)
+    val pointSize =
+        if(includeNum){
+            if (isHighlightPoint)   getSize(Shape.HIGHLIGHT_POINT_NUM)
+            else                    getSize(Shape.DEFAULT_POINT_NUM)
+        }
+        else{
+            if (isHighlightPoint)   getSize(Shape.HIGHLIGHT_POINT)
+            else                    getSize(Shape.DEFAULT_POINT)
+        }
+
 
     val pointColor =    if(color != null)           Color(color)
                         else if (isHighlightPoint)  getColor(ColorType.PROGRESS_BAR__POINT_HIGHLIGHT)
                         else                        getColor(ColorType.PROGRESS_BAR__POINT_DEFAULT)
 
+    val iconTextStyle = if (isHighlightPoint)   getTextStyle(TextType.PROGRESS_BAR__TEXT_HIGHLIGHT).copy(color = Color(textColor ?: whiteInt))
+                        else                    getTextStyle(TextType.PROGRESS_BAR__TEXT).copy(color = Color(textColor ?: whiteInt))
+
     Box(
+        contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(pointSize)
             .clip(CircleShape)
             .background(pointColor)
-    )
+    ){
+        if (text != null){
+            Text(
+                text = text,
+                style = iconTextStyle
+            )
+        }
+    }
 }
 
 

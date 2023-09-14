@@ -15,35 +15,43 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.somewhere.R
 import com.example.somewhere.ui.screenUtils.DisplayIcon
 import com.example.somewhere.ui.screenUtils.MyIcons
+import com.example.somewhere.ui.screenUtils.MySpacerRow
+import com.example.somewhere.ui.screenUtils.UserLocationButton
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.maps.android.compose.CameraPositionState
 import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
 @Composable
 fun ZoomCard(
     zoomLevel: Float,
-    mapZoomTo: (zoomLevel: Float) -> Unit
+    mapZoomTo: (zoomLevel: Float) -> Unit,
+
+    fusedLocationClient: FusedLocationProviderClient,
+    cameraPositionState: CameraPositionState,
+    setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit
 ){
-    //set zoom level
-    Column(
+    Row(
+        verticalAlignment = Alignment.Bottom,
         modifier = Modifier
             .background(MaterialTheme.colors.background)
-            .padding(16.dp)
+            .padding(8.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically){
+        //set zoom level
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = "Zoom Level",
-                style = getTextStyle(TextType.CARD__BODY),
+                text = stringResource(id = R.string.zoom_level),
+                style = getTextStyle(TextType.CARD__TITLE),
                 modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 3.dp)
             )
-
-            Spacer(modifier = Modifier.weight(1f))
-
 
             Card(
                 modifier = Modifier
@@ -76,6 +84,16 @@ fun ZoomCard(
                     }
                 }
             }
+        }
+
+        MySpacerRow(width = 16.dp)
+
+        //user location button
+        Card(modifier = Modifier
+            .clip(RoundedCornerShape(30.dp))
+            .background(MaterialTheme.colors.surface)
+        ) {
+            UserLocationButton(fusedLocationClient, cameraPositionState, setUserLocationEnabled)
         }
     }
 }

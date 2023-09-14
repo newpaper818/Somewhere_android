@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.somewhere.R
 import com.example.somewhere.ui.theme.gray
+import com.example.somewhere.ui.theme.white
 
 data class MyIcon(
     val imageVector: ImageVector,
@@ -29,6 +30,7 @@ object MyIcons {
     val delete = MyIcon(Icons.Filled.Delete,  22.dp, gray, R.string.delete)
     val add = MyIcon(Icons.Filled.Add,        22.dp, null, R.string.new_)
     val deleteImage = MyIcon(Icons.Filled.Close,        16.dp, null, R.string.delete_image)
+    val dragHandle = MyIcon(Icons.Filled.DragHandle,    22.dp, gray, R.string.drag_handle)
 
     //app bar
     val menu = MyIcon(Icons.Filled.Menu,      22.dp, null, R.string.menu)
@@ -38,7 +40,7 @@ object MyIcons {
     val done = MyIcon(Icons.Filled.Done,  22.dp, null, R.string.save)
 
     //color dialog
-    val selectedColor = MyIcon(Icons.Filled.Done,  22.dp, null, R.string.dialog_selected_color)
+    val selectedColor = MyIcon(Icons.Filled.Done,  22.dp, white, R.string.dialog_selected_color)
 
 
     //date < >

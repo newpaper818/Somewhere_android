@@ -1,7 +1,7 @@
 package com.example.somewhere.model
 
-import androidx.annotation.ColorInt
 import com.example.somewhere.typeUtils.SpotTypeGroup
+import com.example.somewhere.ui.theme.MyColor
 import com.example.somewhere.utils.getNumToText
 import com.squareup.moshi.JsonClass
 import java.time.LocalDate
@@ -11,8 +11,7 @@ import java.time.LocalDate
 data class Date(
     var id: Int = 0,
 
-    @ColorInt
-    val iconColor: Int = 0xffff0000.toInt(),
+    val color: MyColor = MyColor(),
 
     val date: LocalDate,
 
@@ -24,7 +23,7 @@ data class Date(
 
     public override fun clone(): Date{
         return Date(
-            id, iconColor, date, titleText, spotList.map{ it.clone() }, memo
+            id, color, date, titleText, spotList.map{ it.clone() }, memo
         )
     }
 
@@ -88,7 +87,43 @@ data class Date(
     }
 
     // set =========================================================================================
+    fun setTitleText(
+        showingTrip: Trip,
+        updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
+        newTitleText: String?
+    ) {
+        val titleText: String? =
+            if (newTitleText == "") null
+            else newTitleText
 
+        val newDateList = showingTrip.dateList.toMutableList()
+        newDateList[id] = newDateList[id].copy(titleText = titleText)
+        updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
+    }
+
+    fun setMemoText(
+        showingTrip: Trip,
+        updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
+        newMemoText: String?
+    ) {
+        val memoText: String? =
+            if (newMemoText == "") null
+            else newMemoText
+
+        val newDateList = showingTrip.dateList.toMutableList()
+        newDateList[id] = newDateList[id].copy(memo = memoText)
+        updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
+    }
+
+    fun setColor(
+        showingTrip: Trip,
+        updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
+        newColor: MyColor
+    ) {
+        val newDateList = showingTrip.dateList.toMutableList()
+        newDateList[id] = newDateList[id].copy(color = newColor)
+        updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
+    }
 
     //sort =========================================================================================
     fun sortSpotListId(){

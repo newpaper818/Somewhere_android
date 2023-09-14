@@ -1,4 +1,4 @@
-package com.example.somewhere.ui.screens.main
+package com.example.somewhere.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,9 +12,10 @@ import kotlinx.coroutines.flow.stateIn
 import java.time.LocalDateTime
 
 data class MainUiState(
-    val tripList: List<Trip> = listOf()
+    var tripList: List<Trip> = listOf()
 )
 
+//FIXME DELETE this viewModel ?????????????????????????????????????????????????????????????????????????
 class MainViewModel(
     private val tripsRepository: TripRepository
 ) : ViewModel() {
@@ -49,6 +50,25 @@ class MainViewModel(
 
     suspend fun deleteTrip(trip: Trip){
         tripsRepository.deleteTrip(trip)
+    }
+
+    fun reorderTripList(currentIndex: Int, destinationIndex: Int){
+        val tripList = mainUiState.value.tripList.toMutableList()
+        val trip = tripList[currentIndex]
+        tripList.removeAt(currentIndex)
+        tripList.add(destinationIndex, trip)
+
+        tripList.forEach {
+            it.id = tripList.indexOf(it)
+        }
+
+        mainUiState.value.tripList = tripList.toList()
+    }
+
+    suspend fun updateTripId(){
+        mainUiState.value.tripList.forEach {
+            tripsRepository.updateTrip(it)
+        }
     }
 }
 

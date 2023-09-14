@@ -29,7 +29,7 @@ val primaryVariant = Color(0x204a4aff)      //selected card (80,80,255)
 val onPrimary = white
 
 val secondary = Color(0xFFfafafa)           //dialog card surface(250)
-val secondaryVariant = Color(0xFFfafafa)    //?
+val secondaryVariant = Color(0xFFd5d5d5)    //card on drag
 val onSecondary = black
 
 val error = errorColor
@@ -47,7 +47,7 @@ val primaryVariant_ = Color(0x307070ff)     //selected card (112,112,255)
 val onPrimary_ = white
 
 val secondary_ = Color(0xFF222222)          //dialog card surface(16)
-val secondaryVariant_ = Color(0xFF222222)   //?
+val secondaryVariant_ = Color(0xFF303030)   //card on drag
 val onSecondary_ = white
 
 val error_ = errorColor
@@ -83,6 +83,7 @@ enum class ColorType{
 
     CARD_SELECTED,
     CARD_ON_SELECTED,
+    CARD_ON_DRAG,
 
     ERROR
 }
@@ -118,48 +119,42 @@ fun getColor(colorType: ColorType): Color {
 
         CARD_SELECTED                   -> MaterialTheme.colors.primaryVariant
         CARD_ON_SELECTED                -> MaterialTheme.colors.primary
+        CARD_ON_DRAG                    -> MaterialTheme.colors.secondaryVariant
 
         ERROR                           -> MaterialTheme.colors.error
     }
 }
 
-val dateColorList = listOf(
-    0xFF493cfa.toInt(),
-    0xFF153015.toInt(),
-    0xFFff0103.toInt(),
-    0xFF4068f0.toInt(),
-    0xFF247923.toInt(),
-    0xFF031560.toInt(),
-    0xFF4dcfda.toInt(),
-    0xFFf53015.toInt(),
-    0xFF0f0103.toInt(),
-    0xFF40f8f0.toInt(),
-    0xFFf47923.toInt(),
-    0xFF031560.toInt(),
 
-    0xFF493cfa.toInt(),
-    0xFF153015.toInt(),
-    0xFFff0103.toInt(),
-    0xFF4068f0.toInt(),
-    0xFF247923.toInt(),
-    0xFF031560.toInt(),
-    0xFF4dcfda.toInt(),
-    0xFFf53015.toInt(),
-    0xFF0f0103.toInt(),
-    0xFF40f8f0.toInt(),
-    0xFFf47923.toInt(),
-    0xFF031560.toInt(),
+const val blackInt = 0xff000000.toInt()
+const val whiteInt = 0xffffffff.toInt()
 
-    0xFF493cfa.toInt(),
-    0xFF153015.toInt(),
-    0xFFff0103.toInt(),
-    0xFF4068f0.toInt(),
-    0xFF247923.toInt(),
-    0xFF031560.toInt(),
-    0xFF4dcfda.toInt(),
-    0xFFf53015.toInt(),
-    0xFF0f0103.toInt(),
-    0xFF40f8f0.toInt(),
-    0xFFf47923.toInt(),
-    0xFF031560.toInt(),
+data class MyColor(
+    @ColorInt val color: Int = 0xFF493cfa.toInt(),
+    @ColorInt val onColor: Int = whiteInt
+)
+
+val myColorLists = listOf(
+    MyColor(0xFF493cfa.toInt()),              MyColor(0xFF7168e8.toInt()),
+    MyColor(0xff5090d0.toInt()),
+
+    MyColor(0xFFff0000.toInt()),              MyColor(0xFFff6666.toInt()),
+    MyColor(0xFFff8000.toInt()),              MyColor(0xFFffb266.toInt(), blackInt),
+
+    MyColor(0xFFffff00.toInt(), blackInt),    MyColor(0xFFffff66.toInt(), blackInt),
+    MyColor(0xFF80ff00.toInt(), blackInt),    MyColor(0xFFb2ff66.toInt(), blackInt),
+
+    MyColor(0xFF00ff00.toInt(), blackInt),    MyColor(0xFF66ff66.toInt(), blackInt),
+    MyColor(0xFF00ff80.toInt(), blackInt),    MyColor(0xFF66ffb2.toInt(), blackInt),
+
+    MyColor(0xFF00ffff.toInt(), blackInt),    MyColor(0xFF66ffff.toInt(), blackInt),
+    MyColor(0xFF0080ff.toInt()),              MyColor(0xFF66b2ff.toInt()),
+
+    MyColor(0xFF0000ff.toInt()),              MyColor(0xFF6666ff.toInt()),
+    MyColor(0xFF7f00ff.toInt()),              MyColor(0xFFb266ff.toInt()),
+
+    MyColor(0xFFff00ff.toInt()),              MyColor(0xFFff66ff.toInt()),
+    MyColor(0xFFff007f.toInt()),              MyColor(0xFFff66b2.toInt()),
+
+    MyColor(0xFF808080.toInt()),              MyColor(0xFFc0c0c0.toInt(), blackInt),
 )

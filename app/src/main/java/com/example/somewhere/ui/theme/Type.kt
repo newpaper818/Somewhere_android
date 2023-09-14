@@ -85,12 +85,16 @@ enum class TextType{
     GRAPH_LIST_ITEM__MAIN_NULL,
     GRAPH_LIST_ITEM__SIDE,
     GRAPH_LIST_ITEM__EXPAND,
+    GRAPH_LIST_ITEM__ICON,
 
     PROGRESS_BAR__UPPER_HIGHLIGHT,
     PROGRESS_BAR__UPPER,
     PROGRESS_BAR__LOWER_HIGHLIGHT,
     PROGRESS_BAR__LOWER_HIGHLIGHT_NULL,
     PROGRESS_BAR__LOWER,
+    PROGRESS_BAR__TEXT_HIGHLIGHT,
+    PROGRESS_BAR__TEXT,
+
 
     BUTTON,     //for Cancel, Save button
     BUTTON_NULL,
@@ -124,12 +128,15 @@ fun getTextStyle(textType: TextType): TextStyle {
         GRAPH_LIST_ITEM__MAIN_NULL  -> MaterialTheme.typography.subtitle1
         GRAPH_LIST_ITEM__SIDE       -> MaterialTheme.typography.h5
         GRAPH_LIST_ITEM__EXPAND     -> MaterialTheme.typography.h6.copy(color = gray)
+        GRAPH_LIST_ITEM__ICON       -> MaterialTheme.typography.h6.copy(fontSize = 11.sp, fontWeight = FontWeight.Bold)
 
         PROGRESS_BAR__UPPER_HIGHLIGHT       -> MaterialTheme.typography.h4.copy(fontWeight = FontWeight.Bold)
         PROGRESS_BAR__UPPER                 -> MaterialTheme.typography.h5
         PROGRESS_BAR__LOWER_HIGHLIGHT       -> MaterialTheme.typography.h4.copy(fontWeight = FontWeight.Bold)
         PROGRESS_BAR__LOWER_HIGHLIGHT_NULL  -> MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
         PROGRESS_BAR__LOWER                 -> MaterialTheme.typography.h5
+        PROGRESS_BAR__TEXT_HIGHLIGHT        -> MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Bold)
+        PROGRESS_BAR__TEXT                  -> MaterialTheme.typography.h6.copy(fontSize = 12.sp, fontWeight = FontWeight.Bold)
 
         BUTTON                      -> MaterialTheme.typography.body2
         BUTTON_NULL                 -> MaterialTheme.typography.subtitle2
