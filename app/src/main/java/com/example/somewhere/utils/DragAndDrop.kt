@@ -114,26 +114,26 @@ fun <T> Modifier.dragAndDrop(
             }
 
 
-//            if (isDraggedAfterLongPress)
-//                detectDragGesturesAfterLongPress(
-//                    onDragStart = {
-//                        //haptic feedback?
-//
-//                        onDragStart()
-//                    },
-//                    onDrag = { change, _ -> onDrag(change) },
-//                    onDragEnd = { onDragEnd() }
-//                )
-//            else
-//                detectDragGestures(
-//                    onDragStart = {
-//                        //haptic feedback?
-//
-//                        onDragStart()
-//                    },
-//                    onDrag = { change, _ -> onDrag(change) },
-//                    onDragEnd = { onDragEnd() }
-//                )
+            if (isDraggedAfterLongPress)
+                detectDragGesturesAfterLongPress(
+                    onDragStart = {
+                        //haptic feedback?
+
+                        onDragStart()
+                    },
+                    onDrag = { change, _ -> onDrag(change) },
+                    onDragEnd = { onDragEnd() }
+                )
+            else
+                detectDragGestures(
+                    onDragStart = {
+                        //haptic feedback?
+
+                        onDragStart()
+                    },
+                    onDrag = { change, _ -> onDrag(change) },
+                    onDragEnd = { onDragEnd() }
+                )
         }
     }
 //        .offset {
