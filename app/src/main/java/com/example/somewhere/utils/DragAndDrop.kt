@@ -3,6 +3,7 @@ package com.example.somewhere.utils
 
 import android.util.Log
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.runtime.remember
@@ -13,6 +14,7 @@ import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.LocalHapticFeedback
+import com.example.somewhere.model.Trip
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.lang.IndexOutOfBoundsException
@@ -26,21 +28,22 @@ enum class SlideState {
     DOWN
 }
 
-fun <T> Modifier.dragAndDrop(
-    item: T,
-    items: MutableList<T>,
+fun  Modifier.dragAndDrop(
+//    item: T,
+    item: Trip,
+//    items: MutableList<T>,
+    items: MutableList<Trip>,
     itemHeight: Int,
-    updateSlideState: (item: T, slideState: SlideState) -> Unit,
+    updateSlideState: (item: Trip, slideState: SlideState) -> Unit,
     isDraggedAfterLongPress: Boolean,
-    setOffsetY: (offsetY: Float) -> Unit,
+    offsetY: Animatable<Float, AnimationVector1D>,
     onStartDrag: () -> Unit,
     onStopDrag: (currentIndex: Int, destinationIndex: Int) -> Unit,
 ): Modifier = composed {
+    Log.d("test2", "    on drag drop trip: ${item.titleText} | tripList: ${items.map { it.titleText } }}")
 
-    val offsetY = remember { Animatable(0f) }
 
     val haptic = LocalHapticFeedback.current
-    //val context = LocalContext.current
 
     pointerInput(Unit) {
         // Wrap in a coroutine scope to use suspend functions for touch events and animation.
@@ -59,19 +62,17 @@ fun <T> Modifier.dragAndDrop(
                 // Interrupt any ongoing animation of other items.
                 launch {
                     offsetY.stop()
-                    setOffsetY(offsetY.value)
                 }
                 onStartDrag()
             }
 
             //on drag
             val onDrag = {change: PointerInputChange ->
+                Log.d("test2", "    on drag trip: ${item.titleText} | tripList: ${items.map { it.titleText } }}")
                 val verticalDragOffset = offsetY.value + change.positionChange().y
 
                 launch {
                     offsetY.snapTo(verticalDragOffset)
-
-                    setOffsetY(offsetY.value)
 
                     val offsetSign = offsetY.value.sign.toInt()
                     previousNumberOfItems = numberOfItems
@@ -83,10 +84,11 @@ fun <T> Modifier.dragAndDrop(
                     )
 
                     if (previousNumberOfItems > numberOfItems) {
-                        updateSlideState(
-                            items[itemIdx + previousNumberOfItems * offsetSign],
-                            SlideState.NONE
-                        )
+                        var idx = itemIdx + previousNumberOfItems * offsetSign
+                        if (idx > items.size - 1)    idx = items.size - 1
+                        else if (idx < 0)           idx = 0
+
+                        updateSlideState(items[idx], SlideState.NONE)
                     } else if (numberOfItems != 0) {
                         try {
                             updateSlideState(
@@ -108,7 +110,6 @@ fun <T> Modifier.dragAndDrop(
             val onDragEnd = {
                 launch {
                     offsetY.animateTo(itemHeight * numberOfItems * offsetY.value.sign)
-                    setOffsetY(offsetY.value)
                     onStopDrag(itemIdx, itemIdx + listOffset)
                 }
             }

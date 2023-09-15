@@ -39,6 +39,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,8 +51,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.input.pointer.PointerInputChange
-import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -77,13 +76,10 @@ import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getColor
 import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.utils.SlideState
-import com.example.somewhere.utils.calculateNumberOfSlideItems
-import com.example.somewhere.utils.dragHandle
+import com.example.somewhere.utils.dragAndDrop
 import com.example.somewhere.viewModel.AppViewModel
 import kotlinx.coroutines.launch
-import java.lang.IndexOutOfBoundsException
 import kotlin.math.roundToInt
-import kotlin.math.sign
 
 object MainDestination : NavigationDestination {
     override val route = "main"
@@ -107,6 +103,7 @@ fun MainScreen(
     val appUiState by appViewModel.appUiState.collectAsState()
     val originalTripList = appUiState.tripList ?: listOf()
     val tempTripList = appUiState.tempTripList ?: listOf()
+
 
     val showingTripList =
         if (isEditMode) tempTripList
@@ -219,7 +216,7 @@ fun MainScreen(
 
                             TripListItem(
                                 trip = trip,
-                                tripList = showingTripList.toMutableList(),
+                                tripList = showingTripList,
                                 isEditMode = isEditMode,
                                 onTripClick = { trip ->
                                     navigateToTrip(false, trip)
@@ -330,7 +327,7 @@ fun MainScreen(
 @Composable
 private fun TripListItem(
     trip: Trip,
-    tripList: MutableList<Trip>,
+    tripList: List<Trip>,
     isEditMode: Boolean,
     onTripClick: (Trip) -> Unit,
     deleteTrip: (Trip) -> Unit,
@@ -367,12 +364,9 @@ private fun TripListItem(
         spacerHeightInt = spacerHeightDp.toPx().toInt()
     }
 
-
     Log.d("test2", "++++title = ${trip.titleText} | tripList: ${tripList.map { it.titleText }}")
 
     var isDragged by remember { mutableStateOf(false) }
-    val itemOffsetY = remember { Animatable(0f) }
-
 
     val zIndex = if (isDragged) 1.0f else 0.0f
 
@@ -384,119 +378,17 @@ private fun TripListItem(
         }
     )
 
-    var currentIndex by remember { mutableStateOf(0) }
-    var destinationIndex by remember { mutableStateOf(0) }
-
     //========================================================================
     //card y offset
-    val offsetY = remember { Animatable(0f) }
-
-    val itemHeight = cardHeightInt + spacerHeightInt
-    val itemIdx = tripList.indexOf(trip)
-    val offsetToSlide = itemHeight / 4
-    var numberOfItems = 0
-    var previousNumberOfItems: Int
-    var listOffset = 0
-
-    //on drag start
-    val onDragStart = {
-        // Interrupt any ongoing animation of other items.
-        coroutineScope.launch {
-            offsetY.stop()
-        }
-        isDragged = true
-    }
-
-    //on drag
-    val onDrag = { change: PointerInputChange ->
-        Log.d("test2", "  **on drag item:${trip.titleText} | tripList: ${tripList.map { it.titleText }}")
-        //card y offset
-        val verticalDragOffset = offsetY.value + change.positionChange().y
-
-        coroutineScope.launch {
-
-            offsetY.snapTo(verticalDragOffset)
-
-            //is offset +(to down) or -(to up)
-            val offsetSign = offsetY.value.sign.toInt()
-
-            previousNumberOfItems = numberOfItems
-            numberOfItems = calculateNumberOfSlideItems(
-                offsetY.value * offsetSign,
-                itemHeight,
-                offsetToSlide,
-                previousNumberOfItems
-            )
-
-
-            if (previousNumberOfItems > numberOfItems) {
-                var idx = itemIdx + previousNumberOfItems * offsetSign
-                if (idx > tripList.size - 1)    idx = tripList.size - 1
-                else if (idx < 0)           idx = 0
-
-                updateSlideState(tripList[idx], SlideState.NONE)
-            } else if (numberOfItems != 0) {
-                try {
-                    //val idx = itemIdx + numberOfItems * offsetSign
-//                    Log.d("test2", "=====================================")
-//                    Log.d("test2", "tripList: ${tripList.map { it.titleText }}")
-                    //Log.d("test2", "idx: $idx | itemIdx: $itemIdx | numberOfItems: $numberOfItems | offsetSign: $offsetSign")
-
-                    updateSlideState(
-                        tripList[itemIdx + numberOfItems * offsetSign],
-                        if (offsetSign == 1) SlideState.UP else SlideState.DOWN
-                    )
-                } catch (e: IndexOutOfBoundsException) {
-                    numberOfItems = previousNumberOfItems
-                    Log.i("DragToReorder", "Item is outside or at the edge")
-                }
-            }
-            listOffset = numberOfItems * offsetSign
-        }
-        // Consume the gesture event, not passed to external
-        change.consume()
-    }
-
-    //on drag end
-    val onDragEnd = {
-        coroutineScope.launch {
-
-
-            Log.d("test1", "===animate to")
-            offsetY.animateTo(itemHeight * numberOfItems * offsetY.value.sign)
-//            delay(2000)
-
-//            Log.d("test1", "===isPlaced = true") //x
-//            isPlaced = true
-//            delay(2000)
-
-
-            Log.d("test1", "===update idx") //show
-            currentIndex = itemIdx
-            destinationIndex = itemIdx + listOffset
-
-            if (currentIndex != destinationIndex){
-                updateItemPosition(currentIndex, destinationIndex)
-            }
-//            delay(6000)
-
-            Log.d("test1", "===isDragged = false") //x
-            isDragged = false
-        }
-    }
-
+    val itemOffsetY = remember { Animatable(0f) }
 
     val cardColor = if (isDragged)  getColor(ColorType.CARD_ON_DRAG)
                     else            getColor(ColorType.CARD)
 
     val dragModifier = if (isEditMode) Modifier
         .offset {
-//            IntOffset(0, verticalTranslation)
-
-            if (isDragged)
-                IntOffset(0, offsetY.value.roundToInt())
-            else
-                IntOffset(0, verticalTranslation)
+            if (isDragged) IntOffset(0, itemOffsetY.value.roundToInt())
+            else IntOffset(0, verticalTranslation)
         }
         .zIndex(zIndex)
     else Modifier
@@ -574,30 +466,23 @@ private fun TripListItem(
                 ) {
                     IconButton(
                         modifier = Modifier
-//                            .dragAndDrop(
-//                            trip, tripList.toMutableList(), cardHeightInt + spacerHeightInt, updateSlideState,
-//                            isDraggedAfterLongPress = false,
-//                            setOffsetY = { offsetY ->
-////                                coroutineScope.launch {
-////                                    itemOffsetY.animateTo(offsetY)
-////                                }
-//                            },
-//                            onStartDrag = {
-//                                isDragged = true
-//                            },
-//                            onStopDrag = { currentIndex_, destinationIndex_ ->
-//                                isDragged = false
-//                                isPlaced = true
-//                                currentIndex = currentIndex_
-//                                destinationIndex = destinationIndex_
-//                            }
-//                          )
-                            .dragHandle(
+                            .dragAndDrop(
+                                trip, tripList.toMutableList(), cardHeightInt + spacerHeightInt, updateSlideState,
                                 isDraggedAfterLongPress = false,
-                                onDragStart = { onDragStart() },
-                                onDrag = onDrag,
-                                onDragEnd = { onDragEnd() }
-                            )
+                                offsetY = itemOffsetY,
+                                onStartDrag = {
+                                    isDragged = true
+                                },
+                                onStopDrag = { currentIndex_, destinationIndex_ ->
+
+                                    if (currentIndex_ != destinationIndex_){
+                                        updateItemPosition(currentIndex_, destinationIndex_)
+                                    }
+
+                                    isDragged = false
+
+                                }
+                          )
                         ,
                         enabled = false,
                         onClick = {  }
