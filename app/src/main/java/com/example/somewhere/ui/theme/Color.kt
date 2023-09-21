@@ -42,7 +42,7 @@ val onBackground_ = white
 val surface_ = Color(0xFF181818)            //card (12)
 val onSurface_ = white
 
-val primary_ = Color(0xFF7070ff)            //selected card text
+val primary_ = Color(0xFF7070ff)            //selected card text  7070ff
 val primaryVariant_ = Color(0x307070ff)     //selected card (112,112,255)
 val onPrimary_ = white
 
@@ -126,6 +126,16 @@ fun getColor(colorType: ColorType): Color {
 }
 
 
+
+
+const val tourColor =       0xff493cfa.toInt()
+const val moveColor =       0xff53ed56.toInt()
+const val movePointColor =  0xff26b502.toInt()
+const val foodColor =       0xffe6a10e.toInt()
+const val lodgingColor =    0xff901aeb.toInt()
+const val etcColor =        0xff808080.toInt()
+
+
 const val blackInt = 0xff000000.toInt()
 const val whiteInt = 0xffffffff.toInt()
 
@@ -135,26 +145,40 @@ data class MyColor(
 )
 
 val myColorLists = listOf(
-    MyColor(0xFF493cfa.toInt()),              MyColor(0xFF7168e8.toInt()),
-    MyColor(0xff5090d0.toInt()),
+    //
+    MyColor(0xFF493cfa.toInt()),
+    MyColor(0xFF7168e8.toInt()),
+    MyColor(0xFF808080.toInt()),
+    MyColor(0xFFf5f0ea.toInt(), blackInt),
 
-    MyColor(0xFFff0000.toInt()),              MyColor(0xFFff6666.toInt()),
-    MyColor(0xFFff8000.toInt()),              MyColor(0xFFffb266.toInt(), blackInt),
+    //
+    MyColor(0xFFff0000.toInt()),
+    MyColor(0xFFd50bd9.toInt()),
+    MyColor(0xFF29a632.toInt()),
+    MyColor(0xFFf28b0c.toInt()),
 
-    MyColor(0xFFffff00.toInt(), blackInt),    MyColor(0xFFffff66.toInt(), blackInt),
-    MyColor(0xFF80ff00.toInt(), blackInt),    MyColor(0xFFb2ff66.toInt(), blackInt),
+    MyColor(0xFFd9a491.toInt()),
+    MyColor(0xFFc37edb.toInt()),
+    MyColor(0xFFb7a6f6.toInt()),
+    MyColor(0xFF88a3e2.toInt()),
 
-    MyColor(0xFF00ff00.toInt(), blackInt),    MyColor(0xFF66ff66.toInt(), blackInt),
-    MyColor(0xFF00ff80.toInt(), blackInt),    MyColor(0xFF66ffb2.toInt(), blackInt),
+    MyColor(0xFFaaecfc.toInt(), blackInt),
+    MyColor(0xFFe4d6a7.toInt(), blackInt),
+    MyColor(0xFF9b2915.toInt()),
+    MyColor(0xFFff6666.toInt()),
 
-    MyColor(0xFF00ffff.toInt(), blackInt),    MyColor(0xFF66ffff.toInt(), blackInt),
-    MyColor(0xFF0080ff.toInt()),              MyColor(0xFF66b2ff.toInt()),
+    MyColor(0xFFff8000.toInt()),
+    MyColor(0xFFffb266.toInt(), blackInt),
+    MyColor(0xFFffff00.toInt(), blackInt),
+    MyColor(0xFF80ff00.toInt(), blackInt),
 
-    MyColor(0xFF0000ff.toInt()),              MyColor(0xFF6666ff.toInt()),
-    MyColor(0xFF7f00ff.toInt()),              MyColor(0xFFb266ff.toInt()),
+    MyColor(0xFF00ffff.toInt(), blackInt),
+    MyColor(0xFF66b2ff.toInt()),
+    MyColor(0xFF7f00ff.toInt()),
+    MyColor(0xFFff66b2.toInt()),
 
-    MyColor(0xFFff00ff.toInt()),              MyColor(0xFFff66ff.toInt()),
-    MyColor(0xFFff007f.toInt()),              MyColor(0xFFff66b2.toInt()),
-
-    MyColor(0xFF808080.toInt()),              MyColor(0xFFc0c0c0.toInt(), blackInt),
+    MyColor(0xFF71734c.toInt()),
+    MyColor(0xFF40342a.toInt()),
+    MyColor(0xFF146152.toInt()),
+    MyColor(0xFFff5a33.toInt()),
 )

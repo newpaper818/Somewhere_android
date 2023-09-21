@@ -1,9 +1,11 @@
 package com.example.somewhere.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.somewhere.db.TripRepository
+import com.example.somewhere.db.UserPreferencesRepository
+import com.example.somewhere.enumUtils.DateFormat
+import com.example.somewhere.enumUtils.TimeFormat
 import com.example.somewhere.model.Trip
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -15,21 +17,31 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
+data class DateTimeFormat(
+    val dateFormat: DateFormat = DateFormat.YMD,
+    val useMonthName: Boolean = false,
+    val includeDayOfWeek: Boolean = false,
+    val timeFormat: TimeFormat = TimeFormat.T24H,
+)
+
 data class AppUiState(
+    val dateTimeFormat: DateTimeFormat = DateTimeFormat(),
+
     val tripList: List<Trip>? = null,
     val tempTripList: List<Trip>? = null
 )
 
 class AppViewModel(
-    private val tripsRepository: TripRepository
+    private val tripsRepository: TripRepository,
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
-
-    private val _isReady = MutableStateFlow(false)
-    val isReady = _isReady.asStateFlow()
 
     private val _appUiState = MutableStateFlow(AppUiState())
     val appUiState = _appUiState.asStateFlow()
 
+    //is load repository done
+    private val _isReady = MutableStateFlow(false)
+    val isReady = _isReady.asStateFlow()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -39,11 +51,91 @@ class AppViewModel(
         viewModelScope.launch {
             while (!_isReady.value) {
                 if (_appUiState.value.tripList != null) {
-                    updateTripListState(true, _appUiState.value.tripList)
+                    updateUiState(true, _appUiState.value.tripList)
                     _isReady.value = true
                 }
                 delay(100)
             }
+        }
+    }
+
+
+    //update UiState ===============================================================================
+    /**update appUiState [tripList] to tripList and tempTripList*/
+    private fun updateUiState(tripList: List<Trip>?){
+        _appUiState.update {
+            it.copy(tripList = tripList, tempTripList = tripList)
+        }
+    }
+
+    /**update appUiState [tripList] and [tempTripList] to tripList and tempTripList*/
+    private fun updateUiState(tripList: List<Trip>?, tempTripList: List<Trip>?){
+        _appUiState.update {
+            it.copy(tripList = tripList, tempTripList = tempTripList)
+        }
+    }
+
+    /**update appUiState [tripList] to tripList or tempTripList*/
+    private fun updateUiState(toTempTripList: Boolean, tripList: List<Trip>?){
+        _appUiState.update {
+            if (toTempTripList)     it.copy(tempTripList = tripList)
+            else                    it.copy(tripList = tripList)
+        }
+    }
+
+    //==============================================================================================
+
+    fun saveUserPreferences(
+        dateFormat: DateFormat? = null,
+        useMonthName: Boolean? = null,
+        includeDayOfWeek: Boolean? = null,
+        timeFormat: TimeFormat? = null
+    ){
+        if (dateFormat != null && dateFormat != appUiState.value.dateTimeFormat.dateFormat) {
+            _appUiState.update { it.copy(dateTimeFormat = it.dateTimeFormat.copy(dateFormat = dateFormat)) }
+            viewModelScope.launch {
+                userPreferencesRepository.saveDateFormatPreference(dateFormat)
+            }
+        }
+        else if (useMonthName != null && useMonthName != appUiState.value.dateTimeFormat.useMonthName) {
+            _appUiState.update { it.copy(dateTimeFormat = it.dateTimeFormat.copy(useMonthName = useMonthName)) }
+            viewModelScope.launch {
+                userPreferencesRepository.saveDateUseMonthNamePreference(useMonthName)
+            }
+        }
+        else if (includeDayOfWeek != null && includeDayOfWeek != appUiState.value.dateTimeFormat.includeDayOfWeek) {
+            _appUiState.update { it.copy(dateTimeFormat = it.dateTimeFormat.copy(includeDayOfWeek = includeDayOfWeek)) }
+            viewModelScope.launch {
+                userPreferencesRepository.saveDateIncludeDayOfWeekPreference(includeDayOfWeek)
+            }
+        }
+        else if (timeFormat != null && timeFormat != appUiState.value.dateTimeFormat.timeFormat) {
+            _appUiState.update { it.copy(dateTimeFormat = it.dateTimeFormat.copy(timeFormat = timeFormat)) }
+            viewModelScope.launch {
+                userPreferencesRepository.saveTimeFormatPreference(timeFormat)
+            }
+        }
+    }
+
+    suspend fun updateAppUiStateFromRepository(){
+        val newTripList = tripsRepository.getAllTripsStream().firstOrNull()
+
+        val newDateFormatInt = userPreferencesRepository.dateFormat.firstOrNull() ?: DateFormat.YMD.ordinal
+        val newDateFormat = enumValues<DateFormat>().firstOrNull(){ it.ordinal == newDateFormatInt } ?: DateFormat.YMD
+
+        val newUseMonthName = userPreferencesRepository.dateUseMonthName.firstOrNull() ?: false
+
+        val newIncludeDayOfWeek = userPreferencesRepository.dateIncludeDayOfWeek.firstOrNull() ?: false
+
+        val newTimeFormatInt = userPreferencesRepository.timeFormat.firstOrNull() ?: TimeFormat.T24H.ordinal
+        val newTimeFormat = enumValues<TimeFormat>().firstOrNull(){ it.ordinal == newTimeFormatInt } ?: TimeFormat.T24H
+
+        _appUiState.update {
+            it.copy(
+                dateTimeFormat = DateTimeFormat(newDateFormat, newUseMonthName, newIncludeDayOfWeek, newTimeFormat),
+                tripList = newTripList,
+                tempTripList = newTripList
+            )
         }
     }
 
@@ -61,6 +153,8 @@ class AppViewModel(
 
         //add trip to repository
         tripsRepository.insertTrip(Trip(orderId = lastOrderId, firstCreatedTime = nowTime, lastModifiedTime = nowTime))
+
+        //auto trip id update
         val newTrip = getTrip(nowTime)
 
         //update appUiState
@@ -68,44 +162,58 @@ class AppViewModel(
             //update appUiState
             val tripList = (_appUiState.value.tripList ?: listOf<Trip>()) .toMutableList()
             tripList.add(newTrip)
-            updateTripListState(false, tripList.toList())
 
             val tempTripList = (_appUiState.value.tempTripList ?: listOf<Trip>()) .toMutableList()
             tempTripList.add(newTrip)
-            updateTripListState(false, tempTripList.toList())
+
+            updateUiState(tripList, tempTripList)
         }
     }
 
-    suspend fun getTrip(firstCreatedTime: LocalDateTime): Trip?{
+    private suspend fun getTrip(firstCreatedTime: LocalDateTime): Trip?{
         return tripsRepository.getTripStream(firstCreatedTime)
             .first()
     }
 
-    fun deleteTempTrip(trip: Trip){
+
+
+
+
+
+
+    //on cancel click
+    fun unSaveTempTripList(){
+        updateUiState(true, _appUiState.value.tripList)
+    }
+
+    //on save click
+    suspend fun saveTempTripList(changeEditMode: () -> Unit){
+        //save tempTripList to repository
+        val tripList = _appUiState.value.tripList ?: listOf()
+        val tempTripList = _appUiState.value.tempTripList ?: listOf()
+
+        for (trip in tripList){
+            if (trip !in tempTripList){
+                tripsRepository.deleteTrip(trip)
+            }
+        }
+        for (tempTrip in tempTripList) {
+            tripsRepository.updateTrip(tempTrip)
+        }
+
+        updateUiState(false, _appUiState.value.tempTripList)
+
+        changeEditMode()
+    }
+
+    fun deleteTripFromTempTrip(trip: Trip){
         if (_appUiState.value.tempTripList != null) {
             val newTempTripList = _appUiState.value.tempTripList!!.toMutableList()
             newTempTripList.remove(trip)
 
-            updateTripListState(true, newTempTripList.toList())
+            updateUiState(true, newTempTripList.toList())
         }
     }
-
-
-
-
-    fun initTripListState(tripList: List<Trip>?){
-        _appUiState.update {
-            it.copy(tripList = tripList, tempTripList = tripList)
-        }
-    }
-
-    fun updateTripListState(toTempTripList: Boolean, tripList: List<Trip>?){
-        _appUiState.update {
-            if (toTempTripList)     it.copy(tripList = it.tripList, tempTripList = tripList)
-            else                    it.copy(tripList = tripList,    tempTripList = it.tempTripList)
-        }
-    }
-
 
 
 
@@ -121,42 +229,7 @@ class AppViewModel(
                 it.orderId = newTripList.indexOf(it)
             }
 
-            updateTripListState(true, newTripList.toList())
-        }
-    }
-
-    suspend fun updateTempToRepository(changeEditMode: () -> Unit){
-        //save tempTripList to repository
-        val tripList = _appUiState.value.tripList ?: listOf()
-        val tempTripList = _appUiState.value.tempTripList ?: listOf()
-
-        for (trip in tripList){
-            if (trip !in tempTripList){
-                tripsRepository.deleteTrip(trip)
-            }
-        }
-        for (tempTrip in tempTripList) {
-            tripsRepository.updateTrip(tempTrip)
-        }
-
-        updateTripListState(false, _appUiState.value.tempTripList)
-
-        changeEditMode()
-    }
-
-    suspend fun updateAppUiStateFromRepository(){
-        val newTripList = tripsRepository.getAllTripsStream().firstOrNull()
-        initTripListState(newTripList)
-    }
-
-    suspend fun updateTempTripId(updateSlideState: (tripId: Int) -> Unit){
-        if (_appUiState.value.tempTripList != null) {
-            _appUiState.value.tempTripList!!.forEach {
-                //???????
-
-                tripsRepository.updateTrip(it)
-                updateSlideState(it.id)
-            }
+            updateUiState(true, newTripList.toList())
         }
     }
 }

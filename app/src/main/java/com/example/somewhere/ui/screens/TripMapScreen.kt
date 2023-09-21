@@ -31,6 +31,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,11 +48,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.somewhere.R
 import com.example.somewhere.model.Date
 import com.example.somewhere.model.Spot
 import com.example.somewhere.model.Trip
-import com.example.somewhere.typeUtils.SpotTypeGroup
+import com.example.somewhere.enumUtils.SpotTypeGroup
 import com.example.somewhere.ui.navigation.NavigationDestination
 import com.example.somewhere.ui.screenUtils.DisplayIcon
 import com.example.somewhere.ui.screenUtils.MapForTrip
@@ -60,12 +64,15 @@ import com.example.somewhere.ui.screenUtils.UserLocationButton
 import com.example.somewhere.ui.screenUtils.MySpacerColumn
 import com.example.somewhere.ui.screenUtils.MySpacerRow
 import com.example.somewhere.ui.screenUtils.StartEndDummySpaceWithRoundedCorner
-import com.example.somewhere.ui.screenUtils.cards.SpotTypeCard
+import com.example.somewhere.ui.screenUtils.cards.SpotTypeGroupCard
 import com.example.somewhere.ui.theme.ColorType
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getColor
 import com.example.somewhere.ui.theme.getTextStyle
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.example.somewhere.viewModel.DateTimeFormat
+import com.example.somewhere.viewModel.DateWithBoolean
+import com.example.somewhere.viewModel.SpotTypeGroupWithBoolean
+import com.example.somewhere.viewModel.TripMapViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.CameraPositionState
@@ -81,15 +88,38 @@ object TripMapDestination : NavigationDestination {
 @Composable
 fun TripMapScreen(
     currentTrip: Trip,
+    dateTimeFormat: DateTimeFormat,
     navigateUp: () -> Unit,
     userLocationEnabled: Boolean,
     fusedLocationClient: FusedLocationProviderClient,
     setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
 
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+//    tripMapViewModel: TripMapViewModel = TripMapViewModel(currentTrip)
+//        viewModel(factory = SomewhereViewModelProvider.Factory)
 ){
-    val context = LocalContext.current
+    //trip map viewModel
+    val tripMapViewModel = viewModel<TripMapViewModel>(
+        factory = object: ViewModelProvider.Factory{
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return TripMapViewModel(currentTrip) as T
+            }
+        }
+    )
 
+
+    //ui state
+    val tripMapUiState by tripMapViewModel.tripMapUiState.collectAsState()
+
+    val dateWithShownMarkerList = tripMapUiState.dateWithShownMarkerList
+    val spotTypeGroupWithShownMarkerList = tripMapUiState.spotTypeGroupWithShownMarkerList
+    val currentDateIndex = tripMapUiState.currentDateIndex
+    val oneDateShown = tripMapUiState.oneDateShown
+    val focusOnToSpotEnabled = tripMapUiState.focusOnToSpotEnabled
+
+
+    //trip's first location
     val initialLocation = currentTrip.getFirstLocation()
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(initialLocation!!, 5f)
@@ -98,21 +128,11 @@ fun TripMapScreen(
     var isControlExpanded by rememberSaveable{ mutableStateOf(true) }
     var mapSize by remember{ mutableStateOf(IntSize(0,0)) }
 
-    //List<Pair<Date, Boolean>>
-    var dateListWithShownMarkerList by rememberSaveable{ mutableStateOf( getDateListWithShownMarkerList(currentTrip) ) }
-    //List<Pair<SpotTypeGroup, Boolean>>
-    var spotTypeGroupWithShownMarkerList by rememberSaveable{ mutableStateOf( getSpotTypeGroupWithShownMarkerList() ) }
 
-    var focusOnToSpotEnabled by rememberSaveable{ mutableStateOf(true) }
-
-    var currentDateIndex by rememberSaveable{ mutableStateOf(0) }
-    var oneDateShown by rememberSaveable{ mutableStateOf(false) }
-
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-
-    oneDateShown = checkOneDateShown(currentDateIndex, dateListWithShownMarkerList)
-
     val dateListState = rememberLazyListState()
+
 
     Column(
         modifier = Modifier
@@ -132,10 +152,10 @@ fun TripMapScreen(
                 context = context,
                 userLocationEnabled = userLocationEnabled,
                 cameraPositionState = cameraPositionState,
-                dateListWithShownMarkerList = dateListWithShownMarkerList,
+                dateListWithShownMarkerList = dateWithShownMarkerList,
                 spotTypeGroupWithShownMarkerList = spotTypeGroupWithShownMarkerList,
                 firstFocusOnToSpot = {
-                    focusOnToSpot(mapSize, coroutineScope, dateListWithShownMarkerList, spotTypeGroupWithShownMarkerList, cameraPositionState)
+                    focusOnToSpot(mapSize, coroutineScope, dateWithShownMarkerList, spotTypeGroupWithShownMarkerList, cameraPositionState)
                 }
             )
         }
@@ -160,81 +180,32 @@ fun TripMapScreen(
                     },
 
                     focusOnToTargetEnabled = focusOnToSpotEnabled,
-                    focusOnToSpotEnabledChanged = {
-                        focusOnToSpotEnabled = it
-                    },
 
                     isDateShown = oneDateShown,
+                    dateTimeFormat = dateTimeFormat,
 
                     currentDateIndex = currentDateIndex,
 
-                    onDateClicked = {
-                        val newList = dateListWithShownMarkerList.map {
-                            if (dateListWithShownMarkerList.indexOf(it) == currentDateIndex) Pair(
-                                it.first,
-                                true
-                            )
-                            else Pair(it.first, false)
-                        }
-
-                        dateListWithShownMarkerList = newList
-
-                        focusOnToSpot(mapSize, coroutineScope, dateListWithShownMarkerList, spotTypeGroupWithShownMarkerList, cameraPositionState)
-
-                        if (isControlExpanded)
-                            coroutineScope.launch {
-                                dateListState.animateScrollToItem(currentDateIndex)
-                            }
+                    onOneDateClicked = {
+                        val newDateShownList = tripMapViewModel.updateDateWithShownMarkerListToCurrentDate()
+                        focusOnToSpot(mapSize, coroutineScope, newDateShownList, spotTypeGroupWithShownMarkerList, cameraPositionState)
+                        animateToDate(coroutineScope, isControlExpanded, dateListState, currentDateIndex)
                     },
                     onPreviousDateClicked = {
-                        currentDateIndex = when (currentDateIndex) {
-                            0 -> dateListWithShownMarkerList.indexOf(dateListWithShownMarkerList.last())
-                            else -> currentDateIndex - 1
-                        }
-
-                        val newList = dateListWithShownMarkerList.map {
-                            if (dateListWithShownMarkerList.indexOf(it) == currentDateIndex) Pair(
-                                it.first,
-                                true
-                            )
-                            else Pair(it.first, false)
-                        }
-
-                        dateListWithShownMarkerList = newList
-
-                        focusOnToSpot(mapSize, coroutineScope, dateListWithShownMarkerList, spotTypeGroupWithShownMarkerList, cameraPositionState)
-
-                        if (isControlExpanded)
-                            coroutineScope.launch {
-                                dateListState.animateScrollToItem(currentDateIndex)
-                            }
+                        val newCurrentDateIndex = tripMapViewModel.currentDateIndexToPrevious()
+                        val newDateShownList = tripMapViewModel.updateDateWithShownMarkerListToCurrentDate()
+                        focusOnToSpot(mapSize, coroutineScope, newDateShownList, spotTypeGroupWithShownMarkerList, cameraPositionState)
+                        animateToDate(coroutineScope, isControlExpanded, dateListState, newCurrentDateIndex)
                     },
                     onNextDateClicked = {
-                        currentDateIndex = when (currentDateIndex) {
-                            dateListWithShownMarkerList.indexOf(dateListWithShownMarkerList.last()) -> 0
-                            else -> currentDateIndex + 1
-                        }
-
-                        val newList = dateListWithShownMarkerList.map {
-                            if (dateListWithShownMarkerList.indexOf(it) == currentDateIndex) Pair(
-                                it.first,
-                                true
-                            )
-                            else Pair(it.first, false)
-                        }
-
-                        dateListWithShownMarkerList = newList
-
-                        focusOnToSpot(mapSize, coroutineScope, dateListWithShownMarkerList, spotTypeGroupWithShownMarkerList, cameraPositionState)
-
-                        if (isControlExpanded)
-                            coroutineScope.launch {
-                                dateListState.animateScrollToItem(currentDateIndex)
-                            }
+                        val newCurrentDateIndex = tripMapViewModel.currentDateIndexToNext()
+                        val newDateShownList = tripMapViewModel.updateDateWithShownMarkerListToCurrentDate()
+                        focusOnToSpot(mapSize, coroutineScope, newDateShownList, spotTypeGroupWithShownMarkerList, cameraPositionState)
+                        animateToDate(coroutineScope, isControlExpanded, dateListState, newCurrentDateIndex)
                     },
 
                     cameraPositionState = cameraPositionState,
-                    dateListWithShownIconList = dateListWithShownMarkerList,
+                    dateListWithShownIconList = dateWithShownMarkerList,
                     spotTypeGroupWithShownIconList = spotTypeGroupWithShownMarkerList,
                     setUserLocationEnabled = setUserLocationEnabled,
                     fusedLocationClient = fusedLocationClient,
@@ -243,13 +214,8 @@ fun TripMapScreen(
 
                 SpotTypeList(
                     spotTypeGroupWithShownIconList = spotTypeGroupWithShownMarkerList,
-                    onSpotTypeItemClicked = { spotType ->
-                        val newList = spotTypeGroupWithShownMarkerList.map {
-                            if (it.first == spotType) Pair(it.first, !it.second)
-                            else it
-                        }
-
-                        spotTypeGroupWithShownMarkerList = newList
+                    onSpotTypeItemClicked = { spotTypeGroup ->
+                        tripMapViewModel.toggleSpotTypeGroupWithShownMarkerList(spotTypeGroup)
                     }
                 )
 
@@ -270,16 +236,11 @@ fun TripMapScreen(
                 )
                 {
                     DateList(
+                        dateTimeFormat = dateTimeFormat,
                         dateListState = dateListState,
-                        dateListWithShownIconList = dateListWithShownMarkerList,
+                        dateListWithShownIconList = dateWithShownMarkerList,
                         onDateItemClicked = { date ->
-
-                            val newList = dateListWithShownMarkerList.map {
-                                if (it.first == date) Pair(it.first, !it.second)
-                                else it
-                            }
-
-                            dateListWithShownMarkerList = newList
+                            tripMapViewModel.toggleOneDateShown(date)
                         }
                     )
                 }
@@ -288,48 +249,19 @@ fun TripMapScreen(
     }
 }
 
-private fun checkOneDateShown(
-    currentDateIndex: Int,
-    dateListWithShownIconList: List<Pair<Date, Boolean>>
-): Boolean{
-    for (datePair in dateListWithShownIconList){
-        if (dateListWithShownIconList.indexOf(datePair) == currentDateIndex && !datePair.second)
-            return false
-        else if (dateListWithShownIconList.indexOf(datePair) != currentDateIndex && datePair.second)
-            return false
-    }
-    return true
+private fun animateToDate(
+    coroutineScope: CoroutineScope,
+    isControlExpanded: Boolean,
+    dateListState: LazyListState,
+    currentDateIndex: Int
+){
+    if (isControlExpanded)
+        coroutineScope.launch {
+            dateListState.animateScrollToItem(currentDateIndex)
+        }
 }
 
-private fun getDateListWithShownMarkerList(
-    trip: Trip
-): List<Pair<Date, Boolean>>{
-    val list: MutableList<Pair<Date, Boolean>> = mutableListOf()
-
-    for (date in trip.dateList){
-        val pair = Pair(date, true)
-        list.add(pair)
-    }
-
-    return list
-}
-
-private fun getSpotTypeGroupWithShownMarkerList(
-
-): List<Pair<SpotTypeGroup, Boolean>>{
-    val list: MutableList<Pair<SpotTypeGroup, Boolean>> = mutableListOf()
-
-    val spotTypeGroupList = enumValues<SpotTypeGroup>()
-
-    for (spotTypeGroup in spotTypeGroupList){
-        if (spotTypeGroup != SpotTypeGroup.MOVE)    //not include MOVE
-            list.add(Pair(spotTypeGroup, true))
-    }
-
-    return list
-}
-
-@OptIn(ExperimentalMaterialApi::class, ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun ButtonsRow(
     isExpanded: Boolean,
@@ -337,18 +269,18 @@ private fun ButtonsRow(
     onExpandButtonClicked: () -> Unit,
 
     focusOnToTargetEnabled: Boolean,
-    focusOnToSpotEnabledChanged: (Boolean) -> Unit,
 
     isDateShown: Boolean,
+    dateTimeFormat: DateTimeFormat,
     currentDateIndex: Int,
-    onDateClicked: () -> Unit,
+    onOneDateClicked: () -> Unit,
     onPreviousDateClicked: () -> Unit,
     onNextDateClicked: () -> Unit,
 
     cameraPositionState: CameraPositionState,
 
-    dateListWithShownIconList:List<Pair<Date, Boolean>>,
-    spotTypeGroupWithShownIconList: List<Pair<SpotTypeGroup, Boolean>>,
+    dateListWithShownIconList:List<DateWithBoolean>,
+    spotTypeGroupWithShownIconList: List<SpotTypeGroupWithBoolean>,
 
     setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
     fusedLocationClient: FusedLocationProviderClient,
@@ -387,7 +319,6 @@ private fun ButtonsRow(
                 FocusOnToSpotButton(
                     mapSize = mapSize,
                     focusOnToTargetEnabled = focusOnToTargetEnabled,
-                    focusOnToSpotEnabledChanged = focusOnToSpotEnabledChanged,
                     cameraPositionState = cameraPositionState,
                     dateListWithShownIconList = dateListWithShownIconList,
                     spotTypeGroupWithShownIconList = spotTypeGroupWithShownIconList
@@ -417,7 +348,7 @@ private fun ButtonsRow(
                 else                getTextStyle(TextType.BUTTON_NULL)
 
                 Card(
-                    onClick = onDateClicked,
+                    onClick = onOneDateClicked,
                     backgroundColor = Color.Transparent,
                     elevation = 0.dp,
                     modifier = Modifier
@@ -427,7 +358,7 @@ private fun ButtonsRow(
                 ) {
                     Box(contentAlignment = Alignment.Center){
                         Text(
-                            text = dateListWithShownIconList[currentDateIndex].first.getDateText(false),
+                            text = dateListWithShownIconList[currentDateIndex].date.getDateText(dateTimeFormat.copy(includeDayOfWeek = false), false),
                             style = dateTextStyle
                         )
                     }
@@ -462,24 +393,19 @@ private fun ButtonsRow(
 private fun FocusOnToSpotButton(
     mapSize: IntSize,
     focusOnToTargetEnabled: Boolean,
-    focusOnToSpotEnabledChanged: (Boolean) -> Unit,
     cameraPositionState: CameraPositionState,
-    dateListWithShownIconList:List<Pair<Date, Boolean>>,
-    spotTypeGroupWithShownIconList: List<Pair<SpotTypeGroup, Boolean>>
+    dateListWithShownIconList:List<DateWithBoolean>,
+    spotTypeGroupWithShownIconList: List<SpotTypeGroupWithBoolean>
 ){
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val spotTypeShownList = mutableListOf<SpotTypeGroup>()
     val toastText = stringResource(id = R.string.toast_no_location_to_show)
 
-    for (spotType in spotTypeGroupWithShownIconList){
-        if (spotType.second)
-            spotTypeShownList.add(spotType.first)
+    for (spotTypeWithBoolean in spotTypeGroupWithShownIconList){
+        if (spotTypeWithBoolean.isShown)
+            spotTypeShownList.add(spotTypeWithBoolean.spotTypeGroup)
     }
-
-    focusOnToSpotEnabledChanged(
-        checkFocusOnToSpotEnabled(dateListWithShownIconList,spotTypeGroupWithShownIconList)
-    )
 
     if (focusOnToTargetEnabled){
         IconButton(
@@ -509,37 +435,19 @@ private fun FocusOnToSpotButton(
 
 }
 
-private fun checkFocusOnToSpotEnabled(
-    dateListWithShownIconList: List<Pair<Date, Boolean>>,
-    spotTypeWithShownIconList: List<Pair<SpotTypeGroup, Boolean>>,
-): Boolean {
-    for (datePair in dateListWithShownIconList){
-        if (datePair.second) {
-            for (spot in datePair.first.spotList) {
-                if (Pair(spot.spotType.group, true or false) in spotTypeWithShownIconList &&
-                    spot.location != null){
-
-                    return true
-                }
-            }
-        }
-    }
-    return false
-}
-
 private fun focusOnToSpot(
     mapSize: IntSize,
     coroutineScope: CoroutineScope,
-    dateListWithShownMarkerList: List<Pair<Date, Boolean>>,
-    spotTypeWithShownMarkerList: List<Pair<SpotTypeGroup, Boolean>>,
+    dateListWithShownMarkerList: List<DateWithBoolean>,
+    spotTypeWithShownMarkerList: List<SpotTypeGroupWithBoolean>,
     cameraPositionState: CameraPositionState,
 ){
     val spotList: MutableList<Spot> = mutableListOf()
 
-    for (date in dateListWithShownMarkerList) {
-        if (date.second) {
-            for (spot in date.first.spotList) {
-                if (Pair(spot.spotType.group, true or false) in spotTypeWithShownMarkerList &&
+    for (dateWithBoolean in dateListWithShownMarkerList) {
+        if (dateWithBoolean.isShown) {
+            for (spot in dateWithBoolean.date.spotList) {
+                if (SpotTypeGroupWithBoolean(spot.spotType.group, true or false) in spotTypeWithShownMarkerList &&
                     spot.location != null
                 ) {
                     spotList.add(spot)
@@ -557,7 +465,7 @@ private fun focusOnToSpot(
 
 @Composable
 private fun SpotTypeList(
-    spotTypeGroupWithShownIconList: List<Pair<SpotTypeGroup, Boolean>>,
+    spotTypeGroupWithShownIconList: List<SpotTypeGroupWithBoolean>,
     onSpotTypeItemClicked: (SpotTypeGroup) -> Unit,
     textStyle: TextStyle = getTextStyle(TextType.CARD__SPOT_TYPE),
     isShownColor: Color = getColor(ColorType.BUTTON),
@@ -571,15 +479,15 @@ private fun SpotTypeList(
         items(spotTypeGroupWithShownIconList){
 
             Row {
-                SpotTypeCard(
-                    spotTypeGroup = it.first,
-                    textStyle = textStyle,
-                    isShown = it.second,
-                    isShownColor = isShownColor,
+                SpotTypeGroupCard(
+                    spotTypeGroup = it.spotTypeGroup,
+                    defaultTextStyle = textStyle,
+                    isShown = it.isShown,
                     isNotShownColor = isNotShownColor,
                     onCardClicked = {spotTypeGroup ->
                         onSpotTypeItemClicked(spotTypeGroup)
-                    }
+                    },
+                    shownColor = isShownColor,
                 )
 
                 MySpacerRow(width = 12.dp)
@@ -590,8 +498,9 @@ private fun SpotTypeList(
 
 @Composable
 private fun DateList(
+    dateTimeFormat: DateTimeFormat,
     dateListState: LazyListState,
-    dateListWithShownIconList: List<Pair<Date, Boolean>>,
+    dateListWithShownIconList: List<DateWithBoolean>,
     onDateItemClicked: (Date) -> Unit,
 ){
     LazyColumn(
@@ -610,8 +519,9 @@ private fun DateList(
         }
         items(dateListWithShownIconList){
             DateItem(
-                date = it.first,
-                isShown = it.second,
+                date = it.date,
+                dateTimeFormat = dateTimeFormat,
+                isShown = it.isShown,
                 onItemClicked = { date ->
                     onDateItemClicked(date)
                 }
@@ -632,6 +542,7 @@ private fun DateList(
 @Composable
 private fun DateItem(
     date: Date,
+    dateTimeFormat: DateTimeFormat,
     isShown: Boolean,
     onItemClicked: (Date) -> Unit,
     dateSpotTextStyle: TextStyle = getTextStyle(TextType.GRAPH_LIST_ITEM__SIDE),
@@ -672,7 +583,7 @@ private fun DateItem(
                 contentAlignment = Alignment.Center
             ){
                 Text(
-                    text = date.getDateText(false),
+                    text = date.getDateText(dateTimeFormat.copy(includeDayOfWeek = false), false),
                     style = dateSpotTextStyle
                 )
             }
@@ -686,8 +597,8 @@ private fun DateItem(
             ) {
                 Text(
                     text = date.titleText ?: stringResource(id = R.string.no_title),
-                    style = if(isShown) titleTextStyle
-                            else        titleNullTextStyle
+                    style = if (isShown && date.titleText != null)  titleTextStyle
+                            else                                    titleNullTextStyle
                 )
             }
 

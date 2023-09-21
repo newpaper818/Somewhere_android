@@ -33,11 +33,12 @@ import androidx.core.content.ContextCompat
 import com.example.somewhere.R
 import com.example.somewhere.model.Date
 import com.example.somewhere.model.Spot
-import com.example.somewhere.typeUtils.SpotTypeGroup
 import com.example.somewhere.utils.USER_LOCATION_PERMISSION_LIST
 import com.example.somewhere.utils.checkAndRequestPermissionForUserLocation
 import com.example.somewhere.utils.checkPermissionUserLocation
 import com.example.somewhere.utils.checkPermissionsIsGranted
+import com.example.somewhere.viewModel.DateWithBoolean
+import com.example.somewhere.viewModel.SpotTypeGroupWithBoolean
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -74,8 +75,8 @@ fun MapForTrip(
     context: Context,
     userLocationEnabled: Boolean,
     cameraPositionState: CameraPositionState,
-    dateListWithShownMarkerList: List<Pair<Date, Boolean>>,
-    spotTypeGroupWithShownMarkerList: List<Pair<SpotTypeGroup, Boolean>>,
+    dateListWithShownMarkerList: List<DateWithBoolean>,
+    spotTypeGroupWithShownMarkerList: List<SpotTypeGroupWithBoolean>,
     firstFocusOnToSpot: () -> Unit
 ){
     val isDarkTheme = isSystemInDarkTheme()
@@ -105,21 +106,21 @@ fun MapForTrip(
             firstFocusOnToSpot()
         }
     ){
-        for (date in dateListWithShownMarkerList){
-            if (date.second){
-                for (spot in date.first.spotList){
+        for (dateWithBoolean in dateListWithShownMarkerList){
+            if (dateWithBoolean.isShown){
+                for (spot in dateWithBoolean.date.spotList){
 
                     if (spot.location != null &&
                         spot.spotType.isNotMove() &&
-                        Pair(spot.spotType.group, true) in spotTypeGroupWithShownMarkerList
+                        SpotTypeGroupWithBoolean(spot.spotType.group, true) in spotTypeGroupWithShownMarkerList
                     ) {
                         MapMarker(
                             location = spot.location,
                             title = spot.titleText ?: stringResource(id = R.string.no_title),
                             isBigMarker = false,
                             text = spot.orderId.toString(),
-                            iconColor = date.first.color.color,
-                            onIconColor = date.first.color.onColor
+                            iconColor = dateWithBoolean.date.color.color,
+                            onIconColor = dateWithBoolean.date.color.onColor
                         )
                     }
                 }
@@ -275,112 +276,112 @@ fun MapChooseLocation(
 }
 
 //map marker =======================================================================================
-@Composable
-private fun MapMarkerSpot(
-    context: Context,
-    spot: Spot
-){
-    //map marker at spot / if null don't show
-    if (spot.location != null) {
-        MapMarker(
-            context = context,
-            location = spot.location,
-            title = spot.titleText ?: stringResource(id = R.string.no_title),
-            iconId = R.drawable.icon_spot,
-            drawBackground = false
-        )
-    }
-}
+//@Composable
+//private fun MapMarkerSpot(
+//    context: Context,
+//    spot: Spot
+//){
+//    //map marker at spot / if null don't show
+//    if (spot.location != null) {
+//        MapMarker(
+//            context = context,
+//            location = spot.location,
+//            title = spot.titleText ?: stringResource(id = R.string.no_title),
+//            iconId = R.drawable.icon_spot,
+//            drawBackground = false
+//        )
+//    }
+//}
+//
+//
+//@Composable
+//private fun MapMarkersMove(
+//    context: Context,
+//    spotFrom: Spot?,
+//    spotTo: Spot?,
+//){
+//    //2 map marker for move / if null don't show
+//    if (spotFrom?.location != null)
+//        MapMarker(
+//            context = context,
+//            location = spotFrom.location,
+//            title = spotFrom.titleText ?: stringResource(id = R.string.to),
+//            iconId = R.drawable.icon_from,
+//            drawBackground = false
+//        )
+//
+//    if (spotTo?.location != null)
+//        MapMarker(
+//            context = context,
+//            location = spotTo.location,
+//            title = spotTo.titleText ?: stringResource(id = R.string.from),
+//            iconId = R.drawable.icon_to,
+//            drawBackground = false
+//        )
+//}
+//
+//@Composable
+//private fun MapMarkerAround(
+//    context: Context,
+//    spotList: List<Spot>,
+//    currentSpot: Spot,
+//
+//    spotFrom: Spot? = null,
+//    spotTo: Spot? = null
+//){
+//    //show map markers around spot
+//    for(spot in spotList){
+//        if (
+//            (
+//                //when move
+//                currentSpot.spotType.isMove() &&
+//                        spotFrom != spot && spotTo != spot
+//
+//                        //when not move
+//                        || currentSpot.spotType.isNotMove() &&
+//                        currentSpot != spot
+//                )
+//            && spot.location != null
+//        )
+//            MapMarker(
+//                context = context,
+//
+//                location = spot.location,
+//                title = spot.titleText ?: stringResource(id = R.string.no_title),
+//
+//                drawBackground = true,
+//
+//                iconId = spot.iconId ?: R.drawable.icon_circle,
+//                iconColor = spot.spotType.group.color.color,
+//                backgroundIconId = R.drawable.icon_background_circle,
+//                backgroundColor = null
+//            )
+//    }
+//}
 
-
-@Composable
-private fun MapMarkersMove(
-    context: Context,
-    spotFrom: Spot?,
-    spotTo: Spot?,
-){
-    //2 map marker for move / if null don't show
-    if (spotFrom?.location != null)
-        MapMarker(
-            context = context,
-            location = spotFrom.location,
-            title = spotFrom.titleText ?: stringResource(id = R.string.to),
-            iconId = R.drawable.icon_from,
-            drawBackground = false
-        )
-
-    if (spotTo?.location != null)
-        MapMarker(
-            context = context,
-            location = spotTo.location,
-            title = spotTo.titleText ?: stringResource(id = R.string.from),
-            iconId = R.drawable.icon_to,
-            drawBackground = false
-        )
-}
-
-@Composable
-private fun MapMarkerAround(
-    context: Context,
-    spotList: List<Spot>,
-    currentSpot: Spot,
-
-    spotFrom: Spot? = null,
-    spotTo: Spot? = null
-){
-    //show map markers around spot
-    for(spot in spotList){
-        if (
-            (
-                //when move
-                currentSpot.spotType.isMove() &&
-                        spotFrom != spot && spotTo != spot
-
-                        //when not move
-                        || currentSpot.spotType.isNotMove() &&
-                        currentSpot != spot
-                )
-            && spot.location != null
-        )
-            MapMarker(
-                context = context,
-
-                location = spot.location,
-                title = spot.titleText ?: stringResource(id = R.string.no_title),
-
-                drawBackground = true,
-
-                iconId = spot.iconId ?: R.drawable.icon_circle,
-                iconColor = spot.spotType.group.color.color,
-                backgroundIconId = R.drawable.icon_background_circle,
-                backgroundColor = null
-            )
-    }
-}
-
-@Composable
-private fun MapMarker(
-    context: Context,
-
-    location: LatLng,
-    title: String,
-
-    drawBackground: Boolean,
-
-    @DrawableRes iconId: Int,
-    @ColorInt iconColor: Int? = null,
-
-    @DrawableRes backgroundIconId: Int = R.drawable.icon_circle,
-    @ColorInt backgroundColor: Int? = null
-){
-    //draw marker on map
-    Marker(
-        state = MarkerState(position = location),
-        title = title,
-        icon = bitmapDescriptor(context, drawBackground, iconId, iconColor, backgroundIconId, backgroundColor),
-        anchor = Offset(0.5f,0.5f)
-    )
-}
+//@Composable
+//private fun MapMarker(
+//    context: Context,
+//
+//    location: LatLng,
+//    title: String,
+//
+//    drawBackground: Boolean,
+//
+//    @DrawableRes iconId: Int,
+//    @ColorInt iconColor: Int? = null,
+//
+//    @DrawableRes backgroundIconId: Int = R.drawable.icon_circle,
+//    @ColorInt backgroundColor: Int? = null
+//){
+//    //draw marker on map
+//    Marker(
+//        state = MarkerState(position = location),
+//        title = title,
+//        icon = bitmapDescriptor(context, drawBackground, iconId, iconColor, backgroundIconId, backgroundColor),
+//        anchor = Offset(0.5f,0.5f)
+//    )
+//}
 
 @Composable
 private fun MapMarker(
@@ -400,49 +401,49 @@ private fun MapMarker(
     )
 }
 
-private fun bitmapDescriptor(
-    context: Context,
-
-    drawBackground: Boolean,
-
-    @DrawableRes iconId: Int,
-    @ColorInt iconColor: Int? = null,
-
-    @DrawableRes backgroundIconId: Int = R.drawable.icon_circle,
-    @ColorInt backgroundColor: Int? = null
-
-): BitmapDescriptor? {
-
-    // retrieve the actual drawable
-    val drawable = ContextCompat.getDrawable(context, iconId) ?: return null
-    drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
-
-    if (iconColor != null)
-        drawable.setTint(iconColor)
-
-    val bm = Bitmap.createBitmap(
-        drawable.intrinsicWidth,
-        drawable.intrinsicHeight,
-        Bitmap.Config.ARGB_8888
-    )
-
-    // draw it onto the bitmap
-    val canvas = android.graphics.Canvas(bm)
-
-    if (drawBackground){
-        val backgroundDrawable = ContextCompat.getDrawable(context, backgroundIconId) ?: return null
-        backgroundDrawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
-
-        if (backgroundColor != null)
-            backgroundDrawable.setTint(backgroundColor)
-
-        backgroundDrawable.draw(canvas)
-    }
-
-    drawable.draw(canvas)
-
-    return BitmapDescriptorFactory.fromBitmap(bm)
-}
+//private fun bitmapDescriptor(
+//    context: Context,
+//
+//    drawBackground: Boolean,
+//
+//    @DrawableRes iconId: Int,
+//    @ColorInt iconColor: Int? = null,
+//
+//    @DrawableRes backgroundIconId: Int = R.drawable.icon_circle,
+//    @ColorInt backgroundColor: Int? = null
+//
+//): BitmapDescriptor? {
+//
+//    // retrieve the actual drawable
+//    val drawable = ContextCompat.getDrawable(context, iconId) ?: return null
+//    drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
+//
+//    if (iconColor != null)
+//        drawable.setTint(iconColor)
+//
+//    val bm = Bitmap.createBitmap(
+//        drawable.intrinsicWidth,
+//        drawable.intrinsicHeight,
+//        Bitmap.Config.ARGB_8888
+//    )
+//
+//    // draw it onto the bitmap
+//    val canvas = android.graphics.Canvas(bm)
+//
+//    if (drawBackground){
+//        val backgroundDrawable = ContextCompat.getDrawable(context, backgroundIconId) ?: return null
+//        backgroundDrawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
+//
+//        if (backgroundColor != null)
+//            backgroundDrawable.setTint(backgroundColor)
+//
+//        backgroundDrawable.draw(canvas)
+//    }
+//
+//    drawable.draw(canvas)
+//
+//    return BitmapDescriptorFactory.fromBitmap(bm)
+//}
 
 @Composable
 private fun bitmapDescriptor(
@@ -727,6 +728,7 @@ suspend fun focusOnToSpot(
 
             if (density != null && padding < defaultPadding / 2) padding = defaultPadding / 2
 
+            //if map screen is not small
             if (padding > 10) {
                 cameraPositionState.animate(
                     CameraUpdateFactory.newLatLngBounds(latLngBounds.build(), padding), 300

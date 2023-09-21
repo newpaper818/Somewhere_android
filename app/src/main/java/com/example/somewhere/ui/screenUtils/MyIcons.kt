@@ -1,5 +1,6 @@
 package com.example.somewhere.ui.screenUtils
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -8,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -42,7 +44,6 @@ object MyIcons {
     //color dialog
     val selectedColor = MyIcon(Icons.Filled.Done,  22.dp, white, R.string.dialog_selected_color)
 
-
     //date < >
     val leftArrow = MyIcon(Icons.Filled.KeyboardArrowLeft,   30.dp, null, R.string.previous_date)
     val rightArrow = MyIcon(Icons.Filled.KeyboardArrowRight, 30.dp, null, R.string.next_date)
@@ -64,7 +65,7 @@ object MyIcons {
 
     //information card
     val period = MyIcon(Icons.Filled.SyncAlt,       20.dp, gray, R.string.period)
-    val budget = MyIcon(Icons.Filled.AttachMoney,   22.dp, gray, R.string.budget)
+    val budget = MyIcon(Icons.Filled.Payments,      22.dp, gray, R.string.budget)
     val travelDistance = MyIcon(Icons.Filled.Route, 20.dp, gray, R.string.travel_distance)
     val category = MyIcon(Icons.Filled.Bookmarks,   20.dp, gray, R.string.category)
 
@@ -83,14 +84,13 @@ object MyIcons {
     val zoomIn = MyIcon(Icons.Filled.Add,                           18.dp, null, R.string.zoom_in)
     val zoomInMore = MyIcon(Icons.Filled.Add,                       26.dp, null, R.string.zoom_in_more)
 
-
-
     val editLocation = MyIcon(Icons.Filled.Edit,        22.dp, null, R.string.edit_location)
     val deleteLocation = MyIcon(Icons.Filled.Delete,    22.dp, null, R.string.delete_location)
     val cancelEditLocation = MyIcon(Icons.Filled.Close, 22.dp, null, R.string.cancel_edit_location)
     val saveLocation = MyIcon(Icons.Filled.Done,        22.dp, null, R.string.save_location)
 
-
+    //setting
+    val openInNew = MyIcon(Icons.Filled.OpenInNew,        22.dp, gray, R.string.open_in_new)
 
 }
 

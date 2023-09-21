@@ -47,7 +47,8 @@ import androidx.compose.ui.unit.dp
 import com.example.somewhere.R
 import com.example.somewhere.model.Date
 import com.example.somewhere.model.Trip
-import com.example.somewhere.typeUtils.SpotTypeGroup
+import com.example.somewhere.enumUtils.SpotTypeGroup
+import com.example.somewhere.enumUtils.TimeFormat
 import com.example.somewhere.ui.navigation.NavigationDestination
 import com.example.somewhere.ui.screenUtils.BottomSaveCancelBar
 import com.example.somewhere.ui.screenUtils.DateListProgressBar
@@ -65,6 +66,7 @@ import com.example.somewhere.ui.screenUtils.cards.FilterCards
 import com.example.somewhere.ui.screenUtils.cards.TitleWithColorCard
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
+import com.example.somewhere.viewModel.DateTimeFormat
 import kotlinx.coroutines.launch
 
 object DateDestination : NavigationDestination {
@@ -82,6 +84,8 @@ fun DateScreen(
     originalTrip: Trip,
     tempTrip: Trip,
     dateId: Int,
+
+    dateTimeFormat: DateTimeFormat,
 
     changeEditMode: (editMode: Boolean?) -> Unit,
 
@@ -141,7 +145,6 @@ fun DateScreen(
         //top app bar
         topBar = {
             SomewhereTopAppBar(
-                isEditMode = isEditMode,
                 title = DateDestination.title,
 
                 //back button
@@ -225,6 +228,7 @@ fun DateScreen(
                     initialIdx = dateId,
                     dateList = dateList,
                     currentDateIdx = datePagerState.currentPage,
+                    dateTimeFormat = dateTimeFormat,
                     onClickDate = { toDateId ->
                         coroutineScope.launch {
                             datePagerState.animateScrollToPage(toDateId)
@@ -246,6 +250,7 @@ fun DateScreen(
                         showingTrip = showingTrip,
                         dateId = pageIndex,
                         currentDate = dateList[pageIndex],
+                        timeFormat = dateTimeFormat.timeFormat,
 
                         focusManager = focusManager,
 
@@ -292,6 +297,7 @@ fun DatePage(
     showingTrip: Trip,
     dateId: Int,
     currentDate: Date,
+    timeFormat: TimeFormat,
 
     focusManager: FocusManager,
 
@@ -474,7 +480,7 @@ fun DatePage(
                                         else null,
                             iconTextColor = it.spotType.group.color.onColor,
 
-                            sideText = it.getStartTimeText() ?: "",
+                            sideText = it.getStartTimeText(timeFormat) ?: "",
                             mainText = it.titleText,
                             expandedText = it.getExpandedText(showingTrip, isEditMode),
 

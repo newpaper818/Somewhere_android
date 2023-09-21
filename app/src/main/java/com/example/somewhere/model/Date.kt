@@ -1,8 +1,9 @@
 package com.example.somewhere.model
 
-import com.example.somewhere.typeUtils.SpotTypeGroup
+import com.example.somewhere.enumUtils.SpotTypeGroup
 import com.example.somewhere.ui.theme.MyColor
 import com.example.somewhere.utils.getNumToText
+import com.example.somewhere.viewModel.DateTimeFormat
 import com.squareup.moshi.JsonClass
 import java.time.LocalDate
 
@@ -48,7 +49,7 @@ data class Date(
     fun getTotalBudgetText(trip: Trip): String{
         val budget = getNumToText(getTotalBudget(), trip.unitOfCurrencyType.numberOfDecimalPlaces)
 
-        return "${trip.unitOfCurrencyType.symbol}${budget}"
+        return "${trip.unitOfCurrencyType.symbol} $budget"
     }
 
     fun getTotalBudget(): Float{
@@ -82,8 +83,8 @@ data class Date(
         return count
     }
 
-    fun getDateText(includeYear: Boolean = true): String{
-        return com.example.somewhere.utils.getDateText(date, includeYear)
+    fun getDateText(dateTimeFormat: DateTimeFormat, includeYear: Boolean = true): String{
+        return com.example.somewhere.utils.getDateText(date, dateTimeFormat, includeYear = includeYear)
     }
 
     // set =========================================================================================

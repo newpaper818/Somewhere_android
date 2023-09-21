@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.IconButton
@@ -27,7 +29,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.somewhere.enumUtils.TimeFormat
 import com.example.somewhere.model.Date
 import com.example.somewhere.model.Spot
 import com.example.somewhere.ui.screenUtils.DisplayIcon
@@ -37,6 +41,7 @@ import com.example.somewhere.ui.screenUtils.SetTimeDialog
 import com.example.somewhere.ui.screenUtils.MySpacerRow
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
+import com.example.somewhere.viewModel.DateTimeFormat
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import java.time.LocalTime
 
@@ -46,6 +51,8 @@ fun DateTimeCard(
     date: Date,
     spot: Spot,
     isEditMode: Boolean,
+
+    dateTimeFormat: DateTimeFormat,
 
     changeDate: (dateId: Int) -> Unit,
     setStartTime: (startTime: LocalTime?) -> Unit,
@@ -69,6 +76,7 @@ fun DateTimeCard(
                     dateList = dateList,
                     currentDate = date,
                     currentSpot = spot,
+                    dateTimeFormat = dateTimeFormat,
                     isEditMode = isEditMode,
                     changeDate = changeDate
                 )
@@ -78,7 +86,8 @@ fun DateTimeCard(
                 spot = spot,
                 isEditMode = isEditMode,
                 setStartTime = setStartTime,
-                setEndTime = setEndTime
+                setEndTime = setEndTime,
+                timeFormat = dateTimeFormat.timeFormat
             )
         }
     }
@@ -89,6 +98,7 @@ private fun OneDateRow(
     dateList: List<Date>,
     currentDate: Date,
     currentSpot: Spot,
+    dateTimeFormat: DateTimeFormat,
     isEditMode: Boolean,
     changeDate: (dateId: Int) -> Unit,
 
@@ -98,14 +108,15 @@ private fun OneDateRow(
 
     val dateText =
         if (dateTitle == null)
-            currentSpot.getDateText(includeYear = true)
+            currentSpot.getDateText(dateTimeFormat, includeYear = true)
         else
-            currentSpot.getDateText(includeYear = true)+ " - " + dateTitle
+            currentSpot.getDateText(dateTimeFormat, includeYear = true)+ " - " + dateTitle
 
     var showSelDateDialog by rememberSaveable { mutableStateOf(false) }
 
     if (showSelDateDialog){
         SelectDateDialog(
+            dateTimeFormat = dateTimeFormat,
             currentDate = currentDate,
             dateList = dateList,
             onDateClick = {dateId ->
@@ -162,6 +173,7 @@ private fun TwoTimesRow(
     isEditMode: Boolean,
     setStartTime: (startTime: LocalTime?) -> Unit,
     setEndTime: (startTime: LocalTime?) -> Unit,
+    timeFormat: TimeFormat
 ){
     Row(
         verticalAlignment = Alignment.CenterVertically
@@ -184,14 +196,15 @@ private fun TwoTimesRow(
             isEditMode = isEditMode,
             setTime = { startTime ->
                 setStartTime(startTime)
-            }
+            },
+            timeFormat = timeFormat
         )
 
-        MySpacerRow(width = 8.dp)
+        MySpacerRow(width = 4.dp)
 
         DisplayIcon(icon = MyIcons.rightArrowTo)
 
-        MySpacerRow(width = 8.dp)
+        MySpacerRow(width = 4.dp)
 
         OneTimeRow(
             spot = spot,
@@ -199,7 +212,8 @@ private fun TwoTimesRow(
             isEditMode = isEditMode,
             setTime = { endTime ->
                 setEndTime(endTime)
-            }
+            },
+            timeFormat = timeFormat
         )
     }
 }
@@ -211,12 +225,13 @@ private fun OneTimeRow(
     isStart: Boolean,
     isEditMode: Boolean,
     setTime: (time: LocalTime?) -> Unit,
+    timeFormat: TimeFormat,
 
     defaultTextStyle: TextStyle = getTextStyle(TextType.CARD__BODY),
     nullTextStyle: TextStyle = getTextStyle(TextType.CARD__BODY_NULL)
 ){
-    val timeText = if (isStart) spot.getStartTimeText()
-                   else         spot.getEndTimeText()
+    val timeText = if (isStart) spot.getStartTimeText(timeFormat)
+                   else         spot.getEndTimeText(timeFormat)
 
     val timeTextStyle = if (timeText == null) nullTextStyle
                         else                  defaultTextStyle
@@ -257,7 +272,7 @@ private fun OneTimeRow(
             //time text
             Text(
                 text = timeText1,
-                style = timeTextStyle
+                style = timeTextStyle,
             )
 
             //delete icon
@@ -266,8 +281,8 @@ private fun OneTimeRow(
                 enter = expandHorizontally(tween(400)),
                 exit = shrinkHorizontally(tween(400))
             ) {
-                Row() {
-                    MySpacerRow(width = 16.dp)
+                Row {
+                    MySpacerRow(width = 8.dp)
 
                     IconButton(
                         onClick = { setTime(null) },

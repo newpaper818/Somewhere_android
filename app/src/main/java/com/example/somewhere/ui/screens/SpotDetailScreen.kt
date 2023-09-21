@@ -75,6 +75,7 @@ import com.example.somewhere.ui.screenUtils.initialZoomLevel
 import com.example.somewhere.ui.screenUtils.seoulLocation
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
+import com.example.somewhere.viewModel.DateTimeFormat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -99,6 +100,8 @@ fun SpotDetailScreen(
     tempTrip: Trip,
     dateId: Int,
     spotId: Int,    //fixed value do not use / use [currentSpotId]
+
+    dateTimeFormat: DateTimeFormat,
 
     changeEditMode: (editMode: Boolean?) -> Unit,
 
@@ -238,16 +241,15 @@ fun SpotDetailScreen(
             null
         else {
             if (dateTitle == null)
-                dateList[dateId].getDateText(includeYear = true)
+                dateList[dateId].getDateText(dateTimeFormat, includeYear = true)
             else
-                dateList[dateId].getDateText(includeYear = true) + " - " + dateTitle
+                dateList[dateId].getDateText(dateTimeFormat, includeYear = true) + " - " + dateTitle
         }
 
     Scaffold(
         //top bar
         topBar = {
             SomewhereTopAppBar(
-                isEditMode = isEditMode,
                 title = DateDestination.title,
                 subTitle = subTitle,
 
@@ -307,6 +309,7 @@ fun SpotDetailScreen(
                     progressBarState = progressBarState,
                     isEditMode = isEditMode,
 
+                    timeFormat = dateTimeFormat.timeFormat,
                     dateList = dateList,
                     dateId = dateId,
                     spotList = spotList,
@@ -430,6 +433,7 @@ fun SpotDetailScreen(
                                     spotId = pageIndex,
                                     currentSpot = dateList[dateId].spotList[pageIndex],
 
+                                    dateTimeFormat = dateTimeFormat,
                                     focusManager = focusManager,
 
                                     updateTripState = updateTripState,
@@ -524,6 +528,8 @@ fun SpotDetailPage(
     currentDate: Date,
     spotId: Int,
     currentSpot: Spot,
+
+    dateTimeFormat: DateTimeFormat,
 
     focusManager: FocusManager,
 
@@ -620,6 +626,7 @@ fun SpotDetailPage(
                 date = currentDate,
                 spot = currentSpot,
                 isEditMode = isEditMode,
+                dateTimeFormat = dateTimeFormat,
                 changeDate = { newDateId ->
                     if (dateId != newDateId) {
                         navigateUp()
@@ -708,7 +715,6 @@ fun SpotDetailPage(
 
             InformationCard(
                 isEditMode = isEditMode,
-                spotTypeColor = currentSpot.spotType.group.color.color,
                 list = listOf(
                     Triple(MyIcons.category, currentSpot.getSpotTypeText()) {
                         showSpotTypeDialog = true

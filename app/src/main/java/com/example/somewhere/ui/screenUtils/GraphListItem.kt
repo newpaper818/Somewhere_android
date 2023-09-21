@@ -147,7 +147,7 @@ fun GraphListItem(
                         .width(80.dp)
                         .fillMaxHeight(),
                     horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = sideText,

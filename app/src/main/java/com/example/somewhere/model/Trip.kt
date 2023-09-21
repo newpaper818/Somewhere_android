@@ -2,9 +2,10 @@ package com.example.somewhere.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.somewhere.typeUtils.CurrencyType
+import com.example.somewhere.enumUtils.CurrencyType
 import com.example.somewhere.utils.getDateText
 import com.example.somewhere.utils.getNumToText
+import com.example.somewhere.viewModel.DateTimeFormat
 import com.google.android.gms.maps.model.LatLng
 import java.time.LocalDateTime
 import java.time.Period
@@ -36,23 +37,23 @@ data class Trip(
 
     // get =========================================================================================
 
-    fun getStartDateText(includeYear: Boolean): String?{
+    fun getStartDateText(dateTimeFormat: DateTimeFormat, includeYear: Boolean): String?{
         return if (dateList.isNotEmpty())
-            getDateText(dateList.first().date, includeYear)
+            getDateText(dateList.first().date, dateTimeFormat, includeYear = includeYear)
         else
             null
     }
 
-    fun getEndDateText(includeYear: Boolean): String?{
+    fun getEndDateText(dateTimeFormat: DateTimeFormat, includeYear: Boolean): String?{
         return if (dateList.isNotEmpty())
-            getDateText(dateList.last().date, includeYear)
+            getDateText(dateList.last().date, dateTimeFormat, includeYear = includeYear)
         else
             null
     }
 
-    fun getStartEndDateText(includeYear: Boolean): String?{
-        val startDateText = getStartDateText(includeYear)
-        val endDateText = getEndDateText(includeYear)
+    fun getStartEndDateText(dateTimeFormat: DateTimeFormat, includeYear: Boolean): String?{
+        val startDateText = getStartDateText(dateTimeFormat, includeYear)
+        val endDateText = getEndDateText(dateTimeFormat, includeYear)
 
         return if (startDateText == null || endDateText == null)
             null
@@ -100,7 +101,7 @@ data class Trip(
     fun getTotalBudgetText(): String{
         val budget = getNumToText(getTotalBudget(), unitOfCurrencyType.numberOfDecimalPlaces)
 
-        return "${unitOfCurrencyType.symbol}${budget}"
+        return "${unitOfCurrencyType.symbol} ${budget}"
     }
 
     private fun getTotalBudget(): Float{
@@ -170,7 +171,12 @@ data class Trip(
         updateTripState(true, this.copy(imagePathList = newImgList))
     }
 
-
+    fun setCurrencyType(
+        updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
+        newCurrencyType: CurrencyType
+    ) {
+        updateTripState(true, this.copy(unitOfCurrencyType = newCurrencyType))
+    }
 
     // =============================================================================================
     fun moveSpotToDate(

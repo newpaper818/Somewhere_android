@@ -14,7 +14,8 @@ object SomewhereViewModelProvider {
         //AppViewModel
         initializer {
             AppViewModel(
-                SomewhereApplication().container.tripsRepository
+                SomewhereApplication().container.tripsRepository,
+                SomewhereApplication().userPreferencesRepository
             )
         }
 
@@ -24,6 +25,13 @@ object SomewhereViewModelProvider {
                 SomewhereApplication().container.tripsRepository
             )
         }
+
+        //TripMapViewModel
+//        initializer {
+//            TripMapViewModel(
+//
+//            )
+//        }
 
         //MainViewModel delete?
         initializer {

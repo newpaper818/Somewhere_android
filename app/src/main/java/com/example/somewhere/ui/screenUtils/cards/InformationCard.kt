@@ -1,18 +1,17 @@
 package com.example.somewhere.ui.screenUtils.cards
 
 import android.util.Log
-import androidx.annotation.ColorInt
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,7 +22,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.example.somewhere.ui.screenUtils.DisplayIcon
 import com.example.somewhere.ui.screenUtils.MyIcon
-import com.example.somewhere.ui.screenUtils.MyIcons
 import com.example.somewhere.ui.screenUtils.MySpacerRow
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
@@ -65,11 +63,9 @@ fun InformationCard(
 fun InformationCard(
     isEditMode: Boolean,
     //                icon    text     onclick
-    list: List<Triple<MyIcon, String?, () -> Unit>>,
+    list: List<Triple<MyIcon, String?, (() -> Unit)?>>,
 
     modifier: Modifier = Modifier,
-
-    @ColorInt spotTypeColor: Int? = null,
 
     textStyle: TextStyle = getTextStyle(TextType.CARD__BODY)
 ){
@@ -90,8 +86,7 @@ fun InformationCard(
                         icon = it.first,
                         text = it.second!!,
                         textStyle = textStyle,
-                        spotTypeColor = spotTypeColor,
-                        onclick = it.third
+                        onClick = it.third
                     )
                 }
             }
@@ -99,6 +94,7 @@ fun InformationCard(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun IconTextRow(
     isEditMode: Boolean,
@@ -107,29 +103,22 @@ private fun IconTextRow(
     text: String,
     textStyle: TextStyle,
 
-    @ColorInt spotTypeColor: Int? = null,
-    onclick: () -> Unit = { }
+    onClick: (() -> Unit)? = null
 ) {
-    val modifier =
-        if (isEditMode) {
-            Modifier
-                .clip(RoundedCornerShape(8.dp))
-                .clickable {
-                    onclick()
-                }
-        } else Modifier
-            .clip(RoundedCornerShape(8.dp))
-
-    val cardColor = if (icon == MyIcons.category && spotTypeColor != null) Color(spotTypeColor)
-                    else                                                    Color.Transparent
-
     Card (
         elevation = 0.dp,
-        modifier = modifier,
-        backgroundColor = cardColor
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .height(48.dp),
+        backgroundColor = Color.Transparent,
+        enabled = isEditMode && onClick != null,
+        onClick = {
+            onClick?.let { it() }
+        },
+
     ){
         Row(
-            modifier
+            modifier = Modifier
                 .padding(8.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically

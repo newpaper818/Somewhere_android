@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.somewhere.R
+import com.example.somewhere.enumUtils.TimeFormat
 import com.example.somewhere.model.Date
 import com.example.somewhere.model.Spot
 import com.example.somewhere.ui.theme.ColorType
@@ -43,6 +44,7 @@ import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getColor
 import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.ui.theme.whiteInt
+import com.example.somewhere.viewModel.DateTimeFormat
 import kotlinx.coroutines.launch
 
 private enum class Shape{
@@ -72,6 +74,7 @@ fun DateListProgressBar(
     initialIdx: Int,
     dateList: List<Date>,
     currentDateIdx: Int,
+    dateTimeFormat: DateTimeFormat,
 
     onClickDate: (dateId: Int) -> Unit
 ){
@@ -102,7 +105,7 @@ fun DateListProgressBar(
 
             OneProgressBar(
                 includeNum = false,
-                upperText = it.getDateText(includeYear = false),
+                upperText = it.getDateText(dateTimeFormat, includeYear = false),
                 titleText = it.titleText,
                 isHighlight = it == dateList[currentDateIdx],
                 isLeftHighlight = false,
@@ -127,6 +130,7 @@ fun SpotListProgressBar(
     progressBarState: LazyListState,
     isEditMode: Boolean,
 
+    timeFormat: TimeFormat,
     dateList: List<Date>,
     dateId: Int,
     spotList: List<Spot>,
@@ -198,7 +202,7 @@ fun SpotListProgressBar(
                     pointColor = it.spotType.group.color.color,
                     iconText = it.orderId.toString(),
                     iconTextColor = it.spotType.group.color.onColor,
-                    upperText = it.getStartTimeText() ?: "",
+                    upperText = it.getStartTimeText(timeFormat) ?: "",
                     titleText = it.titleText,
                     isHighlight = it == spot ||
                             moveIdx != null && (it.id == moveIdx || it.id == moveIdx + 2),

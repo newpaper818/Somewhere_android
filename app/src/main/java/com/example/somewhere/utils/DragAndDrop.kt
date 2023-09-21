@@ -6,7 +6,6 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -32,15 +31,15 @@ fun  Modifier.dragAndDrop(
 //    item: T,
     item: Trip,
 //    items: MutableList<T>,
-    items: MutableList<Trip>,
+    items: List<Trip>,
     itemHeight: Int,
-    updateSlideState: (item: Trip, slideState: SlideState) -> Unit,
+    updateSlideState: (showingTripList: List<Trip>, itemIdx: Int, slideState: SlideState) -> Unit,
     isDraggedAfterLongPress: Boolean,
     offsetY: Animatable<Float, AnimationVector1D>,
     onStartDrag: () -> Unit,
     onStopDrag: (currentIndex: Int, destinationIndex: Int) -> Unit,
 ): Modifier = composed {
-    Log.d("test2", "    on drag drop trip: ${item.titleText} | tripList: ${items.map { it.titleText } }}")
+    Log.d("test3", "        on drag drop trip: ${item.titleText} | tripList: ${items.map { it.titleText } }}")
 
 
     val haptic = LocalHapticFeedback.current
@@ -88,11 +87,12 @@ fun  Modifier.dragAndDrop(
                         if (idx > items.size - 1)    idx = items.size - 1
                         else if (idx < 0)           idx = 0
 
-                        updateSlideState(items[idx], SlideState.NONE)
+                        updateSlideState(items, idx, SlideState.NONE)
                     } else if (numberOfItems != 0) {
                         try {
                             updateSlideState(
-                                items[itemIdx + numberOfItems * offsetSign],
+                                items,
+                                itemIdx + numberOfItems * offsetSign,
                                 if (offsetSign == 1) SlideState.UP else SlideState.DOWN
                             )
                         } catch (e: IndexOutOfBoundsException) {

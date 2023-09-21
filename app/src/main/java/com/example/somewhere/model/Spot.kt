@@ -5,8 +5,11 @@ import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import com.example.somewhere.typeUtils.SpotType
+import com.example.somewhere.enumUtils.SpotType
+import com.example.somewhere.enumUtils.TimeFormat
 import com.example.somewhere.utils.getNumToText
+import com.example.somewhere.utils.getTimeText
+import com.example.somewhere.viewModel.DateTimeFormat
 import com.google.android.gms.maps.model.LatLng
 import com.squareup.moshi.JsonClass
 import java.text.DecimalFormat
@@ -66,7 +69,7 @@ data class Spot(
     }
 
     fun getBudgetText(trip: Trip): String {
-        return "${trip.unitOfCurrencyType.symbol}${
+        return "${trip.unitOfCurrencyType.symbol} ${
             getNumToText(
                 budget,
                 trip.unitOfCurrencyType.numberOfDecimalPlaces
@@ -78,35 +81,22 @@ data class Spot(
         return "${getNumToText(travelDistance, 2)}km"
     }
 
-    fun getDateText(includeYear: Boolean): String {
-        return com.example.somewhere.utils.getDateText(date, includeYear)
+    fun getDateText(dateTimeFormat: DateTimeFormat, includeYear: Boolean): String {
+        return com.example.somewhere.utils.getDateText(date, dateTimeFormat ,includeYear = includeYear)
     }
 
-    fun getStartTimeText(): String? {
+    fun getStartTimeText(timeFormat: TimeFormat): String? {
         return if (startTime != null) {
-            val df1 = DecimalFormat("00")
-
-            val startHour = startTime.hour
-            val startMinute = startTime.minute
-
-            val timeText = "${startHour}:${df1.format(startMinute)}"
-
-            timeText
+            getTimeText(startTime, timeFormat)
         } else {
             null
         }
     }
 
-    fun getEndTimeText(): String? {
+    fun getEndTimeText(timeFormat: TimeFormat): String? {
         return if (endTime != null) {
-            val df1 = DecimalFormat("00")
+            getTimeText(endTime, timeFormat)
 
-            val startHour = endTime.hour
-            val startMinute = endTime.minute
-
-            val timeText = "${startHour}:${df1.format(startMinute)}"
-
-            timeText
         } else {
             null
         }

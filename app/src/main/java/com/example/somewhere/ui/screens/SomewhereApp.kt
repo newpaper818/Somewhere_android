@@ -30,9 +30,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.somewhere.typeUtils.AppContentType
+import com.example.somewhere.enumUtils.AppContentType
 import com.example.somewhere.ui.screenUtils.DisplayIcon
 import com.example.somewhere.ui.screenUtils.MyIcon
+import com.example.somewhere.ui.settingScreens.AboutDestination
+import com.example.somewhere.ui.settingScreens.AboutScreen
+import com.example.somewhere.ui.settingScreens.MainSettingDestination
+import com.example.somewhere.ui.settingScreens.MainSettingScreen
+import com.example.somewhere.ui.settingScreens.SetDateFormatDestination
+import com.example.somewhere.ui.settingScreens.SetDateTimeFormatScreen
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.utils.USER_LOCATION_PERMISSION_LIST
@@ -115,20 +121,18 @@ fun SomewhereApp(
 
     var useImePadding by rememberSaveable { mutableStateOf(true) }
 
-    val boxModifier = if(useImePadding) Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colors.background)
-        .imePadding()
-                        else Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colors.background)
+
+    val boxModifier = if(useImePadding) Modifier.imePadding()
+                      else              Modifier
 
     Box(
         modifier = boxModifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background)
     ) {
         AnimatedNavHost(
             navController = navController,
-            startDestination = MainDestination.route,
+            startDestination = MainDestination.route
         ) {
 
             // MAIN ================================================================================
@@ -146,6 +150,7 @@ fun SomewhereApp(
                     isEditMode = somewhereUiState.isEditMode,
 //                    originalTripList = appUiState.tripList ?: listOf(),
 //                    tempTripList = appUiState.tempTripList ?: listOf(),
+                    dateTimeFormat = appUiState.dateTimeFormat,
                     changeEditMode = {
                         somewhereViewModel.toggleEditMode(it)
                     },
@@ -156,6 +161,7 @@ fun SomewhereApp(
                         somewhereViewModel.toggleIsNewTrip(isNewTrip)
                         navController.navigate(TripDestination.route)
                     },
+                    navigateTo = { navController.navigate(it.route) },
                     appViewModel = appViewModel
                 )
             }
@@ -174,6 +180,7 @@ fun SomewhereApp(
                 if (somewhereUiState.trip != null) {
                     TripMapScreen(
                         currentTrip = somewhereUiState.trip!!,
+                        dateTimeFormat = appUiState.dateTimeFormat,
                         navigateUp = { navigateUp() },
                         userLocationEnabled = userLocationEnabled,
                         setUserLocationEnabled = {
@@ -205,6 +212,8 @@ fun SomewhereApp(
                         originalTrip = somewhereUiState.trip!!,
                         tempTrip = somewhereUiState.tempTrip!!,
                         isNewTrip = somewhereUiState.isNewTrip,
+
+                        dateTimeFormat = appUiState.dateTimeFormat,
 
                         changeEditMode = {
                             somewhereViewModel.toggleEditMode(it)
@@ -270,6 +279,7 @@ fun SomewhereApp(
                         tempTrip = somewhereUiState.tempTrip!!,
                         dateId = somewhereUiState.dateId ?: 0,
 
+                        dateTimeFormat = appUiState.dateTimeFormat,
                         changeEditMode = {
                             somewhereViewModel.toggleEditMode(it)
                         },
@@ -329,6 +339,7 @@ fun SomewhereApp(
                         tempTrip = somewhereUiState.tempTrip!!,
                         dateId = somewhereUiState.dateId ?: 0,
                         spotId = somewhereUiState.spotId ?: 0,
+                        dateTimeFormat = appUiState.dateTimeFormat,
                         changeEditMode = {
                             somewhereViewModel.toggleEditMode(it)
                         },
@@ -360,20 +371,71 @@ fun SomewhereApp(
                         }
                     )
                 }
+            }
 
-                // SPOT IMAGE ==========================================================================
-                composable(
-                    route = SpotImageDestination.route,
-                    enterTransition = { enterTransition },
-                    exitTransition = { exitTransition },
-                    popEnterTransition = { popEnterTransition },
-                    popExitTransition = { popExitTransition }
-                ) {
-                    //update current screen
-                    somewhereViewModel.updateCurrentScreen(SpotImageDestination)
+            // SPOT IMAGE ==========================================================================
+            composable(
+                route = SpotImageDestination.route,
+                enterTransition = { enterTransition },
+                exitTransition = { exitTransition },
+                popEnterTransition = { popEnterTransition },
+                popExitTransition = { popExitTransition }
+            ) {
+                //update current screen
+                somewhereViewModel.updateCurrentScreen(SpotImageDestination)
 
 
-                }
+            }
+
+
+            // MAIN SETTING ========================================================================
+            composable(
+                route = MainSettingDestination.route,
+                enterTransition = { enterTransition },
+                exitTransition = { exitTransition },
+                popEnterTransition = { popEnterTransition },
+                popExitTransition = { popExitTransition }
+            ){
+                somewhereViewModel.updateCurrentScreen(MainSettingDestination)
+
+                MainSettingScreen(
+                    navigateTo = { navController.navigate(it.route) },
+                    navigateUp = { navigateUp() }
+                )
+            }
+
+
+
+            // SET DATE FORMAT =====================================================================
+            composable(
+                route = SetDateFormatDestination.route,
+                enterTransition = { enterTransition },
+                exitTransition = { exitTransition },
+                popEnterTransition = { popEnterTransition },
+                popExitTransition = { popExitTransition }
+            ){
+                somewhereViewModel.updateCurrentScreen(SetDateFormatDestination)
+
+                SetDateTimeFormatScreen(
+                    dateTimeFormat = appUiState.dateTimeFormat,
+                    saveUserPreferences = {dateFormat_, useMonthName_, includeDayOfWeek_, timeFormat_ ->
+                        appViewModel.saveUserPreferences(dateFormat_, useMonthName_, includeDayOfWeek_, timeFormat_)
+                    },
+                    navigateUp = { navigateUp() }
+                )
+            }
+
+            // ABOUT ===============================================================================
+            composable(
+                route = AboutDestination.route,
+                enterTransition = { enterTransition },
+                exitTransition = { exitTransition },
+                popEnterTransition = { popEnterTransition },
+                popExitTransition = { popExitTransition }
+            ){
+                somewhereViewModel.updateCurrentScreen(AboutDestination)
+
+                AboutScreen(navigateUp = { navigateUp() })
             }
         }
 
@@ -387,7 +449,6 @@ fun SomewhereApp(
 
 @Composable
 fun SomewhereTopAppBar(
-    isEditMode: Boolean,
     title: String,
     subTitle: String? = null,
 

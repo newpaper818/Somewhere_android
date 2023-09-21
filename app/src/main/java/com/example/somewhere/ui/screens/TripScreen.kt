@@ -47,12 +47,14 @@ import com.example.somewhere.ui.screenUtils.cards.ImageCard
 import com.example.somewhere.ui.screenUtils.cards.InformationCard
 import com.example.somewhere.ui.screenUtils.cards.MemoCard
 import com.example.somewhere.ui.screenUtils.MyIcons
+import com.example.somewhere.ui.screenUtils.SetCurrencyTypeDialog
 import com.example.somewhere.ui.screenUtils.SomewhereFloatingButton
 import com.example.somewhere.ui.screenUtils.StartEndDummySpaceWithRoundedCorner
 import com.example.somewhere.ui.screenUtils.cards.TitleWithColorCard
 import com.example.somewhere.ui.screenUtils.cards.TripDurationCard
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
+import com.example.somewhere.viewModel.DateTimeFormat
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -70,6 +72,8 @@ fun TripScreen(
     originalTrip: Trip,
     tempTrip: Trip,
     isNewTrip: Boolean,
+
+    dateTimeFormat: DateTimeFormat,
 
     changeEditMode: (editMode: Boolean?) -> Unit,
 
@@ -97,6 +101,8 @@ fun TripScreen(
     val coroutineScope = rememberCoroutineScope()
 
     var showExitDialog by rememberSaveable { mutableStateOf(false) }
+    var showSetCurrencyDialog by rememberSaveable { mutableStateOf(false) }
+
 
     val onBackButtonClick = {
         if (originalTrip != tempTrip)
@@ -131,14 +137,12 @@ fun TripScreen(
         //top app bar
         topBar = {
             SomewhereTopAppBar(
-                isEditMode = isEditMode,
                 title = TripDestination.title,
 
                 navigationIcon = MyIcons.back,
                 navigationIconOnClick = {
                     if (!isEditMode) navigateUp()
                     else             onBackButtonClick()
-
                 },
 
                 actionIcon1 =
@@ -200,6 +204,19 @@ fun TripScreen(
             )
         }
 
+        if (showSetCurrencyDialog){
+            SetCurrencyTypeDialog(
+                currentCurrencyType = showingTrip.unitOfCurrencyType,
+                onCurrencyClick = {newCurrencyType ->
+                    showingTrip.setCurrencyType(updateTripState, newCurrencyType)
+                    showSetCurrencyDialog = false
+                },
+                onDismissRequest = {
+                    showSetCurrencyDialog = false
+                }
+            )
+        }
+
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
@@ -257,8 +274,8 @@ fun TripScreen(
                     TripDurationCard(
                         dateList = showingTrip.dateList,
                         isDateListEmpty = showingTrip.dateList.isEmpty(),
-                        startDateText = showingTrip.getStartDateText(true),
-                        endDateText = showingTrip.getEndDateText(true),
+                        startDateText = showingTrip.getStartDateText(dateTimeFormat, true),
+                        endDateText = showingTrip.getEndDateText(dateTimeFormat, true),
                         durationText = showingTrip.getDurationText(),
 
                         isEditMode = isEditMode,
@@ -271,9 +288,10 @@ fun TripScreen(
                 //information card
                 item {
                     InformationCard(
+                        isEditMode = isEditMode,
                         list = listOf(
-                            Pair(MyIcons.budget, showingTrip.getTotalBudgetText()),
-                            Pair(MyIcons.travelDistance, showingTrip.getTotalTravelDistanceText())
+                            Triple(MyIcons.budget, showingTrip.getTotalBudgetText()) { showSetCurrencyDialog = true },
+                            Triple(MyIcons.travelDistance, showingTrip.getTotalTravelDistanceText(), null)
                         )
                     )
 
@@ -338,7 +356,7 @@ fun TripScreen(
                             isExpanded = isExpanded,
                             itemId = it.id,
 
-                            sideText = it.getDateText(false),
+                            sideText = it.getDateText(dateTimeFormat.copy(includeDayOfWeek = false), false),
                             mainText = it.titleText,
                             expandedText = it.getExpandedText(showingTrip, isEditMode),
 

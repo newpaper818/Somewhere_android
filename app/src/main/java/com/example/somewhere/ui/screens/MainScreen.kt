@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -39,7 +40,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -71,6 +71,7 @@ import com.example.somewhere.ui.screenUtils.MyIcons
 import com.example.somewhere.ui.screenUtils.MySpacerColumn
 import com.example.somewhere.ui.screenUtils.MySpacerRow
 import com.example.somewhere.ui.screenUtils.NewItemButton
+import com.example.somewhere.ui.settingScreens.MainSettingDestination
 import com.example.somewhere.ui.theme.ColorType
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getColor
@@ -78,6 +79,7 @@ import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.utils.SlideState
 import com.example.somewhere.utils.dragAndDrop
 import com.example.somewhere.viewModel.AppViewModel
+import com.example.somewhere.viewModel.DateTimeFormat
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -92,10 +94,12 @@ fun MainScreen(
 
 //    originalTripList: List<Trip>,
 //    tempTripList: List<Trip>,
+    dateTimeFormat: DateTimeFormat,
 
     changeEditMode: (editMode: Boolean?) -> Unit,
 
     navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
+    navigateTo: (NavigationDestination) -> Unit,
 
     appViewModel: AppViewModel,
     modifier: Modifier = Modifier
@@ -137,7 +141,6 @@ fun MainScreen(
         //top app bar
         topBar = {
             SomewhereTopAppBar(
-                isEditMode = isEditMode,
                 title = if (!isEditMode) MainDestination.title
                         else stringResource(id = R.string.top_bar_title_edit_trips),
 
@@ -154,8 +157,7 @@ fun MainScreen(
                 actionIcon2Onclick = {}
             )
         }
-    ) { i ->
-        val a = i
+    ) { paddingValues ->
 
         if(showExitDialog){
             DeleteOrNotDialog(
@@ -165,14 +167,16 @@ fun MainScreen(
                 onDeleteClick = {
                     showExitDialog = false
                     changeEditMode(false)
-                    appViewModel.updateTripListState(true, originalTripList)
+                    appViewModel.unSaveTempTripList()
                 }
             )
         }
 
         //display trips list
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
             contentAlignment = Alignment.BottomCenter
         ) {
             LazyColumn(
@@ -197,7 +201,7 @@ fun MainScreen(
                                 onDismissRequest = { showDeleteDialog = false },
                                 onDeleteClick = {
                                     coroutineScope.launch {
-                                        appViewModel.deleteTempTrip(trip)
+                                        appViewModel.deleteTripFromTempTrip(trip)
                                     }
                                     showDeleteDialog = false
                                 }
@@ -205,7 +209,7 @@ fun MainScreen(
                         }
 
                         //each trip item
-                        key(trip){
+                        key(trip.id){
                             val slideState = slideStates[trip.id] ?: SlideState.NONE
 
                             if (trip == showingTripList.first())
@@ -224,11 +228,13 @@ fun MainScreen(
                                 deleteTrip = {
                                     showDeleteDialog = true
                                 },
+                                dateTimeFormat = dateTimeFormat,
                                 slideState = slideState,
-                                updateSlideState = { trip_, slideState_ ->
-//                                    Log.d("test2", "showingTripLIst: ${showingTripList.map { it.titleText }}")
+                                updateSlideState = { showingTripList_, tripIdx_, slideState_ ->
+                                    Log.d("test3", "[update slide state] showingTripList: ${showingTripList_.map { it.titleText }} - ${showingTripList_[tripIdx_].titleText} $slideState_")
 //                                    Log.d("test2", "${trip_.titleText} $slideState_")
-                                    slideStates[trip_.id] = slideState_
+
+                                    slideStates[showingTripList_[tripIdx_].id] = slideState_
                                 },
                                 updateItemPosition = { currentIndex_, destinationIndex_ ->
                                     //at on drag end
@@ -293,8 +299,11 @@ fun MainScreen(
                     )
                 }
 
-                //TODO remove item{} before release!
+                //TODO remove item{ } before release!
                 item {
+                    Button(onClick = { navigateTo(MainSettingDestination) } ) {
+                        Text(text = "to setting")
+                    }
                     MySpacerColumn(height = 60.dp)
                     Test()
                 }
@@ -312,7 +321,7 @@ fun MainScreen(
                     },
                     onSaveClick = {
                         coroutineScope.launch {
-                            appViewModel.updateTempToRepository {
+                            appViewModel.saveTempTripList {
                                 changeEditMode(false)
                             }
                         }
@@ -332,8 +341,10 @@ private fun TripListItem(
     onTripClick: (Trip) -> Unit,
     deleteTrip: (Trip) -> Unit,
 
+    dateTimeFormat: DateTimeFormat,
+
     slideState: SlideState,
-    updateSlideState: (trip: Trip, slideState: SlideState) -> Unit,
+    updateSlideState: (showingTripList: List<Trip>, tripIdx: Int, slideState: SlideState) -> Unit,
     updateItemPosition: (currentIndex: Int, destinationIndex: Int) -> Unit,
 
     modifier: Modifier = Modifier,
@@ -349,7 +360,7 @@ private fun TripListItem(
     val titleTextStyle1 = if (trip.titleText == null || trip.titleText == "") titleNullTextStyle
                             else titleTextStyle
 
-    val subTitleText = trip.getStartEndDateText(true) ?: stringResource(id = R.string.trip_item_no_date)
+    val subTitleText = trip.getStartEndDateText(dateTimeFormat, true) ?: stringResource(id = R.string.trip_item_no_date)
 
     val haptic = LocalHapticFeedback.current
 
@@ -364,7 +375,7 @@ private fun TripListItem(
         spacerHeightInt = spacerHeightDp.toPx().toInt()
     }
 
-    Log.d("test2", "++++title = ${trip.titleText} | tripList: ${tripList.map { it.titleText }}")
+    Log.d("test3", "   [trip list item] title = ${trip.titleText} | tripList: ${tripList.map { it.titleText }}")
 
     var isDragged by remember { mutableStateOf(false) }
 
@@ -467,7 +478,7 @@ private fun TripListItem(
                     IconButton(
                         modifier = Modifier
                             .dragAndDrop(
-                                trip, tripList.toMutableList(), cardHeightInt + spacerHeightInt, updateSlideState,
+                                trip, tripList, cardHeightInt + spacerHeightInt, updateSlideState,
                                 isDraggedAfterLongPress = false,
                                 offsetY = itemOffsetY,
                                 onStartDrag = {

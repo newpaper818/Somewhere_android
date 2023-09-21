@@ -126,7 +126,7 @@ fun getTextStyle(textType: TextType): TextStyle {
 
         GRAPH_LIST_ITEM__MAIN       -> MaterialTheme.typography.h4
         GRAPH_LIST_ITEM__MAIN_NULL  -> MaterialTheme.typography.subtitle1
-        GRAPH_LIST_ITEM__SIDE       -> MaterialTheme.typography.h5
+        GRAPH_LIST_ITEM__SIDE       -> MaterialTheme.typography.h6.copy(color = gray)
         GRAPH_LIST_ITEM__EXPAND     -> MaterialTheme.typography.h6.copy(color = gray)
         GRAPH_LIST_ITEM__ICON       -> MaterialTheme.typography.h6.copy(fontSize = 11.sp, fontWeight = FontWeight.Bold)
 
