@@ -8,6 +8,9 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,22 +36,23 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -68,6 +72,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -86,7 +91,6 @@ import com.example.somewhere.ui.commonScreenUtils.MyIcons
 import com.example.somewhere.ui.tripScreenUtils.UserLocationButton
 import com.example.somewhere.ui.commonScreenUtils.MySpacerColumn
 import com.example.somewhere.ui.commonScreenUtils.MySpacerRow
-import com.example.somewhere.ui.tripScreenUtils.StartEndDummySpaceWithRoundedCorner
 import com.example.somewhere.ui.tripScreenUtils.cards.SpotTypeGroupCard
 import com.example.somewhere.ui.theme.ColorType
 import com.example.somewhere.ui.theme.TextType
@@ -160,14 +164,25 @@ fun TripMapScreen(
     val dateListState = rememberLazyListState()
 
 
+
     //screen is horizontal/vertical
     val configuration = LocalConfiguration.current
 
     when (configuration.orientation){
         //at vertical
         Configuration.ORIENTATION_PORTRAIT -> {
+
+            val bottomSheetState = rememberBottomSheetScaffoldState(
+                bottomSheetState = rememberStandardBottomSheetState(initialValue = SheetValue.Expanded)
+            )
+
+            Log.d("sheet", "${bottomSheetState.bottomSheetState.currentValue}")
+
+
             Box(modifier = Modifier.navigationBarsPadding()) {
                 BottomSheetScaffold(
+                    scaffoldState = bottomSheetState,
+
                     snackbarHost = {
                         SnackbarHost(
                             hostState = snackBarHostState,
@@ -176,13 +191,14 @@ fun TripMapScreen(
                     },
 
                     //control
+                    sheetSwipeEnabled = true,
                     sheetContainerColor = MaterialTheme.colorScheme.background,
                     sheetPeekHeight = 150.dp,
                     sheetDragHandle = { },
 
                     sheetContent = {
                         Column(
-                            modifier = Modifier.fillMaxHeight(0.45f)
+                            modifier = Modifier.fillMaxHeight(0.5f)
                         ) {
                             BottomSheetHandel()
 
@@ -225,6 +241,7 @@ fun TripMapScreen(
                             firstFocusOnToSpot = {
                                 focusOnToSpot(
                                     mapSize,
+                                    density,
                                     coroutineScope,
                                     dateWithShownMarkerList,
                                     spotTypeGroupWithShownMarkerList,
@@ -275,6 +292,7 @@ fun TripMapScreen(
                             firstFocusOnToSpot = {
                                 focusOnToSpot(
                                     mapSize,
+                                    density,
                                     coroutineScope,
                                     dateWithShownMarkerList,
                                     spotTypeGroupWithShownMarkerList,
@@ -286,13 +304,19 @@ fun TripMapScreen(
 
 
                     //for different screen size - get control panel width
-                    val maxWidth = 450.dp
-                    val minWidth = 330.dp
+                    val maxWidth = 420.dp
+                    val minWidth = 366.dp
                     val screenWidth = configuration.screenWidthDp.dp
                     val cardModifier =
-                        if      (screenWidth > maxWidth / 45 * 100) Modifier.width(maxWidth)
-                        else if (screenWidth < minWidth / 45 * 100) Modifier.width(minWidth)
-                        else Modifier.fillMaxWidth(0.45f)
+                        if (screenWidth > (maxWidth / 45 * 100)) {
+                            Modifier.width(maxWidth)
+                        }
+                        else if (screenWidth < (minWidth / 45 * 100)) {
+                            Modifier.width(minWidth)
+                        }
+                        else {
+                            Modifier.fillMaxWidth(0.45f)
+                        }
 
                     //get status bar padding value - get top padding
                     val statusBarPaddingValue = paddingValue.calculateTopPadding()
@@ -601,6 +625,7 @@ private fun ControlPanel(
                 tripMapViewModel.updateDateWithShownMarkerListToCurrentDate()
             focusOnToSpot(
                 mapSize,
+                density,
                 coroutineScope,
                 newDateShownList,
                 spotTypeGroupWithShownMarkerList,
@@ -619,6 +644,7 @@ private fun ControlPanel(
                 tripMapViewModel.updateDateWithShownMarkerListToCurrentDate()
             focusOnToSpot(
                 mapSize,
+                density,
                 coroutineScope,
                 newDateShownList,
                 spotTypeGroupWithShownMarkerList,
@@ -637,6 +663,7 @@ private fun ControlPanel(
                 tripMapViewModel.updateDateWithShownMarkerListToCurrentDate()
             focusOnToSpot(
                 mapSize,
+                density,
                 coroutineScope,
                 newDateShownList,
                 spotTypeGroupWithShownMarkerList,
@@ -673,8 +700,6 @@ private fun ControlPanel(
             tripMapViewModel.toggleSpotTypeGroupWithShownMarkerList(spotTypeGroup)
         }
     )
-
-    MySpacerColumn(height = 8.dp)
 
     AnimatedVisibility(
         visible = true,
@@ -755,67 +780,82 @@ private fun ButtonsRow(
 
         // my location & focus on target buttons
         Row(
-            modifier = Modifier
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant),
-            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.width(278.dp),
+            horizontalArrangement = Arrangement.Center
         ) {
-            //my location button
-            UserLocationButton(fusedLocationClient , cameraPositionState, setUserLocationEnabled, showSnackBar)
-
-            //focus on to target button
-            FocusOnToSpotButton(
-                mapSize = mapSize,
-                focusOnToTargetEnabled = focusOnToTargetEnabled,
-                cameraPositionState = cameraPositionState,
-                dateListWithShownIconList = dateListWithShownIconList,
-                spotTypeGroupWithShownIconList = spotTypeGroupWithShownIconList,
-                showSnackBar = showSnackBar
-            )
-        }
-
-        MySpacerRow(width = 16.dp)
-
-        //date button  <  3.28  >
-        Row(
-            modifier = Modifier
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            IconButton(
-                onClick = onPreviousDateClicked
-            ) {
-                DisplayIcon(icon = MyIcons.leftArrow)
-            }
-
-            val dateTextStyle = if (isDateShown)    getTextStyle(TextType.BUTTON)
-            else                getTextStyle(TextType.BUTTON_NULL)
-
-            Box(
+            Row(
                 modifier = Modifier
-                    .width(70.dp)
-                    .height(40.dp)
                     .clip(CircleShape)
-                    .clickable { onOneDateClicked() },
-                contentAlignment = Alignment.Center
-            ){
-                Text(
-                    text = dateListWithShownIconList[currentDateIndex].date.getDateText(locale, dateTimeFormat.copy(includeDayOfWeek = false), false),
-                    style = dateTextStyle
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                //my location button
+                UserLocationButton(
+                    fusedLocationClient,
+                    cameraPositionState,
+                    setUserLocationEnabled,
+                    showSnackBar
+                )
+
+                //focus on to target button
+                FocusOnToSpotButton(
+                    mapSize = mapSize,
+                    focusOnToTargetEnabled = focusOnToTargetEnabled,
+                    cameraPositionState = cameraPositionState,
+                    dateListWithShownIconList = dateListWithShownIconList,
+                    spotTypeGroupWithShownIconList = spotTypeGroupWithShownIconList,
+                    showSnackBar = showSnackBar
                 )
             }
 
+            MySpacerRow(width = 16.dp)
 
-            IconButton(
-                onClick = onNextDateClicked
+            //date button  <  3.28  >
+            Row(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                DisplayIcon(icon = MyIcons.rightArrow)
+                IconButton(
+                    onClick = onPreviousDateClicked
+                ) {
+                    DisplayIcon(icon = MyIcons.leftArrow)
+                }
+
+                val dateTextStyle = if (isDateShown) getTextStyle(TextType.BUTTON)
+                else getTextStyle(TextType.BUTTON_NULL)
+
+                Box(
+                    modifier = Modifier
+                        .width(70.dp)
+                        .height(40.dp)
+                        .clip(CircleShape)
+                        .clickable { onOneDateClicked() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = dateListWithShownIconList[currentDateIndex].date.getDateText(
+                            locale,
+                            dateTimeFormat.copy(includeDayOfWeek = false),
+                            false
+                        ),
+                        style = dateTextStyle
+                    )
+                }
+
+
+                IconButton(
+                    onClick = onNextDateClicked
+                ) {
+                    DisplayIcon(icon = MyIcons.rightArrow)
+                }
             }
         }
 
-
         Spacer(modifier = Modifier.weight(1f))
+
+        Spacer(modifier = Modifier.width(40.dp))
 
         //expand collapse button
 //        IconButton(onClick = onExpandButtonClicked) {
@@ -839,6 +879,7 @@ private fun FocusOnToSpotButton(
     val coroutineScope = rememberCoroutineScope()
     val spotTypeShownList = mutableListOf<SpotTypeGroup>()
     val snackBarText = stringResource(id = R.string.snack_bar_no_location_to_show)
+    val density = LocalDensity.current.density
 
     for (spotTypeWithBoolean in spotTypeGroupWithShownIconList){
         if (spotTypeWithBoolean.isShown)
@@ -850,6 +891,7 @@ private fun FocusOnToSpotButton(
             onClick = {
                 focusOnToSpot(
                     mapSize = mapSize,
+                    density = density,
                     coroutineScope = coroutineScope,
                     dateListWithShownMarkerList = dateListWithShownIconList,
                     spotTypeWithShownMarkerList = spotTypeGroupWithShownIconList,
@@ -875,6 +917,7 @@ private fun FocusOnToSpotButton(
 
 private fun focusOnToSpot(
     mapSize: IntSize,
+    density: Float,
     coroutineScope: CoroutineScope,
     dateListWithShownMarkerList: List<DateWithBoolean>,
     spotTypeWithShownMarkerList: List<SpotTypeGroupWithBoolean>,
@@ -894,12 +937,12 @@ private fun focusOnToSpot(
         }
     }
 
-    //add ghost spot - to avoid hide behind the control panel.
+    //TODO add ghost spot - to avoid hide behind the control panel.
 
 
     coroutineScope.launch {
-        com.example.somewhere.ui.tripScreenUtils.focusOnToSpot(
-            cameraPositionState, mapSize, spotList.toList()
+        com.example.somewhere.ui.tripScreenUtils.focusOnToSpotForTripMap(
+            cameraPositionState, spotList.toList(), mapSize, density
         )
     }
 }
@@ -937,7 +980,6 @@ private fun SpotTypeList(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun DateList(
     dateTimeFormat: DateTimeFormat,
@@ -945,44 +987,23 @@ private fun DateList(
     dateListWithShownIconList: List<DateWithBoolean>,
     onDateItemClicked: (Date) -> Unit,
 ){
-    val pullRefreshState = rememberPullRefreshState(true, {  })
+    LazyColumn(
+        state = dateListState,
+        modifier = Modifier
+            .padding(16.dp, 8.dp, 16.dp, 16.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+    ) {
 
-    Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
-        PullRefreshIndicator(refreshing = false, state = pullRefreshState)
-        //here!!!!!!!!!!!!!!!
-
-        LazyColumn(
-            state = dateListState,
-            contentPadding = PaddingValues(top = 0.dp, bottom = 0.dp),
-            modifier = Modifier
-                .padding(16.dp, 0.dp)
-                .fillMaxWidth()
-//            .height(260.dp)
-        ) {
-            item {
-                StartEndDummySpaceWithRoundedCorner(
-                    isFirst = true,
-                    isLast = false
-                )
-            }
-            items(dateListWithShownIconList) {
-                DateItem(
-                    date = it.date,
-                    dateTimeFormat = dateTimeFormat,
-                    isShown = it.isShown,
-                    onItemClicked = { date ->
-                        onDateItemClicked(date)
-                    }
-                )
-            }
-            item {
-                StartEndDummySpaceWithRoundedCorner(
-                    isFirst = false,
-                    isLast = true
-                )
-
-                MySpacerColumn(height = 60.dp)
-            }
+        items(dateListWithShownIconList) {
+            DateItem(
+                date = it.date,
+                dateTimeFormat = dateTimeFormat,
+                isShown = it.isShown,
+                onItemClicked = { date ->
+                    onDateItemClicked(date)
+                }
+            )
         }
     }
 }
@@ -1048,9 +1069,13 @@ private fun DateItem(
                 Text(
                     text = date.titleText ?: stringResource(id = R.string.no_title),
                     style = if (isShown && date.titleText != null)  titleTextStyle
-                            else                                    titleNullTextStyle
+                            else                                    titleNullTextStyle,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
+
+            MySpacerRow(width = 2.dp)
 
             //spot count
             Text(

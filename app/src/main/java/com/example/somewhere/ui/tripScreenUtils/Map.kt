@@ -733,6 +733,55 @@ suspend fun focusOnToSpot(
     }
 }
 
+suspend fun focusOnToSpotForTripMap(
+    cameraPositionState: CameraPositionState,
+    spotList: List<Spot>,
+    mapSize: IntSize,   //same with screen size
+    density: Float
+){
+
+    if (spotList.size == 1){
+        val spot = spotList.first()
+
+        if (spot.location != null) {
+            cameraPositionState.animate(
+                CameraUpdateFactory.newLatLngZoom(spot.location, spot.zoomLevel ?: initialZoomLevel), 300
+            )
+        }
+    }
+    else if (spotList.size > 1){
+        val latLngBounds = LatLngBounds.Builder()
+        var spotCnt = 0
+
+        for(spot in spotList){
+            if (spot.location != null){
+                spotCnt++
+                latLngBounds.include(spot.location)
+            }
+        }
+
+        if (spotCnt >= 2) {
+            //button height + button bottom padding + icon height / 2 + padding
+            val bottomButtonHeight = 52 + 16 + 15 + 2
+            val defaultPadding = if (density != null) (bottomButtonHeight * density * 2).toInt()
+            else                230 * 2
+            val mapHeight = if (density != null) (mapSize.height - (bottomButtonHeight * density * 2)).toInt()
+            else                 mapSize.height
+
+            var padding = min(min(mapHeight, mapSize.width) / 2, defaultPadding) / 2
+
+            if (density != null && padding < defaultPadding / 2) padding = defaultPadding / 2
+
+            //if map screen is not small
+            if (padding > 10) {
+                cameraPositionState.animate(
+                    CameraUpdateFactory.newLatLngBounds(latLngBounds.build(), padding), 300
+                )
+            }
+        }
+    }
+}
+
 private suspend fun focusOnUserLocation(
     cameraPositionState: CameraPositionState,
     userLocation: LatLng,

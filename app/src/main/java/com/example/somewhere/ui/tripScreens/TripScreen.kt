@@ -274,12 +274,12 @@ fun TripScreen(
 
                             showingTrip.setImage(updateTripState, newList.toList())
                         },
-                        showSnackBar = { text_, actionLabel_, duration_ ->
+                        showSnackBar = { text, actionLabel, duration ->
                             coroutineScope.launch {
                                 snackBarHostState.showSnackbar(
-                                    message = text_,
-                                    actionLabel = actionLabel_,
-                                    duration = duration_
+                                    message = text,
+                                    actionLabel = actionLabel,
+                                    duration = duration
                                 )
                             }
                         }
@@ -392,6 +392,15 @@ fun TripScreen(
                             },
                             onExpandedButtonClicked = { dateId -> //TODO remove dateId?
                                 isExpanded = !isExpanded
+                            },
+                            showLongTextSnackBar = { text, actionLabel, duration ->
+                                coroutineScope.launch {
+                                    snackBarHostState.showSnackbar(
+                                        message = text,
+                                        actionLabel = actionLabel,
+                                        duration = duration
+                                    )
+                                }
                             }
                         )
                     }
