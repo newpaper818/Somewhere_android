@@ -5,8 +5,8 @@ import com.example.somewhere.db.TripRepository
 import com.example.somewhere.model.Date
 import com.example.somewhere.model.Spot
 import com.example.somewhere.model.Trip
+import com.example.somewhere.ui.mainScreens.MyTripsDestination
 import com.example.somewhere.ui.navigation.NavigationDestination
-import com.example.somewhere.ui.screens.MainDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -16,7 +16,8 @@ import java.time.LocalDateTime
 
 data class SomewhereUiState(
     val isEditMode: Boolean = false,
-    val currentScreen: NavigationDestination = MainDestination,
+    val currentMainNavigationDestination: NavigationDestination = MyTripsDestination,
+    val currentScreen: NavigationDestination = MyTripsDestination,
     val isNewTrip: Boolean = false,
 
     val tripId: Int? = null,
@@ -37,6 +38,12 @@ class SomewhereViewModel(
 
     val uiState: StateFlow <SomewhereUiState> = _uiState
 
+
+    fun updateCurrentMainNavDestination(screenTo: NavigationDestination){
+        _uiState.update {
+            it.copy(currentMainNavigationDestination = screenTo)
+        }
+    }
 
     fun updateCurrentScreen(screenTo: NavigationDestination) {
         _uiState.update {

@@ -6,6 +6,7 @@ import com.example.somewhere.utils.getNumToText
 import com.example.somewhere.viewModel.DateTimeFormat
 import com.squareup.moshi.JsonClass
 import java.time.LocalDate
+import java.util.Locale
 
 
 @JsonClass(generateAdapter = true)
@@ -83,7 +84,7 @@ data class Date(
         return count
     }
 
-    fun getDateText(dateTimeFormat: DateTimeFormat, includeYear: Boolean = true): String{
+    fun getDateText(locale: Locale, dateTimeFormat: DateTimeFormat, includeYear: Boolean = true): String{
         return com.example.somewhere.utils.getDateText(date, dateTimeFormat, includeYear = includeYear)
     }
 

@@ -9,6 +9,7 @@ import com.example.somewhere.viewModel.DateTimeFormat
 import com.google.android.gms.maps.model.LatLng
 import java.time.LocalDateTime
 import java.time.Period
+import java.util.Locale
 
 @Entity(tableName = "trips")
 data class Trip(
@@ -37,23 +38,23 @@ data class Trip(
 
     // get =========================================================================================
 
-    fun getStartDateText(dateTimeFormat: DateTimeFormat, includeYear: Boolean): String?{
+    fun getStartDateText(locale: Locale, dateTimeFormat: DateTimeFormat, includeYear: Boolean): String?{
         return if (dateList.isNotEmpty())
             getDateText(dateList.first().date, dateTimeFormat, includeYear = includeYear)
         else
             null
     }
 
-    fun getEndDateText(dateTimeFormat: DateTimeFormat, includeYear: Boolean): String?{
+    fun getEndDateText(locale: Locale, dateTimeFormat: DateTimeFormat, includeYear: Boolean): String?{
         return if (dateList.isNotEmpty())
             getDateText(dateList.last().date, dateTimeFormat, includeYear = includeYear)
         else
             null
     }
 
-    fun getStartEndDateText(dateTimeFormat: DateTimeFormat, includeYear: Boolean): String?{
-        val startDateText = getStartDateText(dateTimeFormat, includeYear)
-        val endDateText = getEndDateText(dateTimeFormat, includeYear)
+    fun getStartEndDateText(locale: Locale, dateTimeFormat: DateTimeFormat, includeYear: Boolean): String?{
+        val startDateText = getStartDateText(locale, dateTimeFormat, includeYear)
+        val endDateText = getEndDateText(locale, dateTimeFormat, includeYear)
 
         return if (startDateText == null || endDateText == null)
             null

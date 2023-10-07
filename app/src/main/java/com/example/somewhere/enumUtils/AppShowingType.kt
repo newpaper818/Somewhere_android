@@ -1,5 +1,6 @@
 package com.example.somewhere.enumUtils
 
+//DELETE? =============================
 enum class AppShowingType{
     MAIN,
     TRIP_MAP,

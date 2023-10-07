@@ -1,15 +1,14 @@
 package com.example.somewhere.utils
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.core.os.ConfigurationCompat
 import com.example.somewhere.enumUtils.DateFormat
 import com.example.somewhere.enumUtils.TimeFormat
 import com.example.somewhere.viewModel.DateTimeFormat
 import java.text.DecimalFormat
+import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZoneId
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -34,6 +33,7 @@ fun getDateText(
     date: LocalDate,
     dateTimeFormat: DateTimeFormat,
     includeYear: Boolean = true,
+    locale: Locale = Locale.getDefault()
 ): String{
     val df0 = DecimalFormat("0")
 
@@ -42,7 +42,7 @@ fun getDateText(
     if (!dateTimeFormat.useMonthName) year = "$year."
 
     //month
-    var month = if (dateTimeFormat.useMonthName) date.month.getDisplayName(TextStyle.SHORT, Locale.ENGLISH)
+    var month = if (dateTimeFormat.useMonthName) date.month.getDisplayName(TextStyle.SHORT, locale)
                 else df0.format(date.monthValue)
 
     if (!dateTimeFormat.useMonthName) month = "$month."
@@ -53,7 +53,7 @@ fun getDateText(
 
 
     //day of week
-    val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.ENGLISH)
+    val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.SHORT, locale)
 
 
     var text =
@@ -71,6 +71,27 @@ fun getDateText(
 
 
     return text
+}
+
+fun getDateText(
+    millis: Long,
+    dateTimeFormat: DateTimeFormat,
+    includeYear: Boolean = true,
+    locale: Locale = Locale.getDefault()
+): String{
+    return getDateText(
+        date = millisToLocalDate(millis),
+        dateTimeFormat = dateTimeFormat,
+        includeYear = includeYear,
+        locale = locale
+    )
+}
+
+fun millisToLocalDate(
+    millis: Long
+): LocalDate {
+    val instant = Instant.ofEpochMilli(millis)
+    return LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate()
 }
 
 fun getTimeText(
@@ -91,9 +112,3 @@ fun getTimeText(
             else                               "$hour12:$minute $amPm"
 }
 
-@Composable
-@ReadOnlyComposable
-fun getLocale(): Locale? {
-    val configuration = LocalConfiguration.current
-    return ConfigurationCompat.getLocales(configuration).get(0)
-}

@@ -15,6 +15,7 @@ import com.squareup.moshi.JsonClass
 import java.text.DecimalFormat
 import java.time.LocalDate
 import java.time.LocalTime
+import java.util.Locale
 
 
 @JsonClass(generateAdapter = true)
@@ -81,7 +82,7 @@ data class Spot(
         return "${getNumToText(travelDistance, 2)}km"
     }
 
-    fun getDateText(dateTimeFormat: DateTimeFormat, includeYear: Boolean): String {
+    fun getDateText(locale: Locale, dateTimeFormat: DateTimeFormat, includeYear: Boolean): String {
         return com.example.somewhere.utils.getDateText(date, dateTimeFormat ,includeYear = includeYear)
     }
 

@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.somewhere.db.TripRepository
 import com.example.somewhere.model.Date
 import com.example.somewhere.model.Trip
-import com.example.somewhere.ui.screens.TripDestination
+import com.example.somewhere.ui.tripScreens.TripDestination
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate

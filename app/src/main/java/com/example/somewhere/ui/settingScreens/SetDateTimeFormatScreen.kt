@@ -1,24 +1,19 @@
 package com.example.somewhere.ui.settingScreens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,9 +21,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -37,28 +32,30 @@ import androidx.compose.ui.unit.dp
 import com.example.somewhere.R
 import com.example.somewhere.enumUtils.DateFormat
 import com.example.somewhere.enumUtils.TimeFormat
+import com.example.somewhere.ui.commonScreenUtils.ClickableBox
+import com.example.somewhere.ui.commonScreenUtils.MySpacerRow
 import com.example.somewhere.ui.navigation.NavigationDestination
-import com.example.somewhere.ui.screenUtils.MyIcons
-import com.example.somewhere.ui.screenUtils.MyRadioButton
-import com.example.somewhere.ui.screenUtils.MySpacerColumn
-import com.example.somewhere.ui.screenUtils.MySpacerRow
-import com.example.somewhere.ui.screenUtils.MySwitch
-import com.example.somewhere.ui.screens.SomewhereTopAppBar
-import com.example.somewhere.ui.theme.ColorType
+import com.example.somewhere.ui.commonScreenUtils.SomewhereTopAppBar
+import com.example.somewhere.ui.settingScreenUtils.ItemWithRadioButton
+import com.example.somewhere.ui.settingScreenUtils.ItemDivider
+import com.example.somewhere.ui.settingScreenUtils.ItemWithSwitch
+import com.example.somewhere.ui.settingScreenUtils.ListGroupCard
+import com.example.somewhere.ui.commonScreenUtils.MyIcons
 import com.example.somewhere.ui.theme.TextType
-import com.example.somewhere.ui.theme.getColor
 import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.utils.getDateText
 import com.example.somewhere.utils.getTimeText
 import com.example.somewhere.viewModel.DateTimeFormat
 import java.time.LocalDate
 import java.time.LocalTime
+import java.util.Locale
 
 object SetDateFormatDestination: NavigationDestination {
     override val route = "setDateTimeFormat"
-    override var title = "Date and Time"
+    override var title = "Date and time format"
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetDateTimeFormatScreen(
     dateTimeFormat: DateTimeFormat,
@@ -68,15 +65,14 @@ fun SetDateTimeFormatScreen(
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier
 ){
-    
+    val locale = LocalConfiguration.current.locales[0]
+
     var dateFormat by rememberSaveable { mutableStateOf(dateTimeFormat.dateFormat) }
     var useMonthName by rememberSaveable { mutableStateOf(dateTimeFormat.useMonthName) }
     var includeDayOfWeek by rememberSaveable { mutableStateOf(dateTimeFormat.includeDayOfWeek) }
     var timeFormat by rememberSaveable { mutableStateOf(dateTimeFormat.timeFormat) }
 
-    val dateFormatList by rememberSaveable { mutableStateOf(enumValues<DateFormat>()) }
-
-    var dateText by rememberSaveable { mutableStateOf(getFixedDateText(dateTimeFormat)) }
+    var dateText by rememberSaveable { mutableStateOf(getFixedDateText(locale, dateTimeFormat)) }
     var timeText by rememberSaveable { mutableStateOf(getFixedTimeText(dateTimeFormat)) }
 
     
@@ -92,76 +88,89 @@ fun SetDateTimeFormatScreen(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = paddingValues,
+            contentPadding = PaddingValues(16.dp),
             modifier = modifier
                 .fillMaxSize()
-                .padding(16.dp, 0.dp)
-                .background(MaterialTheme.colors.background)
+                .padding(top = paddingValues.calculateTopPadding())
         ) {
             //current date
             item {
-                UpperDateExampleBox(dateText, timeText)
+                UpperDateTimeExampleBox(dateText, timeText)
             }
 
+            //select time format 12h/24h
             item {
-                //select time format 12h/24h
-                SelectTimeFormat(
-                    currentTimeFormat = timeFormat,
-                    onTimeFormatClick = {
-                        if (timeFormat != it) {
-                            timeFormat = it
-                            timeText = getFixedTimeText(DateTimeFormat(dateFormat, useMonthName, includeDayOfWeek, it))
-                            saveUserPreferences(null, null, null, it)
+                ListGroupCard(title = stringResource(id = R.string.time_format)) {
+                    SelectTimeFormat(
+                        selectedTimeFormat = timeFormat,
+                        onTimeFormatClick = {
+                            if (timeFormat != it) {
+                                timeFormat = it
+                                timeText = getFixedTimeText(
+                                    DateTimeFormat(
+                                        dateFormat,
+                                        useMonthName,
+                                        includeDayOfWeek,
+                                        it
+                                    )
+                                )
+                                saveUserPreferences(null, null, null, it)
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
 
+
             item {
-                Card(
-                    elevation = 0.dp,
-                    backgroundColor = getColor(ColorType.CARD),
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(16.dp))
-                        .fillMaxWidth()
-                ) {
-                    Column(modifier = Modifier.fillMaxWidth()) {
 
-                        //use month name / include day of month
-                        TwoSwitch(
-                            isMonthString = useMonthName,
-                            includeDayOfWeek = includeDayOfWeek,
-                            onUseMonthNameChange = {
-                                if (useMonthName != it) {
-                                    useMonthName = it
-                                    dateText = getFixedDateText(DateTimeFormat(dateFormat, it, includeDayOfWeek, timeFormat))
-                                    saveUserPreferences(null, it, null, null)
-                                }
-                            },
-                            onIncludeDayOfWeekChange = {
-                                if (includeDayOfWeek != it) {
-                                    includeDayOfWeek = it
-                                    dateText = getFixedDateText(DateTimeFormat(dateFormat, useMonthName, it, timeFormat))
-                                    saveUserPreferences(null, null, it, null)
-                                }
+                //use month name
+                ListGroupCard(title = stringResource(id = R.string.date_format)) {
+                    ItemWithSwitch(
+                        text = stringResource(id = R.string.use_month_name),
+                        checked = useMonthName,
+                        onCheckedChange = {
+                            if (useMonthName != it) {
+                                useMonthName = it
+                                dateText = getFixedDateText(
+                                    locale,
+                                    DateTimeFormat(dateFormat, it, includeDayOfWeek, timeFormat)
+                                )
+                                saveUserPreferences(null, it, null, null)
                             }
-                        )
+                        }
+                    )
 
-                        MyDivider()
-
-                        //select date format list / radio button
-                        SelectDateFormatColumn(
-                            currentDateFormat = dateFormat,
-                            dateFormatList = dateFormatList,
-                            onDateFormatChange = {
-                                if (dateFormat != it) {
-                                    dateFormat = it
-                                    dateText = getFixedDateText(DateTimeFormat(it, useMonthName, includeDayOfWeek, timeFormat))
-                                    saveUserPreferences(it, null, null, null)
-                                }
+                    //include day of month
+                    ItemWithSwitch(
+                        text = stringResource(id = R.string.include_day_of_week),
+                        checked = includeDayOfWeek,
+                        onCheckedChange = {
+                            if (includeDayOfWeek != it) {
+                                includeDayOfWeek = it
+                                dateText = getFixedDateText(
+                                    locale,
+                                    DateTimeFormat(dateFormat, useMonthName, it, timeFormat)
+                                )
+                                saveUserPreferences(null, null, it, null)
                             }
-                        )
-                    }
+                        }
+                    )
+
+
+                    ItemDivider()
+
+                    //select date format list / radio button
+                    SelectDateFormat(
+                        selectedDateFormat = dateFormat,
+                        onDateFormatChange = {
+                            if (dateFormat != it) {
+                                dateFormat = it
+                                dateText = getFixedDateText(locale, DateTimeFormat(it, useMonthName, includeDayOfWeek, timeFormat))
+                                saveUserPreferences(it, null, null, null)
+                            }
+                        }
+                    )
                 }
             }
         }
@@ -169,6 +178,7 @@ fun SetDateTimeFormatScreen(
 }
 
 private fun getFixedDateText(
+    locale: Locale,
     dateTimeFormat: DateTimeFormat
 ): String{
     //app release date
@@ -183,22 +193,13 @@ private fun getFixedTimeText(
     return getTimeText(localTime, dateTimeFormat.timeFormat)
 }
 
-@Composable
-fun MyDivider(
 
-){
-    Row {
-        MySpacerRow(width = 16.dp)
-        Divider(modifier = Modifier.weight(1f))
-        MySpacerRow(width = 16.dp)
-    }
-}
 
 @Composable
-private fun UpperDateExampleBox(
+private fun UpperDateTimeExampleBox(
     dateText: String,
     timeText: String,
-    textStyle: TextStyle = getTextStyle(TextType.TRIP_LIST_ITEM__TITLE)
+    textStyle: TextStyle = getTextStyle(TextType.MAIN)
 ){
     Box(
         contentAlignment = Alignment.Center,
@@ -229,32 +230,19 @@ private fun UpperDateExampleBox(
 
 @Composable
 private fun SelectTimeFormat(
-    currentTimeFormat: TimeFormat,
+    selectedTimeFormat: TimeFormat,
     onTimeFormatClick: (timeFormat: TimeFormat) -> Unit,
 ){
-    Card(
-        elevation = 0.dp,
-        backgroundColor = getColor(ColorType.CARD),
-        modifier = Modifier
-            .clip(RoundedCornerShape(16.dp))
-            .fillMaxWidth()
-    ) {
-        Row(modifier = Modifier.padding(8.dp)) {
+    val timeFormatList = rememberSaveable { enumValues<TimeFormat>() }
 
-            OneTimeFormat(
-                timeFormat = TimeFormat.T12H,
-                isSelected = currentTimeFormat == TimeFormat.T12H,
-                onClick = {
-                    onTimeFormatClick(TimeFormat.T12H)
-                },
-                modifier = Modifier.weight(1f)
-            )
+    Row(modifier = Modifier.padding(8.dp)) {
 
+        for (timeFormat in timeFormatList){
             OneTimeFormat(
-                timeFormat = TimeFormat.T24H,
-                isSelected = currentTimeFormat == TimeFormat.T24H,
+                timeFormat = timeFormat,
+                isSelected = selectedTimeFormat == timeFormat,
                 onClick = {
-                    onTimeFormatClick(TimeFormat.T24H)
+                    onTimeFormatClick(timeFormat)
                 },
                 modifier = Modifier.weight(1f)
             )
@@ -262,30 +250,33 @@ private fun SelectTimeFormat(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun OneTimeFormat(
     timeFormat: TimeFormat,
     isSelected: Boolean,
     onClick: () -> Unit,
+
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = getTextStyle(TextType.CARD__BODY).copy(color = MaterialTheme.colors.onSurface)
+    unSelectedTextStyle: TextStyle = getTextStyle(TextType.GROUP_CARD_ITEM_BODY1),
+    selectedTextStyle: TextStyle = getTextStyle(TextType.GROUP_CARD_ITEM_BODY1).copy(color = MaterialTheme.colorScheme.onPrimary)
 ){
-    val cardColor = if(isSelected) getColor(ColorType.CARD_SELECTED)
-                    else            getColor(ColorType.CARD)
+    val cardColor = if (isSelected) MaterialTheme.colorScheme.primary
+//        getColor(ColorType.CARD_SELECTED)
+                    else            Color.Transparent
+
+    val textStyle = if (isSelected) selectedTextStyle
+                    else unSelectedTextStyle
 
     val haptic = LocalHapticFeedback.current
 
-    Card(
-        elevation = 0.dp,
-        backgroundColor = cardColor,
+    ClickableBox(
+        modifier = modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.small,
+        containerColor = cardColor,
         onClick = {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             onClick()
-        },
-        modifier = modifier
-            .clip(RoundedCornerShape(8.dp))
-            .fillMaxWidth()
+        }
     ) {
         Box(
             modifier = Modifier
@@ -302,104 +293,19 @@ private fun OneTimeFormat(
 }
 
 @Composable
-private fun TwoSwitch(
-    isMonthString: Boolean,
-    includeDayOfWeek: Boolean,
-    onUseMonthNameChange: (Boolean) -> Unit,
-    onIncludeDayOfWeekChange: (Boolean) -> Unit
-){
-   TextWithSwitchRow(
-       text = stringResource(id = R.string.use_month_name),
-       checked = isMonthString,
-       onCheckedChange = onUseMonthNameChange
-   )
-
-   TextWithSwitchRow(
-       text = stringResource(id = R.string.include_day_of_week),
-       checked = includeDayOfWeek,
-       onCheckedChange = onIncludeDayOfWeekChange
-   )
-}
-
-@Composable
-private fun TextWithSwitchRow(
-    text: String,
-    checked: Boolean,
-    onCheckedChange: (checked: Boolean) -> Unit,
-    textStyle: TextStyle = getTextStyle(TextType.CARD__BODY)
-){
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(60.dp)
-            .padding(16.dp, 0.dp)
-    ) {
-        Text(
-            text = text,
-            style = textStyle
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        MySwitch(
-            checked = checked,
-            onCheckedChange = onCheckedChange
-        )
-    }
-}
-
-@Composable
-private fun SelectDateFormatColumn(
-    currentDateFormat: DateFormat,
-    dateFormatList: Array<DateFormat>,
+private fun SelectDateFormat(
+    selectedDateFormat: DateFormat,
     onDateFormatChange: (DateFormat) -> Unit
 ){
+    val dateFormatList = rememberSaveable { enumValues<DateFormat>() }
+
     for (dateFormat in dateFormatList){
-        OneDateFormatItem(
-            isSelected = currentDateFormat == dateFormat,
-            dateFormat = dateFormat,
+        ItemWithRadioButton(
+            isSelected = selectedDateFormat == dateFormat,
+            text = stringResource(id = dateFormat.textId),
             onItemClick = {
                 onDateFormatChange(dateFormat)
             }
         )
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-private fun OneDateFormatItem(
-    isSelected: Boolean,
-    dateFormat: DateFormat,
-    onItemClick: () -> Unit,
-    textStyle: TextStyle = getTextStyle(TextType.CARD__BODY)
-){
-    Card(
-        elevation = 0.dp,
-        backgroundColor = Color.Transparent,
-        modifier = Modifier
-            .clip(RoundedCornerShape(16.dp))
-            .fillMaxWidth()
-            .height(60.dp),
-        onClick = onItemClick
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp, 0.dp)
-        ) {
-            MyRadioButton(
-                selected = isSelected,
-                onClick = onItemClick
-            )
-            
-            MySpacerRow(width = 8.dp)
-
-            Text(
-                text = stringResource(id = dateFormat.textId),
-                style = textStyle
-            )
-        }
     }
 }

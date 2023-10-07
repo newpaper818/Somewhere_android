@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.somewhere.db.TripRepository
 import com.example.somewhere.db.UserPreferencesRepository
+import com.example.somewhere.enumUtils.AppTheme
 import com.example.somewhere.enumUtils.DateFormat
+import com.example.somewhere.enumUtils.MapTheme
 import com.example.somewhere.enumUtils.TimeFormat
 import com.example.somewhere.model.Trip
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +19,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
+
+data class Theme(
+    val appTheme: AppTheme = AppTheme.AUTO,
+    val mapTheme: MapTheme = MapTheme.AUTO
+)
 data class DateTimeFormat(
     val dateFormat: DateFormat = DateFormat.YMD,
     val useMonthName: Boolean = false,
@@ -25,6 +32,7 @@ data class DateTimeFormat(
 )
 
 data class AppUiState(
+    val theme: Theme = Theme(),
     val dateTimeFormat: DateTimeFormat = DateTimeFormat(),
 
     val tripList: List<Trip>? = null,
@@ -85,7 +93,25 @@ class AppViewModel(
 
     //==============================================================================================
 
-    fun saveUserPreferences(
+    fun saveThemeUserPreferences(
+        appTheme: AppTheme? = null,
+        mapTheme: MapTheme? = null
+    ){
+        if (appTheme != null && appTheme != appUiState.value.theme.appTheme){
+            _appUiState.update { it.copy(theme = it.theme.copy(appTheme = appTheme)) }
+            viewModelScope.launch {
+                userPreferencesRepository.saveAppThemePreference(appTheme)
+            }
+        }
+        else if (mapTheme != null && mapTheme != appUiState.value.theme.mapTheme){
+            _appUiState.update { it.copy(theme = it.theme.copy(mapTheme = mapTheme)) }
+            viewModelScope.launch {
+                userPreferencesRepository.saveMapThemePreference(mapTheme)
+            }
+        }
+    }
+
+    fun saveDateTimeFormatUserPreferences(
         dateFormat: DateFormat? = null,
         useMonthName: Boolean? = null,
         includeDayOfWeek: Boolean? = null,
@@ -118,21 +144,25 @@ class AppViewModel(
     }
 
     suspend fun updateAppUiStateFromRepository(){
+        //get data from room
         val newTripList = tripsRepository.getAllTripsStream().firstOrNull()
 
-        val newDateFormatInt = userPreferencesRepository.dateFormat.firstOrNull() ?: DateFormat.YMD.ordinal
-        val newDateFormat = enumValues<DateFormat>().firstOrNull(){ it.ordinal == newDateFormatInt } ?: DateFormat.YMD
+        //get data from dataStore
+        //theme
+        val appTheme = AppTheme.get(userPreferencesRepository.appTheme.firstOrNull() ?: AppTheme.AUTO.ordinal)
+        val mapTheme = MapTheme.get(userPreferencesRepository.mapTheme.firstOrNull() ?: MapTheme.AUTO.ordinal)
 
-        val newUseMonthName = userPreferencesRepository.dateUseMonthName.firstOrNull() ?: false
+        //date time format
+        val dateFormat = DateFormat.get(userPreferencesRepository.dateFormat.firstOrNull() ?: DateFormat.YMD.ordinal)
+        val useMonthName = userPreferencesRepository.dateUseMonthName.firstOrNull() ?: false
+        val includeDayOfWeek = userPreferencesRepository.dateIncludeDayOfWeek.firstOrNull() ?: false
+        val timeFormat = TimeFormat.get(userPreferencesRepository.timeFormat.firstOrNull() ?: TimeFormat.T24H.ordinal)
 
-        val newIncludeDayOfWeek = userPreferencesRepository.dateIncludeDayOfWeek.firstOrNull() ?: false
-
-        val newTimeFormatInt = userPreferencesRepository.timeFormat.firstOrNull() ?: TimeFormat.T24H.ordinal
-        val newTimeFormat = enumValues<TimeFormat>().firstOrNull(){ it.ordinal == newTimeFormatInt } ?: TimeFormat.T24H
-
+        //update appUiState
         _appUiState.update {
             it.copy(
-                dateTimeFormat = DateTimeFormat(newDateFormat, newUseMonthName, newIncludeDayOfWeek, newTimeFormat),
+                theme = Theme(appTheme, mapTheme),
+                dateTimeFormat = DateTimeFormat(dateFormat, useMonthName, includeDayOfWeek, timeFormat),
                 tripList = newTripList,
                 tempTripList = newTripList
             )

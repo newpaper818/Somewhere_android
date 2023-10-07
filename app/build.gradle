@@ -7,14 +7,14 @@ plugins {
 
 android {
     namespace 'com.example.somewhere'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.example.somewhere"
         minSdk 26
-        targetSdk 33
+        targetSdk 34
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -55,7 +55,6 @@ dependencies {
     implementation "androidx.compose.ui:ui"
     implementation "androidx.compose.ui:ui-tooling"
     implementation "androidx.compose.ui:ui-tooling-preview"
-    implementation "androidx.compose.material:material"
     implementation "androidx.compose.material:material-icons-extended"
     implementation "androidx.compose.material3:material3"
     implementation "androidx.compose.material3:material3-window-size-class"
@@ -123,6 +122,7 @@ dependencies {
 
     //data store
     implementation "androidx.datastore:datastore-preferences:1.0.0"
+
 
 
     //
