@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.example.somewhere.ui.theme.ColorType.*
 
-//hi
+//git testttttt
 val gray = Color(0xFF878690)
 val black = Color(0xff000000)
 val white = Color(0xffffffff)
