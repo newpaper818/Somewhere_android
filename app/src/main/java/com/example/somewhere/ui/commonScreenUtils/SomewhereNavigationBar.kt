@@ -5,6 +5,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.dp
 import com.example.somewhere.ui.mainScreens.MoreDestination
 import com.example.somewhere.ui.mainScreens.MyTripsDestination
 import com.example.somewhere.ui.navigation.NavigationDestination

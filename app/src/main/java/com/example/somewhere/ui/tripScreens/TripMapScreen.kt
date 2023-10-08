@@ -3,14 +3,12 @@ package com.example.somewhere.ui.tripScreens
 import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,11 +23,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -38,14 +32,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -73,7 +65,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -111,6 +105,10 @@ object TripMapDestination : NavigationDestination {
     override val route = "trip map"
     override var title = ""
 }
+
+val SHEET_PEEK_HEIGHT = 150.dp
+const val CONTROL_PANEL_MAX_WIDTH = 420 //use at horizontal layout-
+const val CONTROL_PANEL_MIN_WIDTH = 366
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -155,9 +153,7 @@ fun TripMapScreen(
 
     val density = LocalDensity.current.density
 
-    var isControlExpanded by rememberSaveable{ mutableStateOf(true) }
     var mapSize by remember{ mutableStateOf(IntSize(0,0)) }
-    var controlBoxHeight by rememberSaveable { mutableStateOf(0) }
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -176,10 +172,10 @@ fun TripMapScreen(
                 bottomSheetState = rememberStandardBottomSheetState(initialValue = SheetValue.Expanded)
             )
 
-            Log.d("sheet", "${bottomSheetState.bottomSheetState.currentValue}")
+            var sheetHeightDp by rememberSaveable { mutableStateOf(0) }
 
+            Scaffold { paddingValue ->
 
-            Box(modifier = Modifier.navigationBarsPadding()) {
                 BottomSheetScaffold(
                     scaffoldState = bottomSheetState,
 
@@ -193,12 +189,16 @@ fun TripMapScreen(
                     //control
                     sheetSwipeEnabled = true,
                     sheetContainerColor = MaterialTheme.colorScheme.background,
-                    sheetPeekHeight = 150.dp,
+                    sheetPeekHeight = SHEET_PEEK_HEIGHT,
                     sheetDragHandle = { },
 
                     sheetContent = {
                         Column(
-                            modifier = Modifier.fillMaxHeight(0.5f)
+                            modifier = Modifier
+                                .fillMaxHeight(0.5f)
+                                .onSizeChanged {
+                                    sheetHeightDp = (it.height / density).toInt()
+                                }
                         ) {
                             BottomSheetHandel()
 
@@ -223,16 +223,29 @@ fun TripMapScreen(
                     }
                 ) { _ ->
 
+                    Log.d("padding", "$paddingValue")
+
+                    //get map bottom padding
+                    val bottomPadding: Float by animateFloatAsState(
+                        if (bottomSheetState.bottomSheetState.currentValue == SheetValue.Expanded)
+                            sheetHeightDp.toFloat()
+                        else
+                            SHEET_PEEK_HEIGHT.value, label = ""
+                    )
+
+                    val mapPadding = PaddingValues(0.dp, paddingValue.calculateTopPadding(), 0.dp, bottomPadding.dp)
+
                     //map
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
                             .onSizeChanged {
-                                mapSize = it
+                                mapSize = getMapSizeWithOutPadding(it, mapPadding, density)
                             }
                     ) {
                         MapForTrip(
                             context = context,
+                            mapPadding = mapPadding,
                             isDarkMapTheme = isDarkMapTheme,
                             userLocationEnabled = userLocationEnabled,
                             cameraPositionState = cameraPositionState,
@@ -241,7 +254,6 @@ fun TripMapScreen(
                             firstFocusOnToSpot = {
                                 focusOnToSpot(
                                     mapSize,
-                                    density,
                                     coroutineScope,
                                     dateWithShownMarkerList,
                                     spotTypeGroupWithShownMarkerList,
@@ -256,6 +268,9 @@ fun TripMapScreen(
 
         //at horizontal
         else ->{
+            var cardWidth by rememberSaveable { mutableStateOf(0) }
+
+
             Scaffold(
                 snackbarHost = {
                     Box(
@@ -269,6 +284,9 @@ fun TripMapScreen(
                     }
                 }
             ) { paddingValue ->
+
+                val mapPadding = PaddingValues(0.dp, paddingValue.calculateTopPadding(), cardWidth.dp, 0.dp)
+
                 Box(
                     contentAlignment = Alignment.BottomEnd,
                     modifier = Modifier.navigationBarsPadding()
@@ -279,11 +297,12 @@ fun TripMapScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .onSizeChanged {
-                                mapSize = it
+                                mapSize = getMapSizeWithOutPadding(it, mapPadding, density)
                             }
                     ) {
                         MapForTrip(
                             context = context,
+                            mapPadding = mapPadding,
                             isDarkMapTheme = isDarkMapTheme,
                             userLocationEnabled = userLocationEnabled,
                             cameraPositionState = cameraPositionState,
@@ -292,7 +311,6 @@ fun TripMapScreen(
                             firstFocusOnToSpot = {
                                 focusOnToSpot(
                                     mapSize,
-                                    density,
                                     coroutineScope,
                                     dateWithShownMarkerList,
                                     spotTypeGroupWithShownMarkerList,
@@ -304,18 +322,17 @@ fun TripMapScreen(
 
 
                     //for different screen size - get control panel width
-                    val maxWidth = 420.dp
-                    val minWidth = 366.dp
-                    val screenWidth = configuration.screenWidthDp.dp
-                    val cardModifier =
-                        if (screenWidth > (maxWidth / 45 * 100)) {
-                            Modifier.width(maxWidth)
+                    val screenWidth = configuration.screenWidthDp
+
+                    cardWidth =
+                        if (screenWidth > (CONTROL_PANEL_MAX_WIDTH / 45 * 100)) {
+                            CONTROL_PANEL_MAX_WIDTH
                         }
-                        else if (screenWidth < (minWidth / 45 * 100)) {
-                            Modifier.width(minWidth)
+                        else if (screenWidth < (CONTROL_PANEL_MIN_WIDTH / 45 * 100)) {
+                            CONTROL_PANEL_MIN_WIDTH
                         }
                         else {
-                            Modifier.fillMaxWidth(0.45f)
+                            (screenWidth * 0.45f).toInt()
                         }
 
                     //get status bar padding value - get top padding
@@ -327,7 +344,8 @@ fun TripMapScreen(
                     Card(
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                         shape = MaterialTheme.shapes.extraLarge,
-                        modifier = cardModifier
+                        modifier = Modifier
+                            .width(cardWidth.dp)
                             .displayCutoutPadding()
                             .padding(0.dp, topPadding, 16.dp, 16.dp)
                             .fillMaxHeight()
@@ -355,14 +373,6 @@ fun TripMapScreen(
                         }
 
                     }
-
-//                Column(
-//                    modifier = Modifier
-//                        .padding(16.dp)
-//                        .fillMaxHeight()
-//                ) {
-//
-//                }
                 }
             }
         }
@@ -608,30 +618,25 @@ private fun ControlPanel(
     navigateUp: () -> Unit,
     snackBarHostState: SnackbarHostState
 ){
+    val density = LocalDensity.current.density
+
     ButtonsRow(
-        isExpanded = false,
         mapSize = mapSize,
-        onExpandButtonClicked = { },
-
         focusOnToTargetEnabled = focusOnToSpotEnabled,
-
         isDateShown = oneDateShown,
         dateTimeFormat = dateTimeFormat,
-
         currentDateIndex = currentDateIndex,
-
         onOneDateClicked = {
             val newDateShownList =
                 tripMapViewModel.updateDateWithShownMarkerListToCurrentDate()
             focusOnToSpot(
                 mapSize,
-                density,
                 coroutineScope,
                 newDateShownList,
                 spotTypeGroupWithShownMarkerList,
                 cameraPositionState
             )
-            animateToDate(
+            scrollToDate(
                 coroutineScope,
                 true,
                 dateListState,
@@ -644,13 +649,12 @@ private fun ControlPanel(
                 tripMapViewModel.updateDateWithShownMarkerListToCurrentDate()
             focusOnToSpot(
                 mapSize,
-                density,
                 coroutineScope,
                 newDateShownList,
                 spotTypeGroupWithShownMarkerList,
                 cameraPositionState
             )
-            animateToDate(
+            scrollToDate(
                 coroutineScope,
                 true,
                 dateListState,
@@ -663,13 +667,12 @@ private fun ControlPanel(
                 tripMapViewModel.updateDateWithShownMarkerListToCurrentDate()
             focusOnToSpot(
                 mapSize,
-                density,
                 coroutineScope,
                 newDateShownList,
                 spotTypeGroupWithShownMarkerList,
                 cameraPositionState
             )
-            animateToDate(
+            scrollToDate(
                 coroutineScope,
                 true,
                 dateListState,
@@ -726,23 +729,9 @@ private fun ControlPanel(
     }
 }
 
-private fun animateToDate(
-    coroutineScope: CoroutineScope,
-    isControlExpanded: Boolean,
-    dateListState: LazyListState,
-    currentDateIndex: Int
-){
-    if (isControlExpanded)
-        coroutineScope.launch {
-            dateListState.animateScrollToItem(currentDateIndex)
-        }
-}
-
 @Composable
 private fun ButtonsRow(
-    isExpanded: Boolean,
     mapSize: IntSize,
-    onExpandButtonClicked: () -> Unit,
 
     focusOnToTargetEnabled: Boolean,
 
@@ -856,12 +845,6 @@ private fun ButtonsRow(
         Spacer(modifier = Modifier.weight(1f))
 
         Spacer(modifier = Modifier.width(40.dp))
-
-        //expand collapse button
-//        IconButton(onClick = onExpandButtonClicked) {
-//            DisplayIcon(icon = if (isExpanded)  MyIcons.collapseControlBox
-//                                else            MyIcons.expandControlBox)
-//        }
     }
 }
 
@@ -891,7 +874,6 @@ private fun FocusOnToSpotButton(
             onClick = {
                 focusOnToSpot(
                     mapSize = mapSize,
-                    density = density,
                     coroutineScope = coroutineScope,
                     dateListWithShownMarkerList = dateListWithShownIconList,
                     spotTypeWithShownMarkerList = spotTypeGroupWithShownIconList,
@@ -915,37 +897,6 @@ private fun FocusOnToSpotButton(
 
 }
 
-private fun focusOnToSpot(
-    mapSize: IntSize,
-    density: Float,
-    coroutineScope: CoroutineScope,
-    dateListWithShownMarkerList: List<DateWithBoolean>,
-    spotTypeWithShownMarkerList: List<SpotTypeGroupWithBoolean>,
-    cameraPositionState: CameraPositionState,
-){
-    val spotList: MutableList<Spot> = mutableListOf()
-
-    for (dateWithBoolean in dateListWithShownMarkerList) {
-        if (dateWithBoolean.isShown) {
-            for (spot in dateWithBoolean.date.spotList) {
-                if (SpotTypeGroupWithBoolean(spot.spotType.group, true or false) in spotTypeWithShownMarkerList &&
-                    spot.location != null
-                ) {
-                    spotList.add(spot)
-                }
-            }
-        }
-    }
-
-    //TODO add ghost spot - to avoid hide behind the control panel.
-
-
-    coroutineScope.launch {
-        com.example.somewhere.ui.tripScreenUtils.focusOnToSpotForTripMap(
-            cameraPositionState, spotList.toList(), mapSize, density
-        )
-    }
-}
 
 @Composable
 private fun SpotTypeList(
@@ -1007,6 +958,7 @@ private fun DateList(
         }
     }
 }
+
 @Composable
 private fun DateItem(
     date: Date,
@@ -1084,4 +1036,60 @@ private fun DateItem(
             )
         }
     }
+}
+
+private fun scrollToDate(
+    coroutineScope: CoroutineScope,
+    isControlExpanded: Boolean,
+    dateListState: LazyListState,
+    currentDateIndex: Int
+){
+    if (isControlExpanded)
+        coroutineScope.launch {
+            dateListState.animateScrollToItem(currentDateIndex)
+        }
+}
+
+private fun focusOnToSpot(
+    mapSize: IntSize,   //map size without padding
+    coroutineScope: CoroutineScope,
+    dateListWithShownMarkerList: List<DateWithBoolean>,
+    spotTypeWithShownMarkerList: List<SpotTypeGroupWithBoolean>,
+    cameraPositionState: CameraPositionState,
+){
+    //get spot list
+    val spotList: MutableList<Spot> = mutableListOf()
+
+    for (dateWithBoolean in dateListWithShownMarkerList) {
+        if (dateWithBoolean.isShown) {
+            for (spot in dateWithBoolean.date.spotList) {
+                if (SpotTypeGroupWithBoolean(spot.spotType.group, true or false) in spotTypeWithShownMarkerList &&
+                    spot.location != null
+                ) {
+                    spotList.add(spot)
+                }
+            }
+        }
+    }
+
+    //focus on to spot
+    coroutineScope.launch {
+        com.example.somewhere.ui.tripScreenUtils.focusOnToSpotForTripMap(
+            mapSize, cameraPositionState, spotList.toList()
+        )
+    }
+}
+
+private fun getMapSizeWithOutPadding(
+    mapSizeWithPadding: IntSize,
+    padding: PaddingValues,
+    density: Float
+): IntSize{
+    val topPadding = padding.calculateTopPadding().value * density
+    val bottomPadding = padding.calculateBottomPadding().value * density
+    val leftPadding = padding.calculateLeftPadding(LayoutDirection.Rtl).value * density
+    val rightPadding = padding.calculateRightPadding(LayoutDirection.Rtl).value * density
+
+    return IntSize((mapSizeWithPadding.height - topPadding - bottomPadding).toInt(),
+            (mapSizeWithPadding.width - leftPadding - rightPadding).toInt())
 }

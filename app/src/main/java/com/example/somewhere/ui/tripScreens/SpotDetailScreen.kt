@@ -33,7 +33,6 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,7 +47,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
@@ -83,8 +81,8 @@ import com.example.somewhere.ui.tripScreenUtils.cards.TitleWithColorCard
 import com.example.somewhere.ui.tripScreenUtils.cards.TitleCardMove
 import com.example.somewhere.ui.tripScreenUtils.cards.ZoomCard
 import com.example.somewhere.ui.tripScreenUtils.focusOnToSpot
-import com.example.somewhere.ui.tripScreenUtils.initialZoomLevel
-import com.example.somewhere.ui.tripScreenUtils.seoulLocation
+import com.example.somewhere.ui.tripScreenUtils.DEFAULT_ZOOM_LEVEL
+import com.example.somewhere.ui.tripScreenUtils.SEOUL_LOCATION
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.ui.tripScreenUtils.AnimatedBottomSaveCancelBar
@@ -201,13 +199,13 @@ fun SpotDetailScreen(
 
     val location =
         if (currentSpot.spotType.isNotMove())
-            currentSpot.location ?: seoulLocation
+            currentSpot.location ?: SEOUL_LOCATION
         else
-            spotFrom?.location ?: seoulLocation
+            spotFrom?.location ?: SEOUL_LOCATION
 
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(location, currentSpot.zoomLevel ?: initialZoomLevel)
+        position = CameraPosition.fromLatLngZoom(location, currentSpot.zoomLevel ?: DEFAULT_ZOOM_LEVEL)
     }
 
     val density = LocalDensity.current.density
@@ -838,10 +836,10 @@ private fun SetLocationPage(
 ){
     val coroutineScope = rememberCoroutineScope()
 
-    val firstLocation = spotList[currentSpotId].location?: seoulLocation
+    val firstLocation = spotList[currentSpotId].location?: SEOUL_LOCATION
     var newLocation: LatLng by rememberSaveable { mutableStateOf(firstLocation) }
 
-    var newZoomLevel: Float by rememberSaveable { mutableStateOf(spotList[currentSpotId].zoomLevel ?: initialZoomLevel) }
+    var newZoomLevel: Float by rememberSaveable { mutableStateOf(spotList[currentSpotId].zoomLevel ?: DEFAULT_ZOOM_LEVEL) }
 
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(firstLocation, newZoomLevel)
