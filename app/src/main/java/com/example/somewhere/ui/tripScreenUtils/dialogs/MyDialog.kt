@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -40,6 +42,104 @@ import com.example.somewhere.ui.theme.getTextStyle
 
 val DIALOG_DEFAULT_WIDTH = 360.dp
 val DIALOG_DEFAULT_MAX_HEIGHT = 570.dp
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MyDialog1(
+    onDismissRequest: () -> Unit,
+
+    modifier: Modifier = Modifier,
+    width: Dp? = DIALOG_DEFAULT_WIDTH,
+    setMaxHeight: Boolean = false,
+    maxHeight: Dp = DIALOG_DEFAULT_MAX_HEIGHT,
+    titleText: String? = null,
+    bodyText: String? = null,
+    bodyContent: @Composable() (() -> Unit)? = null,
+    buttonContent: @Composable() (() -> Unit)? = null,
+    setBodySpacer: Boolean = true
+){
+    var columnModifier =
+        if (width != null) modifier
+            .width(width)
+            .padding(16.dp)
+        else               modifier.padding(16.dp)
+
+    columnModifier =
+        if (setMaxHeight) columnModifier.heightIn(max = maxHeight)
+        else              columnModifier
+
+
+
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        modifier = modifier.wrapContentHeight(),
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Surface(
+            shape = MaterialTheme.shapes.extraLarge,
+            color = getColor(ColorType.DIALOG__BACKGROUND)
+        ) {
+            Column(
+                modifier = columnModifier,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                //title text / align center
+                if (titleText != null){
+                    Text(
+                        text = titleText,
+                        style = getTextStyle(TextType.DIALOG__TITLE)
+                    )
+
+                    MySpacerColumn(height = 16.dp)
+                }
+
+                //body text / align left(fillMaxWidth)
+                if (bodyText != null){
+                    Text(
+                        text = bodyText,
+                        style = getTextStyle(TextType.DIALOG__BODY),
+                        modifier = Modifier
+                            .padding(3.dp, 0.dp)
+                            .fillMaxWidth()
+                    )
+
+                    MySpacerColumn(height = 16.dp)
+                }
+
+
+                Box(
+                    contentAlignment = Alignment.BottomCenter,
+                    modifier = Modifier.fillMaxWidth()
+                ){
+                    Column {
+                        if (bodyContent != null) {
+                            bodyContent()
+                        }
+
+//                        Column(modifier = Modifier.height(60.dp)) {
+//                            Spacer(modifier = Modifier.weight(1f))
+//                        }
+                        
+//                        if (setBodySpacer) {
+//                            MySpacerColumn(height = 12.dp)
+//                        }
+//
+//                        if (buttonContent != null){
+//                            MySpacerColumn(height = 48.dp)
+//                        }
+                    }
+                    Column {
+                        if (buttonContent != null) {
+                            buttonContent()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

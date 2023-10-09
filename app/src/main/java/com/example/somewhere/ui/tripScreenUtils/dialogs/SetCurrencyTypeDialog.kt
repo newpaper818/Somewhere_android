@@ -56,7 +56,7 @@ fun SetCurrencyTypeDialog(
                 contentPadding = PaddingValues(8.dp),
                 modifier = Modifier
                     .heightIn(min = 0.dp)
-                    .clip(RoundedCornerShape(16.dp))
+                    .clip(MaterialTheme.shapes.medium)
                     .background(getColor(ColorType.DIALOG__CARD))
             ) {
                 items(currencyTypeList) {

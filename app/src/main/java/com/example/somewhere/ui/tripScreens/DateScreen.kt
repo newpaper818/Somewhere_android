@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -169,11 +170,13 @@ fun DateScreen(
 
     Scaffold(
         snackbarHost = {
-                SnackbarHost(
-                    hostState = snackBarHostState,
-                    modifier = Modifier.width(500.dp)
-                )
-            },
+            SnackbarHost(
+                hostState = snackBarHostState,
+                modifier = Modifier
+                    .width(500.dp)
+                    .imePadding()
+            )
+        },
         //top app bar
         topBar = {
             SomewhereTopAppBar(
@@ -367,6 +370,9 @@ fun DatePage(
                     currentDate.setTitleText(showingTrip, updateTripState, newTitleText)
                     Log.d("page", "title ${currentDate.id}")
                 },
+                onTextSizeLimit = {
+                    showSnackBar("over 100", null, SnackbarDuration.Short)
+                },
                 color = currentDate.color,
                 modifier = modifier,
                 onColorChange = {newDateColor ->
@@ -400,6 +406,9 @@ fun DatePage(
                 modifier = modifier,
                 onMemoChanged = { newMemoText ->
                     currentDate.setMemoText(showingTrip, updateTripState, newMemoText)
+                },
+                onTextSizeLimit = {
+                    showSnackBar("Memo is too long", null, SnackbarDuration.Short)
                 }
             )
 

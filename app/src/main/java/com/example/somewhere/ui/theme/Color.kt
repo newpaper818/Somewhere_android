@@ -334,7 +334,7 @@ fun getColor(colorType: ColorType): Color {
 const val tourColor =       0xff493cfa.toInt()
 const val moveColor =       0xff53ed56.toInt()
 const val movePointColor =  0xff26b502.toInt()
-const val foodColor =       0xffe6a10e.toInt()
+const val foodColor =       0xFFFFBA5B.toInt()
 const val lodgingColor =    0xff901aeb.toInt()
 const val etcColor =        0xff808080.toInt()
 

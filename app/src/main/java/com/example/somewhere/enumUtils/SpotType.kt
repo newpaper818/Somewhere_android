@@ -5,6 +5,7 @@ import com.example.somewhere.R
 
 import com.example.somewhere.enumUtils.SpotType.*
 import com.example.somewhere.ui.theme.MyColor
+import com.example.somewhere.ui.theme.blackInt
 import com.example.somewhere.ui.theme.etcColor
 import com.example.somewhere.ui.theme.foodColor
 import com.example.somewhere.ui.theme.lodgingColor
@@ -49,7 +50,7 @@ enum class SpotTypeGroup(
         )
     ),
 
-    FOOD(R.string.food, MyColor(foodColor, whiteInt),
+    FOOD(R.string.food, MyColor(foodColor, blackInt),
         listOf(
             SpotType.FOOD,
             COFFEE_TEA, RESTAURANT, FAST_FOOD, DESSERT, SNACK, BAR_PUB

@@ -10,16 +10,19 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,10 +41,12 @@ import androidx.compose.ui.unit.dp
 import com.example.somewhere.R
 import com.example.somewhere.ui.commonScreenUtils.MySpacerColumn
 import com.example.somewhere.ui.commonScreenUtils.MySpacerRow
+import com.example.somewhere.ui.theme.ColorType
 import com.example.somewhere.ui.tripScreenUtils.MyTextField
 import com.example.somewhere.ui.tripScreenUtils.dialogs.SetColorDialog
 import com.example.somewhere.ui.theme.MyColor
 import com.example.somewhere.ui.theme.TextType
+import com.example.somewhere.ui.theme.getColor
 import com.example.somewhere.ui.theme.getTextStyle
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -50,6 +55,7 @@ fun TitleCard(
     isEditMode: Boolean,
     titleText: String?,
     onTitleChange: (String) -> Unit,
+    onTextSizeLimit: () -> Unit,
     focusManager: FocusManager,
 
     modifier: Modifier = Modifier,
@@ -71,7 +77,7 @@ fun TitleCard(
             Row {
                 //TODO focus 되면 배경색 달라지게?
                 //TODO text num limit
-                TitleCardUi(isEditMode, titleText, onTitleChange, focusManager,
+                TitleCardUi(isEditMode, titleText, onTitleChange, onTextSizeLimit, focusManager,
                     getCardHeight = { },
                     modifier = Modifier.weight(1f)
                 )
@@ -90,6 +96,7 @@ fun TitleWithColorCard(
     titleText: String?,
     setShowBottomSaveCancelBar: (Boolean) -> Unit,
     onTitleChange: (newTitle: String) -> Unit,
+    onTextSizeLimit: () -> Unit,
     focusManager: FocusManager,
     color: MyColor,
 
@@ -114,7 +121,7 @@ fun TitleWithColorCard(
             Row {
                 //TODO focus 되면 배경색 달라지게?
                 //TODO text num limit
-                TitleCardUi(isEditMode, titleText, onTitleChange, focusManager,
+                TitleCardUi(isEditMode, titleText, onTitleChange, onTextSizeLimit, focusManager,
                     getCardHeight = {cardHeight_ ->
                         cardHeight = cardHeight_
                     }, modifier = Modifier.weight(1f)
@@ -161,9 +168,10 @@ fun TitleCardMove(
     isEditMode: Boolean,
     titleText: String?,
     onTitleChange: (String) -> Unit,
+    onTextSizeLimit: () -> Unit,
     focusManager: FocusManager
 ){
-    TitleCardUi(isEditMode, titleText, onTitleChange, focusManager, getCardHeight = { })
+    TitleCardUi(isEditMode, titleText, onTitleChange, onTextSizeLimit, focusManager, getCardHeight = { })
 }
 
 @Composable
@@ -171,6 +179,7 @@ private fun TitleCardUi(
     isEditMode: Boolean,
     titleText: String?,
     onTitleChange: (String) -> Unit,
+    onTextSizeLimit: () -> Unit,
     focusManager: FocusManager,
 
     getCardHeight: (cardHeight: Int) -> Unit,
@@ -180,9 +189,15 @@ private fun TitleCardUi(
     bodyTextStyle: TextStyle = getTextStyle(TextType.CARD__BODY),
     bodyNullTextStyle: TextStyle = getTextStyle(TextType.CARD__BODY_NULL)
 ){
+    var isTextSizeLimit by rememberSaveable { mutableStateOf(false) }
+
+    val borderColor = if (isTextSizeLimit) getColor(ColorType.ERROR_BORDER)
+                    else Color.Transparent
+
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .border(1.dp, borderColor, RoundedCornerShape(16.dp))
             .onSizeChanged {
                 getCardHeight(it.height)
             }
@@ -216,9 +231,7 @@ private fun TitleCardUi(
 
             //edit mode
             else{
-
                 //TODO focus 되면 배경색 달라지게?
-                //TODO text num limit
                 MyTextField(
                     inputText = titleText,
                     inputTextStyle = bodyTextStyle,
@@ -226,7 +239,19 @@ private fun TitleCardUi(
                     placeholderText = stringResource(id = R.string.title_card_body_add_a_title),
                     placeholderTextStyle = bodyNullTextStyle,
 
-                    onValueChange = onTitleChange,
+                    onValueChange = {
+                        var text = it
+
+                        if(it.length > 100) {
+                            isTextSizeLimit = true
+                            onTextSizeLimit()
+                            text = text.substring(0, 100)
+                        }
+                        else
+                            isTextSizeLimit = false
+
+                        onTitleChange(text)
+                    },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {

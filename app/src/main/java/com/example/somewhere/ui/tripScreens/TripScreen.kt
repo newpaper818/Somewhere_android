@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -142,7 +143,8 @@ fun TripScreen(
 
     val snackBarPadding by animateFloatAsState(
         targetValue = if (isEditMode) 10f else 0f,
-        animationSpec = tween(300)
+        animationSpec = tween(300),
+        label = ""
     )
 
     //for expanded fab animation
@@ -155,6 +157,7 @@ fun TripScreen(
             modifier = Modifier
                 .width(500.dp)
                 .padding(0.dp, 0.dp, 0.dp, snackBarPadding.dp)
+                .imePadding()
         ) },
 
         //top app bar
@@ -236,6 +239,15 @@ fun TripScreen(
                         focusManager = focusManager,
                         onTitleChange = { newTitleText ->
                             showingTrip.setTitleText(updateTripState, newTitleText)
+                        },
+                        onTextSizeLimit = {
+                            coroutineScope.launch {
+                                snackBarHostState.showSnackbar(
+                                    message = "over 100",
+                                    actionLabel = null,
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
                         }
                     )
                 }
@@ -327,6 +339,15 @@ fun TripScreen(
                         memoText = showingTrip.memoText,
                         onMemoChanged = { newMemoText ->
                             showingTrip.setMemoText(updateTripState, newMemoText)
+                        },
+                        onTextSizeLimit = {
+                            coroutineScope.launch {
+                                snackBarHostState.showSnackbar(
+                                    message = "Memo is too long",
+                                    actionLabel = null,
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
                         }
                     )
 

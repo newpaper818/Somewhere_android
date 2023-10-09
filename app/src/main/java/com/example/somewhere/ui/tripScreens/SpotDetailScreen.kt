@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -280,8 +281,9 @@ fun SpotDetailScreen(
             SnackbarHost(
                 hostState = snackBarHostState,
                 modifier = Modifier
-                    .padding(0.dp, 0.dp, 0.dp, snackBarPadding.dp)
                     .width(500.dp)
+                    .padding(0.dp, 0.dp, 0.dp, snackBarPadding.dp)
+                    .imePadding()
             )
         },
         //top bar
@@ -610,16 +612,34 @@ fun SpotDetailPage(
                     onTitleChange = { newTitleText ->
                         currentSpot.setTitleText(showingTrip, dateId, updateTripState, newTitleText)
                     },
+                    onTextSizeLimit = {
+                        coroutineScope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "over 100",
+                                actionLabel = null,
+                                duration = SnackbarDuration.Short
+                            )
+                        }
+                    },
                     focusManager = focusManager,
                 )
             else {
                 TitleCardMove(
                     isEditMode = isEditMode,
                     titleText = currentSpot.titleText,
-                    focusManager = focusManager,
                     onTitleChange = { newTitleText ->
                         currentSpot.setTitleText(showingTrip, dateId, updateTripState, newTitleText)
-                    }
+                    },
+                    onTextSizeLimit = {
+                        coroutineScope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "over 100",
+                                actionLabel = null,
+                                duration = SnackbarDuration.Short
+                            )
+                        }
+                    },
+                    focusManager = focusManager
                 )
 
                 MySpacerColumn(height = 16.dp)
@@ -807,6 +827,15 @@ fun SpotDetailPage(
                 memoText = currentSpot.memo,
                 onMemoChanged = { newMemoText ->
                     currentSpot.setMemoText(showingTrip, dateId, updateTripState, newMemoText)
+                },
+                onTextSizeLimit = {
+                    coroutineScope.launch {
+                        snackBarHostState.showSnackbar(
+                            message = "Memo is too long",
+                            actionLabel = null,
+                            duration = SnackbarDuration.Short
+                        )
+                    }
                 }
             )
 
