@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,7 +38,6 @@ import com.example.somewhere.utils.millisToLocalDate
 import com.example.somewhere.viewModel.DateTimeFormat
 import java.time.LocalDate
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TripDurationCard(
     dateList: List<Date>,
@@ -52,6 +50,7 @@ fun TripDurationCard(
     dateTimeFormat: DateTimeFormat,
 
     isEditMode: Boolean,
+    setShowBottomSaveCancelBar: (Boolean) -> Unit,
     setTripDuration: (startDate: LocalDate, endDate: LocalDate) -> Unit,
 
     modifier: Modifier = Modifier,
@@ -59,6 +58,8 @@ fun TripDurationCard(
     bodyTextStyle: TextStyle = getTextStyle(TextType.CARD__BODY),
     bodyNullTextStyle: TextStyle = getTextStyle(TextType.CARD__BODY_NULL)
 ){
+    var showDateRangePickerDialog by rememberSaveable { mutableStateOf(false) }
+
     //set body text and body text style
     // Start Date || No Start Date || 2023.06.23
     val startDateText1 =
@@ -77,8 +78,6 @@ fun TripDurationCard(
         else
             LocalDate.now().let { now -> now.plusDays(1)..now.plusDays(5) }
 
-    var showDateRangePickerDialog by rememberSaveable { mutableStateOf(false) }
-
     if (showDateRangePickerDialog) {
         DateRangeDialog(
             defaultDateRange = defaultDateRange,
@@ -86,12 +85,14 @@ fun TripDurationCard(
             dateTimeFormat = dateTimeFormat,
             onDismissRequest = {
                 showDateRangePickerDialog = false
+                setShowBottomSaveCancelBar(true)
             },
-            onConfirm = {startDateMillis_, endDateMillis_ ->
-                if (startDateMillis_ != null && endDateMillis_ != null){
-                    setTripDuration(millisToLocalDate(startDateMillis_), millisToLocalDate(endDateMillis_))
+            onConfirm = {startDateMillis, endDateMillis ->
+                if (startDateMillis != null && endDateMillis != null){
+                    setTripDuration(millisToLocalDate(startDateMillis), millisToLocalDate(endDateMillis))
                 }
                 showDateRangePickerDialog = false
+                setShowBottomSaveCancelBar(true)
             }
         )
     }
@@ -104,6 +105,7 @@ fun TripDurationCard(
             modifier = modifier.fillMaxWidth(),
             onClick = {
                 showDateRangePickerDialog = true
+                setShowBottomSaveCancelBar(false)
             },
             enabled = isEditMode
         ) {

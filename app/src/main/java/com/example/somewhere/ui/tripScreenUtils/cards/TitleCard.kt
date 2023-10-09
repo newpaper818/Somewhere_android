@@ -36,7 +36,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.example.somewhere.R
-import com.example.somewhere.model.Date
 import com.example.somewhere.ui.commonScreenUtils.MySpacerColumn
 import com.example.somewhere.ui.commonScreenUtils.MySpacerRow
 import com.example.somewhere.ui.tripScreenUtils.MyTextField
@@ -45,17 +44,15 @@ import com.example.somewhere.ui.theme.MyColor
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
 
-@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun TitleWithColorCard(
+fun TitleCard(
     isEditMode: Boolean,
     titleText: String?,
     onTitleChange: (String) -> Unit,
     focusManager: FocusManager,
 
     modifier: Modifier = Modifier,
-    date: Date? = null, //if not null, show color card
-    onColorChange: (newMyColor: MyColor) -> Unit = {},
 ){
     var cardHeight by rememberSaveable { mutableStateOf(0) }
 
@@ -74,39 +71,83 @@ fun TitleWithColorCard(
             Row {
                 //TODO focus 되면 배경색 달라지게?
                 //TODO text num limit
-                TitleCard(isEditMode, titleText, onTitleChange, focusManager,
+                TitleCardUi(isEditMode, titleText, onTitleChange, focusManager,
+                    getCardHeight = { },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            MySpacerColumn(height = 16.dp)
+        }
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun TitleWithColorCard(
+    isEditMode: Boolean,
+
+    titleText: String?,
+    setShowBottomSaveCancelBar: (Boolean) -> Unit,
+    onTitleChange: (newTitle: String) -> Unit,
+    focusManager: FocusManager,
+    color: MyColor,
+
+    modifier: Modifier = Modifier,
+    onColorChange: (newMyColor: MyColor) -> Unit,
+){
+    var cardHeight by rememberSaveable { mutableStateOf(0) }
+    var showColorPickerDialog by rememberSaveable { mutableStateOf(false) }
+
+    AnimatedVisibility(
+        visible = isEditMode,
+        enter =
+        scaleIn(animationSpec = tween(170, 0, LinearEasing))
+                + expandVertically(animationSpec = tween(190, 0, LinearEasing))
+                + fadeIn(animationSpec = tween(300, 100)),
+        exit =
+        scaleOut(animationSpec = tween(250, 100))
+                + shrinkVertically(animationSpec = tween(320, 100))
+                + fadeOut(animationSpec = tween(300, 100))
+    ) {
+        Column(modifier = modifier) {
+            Row {
+                //TODO focus 되면 배경색 달라지게?
+                //TODO text num limit
+                TitleCardUi(isEditMode, titleText, onTitleChange, focusManager,
                     getCardHeight = {cardHeight_ ->
                         cardHeight = cardHeight_
                     }, modifier = Modifier.weight(1f)
                 )
 
-                if (date != null) {
-                    var showColorDialog by rememberSaveable { mutableStateOf(false) }
+                if(showColorPickerDialog){
+                    SetColorDialog(
+                        initialColor = color,
+                        onDismissRequest = {
+                            showColorPickerDialog = false
+                            setShowBottomSaveCancelBar(true)
+                        },
+                        onOkClick = {
+                            showColorPickerDialog = false
+                            setShowBottomSaveCancelBar(true)
+                            onColorChange(it)
 
-                    if(showColorDialog){
-                        SetColorDialog(
-                            currentDate = date,
-                            onDismissRequest = { showColorDialog = false },
-                            onOkClick = {
-                                onColorChange(it)
-                                showColorDialog = false
-                            }
-                        )
-                    }
-
-                    
-                    MySpacerRow(width = 16.dp)
-
-                    //color card
-                    Card(
-                        colors = CardDefaults.cardColors(containerColor = Color(date.color.color)),
-                        modifier = Modifier.size((cardHeight / LocalDensity.current.density).toInt().dp),
-                        onClick = {
-                            showColorDialog = true
                         }
-                    ) {
+                    )
+                }
 
+                MySpacerRow(width = 16.dp)
+
+                //color card
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = Color(color.color)),
+                    modifier = Modifier.size((cardHeight / LocalDensity.current.density).toInt().dp),
+                    onClick = {
+                        showColorPickerDialog = true
+                        setShowBottomSaveCancelBar(false)
                     }
+                ) {
+
                 }
             }
 
@@ -122,11 +163,11 @@ fun TitleCardMove(
     onTitleChange: (String) -> Unit,
     focusManager: FocusManager
 ){
-    TitleCard(isEditMode, titleText, onTitleChange, focusManager, getCardHeight = { })
+    TitleCardUi(isEditMode, titleText, onTitleChange, focusManager, getCardHeight = { })
 }
 
 @Composable
-fun TitleCard(
+private fun TitleCardUi(
     isEditMode: Boolean,
     titleText: String?,
     onTitleChange: (String) -> Unit,

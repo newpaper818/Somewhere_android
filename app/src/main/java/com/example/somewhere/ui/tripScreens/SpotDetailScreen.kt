@@ -13,14 +13,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -87,6 +91,7 @@ import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.ui.tripScreenUtils.AnimatedBottomSaveCancelBar
 import com.example.somewhere.ui.tripScreenUtils.IconFAB
+import com.example.somewhere.ui.tripScreenUtils.cards.TitleCard
 import com.example.somewhere.viewModel.DateTimeFormat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -165,6 +170,7 @@ fun SpotDetailScreen(
 
     //dialog: delete trip? unsaved data will be deleted
     var showExitDialog by rememberSaveable { mutableStateOf(false) }
+    var showBottomSaveCancelBar by rememberSaveable { mutableStateOf(true) }
 
     val snackBarHostState = remember { SnackbarHostState() }
 
@@ -285,7 +291,9 @@ fun SpotDetailScreen(
                 subTitle = subTitle,
 
                 //back button
-                navigationIcon = MyIcons.back,
+                navigationIcon =
+                    if (isEditLocationMode) MyIcons.close
+                    else                    MyIcons.back,
                 navigationIconOnClick = {
                     onBackButtonClick()
                 }
@@ -462,6 +470,9 @@ fun SpotDetailScreen(
                                     dateTimeFormat = dateTimeFormat,
                                     focusManager = focusManager,
 
+                                    setShowBottomSaveCancelBar = {
+                                        showBottomSaveCancelBar = it
+                                    },
                                     updateTripState = updateTripState,
 
                                     toggleIsEditLocation = {
@@ -500,7 +511,7 @@ fun SpotDetailScreen(
 
             //bottom save cancel bar
             AnimatedBottomSaveCancelBar(
-                visible = isEditMode,
+                visible = isEditMode && showBottomSaveCancelBar,
                 onCancelClick = {
                     focusManager.clearFocus()
                     onBackButtonClick()
@@ -558,6 +569,7 @@ fun SpotDetailPage(
 
     focusManager: FocusManager,
 
+    setShowBottomSaveCancelBar: (Boolean) -> Unit,
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
 
     toggleIsEditLocation: (spotId: Int) -> Unit,
@@ -592,13 +604,13 @@ fun SpotDetailPage(
             MySpacerColumn(height = 16.dp)
 
             if (currentSpot.spotType.isNotMove())
-                TitleWithColorCard(
+                TitleCard(
                     isEditMode = isEditMode,
                     titleText = currentSpot.titleText,
-                    focusManager = focusManager,
                     onTitleChange = { newTitleText ->
                         currentSpot.setTitleText(showingTrip, dateId, updateTripState, newTitleText)
-                    }
+                    },
+                    focusManager = focusManager,
                 )
             else {
                 TitleCardMove(
@@ -668,6 +680,7 @@ fun SpotDetailPage(
                 spot = currentSpot,
                 isEditMode = isEditMode,
                 dateTimeFormat = dateTimeFormat,
+                setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
                 changeDate = { newDateId ->
                     if (dateId != newDateId) {
                         navigateUp()
@@ -701,9 +714,13 @@ fun SpotDetailPage(
             if (showSpotTypeDialog) {
                 SetSpotTypeDialog(
                     initialSpotType = currentSpot.spotType,
-                    onDismissRequest = { showSpotTypeDialog = false },
+                    onDismissRequest = {
+                        showSpotTypeDialog = false
+                        setShowBottomSaveCancelBar(true)
+                    },
                     onOkClick = { newSpotType ->
                         showSpotTypeDialog = false
+                        setShowBottomSaveCancelBar(true)
                         currentSpot.setSpotType(
                             showingTrip,
                             dateId,
@@ -721,10 +738,12 @@ fun SpotDetailPage(
                     initialValue = currentSpot.budget,
                     onDismissRequest = {
                         showBudgetDialog = false
+                        setShowBottomSaveCancelBar(true)
                         setImePadding()
                     },
                     onSaveClick = { newBudget ->
                         showBudgetDialog = false
+                        setShowBottomSaveCancelBar(true)
                         currentSpot.setBudget(showingTrip, dateId, updateTripState, newBudget)
                         setImePadding()
                     }
@@ -737,10 +756,12 @@ fun SpotDetailPage(
                     initialValue = currentSpot.travelDistance,
                     onDismissRequest = {
                         showDistanceDialog = false
+                        setShowBottomSaveCancelBar(true)
                         setImePadding()
                     },
                     onSaveClick = { newTravelDistance ->
                         showDistanceDialog = false
+                        setShowBottomSaveCancelBar(true)
                         currentSpot.travelDistance = newTravelDistance
                         setImePadding()
                     }
@@ -759,15 +780,19 @@ fun SpotDetailPage(
                 list = listOf(
                     Triple(MyIcons.category, currentSpot.getSpotTypeText()) {
                         showSpotTypeDialog = true
+                        setShowBottomSaveCancelBar(false)
                     },
 
                     Triple(MyIcons.budget, currentSpot.getBudgetText(showingTrip)) {
                         showBudgetDialog = true
+                        setShowBottomSaveCancelBar(false)
                     },
 
                     Triple(MyIcons.travelDistance, currentSpot.getDistanceText()) {
-                        if (currentSpot.spotType.isNotMove())
+                        if (currentSpot.spotType.isNotMove()) {
                             showDistanceDialog = true
+                            setShowBottomSaveCancelBar(false)
+                        }
                     }
                 )
             )
@@ -895,41 +920,105 @@ private fun SetLocationPage(
             }
         }
 
-        Row(verticalAlignment = Alignment.Bottom) {
-            //zoom card
-            ZoomCard(
-                zoomLevel = newZoomLevel,
-                mapZoomTo = { newZoomLevel_ ->
-                    newZoomLevel = newZoomLevel_
-                    coroutineScope.launch {
-                        cameraPositionState.animate(
-                            CameraUpdateFactory.zoomTo(newZoomLevel), 300
-                        )
-                    }
-                },
-                fusedLocationClient = fusedLocationClient,
-                cameraPositionState = cameraPositionState,
-                setUserLocationEnabled = setUserLocationEnabled,
-                showSnackBar = showSnackBar
-            )
+//        LazyVerticalGrid(
+//            columns = GridCells.Adaptive(320.dp),
+//            horizontalArrangement = Arrangement.Center,
+//            modifier = Modifier.fillMaxWidth()
+//        ){
+//            item {
+//                //zoom card
+////                Box(modifier = Modifier.width(335.dp)) {
+//                    ZoomCard(
+//                        zoomLevel = newZoomLevel,
+//                        mapZoomTo = { newZoomLevel_ ->
+//                            newZoomLevel = newZoomLevel_
+//                            coroutineScope.launch {
+//                                cameraPositionState.animate(
+//                                    CameraUpdateFactory.zoomTo(newZoomLevel), 300
+//                                )
+//                            }
+//                        },
+//                        fusedLocationClient = fusedLocationClient,
+//                        cameraPositionState = cameraPositionState,
+//                        setUserLocationEnabled = setUserLocationEnabled,
+//                        showSnackBar = showSnackBar
+//                    )
+////                }
+//            }
+//            item {
+//                //cancel save buttons
+//                SaveCancelButtons(
+//                    onCancelClick = toggleIsEditLocationMode,
+//                    onSaveClick = {
+//                        //set location and zoom level
+//                        //spotList[currentSpotId].zoomLevel = zoomLevel
+//                        spotList[currentSpotId].setLocation(
+//                            showingTrip,
+//                            dateId,
+//                            updateTripState,
+//                            newLocation,
+//                            newZoomLevel
+//                        )
+//                        toggleIsEditLocationMode()
+//                    },
+//                    modifier = Modifier.background(MaterialTheme.colorScheme.background),
+//                    positiveText = stringResource(id = R.string.dialog_button_ok)
+//                )
+//            }
+//        }
 
-            if (screenWidthDp >= 740){
-                MySpacerRow(width = 64.dp)
 
-                //cancel save buttons
-                SaveCancelButtons(
-                    onCancelClick = toggleIsEditLocationMode ,
-                    onSaveClick = {
-                        //set location and zoom level
-                        //spotList[currentSpotId].zoomLevel = zoomLevel
-                        spotList[currentSpotId].setLocation(showingTrip, dateId, updateTripState, newLocation, newZoomLevel)
-                        toggleIsEditLocationMode()
+        Row(
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Box(
+                contentAlignment = Alignment.BottomCenter,
+                modifier = Modifier.weight(1f)
+            ) {
+                ZoomCard(
+                    zoomLevel = newZoomLevel,
+                    mapZoomTo = { newZoomLevel1 ->
+                        newZoomLevel = newZoomLevel1
+                        coroutineScope.launch {
+                            cameraPositionState.animate(
+                                CameraUpdateFactory.zoomTo(newZoomLevel), 300
+                            )
+                        }
                     },
-                    modifier = Modifier.background(MaterialTheme.colorScheme.background)
+                    fusedLocationClient = fusedLocationClient,
+                    cameraPositionState = cameraPositionState,
+                    setUserLocationEnabled = setUserLocationEnabled,
+                    showSnackBar = showSnackBar
                 )
             }
+
+            if (screenWidthDp >= 670){
+                Box(
+                    contentAlignment = Alignment.BottomCenter,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    //cancel save buttons
+                    SaveCancelButtons(
+                        onCancelClick = toggleIsEditLocationMode,
+                        onSaveClick = {
+                            //set location and zoom level
+                            //spotList[currentSpotId].zoomLevel = zoomLevel
+                            spotList[currentSpotId].setLocation(
+                                showingTrip,
+                                dateId,
+                                updateTripState,
+                                newLocation,
+                                newZoomLevel
+                            )
+                            toggleIsEditLocationMode()
+                        },
+                        modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                        positiveText = stringResource(id = R.string.dialog_button_ok)
+                    )
+                }
+            }
         }
-        if (screenWidthDp < 740) {
+        if (screenWidthDp < 670) {
 
             MySpacerColumn(height = 8.dp)
 
@@ -948,7 +1037,8 @@ private fun SetLocationPage(
                     )
                     toggleIsEditLocationMode()
                 },
-                modifier = Modifier.background(MaterialTheme.colorScheme.background)
+                modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                positiveText = stringResource(id = R.string.dialog_button_ok)
             )
         }
     }

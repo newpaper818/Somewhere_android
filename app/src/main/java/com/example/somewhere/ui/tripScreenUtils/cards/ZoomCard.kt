@@ -43,7 +43,7 @@ fun ZoomCard(
         verticalAlignment = Alignment.Bottom,
         modifier = Modifier
 //            .background(MaterialTheme.colorScheme.background)
-            .padding(10.dp)
+            .padding(0.dp, 10.dp)
     ) {
         //set zoom level
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

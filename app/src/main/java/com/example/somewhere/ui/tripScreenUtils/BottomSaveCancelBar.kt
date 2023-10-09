@@ -59,7 +59,8 @@ fun AnimatedBottomSaveCancelBar(
 fun BottomSaveCancelBar(
     onCancelClick: () -> Unit,
     onSaveClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    positiveText: String = stringResource(id = R.string.save)
 ){
     Box(
         contentAlignment = Alignment.Center,
@@ -70,7 +71,8 @@ fun BottomSaveCancelBar(
     ) {
         SaveCancelButtonsRow(
             onCancelClick = onCancelClick,
-            onSaveClick = onSaveClick
+            onSaveClick = onSaveClick,
+            positiveText = positiveText
         )
     }
 }
@@ -78,7 +80,8 @@ fun BottomSaveCancelBar(
 private fun SaveCancelButtonsRow(
     onCancelClick: () -> Unit,
     onSaveClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    positiveText: String  = stringResource(id = R.string.save),
 ) {
     Row(modifier = modifier) {
         MyButton(
@@ -91,7 +94,7 @@ private fun SaveCancelButtonsRow(
 
         MyButton(
             onClick = onSaveClick,
-            text = stringResource(id = R.string.save)
+            text = positiveText
         )
     }
 }
@@ -100,14 +103,16 @@ private fun SaveCancelButtonsRow(
 fun SaveCancelButtons(
     onCancelClick: () -> Unit,
     onSaveClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    positiveText: String = stringResource(id = R.string.save)
 ) {
     Column(
         modifier = modifier
     ) {
         SaveCancelButtonsRow(
             onCancelClick = onCancelClick,
-            onSaveClick = onSaveClick
+            onSaveClick = onSaveClick,
+            positiveText = positiveText
         )
 
         MySpacerColumn(height = 10.dp)

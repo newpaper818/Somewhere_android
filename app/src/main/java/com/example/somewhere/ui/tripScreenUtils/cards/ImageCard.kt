@@ -119,7 +119,7 @@ fun ImageCard(
 
                             Text(
                                 text = stringResource(id = R.string.image_card_subtitle_add_images),
-                                style = titleTextStyle,
+                                style = titleTextStyle.copy(color = MaterialTheme.colorScheme.primary),
                                 modifier = Modifier
                                     .clickable {
                                         if (imgList.size <= 9)

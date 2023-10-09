@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -26,7 +25,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -35,7 +33,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -136,8 +133,10 @@ fun DateScreen(
         }
     }
 
-    //dialog: delete trip? unsaved data will be deleted
+    //dialog
     var showExitDialog by rememberSaveable { mutableStateOf(false) }
+    var showBottomSaveCancelBar by rememberSaveable { mutableStateOf(true) }
+
 
     //when back button click
     val onBackButtonClick = {
@@ -233,15 +232,15 @@ fun DateScreen(
                     dateList = dateList,
                     currentDateIdx = datePagerState.currentPage,
                     dateTimeFormat = dateTimeFormat,
-                    onClickDate = { toDateId_ ->
+                    onClickDate = { toDateId ->
                         //progress bar animate
                         coroutineScope.launch {
-                            progressBarState.animateScrollToItem(toDateId_)
+                            progressBarState.animateScrollToItem(toDateId)
                         }
 
                         //page animate
                         coroutineScope.launch {
-                            datePagerState.animateScrollToPage(toDateId_)
+                            datePagerState.animateScrollToPage(toDateId)
                         }
                     }
                 )
@@ -265,6 +264,9 @@ fun DateScreen(
 
                         focusManager = focusManager,
 
+                        setShowBottomSaveCancelBar = {
+                            showBottomSaveCancelBar = it
+                        },
                         updateTripState = updateTripState,
 
                         addNewSpot = { dateId ->
@@ -288,13 +290,12 @@ fun DateScreen(
                         },
                         modifier = modifier.padding(16.dp, 0.dp)
                     )
-
                 }
             }
 
             //bottom save cancel bar
             AnimatedBottomSaveCancelBar(
-                visible = isEditMode,
+                visible = isEditMode && showBottomSaveCancelBar,
                 onCancelClick = {
                     focusManager.clearFocus()
                     onBackButtonClick()
@@ -319,6 +320,7 @@ fun DatePage(
 
     focusManager: FocusManager,
 
+    setShowBottomSaveCancelBar: (Boolean) -> Unit,
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     addNewSpot: (dateId: Int) -> Unit,
     deleteSpot: (dateId: Int, spotId: Int) -> Unit,
@@ -354,20 +356,22 @@ fun DatePage(
         contentPadding = PaddingValues(top = 8.dp, bottom = 300.dp),
         modifier = Modifier.fillMaxSize()
     ) {
-
         //title card
         item {
             TitleWithColorCard(
                 isEditMode = isEditMode,
                 titleText = currentDate.titleText,
+                setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
                 focusManager = focusManager,
-                onTitleChange = {titleText ->
-                    currentDate.setTitleText(showingTrip, updateTripState, titleText)
+                onTitleChange = {newTitleText ->
+                    currentDate.setTitleText(showingTrip, updateTripState, newTitleText)
+                    Log.d("page", "title ${currentDate.id}")
                 },
+                color = currentDate.color,
                 modifier = modifier,
-                date = currentDate,
                 onColorChange = {newDateColor ->
                     currentDate.setColor(showingTrip, updateTripState, newDateColor)
+                    Log.d("page", "               color ${currentDate.id}")
                 }
             )
         }

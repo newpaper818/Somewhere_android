@@ -52,6 +52,7 @@ fun DateTimeCard(
 
     dateTimeFormat: DateTimeFormat,
 
+    setShowBottomSaveCancelBar: (Boolean) -> Unit,
     changeDate: (dateId: Int) -> Unit,
     setStartTime: (startTime: LocalTime?) -> Unit,
     setEndTime: (endTime: LocalTime?) -> Unit,
@@ -69,6 +70,7 @@ fun DateTimeCard(
             ) {
                 OneDateRow(
                     setUseImePadding = setUseImePadding,
+                    setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
                     dateList = dateList,
                     currentDate = date,
                     currentSpot = spot,
@@ -80,6 +82,7 @@ fun DateTimeCard(
 
             TwoTimesRow(
                 setUseImePadding = setUseImePadding,
+                setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
                 spot = spot,
                 isEditMode = isEditMode,
                 setStartTime = setStartTime,
@@ -93,6 +96,7 @@ fun DateTimeCard(
 @Composable
 private fun OneDateRow(
     setUseImePadding: (useImePadding: Boolean) -> Unit,
+    setShowBottomSaveCancelBar: (Boolean) -> Unit,
     dateList: List<Date>,
     currentDate: Date,
     currentSpot: Spot,
@@ -122,9 +126,11 @@ private fun OneDateRow(
             onOkClick = { dateId ->
                 changeDate(dateId)
                 showSelDateDialog = false
+                setShowBottomSaveCancelBar(true)
             },
             onDismissRequest = {
                 showSelDateDialog = false
+                setShowBottomSaveCancelBar(true)
             }
         )
     }
@@ -136,6 +142,7 @@ private fun OneDateRow(
                 .clip(RoundedCornerShape(8.dp))
                 .clickable {
                     showSelDateDialog = true
+                    setShowBottomSaveCancelBar(false)
                 }
         }
         else Modifier
@@ -170,6 +177,7 @@ private fun OneDateRow(
 @Composable
 private fun TwoTimesRow(
     setUseImePadding: (useImePadding: Boolean) -> Unit,
+    setShowBottomSaveCancelBar: (Boolean) -> Unit,
     spot: Spot,
     isEditMode: Boolean,
     setStartTime: (startTime: LocalTime?) -> Unit,
@@ -193,6 +201,7 @@ private fun TwoTimesRow(
 
         OneTimeRow(
             setUseImePadding = setUseImePadding,
+            setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
             spot = spot,
             isStart = true,
             isEditMode = isEditMode,
@@ -210,6 +219,7 @@ private fun TwoTimesRow(
 
         OneTimeRow(
             setUseImePadding = setUseImePadding,
+            setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
             spot = spot,
             isStart = false,
             isEditMode = isEditMode,
@@ -225,6 +235,7 @@ private fun TwoTimesRow(
 @Composable
 private fun OneTimeRow(
     setUseImePadding: (useImePadding: Boolean) -> Unit,
+    setShowBottomSaveCancelBar: (Boolean) -> Unit,
     spot: Spot,
     isStart: Boolean,
     isEditMode: Boolean,
@@ -257,35 +268,23 @@ private fun OneTimeRow(
             title = "Set time",
             onDismissRequest = {
                 showTimePicker = false
+                setShowBottomSaveCancelBar(true)
             },
             onConfirm = {newTime_ ->
                 setTime(newTime_)
                 showTimePicker = false
+                setShowBottomSaveCancelBar(true)
             }
         )
     }
-
-
-
-//
-//    val timeDialogState = rememberUseCaseState(visible = false)
-//
-//    SetTimeDialog(
-//        dialogState = timeDialogState,
-//        initialTime = spot.startTime,
-//        title = if (isStart) "Start Time" else "End Time",
-//        setTime = {time ->
-//            setTime(time)
-//        }
-//    )
 
     val modifier =
         if (isEditMode){
             Modifier
                 .clip(RoundedCornerShape(8.dp))
                 .clickable {
-//                    timeDialogState.show()
                     showTimePicker = true
+                    setShowBottomSaveCancelBar(false)
                 }
         }
         else Modifier.clip(RoundedCornerShape(8.dp))
