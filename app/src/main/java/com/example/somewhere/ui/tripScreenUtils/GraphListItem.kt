@@ -1,6 +1,5 @@
 package com.example.somewhere.ui.tripScreenUtils
 
-import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -27,11 +26,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Shapes
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -39,8 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -50,8 +46,8 @@ import androidx.compose.ui.unit.dp
 import com.example.somewhere.ui.commonScreenUtils.ClickableBox
 import com.example.somewhere.ui.commonScreenUtils.DisplayIcon
 import com.example.somewhere.ui.commonScreenUtils.MyIcons
+import com.example.somewhere.ui.commonScreenUtils.MySpacerRow
 import com.example.somewhere.ui.theme.ColorType
-import com.example.somewhere.ui.theme.Shapes
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.ui.theme.getColor
@@ -82,6 +78,7 @@ fun GraphListItem(
 
     onItemClick: (Int) -> Unit,/**return [itemId] (Date's id / Spot's id)*/
     onExpandedButtonClicked: (Int) -> Unit,
+    showLongTextSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit,
 
     modifier: Modifier = Modifier,
     onDeleteClick: (itemId: Int) -> Unit = { },
@@ -206,7 +203,7 @@ fun GraphListItem(
                     }
                 }
 
-                Spacer(modifier = Modifier.width(20.dp))
+                MySpacerRow(width = 20.dp)
 
                 Box(modifier = Modifier.weight(1f)) {
                     //main text
@@ -220,7 +217,6 @@ fun GraphListItem(
                     }
                     else{
                         val focusManager = LocalFocusManager.current
-                        val context = LocalContext.current
 
                         MyTextField(
                             inputText = mainText,
@@ -229,9 +225,12 @@ fun GraphListItem(
                             placeholderTextStyle = mainNullTextStyle,
                             onValueChange = {
                                 var text = it
-                                if(it.length > 25) {
-                                    Toast.makeText(context, "over 25", Toast.LENGTH_SHORT).show()
-                                    text = text.substring(0, 25)
+
+                                if(it.length > 100) {
+                                    //FIXME snackbar is behind the keyboard
+                                    showLongTextSnackBar("over 100", null, SnackbarDuration.Short)
+
+                                    text = text.substring(0, 100)
                                 }
 
                                 onTitleTextChange(itemId, text)

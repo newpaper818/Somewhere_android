@@ -1,5 +1,6 @@
 package com.example.somewhere.model
 
+import android.util.Log
 import com.example.somewhere.enumUtils.SpotTypeGroup
 import com.example.somewhere.ui.theme.MyColor
 import com.example.somewhere.utils.getNumToText

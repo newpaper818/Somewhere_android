@@ -17,21 +17,23 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -123,6 +125,8 @@ fun DateScreen(
         initialPage = dateId
     )
 
+    val snackBarHostState = remember { SnackbarHostState() }
+
     //animate progress bar when current page changed
     LaunchedEffect(datePagerState){
         snapshotFlow { datePagerState.currentPage }.collect {currentPage_ ->
@@ -130,8 +134,10 @@ fun DateScreen(
         }
     }
 
-    //dialog: delete trip? unsaved data will be deleted
+    //dialog
     var showExitDialog by rememberSaveable { mutableStateOf(false) }
+    var showBottomSaveCancelBar by rememberSaveable { mutableStateOf(true) }
+
 
     //when back button click
     val onBackButtonClick = {
@@ -163,6 +169,14 @@ fun DateScreen(
     var isFABExpanded by rememberSaveable { mutableStateOf(true) }
 
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackBarHostState,
+                modifier = Modifier
+                    .width(500.dp)
+                    .imePadding()
+            )
+        },
         //top app bar
         topBar = {
             SomewhereTopAppBar(
@@ -221,15 +235,15 @@ fun DateScreen(
                     dateList = dateList,
                     currentDateIdx = datePagerState.currentPage,
                     dateTimeFormat = dateTimeFormat,
-                    onClickDate = { toDateId_ ->
+                    onClickDate = { toDateId ->
                         //progress bar animate
                         coroutineScope.launch {
-                            progressBarState.animateScrollToItem(toDateId_)
+                            progressBarState.animateScrollToItem(toDateId)
                         }
 
                         //page animate
                         coroutineScope.launch {
-                            datePagerState.animateScrollToPage(toDateId_)
+                            datePagerState.animateScrollToPage(toDateId)
                         }
                     }
                 )
@@ -253,6 +267,9 @@ fun DateScreen(
 
                         focusManager = focusManager,
 
+                        setShowBottomSaveCancelBar = {
+                            showBottomSaveCancelBar = it
+                        },
                         updateTripState = updateTripState,
 
                         addNewSpot = { dateId ->
@@ -265,15 +282,23 @@ fun DateScreen(
                         setIsFABExpanded = {
                             isFABExpanded = it
                         },
+                        showSnackBar = { text_, actionLabel_, duration_ ->
+                            coroutineScope.launch {
+                                snackBarHostState.showSnackbar(
+                                    message = text_,
+                                    actionLabel = actionLabel_,
+                                    duration = duration_
+                                )
+                            }
+                        },
                         modifier = modifier.padding(16.dp, 0.dp)
                     )
-
                 }
             }
 
             //bottom save cancel bar
             AnimatedBottomSaveCancelBar(
-                visible = isEditMode,
+                visible = isEditMode && showBottomSaveCancelBar,
                 onCancelClick = {
                     focusManager.clearFocus()
                     onBackButtonClick()
@@ -298,12 +323,14 @@ fun DatePage(
 
     focusManager: FocusManager,
 
+    setShowBottomSaveCancelBar: (Boolean) -> Unit,
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     addNewSpot: (dateId: Int) -> Unit,
     deleteSpot: (dateId: Int, spotId: Int) -> Unit,
 
     navigateToSpot: (dateId: Int, spotId: Int) -> Unit,
     setIsFABExpanded: (Boolean) -> Unit,
+    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit,
 
     modifier: Modifier = Modifier
 ){
@@ -332,20 +359,25 @@ fun DatePage(
         contentPadding = PaddingValues(top = 8.dp, bottom = 300.dp),
         modifier = Modifier.fillMaxSize()
     ) {
-
         //title card
         item {
             TitleWithColorCard(
                 isEditMode = isEditMode,
                 titleText = currentDate.titleText,
+                setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
                 focusManager = focusManager,
-                onTitleChange = {titleText ->
-                    currentDate.setTitleText(showingTrip, updateTripState, titleText)
+                onTitleChange = {newTitleText ->
+                    currentDate.setTitleText(showingTrip, updateTripState, newTitleText)
+                    Log.d("page", "title ${currentDate.id}")
                 },
+                onTextSizeLimit = {
+                    showSnackBar("over 100", null, SnackbarDuration.Short)
+                },
+                color = currentDate.color,
                 modifier = modifier,
-                date = currentDate,
                 onColorChange = {newDateColor ->
                     currentDate.setColor(showingTrip, updateTripState, newDateColor)
+                    Log.d("page", "               color ${currentDate.id}")
                 }
             )
         }
@@ -374,6 +406,9 @@ fun DatePage(
                 modifier = modifier,
                 onMemoChanged = { newMemoText ->
                     currentDate.setMemoText(showingTrip, updateTripState, newMemoText)
+                },
+                onTextSizeLimit = {
+                    showSnackBar("Memo is too long", null, SnackbarDuration.Short)
                 }
             )
 
@@ -524,6 +559,7 @@ fun DatePage(
                             },
 
                             pointColor = pointColor,
+                            showLongTextSnackBar = showSnackBar,
                             modifier = modifier
                         )
                     }

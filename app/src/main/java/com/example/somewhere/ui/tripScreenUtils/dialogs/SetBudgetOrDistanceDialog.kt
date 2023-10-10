@@ -46,7 +46,6 @@ fun SetBudgetOrDistanceDialog(
     onSaveClick: (newBudget: Float) -> Unit,
     currencySymbol: String? = null
 ){
-    val context = LocalContext.current
     val titleText = if (currencySymbol == null) stringResource(id = R.string.dialog_title_set_travel_distance)
                     else stringResource(id = R.string.dialog_title_set_budget)
 

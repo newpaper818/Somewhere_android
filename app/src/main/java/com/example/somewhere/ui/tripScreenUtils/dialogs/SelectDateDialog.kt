@@ -77,7 +77,8 @@ fun SelectDateDialog(
                         },
                         onExpandedButtonClicked = {},
                         itemColor = if (it.id == currentDateId) getColor(ColorType.CARD_SELECTED)
-                        else Color.Transparent
+                        else Color.Transparent,
+                        showLongTextSnackBar = {_, _,_ ->}
                     )
                 }
             }

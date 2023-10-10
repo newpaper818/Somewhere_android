@@ -40,6 +40,7 @@ object MyIcons {
     //app bar
     val menu = MyIcon(Icons.Filled.Menu,      22.dp, null, R.string.menu)
     val back = MyIcon(Icons.Filled.ArrowBack, 22.dp, null, R.string.back)
+    val close = MyIcon(Icons.Filled.Close,    22.dp, null, R.string.close)
     //val edit = MyIcon(Icons.Filled.Edit,      22.dp, null, R.string.edit)
     val more = MyIcon(Icons.Filled.MoreVert,  22.dp, null, R.string.more)
     val done = MyIcon(Icons.Filled.Done,  22.dp, null, R.string.save)

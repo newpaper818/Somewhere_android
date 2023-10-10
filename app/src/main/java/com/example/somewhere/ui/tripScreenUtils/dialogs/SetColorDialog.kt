@@ -36,12 +36,12 @@ import com.example.somewhere.ui.theme.myColorLists
 
 @Composable
 fun SetColorDialog(
-    currentDate: Date,
+    initialColor: MyColor,
 
     onDismissRequest: () -> Unit,
     onOkClick: (newMyColor: MyColor) -> Unit
 ){
-    var dateColor by remember { mutableStateOf(currentDate.color) }
+    var dateColor by remember { mutableStateOf(initialColor) }
 
     MyDialog(
         onDismissRequest = onDismissRequest,

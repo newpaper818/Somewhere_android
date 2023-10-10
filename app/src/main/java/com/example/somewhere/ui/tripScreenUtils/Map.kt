@@ -10,6 +10,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.ColorInt
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarDuration
@@ -57,8 +58,11 @@ import com.google.maps.android.compose.MarkerState
 import kotlinx.coroutines.launch
 import kotlin.math.min
 
-val seoulLocation = LatLng(37.55, 126.98)
-const val initialZoomLevel = 10f
+val SEOUL_LOCATION = LatLng(37.55, 126.98)
+const val DEFAULT_ZOOM_LEVEL = 10f
+
+const val ANIMATION_DURATION_MS = 300
+const val LAT_LNG_BOUND_PADDING = 200
 
 //map style dark / light
 fun getMapStyle(
@@ -69,10 +73,10 @@ fun getMapStyle(
 }
 
 //==================================================================================================
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MapForTrip(
     context: Context,
+    mapPadding: PaddingValues,
     isDarkMapTheme: Boolean,
     userLocationEnabled: Boolean,
     cameraPositionState: CameraPositionState,
@@ -103,7 +107,8 @@ fun MapForTrip(
         uiSettings = uiSettings,
         onMapLoaded = {
             firstFocusOnToSpot()
-        }
+        },
+        contentPadding = mapPadding
     ){
         for (dateWithBoolean in dateListWithShownMarkerList){
             if (dateWithBoolean.isShown){
@@ -696,7 +701,7 @@ suspend fun focusOnToSpot(
 
         if (spot.location != null) {
             cameraPositionState.animate(
-                CameraUpdateFactory.newLatLngZoom(spot.location, spot.zoomLevel ?: initialZoomLevel), 300
+                CameraUpdateFactory.newLatLngZoom(spot.location, spot.zoomLevel ?: DEFAULT_ZOOM_LEVEL), 300
             )
         }
     }
@@ -729,6 +734,49 @@ suspend fun focusOnToSpot(
                     CameraUpdateFactory.newLatLngBounds(latLngBounds.build(), padding), 300
                 )
             }
+        }
+    }
+}
+
+suspend fun focusOnToSpotForTripMap(
+    mapSize: IntSize,   //exclude map padding
+    cameraPositionState: CameraPositionState,
+    spotList: List<Spot>
+){
+    //focus to 1 spot
+    if (spotList.size == 1){
+        val spot = spotList.first()
+
+        if (spot.location != null) {
+            cameraPositionState.animate(
+                CameraUpdateFactory.newLatLngZoom(spot.location, spot.zoomLevel ?: DEFAULT_ZOOM_LEVEL), ANIMATION_DURATION_MS
+            )
+        }
+    }
+
+    //focus to 2 or more spot
+    else if (spotList.size > 1){
+        val latLngBounds = LatLngBounds.Builder()
+        var spotCnt = 0
+
+        for(spot in spotList){
+            if (spot.location != null){
+                spotCnt++
+                latLngBounds.include(spot.location)
+            }
+        }
+
+        if (spotCnt >= 2) {
+            //calc padding using map size
+            val mapSizeMin = min(mapSize.width, mapSize.height)
+
+            val padding =
+                if (mapSizeMin * 0.2 > LAT_LNG_BOUND_PADDING) LAT_LNG_BOUND_PADDING
+                else                                            (mapSizeMin * 0.2).toInt()
+
+            cameraPositionState.animate(
+                CameraUpdateFactory.newLatLngBounds(latLngBounds.build(), padding), ANIMATION_DURATION_MS
+            )
         }
     }
 }
