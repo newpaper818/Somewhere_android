@@ -1,6 +1,16 @@
 package com.example.somewhere.ui.tripScreenUtils.cards
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -11,7 +21,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -46,7 +55,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.somewhere.R
 import com.example.somewhere.ui.commonScreenUtils.MySpacerColumn
@@ -55,10 +64,21 @@ import com.example.somewhere.ui.commonScreenUtils.DisplayIcon
 import com.example.somewhere.ui.commonScreenUtils.MyIcons
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import kotlin.math.sqrt
+
+const val IMAGE_MAX_COUNT = 10
+const val IMAGE_MAX_SIZE = 45_500_000
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ImageCard(
+    tripId: Int,
     isEditMode: Boolean,
     imgList: List<String>,
     onAddImages: (List<String>) -> Unit,
@@ -72,11 +92,30 @@ fun ImageCard(
 ){
     val context = LocalContext.current
 
+    val snackBarTextImageLimit = stringResource(id = R.string.snack_bar_image_limit)
+
     val galleryLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetMultipleContents()
-    ){uriList ->
-        onAddImages(uriList.map { it.toString() })
+    ){ uriList ->
+        var addUriList = uriList
+
+        if (imgList.size + uriList.size > IMAGE_MAX_COUNT){
+            addUriList = addUriList.subList(0, IMAGE_MAX_COUNT - imgList.size)
+
+            showSnackBar(snackBarTextImageLimit, null, SnackbarDuration.Short)
+        }
+
+        val fileList: MutableList<String> = mutableListOf()
+
+        addUriList.forEachIndexed { index, uri ->
+            val file = saveImageToInternalStorage(tripId, index, context, uri)
+            fileList.add(file)
+        }
+
+
+        onAddImages(fileList)
     }
+
 
     val modifier1 = if (isEditMode) modifier
                     else modifier.sizeIn(maxWidth = 390.dp, maxHeight = 390.dp)
@@ -115,7 +154,6 @@ fun ImageCard(
                             Spacer(modifier = Modifier.weight(1f))
 
                             //add images text
-                            val snackBarText = stringResource(id = R.string.snack_bar_image_limit)
 
                             Text(
                                 text = stringResource(id = R.string.image_card_subtitle_add_images),
@@ -125,7 +163,11 @@ fun ImageCard(
                                         if (imgList.size <= 9)
                                             galleryLauncher.launch("image/*")
                                         else
-                                            showSnackBar(snackBarText, null, SnackbarDuration.Short)
+                                            showSnackBar(
+                                                snackBarTextImageLimit,
+                                                null,
+                                                SnackbarDuration.Short
+                                            )
                                     }
                                     .padding(16.dp, 14.dp, 16.dp, 8.dp)
                             )
@@ -228,21 +270,30 @@ fun ImageCard(
 fun DisplayImage(
     imagePath: String
 ){
-    val imagePainter = rememberAsyncImagePainter(
-        ImageRequest
-            .Builder(LocalContext.current)
-            .data(data = Uri.parse(imagePath))
-            .build()
-    )
+    val context = LocalContext.current
 
-    Image(
-        painter = imagePainter,
-        contentDescription = stringResource(id = R.string.image_card_display_image_description),
-        contentScale = ContentScale.Crop,
-        modifier = Modifier
-            .fillMaxSize()
-    )
+    val bitmap = loadImageFromInternalStorage(context, imagePath)
+//    if (bitmap != null){
 
+    if (bitmap != null){
+//        AsyncImage(
+//            model = ImageRequest.Builder(context).data(bitmap).build(),
+//            contentDescription = "image",
+//            contentScale = ContentScale.Crop,
+//            modifier = Modifier.fillMaxSize()
+//        )
+        AsyncImage(
+            model = ImageRequest.Builder(context).data(bitmap).crossfade(true).build(),
+            contentDescription = "",
+//            placeholder = painterResource(id = R.drawable.ic_launcher_foreground),
+//            error = painterResource(id = R.drawable.ic_launcher_foreground),
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+    else {
+        Text(text = "null")
+    }
 }
 
 @Composable
@@ -276,3 +327,182 @@ private fun ImageIndicateDots(
         }
     }
 }
+
+private fun saveImageToInternalStorage(
+    tripId: Int,
+    index: Int,
+    context: Context,
+    uri: Uri
+): String {
+    //convert to bitmap
+    val bitmap = getBitMapFromUri(uri, context)
+
+    //resize bitmap (under 3MB)
+    compressBitmap(bitmap)
+
+    //make file name : tripId date time index
+    val fileName = getImageFileName(tripId, index)
+    val inputStream = context.contentResolver.openInputStream(uri)
+    val outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)
+    inputStream?.use { input ->
+        outputStream.use { output ->
+            input.copyTo(output)
+        }
+    }
+
+    return fileName
+}
+
+private fun getImageFileName(
+    tripId: Int,
+    index: Int,
+): String {
+    val now = ZonedDateTime.now(ZoneId.of("UTC"))
+    val dateTime = now.format(DateTimeFormatter.ofPattern("yyMMdd_HHmmssS"))
+    return "somewhere_${tripId}_utc${dateTime}_${index}.jpg"
+}
+
+fun loadImageFromInternalStorage(
+    context: Context,
+    filePath: String
+): Bitmap? {
+    Log.d("img", filePath)
+    try {
+        val inputStream = context.openFileInput(filePath)
+        return BitmapFactory.decodeStream(inputStream)
+    } catch (e: FileNotFoundException) {
+        e.printStackTrace()
+    }
+    return null
+}
+
+private fun getBitMapFromUri(
+    uri: Uri,
+    context: Context
+): Bitmap {
+    return if (Build.VERSION.SDK_INT >= 28) {
+        val source = ImageDecoder.createSource(context.contentResolver, uri)
+        ImageDecoder.decodeBitmap(source)
+    }
+    else{
+        MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+    }
+}
+
+private fun compressBitmap(
+    bitmap: Bitmap,
+    uri: Uri,
+    context: Context
+): Bitmap{
+
+    val size = bitmap.byteCount
+    val width = bitmap.width
+    val height = bitmap.height
+
+    Log.d("img", "before = ${size}byte ${width}x${height}")
+
+    //if is over 3MB (== 45,500,000 ?)
+    return if (size > IMAGE_MAX_SIZE){
+        var scale = sqrt((IMAGE_MAX_SIZE / size).toFloat())
+        45,500,000 / 45,543,680
+        Log.d("img", "scale = $scale | $IMAGE_MAX_SIZE / $size")
+        if (scale > 0.1){
+            scale = 0.1f
+        }
+
+        val newBitmap = Bitmap.createScaledBitmap(bitmap, (width * scale).toInt(), (height *scale).toInt(), true)
+        Log.d("img", "after = ${newBitmap.byteCount}byte ${newBitmap.width}x${newBitmap.height}")
+
+        newBitmap
+    }
+    else
+        bitmap
+}
+
+
+private fun createImageFile(
+    fileName: String = "temp_image"
+): File {
+    val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+    return File.createTempFile(fileName, ".jpg", storageDir)
+}
+
+
+private fun uriToFile(
+    context: Context,
+    uri: Uri,
+    fileName: String
+): File?{
+    context.contentResolver.openInputStream(uri)?.let {inputStream ->
+
+        val tempFile: File = createImageFile(fileName)
+        val fileOutputStream = FileOutputStream(tempFile)
+
+        inputStream.copyTo(fileOutputStream)
+        inputStream.close()
+        fileOutputStream.close()
+
+        return tempFile
+    }
+    return null
+}
+
+private fun compressImage(
+    filePath: String,
+    targetMB: Double = 1.0
+){
+    var image: Bitmap = BitmapFactory.decodeFile(filePath)
+
+    val exif = ExifInterface(filePath)
+    val exifOrientation: Int = exif.getAttributeInt(
+        ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL
+    )
+
+    val exifDegree: Int = exifOrientationToDegrees(exifOrientation)
+
+    image = rotateImage(image, exifDegree.toFloat())
+
+    try {
+        val file = File(filePath)
+        val length = file.length()
+
+        val fileSizeInKB = (length / 1024).toString().toDouble()
+        val fileSizeInMB = (fileSizeInKB / 1024).toString().toDouble()
+
+        var quality = 100
+        if (fileSizeInMB > targetMB){
+            quality = ((targetMB / fileSizeInMB) * 100).toInt()
+        }
+
+        val fileOutputStream = FileOutputStream(filePath)
+        //compress
+        image.compress(Bitmap.)
+        fileOutputStream.close()
+    }
+    catch (){
+
+    }
+}
+
+private fun exifOrientationToDegrees(exifOrientation: Int): Int{
+    return when (exifOrientation){
+        ExifInterface.ORIENTATION_ROTATE_90 -> 90
+        ExifInterface.ORIENTATION_ROTATE_180 -> 180
+        ExifInterface.ORIENTATION_ROTATE_270 -> 270
+        else -> 0
+    }
+}
+
+private fun rotateImage(
+    source: Bitmap,
+    angle: Float
+): Bitmap {
+    val matrix = Matrix()
+    matrix.postRotate(angle)
+    return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
+}
+
+
+
+
+

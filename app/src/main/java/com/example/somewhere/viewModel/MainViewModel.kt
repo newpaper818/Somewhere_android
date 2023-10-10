@@ -59,7 +59,7 @@ class MainViewModel(
         tripList.add(destinationIndex, trip)
 
         tripList.forEach {
-            it.id = tripList.indexOf(it)
+            it.orderId = tripList.indexOf(it)
         }
 
         mainUiState.value.tripList = tripList.toList()

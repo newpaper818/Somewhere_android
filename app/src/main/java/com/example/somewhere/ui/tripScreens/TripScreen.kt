@@ -257,25 +257,11 @@ fun TripScreen(
                     val snackBarText = stringResource(id = R.string.snack_bar_image_limit)
 
                     ImageCard(
+                        tripId = showingTrip.id,
                         isEditMode = isEditMode,
                         imgList = showingTrip.imagePathList,
                         onAddImages = {
-                            var addImageList: List<String> = it
-
-                            //up to 10 images
-                            if (showingTrip.imagePathList.size + it.size > 10){
-                                addImageList = it.subList(0, 10 - showingTrip.imagePathList.size)
-
-                                coroutineScope.launch {
-                                    snackBarHostState.showSnackbar(
-                                        message = snackBarText,
-                                        actionLabel = null,
-                                        duration = SnackbarDuration.Short
-                                    )
-                                }
-                            }
-
-                            showingTrip.setImage(updateTripState, showingTrip.imagePathList + addImageList)
+                            showingTrip.setImage(updateTripState, showingTrip.imagePathList + it)
                         },
                         deleteImage = {
                             val newList: MutableList<String> = showingTrip.imagePathList.toMutableList()

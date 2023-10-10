@@ -651,6 +651,7 @@ fun SpotDetailPage(
             val snackBarText = stringResource(id = R.string.snack_bar_image_limit)
 
             ImageCard(
+                tripId = showingTrip.id,
                 isEditMode = isEditMode,
                 imgList = currentSpot.imgPathList,
                 onAddImages = {

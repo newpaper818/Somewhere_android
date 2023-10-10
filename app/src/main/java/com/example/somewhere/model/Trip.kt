@@ -14,7 +14,7 @@ import java.util.Locale
 @Entity(tableName = "trips")
 data class Trip(
     @PrimaryKey(autoGenerate = true)
-    var id: Int = 0,
+    val id: Int = 0,
 
     var orderId: Int = 0,
 

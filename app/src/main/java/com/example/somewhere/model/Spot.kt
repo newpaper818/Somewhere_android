@@ -12,7 +12,6 @@ import com.example.somewhere.utils.getTimeText
 import com.example.somewhere.viewModel.DateTimeFormat
 import com.google.android.gms.maps.model.LatLng
 import com.squareup.moshi.JsonClass
-import java.text.DecimalFormat
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.Locale
