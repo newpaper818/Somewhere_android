@@ -15,12 +15,14 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -46,16 +48,31 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.somewhere.R
 import com.example.somewhere.ui.commonScreenUtils.MySpacerColumn
@@ -64,9 +81,18 @@ import com.example.somewhere.ui.commonScreenUtils.DisplayIcon
 import com.example.somewhere.ui.commonScreenUtils.MyIcons
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.jetbrains.annotations.Async
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
+import java.io.IOException
+import java.text.DecimalFormat
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -107,11 +133,12 @@ fun ImageCard(
 
         val fileList: MutableList<String> = mutableListOf()
 
+        //save to internal storage
         addUriList.forEachIndexed { index, uri ->
             val file = saveImageToInternalStorage(tripId, index, context, uri)
-            fileList.add(file)
+            if (file != null)
+                fileList.add(file)
         }
-
 
         onAddImages(fileList)
     }
@@ -138,6 +165,7 @@ fun ImageCard(
                     enter = fadeIn(animationSpec = tween(100, 0)),
                     exit = fadeOut(animationSpec = tween(500, 0))
                 ) {
+
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Row(
                             modifier = Modifier
@@ -154,7 +182,6 @@ fun ImageCard(
                             Spacer(modifier = Modifier.weight(1f))
 
                             //add images text
-
                             Text(
                                 text = stringResource(id = R.string.image_card_subtitle_add_images),
                                 style = titleTextStyle.copy(color = MaterialTheme.colorScheme.primary),
@@ -189,41 +216,19 @@ fun ImageCard(
                             modifier = Modifier
                                 .fillMaxWidth()
                         ) {
-                            items(imgList) {
-                                Card(
-                                    shape = MaterialTheme.shapes.small,
-                                    modifier = Modifier.size(105.dp)
-                                ) {
-                                    Box {
-                                        DisplayImage(imagePath = it)
-
-
-                                        Column {
-                                            MySpacerColumn(height = 4.dp)
-
-                                            //delete icon
-                                            Row {
-                                                Spacer(modifier = Modifier.weight(1f))
-
-                                                Box(
-                                                    contentAlignment = Alignment.Center,
-                                                    modifier = Modifier
-                                                        .size(24.dp)
-                                                        .clip(CircleShape)
-                                                        .background(MaterialTheme.colorScheme.surface)
-                                                        .clickable { deleteImage(it) }
-                                                ) {
-                                                    DisplayIcon(icon = MyIcons.deleteImage)
-                                                }
-
-                                                MySpacerRow(width = 4.dp)
-                                            }
+                            item{
+                                imgList.forEach {
+                                    ImageWithDeleteIcon(
+                                        imagePath = it,
+                                        onDeleteClick = {
+                                            deleteImage(it)
                                         }
-                                    }
+                                    )
+                                    MySpacerRow(width = 16.dp)
                                 }
-                                MySpacerRow(width = 16.dp)
                             }
                         }
+
                         MySpacerColumn(height = 16.dp)
                     }
                 }
@@ -246,7 +251,8 @@ fun ImageCard(
                     ) {
                         HorizontalPager(
                             pageCount = imgList.size,
-                            state = pageState
+                            state = pageState,
+                            beyondBoundsPageCount = 3
                         ) {
                             DisplayImage(imagePath = imgList[it])
                         }
@@ -267,32 +273,88 @@ fun ImageCard(
 }
 
 @Composable
+private fun ImageWithDeleteIcon(
+    imagePath: String,
+    onDeleteClick: () -> Unit
+){
+    Card(
+        shape = MaterialTheme.shapes.small,
+        modifier = Modifier.size(105.dp)
+    ) {
+        Box {
+            DisplayImage(imagePath = imagePath)
+
+            Column {
+                MySpacerColumn(height = 4.dp)
+
+                //delete icon
+                Row {
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surface)
+                            .clickable {
+                                //TODO animation
+                                onDeleteClick()
+                            }
+                    ) {
+                        DisplayIcon(icon = MyIcons.deleteImage)
+                    }
+
+                    MySpacerRow(width = 4.dp)
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun DisplayImage(
     imagePath: String
 ){
     val context = LocalContext.current
 
-    val bitmap = loadImageFromInternalStorage(context, imagePath)
-//    if (bitmap != null){
+    val painter = rememberAsyncImagePainter(model = File(context.filesDir, imagePath))
+    val imageState = painter.state
 
-    if (bitmap != null){
-//        AsyncImage(
-//            model = ImageRequest.Builder(context).data(bitmap).build(),
-//            contentDescription = "image",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier.fillMaxSize()
-//        )
-        AsyncImage(
-            model = ImageRequest.Builder(context).data(bitmap).crossfade(true).build(),
-            contentDescription = "",
-//            placeholder = painterResource(id = R.drawable.ic_launcher_foreground),
-//            error = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentScale = ContentScale.Crop,
+    val alphaTransition by animateFloatAsState(
+        targetValue = if (imageState is AsyncImagePainter.State.Success) 1f else 0f,
+        animationSpec = tween(300),
+        label = ""
+    )
+    val scaleTransition by animateFloatAsState(
+        targetValue = if (imageState is AsyncImagePainter.State.Success) 1f else 0.9f,
+        animationSpec = tween(300),
+        label = ""
+    )
+
+    Image(
+        painter = painter,
+        contentDescription = "image",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .fillMaxSize()
+            .alpha(alphaTransition)
+            .scale(scaleTransition)
+    )
+
+    if (imageState is AsyncImagePainter.State.Loading){
+        Text(
+            text = "loading...",
+            textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxSize()
         )
     }
-    else {
-        Text(text = "null")
+    if (imageState is AsyncImagePainter.State.Error){
+        Text(
+            text = "Error!",
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
 
@@ -333,47 +395,86 @@ private fun saveImageToInternalStorage(
     index: Int,
     context: Context,
     uri: Uri
-): String {
-    //convert to bitmap
+): String? {
+    //convert uri to bitmap
     val bitmap = getBitMapFromUri(uri, context)
 
-    //resize bitmap (under 3MB)
-    compressBitmap(bitmap)
+    //compress bitmap
+//    compressBitmap(context, bitmap, uri)
 
     //make file name : tripId date time index
     val fileName = getImageFileName(tripId, index)
-    val inputStream = context.contentResolver.openInputStream(uri)
-    val outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)
-    inputStream?.use { input ->
-        outputStream.use { output ->
-            input.copyTo(output)
-        }
-    }
 
-    return fileName
+    //save
+    return try{
+
+        context.openFileOutput(fileName, Context.MODE_PRIVATE).use {stream ->
+            if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)){
+                throw IOException("Couldn't save bitmap")
+            }
+        }
+        fileName
+
+//        val inputStream = context.contentResolver.openInputStream(uri)
+//        val outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)
+//        inputStream?.use { input ->
+//            outputStream.use { output ->
+//                input.copyTo(output)
+//            }
+//        }
+    } catch(e: IOException){
+        e.printStackTrace()
+        null
+    }
 }
 
 private fun getImageFileName(
     tripId: Int,
     index: Int,
 ): String {
+    val df = DecimalFormat("000")
     val now = ZonedDateTime.now(ZoneId.of("UTC"))
     val dateTime = now.format(DateTimeFormatter.ofPattern("yyMMdd_HHmmssS"))
-    return "somewhere_${tripId}_utc${dateTime}_${index}.jpg"
+    return "${df.format(tripId)}_${dateTime}_${index}.jpg"
+    //001_231011_1030121_0.jpg
 }
 
-fun loadImageFromInternalStorage(
+suspend fun loadImageFromInternalStorage(
     context: Context,
     filePath: String
 ): Bitmap? {
-    Log.d("img", filePath)
-    try {
-        val inputStream = context.openFileInput(filePath)
-        return BitmapFactory.decodeStream(inputStream)
-    } catch (e: FileNotFoundException) {
-        e.printStackTrace()
+
+    return withContext(Dispatchers.IO){
+        try {
+            val inputStream = context.openFileInput(filePath)
+            BitmapFactory.decodeStream(inputStream)
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+            null
+        }
     }
-    return null
+}
+
+private fun deleteImageFromInternalStorage(
+    context: Context,
+    filePath: String
+): Boolean{
+    Log.d("file", "delete - $filePath")
+    return try {
+        context.deleteFile(filePath)
+    } catch (e: Exception){
+        e.printStackTrace()
+        false
+    }
+}
+
+fun deleteImagesFromInternalStorage(
+    context: Context,
+    imageFileList: List<String>
+){
+    imageFileList.forEach {
+        deleteImageFromInternalStorage(context, it)
+    }
 }
 
 private fun getBitMapFromUri(
@@ -390,9 +491,9 @@ private fun getBitMapFromUri(
 }
 
 private fun compressBitmap(
+    context: Context,
     bitmap: Bitmap,
-    uri: Uri,
-    context: Context
+    uri: Uri
 ): Bitmap{
 
     val size = bitmap.byteCount
@@ -404,7 +505,7 @@ private fun compressBitmap(
     //if is over 3MB (== 45,500,000 ?)
     return if (size > IMAGE_MAX_SIZE){
         var scale = sqrt((IMAGE_MAX_SIZE / size).toFloat())
-        45,500,000 / 45,543,680
+        //45,500,000 / 45,543,680
         Log.d("img", "scale = $scale | $IMAGE_MAX_SIZE / $size")
         if (scale > 0.1){
             scale = 0.1f
@@ -420,87 +521,88 @@ private fun compressBitmap(
 }
 
 
-private fun createImageFile(
-    fileName: String = "temp_image"
-): File {
-    val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-    return File.createTempFile(fileName, ".jpg", storageDir)
-}
+//private fun createImageFile(
+//    fileName: String = "temp_image"
+//): File {
+//    val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+//    return File.createTempFile(fileName, ".jpg", storageDir)
+//}
+//
+//
+//private fun uriToFile(
+//    context: Context,
+//    uri: Uri,
+//    fileName: String
+//): File?{
+//    context.contentResolver.openInputStream(uri)?.let {inputStream ->
+//
+//        val tempFile: File = createImageFile(fileName)
+//        val fileOutputStream = FileOutputStream(tempFile)
+//
+//        inputStream.copyTo(fileOutputStream)
+//        inputStream.close()
+//        fileOutputStream.close()
+//
+//        return tempFile
+//    }
+//    return null
+//}
+//
+//private fun compressImage(
+//    filePath: String,
+//    targetMB: Double = 1.0
+//){
+//    var image: Bitmap = BitmapFactory.decodeFile(filePath)
+//
+//    val exif = ExifInterface(filePath)
+//    val exifOrientation: Int = exif.getAttributeInt(
+//        ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL
+//    )
+//
+//    val exifDegree: Int = exifOrientationToDegrees(exifOrientation)
+//
+//    image = rotateImage(image, exifDegree.toFloat())
+//
+//    try {
+//        val file = File(filePath)
+//        val length = file.length()
+//
+//        val fileSizeInKB = (length / 1024).toString().toDouble()
+//        val fileSizeInMB = (fileSizeInKB / 1024).toString().toDouble()
+//
+//        var quality = 100
+//        if (fileSizeInMB > targetMB){
+//            quality = ((targetMB / fileSizeInMB) * 100).toInt()
+//        }
+//
+//        val fileOutputStream = FileOutputStream(filePath)
+//        //compress
+//        image.compress(Bitmap.)
+//        fileOutputStream.close()
+//    }
+//    catch (){
+//
+//    }
+//}
+//
+//private fun exifOrientationToDegrees(exifOrientation: Int): Int{
+//    return when (exifOrientation){
+//        ExifInterface.ORIENTATION_ROTATE_90 -> 90
+//        ExifInterface.ORIENTATION_ROTATE_180 -> 180
+//        ExifInterface.ORIENTATION_ROTATE_270 -> 270
+//        else -> 0
+//    }
+//}
+//
+//private fun rotateImage(
+//    source: Bitmap,
+//    angle: Float
+//): Bitmap {
+//    val matrix = Matrix()
+//    matrix.postRotate(angle)
+//    return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
+//}
 
-
-private fun uriToFile(
-    context: Context,
-    uri: Uri,
-    fileName: String
-): File?{
-    context.contentResolver.openInputStream(uri)?.let {inputStream ->
-
-        val tempFile: File = createImageFile(fileName)
-        val fileOutputStream = FileOutputStream(tempFile)
-
-        inputStream.copyTo(fileOutputStream)
-        inputStream.close()
-        fileOutputStream.close()
-
-        return tempFile
-    }
-    return null
-}
-
-private fun compressImage(
-    filePath: String,
-    targetMB: Double = 1.0
-){
-    var image: Bitmap = BitmapFactory.decodeFile(filePath)
-
-    val exif = ExifInterface(filePath)
-    val exifOrientation: Int = exif.getAttributeInt(
-        ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL
-    )
-
-    val exifDegree: Int = exifOrientationToDegrees(exifOrientation)
-
-    image = rotateImage(image, exifDegree.toFloat())
-
-    try {
-        val file = File(filePath)
-        val length = file.length()
-
-        val fileSizeInKB = (length / 1024).toString().toDouble()
-        val fileSizeInMB = (fileSizeInKB / 1024).toString().toDouble()
-
-        var quality = 100
-        if (fileSizeInMB > targetMB){
-            quality = ((targetMB / fileSizeInMB) * 100).toInt()
-        }
-
-        val fileOutputStream = FileOutputStream(filePath)
-        //compress
-        image.compress(Bitmap.)
-        fileOutputStream.close()
-    }
-    catch (){
-
-    }
-}
-
-private fun exifOrientationToDegrees(exifOrientation: Int): Int{
-    return when (exifOrientation){
-        ExifInterface.ORIENTATION_ROTATE_90 -> 90
-        ExifInterface.ORIENTATION_ROTATE_180 -> 180
-        ExifInterface.ORIENTATION_ROTATE_270 -> 270
-        else -> 0
-    }
-}
-
-private fun rotateImage(
-    source: Bitmap,
-    angle: Float
-): Bitmap {
-    val matrix = Matrix()
-    matrix.postRotate(angle)
-    return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
-}
 
 
 

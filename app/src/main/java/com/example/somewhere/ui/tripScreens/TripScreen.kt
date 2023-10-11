@@ -1,5 +1,6 @@
 package com.example.somewhere.ui.tripScreens
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -59,6 +60,7 @@ import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.ui.tripScreenUtils.AnimatedBottomSaveCancelBar
 import com.example.somewhere.ui.tripScreenUtils.EditAndMapFAB
 import com.example.somewhere.ui.tripScreenUtils.cards.TitleCard
+import com.example.somewhere.ui.tripScreenUtils.cards.deleteImagesFromInternalStorage
 import com.example.somewhere.viewModel.DateTimeFormat
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -112,6 +114,9 @@ fun TripScreen(
     var showBottomSaveCancelBar by rememberSaveable { mutableStateOf(true) }
 
     val locale = LocalConfiguration.current.locales[0]
+
+    val willDeleteImageList: MutableList<String> = mutableListOf()
+
 
     val onBackButtonClick = {
         if (originalTrip != tempTrip)
@@ -199,6 +204,8 @@ fun TripScreen(
                     if (isNewTrip){
                         navigateUpAndDeleteTrip(originalTrip)
                     }
+
+                    willDeleteImageList.clear()
                 }
             )
         }
@@ -263,9 +270,11 @@ fun TripScreen(
                         onAddImages = {
                             showingTrip.setImage(updateTripState, showingTrip.imagePathList + it)
                         },
-                        deleteImage = {
+                        deleteImage = {imageFile ->
+                            willDeleteImageList.add(imageFile)
+
                             val newList: MutableList<String> = showingTrip.imagePathList.toMutableList()
-                            newList.remove(it)
+                            newList.remove(imageFile)
 
                             showingTrip.setImage(updateTripState, newList.toList())
                         },
@@ -447,12 +456,19 @@ fun TripScreen(
             AnimatedBottomSaveCancelBar(
                 visible = isEditMode && showBottomSaveCancelBar,
                 onCancelClick = {
+                    willDeleteImageList.clear()
                     focusManager.clearFocus()
                     onBackButtonClick()
                 },
                 onSaveClick = {
                     coroutineScope.launch {
                         saveTrip()
+
+                        deleteImagesFromInternalStorage(context, willDeleteImageList)
+                        Log.d("file", "====== after save $willDeleteImageList")
+                        context.filesDir.listFiles()?.forEach {
+                            Log.d("file", "$it")
+                        }
                     }
                 }
             )
