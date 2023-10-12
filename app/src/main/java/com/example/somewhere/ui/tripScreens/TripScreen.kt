@@ -1,6 +1,5 @@
 package com.example.somewhere.ui.tripScreens
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -60,7 +59,6 @@ import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.ui.tripScreenUtils.AnimatedBottomSaveCancelBar
 import com.example.somewhere.ui.tripScreenUtils.EditAndMapFAB
 import com.example.somewhere.ui.tripScreenUtils.cards.TitleCard
-import com.example.somewhere.ui.tripScreenUtils.cards.deleteImagesFromInternalStorage
 import com.example.somewhere.viewModel.DateTimeFormat
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -91,6 +89,11 @@ fun TripScreen(
 
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     updateTripDurationAndTripState: (toTempTrip: Boolean, startDate: LocalDate, endDate: LocalDate) -> Unit,
+
+    addAddedImages: (imageFiles: List<String>) -> Unit,
+    addDeletedImages: (imageFiles: List<String>) -> Unit,
+    organizeAddedDeletedImages: (isClickSave: Boolean) -> Unit,
+
     saveTrip: () -> Unit,
 
     modifier: Modifier = Modifier,
@@ -114,9 +117,6 @@ fun TripScreen(
     var showBottomSaveCancelBar by rememberSaveable { mutableStateOf(true) }
 
     val locale = LocalConfiguration.current.locales[0]
-
-    val willDeleteImageList: MutableList<String> = mutableListOf()
-
 
     val onBackButtonClick = {
         if (originalTrip != tempTrip)
@@ -205,7 +205,7 @@ fun TripScreen(
                         navigateUpAndDeleteTrip(originalTrip)
                     }
 
-                    willDeleteImageList.clear()
+                    organizeAddedDeletedImages(false)
                 }
             )
         }
@@ -267,11 +267,12 @@ fun TripScreen(
                         tripId = showingTrip.id,
                         isEditMode = isEditMode,
                         imgList = showingTrip.imagePathList,
-                        onAddImages = {
-                            showingTrip.setImage(updateTripState, showingTrip.imagePathList + it)
+                        onAddImages = { imageFiles ->
+                            addAddedImages(imageFiles)
+                            showingTrip.setImage(updateTripState, showingTrip.imagePathList + imageFiles)
                         },
-                        deleteImage = {imageFile ->
-                            willDeleteImageList.add(imageFile)
+                        deleteImage = { imageFile ->
+                            addDeletedImages(listOf(imageFile))
 
                             val newList: MutableList<String> = showingTrip.imagePathList.toMutableList()
                             newList.remove(imageFile)
@@ -456,7 +457,6 @@ fun TripScreen(
             AnimatedBottomSaveCancelBar(
                 visible = isEditMode && showBottomSaveCancelBar,
                 onCancelClick = {
-                    willDeleteImageList.clear()
                     focusManager.clearFocus()
                     onBackButtonClick()
                 },
@@ -464,11 +464,7 @@ fun TripScreen(
                     coroutineScope.launch {
                         saveTrip()
 
-                        deleteImagesFromInternalStorage(context, willDeleteImageList)
-                        Log.d("file", "====== after save $willDeleteImageList")
-                        context.filesDir.listFiles()?.forEach {
-                            Log.d("file", "$it")
-                        }
+                        organizeAddedDeletedImages(true)
                     }
                 }
             )

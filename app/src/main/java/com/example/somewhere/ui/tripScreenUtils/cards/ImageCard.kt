@@ -4,12 +4,10 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
-import android.graphics.Matrix
-import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -39,7 +37,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -48,32 +45,22 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
 import com.example.somewhere.R
 import com.example.somewhere.ui.commonScreenUtils.MySpacerColumn
 import com.example.somewhere.ui.commonScreenUtils.MySpacerRow
@@ -81,16 +68,13 @@ import com.example.somewhere.ui.commonScreenUtils.DisplayIcon
 import com.example.somewhere.ui.commonScreenUtils.MyIcons
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import org.jetbrains.annotations.Async
 import java.io.File
 import java.io.FileNotFoundException
-import java.io.FileOutputStream
 import java.io.IOException
 import java.text.DecimalFormat
 import java.time.ZoneId
@@ -99,7 +83,7 @@ import java.time.format.DateTimeFormatter
 import kotlin.math.sqrt
 
 const val IMAGE_MAX_COUNT = 10
-const val IMAGE_MAX_SIZE = 45_500_000
+const val IMAGE_MAX_SIZE_MB = 2.5    //Mebibyte
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -120,6 +104,8 @@ fun ImageCard(
 
     val snackBarTextImageLimit = stringResource(id = R.string.snack_bar_image_limit)
 
+    val coroutineScope = rememberCoroutineScope()
+
     val galleryLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetMultipleContents()
     ){ uriList ->
@@ -133,14 +119,15 @@ fun ImageCard(
 
         val fileList: MutableList<String> = mutableListOf()
 
-        //save to internal storage
-        addUriList.forEachIndexed { index, uri ->
-            val file = saveImageToInternalStorage(tripId, index, context, uri)
-            if (file != null)
-                fileList.add(file)
+        coroutineScope.launch {
+            //save to internal storage
+            addUriList.forEachIndexed { index, uri ->
+                val file = saveImageToInternalStorage(tripId, index, context, uri)
+                if (file != null)
+                    fileList.add(file)
+            }
+            onAddImages(fileList)
         }
-
-        onAddImages(fileList)
     }
 
 
@@ -400,7 +387,7 @@ private fun saveImageToInternalStorage(
     val bitmap = getBitMapFromUri(uri, context)
 
     //compress bitmap
-//    compressBitmap(context, bitmap, uri)
+    val newBitmap = compressBitmap(context, bitmap, uri)
 
     //make file name : tripId date time index
     val fileName = getImageFileName(tripId, index)
@@ -409,19 +396,12 @@ private fun saveImageToInternalStorage(
     return try{
 
         context.openFileOutput(fileName, Context.MODE_PRIVATE).use {stream ->
-            if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)){
+            if (!newBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)){
                 throw IOException("Couldn't save bitmap")
             }
         }
         fileName
 
-//        val inputStream = context.contentResolver.openInputStream(uri)
-//        val outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)
-//        inputStream?.use { input ->
-//            outputStream.use { output ->
-//                input.copyTo(output)
-//            }
-//        }
     } catch(e: IOException){
         e.printStackTrace()
         null
@@ -455,11 +435,10 @@ suspend fun loadImageFromInternalStorage(
     }
 }
 
-private fun deleteImageFromInternalStorage(
+private fun deleteFileFromInternalStorage(
     context: Context,
     filePath: String
 ): Boolean{
-    Log.d("file", "delete - $filePath")
     return try {
         context.deleteFile(filePath)
     } catch (e: Exception){
@@ -468,12 +447,12 @@ private fun deleteImageFromInternalStorage(
     }
 }
 
-fun deleteImagesFromInternalStorage(
+fun deleteFilesFromInternalStorage(
     context: Context,
     imageFileList: List<String>
 ){
     imageFileList.forEach {
-        deleteImageFromInternalStorage(context, it)
+        deleteFileFromInternalStorage(context, it)
     }
 }
 
@@ -495,29 +474,50 @@ private fun compressBitmap(
     bitmap: Bitmap,
     uri: Uri
 ): Bitmap{
+    var imageFileSize: Float = 0f
+    runBlocking {
+        imageFileSize = getFileSizeFromUri(context, uri)
+    }
 
-    val size = bitmap.byteCount
     val width = bitmap.width
     val height = bitmap.height
 
-    Log.d("img", "before = ${size}byte ${width}x${height}")
 
-    //if is over 3MB (== 45,500,000 ?)
-    return if (size > IMAGE_MAX_SIZE){
-        var scale = sqrt((IMAGE_MAX_SIZE / size).toFloat())
-        //45,500,000 / 45,543,680
-        Log.d("img", "scale = $scale | $IMAGE_MAX_SIZE / $size")
-        if (scale > 0.1){
-            scale = 0.1f
+    //if is over 3 Mebibyte
+    return if (imageFileSize > IMAGE_MAX_SIZE_MB){
+        var scale = sqrt(IMAGE_MAX_SIZE_MB / imageFileSize)
+
+        if (scale < 0.01f){
+            scale = 0.01
         }
 
         val newBitmap = Bitmap.createScaledBitmap(bitmap, (width * scale).toInt(), (height *scale).toInt(), true)
-        Log.d("img", "after = ${newBitmap.byteCount}byte ${newBitmap.width}x${newBitmap.height}")
 
         newBitmap
     }
     else
         bitmap
+}
+
+
+
+private fun getFileSizeFromUri(
+    context: Context,
+    uri: Uri
+): Float {
+
+    var fileSize: Long = 0
+
+    context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+        val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
+
+        cursor.moveToFirst()
+
+        fileSize = cursor.getLong(sizeIndex)
+    }
+
+    //Byte to Mebibyte
+    return fileSize.toFloat() / 1024 / 1024
 }
 
 

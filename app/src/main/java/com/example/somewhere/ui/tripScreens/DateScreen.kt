@@ -97,6 +97,10 @@ fun DateScreen(
 
     changeEditMode: (editMode: Boolean?) -> Unit,
 
+    addAddedImages: (imageFiles: List<String>) -> Unit,
+    addDeletedImages: (imageFiles: List<String>) -> Unit,
+    organizeAddedDeletedImages: (isClickSave: Boolean) -> Unit,
+
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     addNewSpot: (dateId: Int) -> Unit,
     deleteSpot: (dateId: Int, spotId: Int) -> Unit,
@@ -211,6 +215,8 @@ fun DateScreen(
                     showExitDialog = false
                     changeEditMode(false)
                     updateTripState(true, originalTrip)
+
+                    organizeAddedDeletedImages(false)
                 }
             )
         }
@@ -277,6 +283,7 @@ fun DateScreen(
                         },
                         deleteSpot = { dateId, spotId ->
                             deleteSpot(dateId, spotId)
+                            addDeletedImages(dateList[dateId].spotList[spotId].imagePathList)
                         },
                         navigateToSpot = navigateToSpot,
                         setIsFABExpanded = {
@@ -306,6 +313,8 @@ fun DateScreen(
                 onSaveClick = {
                     coroutineScope.launch {
                         saveTrip()
+
+                        organizeAddedDeletedImages(true)
                     }
                 }
             )

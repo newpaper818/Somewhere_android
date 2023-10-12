@@ -1,5 +1,6 @@
 package com.example.somewhere.viewModel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.example.somewhere.db.TripRepository
 import com.example.somewhere.model.Date
@@ -7,6 +8,7 @@ import com.example.somewhere.model.Spot
 import com.example.somewhere.model.Trip
 import com.example.somewhere.ui.mainScreens.MyTripsDestination
 import com.example.somewhere.ui.navigation.NavigationDestination
+import com.example.somewhere.ui.tripScreenUtils.cards.deleteFilesFromInternalStorage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -25,7 +27,10 @@ data class SomewhereUiState(
     val spotId: Int? = null,
 
     val trip: Trip? = null,
-    val tempTrip: Trip? = null
+    val tempTrip: Trip? = null,
+
+    val addedImages: List<String> = listOf(),
+    val deletedImages: List<String> = listOf(),
 )
 
 class SomewhereViewModel(
@@ -272,6 +277,51 @@ class SomewhereViewModel(
 
             //update tempTrip
             updateTripState(true, currentTrip.copy(dateList = newDateList.toList()))
+        }
+    }
+
+    //image
+    fun addAddedImages(
+        newAddedImages: List<String>
+    ){
+        _uiState.update {
+            it.copy(addedImages = it.addedImages + newAddedImages)
+        }
+    }
+
+    fun addDeletedImages(
+        newDeletedImages: List<String>
+    ){
+        _uiState.update {
+            it.copy(deletedImages = it.deletedImages + newDeletedImages)
+        }
+    }
+
+    fun organizeAddedDeletedImages(
+        context: Context,
+        isClickSave: Boolean //save: true / cancel: false
+    ){
+
+        //when edit mode, user add images and cancel edit
+        // -> delete here (delete internal storage)
+
+        //save: delete(delete internal storage) deletedImages
+        if (isClickSave){
+            deleteFilesFromInternalStorage(context, _uiState.value.deletedImages)
+        }
+
+        //cancel: delete(delete internal storage) addedImages
+        else{
+            deleteFilesFromInternalStorage(context, _uiState.value.addedImages)
+        }
+
+        //init
+        initAddedDeletedImages()
+    }
+
+    private fun initAddedDeletedImages() {
+        _uiState.update {
+            it.copy(addedImages = listOf(), deletedImages = listOf())
         }
     }
 }

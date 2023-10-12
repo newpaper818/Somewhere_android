@@ -99,6 +99,10 @@ fun MyTripsScreen(
 
     changeEditMode: (editMode: Boolean?) -> Unit,
 
+    addAddedImages: (imageFiles: List<String>) -> Unit,
+    addDeletedImages: (imageFiles: List<String>) -> Unit,
+    organizeAddedDeletedImages: (isClickSave: Boolean) -> Unit,
+
     navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
     navigateTo: (NavigationDestination) -> Unit,
     navigateToMain: (NavigationDestination) -> Unit,
@@ -168,6 +172,7 @@ fun MyTripsScreen(
                                 changeEditMode(false)
                             }
                         }
+                        organizeAddedDeletedImages(true)
                     }
                 )
         },
@@ -206,6 +211,7 @@ fun MyTripsScreen(
                     showExitDialog = false
                     changeEditMode(false)
                     appViewModel.unSaveTempTripList()
+                    organizeAddedDeletedImages(false)
                 }
             )
         }
@@ -264,6 +270,7 @@ fun MyTripsScreen(
                             },
                             deleteTrip = {
                                 showDeleteDialog = true
+                                addDeletedImages(it.getAllImagesPath())
                             },
                             dateTimeFormat = dateTimeFormat,
                             slideState = slideState,

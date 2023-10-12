@@ -182,6 +182,16 @@ fun SomewhereApp(
                     },
                     isEditMode = somewhereUiState.isEditMode,
                     dateTimeFormat = appUiState.dateTimeFormat,
+                    addAddedImages = { newImages ->
+                        somewhereViewModel.addAddedImages(newImages)
+                    },
+                    addDeletedImages = { newImages ->
+                        somewhereViewModel.addDeletedImages(newImages)
+                    },
+                    organizeAddedDeletedImages = { isClickSave ->
+                        somewhereViewModel.organizeAddedDeletedImages(context, isClickSave)
+                    },
+
                     changeEditMode = {
                         somewhereViewModel.toggleEditMode(it)
                     },
@@ -330,6 +340,17 @@ fun SomewhereApp(
                                 endDate
                             )
                         },
+
+                        addAddedImages = { newImages ->
+                            somewhereViewModel.addAddedImages(newImages)
+                        },
+                        addDeletedImages = { newImages ->
+                            somewhereViewModel.addDeletedImages(newImages)
+                        },
+                        organizeAddedDeletedImages = { isClickSave ->
+                            somewhereViewModel.organizeAddedDeletedImages(context, isClickSave)
+                        },
+
                         saveTrip = {
                             coroutineScope.launch {
                                 somewhereViewModel.saveTrip{
@@ -362,6 +383,16 @@ fun SomewhereApp(
                         dateTimeFormat = appUiState.dateTimeFormat,
                         changeEditMode = {
                             somewhereViewModel.toggleEditMode(it)
+                        },
+
+                        addAddedImages = { newImages ->
+                            somewhereViewModel.addAddedImages(newImages)
+                        },
+                        addDeletedImages = { newImages ->
+                            somewhereViewModel.addDeletedImages(newImages)
+                        },
+                        organizeAddedDeletedImages = { isClickSave ->
+                            somewhereViewModel.organizeAddedDeletedImages(context, isClickSave)
                         },
 
                         updateTripState = { toTempTrip, trip ->
@@ -423,6 +454,16 @@ fun SomewhereApp(
                         changeEditMode = {
                             somewhereViewModel.toggleEditMode(it)
                         },
+                        addAddedImages = { newImages ->
+                            somewhereViewModel.addAddedImages(newImages)
+                        },
+                        addDeletedImages = { newImages ->
+                            somewhereViewModel.addDeletedImages(newImages)
+                        },
+                        organizeAddedDeletedImages = { isClickSave ->
+                            somewhereViewModel.organizeAddedDeletedImages(context, isClickSave)
+                        },
+
                         updateTripState = { toTempTrip, trip ->
                             somewhereViewModel.updateTripState(toTempTrip, trip)
                         },

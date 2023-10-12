@@ -21,6 +21,10 @@ fun MainScreen(
     dateTimeFormat: DateTimeFormat,
     changeEditMode: (editMode: Boolean?) -> Unit,
 
+    addAddedImages: (imageFiles: List<String>) -> Unit,
+    addDeletedImages: (imageFiles: List<String>) -> Unit,
+    organizeAddedDeletedImages: (isClickSave: Boolean) -> Unit,
+
     navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
     navigateTo: (NavigationDestination) -> Unit,
 
@@ -34,6 +38,9 @@ fun MainScreen(
                 isEditMode = isEditMode,
                 dateTimeFormat = dateTimeFormat,
                 changeEditMode = changeEditMode,
+                addAddedImages = addAddedImages,
+                addDeletedImages = addDeletedImages,
+                organizeAddedDeletedImages = organizeAddedDeletedImages,
                 navigateToTrip = navigateToTrip,
                 navigateTo = navigateTo,
                 navigateToMain = {

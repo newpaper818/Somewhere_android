@@ -36,7 +36,7 @@ data class Spot(
     val zoomLevel: Float? = null,
 
     val titleText: String? = null,
-    val imgPathList: List<String> = listOf(),
+    val imagePathList: List<String> = listOf(),
 
     val startTime: LocalTime? = null,
     val endTime: LocalTime? = null,
@@ -48,7 +48,7 @@ data class Spot(
     public override fun clone(): Spot {
         return Spot(
             id, orderId, spotType, iconId, iconColor, iconBackgroundColor, date, location, zoomLevel,
-            titleText, imgPathList, startTime, endTime, budget, travelDistance, memo
+            titleText, imagePathList, startTime, endTime, budget, travelDistance, memo
         )
     }
 
@@ -145,7 +145,7 @@ data class Spot(
         newImgList: List<String>
     ) {
         val newSpotList = showingTrip.dateList[dateId].spotList.toMutableList()
-        newSpotList[id] = newSpotList[id].copy(imgPathList = newImgList)
+        newSpotList[id] = newSpotList[id].copy(imagePathList = newImgList)
         val newDateList = showingTrip.dateList.toMutableList()
         newDateList[dateId] = newDateList[dateId].copy(spotList = newSpotList.toList())
         updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))

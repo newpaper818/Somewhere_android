@@ -142,6 +142,18 @@ data class Trip(
         return null
     }
 
+    fun getAllImagesPath(): List<String>{
+        val tripImages = imagePathList
+        var spotImages: List<String> = listOf()
+        dateList.forEach { date ->
+            date.spotList.forEach { spot ->
+                spotImages = spotImages + spot.imagePathList
+            }
+        }
+
+        return tripImages + spotImages
+    }
+
     // set =========================================================================================
     fun setTitleText(
         updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,

@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -21,11 +20,8 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -77,12 +73,10 @@ import com.example.somewhere.ui.tripScreenUtils.cards.MemoCard
 import com.example.somewhere.ui.commonScreenUtils.MyIcons
 import com.example.somewhere.ui.tripScreenUtils.dialogs.SetSpotTypeDialog
 import com.example.somewhere.ui.commonScreenUtils.MySpacerColumn
-import com.example.somewhere.ui.commonScreenUtils.MySpacerRow
 import com.example.somewhere.ui.commonScreenUtils.SomewhereTopAppBar
 import com.example.somewhere.ui.tripScreenUtils.dialogs.SetBudgetOrDistanceDialog
 import com.example.somewhere.ui.tripScreenUtils.SpotListProgressBar
 import com.example.somewhere.ui.tripScreenUtils.cards.DateTimeCard
-import com.example.somewhere.ui.tripScreenUtils.cards.TitleWithColorCard
 import com.example.somewhere.ui.tripScreenUtils.cards.TitleCardMove
 import com.example.somewhere.ui.tripScreenUtils.cards.ZoomCard
 import com.example.somewhere.ui.tripScreenUtils.focusOnToSpot
@@ -123,6 +117,9 @@ fun SpotDetailScreen(
     dateTimeFormat: DateTimeFormat,
 
     changeEditMode: (editMode: Boolean?) -> Unit,
+    addAddedImages: (imageFiles: List<String>) -> Unit,
+    addDeletedImages: (imageFiles: List<String>) -> Unit,
+    organizeAddedDeletedImages: (isClickSave: Boolean) -> Unit,
 
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     addNewSpot: (dateId: Int) -> Unit,
@@ -142,6 +139,8 @@ fun SpotDetailScreen(
 ){
     val showingTrip = if (isEditMode) tempTrip
                       else            originalTrip
+
+    val context = LocalContext.current
 
     val dateList = showingTrip.dateList
     val spotList = dateList[dateId].spotList
@@ -174,6 +173,8 @@ fun SpotDetailScreen(
     var showBottomSaveCancelBar by rememberSaveable { mutableStateOf(true) }
 
     val snackBarHostState = remember { SnackbarHostState() }
+
+
 
     //when back button click
     val onBackButtonClick = {
@@ -319,6 +320,8 @@ fun SpotDetailScreen(
                     showExitDialog = false
                     changeEditMode(false)
                     updateTripState(true, originalTrip)
+
+                    organizeAddedDeletedImages(false)
                 }
             )
         }
@@ -472,6 +475,9 @@ fun SpotDetailScreen(
                                     dateTimeFormat = dateTimeFormat,
                                     focusManager = focusManager,
 
+                                    addAddedImageList = addAddedImages,
+                                    addDeletedImageList = addDeletedImages,
+
                                     setShowBottomSaveCancelBar = {
                                         showBottomSaveCancelBar = it
                                     },
@@ -483,22 +489,24 @@ fun SpotDetailScreen(
 
                                     onImageClicked = onImageClicked,
                                     deleteSpot = {
+                                        addDeletedImages(currentSpot.imagePathList)
+
                                         if (spotList.size <= 1) {
                                             navigateUp()
                                             deleteSpot(dateId, currentSpotId)
-                                        } else {
+                                        }
+                                        else {
                                             var toIdx = currentSpotId - 1
 
                                             if (toIdx < 0) {
                                                 toIdx = currentSpotId
                                             }
 
-                                            deleteSpot(dateId, currentSpotId)
-
                                             coroutineScope.launch {
-                                                delay(100)
+                                                delay(0)
                                                 spotPagerState.animateScrollToPage(toIdx)
                                                 progressBarState.animateScrollToItem(toIdx)
+                                                deleteSpot(dateId, currentSpotId)
                                             }
                                         }
                                     },
@@ -521,6 +529,8 @@ fun SpotDetailScreen(
                 onSaveClick = {
                     coroutineScope.launch {
                         saveTrip()
+
+                        organizeAddedDeletedImages(true)
                     }
                 }
             )
@@ -570,6 +580,9 @@ fun SpotDetailPage(
     dateTimeFormat: DateTimeFormat,
 
     focusManager: FocusManager,
+
+    addAddedImageList: (List<String>) -> Unit,
+    addDeletedImageList: (List<String>) -> Unit,
 
     setShowBottomSaveCancelBar: (Boolean) -> Unit,
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
@@ -653,13 +666,15 @@ fun SpotDetailPage(
             ImageCard(
                 tripId = showingTrip.id,
                 isEditMode = isEditMode,
-                imgList = currentSpot.imgPathList,
-                onAddImages = {
-                    var addImageList: List<String> = it
+                imgList = currentSpot.imagePathList,
+                onAddImages = { imageFiles ->
+                    addAddedImageList(imageFiles)
+
+                    var addImageList: List<String> = imageFiles
 
                     //up to 10 images
-                    if (currentSpot.imgPathList.size + it.size > 10) {
-                        addImageList = it.subList(0, 10 - currentSpot.imgPathList.size)
+                    if (currentSpot.imagePathList.size + imageFiles.size > 10) {
+                        addImageList = imageFiles.subList(0, 10 - currentSpot.imagePathList.size)
 
                         coroutineScope.launch {
                             snackBarHostState.showSnackbar(
@@ -669,14 +684,16 @@ fun SpotDetailPage(
                         }
                     }
 
-                    val newImgList = currentSpot.imgPathList + addImageList
+                    val newImgList = currentSpot.imagePathList + addImageList
 
                     currentSpot.setImage(showingTrip, dateId, updateTripState, newImgList)
                 },
-                deleteImage = {
+                deleteImage = {imageFile ->
+                    addDeletedImageList(listOf(imageFile))
+
                     val newImgList: MutableList<String> =
-                        currentSpot.imgPathList.toMutableList()
-                    newImgList.remove(it)
+                        currentSpot.imagePathList.toMutableList()
+                    newImgList.remove(imageFile)
 
                     currentSpot.setImage(showingTrip, dateId, updateTripState, newImgList)
                 },
