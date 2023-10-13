@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -57,7 +58,7 @@ import com.example.somewhere.ui.tripScreenUtils.cards.TripDurationCard
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.ui.tripScreenUtils.AnimatedBottomSaveCancelBar
-import com.example.somewhere.ui.tripScreenUtils.EditAndMapFAB
+import com.example.somewhere.ui.tripScreenUtils.SeeOnMapExtendedFAB
 import com.example.somewhere.ui.tripScreenUtils.cards.TitleCard
 import com.example.somewhere.viewModel.DateTimeFormat
 import kotlinx.coroutines.launch
@@ -174,18 +175,21 @@ fun TripScreen(
                 navigationIconOnClick = {
                     if (!isEditMode) navigateUp()
                     else             onBackButtonClick()
+                },
+
+                actionIcon1 = if (!isEditMode) MyIcons.edit else null,
+                actionIcon1Onclick = {
+                    changeEditMode(null)
                 }
             )
         },
 
         //bottom floating button
         floatingActionButton = {
-            EditAndMapFAB(
-                visible = !isEditMode,
-                onEditClick = { changeEditMode(null) },
-                showMapFAB = showingTrip.getFirstLocation() != null,
-                onMapClick = navigateToTripMap,
-                isMapFABExpanded = isFABExpanded
+            SeeOnMapExtendedFAB(
+                visible = !isEditMode && showingTrip.getFirstLocation() != null,
+                onClick = navigateToTripMap,
+                expanded = isFABExpanded
             )
         }
     ) { paddingValues ->
@@ -395,7 +399,7 @@ fun TripScreen(
                             isExpanded = isExpanded,
                             itemId = it.id,
 
-                            sideText = it.getDateText(locale, dateTimeFormat.copy(includeDayOfWeek = false), false),
+                            sideText = it.getDateText(dateTimeFormat.copy(includeDayOfWeek = false), false),
                             mainText = it.titleText,
                             expandedText = it.getExpandedText(showingTrip, isEditMode),
 

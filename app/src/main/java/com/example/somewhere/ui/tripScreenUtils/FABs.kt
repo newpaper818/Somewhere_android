@@ -7,6 +7,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
@@ -24,47 +25,47 @@ import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.ui.theme.white
 
-@Composable
-fun EditAndMapFAB(
-    visible: Boolean,
-    onEditClick: () -> Unit,
-
-    showMapFAB: Boolean,
-    onMapClick: () -> Unit,
-    isMapFABExpanded: Boolean,
-    modifier: Modifier = Modifier
-){
-    AnimatedVisibility(
-        visible = visible,
-        enter = slideInHorizontally(
-            animationSpec = tween(1000),
-            initialOffsetX = { (it * 2) }
-        ),
-        exit = slideOutHorizontally(
-            animationSpec = tween(1000),
-            targetOffsetX = { (it * 2) }
-        )
-    ) {
-        Column(
-            horizontalAlignment = Alignment.End,
-            modifier = modifier
-        ) {
-            FloatingActionButton(onClick = onEditClick) {
-                DisplayIcon(icon = MyIcons.edit)
-            }
-
-            if (showMapFAB) {
-                MySpacerColumn(height = 16.dp)
-
-                //trip map floating button
-                SeeOnMapExtendedFAB(
-                    onClick = onMapClick,
-                    expanded = isMapFABExpanded
-                )
-            }
-        }
-    }
-}
+//@Composable
+//fun EditAndMapFAB(
+//    visible: Boolean,
+//    onEditClick: () -> Unit,
+//
+//    showMapFAB: Boolean,
+//    onMapClick: () -> Unit,
+//    isMapFABExpanded: Boolean,
+//    modifier: Modifier = Modifier
+//){
+//    AnimatedVisibility(
+//        visible = visible,
+//        enter = slideInHorizontally(
+//            animationSpec = tween(1000),
+//            initialOffsetX = { (it * 2) }
+//        ),
+//        exit = slideOutHorizontally(
+//            animationSpec = tween(1000),
+//            targetOffsetX = { (it * 2) }
+//        )
+//    ) {
+//        Column(
+//            horizontalAlignment = Alignment.End,
+//            modifier = modifier
+//        ) {
+//            FloatingActionButton(onClick = onEditClick) {
+//                DisplayIcon(icon = MyIcons.edit)
+//            }
+//
+//            if (showMapFAB) {
+//                MySpacerColumn(height = 16.dp)
+//
+//                //trip map floating button
+//                SeeOnMapExtendedFAB(
+//                    onClick = onMapClick,
+//                    expanded = isMapFABExpanded
+//                )
+//            }
+//        }
+//    }
+//}
 
 @Composable
 fun IconFAB(
@@ -75,11 +76,11 @@ fun IconFAB(
     AnimatedVisibility(
         visible = visible,
         enter = slideInHorizontally(
-            animationSpec = tween(700),
+            animationSpec = tween(500),
             initialOffsetX = { (it * 2) }
         ),
         exit = slideOutHorizontally(
-            animationSpec = tween(700),
+            animationSpec = tween(500),
             targetOffsetX = { (it * 2) }
         )
     ) {
@@ -91,26 +92,26 @@ fun IconFAB(
 
 @Composable
 fun SeeOnMapExtendedFAB(
-//    visible: Boolean,
+    visible: Boolean,
     onClick: () -> Unit,
     expanded: Boolean
 ){
-//    AnimatedVisibility(
-//        visible = visible,
-//        enter = slideInHorizontally(
-//            animationSpec = tween(10000),
-//            initialOffsetX = { (it * 2) }),
-//        exit = slideOutHorizontally(
-//            animationSpec = tween(2000),
-//            targetOffsetX = { (it * 2) })
-//    ) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = slideInVertically(
+            animationSpec = tween(500),
+            initialOffsetY = { (it * 2.5f).toInt() }),
+        exit = slideOutVertically(
+            animationSpec = tween(500),
+            targetOffsetY = { (it * 2.5f).toInt() })
+    ) {
         SomewhereFloatingActionButton(
             text = stringResource(id = R.string.see_on_map),
             icon = MyIcons.map,
             onClick = onClick,
             expanded = expanded
         )
-//    }
+    }
 }
 
 @Composable
@@ -124,6 +125,7 @@ private fun SomewhereFloatingActionButton(
         text = { Text(text = text, style = getTextStyle(TextType.FAB)) },
         icon = { DisplayIcon(icon, color = white) },
         onClick = onClick,
-        expanded = expanded
+        expanded = expanded,
+        modifier = Modifier.padding(bottom = 0.dp)
     )
 }

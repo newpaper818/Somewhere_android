@@ -50,6 +50,75 @@ fun DeleteItemButton(
     )
 }
 
+
+@Composable
+fun ToPrevDateButton(
+    text: String,
+    onClick: () -> Unit,
+    iconColor: Color? = null,
+    buttonColor: Color = getColor(ColorType.BUTTON),
+    textStyle: TextStyle = getTextStyle(TextType.BUTTON)
+){
+    Button(
+        colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
+        contentPadding = PaddingValues(8.dp, 0.dp, 16.dp, 0.dp),
+        onClick = onClick
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            DisplayIcon(
+                icon = MyIcons.leftArrow,
+                onColor = iconColor == null,
+                color = iconColor
+            )
+
+            Column {
+                Text(
+                    text = text,
+                    style = textStyle
+                )
+                MySpacerColumn(2.dp)
+            }
+        }
+    }
+}
+
+@Composable
+fun ToNextDateButton(
+    text: String,
+    onClick: () -> Unit,
+    iconColor: Color? = null,
+    buttonColor: Color = getColor(ColorType.BUTTON),
+    textStyle: TextStyle = getTextStyle(TextType.BUTTON)
+){
+    Button(
+        colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
+        contentPadding = PaddingValues(16.dp, 0.dp, 8.dp, 0.dp),
+        onClick = onClick
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Column {
+                Text(
+                    text = text,
+                    style = textStyle
+                )
+                MySpacerColumn(2.dp)
+            }
+
+            DisplayIcon(
+                icon = MyIcons.rightArrow,
+                onColor = iconColor == null,
+                color = iconColor
+            )
+        }
+    }
+}
+
 @Composable
 private fun IconTextButton(
     icon: MyIcon,

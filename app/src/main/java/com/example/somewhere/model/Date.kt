@@ -5,6 +5,7 @@ import com.example.somewhere.enumUtils.SpotTypeGroup
 import com.example.somewhere.ui.theme.MyColor
 import com.example.somewhere.utils.getNumToText
 import com.example.somewhere.viewModel.DateTimeFormat
+import com.google.android.gms.maps.model.LatLng
 import com.squareup.moshi.JsonClass
 import java.time.LocalDate
 import java.util.Locale
@@ -85,8 +86,36 @@ data class Date(
         return count
     }
 
-    fun getDateText(locale: Locale, dateTimeFormat: DateTimeFormat, includeYear: Boolean = true): String{
+    fun getDateText(dateTimeFormat: DateTimeFormat, includeYear: Boolean = true): String{
         return com.example.somewhere.utils.getDateText(date, dateTimeFormat, includeYear = includeYear)
+    }
+
+    /**
+     * get spotList's last location.
+     * If spotList is empty or don't have any location, return null
+     *
+     * @param startSpotIndex start searching index of spotList. if null, it will set to spotList last index.
+     * @return get spotList's last location
+     */
+    fun getLastLocation(startSpotIndex: Int? = null): LatLng? {
+        if (spotList.isNotEmpty()){
+            var index = if (startSpotIndex == null) (spotList.size - 1)
+                        else {
+                            minOf(startSpotIndex, (spotList.size - 1))
+                        }
+
+            while (index >= 0){
+                val spot = spotList[index]
+                if (spot.location != null)
+                    return spot.location
+                else
+                    index -= 1
+            }
+
+            return null
+        }
+        else
+            return null
     }
 
     // set =========================================================================================

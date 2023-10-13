@@ -34,8 +34,6 @@ fun SelectDateDialog(
     onOkClick: (dateId: Int) -> Unit,
     onDismissRequest: () -> Unit
 ){
-    val locale = LocalConfiguration.current.locales[0]
-
     var currentDateId by rememberSaveable { mutableStateOf(initialDate.id) }
 
     val maxHeight = 26.dp + 16.dp + 60.dp * dateList.size + 12.dp + 48.dp
@@ -60,7 +58,6 @@ fun SelectDateDialog(
                         isExpanded = false,
                         itemId = it.id,
                         sideText = it.getDateText(
-                            locale,
                             dateTimeFormat.copy(includeDayOfWeek = false),
                             false
                         ),

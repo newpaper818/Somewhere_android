@@ -242,9 +242,9 @@ fun getTextStyle(textType: TextType): TextStyle {
 
         PROGRESS_BAR__UPPER_HIGHLIGHT       -> MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
         PROGRESS_BAR__UPPER                 -> MaterialTheme.typography.bodySmall.copy(color = n60)
-        PROGRESS_BAR__LOWER_HIGHLIGHT       -> MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
-        PROGRESS_BAR__LOWER_HIGHLIGHT_NULL  -> MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold, color = n60)
-        PROGRESS_BAR__LOWER                 -> MaterialTheme.typography.bodyMedium
+        PROGRESS_BAR__LOWER_HIGHLIGHT       -> MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+        PROGRESS_BAR__LOWER_HIGHLIGHT_NULL  -> MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, color = n60)
+        PROGRESS_BAR__LOWER                 -> MaterialTheme.typography.bodySmall
         PROGRESS_BAR__ICON_TEXT_HIGHLIGHT   -> MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
         PROGRESS_BAR__ICON_TEXT             -> MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
 

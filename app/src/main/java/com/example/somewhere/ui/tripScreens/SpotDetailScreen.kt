@@ -1,5 +1,6 @@
 package com.example.somewhere.ui.tripScreens
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -142,12 +143,15 @@ fun SpotDetailScreen(
 
     val context = LocalContext.current
 
-    val dateList = showingTrip.dateList
-    val spotList = dateList[dateId].spotList
+    var currentDateId by rememberSaveable { mutableStateOf(dateId) }
     var currentSpotId by rememberSaveable { mutableStateOf(spotId) }
+
+    val dateList = showingTrip.dateList
+    val spotList = dateList[currentDateId].spotList
+
     //var prevSpotId by rememberSaveable { mutableStateOf(currentSpotId) }
 
-    val currentSpot = spotList.getOrNull(currentSpotId) ?: return
+    val currentSpot = spotList.getOrNull(currentSpotId)
 
     val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
@@ -165,8 +169,6 @@ fun SpotDetailScreen(
     val progressBarState = rememberLazyListState(
         initialFirstVisibleItemIndex = currentSpotId
     )
-
-    val locale = LocalConfiguration.current.locales[0]
 
     //dialog: delete trip? unsaved data will be deleted
     var showExitDialog by rememberSaveable { mutableStateOf(false) }
@@ -200,45 +202,59 @@ fun SpotDetailScreen(
     var spotFrom: Spot? = null
     var spotTo: Spot? = null
 
-    if(currentSpot.spotType.isMove()) {
-        spotFrom = currentSpot.getPrevSpot(dateList, spotList, dateId)
-        spotTo = currentSpot.getNextSpot(dateList, spotList, dateId)
+    if(currentSpot?.spotType?.isMove() == true) {
+        spotFrom = currentSpot.getPrevSpot(dateList, spotList, currentDateId)
+        spotTo = currentSpot.getNextSpot(dateList, spotList, currentDateId)
     }
 
     val location =
-        if (currentSpot.spotType.isNotMove())
+        if (currentSpot?.spotType?.isNotMove() == true)
             currentSpot.location ?: SEOUL_LOCATION
         else
             spotFrom?.location ?: SEOUL_LOCATION
 
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(location, currentSpot.zoomLevel ?: DEFAULT_ZOOM_LEVEL)
+        position = CameraPosition.fromLatLngZoom(location, currentSpot?.zoomLevel ?: DEFAULT_ZOOM_LEVEL)
     }
 
     val density = LocalDensity.current.density
 
     //animate progress bar / map spot when current page changed
     LaunchedEffect(spotPagerState, spotList){
-        snapshotFlow { spotPagerState.currentPage }.collect { currentPageIndex_ ->
-            currentSpotId = currentPageIndex_
+        snapshotFlow { spotPagerState.currentPage }.collect { currentPageIndex ->
+            currentSpotId = currentPageIndex
 
             //progress bar animate
             coroutineScope.launch {
-                val toIdx = if (
-                    currentPageIndex_ >= 1 &&
-                    spotList[currentPageIndex_ - 1].spotType.isMove()
-                    && spotList[currentPageIndex_].spotType.isNotMove()
-                )
-                    currentPageIndex_ - 1
-                else currentPageIndex_
+//                val toIdx =
+//                    if (currentPageIndex >= 1 &&
+//                        spotList[currentPageIndex - 1].spotType.isMove()
+//                        && spotList[currentPageIndex].spotType.isNotMove()
+//                    ) currentPageIndex - 1
+//
+//                    else currentPageIndex
+                val toIdx = if (currentPageIndex == 0) 0
+                            else currentPageIndex + 1
                 progressBarState.animateScrollToItem(toIdx)
             }
 
             //map spot animate
-            coroutineScope.launch {
+            if (currentSpot != null) {
                 coroutineScope.launch {
-                    mapAnimateToSpot(scrollState, spotList[currentPageIndex_], dateList, spotList, dateId, cameraPositionState, mapSize, density, coroutineScope)
+                    coroutineScope.launch {
+                        mapAnimateToSpot(
+                            scrollState,
+                            spotList[currentPageIndex],
+                            dateList,
+                            spotList,
+                            currentDateId,
+                            cameraPositionState,
+                            mapSize,
+                            density,
+                            coroutineScope
+                        )
+                    }
                 }
             }
         }
@@ -259,22 +275,23 @@ fun SpotDetailScreen(
                 showingTrip.titleText
         }
 
-    val dateTitle = dateList[dateId].titleText
+    val dateTitle = dateList[currentDateId].titleText
     val subTitle =
         if (isEditLocationMode)
             null
         else {
             if (dateTitle == null)
-                dateList[dateId].getDateText(locale, dateTimeFormat, includeYear = true)
+                dateList[currentDateId].getDateText(dateTimeFormat, includeYear = true)
             else
-                dateList[dateId].getDateText(locale, dateTimeFormat, includeYear = true) + " - " + dateTitle
+                dateList[currentDateId].getDateText(dateTimeFormat, includeYear = true) + " - " + dateTitle
         }
 
     val snackBarPadding by animateFloatAsState(
         targetValue = if (isMapExpand) 75f
                         else if (isEditMode) 56f
                         else 0f,
-        animationSpec = tween(300)
+        animationSpec = tween(300),
+        label = "snackbar padding"
     )
 
     Scaffold(
@@ -299,14 +316,12 @@ fun SpotDetailScreen(
                     else                    MyIcons.back,
                 navigationIconOnClick = {
                     onBackButtonClick()
+                },
+
+                actionIcon1 = if (!isEditMode) MyIcons.edit else null,
+                actionIcon1Onclick = {
+                    changeEditMode(null)
                 }
-            )
-        },
-        floatingActionButton = {
-            IconFAB(
-                onClick = { changeEditMode(null) },
-                visible = !isEditMode,
-                icon = MyIcons.edit
             )
         }
     ) { paddingValue ->
@@ -343,17 +358,17 @@ fun SpotDetailScreen(
 
                 //progress bar
                 SpotListProgressBar(
-                    initialIdx = spotId,
+                    initialIdx = currentSpotId,
                     progressBarState = progressBarState,
                     isEditMode = isEditMode,
 
-                    timeFormat = dateTimeFormat.timeFormat,
+                    dateTimeFormat = dateTimeFormat,
                     dateList = dateList,
-                    dateId = dateId,
+                    dateId = currentDateId,
                     spotList = spotList,
                     currentSpotIdx = currentSpotId,
                     addNewSpot = {
-                        addNewSpot(dateId)
+                        addNewSpot(currentDateId)
 
                         coroutineScope.launch {
                             delay(100)
@@ -372,13 +387,22 @@ fun SpotDetailScreen(
                             progressBarState.animateScrollToItem(toIdx)
                         }
                     },
-                    onClickSpot = {spotId_ ->
-                        currentSpotId = spotId_
+                    onClickSpot = {toSpotId ->
+                        currentSpotId = toSpotId
 
                         //pager animate
                         coroutineScope.launch {
-                            spotPagerState.animateScrollToPage(spotId_)
+                            spotPagerState.animateScrollToPage(toSpotId)
                         }
+                    },
+                    onPrevDateClick = {toDateId ->
+                        currentDateId = toDateId
+                        val lastSpotIndex = dateList[toDateId].spotList.lastIndex
+                        currentSpotId = if (lastSpotIndex == -1) 0 else lastSpotIndex
+                    },
+                    onNextDateClick = {toDateId ->
+                        currentDateId = toDateId
+                        currentSpotId = 0
                     }
                 )
 
@@ -399,120 +423,134 @@ fun SpotDetailScreen(
                     userScrollEnabled = !isMapExpand
                 ) {
 
-                    //map card
-                    item {
-                        MapCard(
-                            isEditMode = isEditMode,
-                            isMapExpand = isMapExpand,
-                            expandHeight = (lazyColumnHeight / LocalDensity.current.density).toInt() - 1,
-                            mapSize = mapSize,
-
-                            isDarkMapTheme = isDarkMapTheme,
-                            fusedLocationClient = fusedLocationClient,
-                            userLocationEnabled = userLocationEnabled,
-                            setUserLocationEnabled = setUserLocationEnabled,
-                            cameraPositionState = cameraPositionState,
-
-                            spotList = spotList,
-                            currentSpot = currentSpot,
-                            onFullScreenClicked = {
-                                isMapExpand = !isMapExpand
-
-                                //scroll to top(map)
-                                if (isMapExpand)
-                                    coroutineScope.launch {
-                                        scrollState.animateScrollToItem(0)
-                                    }
-                            },
-
-                            toggleIsEditLocation = {
-                                isEditLocationMode = !isEditLocationMode
-                            },
-                            deleteLocation = {
-                                currentSpot.setLocation(
-                                    showingTrip,
-                                    dateId,
-                                    updateTripState,
-                                    null,
-                                    null
-                                )
-                            },
-                            setMapSize = {
-                                mapSize = it
-                            },
-                            showSnackBar = { text_, actionLabel_, duration_ ->
-                                coroutineScope.launch {
-                                    snackBarHostState.showSnackbar(text_, actionLabel_, duration = duration_)
-                                }
-                            },
-                            spotFrom = spotFrom,
-                            spotTo = spotTo
-                        )
+                    if (spotList.isEmpty()){
+                        item{
+                            Text("no spot")
+                        }
                     }
+                    else {
+                        if (currentSpot != null) {
+                            //map card
+                            item {
 
-                    //each spot page
-                    item {
-                        HorizontalPager(
-                            pageCount = spotList.size,
-                            state = spotPagerState,
-                            verticalAlignment = Alignment.Top,
-                            modifier = Modifier.weight(1f)
-                        ) { pageIndex ->     //pageIndex == spotId
-
-                            if (!isEditLocationMode) {
-                                //each page
-                                SpotDetailPage(
+                                MapCard(
                                     isEditMode = isEditMode,
-                                    setUseImePadding = setUseImePadding,
-                                    snackBarHostState = snackBarHostState,
+                                    isMapExpand = isMapExpand,
+                                    expandHeight = (lazyColumnHeight / LocalDensity.current.density).toInt() - 1,
+                                    mapSize = mapSize,
 
-                                    showingTrip = showingTrip,
-                                    dateId = dateId,
-                                    currentDate = dateList[dateId],
-                                    spotId = pageIndex,
-                                    currentSpot = dateList[dateId].spotList[pageIndex],
+                                    isDarkMapTheme = isDarkMapTheme,
+                                    fusedLocationClient = fusedLocationClient,
+                                    userLocationEnabled = userLocationEnabled,
+                                    setUserLocationEnabled = setUserLocationEnabled,
+                                    cameraPositionState = cameraPositionState,
 
-                                    dateTimeFormat = dateTimeFormat,
-                                    focusManager = focusManager,
+                                    spotList = spotList,
+                                    currentSpot = currentSpot,
+                                    onFullScreenClicked = {
+                                        isMapExpand = !isMapExpand
 
-                                    addAddedImageList = addAddedImages,
-                                    addDeletedImageList = addDeletedImages,
-
-                                    setShowBottomSaveCancelBar = {
-                                        showBottomSaveCancelBar = it
+                                        //scroll to top(map)
+                                        if (isMapExpand)
+                                            coroutineScope.launch {
+                                                scrollState.animateScrollToItem(0)
+                                            }
                                     },
-                                    updateTripState = updateTripState,
 
                                     toggleIsEditLocation = {
                                         isEditLocationMode = !isEditLocationMode
                                     },
-
-                                    onImageClicked = onImageClicked,
-                                    deleteSpot = {
-                                        addDeletedImages(currentSpot.imagePathList)
-
-                                        if (spotList.size <= 1) {
-                                            navigateUp()
-                                            deleteSpot(dateId, currentSpotId)
-                                        }
-                                        else {
-                                            var toIdx = currentSpotId - 1
-
-                                            if (toIdx < 0) {
-                                                toIdx = currentSpotId
-                                            }
-
-                                            coroutineScope.launch {
-                                                delay(0)
-                                                spotPagerState.animateScrollToPage(toIdx)
-                                                progressBarState.animateScrollToItem(toIdx)
-                                                deleteSpot(dateId, currentSpotId)
-                                            }
+                                    deleteLocation = {
+                                        currentSpot.setLocation(
+                                            showingTrip,
+                                            currentDateId,
+                                            updateTripState,
+                                            null,
+                                            null
+                                        )
+                                    },
+                                    setMapSize = {
+                                        mapSize = it
+                                    },
+                                    showSnackBar = { text_, actionLabel_, duration_ ->
+                                        coroutineScope.launch {
+                                            snackBarHostState.showSnackbar(
+                                                text_,
+                                                actionLabel_,
+                                                duration = duration_
+                                            )
                                         }
                                     },
-                                    navigateUp = navigateUp,
-                                    modifier = modifier.padding(16.dp, 0.dp)
+                                    spotFrom = spotFrom,
+                                    spotTo = spotTo
                                 )
+                            }
+
+
+                            //each spot page
+                            item {
+                                HorizontalPager(
+                                    pageCount = spotList.size,
+                                    state = spotPagerState,
+                                    verticalAlignment = Alignment.Top,
+                                    modifier = Modifier.weight(1f)
+                                ) { pageIndex ->     //pageIndex == spotId
+
+                                    if (!isEditLocationMode) {
+                                        //each page
+                                        SpotDetailPage(
+                                            isEditMode = isEditMode,
+                                            setUseImePadding = setUseImePadding,
+                                            snackBarHostState = snackBarHostState,
+
+                                            showingTrip = showingTrip,
+                                            dateId = currentDateId,
+                                            currentDate = dateList[currentDateId],
+                                            spotId = pageIndex,
+                                            currentSpot = dateList[currentDateId].spotList.getOrNull(
+                                                pageIndex
+                                            ),
+
+                                            dateTimeFormat = dateTimeFormat,
+                                            focusManager = focusManager,
+
+                                            addAddedImageList = addAddedImages,
+                                            addDeletedImageList = addDeletedImages,
+
+                                            setShowBottomSaveCancelBar = {
+                                                showBottomSaveCancelBar = it
+                                            },
+                                            updateTripState = updateTripState,
+
+                                            toggleIsEditLocation = {
+                                                isEditLocationMode = !isEditLocationMode
+                                            },
+
+                                            onImageClicked = onImageClicked,
+                                            deleteSpot = {
+                                                addDeletedImages(currentSpot.imagePathList)
+
+                                                if (spotList.size <= 1) {
+                                                    deleteSpot(currentDateId, currentSpotId)
+                                                } else {
+                                                    var toIdx = currentSpotId - 1
+
+                                                    if (toIdx < 0) {
+                                                        toIdx = currentSpotId
+                                                    }
+
+                                                    coroutineScope.launch {
+                                                        spotPagerState.animateScrollToPage(toIdx)
+                                                        progressBarState.animateScrollToItem(toIdx + 1)
+                                                        deleteSpot(currentDateId, currentSpotId)
+                                                    }
+                                                }
+                                            },
+                                            navigateUp = navigateUp,
+                                            modifier = modifier.padding(16.dp, 0.dp)
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -546,7 +584,7 @@ fun SpotDetailScreen(
                     spotList = spotList,
                     currentSpotId = currentSpotId,
                     dateList = dateList,
-                    dateId = dateId,
+                    dateId = currentDateId,
                     isDarkMapTheme = isDarkMapTheme,
                     updateTripState = updateTripState,
                     toggleIsEditLocationMode = {
@@ -554,9 +592,9 @@ fun SpotDetailScreen(
                     },
                     fusedLocationClient = fusedLocationClient,
                     setUserLocationEnabled = setUserLocationEnabled,
-                    showSnackBar = { text_, actionLabel_, duration_ ->
+                    showSnackBar = { text, actionLabel, duration ->
                         coroutineScope.launch {
-                            snackBarHostState.showSnackbar(text_, actionLabel_, duration = duration_)
+                            snackBarHostState.showSnackbar(text, actionLabel, duration = duration)
                         }
                     }
                 )
@@ -575,7 +613,7 @@ fun SpotDetailPage(
     dateId: Int,
     currentDate: Date,
     spotId: Int,
-    currentSpot: Spot,
+    currentSpot: Spot?,
 
     dateTimeFormat: DateTimeFormat,
 
@@ -611,280 +649,297 @@ fun SpotDetailPage(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
         //userScrollEnabled = false
-    ){
+    ) {
+        if (currentSpot != null){
 
+            //title card
+            item {
+                MySpacerColumn(height = 16.dp)
 
-        //title card
-        item {
-            MySpacerColumn(height = 16.dp)
+                if (currentSpot.spotType.isNotMove())
+                    TitleCard(
+                        isEditMode = isEditMode,
+                        titleText = currentSpot.titleText,
+                        onTitleChange = { newTitleText ->
+                            currentSpot.setTitleText(
+                                showingTrip,
+                                dateId,
+                                updateTripState,
+                                newTitleText
+                            )
+                        },
+                        onTextSizeLimit = {
+                            coroutineScope.launch {
+                                snackBarHostState.showSnackbar(
+                                    message = "over 100",
+                                    actionLabel = null,
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                        },
+                        focusManager = focusManager,
+                    )
+                else {
+                    TitleCardMove(
+                        isEditMode = isEditMode,
+                        titleText = currentSpot.titleText,
+                        onTitleChange = { newTitleText ->
+                            currentSpot.setTitleText(
+                                showingTrip,
+                                dateId,
+                                updateTripState,
+                                newTitleText
+                            )
+                        },
+                        onTextSizeLimit = {
+                            coroutineScope.launch {
+                                snackBarHostState.showSnackbar(
+                                    message = "over 100",
+                                    actionLabel = null,
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                        },
+                        focusManager = focusManager
+                    )
 
-            if (currentSpot.spotType.isNotMove())
-                TitleCard(
+                    MySpacerColumn(height = 16.dp)
+                }
+            }
+
+            //image card
+            item {
+                val snackBarText = stringResource(id = R.string.snack_bar_image_limit)
+
+                ImageCard(
+                    tripId = showingTrip.id,
                     isEditMode = isEditMode,
-                    titleText = currentSpot.titleText,
-                    onTitleChange = { newTitleText ->
-                        currentSpot.setTitleText(showingTrip, dateId, updateTripState, newTitleText)
+                    imgList = currentSpot.imagePathList,
+                    onAddImages = { imageFiles ->
+                        addAddedImageList(imageFiles)
+
+                        var addImageList: List<String> = imageFiles
+
+                        //up to 10 images
+                        if (currentSpot.imagePathList.size + imageFiles.size > 10) {
+                            addImageList = imageFiles.subList(0, 10 - currentSpot.imagePathList.size)
+
+                            coroutineScope.launch {
+                                snackBarHostState.showSnackbar(
+                                    message = snackBarText,
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                        }
+
+                        val newImgList = currentSpot.imagePathList + addImageList
+
+                        currentSpot.setImage(showingTrip, dateId, updateTripState, newImgList)
                     },
-                    onTextSizeLimit = {
+                    deleteImage = { imageFile ->
+                        addDeletedImageList(listOf(imageFile))
+
+                        val newImgList: MutableList<String> =
+                            currentSpot.imagePathList.toMutableList()
+                        newImgList.remove(imageFile)
+
+                        currentSpot.setImage(showingTrip, dateId, updateTripState, newImgList)
+                    },
+                    showSnackBar = { text_, actionLabel_, duration_ ->
                         coroutineScope.launch {
                             snackBarHostState.showSnackbar(
-                                message = "over 100",
-                                actionLabel = null,
-                                duration = SnackbarDuration.Short
+                                message = text_,
+                                actionLabel = actionLabel_,
+                                duration = duration_
                             )
                         }
-                    },
-                    focusManager = focusManager,
+                    }
                 )
-            else {
-                TitleCardMove(
+            }
+
+            //date time card
+            item {
+                DateTimeCard(
+                    setUseImePadding = setUseImePadding,
+                    dateList = dateList,
+                    date = currentDate,
+                    spot = currentSpot,
                     isEditMode = isEditMode,
-                    titleText = currentSpot.titleText,
-                    onTitleChange = { newTitleText ->
-                        currentSpot.setTitleText(showingTrip, dateId, updateTripState, newTitleText)
-                    },
-                    onTextSizeLimit = {
-                        coroutineScope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = "over 100",
-                                actionLabel = null,
-                                duration = SnackbarDuration.Short
+                    dateTimeFormat = dateTimeFormat,
+                    setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
+                    changeDate = { newDateId ->
+                        if (dateId != newDateId) {
+                            navigateUp()
+                            showingTrip.moveSpotToDate(
+                                showingTrip,
+                                dateId,
+                                spotId,
+                                newDateId,
+                                updateTripState
                             )
                         }
                     },
-                    focusManager = focusManager
+                    setStartTime = { startTime ->
+                        currentSpot.setStartTime(showingTrip, dateId, updateTripState, startTime)
+                    },
+                    setEndTime = { endTime ->
+                        currentSpot.setEndTime(showingTrip, dateId, updateTripState, endTime)
+                    }
                 )
 
                 MySpacerColumn(height = 16.dp)
             }
-        }
 
-        //image card
-        item {
-            val snackBarText = stringResource(id = R.string.snack_bar_image_limit)
+            //spot type, budget, travel distance card
+            item {
+                var showSpotTypeDialog by rememberSaveable { mutableStateOf(false) }
+                var showBudgetDialog by rememberSaveable { mutableStateOf(false) }
+                var showDistanceDialog by rememberSaveable { mutableStateOf(false) }
 
-            ImageCard(
-                tripId = showingTrip.id,
-                isEditMode = isEditMode,
-                imgList = currentSpot.imagePathList,
-                onAddImages = { imageFiles ->
-                    addAddedImageList(imageFiles)
+                val setImePadding = {
+                    coroutineScope.launch {
+                        delay(80)
+                        setUseImePadding(true)
+                    }
+                }
 
-                    var addImageList: List<String> = imageFiles
-
-                    //up to 10 images
-                    if (currentSpot.imagePathList.size + imageFiles.size > 10) {
-                        addImageList = imageFiles.subList(0, 10 - currentSpot.imagePathList.size)
-
-                        coroutineScope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = snackBarText,
-                                duration = SnackbarDuration.Short
+                if (showSpotTypeDialog) {
+                    SetSpotTypeDialog(
+                        initialSpotType = currentSpot.spotType,
+                        onDismissRequest = {
+                            showSpotTypeDialog = false
+                            setShowBottomSaveCancelBar(true)
+                        },
+                        onOkClick = { newSpotType ->
+                            showSpotTypeDialog = false
+                            setShowBottomSaveCancelBar(true)
+                            currentSpot.setSpotType(
+                                showingTrip,
+                                dateId,
+                                updateTripState,
+                                newSpotType
                             )
-                        }
-                    }
-
-                    val newImgList = currentSpot.imagePathList + addImageList
-
-                    currentSpot.setImage(showingTrip, dateId, updateTripState, newImgList)
-                },
-                deleteImage = {imageFile ->
-                    addDeletedImageList(listOf(imageFile))
-
-                    val newImgList: MutableList<String> =
-                        currentSpot.imagePathList.toMutableList()
-                    newImgList.remove(imageFile)
-
-                    currentSpot.setImage(showingTrip, dateId, updateTripState, newImgList)
-                },
-                showSnackBar = { text_, actionLabel_, duration_ ->
-                    coroutineScope.launch {
-                        snackBarHostState.showSnackbar(
-                            message = text_,
-                            actionLabel = actionLabel_,
-                            duration = duration_
-                        )
-                    }
-                }
-            )
-        }
-
-        //date time card
-        item {
-            DateTimeCard(
-                setUseImePadding = setUseImePadding,
-                dateList = dateList,
-                date = currentDate,
-                spot = currentSpot,
-                isEditMode = isEditMode,
-                dateTimeFormat = dateTimeFormat,
-                setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
-                changeDate = { newDateId ->
-                    if (dateId != newDateId) {
-                        navigateUp()
-                        showingTrip.moveSpotToDate(showingTrip, dateId, spotId, newDateId, updateTripState)
-                    }
-                },
-                setStartTime = { startTime ->
-                    currentSpot.setStartTime(showingTrip, dateId, updateTripState, startTime)
-                },
-                setEndTime = { endTime ->
-                    currentSpot.setEndTime(showingTrip, dateId, updateTripState, endTime)
-                }
-            )
-
-            MySpacerColumn(height = 16.dp)
-        }
-
-        //spot type, budget, travel distance card
-        item {
-            var showSpotTypeDialog by rememberSaveable { mutableStateOf(false) }
-            var showBudgetDialog by rememberSaveable { mutableStateOf(false) }
-            var showDistanceDialog by rememberSaveable { mutableStateOf(false) }
-
-            val setImePadding = {
-                coroutineScope.launch {
-                    delay(80)
-                    setUseImePadding(true)
-                }
-            }
-
-            if (showSpotTypeDialog) {
-                SetSpotTypeDialog(
-                    initialSpotType = currentSpot.spotType,
-                    onDismissRequest = {
-                        showSpotTypeDialog = false
-                        setShowBottomSaveCancelBar(true)
-                    },
-                    onOkClick = { newSpotType ->
-                        showSpotTypeDialog = false
-                        setShowBottomSaveCancelBar(true)
-                        currentSpot.setSpotType(
-                            showingTrip,
-                            dateId,
-                            updateTripState,
-                            newSpotType
-                        )
-                    }
-                )
-            }
-
-            if (showBudgetDialog) {
-                setUseImePadding(false)
-                SetBudgetOrDistanceDialog(
-                    currencySymbol = showingTrip.unitOfCurrencyType.symbol,
-                    initialValue = currentSpot.budget,
-                    onDismissRequest = {
-                        showBudgetDialog = false
-                        setShowBottomSaveCancelBar(true)
-                        setImePadding()
-                    },
-                    onSaveClick = { newBudget ->
-                        showBudgetDialog = false
-                        setShowBottomSaveCancelBar(true)
-                        currentSpot.setBudget(showingTrip, dateId, updateTripState, newBudget)
-                        setImePadding()
-                    }
-                )
-            }
-
-            if (showDistanceDialog) {
-                setUseImePadding(false)
-                SetBudgetOrDistanceDialog(
-                    initialValue = currentSpot.travelDistance,
-                    onDismissRequest = {
-                        showDistanceDialog = false
-                        setShowBottomSaveCancelBar(true)
-                        setImePadding()
-                    },
-                    onSaveClick = { newTravelDistance ->
-                        showDistanceDialog = false
-                        setShowBottomSaveCancelBar(true)
-                        currentSpot.travelDistance = newTravelDistance
-                        setImePadding()
-                    }
-                )
-            }
-
-            if (currentSpot.spotType.isMove()) {
-                currentSpot.updateDistance(
-                    currentSpot.getPrevSpot(dateList, spotList, dateId)?.location,
-                    currentSpot.getNextSpot(dateList, spotList, dateId)?.location
-                )
-            }
-
-            InformationCard(
-                isEditMode = isEditMode,
-                list = listOf(
-                    Triple(MyIcons.category, currentSpot.getSpotTypeText()) {
-                        showSpotTypeDialog = true
-                        setShowBottomSaveCancelBar(false)
-                    },
-
-                    Triple(MyIcons.budget, currentSpot.getBudgetText(showingTrip)) {
-                        showBudgetDialog = true
-                        setShowBottomSaveCancelBar(false)
-                    },
-
-                    Triple(MyIcons.travelDistance, currentSpot.getDistanceText()) {
-                        if (currentSpot.spotType.isNotMove()) {
-                            showDistanceDialog = true
-                            setShowBottomSaveCancelBar(false)
-                        }
-                    }
-                )
-            )
-
-            MySpacerColumn(height = 16.dp)
-        }
-
-        //memo card
-        item {
-            MemoCard(
-                isEditMode = isEditMode,
-                memoText = currentSpot.memo,
-                onMemoChanged = { newMemoText ->
-                    currentSpot.setMemoText(showingTrip, dateId, updateTripState, newMemoText)
-                },
-                onTextSizeLimit = {
-                    coroutineScope.launch {
-                        snackBarHostState.showSnackbar(
-                            message = "Memo is too long",
-                            actionLabel = null,
-                            duration = SnackbarDuration.Short
-                        )
-                    }
-                }
-            )
-
-            MySpacerColumn(height = 16.dp)
-        }
-
-        //delete spot button
-        item {
-            //TODO animation
-            if (isEditMode) {
-                var showDialog by rememberSaveable { mutableStateOf(false) }
-
-                if (showDialog) {
-                    DeleteOrNotDialog(
-                        bodyText = stringResource(id = R.string.dialog_body_delete_spot),
-                        deleteText = stringResource(id = R.string.dialog_button_delete),
-                        onDismissRequest = { showDialog = false },
-                        onDeleteClick = {
-                            showDialog = false
-                            deleteSpot()
                         }
                     )
                 }
 
-                //delete spot
-                MySpacerColumn(height = 64.dp)
+                if (showBudgetDialog) {
+                    setUseImePadding(false)
+                    SetBudgetOrDistanceDialog(
+                        currencySymbol = showingTrip.unitOfCurrencyType.symbol,
+                        initialValue = currentSpot.budget,
+                        onDismissRequest = {
+                            showBudgetDialog = false
+                            setShowBottomSaveCancelBar(true)
+                            setImePadding()
+                        },
+                        onSaveClick = { newBudget ->
+                            showBudgetDialog = false
+                            setShowBottomSaveCancelBar(true)
+                            currentSpot.setBudget(showingTrip, dateId, updateTripState, newBudget)
+                            setImePadding()
+                        }
+                    )
+                }
 
-                DeleteItemButton(text = "Delete spot", onClick = {
-                    //show dialog
-                    showDialog = true
-                })
+                if (showDistanceDialog) {
+                    setUseImePadding(false)
+                    SetBudgetOrDistanceDialog(
+                        initialValue = currentSpot.travelDistance,
+                        onDismissRequest = {
+                            showDistanceDialog = false
+                            setShowBottomSaveCancelBar(true)
+                            setImePadding()
+                        },
+                        onSaveClick = { newTravelDistance ->
+                            showDistanceDialog = false
+                            setShowBottomSaveCancelBar(true)
+                            currentSpot.travelDistance = newTravelDistance
+                            setImePadding()
+                        }
+                    )
+                }
+
+                if (currentSpot.spotType.isMove()) {
+                    currentSpot.updateDistance(
+                        currentSpot.getPrevSpot(dateList, spotList, dateId)?.location,
+                        currentSpot.getNextSpot(dateList, spotList, dateId)?.location
+                    )
+                }
+
+                InformationCard(
+                    isEditMode = isEditMode,
+                    list = listOf(
+                        Triple(MyIcons.category, currentSpot.getSpotTypeText()) {
+                            showSpotTypeDialog = true
+                            setShowBottomSaveCancelBar(false)
+                        },
+
+                        Triple(MyIcons.budget, currentSpot.getBudgetText(showingTrip)) {
+                            showBudgetDialog = true
+                            setShowBottomSaveCancelBar(false)
+                        },
+
+                        Triple(MyIcons.travelDistance, currentSpot.getDistanceText()) {
+                            if (currentSpot.spotType.isNotMove()) {
+                                showDistanceDialog = true
+                                setShowBottomSaveCancelBar(false)
+                            }
+                        }
+                    )
+                )
+
+                MySpacerColumn(height = 16.dp)
+            }
+
+            //memo card
+            item {
+                MemoCard(
+                    isEditMode = isEditMode,
+                    memoText = currentSpot.memo,
+                    onMemoChanged = { newMemoText ->
+                        currentSpot.setMemoText(showingTrip, dateId, updateTripState, newMemoText)
+                    },
+                    onTextSizeLimit = {
+                        coroutineScope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "Memo is too long",
+                                actionLabel = null,
+                                duration = SnackbarDuration.Short
+                            )
+                        }
+                    }
+                )
+
+                MySpacerColumn(height = 16.dp)
+            }
+
+            //delete spot button
+            item {
+                //TODO animation
+                if (isEditMode) {
+                    var showDialog by rememberSaveable { mutableStateOf(false) }
+
+                    if (showDialog) {
+                        DeleteOrNotDialog(
+                            bodyText = stringResource(id = R.string.dialog_body_delete_spot),
+                            deleteText = stringResource(id = R.string.dialog_button_delete),
+                            onDismissRequest = { showDialog = false },
+                            onDeleteClick = {
+                                showDialog = false
+                                deleteSpot()
+                            }
+                        )
+                    }
+
+                    //delete spot
+                    MySpacerColumn(height = 64.dp)
+
+                    DeleteItemButton(text = "Delete spot", onClick = {
+                        //show dialog
+                        showDialog = true
+                    })
+                }
             }
         }
     }
@@ -908,7 +963,7 @@ private fun SetLocationPage(
 ){
     val coroutineScope = rememberCoroutineScope()
 
-    val firstLocation = spotList[currentSpotId].location?: SEOUL_LOCATION
+    val firstLocation = spotList[currentSpotId].getPrevLocation(dateList, dateId)
     var newLocation: LatLng by rememberSaveable { mutableStateOf(firstLocation) }
 
     var newZoomLevel: Float by rememberSaveable { mutableStateOf(spotList[currentSpotId].zoomLevel ?: DEFAULT_ZOOM_LEVEL) }

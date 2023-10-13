@@ -216,7 +216,8 @@ val nv100 = Color(0xFFffffff)
 
 
 val point = Color(0xFF493cfa)
-val line = Color(0xFF7168e8)
+val lineMove = Color(0xFF7168e8)
+
 
 //val errorColor = Color(0xFFff4040)
 //
@@ -266,6 +267,7 @@ enum class ColorType{
     PROGRESS_BAR__POINT_DEFAULT,
     PROGRESS_BAR__POINT_HIGHLIGHT,
     PROGRESS_BAR__LINE_DEFAULT,
+    PROGRESS_BAR__LINE_DEFAULT_MOVE,
     PROGRESS_BAR__LINE_HIGHLIGHT,
 
 
@@ -296,12 +298,13 @@ enum class ColorType{
 fun getColor(colorType: ColorType): Color {
     return when(colorType){
         GRAPH__POINT                    -> point
-        GRAPH__LINE                     -> line
+        GRAPH__LINE                     -> lineMove
         GRAPH__HIGHLIGHT                -> Color(0xFF4020b5)
 
-        PROGRESS_BAR__POINT_DEFAULT     -> line
+        PROGRESS_BAR__POINT_DEFAULT     -> lineMove
         PROGRESS_BAR__POINT_HIGHLIGHT   -> point
-        PROGRESS_BAR__LINE_DEFAULT      -> line
+        PROGRESS_BAR__LINE_DEFAULT      -> MaterialTheme.colorScheme.outline
+        PROGRESS_BAR__LINE_DEFAULT_MOVE -> lineMove
         PROGRESS_BAR__LINE_HIGHLIGHT    -> point
 
 

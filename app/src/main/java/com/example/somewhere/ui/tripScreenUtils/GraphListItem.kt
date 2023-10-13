@@ -405,6 +405,6 @@ fun StartEndDummySpaceWithRoundedCorner(
             )
     ){
         if(showLine)
-            DummySpaceWithLine()
+            DummySpaceWithLine(height = 16.dp)
     }
 }

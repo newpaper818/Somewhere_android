@@ -26,6 +26,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -73,7 +74,7 @@ import com.example.somewhere.ui.tripScreenUtils.cards.TitleWithColorCard
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.ui.tripScreenUtils.AnimatedBottomSaveCancelBar
-import com.example.somewhere.ui.tripScreenUtils.EditAndMapFAB
+import com.example.somewhere.ui.tripScreenUtils.SeeOnMapExtendedFAB
 import com.example.somewhere.viewModel.DateTimeFormat
 import kotlinx.coroutines.launch
 
@@ -190,18 +191,21 @@ fun DateScreen(
                 navigationIcon = MyIcons.back,
                 navigationIconOnClick = {
                     onBackButtonClick()
+                },
+
+                actionIcon1 = if (!isEditMode) MyIcons.edit else null,
+                actionIcon1Onclick = {
+                    changeEditMode(null)
                 }
             )
         },
 
         //bottom floating button: see on map
         floatingActionButton = {
-            EditAndMapFAB(
-                visible = !isEditMode,
-                onEditClick = { changeEditMode(null) },
-                showMapFAB = showingTrip.getFirstLocation() != null,
-                onMapClick = navigateToDateMap,
-                isMapFABExpanded = isFABExpanded
+            SeeOnMapExtendedFAB(
+                visible = !isEditMode && showingTrip.getFirstLocation() != null,
+                onClick = navigateToDateMap,
+                expanded = isFABExpanded
             )
         }
     ) { paddingValue ->

@@ -71,7 +71,8 @@ fun MapCard(
     val cardHeight by animateIntAsState(
         targetValue = if (isMapExpand)  expandHeight
                         else            300,
-        animationSpec = tween(300)
+        animationSpec = tween(300),
+        label = "card height"
     )
 
 

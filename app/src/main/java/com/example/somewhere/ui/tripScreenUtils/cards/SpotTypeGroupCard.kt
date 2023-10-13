@@ -1,5 +1,6 @@
 package com.example.somewhere.ui.tripScreenUtils.cards
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -10,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -49,9 +51,7 @@ fun FilterCards(
                     SpotTypeGroupCard(
                         frontText = "$spotTypeCount ",
                         spotTypeGroup = it.first,
-                        defaultTextStyle = textStyle,
-                        isShown = it.second,
-                        isNotShownColor = isNotShownColor,
+                        selected = it.second,
                         onCardClicked = {spotType ->
                             onCardClicked(spotType)
                         }
@@ -67,29 +67,37 @@ fun FilterCards(
 @Composable
 fun SpotTypeGroupCard(
     spotTypeGroup: SpotTypeGroup,
-    isShown: Boolean,
 
-    defaultTextStyle: TextStyle,
+    selected: Boolean,
 
-    isNotShownColor: Color,
+    selectedColor: Color? = null,
+    notSelectedColor: Color = Color.Transparent,
+
+    selectedTextStyle: TextStyle = getTextStyle(TextType.CARD__SPOT_TYPE),
+    notSelectedTextStyle: TextStyle = getTextStyle(TextType.CARD__SPOT_TYPE).copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+
     onCardClicked: (SpotTypeGroup) -> Unit,
 
-    shownColor: Color? = null,
     frontText: String = "",
 ){
     val cardColor =
-        if (isShown)    shownColor ?: Color(spotTypeGroup.color.color)
-        else            isNotShownColor
+        if (selected)    selectedColor ?: Color(spotTypeGroup.color.color)
+        else             notSelectedColor
+
+    val border =
+        if (selected)   null
+        else            BorderStroke(1.5.dp, MaterialTheme.colorScheme.outlineVariant)
 
     val textStyle =
-        if (isShown) {
-            if (shownColor == null) defaultTextStyle.copy(color = Color(spotTypeGroup.color.onColor))
-            else                    defaultTextStyle
+        if (selected) {
+            if (selectedColor == null) selectedTextStyle.copy(color = Color(spotTypeGroup.color.onColor))
+            else                    selectedTextStyle
         }
-        else            defaultTextStyle
+        else    notSelectedTextStyle
 
     Button(
         colors = ButtonDefaults.buttonColors(containerColor = cardColor),
+        border = border,
         contentPadding = PaddingValues(12.dp, 0.dp, 12.dp, 2.dp),
         onClick = { onCardClicked(spotTypeGroup)}
     ) {

@@ -33,6 +33,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -150,6 +151,11 @@ fun MyTripsScreen(
             SomewhereTopAppBar(
                 title = if (!isEditMode) MyTripsDestination.title
                         else stringResource(id = R.string.top_bar_title_edit_trips),
+
+                actionIcon1 = if (!isEditMode) MyIcons.edit else null,
+                actionIcon1Onclick = {
+                    changeEditMode(null)
+                }
             )
         },
         bottomBar = {
@@ -176,11 +182,11 @@ fun MyTripsScreen(
                     }
                 )
         },
+
         floatingActionButton = {
             IconFAB(
-                visible = true,
-                icon = if (isEditMode) MyIcons.add
-                        else MyIcons.edit,
+                visible = isEditMode,
+                icon = MyIcons.add,
                 onClick = {
                     if (isEditMode) {
                         coroutineScope.launch {
@@ -190,10 +196,7 @@ fun MyTripsScreen(
                                 navigateToTrip(true, newTrip)
                                 changeEditMode(true)
                             } else
-                                Log.d(
-                                    "debug",
-                                    "New Trip Button onClick - navigate to new trip - Can't find new trip"
-                                )
+                                Log.d("debug", "New Trip Button onClick - navigate to new trip - Can't find new trip")
                         }
                     }
                     else changeEditMode(null)
@@ -558,6 +561,7 @@ private fun Test(){
         Spacer(modifier = Modifier.height(16.dp))
 
         ColorTest(MaterialTheme.colorScheme.outline,            "outline",           )
+        ColorTest(MaterialTheme.colorScheme.outlineVariant,     "outlineVariant",    )
 
     }
 }

@@ -31,7 +31,7 @@ enum class SpotTypeGroup(
         )
     ),
 
-    MOVE(R.string.move, MyColor(moveColor, whiteInt),
+    MOVE(R.string.move, MyColor(moveColor, blackInt),
         listOf(
             SpotType.MOVE,
             AIRPLANE, HELICOPTER, HOT_AIR_BALLOON,

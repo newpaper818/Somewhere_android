@@ -65,7 +65,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -754,8 +753,6 @@ private fun ButtonsRow(
 
     onBackButtonClicked: () -> Unit,
 ){
-    val locale = LocalConfiguration.current.locales[0]
-
     Row(
         modifier = Modifier.padding(4.dp, 0.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -825,7 +822,6 @@ private fun ButtonsRow(
                 ) {
                     Text(
                         text = dateListWithShownIconList[currentDateIndex].date.getDateText(
-                            locale,
                             dateTimeFormat.copy(includeDayOfWeek = false),
                             false
                         ),
@@ -903,8 +899,7 @@ private fun SpotTypeList(
     spotTypeGroupWithShownIconList: List<SpotTypeGroupWithBoolean>,
     onSpotTypeItemClicked: (SpotTypeGroup) -> Unit,
     textStyle: TextStyle = getTextStyle(TextType.CARD__SPOT_TYPE),
-    isShownColor: Color = getColor(ColorType.BUTTON),
-    isNotShownColor: Color = getColor(ColorType.CARD)
+    isShownColor: Color = getColor(ColorType.BUTTON)
 ){
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(0.dp),
@@ -916,13 +911,12 @@ private fun SpotTypeList(
             Row {
                 SpotTypeGroupCard(
                     spotTypeGroup = it.spotTypeGroup,
-                    defaultTextStyle = textStyle,
-                    isShown = it.isShown,
-                    isNotShownColor = isNotShownColor,
+                    selectedTextStyle = textStyle,
+                    selected = it.isShown,
                     onCardClicked = { spotTypeGroup ->
                         onSpotTypeItemClicked(spotTypeGroup)
                     },
-                    shownColor = isShownColor,
+                    selectedColor = isShownColor,
                 )
 
                 MySpacerRow(width = 12.dp)
@@ -972,9 +966,6 @@ private fun DateItem(
     val pointColor = if (isShown) Color(date.color.color)
                     else Color.Transparent
 
-    val locale = LocalConfiguration.current.locales[0]
-
-
     ClickableBox(
         shape = RectangleShape,
         containerColor = getColor(ColorType.CARD),
@@ -1006,7 +997,7 @@ private fun DateItem(
                 contentAlignment = Alignment.Center
             ){
                 Text(
-                    text = date.getDateText(locale, dateTimeFormat.copy(includeDayOfWeek = false), false),
+                    text = date.getDateText(dateTimeFormat.copy(includeDayOfWeek = false), false),
                     style = dateSpotTextStyle
                 )
             }

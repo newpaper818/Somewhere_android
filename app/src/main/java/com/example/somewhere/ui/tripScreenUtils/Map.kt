@@ -58,13 +58,32 @@ import com.google.maps.android.compose.MarkerState
 import kotlinx.coroutines.launch
 import kotlin.math.min
 
+/**
+ * seoul location, initial location
+ */
 val SEOUL_LOCATION = LatLng(37.55, 126.98)
+
+/**
+ * 10f, default map zoom level
+ */
 const val DEFAULT_ZOOM_LEVEL = 10f
 
+/**
+ * 300ms, map move spot animation duration
+ */
 const val ANIMATION_DURATION_MS = 300
+
+/**
+ * 200, map LatLng bound padding value
+ */
 const val LAT_LNG_BOUND_PADDING = 200
 
-//map style dark / light
+/**
+ * get map style(dark / light)
+ *
+ * @param isDarkTheme
+ * @return map style(dark / light)
+ */
 fun getMapStyle(
     isDarkTheme: Boolean
 ): Int {

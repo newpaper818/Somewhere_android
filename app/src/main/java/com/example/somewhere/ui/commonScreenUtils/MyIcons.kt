@@ -41,7 +41,8 @@ object MyIcons {
     val menu = MyIcon(Icons.Filled.Menu,      22.dp, null, R.string.menu)
     val back = MyIcon(Icons.Filled.ArrowBack, 22.dp, null, R.string.back)
     val close = MyIcon(Icons.Filled.Close,    22.dp, null, R.string.close)
-    //val edit = MyIcon(Icons.Filled.Edit,      22.dp, null, R.string.edit)
+    val edit = MyIcon(Icons.Filled.Edit,      24.dp, null, R.string.edit)
+
     val more = MyIcon(Icons.Filled.MoreVert,  22.dp, null, R.string.more)
     val done = MyIcon(Icons.Filled.Done,  22.dp, null, R.string.save)
 
@@ -55,7 +56,7 @@ object MyIcons {
 
     //Floating Action Button
     val add = MyIcon(Icons.Filled.Add,        24.dp, null, R.string.new_)
-    val edit = MyIcon(Icons.Filled.Edit,      24.dp, null, R.string.edit)
+
 
 
     //color dialog
@@ -64,12 +65,6 @@ object MyIcons {
     //date < >
     val leftArrow = MyIcon(Icons.Filled.KeyboardArrowLeft,   30.dp, null, R.string.previous_date)
     val rightArrow = MyIcon(Icons.Filled.KeyboardArrowRight, 30.dp, null, R.string.next_date)
-    val toFirstPage = MyIcon(Icons.Filled.FirstPage,         30.dp, null, R.string.to_first_date)
-    val toLastPage = MyIcon(Icons.Filled.LastPage,           30.dp, null, R.string.to_last_date)
-    val disabledLeftArrow = MyIcon(Icons.Filled.KeyboardArrowLeft,   30.dp, gray, R.string.disabled_previous_date)
-    val disabledRightArrow = MyIcon(Icons.Filled.KeyboardArrowRight, 30.dp, gray, R.string.disabled_next_date)
-    val disabledToFirstPage = MyIcon(Icons.Filled.FirstPage,         30.dp, gray, R.string.disabled_to_first_date)
-    val disabledToLastPage = MyIcon(Icons.Filled.LastPage,           30.dp, gray, R.string.disabled_to_last_date)
 
     //date time
     val date = MyIcon(Icons.Filled.CalendarMonth,   22.dp, gray, R.string.date)

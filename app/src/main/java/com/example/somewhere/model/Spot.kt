@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.example.somewhere.enumUtils.SpotType
 import com.example.somewhere.enumUtils.TimeFormat
+import com.example.somewhere.ui.tripScreenUtils.SEOUL_LOCATION
 import com.example.somewhere.utils.getNumToText
 import com.example.somewhere.utils.getTimeText
 import com.example.somewhere.viewModel.DateTimeFormat
@@ -102,6 +103,10 @@ data class Spot(
         }
     }
 
+    /**
+     * get previous spot of current spot
+     * if don't exist, get previous date's last spot
+     */
     fun getPrevSpot(
         dateList: List<Date>,
         spotList: List<Spot>,
@@ -133,6 +138,40 @@ data class Spot(
         }
 
         return nextSpot
+    }
+
+    /**
+     * get last location form this spot.
+     * searching backward.
+     *
+     * @param dateList trip's dateList
+     * @param dateId this spot's date id
+     * @return
+     */
+    fun getPrevLocation(
+        dateList: List<Date>,
+        dateId: Int,
+    ): LatLng{
+        //if this(current spot) location not null
+        if (location != null)
+            return location
+
+        //if this(current spot) location null
+        var dateIndex = dateId
+
+        while (dateIndex >= 0){
+            val startingSpotIndex = if (dateIndex == dateId) id
+                                    else                     null
+
+            val dateLastLocation = dateList[dateIndex].getLastLocation(startingSpotIndex)
+
+            if (dateLastLocation != null)
+                return dateLastLocation
+            else
+                dateIndex -= 1
+        }
+
+        return SEOUL_LOCATION
     }
 
     // set =========================================================================================
