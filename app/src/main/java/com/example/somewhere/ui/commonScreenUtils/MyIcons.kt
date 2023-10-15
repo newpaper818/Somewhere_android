@@ -1,11 +1,9 @@
 package com.example.somewhere.ui.commonScreenUtils
 
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -43,15 +41,15 @@ object MyIcons {
     val close = MyIcon(Icons.Filled.Close,    22.dp, null, R.string.close)
     val edit = MyIcon(Icons.Filled.Edit,      24.dp, null, R.string.edit)
 
-    val more = MyIcon(Icons.Filled.MoreVert,  22.dp, null, R.string.more)
-    val done = MyIcon(Icons.Filled.Done,  22.dp, null, R.string.save)
+//    val more = MyIcon(Icons.Filled.MoreVert,  22.dp, null, R.string.more)
+//    val done = MyIcon(Icons.Filled.Done,  22.dp, null, R.string.save)
 
     //bottom navigation bar
     val myTrips = MyIcon(Icons.Filled.Flight,   24.dp, null, R.string.my_trips)
     val moreHoriz = MyIcon(Icons.Filled.MoreHoriz,    24.dp, null, R.string.more)
 
-    val profileNotSelected = MyIcon(Icons.Outlined.Person,  24.dp, null, R.string.profile)
-    val profileSelected = MyIcon(Icons.Filled.Person,       24.dp, null, R.string.profile)
+//    val profileNotSelected = MyIcon(Icons.Outlined.Person,  24.dp, null, R.string.profile)
+//    val profileSelected = MyIcon(Icons.Filled.Person,       24.dp, null, R.string.profile)
 
 
     //Floating Action Button
@@ -60,7 +58,7 @@ object MyIcons {
 
 
     //color dialog
-    val selectedColor = MyIcon(Icons.Filled.Done,  22.dp, white, R.string.dialog_selected_color)
+    val selectedColor = MyIcon(Icons.Filled.Done,  22.dp, white, R.string.selected_color)
 
     //date < >
     val leftArrow = MyIcon(Icons.Filled.KeyboardArrowLeft,   30.dp, null, R.string.previous_date)
@@ -93,8 +91,8 @@ object MyIcons {
     val fullscreen = MyIcon(Icons.Filled.Fullscreen,               24.dp, null, R.string.fullscreen_map)
     val myLocation = MyIcon(Icons.Filled.MyLocation,               24.dp, null, R.string.my_location)
     val disabledMyLocation = MyIcon(Icons.Filled.LocationDisabled, 24.dp, gray, R.string.disabled_my_location)
-    val expandControlBox = MyIcon(Icons.Filled.ExpandLess,         24.dp, null, R.string.expand_control_box)
-    val collapseControlBox = MyIcon(Icons.Filled.ExpandMore,       24.dp, null, R.string.collapse_control_box)
+//    val expandControlBox = MyIcon(Icons.Filled.ExpandLess,         24.dp, null, R.string.expand_control_box)
+//    val collapseControlBox = MyIcon(Icons.Filled.ExpandMore,       24.dp, null, R.string.collapse_control_box)
 
     val zoomOutMore = MyIcon(Icons.Filled.Remove,                   26.dp, null, R.string.zoom_out_more)
     val zoomOut = MyIcon(Icons.Filled.Remove,                       18.dp, null, R.string.zoom_out)

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,7 +49,7 @@ fun SetCurrencyTypeDialog(
         onDismissRequest = onDismissRequest,
         setMaxHeight = true,
 
-        titleText = stringResource(id = R.string.dialog_title_set_currency_type),
+        titleText = stringResource(id = R.string.set_currency_type_dialog_title),
         bodyContent = {
             LazyColumn(
                 contentPadding = PaddingValues(8.dp),
@@ -141,7 +140,7 @@ private fun OneCurrencyType(
             MySpacerRow(width = 2.dp)
 
             Text(
-                text = currencyType.code,
+                text = stringResource(id = currencyType.code),
                 style = textStyle,
                 modifier = Modifier.width(50.dp),
                 textAlign = TextAlign.Center
@@ -150,7 +149,7 @@ private fun OneCurrencyType(
             MySpacerRow(width = 4.dp)
 
             Text(
-                text = currencyType.currencyName,
+                text = stringResource(id = currencyType.currencyName),
                 style = textStyle
             )
         }

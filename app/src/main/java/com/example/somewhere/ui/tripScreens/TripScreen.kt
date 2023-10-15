@@ -21,7 +21,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -116,6 +115,8 @@ fun TripScreen(
     var showExitDialog by rememberSaveable { mutableStateOf(false) }
     var showSetCurrencyDialog by rememberSaveable { mutableStateOf(false) }
     var showBottomSaveCancelBar by rememberSaveable { mutableStateOf(true) }
+    var saveButtonEnabled by rememberSaveable { mutableStateOf(true) }
+
 
     val locale = LocalConfiguration.current.locales[0]
 
@@ -139,7 +140,7 @@ fun TripScreen(
 
     //set top bar title
     TripDestination.title =
-        if (isEditMode) stringResource(id = R.string.top_bar_title_edit_trip)
+        if (isEditMode) stringResource(id = R.string.edit_trip)
         else {
             if (showingTrip.titleText == null || showingTrip.titleText == "")
                 stringResource(id = R.string.no_title)
@@ -244,29 +245,21 @@ fun TripScreen(
 
                 //title card
                 item {
+                    val snackBarLongText = stringResource(id = R.string.long_text, 100)
+
                     TitleCard(
                         isEditMode = isEditMode,
                         titleText = showingTrip.titleText,
-                        focusManager = focusManager,
                         onTitleChange = { newTitleText ->
                             showingTrip.setTitleText(updateTripState, newTitleText)
                         },
-                        onTextSizeLimit = {
-                            coroutineScope.launch {
-                                snackBarHostState.showSnackbar(
-                                    message = "over 100",
-                                    actionLabel = null,
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
-                        }
+                        focusManager = focusManager,
+                        isLongText = { saveButtonEnabled = !it }
                     )
                 }
 
                 //image card
                 item {
-                    val snackBarText = stringResource(id = R.string.snack_bar_image_limit)
-
                     ImageCard(
                         tripId = showingTrip.id,
                         isEditMode = isEditMode,
@@ -283,15 +276,7 @@ fun TripScreen(
 
                             showingTrip.setImage(updateTripState, newList.toList())
                         },
-                        showSnackBar = { text, actionLabel, duration ->
-                            coroutineScope.launch {
-                                snackBarHostState.showSnackbar(
-                                    message = text,
-                                    actionLabel = actionLabel,
-                                    duration = duration
-                                )
-                            }
-                        }
+                        isOverImage = { saveButtonEnabled = !it }
                     )
                 }
 
@@ -334,21 +319,15 @@ fun TripScreen(
 
                 //memo card
                 item {
+                    val snackBarLongText = stringResource(id = R.string.long_text, 100)
+
                     MemoCard(
                         isEditMode = isEditMode,
                         memoText = showingTrip.memoText,
                         onMemoChanged = { newMemoText ->
                             showingTrip.setMemoText(updateTripState, newMemoText)
                         },
-                        onTextSizeLimit = {
-                            coroutineScope.launch {
-                                snackBarHostState.showSnackbar(
-                                    message = "Memo is too long",
-                                    actionLabel = null,
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
-                        }
+                        isLongText = { saveButtonEnabled = !it }
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -375,7 +354,7 @@ fun TripScreen(
                                 modifier = Modifier.padding(16.dp, 0.dp)
                             ) {
                                 Text(
-                                    text = "Dates",
+                                    text = stringResource(id = R.string.dates),
                                     style = getTextStyle(TextType.CARD__TITLE),
                                     modifier = if (showingTrip.dateList.isNotEmpty()) Modifier.padding(
                                         0.dp, 0.dp, 0.dp, 0.dp
@@ -417,6 +396,14 @@ fun TripScreen(
                             onExpandedButtonClicked = { dateId -> //TODO remove dateId?
                                 isExpanded = !isExpanded
                             },
+                            onSideTextClick = {
+                                //move date
+
+                            },
+                            onPointClick = {
+                                // set date's color
+
+                            },
                             showLongTextSnackBar = { text, actionLabel, duration ->
                                 coroutineScope.launch {
                                     snackBarHostState.showSnackbar(
@@ -433,7 +420,7 @@ fun TripScreen(
                 else {
                     item {
                         //empty dates
-                        val text = if (isEditMode) stringResource(id = R.string.dates_set_trip_duration)
+                        val text = if (isEditMode) stringResource(id = R.string.set_trip_duration)
                                     else stringResource(id = R.string.dates_no_plan)
 
                         Card(
@@ -470,7 +457,8 @@ fun TripScreen(
 
                         organizeAddedDeletedImages(true)
                     }
-                }
+                },
+                saveEnabled = saveButtonEnabled
             )
         }
     }

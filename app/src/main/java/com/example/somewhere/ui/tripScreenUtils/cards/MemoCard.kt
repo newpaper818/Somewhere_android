@@ -6,6 +6,8 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -41,8 +43,8 @@ import com.example.somewhere.ui.theme.getColor
 import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.ui.tripScreenUtils.dialogs.MemoDialog
 
-const val MAX_MEMO_LENGTH = 5000
-const val MAX_VIEW_MEMO_LENGTH = 500
+private const val MAX_MEMO_LENGTH = 5000
+private const val MAX_VIEW_MEMO_LENGTH = 500
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,10 +52,11 @@ fun MemoCard(
     isEditMode: Boolean,
     memoText: String?,
     onMemoChanged: (String) -> Unit,
-    onTextSizeLimit: () -> Unit,
+    isLongText: (Boolean) -> Unit,
 
     modifier: Modifier = Modifier,
     titleTextStyle: TextStyle = getTextStyle(TextType.CARD__TITLE),
+    errTextStyle: TextStyle = getTextStyle(TextType.CARD__TITLE_ERROR),
     bodyTextStyle: TextStyle = getTextStyle(TextType.CARD__BODY),
     bodyNullTextStyle: TextStyle = getTextStyle(TextType.CARD__BODY_NULL)
 ){
@@ -113,10 +116,22 @@ fun MemoCard(
                 exit = shrinkVertically(tween(400))
             ) {
                 Column {
-                    Text(
-                        text = stringResource(id = R.string.memo_card_title),
-                        style = titleTextStyle
-                    )
+                    Row {
+                        Text(
+                            text = stringResource(id = R.string.memo_card_title),
+                            style = titleTextStyle
+                        )
+                        //up to 100 characters
+                        if (isTextSizeLimit){
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            Text(
+                                text = stringResource(id = R.string.long_text, MAX_MEMO_LENGTH),
+                                style = errTextStyle
+                            )
+                        }
+                    }
+
 
                     MySpacerColumn(height = 8.dp)
                 }
@@ -146,17 +161,15 @@ fun MemoCard(
                     placeholderTextStyle = bodyNullTextStyle,
 
                     onValueChange = {
-                        var text = it
-
-                        if(it.length > MAX_MEMO_LENGTH) {
+                        if (it.length > MAX_MEMO_LENGTH && !isTextSizeLimit){
                             isTextSizeLimit = true
-                            onTextSizeLimit()
-                            text = text.substring(0, MAX_MEMO_LENGTH)
+                            isLongText(true)
                         }
-                        else
+                        else if (it.length <= MAX_MEMO_LENGTH && isTextSizeLimit) {
                             isTextSizeLimit = false
-
-                        onMemoChanged(text)
+                            isLongText(false)
+                        }
+                        onMemoChanged(it)
                     },
                     singleLine = false,
                     keyboardOptions = KeyboardOptions(autoCorrect = true),

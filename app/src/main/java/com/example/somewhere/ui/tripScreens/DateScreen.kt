@@ -51,6 +51,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.somewhere.R
 import com.example.somewhere.model.Date
@@ -131,6 +132,7 @@ fun DateScreen(
     )
 
     val snackBarHostState = remember { SnackbarHostState() }
+    var saveButtonEnabled by rememberSaveable { mutableStateOf(true) }
 
     //animate progress bar when current page changed
     LaunchedEffect(datePagerState){
@@ -162,7 +164,7 @@ fun DateScreen(
 
     //set top bar title
     DateDestination.title =
-        if (isEditMode) stringResource(id = R.string.top_bar_title_edit_date)
+        if (isEditMode) stringResource(id = R.string.edit_date)
         else {
             if (showingTrip.titleText == null || showingTrip.titleText == "")
                 stringResource(id = R.string.no_title)
@@ -276,10 +278,12 @@ fun DateScreen(
                         timeFormat = dateTimeFormat.timeFormat,
 
                         focusManager = focusManager,
+                        snackBarHostState = snackBarHostState,
 
                         setShowBottomSaveCancelBar = {
                             showBottomSaveCancelBar = it
                         },
+                        setSaveButtonEnabled = { saveButtonEnabled = !it },
                         updateTripState = updateTripState,
 
                         addNewSpot = { dateId ->
@@ -320,7 +324,8 @@ fun DateScreen(
 
                         organizeAddedDeletedImages(true)
                     }
-                }
+                },
+                saveEnabled = saveButtonEnabled
             )
         }
     }
@@ -335,8 +340,10 @@ fun DatePage(
     timeFormat: TimeFormat,
 
     focusManager: FocusManager,
+    snackBarHostState: SnackbarHostState,
 
     setShowBottomSaveCancelBar: (Boolean) -> Unit,
+    setSaveButtonEnabled: (Boolean) -> Unit,
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     addNewSpot: (dateId: Int) -> Unit,
     deleteSpot: (dateId: Int, spotId: Int) -> Unit,
@@ -376,22 +383,24 @@ fun DatePage(
         item {
             TitleWithColorCard(
                 isEditMode = isEditMode,
+
                 titleText = currentDate.titleText,
-                setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
-                focusManager = focusManager,
                 onTitleChange = {newTitleText ->
                     currentDate.setTitleText(showingTrip, updateTripState, newTitleText)
                     Log.d("page", "title ${currentDate.id}")
                 },
-                onTextSizeLimit = {
-                    showSnackBar("over 100", null, SnackbarDuration.Short)
-                },
+                focusManager = focusManager,
+                isLongText = setSaveButtonEnabled,
+
                 color = currentDate.color,
-                modifier = modifier,
                 onColorChange = {newDateColor ->
                     currentDate.setColor(showingTrip, updateTripState, newDateColor)
                     Log.d("page", "               color ${currentDate.id}")
-                }
+                },
+
+                setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
+
+                modifier = modifier
             )
         }
 
@@ -420,9 +429,7 @@ fun DatePage(
                 onMemoChanged = { newMemoText ->
                     currentDate.setMemoText(showingTrip, updateTripState, newMemoText)
                 },
-                onTextSizeLimit = {
-                    showSnackBar("Memo is too long", null, SnackbarDuration.Short)
-                }
+                isLongText = setSaveButtonEnabled
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -499,7 +506,7 @@ fun DatePage(
                                     modifier = Modifier.padding(16.dp, 0.dp)
                                 ) {
                                     Text(
-                                        text = "Spots",
+                                        text = stringResource(id = R.string.spots),
                                         style = getTextStyle(TextType.CARD__TITLE),
                                         modifier = textModifier.onGloballyPositioned {
                                             textHeight = it.size.height
@@ -610,7 +617,7 @@ fun DatePage(
                 MySpacerColumn(height = 16.dp)
 
                 NewItemButton(
-                    text = "New Spot",
+                    text = stringResource(id = R.string.new_spot),
                     onClick = {
                         //add new spot
                         addNewSpot(dateId)
@@ -689,12 +696,9 @@ private fun NoPlanText(
         modifier = modifier.fillMaxWidth()
     ) {
         Text(
-            text = "No Plan...",
-            style = textStyle
-        )
-        Text(
-            text = "Let's create a new plan!",
-            style = textStyle
+            text = stringResource(id = R.string.no_plan),
+            style = textStyle,
+            textAlign = TextAlign.Center
         )
     }
 }
@@ -709,7 +713,7 @@ private fun NoChosenSpotTypeGroupText(
         modifier = modifier.fillMaxWidth()
     ) {
         Text(
-            text = "Choose a Spot Type!",
+            text = stringResource(id = R.string.choose_spot_type),
             style = textStyle
         )
     }

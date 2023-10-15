@@ -1,2 +1,354 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+
+    <!--model ===================================================================================-->
+    <!--Trip.kt-->
+    <string name="year">%d년</string>
+    <string name="years">%d년</string>
+    <string name="month">%d달</string>
+    <string name="months">%d달</string>
+    <string name="day">%d일</string>
+    <string name="days">%d일</string>
+
+
+    <!--enumUtils ===============================================================================-->
+    <!--CurrencyType.kt-->
+    <string name="aud_code">AUD</string>
+    <string name="cad_code">AUD</string>
+    <string name="eur_code">EUR</string>
+    <string name="jpy_code">JPY</string>
+    <string name="krw_code">KRW</string>
+    <string name="cny_code">CNY</string>
+    <string name="rub_code">RUB</string>
+    <string name="thb_code">THB</string>
+    <string name="usd_code">USD</string>
+
+    <string name="aud_name">호주 달러</string>
+    <string name="cad_name">캐나다 달러</string>
+    <string name="eur_name">유럽 연합 유로</string>
+    <string name="jpy_name">일본 엔</string>
+    <string name="krw_name">한화 원</string>
+    <string name="cny_name">중국 위안</string>
+    <string name="rub_name">러시아 루블</string>
+    <string name="thb_name">태국 바트</string>
+    <string name="usd_name">미국 달러</string>
+
+    <!--DateTime.kt-->
+    <string name="ymd">년월일</string>
+    <string name="dmy">일월년</string>
+    <string name="mdy">월일년</string>
+    <string name="_24h">24시간</string>
+    <string name="_12h">12시간</string>
+
+    <!--SpotType.kt-->
+    <string name="tour">Tour</string>
+    <string name="move">Move</string>
+    <string name="move_point">Move Point</string>
+    <string name="food">Food</string>
+    <string name="lodging">Lodging</string>
+    <string name="etc">Etc</string>
+
+    <string name="airplane">Airplane</string>
+    <string name="helicopter">Helicopter</string>
+    <string name="hot_air_balloon">Hot Air Balloon</string>
+    <string name="train">Train</string>
+    <string name="subway">Subway</string>
+    <string name="tram">Tram</string>
+    <string name="bus">Bus</string>
+    <string name="taxi">Taxi</string>
+    <string name="car">Car</string>
+    <string name="bicycle">Bicycle</string>
+    <string name="electric_kickboard">Electric Kickboard</string>
+    <string name="walk">Walk</string>
+    <string name="running">Running</string>
+    <string name="hiking">Hiking</string>
+    <string name="ship">Ship</string>
+    <string name="yacht">Yacht</string>
+    <string name="terminal">Terminal</string>
+    <string name="airport">Airport</string>
+    <string name="bus_terminal">Bus Terminal</string>
+    <string name="bus_stop">Bus Stop</string>
+    <string name="subway_station">Subway Station</string>
+    <string name="train_station">Train Station</string>
+    <string name="port">Port</string>
+    <string name="tourist_attraction">Tourist Attraction</string>
+    <string name="historic_site">Historic Site</string>
+    <string name="architectural_building">Architectural Building</string>
+    <string name="landmark">Landmark</string>
+    <string name="religious_site">Religious Site</string>
+    <string name="monument_statue">Monument &amp; Statue</string>
+    <string name="activity">Activity</string>
+    <string name="leisure">Leisure</string>
+    <string name="sport">Sport</string>
+    <string name="outdoor">Outdoor</string>
+    <string name="adventure">Adventure</string>
+    <string name="entertainment">Entertainment</string>
+    <string name="festival">Festival</string>
+    <string name="art">Art</string>
+    <string name="music">Music</string>
+    <string name="movie">Movie</string>
+    <string name="museum">Museum</string>
+    <string name="exhibition">Exhibition</string>
+    <string name="park">Park</string>
+    <string name="garden">Garden</string>
+    <string name="beach">Beach</string>
+    <string name="street_market">Street Market</string>
+    <string name="gift_shop">Gift Shop</string>
+    <string name="shopping">Shopping</string>
+    <string name="coffee_tea">Coffee &amp; Tea</string>
+    <string name="restaurant">Restaurant</string>
+    <string name="fast_food">Fast Food</string>
+    <string name="dessert">Dessert</string>
+    <string name="snack">Snack</string>
+    <string name="bar_pub">Bar &amp; Pub</string>
+    <string name="hotel">Hotel</string>
+    <string name="motel">Motel</string>
+    <string name="guest_house">Guest House</string>
+    <string name="resort">Resort</string>
+    <string name="hostel">Hostel</string>
+    <string name="air_bnb">Air BnB</string>
+    <string name="pension">Pension</string>
+    <string name="camping">Camping</string>
+
+    <!--Theme.kt-->
+    <string name="theme_light">라이트 테마</string>
+    <string name="theme_dark">다크 테마</string>
+    <string name="theme_auto">시스템 기본값</string>
+    <string name="map_theme_auto">앱 테마 기본값</string>
+
+
+    <!--MyIcons.kt ==============================================================================-->
+    <string name="delete">삭제</string>
+    <string name="new_">추가</string>
+    <string name="delete_image">이미지 삭제</string>
+    <string name="drag_handle">드래그 핸들</string>
+
+    <string name="menu">메뉴</string>
+    <string name="back">뒤로가기</string>
+    <string name="close">닫기</string>
+    <string name="edit">편집</string>
+
+    <string name="selected_color">선택된 색</string>
+
+    <string name="previous_date">이전 날짜</string>
+    <string name="next_date">다음 날짜</string>
+
+    <string name="date">날짜</string>
+    <string name="time">시간</string>
+
+    <string name="switch_to_text_input">키보드 입력으로 변경</string>
+    <string name="switch_to_touch_input">터치 입력으로 변경</string>
+
+
+    <string name="to">으로</string>
+    <string name="from">에서</string>
+
+    <string name="expand">열기</string>
+    <string name="collapse">줄이기</string>
+
+
+    <string name="period">여행 기간</string>
+    <string name="budget">예산</string>
+    <string name="travel_distance">이동 거리</string>
+    <string name="category">카테고리</string>
+
+    <string name="map">지도</string>
+    <string name="focus_on_to_target">장소 맞춤</string>
+    <string name="disabled_focus_on_to_target">장소 맞춤 사용 불가</string>
+    <string name="fullscreen_map">지도 화면에 채우기</string>
+    <string name="my_location">현 위치</string>
+    <string name="disabled_my_location">현 위치 사용 불가</string>
+    <string name="expand_control_box">컨트롤 패널 열기</string>
+    <string name="collapse_control_box">컨트롤 패널 닫기</string>
+
+    <string name="edit_location">위치 편집</string>
+    <string name="delete_location">위치 삭제</string>
+    <string name="cancel_edit_location">위치 설정 취소</string>
+    <string name="save_location">위치 저장</string>
+
+    <string name="zoom_out_more">축소</string>
+    <string name="zoom_out">조금 축소</string>
+    <string name="zoom_in">조금 확대</string>
+    <string name="zoom_in_more">확대</string>
+
+    <string name="open_in_new">새 창에서 열기</string>
+
+
+
+    <!--snack bar ===============================================================================-->
+    <string name="snack_bar_location_permission_denied">사용자 위치 권한 거부됨</string>
+    <string name="snack_bar_no_location_to_show">장소 없음</string>
+    <string name="snack_bar_no_user_location">현 위치 찾을 수 없음</string>
+    <string name="snack_bar_settings">설정</string>
+
+
+    <!--Cards ===================================================================================-->
+    <!--DateTimeCard.kt-->
+    <string name="date_time_card_date_text">%s - %s</string>
+    <string name="date_time_card_starts">시작 시간</string>
+    <string name="date_time_card_ends">종료 시간</string>
+
+    <!--ImageCard.kt-->
+    <string name="image_content_description">사용자 추가 사진</string>
+    <string name="image_card_title">사진 %d/%d</string>
+    <string name="image_card_subtitle_add_images">+ 사진 추가</string>
+    <string name="image_card_body_no_image">사진 없음</string>
+
+    <!--InformationCard.kt none-->
+
+    <!--MapCard.kt none-->
+
+    <!--MemoCard.kt-->
+    <string name="memo_card_title">메모</string>
+    <string name="memo_card_body_no_memo">메모 없음</string>
+    <string name="memo_card_body_add_a_memo">메모 추가</string>
+
+    <!--SpotTypeGroupCard.kt none-->
+
+    <!--TitleCard.kt-->
+    <string name="title_card_title">제목</string>
+    <string name="title_card_body_add_a_title">제목 추가</string>
+    <string name="long_text">최대 %d자</string>
+
+    <!--TripDurationCard.kt-->
+    <string name="trip_duration_card_title">여행 기간</string>
+    <string name="trip_duration_card_body_start_date">시작일</string>
+    <string name="trip_duration_card_body_end_date">종료일</string>
+    <string name="trip_duration_card_body_no_start_date">시작일 없음</string>
+    <string name="trip_duration_card_body_no_end_date">종료일 없음</string>
+
+    <!--ZoomCard.kt-->
+    <string name="zoom_card_zoom_level">줌 레벨</string>
+
+
+    <!--dialogs =================================================================================-->
+    <!--DateRangeDialog.kt-->
+    <string name="date_range_dialog_title">여행 기간 설정</string>
+    <string name="date_range_dialog_starts">시작일</string>
+    <string name="date_range_dialog_ends">종료일</string>
+    <string name="date_range_dialog_headline">%s - %s</string>
+
+    <!--MemoDialog.kt-->
+    <string name="memo_dialog_title">메모</string>
+
+    <!--SelectDateDialog.kt-->
+    <string name="select_date_dialog_title">날짜 이동</string>
+
+    <!--SetBudgetOrDistanceDialog.kt-->
+    <string name="set_budget_dialog_title">예산 설정</string>
+    <string name="set_travel_distance_dialog_title">이동 거리 설정</string>
+    <string name="set_distance_dialog_km">km</string>
+
+    <!--SetColorDialog.kt-->
+    <string name="set_color_dialog_title">색상 설정</string>
+
+    <!--SetCurrencyDialog.kt-->
+    <string name="set_currency_type_dialog_title">통화 유형 선택</string>
+
+    <!--SetSpotTypeDialog.kt-->
+    <string name="set_spot_type_dialog_title">장소 유형 선택</string>
+
+    <!--SetTimeDialog.kt-->
+    <string name="set_start_time_dialog_title">시작 시간 설정</string>
+    <string name="set_end_time_dialog_title">종료 시간 설정</string>
+
+    <!---->
+    <string name="dialog_body_are_you_sure_to_exit">정말로 나가시겠습니까?\n저장하지 않은 데이터는 삭제됩니다</string>
+    <string name="dialog_body_delete_trip">Delete this Trip?</string>
+    <string name="dialog_body_delete_spot">Delete this Spot?</string>
+
+    <string name="dialog_button_close">닫기</string>
+    <string name="dialog_button_cancel">취소</string>
+    <string name="dialog_button_delete">삭제</string>
+    <string name="dialog_button_exit">나가기</string>
+    <string name="dialog_button_save">저장</string>
+    <string name="dialog_button_ok">확인</string>
+
+
+    <!--FABs.kt =================================================================================-->
+    <string name="see_on_map">지도</string>
+
+
+    <!--general =================================================================================-->
+    <string name="no_title">제목 없음</string>
+
+    <!--buttons =================================================================================-->
+    <string name="cancel">취소</string>
+    <string name="save">저장</string>
+    <string name="new_spot">새 장소</string>
+
+
+    <!--mainScreens =============================================================================-->
+    <string name="my_trips">내 여행</string>
+    <string name="more">더 보기</string>
+
+    <!--MyTripsScreen.kt-->
+    <string name="edit_trips">여행 편집</string>
+    <string name="no_trip">여행이 없어요…\n새 여행을 추가해 보세요!</string>
+    <string name="no_date">일정 없음</string>
+
+    <!--MoreScreen.kt-->
+    <string name="settings">설정</string>
+    <string name="feedback">피드백</string>
+    <string name="date_time_format">날짜 및 시간</string>
+    <string name="theme">테마</string>
+    <string name="send_feedback">피드백 보내기</string>
+    <string name="bug_report">버그 신고</string>
+    <string name="about">앱 정보</string>
+
+    <!--tripScreens =============================================================================-->
+    <!--TripScreen.kt-->
+    <string name="edit_trip">여행 편집</string>
+    <string name="dates">일정</string>
+    <string name="set_trip_duration">여행 기간 설정</string>
+    <string name="dates_no_plan">일정 없음</string>
+
+    <!--DateScreen.kt-->
+    <string name="edit_date">일정 편집</string>
+    <string name="spots">장소</string>
+    <string name="no_plan">계획이 없어요…\n새 계획을 추가해 보세요!</string>
+    <string name="choose_spot_type">장소 유형을 선택하세요!</string>
+
+    <!--SpotScreen.kt-->
+    <string name="edit_spot">장소 편집</string>
+    <string name="set_location">위치 설정</string>
+    <string name="sub_title">%s - %s</string>
+    <string name="no_spot">장소 없음</string>
+    <string name="delete_spot">장소 삭제</string>
+
+    <!--TripMapScreen.kt None-->
+
+    <!--settingScreens ==========================================================================-->
+    <!--SetDateTimeFormatScreen.kt-->
+    <string name="time_format">시간 형식</string>
+    <string name="date_format">날짜 형식</string>
+    <string name="use_month_name">월 이름 사용</string>
+    <string name="include_day_of_week">요일 포함</string>
+
+    <!--SetThemeScreen.kt-->
+    <string name="app_theme">앱 테마</string>
+    <string name="map_theme">지도 테마</string>
+
+    <!--AboutScreen.kt-->
+    <string name="somewhere_app_icon">Somewhere 앱 아이콘</string>
+    <string name="version">버전</string>
+    <string name="developer">개발자</string>
+    <string name="developer_name">이세종</string>
+    <string name="developer_info">세종대학교 19 컴퓨터공학과</string>
+
+
+</resources>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

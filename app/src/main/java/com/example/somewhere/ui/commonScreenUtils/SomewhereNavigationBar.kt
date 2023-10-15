@@ -4,8 +4,9 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.dp
+import com.example.somewhere.R
 import com.example.somewhere.ui.mainScreens.MoreDestination
 import com.example.somewhere.ui.mainScreens.MyTripsDestination
 import com.example.somewhere.ui.navigation.NavigationDestination
@@ -25,7 +26,7 @@ fun SomewhereNavigationBar(
             icon = { DisplayIcon(icon = MyIcons.myTrips) },
             label = {
                 Text(
-                    text = "My trips",
+                    text = stringResource(id = R.string.my_trips),
                     style = if (currentDestination == MyTripsDestination)   selectedTextStyle
                             else                                            textStyle
                 )
@@ -43,7 +44,7 @@ fun SomewhereNavigationBar(
             icon = { DisplayIcon(icon = MyIcons.moreHoriz) },
             label = {
                 Text(
-                    text = "More",
+                    text = stringResource(id = R.string.more),
                     style = if (currentDestination == MoreDestination)   selectedTextStyle
                             else                                            textStyle
                 )

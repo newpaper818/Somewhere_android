@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,8 +26,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import com.example.somewhere.R
 import com.example.somewhere.enumUtils.TimeFormat
 import com.example.somewhere.model.Date
 import com.example.somewhere.model.Spot
@@ -113,7 +114,7 @@ private fun OneDateRow(
         if (dateTitle == null)
             currentSpot.getDateText(locale, dateTimeFormat, includeYear = true)
         else
-            currentSpot.getDateText(locale, dateTimeFormat, includeYear = true)+ " - " + dateTitle
+            stringResource(id = R.string.date_time_card_date_text, currentSpot.getDateText(locale, dateTimeFormat, includeYear = true), dateTitle)
 
     var showSelDateDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -231,7 +232,6 @@ private fun TwoTimesRow(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun OneTimeRow(
     setUseImePadding: (useImePadding: Boolean) -> Unit,
@@ -251,8 +251,8 @@ private fun OneTimeRow(
     val timeTextStyle = if (timeText == null) nullTextStyle
                         else                  defaultTextStyle
 
-    val timeText1 = timeText ?: if (isStart) "Starts"
-                                else         "Ends"
+    val timeText1 = timeText ?: if (isStart) stringResource(id = R.string.date_time_card_starts)
+                                else         stringResource(id = R.string.date_time_card_ends)
 
     val initialTime = if  (isStart) spot.startTime ?: LocalTime.now()
                         else        spot.endTime ?: LocalTime.now()
@@ -265,7 +265,7 @@ private fun OneTimeRow(
         SetTimeDialog(
             initialTime = initialTime,
             timeFormat = timeFormat,
-            title = "Set time",
+            isSetStartTime = isStart,
             onDismissRequest = {
                 showTimePicker = false
                 setShowBottomSaveCancelBar(true)

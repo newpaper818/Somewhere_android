@@ -12,10 +12,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.somewhere.R
 import com.example.somewhere.ui.commonScreenUtils.DisplayIcon
@@ -48,7 +46,7 @@ fun ZoomCard(
         //set zoom level
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = stringResource(id = R.string.zoom_level),
+                text = stringResource(id = R.string.zoom_card_zoom_level),
                 style = getTextStyle(TextType.CARD__TITLE),
                 modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 3.dp)
             )

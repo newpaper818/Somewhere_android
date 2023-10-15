@@ -22,6 +22,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,13 +41,17 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -66,10 +71,11 @@ import com.example.somewhere.ui.commonScreenUtils.MySpacerColumn
 import com.example.somewhere.ui.commonScreenUtils.MySpacerRow
 import com.example.somewhere.ui.commonScreenUtils.DisplayIcon
 import com.example.somewhere.ui.commonScreenUtils.MyIcons
+import com.example.somewhere.ui.theme.ColorType
 import com.example.somewhere.ui.theme.TextType
+import com.example.somewhere.ui.theme.getColor
 import com.example.somewhere.ui.theme.getTextStyle
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -82,8 +88,8 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.sqrt
 
-const val IMAGE_MAX_COUNT = 10
-const val IMAGE_MAX_SIZE_MB = 2.5    //Mebibyte
+private const val IMAGE_MAX_COUNT = 10
+private const val IMAGE_MAX_SIZE_MB = 2.5    //Mebibyte
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -93,29 +99,44 @@ fun ImageCard(
     imgList: List<String>,
     onAddImages: (List<String>) -> Unit,
     deleteImage: (String) -> Unit,
-    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit,
+    isOverImage: (Boolean) -> Unit,
 
     modifier: Modifier = Modifier,
 
     titleTextStyle: TextStyle = getTextStyle(TextType.CARD__TITLE),
+    errorTitleTextStyle: TextStyle = getTextStyle(TextType.CARD__TITLE_ERROR),
     bodyNullTextStyle: TextStyle = getTextStyle(TextType.CARD__BODY_NULL)
 ){
     val context = LocalContext.current
 
-    val snackBarTextImageLimit = stringResource(id = R.string.snack_bar_image_limit)
-
     val coroutineScope = rememberCoroutineScope()
+
+    // 11 or over
+    var isImageCountLimit by rememberSaveable { mutableStateOf(false) }
+
+    val titleTextStyle1 = if (isImageCountLimit) errorTitleTextStyle
+                        else titleTextStyle
+
+    val borderColor = if (isImageCountLimit) getColor(ColorType.ERROR_BORDER)
+                        else Color.Transparent
+
+    val addImageTextStyle = if (!isImageCountLimit && imgList.size < IMAGE_MAX_COUNT) titleTextStyle.copy(color = MaterialTheme.colorScheme.primary)
+                            else titleTextStyle
 
     val galleryLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetMultipleContents()
     ){ uriList ->
         var addUriList = uriList
 
-        if (imgList.size + uriList.size > IMAGE_MAX_COUNT){
-            addUriList = addUriList.subList(0, IMAGE_MAX_COUNT - imgList.size)
-
-            showSnackBar(snackBarTextImageLimit, null, SnackbarDuration.Short)
+        if (imgList.size + uriList.size > IMAGE_MAX_COUNT && !isImageCountLimit){
+            isImageCountLimit = true
+            isOverImage(true)
         }
+
+        if (uriList.size > 20){
+            addUriList = addUriList.subList(0, 20)
+        }
+
 
         val fileList: MutableList<String> = mutableListOf()
 
@@ -144,7 +165,9 @@ fun ImageCard(
             modifier = modifier
         ) {
             Card(
-                modifier = modifier1.fillMaxWidth()
+                modifier = modifier1
+                    .fillMaxWidth()
+                    .border(1.dp, borderColor, RoundedCornerShape(16.dp))
             ) {
                 //edit mode
                 AnimatedVisibility(
@@ -161,8 +184,8 @@ fun ImageCard(
 
                             //Images text
                             Text(
-                                text = stringResource(id = R.string.image_card_title, imgList.size),
-                                style = titleTextStyle,
+                                text = stringResource(id = R.string.image_card_title, imgList.size, IMAGE_MAX_COUNT),
+                                style = titleTextStyle1,
                                 modifier = Modifier.padding(16.dp, 14.dp, 0.dp, 8.dp),
                             )
 
@@ -171,23 +194,19 @@ fun ImageCard(
                             //add images text
                             Text(
                                 text = stringResource(id = R.string.image_card_subtitle_add_images),
-                                style = titleTextStyle.copy(color = MaterialTheme.colorScheme.primary),
+                                style = addImageTextStyle,
                                 modifier = Modifier
-                                    .clickable {
-                                        if (imgList.size <= 9)
+                                    .clickable(
+                                        enabled = !isImageCountLimit && imgList.size < IMAGE_MAX_COUNT,
+                                        onClick = {
                                             galleryLauncher.launch("image/*")
-                                        else
-                                            showSnackBar(
-                                                snackBarTextImageLimit,
-                                                null,
-                                                SnackbarDuration.Short
-                                            )
-                                    }
+                                        }
+                                    )
                                     .padding(16.dp, 14.dp, 16.dp, 8.dp)
                             )
                         }
 
-                        //if no images
+                        //if no image
                         if (imgList.isEmpty()) {
                             Text(
                                 text = stringResource(id = R.string.image_card_body_no_image),
@@ -209,6 +228,12 @@ fun ImageCard(
                                         imagePath = it,
                                         onDeleteClick = {
                                             deleteImage(it)
+                                            Log.d("image", "img size = ${imgList.size}")
+                                            if (imgList.size - 1 <= IMAGE_MAX_COUNT && isImageCountLimit){
+                                                Log.d("image", "to false")
+                                                isImageCountLimit = false
+                                                isOverImage(false)
+                                            }
                                         }
                                     )
                                     MySpacerRow(width = 16.dp)
@@ -321,7 +346,7 @@ fun DisplayImage(
 
     Image(
         painter = painter,
-        contentDescription = "image",
+        contentDescription = stringResource(id = R.string.image_content_description),
         contentScale = ContentScale.Crop,
         modifier = Modifier
             .fillMaxSize()
@@ -329,6 +354,7 @@ fun DisplayImage(
             .scale(scaleTransition)
     )
 
+    //TODO prettier
     if (imageState is AsyncImagePainter.State.Loading){
         Text(
             text = "loading...",

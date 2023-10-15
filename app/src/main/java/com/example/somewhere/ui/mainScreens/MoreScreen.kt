@@ -27,12 +27,14 @@ import com.example.somewhere.ui.settingScreens.SetDateFormatDestination
 import com.example.somewhere.ui.settingScreens.SetThemeScreenDestination
 import kotlinx.coroutines.launch
 
+private const val feedbackUrl = "https://forms.gle/2UqNgmLqPdECiSb17"
+private const val bugReportUrl = "https://forms.gle/5XZSxD6xPuLAeXah7"
+
 object MoreDestination: NavigationDestination {
     override val route = "more"
-    override var title = "More"
+    override var title = ""
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MoreScreen(
     navigateTo: (NavigationDestination) -> Unit,
@@ -48,9 +50,7 @@ fun MoreScreen(
     Scaffold(
         topBar = {
             SomewhereTopAppBar(
-                title = MoreDestination.title,
-//                navigationIcon = MyIcons.back,
-//                navigationIconOnClick = { navigateUp() }
+                title = stringResource(id = R.string.more)
             )
         },
         bottomBar = {
@@ -71,17 +71,19 @@ fun MoreScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(16.dp),
-            modifier = modifier.fillMaxSize().padding(top = paddingValues.calculateTopPadding())
+            modifier = modifier
+                .fillMaxSize()
+                .padding(top = paddingValues.calculateTopPadding())
         ) {
 
             //setting
             item {
                 ListGroupCard(
-                    title = "Settings"
+                    title = stringResource(id = R.string.settings)
                 ) {
                     //date time format
                     ItemWithText(
-                        body1Text = SetDateFormatDestination.title,
+                        body1Text = stringResource(id = R.string.date_time_format),
                         onItemClick = { navigateTo(SetDateFormatDestination) }
                     )
 
@@ -89,7 +91,7 @@ fun MoreScreen(
 
                     //app theme
                     ItemWithText(
-                        body1Text = SetThemeScreenDestination.title,
+                        body1Text = stringResource(id = R.string.theme),
                         onItemClick = { navigateTo(SetThemeScreenDestination) }
                     )
                 }
@@ -98,16 +100,14 @@ fun MoreScreen(
             //feedback and bug report
             item {
                 val uriHandler = LocalUriHandler.current
-                val feedbackUri = stringResource(id = R.string.feedback_uri)
-                val bugReportUri = stringResource(id = R.string.bug_report_uri)
 
                 ListGroupCard(
-                    title = "Feedback"
+                    title = stringResource(id = R.string.feedback)
                 ) {
                     //send feedback - open web browser to google form
                     ItemWithText(
                         body1Text = stringResource(id = R.string.send_feedback),
-                        onItemClick = { uriHandler.openUri(feedbackUri) },
+                        onItemClick = { uriHandler.openUri(feedbackUrl) },
                         isOpenInNew = true
                     )
 
@@ -116,18 +116,19 @@ fun MoreScreen(
                     //bug report - open web browser to google form
                     ItemWithText(
                         body1Text = stringResource(id = R.string.bug_report),
-                        onItemClick = { uriHandler.openUri(bugReportUri) },
+                        onItemClick = { uriHandler.openUri(bugReportUrl) },
                         isOpenInNew = true
                     )
                 }
             }
 
             //about
+            //about
             item {
                 ListGroupCard {
                     //send feedback
                     ItemWithText(
-                        body1Text = AboutDestination.title,
+                        body1Text = stringResource(id = R.string.about),
                         onItemClick = { navigateTo(AboutDestination) }
                     )
                 }

@@ -32,7 +32,7 @@ import com.example.somewhere.ui.theme.getTextStyle
 
 object AboutDestination: NavigationDestination {
     override val route = "about"
-    override var title = "About"
+    override var title = ""
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,7 +44,7 @@ fun AboutScreen(
     Scaffold(
         topBar = {
             SomewhereTopAppBar(
-                title = AboutDestination.title,
+                title = stringResource(id = R.string.about),
                 navigationIcon = MyIcons.back,
                 navigationIconOnClick = { navigateUp() }
             )
@@ -55,7 +55,9 @@ fun AboutScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(16.dp),
-            modifier = modifier.fillMaxSize().padding(top = paddingValues.calculateTopPadding())
+            modifier = modifier
+                .fillMaxSize()
+                .padding(top = paddingValues.calculateTopPadding())
         ) {
             item{
                 //app icon image
@@ -92,7 +94,9 @@ private fun AppIconImageWithAppName(
         Image(
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
             contentDescription = stringResource(id = R.string.somewhere_app_icon),
-            modifier = Modifier.size(160.dp).padding(0.dp, 0.dp, 0.dp, 16.dp)
+            modifier = Modifier
+                .size(160.dp)
+                .padding(0.dp, 0.dp, 0.dp, 16.dp)
         )
 
         Text(

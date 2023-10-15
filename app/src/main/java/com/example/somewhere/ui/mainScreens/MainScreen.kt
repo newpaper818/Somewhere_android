@@ -9,7 +9,7 @@ import com.example.somewhere.viewModel.DateTimeFormat
 
 object MainDestination : NavigationDestination {
     override val route = "main"
-    override var title = "Somewhere"
+    override var title = ""
 }
 
 @Composable

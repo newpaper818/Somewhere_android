@@ -32,8 +32,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -59,6 +57,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -89,7 +88,7 @@ import kotlin.math.roundToInt
 
 object MyTripsDestination : NavigationDestination {
     override val route = "my_trips"
-    override var title = "Somewhere"
+    override var title = ""
 }
 
 @Composable
@@ -149,8 +148,8 @@ fun MyTripsScreen(
         //top app bar
         topBar = {
             SomewhereTopAppBar(
-                title = if (!isEditMode) MyTripsDestination.title
-                        else stringResource(id = R.string.top_bar_title_edit_trips),
+                title = if (!isEditMode) stringResource(id = R.string.app_name)
+                        else stringResource(id = R.string.edit_trips),
 
                 actionIcon1 = if (!isEditMode) MyIcons.edit else null,
                 actionIcon1Onclick = {
@@ -277,20 +276,20 @@ fun MyTripsScreen(
                             },
                             dateTimeFormat = dateTimeFormat,
                             slideState = slideState,
-                            updateSlideState = { showingTripList_, tripIdx_, slideState_ ->
-                                Log.d("test3", "[update slide state] showingTripList: ${showingTripList_.map { it.titleText }} - ${showingTripList_[tripIdx_].titleText} $slideState_")
-//                                    Log.d("reorder", "${trip_.titleText} $slideState_")
+                            updateSlideState = { showingTripList, tripIdx, slideState ->
+                                Log.d("test3", "[update slide state] showingTripList: ${showingTripList.map { it.titleText }} - ${showingTripList[tripIdx].titleText} $slideState")
+//                                    Log.d("reorder", "${trip_.titleText} $slideState")
 
-                                slideStates[showingTripList_[tripIdx_].id] = slideState_
+                                slideStates[showingTripList[tripIdx].id] = slideState
                             },
-                            updateItemPosition = { currentIndex_, destinationIndex_ ->
+                            updateItemPosition = { currentIndex, destinationIndex ->
                                 //at on drag end
                                 Log.d("reorder", "***************************")
 
                                 Log.d("reorder", "before: ${showingTripList.map { it.titleText }}")
                                 coroutineScope.launch {
                                     Log.d("test1", "--------- reorder trip list")
-                                    appViewModel.reorderTempTripList(currentIndex_, destinationIndex_)
+                                    appViewModel.reorderTempTripList(currentIndex, destinationIndex)
 
 //                                        Log.d("reorder", "- showingTripList: ${appViewModel.appUiState.value.tempTripList?.map { it.titleText }}")
 //                                        Log.d("reorder", "- showingTripList: ${showingTripList.map { it.titleText }}")
@@ -314,7 +313,8 @@ fun MyTripsScreen(
                 item {
                     Text(
                         text = stringResource(id = R.string.no_trip),
-                        style = getTextStyle(TextType.CARD__BODY)
+                        style = getTextStyle(TextType.CARD__BODY),
+                        textAlign = TextAlign.Center
                     )
                     MySpacerColumn(height = 16.dp)
                 }
@@ -358,7 +358,7 @@ private fun TripListItem(
     val titleTextStyle1 = if (trip.titleText == null || trip.titleText == "") titleNullTextStyle
                             else titleTextStyle
 
-    val subTitleText = trip.getStartEndDateText(locale, dateTimeFormat.copy(includeDayOfWeek = false), true) ?: stringResource(id = R.string.trip_item_no_date)
+    val subTitleText = trip.getStartEndDateText(locale, dateTimeFormat.copy(includeDayOfWeek = false), true) ?: stringResource(id = R.string.no_date)
 
     val haptic = LocalHapticFeedback.current
 
@@ -482,10 +482,10 @@ private fun TripListItem(
                                 onStartDrag = {
                                     isDragged = true
                                 },
-                                onStopDrag = { currentIndex_, destinationIndex_ ->
+                                onStopDrag = { currentIndex, destinationIndex ->
 
-                                    if (currentIndex_ != destinationIndex_){
-                                        updateItemPosition(currentIndex_, destinationIndex_)
+                                    if (currentIndex != destinationIndex){
+                                        updateItemPosition(currentIndex, destinationIndex)
                                     }
 
                                     isDragged = false

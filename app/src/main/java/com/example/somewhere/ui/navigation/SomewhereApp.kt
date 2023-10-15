@@ -12,10 +12,8 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.*
@@ -40,7 +38,7 @@ import com.example.somewhere.ui.settingScreens.SetThemeScreenDestination
 import com.example.somewhere.ui.tripScreens.DateDestination
 import com.example.somewhere.ui.tripScreens.DateScreen
 import com.example.somewhere.ui.tripScreens.SpotDetailDestination
-import com.example.somewhere.ui.tripScreens.SpotDetailScreen
+import com.example.somewhere.ui.tripScreens.SpotScreen
 import com.example.somewhere.ui.tripScreens.SpotImageDestination
 import com.example.somewhere.ui.tripScreens.TripDestination
 import com.example.somewhere.ui.tripScreens.TripMapDestination
@@ -440,7 +438,7 @@ fun SomewhereApp(
                 somewhereViewModel.updateCurrentScreen(SpotDetailDestination)
 
                 if (somewhereUiState.trip != null && somewhereUiState.tempTrip != null) {
-                    SpotDetailScreen(
+                    SpotScreen(
                         isEditMode = somewhereUiState.isEditMode,
                         setUseImePadding = {
                             useImePadding = it

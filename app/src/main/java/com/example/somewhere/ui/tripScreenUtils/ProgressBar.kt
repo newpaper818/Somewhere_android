@@ -274,7 +274,7 @@ fun SpotListProgressBar(
                     verticalArrangement = Arrangement.Center
                 ) {
 
-                    NewItemButton(text = "New Spot", onClick = {
+                    NewItemButton(text = stringResource(id = R.string.new_spot), onClick = {
                         addNewSpot()
                     })
                 }

@@ -3,6 +3,7 @@ package com.example.somewhere.ui.theme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -168,6 +169,7 @@ enum class TextType{
     TRIP_LIST_ITEM__SUBTITLE,
 
     CARD__TITLE,
+    CARD__TITLE_ERROR,
     CARD__BODY,
     CARD__BODY_NULL,
     CARD__SPOT_TYPE,
@@ -230,6 +232,7 @@ fun getTextStyle(textType: TextType): TextStyle {
         TRIP_LIST_ITEM__SUBTITLE    -> MaterialTheme.typography.bodySmall.copy(color = n60)
 
         CARD__TITLE                 -> MaterialTheme.typography.bodySmall.copy(color = n60)
+        CARD__TITLE_ERROR           -> MaterialTheme.typography.bodySmall.copy(color = e60)
         CARD__BODY                  -> MaterialTheme.typography.bodyLarge
         CARD__BODY_NULL             -> MaterialTheme.typography.bodyLarge.copy(color = n60)
         CARD__SPOT_TYPE             -> MaterialTheme.typography.labelLarge

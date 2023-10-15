@@ -13,6 +13,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,7 +23,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,19 +49,19 @@ import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getColor
 import com.example.somewhere.ui.theme.getTextStyle
 
+private const val MAX_TITLE_LENGTH = 100
+
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TitleCard(
     isEditMode: Boolean,
     titleText: String?,
     onTitleChange: (String) -> Unit,
-    onTextSizeLimit: () -> Unit,
     focusManager: FocusManager,
+    isLongText: (Boolean) -> Unit,
 
     modifier: Modifier = Modifier,
 ){
-    var cardHeight by rememberSaveable { mutableStateOf(0) }
-
     AnimatedVisibility(
         visible = isEditMode,
         enter =
@@ -77,9 +77,8 @@ fun TitleCard(
             Row {
                 //TODO focus 되면 배경색 달라지게?
                 //TODO text num limit
-                TitleCardUi(isEditMode, titleText, onTitleChange, onTextSizeLimit, focusManager,
-                    getCardHeight = { },
-                    modifier = Modifier.weight(1f)
+                TitleCardUi(isEditMode, titleText, onTitleChange, focusManager, isLongText,
+                    getCardHeight = { }, modifier = Modifier.weight(1f)
                 )
             }
 
@@ -94,14 +93,16 @@ fun TitleWithColorCard(
     isEditMode: Boolean,
 
     titleText: String?,
-    setShowBottomSaveCancelBar: (Boolean) -> Unit,
     onTitleChange: (newTitle: String) -> Unit,
-    onTextSizeLimit: () -> Unit,
     focusManager: FocusManager,
-    color: MyColor,
+    isLongText: (Boolean) -> Unit,
 
-    modifier: Modifier = Modifier,
+    color: MyColor,
     onColorChange: (newMyColor: MyColor) -> Unit,
+
+    setShowBottomSaveCancelBar: (Boolean) -> Unit,
+
+    modifier: Modifier = Modifier
 ){
     var cardHeight by rememberSaveable { mutableStateOf(0) }
     var showColorPickerDialog by rememberSaveable { mutableStateOf(false) }
@@ -121,9 +122,9 @@ fun TitleWithColorCard(
             Row {
                 //TODO focus 되면 배경색 달라지게?
                 //TODO text num limit
-                TitleCardUi(isEditMode, titleText, onTitleChange, onTextSizeLimit, focusManager,
-                    getCardHeight = {cardHeight_ ->
-                        cardHeight = cardHeight_
+                TitleCardUi(isEditMode, titleText, onTitleChange, focusManager, isLongText,
+                    getCardHeight = {newCardHeight ->
+                        cardHeight = newCardHeight
                     }, modifier = Modifier.weight(1f)
                 )
 
@@ -168,24 +169,26 @@ fun TitleCardMove(
     isEditMode: Boolean,
     titleText: String?,
     onTitleChange: (String) -> Unit,
-    onTextSizeLimit: () -> Unit,
-    focusManager: FocusManager
+    focusManager: FocusManager,
+    isLongText: (Boolean) -> Unit
 ){
-    TitleCardUi(isEditMode, titleText, onTitleChange, onTextSizeLimit, focusManager, getCardHeight = { })
+    TitleCardUi(isEditMode, titleText, onTitleChange, focusManager, isLongText, getCardHeight = { })
 }
 
 @Composable
 private fun TitleCardUi(
     isEditMode: Boolean,
+
     titleText: String?,
     onTitleChange: (String) -> Unit,
-    onTextSizeLimit: () -> Unit,
     focusManager: FocusManager,
+    isLongText: (Boolean) -> Unit,
 
     getCardHeight: (cardHeight: Int) -> Unit,
 
     modifier: Modifier = Modifier,
     titleTextStyle: TextStyle = getTextStyle(TextType.CARD__TITLE),
+    errTextStyle: TextStyle = getTextStyle(TextType.CARD__TITLE_ERROR),
     bodyTextStyle: TextStyle = getTextStyle(TextType.CARD__BODY),
     bodyNullTextStyle: TextStyle = getTextStyle(TextType.CARD__BODY_NULL)
 ){
@@ -211,10 +214,23 @@ private fun TitleCardUi(
                 exit = shrinkVertically(tween(400))
             ) {
                 Column {
-                    Text(
-                        text = stringResource(id = R.string.title_card_title),
-                        style = titleTextStyle
-                    )
+                    Row {
+                        //title
+                        Text(
+                            text = stringResource(id = R.string.title_card_title),
+                            style = titleTextStyle
+                        )
+
+                        //up to 100 characters
+                        if (isTextSizeLimit){
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            Text(
+                                text = stringResource(id = R.string.long_text, MAX_TITLE_LENGTH),
+                                style = errTextStyle
+                            )
+                        }
+                    }
 
                     MySpacerColumn(height = 8.dp)
                 }
@@ -240,17 +256,15 @@ private fun TitleCardUi(
                     placeholderTextStyle = bodyNullTextStyle,
 
                     onValueChange = {
-                        var text = it
-
-                        if(it.length > 100) {
+                        if (it.length > MAX_TITLE_LENGTH && !isTextSizeLimit){
                             isTextSizeLimit = true
-                            onTextSizeLimit()
-                            text = text.substring(0, 100)
+                            isLongText(true)
                         }
-                        else
+                        else if (it.length <= MAX_TITLE_LENGTH && isTextSizeLimit){
                             isTextSizeLimit = false
-
-                        onTitleChange(text)
+                            isLongText(false)
+                        }
+                        onTitleChange(it)
                     },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),

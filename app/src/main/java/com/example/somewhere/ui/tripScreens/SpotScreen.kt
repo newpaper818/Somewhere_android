@@ -1,6 +1,5 @@
 package com.example.somewhere.ui.tripScreens
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -28,7 +27,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -51,7 +49,6 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
@@ -86,7 +83,6 @@ import com.example.somewhere.ui.tripScreenUtils.SEOUL_LOCATION
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.ui.tripScreenUtils.AnimatedBottomSaveCancelBar
-import com.example.somewhere.ui.tripScreenUtils.IconFAB
 import com.example.somewhere.ui.tripScreenUtils.cards.TitleCard
 import com.example.somewhere.viewModel.DateTimeFormat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -104,9 +100,9 @@ object SpotDetailDestination : NavigationDestination {
     override var title = ""
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SpotDetailScreen(
+fun SpotScreen(
     isEditMode: Boolean,
     setUseImePadding: (useImePadding: Boolean) -> Unit,
 
@@ -155,6 +151,7 @@ fun SpotDetailScreen(
 
     val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
+    var saveButtonEnabled by rememberSaveable { mutableStateOf(true) }
 
     var isEditLocationMode by rememberSaveable { mutableStateOf(false) }
     var isMapExpand by rememberSaveable { mutableStateOf(false) }
@@ -263,10 +260,10 @@ fun SpotDetailScreen(
     //set top bar title
     DateDestination.title =
         if (isEditLocationMode)
-            stringResource(id = R.string.top_bar_title_set_location)
+            stringResource(id = R.string.set_location)
 
         else if (isEditMode)
-            stringResource(id = R.string.top_bar_title_edit_spot)
+            stringResource(id = R.string.edit_spot)
 
         else {
             if (showingTrip.titleText == null || showingTrip.titleText == "")
@@ -283,7 +280,7 @@ fun SpotDetailScreen(
             if (dateTitle == null)
                 dateList[currentDateId].getDateText(dateTimeFormat, includeYear = true)
             else
-                dateList[currentDateId].getDateText(dateTimeFormat, includeYear = true) + " - " + dateTitle
+                stringResource(id = R.string.sub_title, dateList[currentDateId].getDateText(dateTimeFormat, includeYear = true), dateTitle)
         }
 
     val snackBarPadding by animateFloatAsState(
@@ -425,7 +422,7 @@ fun SpotDetailScreen(
 
                     if (spotList.isEmpty()){
                         item{
-                            Text("no spot")
+                            Text(stringResource(id = R.string.no_spot))
                         }
                     }
                     else {
@@ -513,6 +510,7 @@ fun SpotDetailScreen(
 
                                             dateTimeFormat = dateTimeFormat,
                                             focusManager = focusManager,
+                                            setSaveButtonEnabled = { saveButtonEnabled = !it },
 
                                             addAddedImageList = addAddedImages,
                                             addDeletedImageList = addDeletedImages,
@@ -570,7 +568,8 @@ fun SpotDetailScreen(
 
                         organizeAddedDeletedImages(true)
                     }
-                }
+                },
+                saveEnabled = saveButtonEnabled
             )
 
             //set location page
@@ -618,6 +617,7 @@ fun SpotDetailPage(
     dateTimeFormat: DateTimeFormat,
 
     focusManager: FocusManager,
+    setSaveButtonEnabled: (Boolean) -> Unit,
 
     addAddedImageList: (List<String>) -> Unit,
     addDeletedImageList: (List<String>) -> Unit,
@@ -668,16 +668,8 @@ fun SpotDetailPage(
                                 newTitleText
                             )
                         },
-                        onTextSizeLimit = {
-                            coroutineScope.launch {
-                                snackBarHostState.showSnackbar(
-                                    message = "over 100",
-                                    actionLabel = null,
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
-                        },
                         focusManager = focusManager,
+                        isLongText = setSaveButtonEnabled
                     )
                 else {
                     TitleCardMove(
@@ -691,16 +683,8 @@ fun SpotDetailPage(
                                 newTitleText
                             )
                         },
-                        onTextSizeLimit = {
-                            coroutineScope.launch {
-                                snackBarHostState.showSnackbar(
-                                    message = "over 100",
-                                    actionLabel = null,
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
-                        },
-                        focusManager = focusManager
+                        focusManager = focusManager,
+                        isLongText = setSaveButtonEnabled
                     )
 
                     MySpacerColumn(height = 16.dp)
@@ -709,8 +693,6 @@ fun SpotDetailPage(
 
             //image card
             item {
-                val snackBarText = stringResource(id = R.string.snack_bar_image_limit)
-
                 ImageCard(
                     tripId = showingTrip.id,
                     isEditMode = isEditMode,
@@ -718,21 +700,7 @@ fun SpotDetailPage(
                     onAddImages = { imageFiles ->
                         addAddedImageList(imageFiles)
 
-                        var addImageList: List<String> = imageFiles
-
-                        //up to 10 images
-                        if (currentSpot.imagePathList.size + imageFiles.size > 10) {
-                            addImageList = imageFiles.subList(0, 10 - currentSpot.imagePathList.size)
-
-                            coroutineScope.launch {
-                                snackBarHostState.showSnackbar(
-                                    message = snackBarText,
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
-                        }
-
-                        val newImgList = currentSpot.imagePathList + addImageList
+                        val newImgList = currentSpot.imagePathList + imageFiles
 
                         currentSpot.setImage(showingTrip, dateId, updateTripState, newImgList)
                     },
@@ -745,15 +713,7 @@ fun SpotDetailPage(
 
                         currentSpot.setImage(showingTrip, dateId, updateTripState, newImgList)
                     },
-                    showSnackBar = { text_, actionLabel_, duration_ ->
-                        coroutineScope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = text_,
-                                actionLabel = actionLabel_,
-                                duration = duration_
-                            )
-                        }
-                    }
+                    isOverImage = setSaveButtonEnabled
                 )
             }
 
@@ -900,15 +860,7 @@ fun SpotDetailPage(
                     onMemoChanged = { newMemoText ->
                         currentSpot.setMemoText(showingTrip, dateId, updateTripState, newMemoText)
                     },
-                    onTextSizeLimit = {
-                        coroutineScope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = "Memo is too long",
-                                actionLabel = null,
-                                duration = SnackbarDuration.Short
-                            )
-                        }
-                    }
+                    isLongText = setSaveButtonEnabled
                 )
 
                 MySpacerColumn(height = 16.dp)
@@ -935,7 +887,9 @@ fun SpotDetailPage(
                     //delete spot
                     MySpacerColumn(height = 64.dp)
 
-                    DeleteItemButton(text = "Delete spot", onClick = {
+                    DeleteItemButton(
+                        text = stringResource(id = R.string.delete_spot),
+                        onClick = {
                         //show dialog
                         showDialog = true
                     })

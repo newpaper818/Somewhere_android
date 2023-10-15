@@ -22,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -46,8 +45,8 @@ fun SetBudgetOrDistanceDialog(
     onSaveClick: (newBudget: Float) -> Unit,
     currencySymbol: String? = null
 ){
-    val titleText = if (currencySymbol == null) stringResource(id = R.string.dialog_title_set_travel_distance)
-                    else stringResource(id = R.string.dialog_title_set_budget)
+    val titleText = if (currencySymbol == null) stringResource(id = R.string.set_travel_distance_dialog_title)
+                    else stringResource(id = R.string.set_budget_dialog_title)
 
     val newValueText: String by rememberSaveable {
         mutableStateOf(
@@ -131,7 +130,7 @@ fun SetBudgetOrDistanceDialog(
                         MySpacerRow(width = 8.dp)
 
                         Text(
-                            text = "km",
+                            text = stringResource(id = R.string.set_distance_dialog_km),
                             style = getTextStyle(TextType.DIALOG__BODY)
                         )
                     }

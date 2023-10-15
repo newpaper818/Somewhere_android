@@ -39,7 +39,6 @@ import java.time.ZoneOffset
 @Composable
 fun DateRangeDialog(
     defaultDateRange: ClosedRange<LocalDate>,
-    title: String,
     dateTimeFormat: DateTimeFormat,
     onDismissRequest: () -> Unit,
     onConfirm: (startDateMillis: Long?, endDateMillis: Long?) -> Unit
@@ -58,11 +57,11 @@ fun DateRangeDialog(
 
     val startDateMillis = dateRangePickerState.selectedStartDateMillis
     val startDateText = if (startDateMillis != null) getDateText(startDateMillis, dateTimeFormat)
-                        else "starts"
+                        else stringResource(id = R.string.date_range_dialog_starts)
 
     val endDateMillis = dateRangePickerState.selectedEndDateMillis
     val endDateText = if (endDateMillis != null) getDateText(endDateMillis, dateTimeFormat)
-                        else "ends"
+                        else stringResource(id = R.string.date_range_dialog_ends)
 
     dateRangePickerState.displayMode
 
@@ -74,7 +73,7 @@ fun DateRangeDialog(
         onDismissRequest = onDismissRequest,
         maxHeight = maxHeight,
 
-        titleText = title,
+        titleText = stringResource(id = R.string.date_range_dialog_title),
         bodyContent = {
             Column(
                 modifier = Modifier.heightIn(min = 0.dp)
@@ -86,7 +85,7 @@ fun DateRangeDialog(
                         Row {
                             MySpacerRow(width = 16.dp)
                             Text(
-                                text = "$startDateText - $endDateText",
+                                text = stringResource(id = R.string.date_range_dialog_headline, startDateText, endDateText),
                                 style = getTextStyle(TextType.DIALOG__BODY)
                             )
                         }

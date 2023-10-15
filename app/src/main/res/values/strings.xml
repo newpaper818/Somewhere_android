@@ -1,17 +1,46 @@
 <resources>
-    <string name="app_name">Somewhere</string>
+    <string name="app_name" translatable="false">Somewhere</string>
 
-    <!--send feedback / bug report url DO NOT CHANGE! ===========================================-->
-    <string name="feedback_uri">https://forms.gle/2UqNgmLqPdECiSb17</string>
-    <string name="bug_report_uri">https://forms.gle/5XZSxD6xPuLAeXah7</string>
+    <!--model ===================================================================================-->
+    <!--Trip.kt-->
+    <string name="year">%dyear</string>
+    <string name="years">%dyears</string>
+    <string name="month">%dmonth</string>
+    <string name="months">%dmonths</string>
+    <string name="day">%dday</string>
+    <string name="days">%ddays</string>
 
-    <!--general =================================================================================-->
-    <string name="no_title">No Title</string>
-    <string name="cancel">Cancel</string>
-    <string name="save">Save</string>
 
+    <!--enumUtils ===============================================================================-->
+    <!--CurrencyType.kt-->
+    <string name="aud_code">AUD</string>
+    <string name="cad_code">AUD</string>
+    <string name="eur_code">EUR</string>
+    <string name="jpy_code">JPY</string>
+    <string name="krw_code">KRW</string>
+    <string name="cny_code">CNY</string>
+    <string name="rub_code">RUB</string>
+    <string name="thb_code">THB</string>
+    <string name="usd_code">USD</string>
 
-    <!--Spot Type Text ==========================================================================-->
+    <string name="aud_name">Australian dollar</string>
+    <string name="cad_name">Canadian dollar</string>
+    <string name="eur_name">Euro</string>
+    <string name="jpy_name">Japanese yen</string>
+    <string name="krw_name">South Korean won</string>
+    <string name="cny_name">Renminbi</string>
+    <string name="rub_name">Russian ruble</string>
+    <string name="thb_name">Thai baht</string>
+    <string name="usd_name">United States dollar</string>
+
+    <!--DateTime.kt-->
+    <string name="ymd">YMD</string>
+    <string name="dmy">DMY</string>
+    <string name="mdy">MDY</string>
+    <string name="_24h">24h</string>
+    <string name="_12h">12h</string>
+
+    <!--SpotType.kt-->
     <string name="tour">Tour</string>
     <string name="move">Move</string>
     <string name="move_point">Move Point</string>
@@ -81,20 +110,14 @@
     <string name="pension">Pension</string>
     <string name="camping">Camping</string>
 
-    <!--enum ====================================================================================-->
+    <!--Theme.kt-->
     <string name="theme_light">Light theme</string>
     <string name="theme_dark">Dark theme</string>
     <string name="theme_auto">Same as device theme</string>
     <string name="map_theme_auto">Same as app theme</string>
 
-    <string name="ymd">YMD</string>
-    <string name="dmy">DMY</string>
-    <string name="mdy">MDY</string>
-    <string name="_24h">24h</string>
-    <string name="_12h">12h</string>
 
-
-    <!--use at MyIcons.kt - icon description ====================================================-->
+    <!--MyIcons.kt ==============================================================================-->
     <string name="delete">Delete</string>
     <string name="new_">New</string>
     <string name="delete_image">Delete image</string>
@@ -104,20 +127,11 @@
     <string name="back">Back</string>
     <string name="close">Close</string>
     <string name="edit">Edit</string>
-    <string name="more">More</string>
 
-    <string name="my_trips">My trips</string>
-    <string name="profile">Profile</string>
-
+    <string name="selected_color">Selected color</string>
 
     <string name="previous_date">Previous date</string>
     <string name="next_date">Next date</string>
-    <string name="to_first_date">To first date</string>
-    <string name="to_last_date">To last date</string>
-    <string name="disabled_previous_date">Disabled previous date</string>
-    <string name="disabled_next_date">Disabled next date</string>
-    <string name="disabled_to_first_date">Disabled to first date</string>
-    <string name="disabled_to_last_date">Disabled to last date</string>
 
     <string name="date">Date</string>
     <string name="time">Time</string>
@@ -160,50 +174,85 @@
     <string name="open_in_new">Open in new</string>
 
 
-    <!--use at Toast ============================================================================-->
-    <string name="snack_bar_image_limit">You can add images up to 10</string>
-<!--    <string name="snack_bar_invalid_budget">Invalid Budget text</string>-->
-<!--    <string name="snack_bar_invalid_travel_distance">Invalid Travel Distance text</string>-->
+
+    <!--snack bar ===============================================================================-->
     <string name="snack_bar_location_permission_denied">User location permission denied</string>
-    <string name="snack_bar_no_location">No location</string>
     <string name="snack_bar_no_location_to_show">No location to show</string>
     <string name="snack_bar_no_user_location">Can\'t find your location</string>
     <string name="snack_bar_settings">Settings</string>
 
 
-    <!--use at Cards.kt =========================================================================-->
-    <string name="image_card_title">Images %1$d/10</string>
+    <!--Cards ===================================================================================-->
+    <!--DateTimeCard.kt-->
+    <string name="date_time_card_date_text">%s - %s</string>
+    <string name="date_time_card_starts">Starts</string>
+    <string name="date_time_card_ends">Ends</string>
+
+    <!--ImageCard.kt-->
+    <string name="image_content_description">Displayed image</string>
+    <string name="image_card_title">Images %d/%d</string>
     <string name="image_card_subtitle_add_images">+ Add images</string>
     <string name="image_card_body_no_image">No Image</string>
-    <string name="image_card_display_image_description">Displayed Image</string>
 
+    <!--InformationCard.kt none-->
+
+    <!--MapCard.kt none-->
+
+    <!--MemoCard.kt-->
+    <string name="memo_card_title">Memo</string>
+    <string name="memo_card_body_no_memo">No Memo</string>
+    <string name="memo_card_body_add_a_memo">Add a Memo</string>
+
+    <!--SpotTypeGroupCard.kt none-->
+
+    <!--TitleCard.kt-->
     <string name="title_card_title">Title</string>
     <string name="title_card_body_add_a_title">Add a Title</string>
+    <string name="long_text">Long text(Up to %d characters)</string>
 
+    <!--TripDurationCard.kt-->
     <string name="trip_duration_card_title">Trip Duration</string>
     <string name="trip_duration_card_body_start_date">Start Date</string>
     <string name="trip_duration_card_body_end_date">End Date</string>
     <string name="trip_duration_card_body_no_start_date">No Start Date</string>
     <string name="trip_duration_card_body_no_end_date">No End Date</string>
 
-    <string name="memo_card_title">Memo</string>
-    <string name="memo_card_body_no_memo">No Memo</string>
-    <string name="memo_card_body_add_a_memo">Add a Memo</string>
-
-    <string name="location_card_title">Location</string>
-    <string name="zoom_level">Zoom Level</string>
-
-    <!--use at dialog ===========================================================================-->
-    <string name="dialog_title_memo">Memo</string>
-    <string name="dialog_title_set_color">Set Color</string>
-    <string name="dialog_title_move_date">Move Date</string>
-    <string name="dialog_title_set_budget">Set Budget</string>
-    <string name="dialog_title_set_travel_distance">Set Travel Distance</string>
-    <string name="dialog_title_set_spot_type">Set Spot Type</string>
-    <string name="dialog_selected_color">Selected color</string>
-    <string name="dialog_title_set_currency_type">Set Currency Type</string>
+    <!--ZoomCard.kt-->
+    <string name="zoom_card_zoom_level">Zoom Level</string>
 
 
+    <!--dialogs =================================================================================-->
+    <!--DateRangeDialog.kt-->
+    <string name="date_range_dialog_title">Set date range</string>
+    <string name="date_range_dialog_starts">Starts</string>
+    <string name="date_range_dialog_ends">Ends</string>
+    <string name="date_range_dialog_headline">%s - %s</string>
+
+    <!--MemoDialog.kt-->
+    <string name="memo_dialog_title">Memo</string>
+
+    <!--SelectDateDialog.kt-->
+    <string name="select_date_dialog_title">Move Date</string>
+
+    <!--SetBudgetOrDistanceDialog.kt-->
+    <string name="set_budget_dialog_title">Set Budget</string>
+    <string name="set_travel_distance_dialog_title">Set Travel Distance</string>
+    <string name="set_distance_dialog_km">km</string>
+
+    <!--SetColorDialog.kt-->
+    <string name="set_color_dialog_title">Set Color</string>
+
+    <!--SetCurrencyDialog.kt-->
+    <string name="set_currency_type_dialog_title">Set Currency Type</string>
+
+    <!--SetSpotTypeDialog.kt-->
+    <string name="set_spot_type_dialog_title">Set Spot Type</string>
+
+    <!--SetTimeDialog.kt-->
+    <string name="set_start_time_dialog_title">Set start time</string>
+    <string name="set_end_time_dialog_title">Set end time</string>
+
+    <!---->
     <string name="dialog_body_are_you_sure_to_exit">Are you sure to exit?\nUnsaved data will be delete</string>
     <string name="dialog_body_delete_trip">Delete this Trip?</string>
     <string name="dialog_body_delete_spot">Delete this Spot?</string>
@@ -215,45 +264,72 @@
     <string name="dialog_button_save">Save</string>
     <string name="dialog_button_ok">OK</string>
 
-    <!--use at MainScreen.kt ====================================================================-->
-    <string name="top_bar_title_edit_trips">Edit Trips</string>
-    <string name="no_trip">No Trip…\nLet\'s create a new trip!</string>
 
-    <string name="trip_item_no_date">No Date</string>
-    <string name="new_trip">New Trip</string>
-
-    <!--use at TripScreen.kt ====================================================================-->
-    <string name="top_bar_title_edit_trip">Edit Trip</string>
-
+    <!--FABs.kt =================================================================================-->
     <string name="see_on_map">See on Map</string>
 
-    <string name="dates_set_trip_duration">Set Trip Duration</string>
-    <string name="dates_no_plan">No Plan</string>
 
-    <!--use at DateScreen.kt ====================================================================-->
-    <string name="top_bar_title_edit_date">Edit Date</string>
+    <!--general =================================================================================-->
+    <string name="no_title">No Title</string>
 
-    <!--use at SpotDetailScreen.kt ==============================================================-->
-    <string name="top_bar_title_edit_spot">Edit Spot</string>
-    <string name="top_bar_title_set_location">Set Location</string>
-    <string name="set_new_location">Set new location</string>
+    <!--buttons =================================================================================-->
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="new_spot">New Spot</string>
 
 
-    <!--use at mainSettingScreen.kt =============================================================-->
+    <!--mainScreens =============================================================================-->
+    <string name="my_trips">My trips</string>
+    <string name="more">More</string>
+
+    <!--MyTripsScreen.kt-->
+    <string name="edit_trips">Edit Trips</string>
+    <string name="no_trip">No Trip…\nLet\'s create a new trip!</string>
+    <string name="no_date">No Date</string>
+
+    <!--MoreScreen.kt-->
+    <string name="settings">Settings</string>
+    <string name="feedback">Feedback</string>
     <string name="date_time_format">Date time format</string>
     <string name="theme">Theme</string>
     <string name="send_feedback">Send feedback</string>
     <string name="bug_report">Bug report</string>
     <string name="about">About</string>
 
-    <!--use at setting, about (inner setting) ===================================================-->
-    <string name="app_theme">App theme</string>
-    <string name="map_theme">Map theme</string>
+    <!--tripScreens =============================================================================-->
+    <!--TripScreen.kt-->
+    <string name="edit_trip">Edit Trip</string>
+    <string name="dates">Dates</string>
+    <string name="set_trip_duration">Set Trip Duration</string>
+    <string name="dates_no_plan">No Plan</string>
+
+    <!--DateScreen.kt-->
+    <string name="edit_date">Edit Date</string>
+    <string name="spots">Spots</string>
+    <string name="no_plan">No Plan…\nLet\'s create a new plan!</string>
+    <string name="choose_spot_type">Choose Spot Type!</string>
+
+    <!--SpotScreen.kt-->
+    <string name="edit_spot">Edit Spot</string>
+    <string name="set_location">Set Location</string>
+    <string name="sub_title">%s - %s</string>
+    <string name="no_spot">No spot</string>
+    <string name="delete_spot">Delete spot</string>
+
+    <!--TripMapScreen.kt None-->
+
+    <!--settingScreens ==========================================================================-->
+    <!--SetDateTimeFormatScreen.kt-->
     <string name="time_format">Time format</string>
     <string name="date_format">Date format</string>
-
     <string name="use_month_name">Use month name</string>
     <string name="include_day_of_week">Include day of week</string>
+
+    <!--SetThemeScreen.kt-->
+    <string name="app_theme">App theme</string>
+    <string name="map_theme">Map theme</string>
+
+    <!--AboutScreen.kt-->
     <string name="somewhere_app_icon">Somewhere app icon</string>
     <string name="version">Version</string>
     <string name="developer">Developer</string>

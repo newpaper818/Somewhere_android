@@ -30,10 +30,12 @@ import java.time.LocalTime
 fun SetTimeDialog(
     initialTime: LocalTime,
     timeFormat: TimeFormat,
-    title: String,
+    isSetStartTime: Boolean,
     onDismissRequest: () -> Unit,
     onConfirm: (newTime: LocalTime) -> Unit
 ){
+    val title = if (isSetStartTime) stringResource(id = R.string.set_start_time_dialog_title)
+                else    stringResource(id = R.string.set_end_time_dialog_title)
     val configuration = LocalConfiguration.current
     val screenHeightLong = configuration.screenHeightDp > 600
 

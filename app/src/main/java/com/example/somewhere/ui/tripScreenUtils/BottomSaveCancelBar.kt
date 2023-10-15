@@ -36,7 +36,8 @@ fun AnimatedBottomSaveCancelBar(
     visible: Boolean,
     onCancelClick: () -> Unit,
     onSaveClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    saveEnabled: Boolean = true
 ){
     AnimatedVisibility(
         visible = visible,
@@ -50,7 +51,8 @@ fun AnimatedBottomSaveCancelBar(
         SaveCancelButtons(
             onCancelClick = onCancelClick,
             onSaveClick = onSaveClick,
-            modifier = modifier
+            modifier = modifier,
+            saveEnabled = saveEnabled
         )
     }
 }
@@ -76,11 +78,36 @@ fun BottomSaveCancelBar(
         )
     }
 }
+
+@Composable
+fun SaveCancelButtons(
+    onCancelClick: () -> Unit,
+    onSaveClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    saveEnabled: Boolean = true,
+    positiveText: String = stringResource(id = R.string.save)
+) {
+    Column(
+        modifier = modifier
+    ) {
+        SaveCancelButtonsRow(
+            onCancelClick = onCancelClick,
+            onSaveClick = onSaveClick,
+            positiveText = positiveText,
+            saveEnabled = saveEnabled
+        )
+
+        MySpacerColumn(height = 10.dp)
+    }
+}
+
 @Composable
 private fun SaveCancelButtonsRow(
     onCancelClick: () -> Unit,
     onSaveClick: () -> Unit,
+
     modifier: Modifier = Modifier,
+    saveEnabled: Boolean = true,
     positiveText: String  = stringResource(id = R.string.save),
 ) {
     Row(modifier = modifier) {
@@ -94,28 +121,9 @@ private fun SaveCancelButtonsRow(
 
         MyButton(
             onClick = onSaveClick,
-            text = positiveText
+            text = positiveText,
+            enabled = saveEnabled
         )
-    }
-}
-
-@Composable
-fun SaveCancelButtons(
-    onCancelClick: () -> Unit,
-    onSaveClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    positiveText: String = stringResource(id = R.string.save)
-) {
-    Column(
-        modifier = modifier
-    ) {
-        SaveCancelButtonsRow(
-            onCancelClick = onCancelClick,
-            onSaveClick = onSaveClick,
-            positiveText = positiveText
-        )
-
-        MySpacerColumn(height = 10.dp)
     }
 }
 
@@ -123,13 +131,15 @@ fun SaveCancelButtons(
 private fun MyButton(
     onClick: () -> Unit,
     text: String,
+    enabled: Boolean = true,
     buttonColor: Color? = null
 ){
     val color = if (buttonColor != null) ButtonDefaults.buttonColors(containerColor = buttonColor)
                 else                    ButtonDefaults.buttonColors()
 
     val textStyle = if (buttonColor != null) getTextStyle(TextType.BUTTON).copy(color = white)
-                    else                    getTextStyle(TextType.BUTTON).copy(color = MaterialTheme.colorScheme.onPrimary)
+                    else if (enabled)        getTextStyle(TextType.BUTTON).copy(color = MaterialTheme.colorScheme.onPrimary)
+                    else                     getTextStyle(TextType.BUTTON).copy(color = MaterialTheme.colorScheme.surfaceVariant)
 
     Button(
         modifier = Modifier
@@ -137,6 +147,7 @@ private fun MyButton(
             .width(150.dp),
         contentPadding = PaddingValues(0.dp, 0.dp, 0.dp, 2.dp),
         colors = color,
+        enabled = enabled,
         onClick = onClick
     ) {
         Text(

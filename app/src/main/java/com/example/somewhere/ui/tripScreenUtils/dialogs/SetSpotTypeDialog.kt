@@ -65,7 +65,7 @@ fun SetSpotTypeDialog(
         onDismissRequest = onDismissRequest,
         setMaxHeight = true,
 
-        titleText = stringResource(id = R.string.dialog_title_set_spot_type),
+        titleText = stringResource(id = R.string.set_spot_type_dialog_title),
         bodyContent = {
 
             //spot type group row list

@@ -52,10 +52,9 @@ import java.util.Locale
 
 object SetDateFormatDestination: NavigationDestination {
     override val route = "setDateTimeFormat"
-    override var title = "Date and time format"
+    override var title = ""
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetDateTimeFormatScreen(
     dateTimeFormat: DateTimeFormat,
@@ -79,7 +78,7 @@ fun SetDateTimeFormatScreen(
     Scaffold(
         topBar = {
             SomewhereTopAppBar(
-                title = SetDateFormatDestination.title,
+                title = stringResource(id = R.string.date_time_format),
                 navigationIcon = MyIcons.back,
                 navigationIconOnClick = { navigateUp() }
             )

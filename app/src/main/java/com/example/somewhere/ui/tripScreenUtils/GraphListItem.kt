@@ -38,11 +38,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.somewhere.R
 import com.example.somewhere.ui.commonScreenUtils.ClickableBox
 import com.example.somewhere.ui.commonScreenUtils.DisplayIcon
 import com.example.somewhere.ui.commonScreenUtils.MyIcons
@@ -83,6 +85,9 @@ fun GraphListItem(
     modifier: Modifier = Modifier,
     onDeleteClick: (itemId: Int) -> Unit = { },
 
+    onSideTextClick: () -> Unit = { },
+    onPointClick: () -> Unit = { },
+
     iconText: String? = null,
     @ColorInt iconTextColor: Int? = null,
 
@@ -110,7 +115,7 @@ fun GraphListItem(
     if (isLastItem)
         lowerLineColor = Color.Transparent
 
-    val mainText1 = if(mainText == null || mainText == "") "No Title"
+    val mainText1 = if(mainText == null || mainText == "") stringResource(id = R.string.no_title)
                     else mainText
 
     val mainTextStyle1 = if(mainText == null || mainText == "") mainNullTextStyle
@@ -121,9 +126,9 @@ fun GraphListItem(
         shape = RectangleShape,
         containerColor = itemColor,
         modifier = modifier,
+        enabled = !isEditMode,
         onClick = {
-            if (!isEditMode)
-                onItemClick(itemId)
+            onItemClick(itemId)
         }
     ) {
         Column(
@@ -144,27 +149,35 @@ fun GraphListItem(
             ) {
 
 
-                //side text
-                Row(
-                    modifier = Modifier
-                        .width(80.dp)
-                        .fillMaxHeight(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
+                ClickableBox(
+                    shape = MaterialTheme.shapes.small,
+                    enabled = isEditMode,
+                    onClick = onSideTextClick
                 ) {
-                    Text(
-                        text = sideText,
-                        style = sideTextStyle
-                    )
+                    //side text
+                    Row(
+                        modifier = Modifier
+                            .width(80.dp)
+                            .fillMaxHeight(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = sideText,
+                            style = sideTextStyle
+                        )
+                    }
                 }
 
-
                 //point, line
-                Box(
+                ClickableBox(
+                    shape = RoundedCornerShape((pointCircleSize - lineWidth)/2),
                     modifier = Modifier
                         .width(pointCircleSize)
                         .fillMaxHeight(),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
+                    enabled = isEditMode,
+                    onClick = onPointClick
                 ) {
 
                     Column {

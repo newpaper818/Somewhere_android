@@ -81,7 +81,6 @@ fun TripDurationCard(
     if (showDateRangePickerDialog) {
         DateRangeDialog(
             defaultDateRange = defaultDateRange,
-            title = "Set date range",
             dateTimeFormat = dateTimeFormat,
             onDismissRequest = {
                 showDateRangePickerDialog = false

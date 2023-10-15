@@ -1,7 +1,10 @@
 package com.example.somewhere.model
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.somewhere.R
 import com.example.somewhere.enumUtils.CurrencyType
 import com.example.somewhere.utils.getDateText
 import com.example.somewhere.utils.getNumToText
@@ -65,6 +68,7 @@ data class Trip(
                 "$startDateText - $endDateText"
     }
 
+    @Composable
     fun getDurationText(): String?{
         if (dateList.isNotEmpty()) {
             val period = Period.between(dateList.first().date, dateList.last().date.plusDays(1))
@@ -75,22 +79,22 @@ data class Trip(
 
             val yearsText =
                 if (years > 0){
-                    if (years > 1)  "${years}years"
-                    else            "${years}year"
+                    if (years > 1)  stringResource(id = R.string.years, years)
+                    else            stringResource(id = R.string.year, years)
                 }
                 else ""
 
             val monthsText =
                 if (months > 0) {
-                    if (months > 1) "${months}months"
-                    else            "${months}month"
+                    if (months > 1) stringResource(id = R.string.months, months)
+                    else            stringResource(id = R.string.month, months)
                 }
                 else ""
 
             val daysText =
                 if (days > 0) {
-                    if (days > 1)   "${days}days"
-                    else            "${days}day"
+                    if (days > 1)   stringResource(id = R.string.days, days)
+                    else            stringResource(id = R.string.day, days)
                 }
                 else ""
             return "$yearsText $monthsText $daysText"

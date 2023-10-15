@@ -28,7 +28,7 @@ import com.example.somewhere.viewModel.Theme
 
 object SetThemeScreenDestination: NavigationDestination {
     override val route = "setTheme"
-    override var title = "Theme"
+    override var title = ""
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,7 +45,7 @@ fun SetThemeScreen(
     Scaffold(
         topBar = {
             SomewhereTopAppBar(
-                title = SetThemeScreenDestination.title,
+                title = stringResource(id = R.string.theme),
                 navigationIcon = MyIcons.back,
                 navigationIconOnClick = { navigateUp() }
             )
@@ -56,7 +56,9 @@ fun SetThemeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(16.dp),
-            modifier = modifier.fillMaxSize().padding(top = paddingValues.calculateTopPadding())
+            modifier = modifier
+                .fillMaxSize()
+                .padding(top = paddingValues.calculateTopPadding())
         ) {
 
             //setting app theme

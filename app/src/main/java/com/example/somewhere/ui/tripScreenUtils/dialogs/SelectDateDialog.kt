@@ -14,7 +14,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
@@ -44,7 +43,7 @@ fun SelectDateDialog(
         setMaxHeight = true,
         maxHeight = min(maxHeight, DIALOG_DEFAULT_MAX_HEIGHT),
 
-        titleText = stringResource(id = R.string.dialog_title_move_date),
+        titleText = stringResource(id = R.string.select_date_dialog_title),
         bodyContent = {
             LazyColumn(
                 modifier = Modifier

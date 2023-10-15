@@ -2,8 +2,6 @@ package com.example.somewhere.ui.tripScreenUtils.dialogs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,7 +10,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -37,7 +34,7 @@ fun MemoDialog(
         setBodySpacer = false,
         closeIcon = true,
 
-        titleText = stringResource(id = R.string.dialog_title_memo),
+        titleText = stringResource(id = R.string.memo_dialog_title),
         bodyContent = {
             LazyColumn(
                 contentPadding = PaddingValues(16.dp, 8.dp),
