@@ -8,7 +8,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,14 +28,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.somewhere.R
-import com.example.somewhere.enumUtils.TimeFormat
 import com.example.somewhere.model.Date
 import com.example.somewhere.model.Spot
 import com.example.somewhere.ui.commonScreenUtils.MySpacerRow
@@ -159,7 +156,7 @@ fun SpotListProgressBar(
         modifier = Modifier.fillMaxWidth()
     ){
 
-        //to prev date
+        //to prev date button
         item {
             if (!isEditMode && dateList.first() != dateList[dateId]) {
                 MySpacerRow(width = 16.dp)
@@ -212,18 +209,18 @@ fun SpotListProgressBar(
                 OneProgressBar(
                     includeIconNum = true,
                     pointColor = it.spotType.group.color.color,
-                    iconText = it.orderId.toString(),
+                    iconText = it.iconText.toString(),
                     iconTextColor = it.spotType.group.color.onColor,
                     upperText = it.getStartTimeText(dateTimeFormat.timeFormat) ?: "",
                     titleText = it.titleText,
                     isHighlight = it == spot ||
-                            moveIdx != null && (it.id == moveIdx || it.id == moveIdx + 2),
-                    isLeftHighlight = moveIdx != null && it.id == moveIdx + 2,
-                    isRightHighlight = moveIdx != null && it.id == moveIdx,
+                            moveIdx != null && (it.index == moveIdx || it.index == moveIdx + 2),
+                    isLeftHighlight = moveIdx != null && it.index == moveIdx + 2,
+                    isRightHighlight = moveIdx != null && it.index == moveIdx,
                     isFirst = it == spotList.first() && it.getPrevSpot(dateList, spotList, dateId)?.spotType?.isNotMove() ?: true,
                     isLast = it == spotList.last() && it.getNextSpot(dateList, spotList, dateId)?.spotType?.isNotMove() ?: true,
                     onClickItem = {
-                        onClickSpot(it.id)
+                        onClickSpot(it.index)
                     },
                     prevSpotIsMove = it.getPrevSpot(dateList, spotList, dateId)?.spotType?.isMove() ?: false,
                     nextSpotIsMove = it.getNextSpot(dateList, spotList, dateId)?.spotType?.isMove() ?: false
@@ -283,7 +280,7 @@ fun SpotListProgressBar(
             }
         }
 
-        //to next date
+        //to next date button
         item {
             if (!isEditMode && dateList.last() != dateList[dateId]) {
                 if (spot == null)

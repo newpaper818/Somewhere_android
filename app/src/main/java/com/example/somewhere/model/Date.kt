@@ -1,6 +1,5 @@
 package com.example.somewhere.model
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.example.somewhere.R
@@ -11,7 +10,6 @@ import com.example.somewhere.viewModel.DateTimeFormat
 import com.google.android.gms.maps.model.LatLng
 import com.squareup.moshi.JsonClass
 import java.time.LocalDate
-import java.util.Locale
 
 
 @JsonClass(generateAdapter = true)
@@ -164,12 +162,12 @@ data class Date(
     }
 
     //sort =========================================================================================
-    fun sortSpotListId(){
+    fun sortSpotListIndex(){
 //        for ((id, spot) in spotList.withIndex()){
 //            spot.id = id
 //        }
         spotList.forEachIndexed { index, value ->
-            value.id = index
+            value.index = index
         }
     }
 

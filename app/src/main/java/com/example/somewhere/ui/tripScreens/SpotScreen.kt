@@ -109,7 +109,7 @@ fun SpotScreen(
     originalTrip: Trip,
     tempTrip: Trip,
     dateId: Int,
-    spotId: Int,    //fixed value do not use / use [currentSpotId]
+    spotIndex: Int,    //fixed value do not use / use [currentSpotId]
 
     dateTimeFormat: DateTimeFormat,
 
@@ -140,14 +140,14 @@ fun SpotScreen(
     val context = LocalContext.current
 
     var currentDateId by rememberSaveable { mutableStateOf(dateId) }
-    var currentSpotId by rememberSaveable { mutableStateOf(spotId) }
+    var currentSpotIndex by rememberSaveable { mutableStateOf(spotIndex) }
 
     val dateList = showingTrip.dateList
     val spotList = dateList[currentDateId].spotList
 
     //var prevSpotId by rememberSaveable { mutableStateOf(currentSpotId) }
 
-    val currentSpot = spotList.getOrNull(currentSpotId)
+    val currentSpot = spotList.getOrNull(currentSpotIndex)
 
     val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
@@ -165,11 +165,11 @@ fun SpotScreen(
     val scrollState = rememberLazyListState()
 
     val spotPagerState = rememberPagerState(
-        initialPage = currentSpotId
+        initialPage = currentSpotIndex
     )
 
     val progressBarState = rememberLazyListState(
-        initialFirstVisibleItemIndex = currentSpotId
+        initialFirstVisibleItemIndex = currentSpotIndex
     )
 
     //dialog: delete trip? unsaved data will be deleted
@@ -225,7 +225,7 @@ fun SpotScreen(
     //animate progress bar / map spot when current page changed
     LaunchedEffect(spotPagerState, spotList){
         snapshotFlow { spotPagerState.currentPage }.collect { currentPageIndex ->
-            currentSpotId = currentPageIndex
+            currentSpotIndex = currentPageIndex
 
             //progress bar animate
             coroutineScope.launch {
@@ -360,7 +360,7 @@ fun SpotScreen(
 
                 //progress bar
                 SpotListProgressBar(
-                    initialIdx = currentSpotId,
+                    initialIdx = currentSpotIndex,
                     progressBarState = progressBarState,
                     isEditMode = isEditMode,
 
@@ -368,29 +368,29 @@ fun SpotScreen(
                     dateList = dateList,
                     dateId = currentDateId,
                     spotList = spotList,
-                    currentSpotIdx = currentSpotId,
+                    currentSpotIdx = currentSpotIndex,
                     addNewSpot = {
                         addNewSpot(currentDateId)
 
                         coroutineScope.launch {
                             delay(100)
                             val lastIdx = spotList.size
-                            currentSpotId = lastIdx
+                            currentSpotIndex = lastIdx
                             spotPagerState.animateScrollToPage(lastIdx)
 
                             val toIdx = if (
-                                    currentSpotId >= 1 &&
-                                    spotList[currentSpotId - 1].spotType.isMove()
-                                    && spotList[currentSpotId].spotType.isNotMove()
+                                    currentSpotIndex >= 1 &&
+                                    spotList[currentSpotIndex - 1].spotType.isMove()
+                                    && spotList[currentSpotIndex].spotType.isNotMove()
                                 )
-                                    currentSpotId -1
-                                else    currentSpotId
+                                    currentSpotIndex -1
+                                else    currentSpotIndex
 
                             progressBarState.animateScrollToItem(toIdx)
                         }
                     },
                     onClickSpot = {toSpotId ->
-                        currentSpotId = toSpotId
+                        currentSpotIndex = toSpotId
 
                         //pager animate
                         coroutineScope.launch {
@@ -400,11 +400,11 @@ fun SpotScreen(
                     onPrevDateClick = {toDateId ->
                         currentDateId = toDateId
                         val lastSpotIndex = dateList[toDateId].spotList.lastIndex
-                        currentSpotId = if (lastSpotIndex == -1) 0 else lastSpotIndex
+                        currentSpotIndex = if (lastSpotIndex == -1) 0 else lastSpotIndex
                     },
                     onNextDateClick = {toDateId ->
                         currentDateId = toDateId
-                        currentSpotId = 0
+                        currentSpotIndex = 0
                     }
                 )
 
@@ -508,7 +508,7 @@ fun SpotScreen(
                                             showingTrip = showingTrip,
                                             dateId = currentDateId,
                                             currentDate = dateList[currentDateId],
-                                            spotId = pageIndex,
+                                            spotIndex = pageIndex,
                                             currentSpot = dateList[currentDateId].spotList.getOrNull(
                                                 pageIndex
                                             ),
@@ -537,18 +537,18 @@ fun SpotScreen(
                                                 addDeletedImages(currentSpot.imagePathList)
 
                                                 if (spotList.size <= 1) {
-                                                    deleteSpot(currentDateId, currentSpotId)
+                                                    deleteSpot(currentDateId, currentSpotIndex)
                                                 } else {
-                                                    var toIdx = currentSpotId - 1
+                                                    var toIdx = currentSpotIndex - 1
 
                                                     if (toIdx < 0) {
-                                                        toIdx = currentSpotId
+                                                        toIdx = currentSpotIndex
                                                     }
 
                                                     coroutineScope.launch {
                                                         spotPagerState.animateScrollToPage(toIdx)
                                                         progressBarState.animateScrollToItem(toIdx + 1)
-                                                        deleteSpot(currentDateId, currentSpotId)
+                                                        deleteSpot(currentDateId, currentSpotIndex)
                                                     }
                                                 }
                                             },
@@ -589,7 +589,7 @@ fun SpotScreen(
                 SetLocationPage(
                     showingTrip = showingTrip,
                     spotList = spotList,
-                    currentSpotId = currentSpotId,
+                    currentSpotId = currentSpotIndex,
                     dateList = dateList,
                     dateId = currentDateId,
                     isDarkMapTheme = isDarkMapTheme,
@@ -619,7 +619,7 @@ fun SpotDetailPage(
     showingTrip: Trip,
     dateId: Int,
     currentDate: Date,
-    spotId: Int,
+    spotIndex: Int,
     currentSpot: Spot?,
 
     dateTimeFormat: DateTimeFormat,
@@ -741,7 +741,7 @@ fun SpotDetailPage(
                             showingTrip.moveSpotToDate(
                                 showingTrip,
                                 dateId,
-                                spotId,
+                                spotIndex,
                                 newDateId,
                                 updateTripState
                             )
@@ -977,7 +977,7 @@ private fun SetLocationPage(
                     .background(Color(spotList[currentSpotId].spotType.group.color.color))
             ){
                 Text(
-                    text = spotList[currentSpotId].orderId.toString(),
+                    text = spotList[currentSpotId].iconText.toString(),
                     style = getTextStyle(TextType.PROGRESS_BAR__ICON_TEXT_HIGHLIGHT)
                         .copy(color = Color(spotList[currentSpotId].spotType.group.color.onColor))
                 )

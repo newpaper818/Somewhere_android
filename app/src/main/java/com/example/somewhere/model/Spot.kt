@@ -18,10 +18,32 @@ import java.time.LocalTime
 import java.util.Locale
 
 
+/**
+ * TODO
+ *
+ * @property id unique id
+ * @property iconText order of spot (MOVE's [iconText] can duplicate)
+ * @property index index of [Spot]. no duplication
+ * @property spotType
+ * @property iconId
+ * @property iconColor
+ * @property iconBackgroundColor
+ * @property date
+ * @property location
+ * @property zoomLevel
+ * @property titleText
+ * @property imagePathList
+ * @property startTime
+ * @property endTime
+ * @property budget
+ * @property travelDistance
+ * @property memo
+ */
 @JsonClass(generateAdapter = true)
 data class Spot(
-    var id: Int = 0,
-    var orderId: Int = 0,
+    val id: Int = 0,
+    var iconText: Int = 0,
+    var index: Int = 0,
 
     val spotType: SpotType = SpotType.TOUR,
     @DrawableRes
@@ -48,7 +70,7 @@ data class Spot(
 ): Cloneable {
     public override fun clone(): Spot {
         return Spot(
-            id, orderId, spotType, iconId, iconColor, iconBackgroundColor, date, location, zoomLevel,
+            id, iconText, index, spotType, iconId, iconColor, iconBackgroundColor, date, location, zoomLevel,
             titleText, imagePathList, startTime, endTime, budget, travelDistance, memo
         )
     }
@@ -112,7 +134,7 @@ data class Spot(
         spotList: List<Spot>,
         dateId: Int,
     ): Spot?{
-        var prevSpot = spotList.getOrNull(id - 1)
+        var prevSpot = spotList.getOrNull(index - 1)
         if (prevSpot == null){
             val prevDate = dateList.getOrNull(dateId - 1)
             if (prevDate != null){
@@ -129,7 +151,7 @@ data class Spot(
         dateId: Int,
     ): Spot?{
 
-        var nextSpot = spotList.getOrNull(id + 1)
+        var nextSpot = spotList.getOrNull(index + 1)
         if (nextSpot == null){
             val nextDate = dateList.getOrNull(dateId + 1)
             if (nextDate != null){
@@ -209,13 +231,13 @@ data class Spot(
         //index orderId
         if (reIndex) {
             var newOrderId = if (id == 0) 0
-                            else newSpotList[id - 1].orderId
+                            else newSpotList[id - 1].iconText
 
             for (i in id until newSpotList.size) {
                 if(newSpotList[i].spotType.isNotMove())
                     newOrderId++
 
-                newSpotList[i].orderId = newOrderId
+                newSpotList[i].iconText = newOrderId
             }
         }
 

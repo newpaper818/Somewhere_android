@@ -230,10 +230,14 @@ class SomewhereViewModel(
                 else -1
 
             val lastOrderId =
-                if (newSpotList.isNotEmpty()) newSpotList.last().orderId
+                if (newSpotList.isNotEmpty()) newSpotList.last().iconText
                 else 0
 
-            newSpotList.add(Spot(id = lastId + 1, orderId = lastOrderId + 1, date = date))
+            val lastIndex =
+                if (newSpotList.isNotEmpty()) newSpotList.last().index
+                else 0
+
+            newSpotList.add(Spot(id = lastId + 1, iconText = lastOrderId + 1, index = lastIndex + 1, date = date))
 
             //update
             val newDateList = _uiState.value.tempTrip!!.dateList.toMutableList()
@@ -257,17 +261,17 @@ class SomewhereViewModel(
             //delete spot
             newSpotList.removeAt(spotId)
 
-            //index id, orderId
-            var newOrderId = if (spotId == 0) 0
-                            else newSpotList[spotId - 1].orderId
+            //set id, orderId
+            var newIconText = if (spotId == 0) 0
+                            else newSpotList[spotId - 1].iconText
 
             for (i in spotId until newSpotList.size){
-                newSpotList[i].id = i
+                newSpotList[i].index = i
 
                 if(newSpotList[i].spotType.isNotMove())
-                    newOrderId++
+                    newIconText++
 
-                newSpotList[i].orderId = newOrderId
+                newSpotList[i].iconText = newIconText
             }
 
 
@@ -344,6 +348,41 @@ class SomewhereViewModel(
             }
 
             //update ui state
+            val newTempTrip = _uiState.value.tempTrip!!.copy(dateList = newDateList)
+
+            _uiState.update {
+                it.copy(tempTrip = newTempTrip)
+            }
+        }
+    }
+
+    fun reorderSpotList(dateId: Int, currentIndex: Int, destinationIndex: Int){
+        if (_uiState.value.tempTrip?.dateList?.get(dateId)?.spotList != null){
+
+            val newSpotList = _uiState.value.tempTrip!!.dateList[dateId].spotList.toMutableList()
+
+            //reorder
+            val date = newSpotList[currentIndex]
+            newSpotList.removeAt(currentIndex)
+            newSpotList.add(destinationIndex, date)
+
+            //update orderId
+            newSpotList.forEach{
+                it.iconText = newSpotList.indexOf(it)
+            }
+
+            var newOrderId = 0
+            for (i in 0 until newSpotList.size){
+                if (newSpotList[i].spotType.isNotMove())
+                    newOrderId++
+                newSpotList[i].iconText = newOrderId
+                newSpotList[i].index = i
+            }
+
+            //update ui state
+            val newDate = _uiState.value.tempTrip!!.dateList[dateId].copy(spotList = newSpotList)
+            val newDateList = _uiState.value.tempTrip!!.dateList.toMutableList()
+            newDateList[dateId] = newDate
             val newTempTrip = _uiState.value.tempTrip!!.copy(dateList = newDateList)
 
             _uiState.update {

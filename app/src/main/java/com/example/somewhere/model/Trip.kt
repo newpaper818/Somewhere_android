@@ -221,8 +221,8 @@ data class Trip(
         newDateList[newDateId] = newDateList[newDateId].copy(spotList = newSpotList.toList())
 
         //sort id
-        newDateList[dateId].sortSpotListId()
-        newDateList[newDateId].sortSpotListId()
+        newDateList[dateId].sortSpotListIndex()
+        newDateList[newDateId].sortSpotListIndex()
 
         //update state
         updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))

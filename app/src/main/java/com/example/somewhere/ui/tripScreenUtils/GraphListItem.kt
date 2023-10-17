@@ -61,13 +61,12 @@ import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.ui.theme.getColor
 import com.example.somewhere.ui.theme.whiteInt
 import com.example.somewhere.ui.tripScreenUtils.cards.MAX_TITLE_LENGTH
-import com.example.somewhere.utils.dragAndDrop
 
-val dummySpaceHeight:   Dp = 10.dp
-val minCardHeight:      Dp = 40.dp
-val additionalHeight:   Dp = 22.dp
-val pointCircleSize:    Dp = 22.dp
-val lineWidth:          Dp = 7.dp
+val DUMMY_SPACE_HEIGHT: Dp = 10.dp
+val MIN_CARD_HEIGHT:    Dp = 40.dp
+val ADDITIONAL_HEIGHT:  Dp = 22.dp
+val POINT_CIRCLE_SIZE:  Dp = 22.dp
+val LINE_WIDTH:         Dp = 7.dp
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -165,12 +164,12 @@ fun GraphListItem(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(minCardHeight)
+                        .height(MIN_CARD_HEIGHT)
                         .padding(0.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    MySpacerRow(width = (40.dp - pointCircleSize) / 2)
+                    MySpacerRow(width = (40.dp - POINT_CIRCLE_SIZE) / 2)
                     
                     //side text
                     ClickableBox(
@@ -208,16 +207,16 @@ fun GraphListItem(
                             //upper line
                             Box(
                                 modifier = Modifier
-                                    .width(lineWidth)
-                                    .height(minCardHeight / 2)
+                                    .width(LINE_WIDTH)
+                                    .height(MIN_CARD_HEIGHT / 2)
                                     .background(upperLineColor)
                             )
 
                             //lower line
                             Box(
                                 modifier = Modifier
-                                    .width(lineWidth)
-                                    .height(minCardHeight / 2)
+                                    .width(LINE_WIDTH)
+                                    .height(MIN_CARD_HEIGHT / 2)
                                     .background(lowerLineColor)
                             )
                         }
@@ -226,7 +225,7 @@ fun GraphListItem(
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = spotDragModifier
-                                .size(pointCircleSize)
+                                .size(POINT_CIRCLE_SIZE)
                                 .clip(CircleShape)
                                 .background(pointColor)
                         ) {
@@ -380,30 +379,30 @@ private fun ExpandedTextWithLine(
     expandedTextStyle: TextStyle = getTextStyle(TextType.GRAPH_LIST_ITEM__EXPAND),
     lineColor: Color = getColor(ColorType.GRAPH__LINE)
 ){
-    val dummyPointHalfWidth = (pointCircleSize - lineWidth)/2
+    val dummyPointHalfWidth = (POINT_CIRCLE_SIZE - LINE_WIDTH)/2
 
     Column{
         Row(
             modifier = Modifier
-                .height(additionalHeight)
+                .height(ADDITIONAL_HEIGHT)
                 .fillMaxWidth()
         ) {
             //dummy date/time
-            MySpacerRow(width = (40.dp - pointCircleSize) / 2 + 70.dp)
+            MySpacerRow(width = (40.dp - POINT_CIRCLE_SIZE) / 2 + 70.dp)
 
             //dummy (40.dp - line) / 2
-            MySpacerRow(width = (40.dp - lineWidth) / 2)
+            MySpacerRow(width = (40.dp - LINE_WIDTH) / 2)
 
             //line
             Box(
                 modifier = Modifier
-                    .width(lineWidth)
+                    .width(LINE_WIDTH)
                     .fillMaxHeight()
                     .background(lineColor)
             )
 
             //dummy (40.dp - line) / 2
-            MySpacerRow(width = (40.dp - lineWidth) / 2)
+            MySpacerRow(width = (40.dp - LINE_WIDTH) / 2)
 
             Spacer(modifier = Modifier.width(10.dp))
 
@@ -423,7 +422,7 @@ private fun ExpandedTextWithLine(
  */
 @Composable
 fun DummySpaceWithLine(
-    height: Dp = dummySpaceHeight,
+    height: Dp = DUMMY_SPACE_HEIGHT,
     lineColor: Color = getColor(ColorType.GRAPH__LINE)
 ){
     Row (
@@ -432,21 +431,21 @@ fun DummySpaceWithLine(
             .height(height)
     ){
         //dummy date/time
-        MySpacerRow(width = (40.dp - pointCircleSize) / 2 + 70.dp)
+        MySpacerRow(width = (40.dp - POINT_CIRCLE_SIZE) / 2 + 70.dp)
 
         //dummy (40.dp - line) / 2
-        MySpacerRow(width = (40.dp - lineWidth) / 2)
+        MySpacerRow(width = (40.dp - LINE_WIDTH) / 2)
 
         //line
         Box(
             modifier = Modifier
-                .width(lineWidth)
+                .width(LINE_WIDTH)
                 .fillMaxHeight()
                 .background(lineColor)
         )
 
         //dummy (40.dp - line) / 2
-        MySpacerRow(width = (40.dp - lineWidth) / 2)
+        MySpacerRow(width = (40.dp - LINE_WIDTH) / 2)
     }
 }
 

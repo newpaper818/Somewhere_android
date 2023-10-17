@@ -64,11 +64,11 @@ import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.ui.tripScreenUtils.AnimatedBottomSaveCancelBar
 import com.example.somewhere.ui.tripScreenUtils.SeeOnMapExtendedFAB
-import com.example.somewhere.ui.tripScreenUtils.additionalHeight
+import com.example.somewhere.ui.tripScreenUtils.ADDITIONAL_HEIGHT
 import com.example.somewhere.ui.tripScreenUtils.cards.MAX_TITLE_LENGTH
 import com.example.somewhere.ui.tripScreenUtils.cards.TitleCard
-import com.example.somewhere.ui.tripScreenUtils.dummySpaceHeight
-import com.example.somewhere.ui.tripScreenUtils.minCardHeight
+import com.example.somewhere.ui.tripScreenUtils.DUMMY_SPACE_HEIGHT
+import com.example.somewhere.ui.tripScreenUtils.MIN_CARD_HEIGHT
 import com.example.somewhere.utils.SlideState
 import com.example.somewhere.utils.dragAndDrop
 import com.example.somewhere.viewModel.DateTimeFormat
@@ -446,7 +446,7 @@ fun TripScreen(
                                         dateTitleErrorCount--
                                     }
                                 },
-                                onItemClick = { navigateToDate(date.id) },
+                                onItemClick = { navigateToDate(date.orderId) },
                                 onSideTextClick = { },
                                 onPointClick = { }
                             )
@@ -525,8 +525,8 @@ private fun DateListItem(
 
     //get item height(px), use at drag reorder
     var itemHeight: Int
-    val unExpandedItemHeight = minCardHeight + dummySpaceHeight * 2
-    val expandedItemHeight = minCardHeight + dummySpaceHeight * 2 + additionalHeight
+    val unExpandedItemHeight = MIN_CARD_HEIGHT + DUMMY_SPACE_HEIGHT * 2
+    val expandedItemHeight = MIN_CARD_HEIGHT + DUMMY_SPACE_HEIGHT * 2 + ADDITIONAL_HEIGHT
 
     with(LocalDensity.current){
         itemHeight = if (isExpanded) expandedItemHeight.toPx().toInt()
@@ -563,6 +563,25 @@ private fun DateListItem(
     //item ui
     GraphListItem(
         modifier = dragModifier,
+        dragHandleModifier = Modifier
+            .dragAndDrop(
+                date, trip.dateList,
+                itemHeight = itemHeight,
+                updateSlideState = updateSlideState,
+                offsetY = itemOffsetY,
+                onStartDrag = {
+                    isDragged = true
+                },
+                onStopDrag = { currentIndex, destinationIndex ->
+
+                    if (currentIndex != destinationIndex){
+                        updateItemPosition(currentIndex, destinationIndex)
+                    }
+
+                    isDragged = false
+                }
+            ),
+
         pointColor = Color(date.color.color),
         isEditMode = isEditMode,
         isExpanded = isExpanded,
@@ -586,24 +605,6 @@ private fun DateListItem(
         },
         onSideTextClick = onSideTextClick,
         onPointClick = onPointClick,
-        isLongText = isLongText,
-        dragHandleModifier = Modifier
-            .dragAndDrop(
-                date, trip.dateList,
-                itemHeight = itemHeight,
-                updateSlideState = updateSlideState,
-                offsetY = itemOffsetY,
-                onStartDrag = {
-                    isDragged = true
-                },
-                onStopDrag = { currentIndex, destinationIndex ->
-
-                    if (currentIndex != destinationIndex){
-                        updateItemPosition(currentIndex, destinationIndex)
-                    }
-
-                    isDragged = false
-                }
-            )
+        isLongText = isLongText
     )
 }

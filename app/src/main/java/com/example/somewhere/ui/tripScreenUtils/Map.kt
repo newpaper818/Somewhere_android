@@ -141,7 +141,7 @@ fun MapForTrip(
                             location = spot.location,
                             title = spot.titleText ?: stringResource(id = R.string.no_title),
                             isBigMarker = false,
-                            text = spot.orderId.toString(),
+                            text = spot.iconText.toString(),
                             iconColor = dateWithBoolean.date.color.color,
                             onIconColor = dateWithBoolean.date.color.onColor
                         )
@@ -215,7 +215,7 @@ fun MapForSpot(
                     location = spot1.location,
                     title = spot1.titleText ?: stringResource(id = R.string.no_title),
                     isBigMarker = spot1 == spot || spot1 == spotFrom || spot1 == spotTo,
-                    text = spot1.orderId.toString(),
+                    text = spot1.iconText.toString(),
                     iconColor = spot1.spotType.group.color.color,
                     onIconColor = spot1.spotType.group.color.onColor
                 )
@@ -287,7 +287,7 @@ fun MapChooseLocation(
                     location = spot1.location,
                     title = spot1.titleText ?: stringResource(id = R.string.no_title),
                     isBigMarker = false,
-                    text = spot1.orderId.toString(),
+                    text = spot1.iconText.toString(),
                     iconColor = spot1.spotType.group.color.color,
                     onIconColor = spot1.spotType.group.color.onColor
                 )

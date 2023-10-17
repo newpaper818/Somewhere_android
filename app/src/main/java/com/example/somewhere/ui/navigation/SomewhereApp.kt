@@ -410,6 +410,9 @@ fun SomewhereApp(
                         deleteSpot = { dateId, spotId ->
                             somewhereViewModel.deleteSpot(dateId, spotId)
                         },
+                        reorderSpotList = { dateId, currentIndex, destinationIndex ->
+                            somewhereViewModel.reorderSpotList(dateId, currentIndex, destinationIndex)
+                        },
                         saveTrip = {
                             coroutineScope.launch {
                                 somewhereViewModel.saveTrip({
@@ -454,7 +457,7 @@ fun SomewhereApp(
                         originalTrip = somewhereUiState.trip!!,
                         tempTrip = somewhereUiState.tempTrip!!,
                         dateId = somewhereUiState.dateId ?: 0,
-                        spotId = somewhereUiState.spotId ?: 0,
+                        spotIndex = somewhereUiState.spotId ?: 0,
                         dateTimeFormat = appUiState.dateTimeFormat,
                         changeEditMode = {
                             somewhereViewModel.toggleEditMode(it)

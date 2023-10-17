@@ -3,6 +3,8 @@ package com.example.somewhere.ui.tripScreens
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -18,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -35,6 +38,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -51,12 +56,15 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.example.somewhere.R
 import com.example.somewhere.model.Date
 import com.example.somewhere.model.Trip
 import com.example.somewhere.enumUtils.SpotTypeGroup
 import com.example.somewhere.enumUtils.TimeFormat
+import com.example.somewhere.model.Spot
 import com.example.somewhere.ui.navigation.NavigationDestination
 import com.example.somewhere.ui.tripScreenUtils.DateListProgressBar
 import com.example.somewhere.ui.tripScreenUtils.dialogs.DeleteOrNotDialog
@@ -75,9 +83,15 @@ import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.ui.tripScreenUtils.AnimatedBottomSaveCancelBar
 import com.example.somewhere.ui.tripScreenUtils.SeeOnMapExtendedFAB
+import com.example.somewhere.ui.tripScreenUtils.ADDITIONAL_HEIGHT
 import com.example.somewhere.ui.tripScreenUtils.cards.MAX_TITLE_LENGTH
+import com.example.somewhere.ui.tripScreenUtils.DUMMY_SPACE_HEIGHT
+import com.example.somewhere.ui.tripScreenUtils.MIN_CARD_HEIGHT
+import com.example.somewhere.utils.SlideState
+import com.example.somewhere.utils.dragAndDrop
 import com.example.somewhere.viewModel.DateTimeFormat
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 object DateDestination : NavigationDestination {
     override val route = "date"
@@ -106,6 +120,7 @@ fun DateScreen(
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     addNewSpot: (dateId: Int) -> Unit,
     deleteSpot: (dateId: Int, spotId: Int) -> Unit,
+    reorderSpotList: (dateId: Int, currentIndex: Int, destinationIndex: Int) -> Unit,
     saveTrip: () -> Unit,
 
     navigateUp: () -> Unit,
@@ -272,7 +287,7 @@ fun DateScreen(
                     state = datePagerState,
 //                    beyondBoundsPageCount = 1,
                     modifier = Modifier.weight(1f)
-                ) { pageIndex ->    //pageIndex == dateId
+                ) { pageIndex ->    //pageIndex == dateOrderId
 
                     DatePage(
                         isEditMode = isEditMode,
@@ -313,6 +328,9 @@ fun DateScreen(
                                     duration = duration_
                                 )
                             }
+                        },
+                        reorderSpotList = { currentIndex, destinationIndex ->
+                            reorderSpotList(pageIndex, currentIndex, destinationIndex)
                         },
                         modifier = modifier.padding(16.dp, 0.dp)
                     )
@@ -359,17 +377,25 @@ fun DatePage(
     navigateToSpot: (dateId: Int, spotId: Int) -> Unit,
     setIsFABExpanded: (Boolean) -> Unit,
     showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit,
+    reorderSpotList: (currentIndex: Int, destinationIndex: Int) -> Unit,
 
     modifier: Modifier = Modifier
 ){
     val dateList = showingTrip.dateList
     val spotList = currentDate.spotList
 
+    val coroutineScope = rememberCoroutineScope()
+
     var spotTypeWithShownList by rememberSaveable{
         mutableStateOf(getSpotTypeGroupWithShownList(currentDate))
     }
 
     val scrollState = rememberLazyListState()
+
+    //slideStates
+    val slideStates = remember { mutableStateMapOf<Int, SlideState>(
+        *showingTrip.dateList[dateId].spotList.map { it.id to SlideState.NONE }.toTypedArray()
+    ) }
 
     var spotTitleErrorCount by rememberSaveable { mutableStateOf(0) }
 
@@ -548,67 +574,52 @@ fun DatePage(
 
                 //list with line
                 items(spotList) { spot ->
+                    key(spotList.map { it.id }){
+                        val slideState = slideStates[spot.id] ?: SlideState.NONE
 
-                    if (checkSpotTypeGroupIsShown(spot.spotType.group, spotTypeWithShownList)) {
+                        if (checkSpotTypeGroupIsShown(spot.spotType.group, spotTypeWithShownList)) {
 
-                        //set point color
-                        val pointColor =
-                            if (spot.spotType.isMove())
-                                Color.Transparent
-                            else
-                                Color(spot.spotType.group.color.color)
+                            SpotListItem(
+                                modifier = modifier,
+                                trip = showingTrip,
+                                dateId = dateId,
+                                spot = spot,
+                                isEditMode = isEditMode,
+                                timeFormat = timeFormat,
+                                slideState = slideState,
+                                updateSlideState = { dateId, newSlideState ->
+                                    slideStates[spotList[dateId].id] = newSlideState
+                                },
+                                updateItemPosition = { currentIndex, destinationIndex ->
+                                    //on drag end
+                                    coroutineScope.launch {
+                                        //reorder list
+                                        reorderSpotList(currentIndex, destinationIndex)
 
-                        var isExpanded by rememberSaveable { mutableStateOf(false) }
-
-                        //list item
-                        GraphListItem(
-                            isEditMode = isEditMode,
-                            isExpanded = isExpanded,
-
-                            iconText = if (spot.spotType.isNotMove()) spot.orderId.toString()
-                                        else null,
-                            iconTextColor = spot.spotType.group.color.onColor,
-
-                            sideText = spot.getStartTimeText(timeFormat) ?: "",
-                            mainText = spot.titleText,
-                            expandedText = spot.getExpandedText(showingTrip, isEditMode),
-
-                            onTitleTextChange = { spotTitleText ->
-                                spotList[spot.id].setTitleText(showingTrip, dateId, updateTripState, spotTitleText)
-                            },
-
-                            isFirstItem = spot.spotType.isNotMove()
-                                    && spot == spotList.first()
-                                    && spot.getPrevSpot(dateList, spotList, dateId)?.spotType?.isNotMove() ?: true,
-
-                            isLastItem = spot.spotType.isNotMove()
-                                    && spot == spotList.last()
-                                    && spot.getNextSpot(dateList, spotList, dateId)?.spotType?.isNotMove() ?: true,
-
-                            deleteEnabled = true,
-                            dragEnabled = true,
-
-                            onItemClick = {
-                                navigateToSpot(dateId, spot.id)
-                            },
-                            onExpandedButtonClicked = {
-                                isExpanded = !isExpanded
-                            },
-                            onDeleteClick = {
-                                //dialog: ask delete
-                                deleteSpot(dateId, spot.id)
-                                spotTypeWithShownList =
-                                    updateSpotTypeGroupWithShownList(currentDate, spotTypeWithShownList)
-                            },
-
-                            pointColor = pointColor,
-                            isLongText = {
-                                if (it) spotTitleErrorCount++
-                                else    spotTitleErrorCount--
-                                onErrorCountChange(it)
-                            },
-                            modifier = modifier
-                        )
+                                        //all slideState to NONE
+                                        slideStates.putAll(spotList.map { it.id }
+                                            .associateWith { SlideState.NONE })
+                                    }
+                                },
+                                updateTripState = updateTripState,
+                                isLongText = {
+                                    if (it) spotTitleErrorCount++
+                                    else    spotTitleErrorCount--
+                                    onErrorCountChange(it)
+                                },
+                                onItemClick = {
+                                    navigateToSpot(dateId, spotList.indexOf(spot))
+                                },
+                                onDeleteClick = {
+                                    //dialog: ask delete
+                                    deleteSpot(dateId, spot.id)
+                                    spotTypeWithShownList =
+                                        updateSpotTypeGroupWithShownList(currentDate, spotTypeWithShownList)
+                                },
+                                onSideTextClick = { /*TODO*/ },
+                                onPointClick = { /*TODO*/ }
+                            )
+                        }
                     }
                 }
 
@@ -654,6 +665,141 @@ fun DatePage(
             }
         }
     }
+}
+
+@Composable
+fun SpotListItem(
+    trip: Trip,
+    dateId: Int,
+    spot: Spot,
+
+    isEditMode: Boolean,
+
+    timeFormat: TimeFormat,
+
+    slideState: SlideState,
+    updateSlideState: (tripIdx: Int, slideState: SlideState) -> Unit,
+    updateItemPosition: (currentIndex: Int, destinationIndex: Int) -> Unit,
+
+    updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
+    isLongText: (Boolean) -> Unit,
+
+    onItemClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    onSideTextClick: () -> Unit,
+    onPointClick: () -> Unit,
+
+    modifier: Modifier = Modifier
+){
+    val dateList = trip.dateList
+    val spotList = trip.dateList[dateId].spotList
+
+    //set point color
+    val pointColor =
+        if (spot.spotType.isMove())
+            Color.Transparent
+        else
+            Color(spot.spotType.group.color.color)
+
+    //is expanded
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
+
+    //get item height(px), use at drag reorder
+    var itemHeight: Int
+    val unExpandedItemHeight = MIN_CARD_HEIGHT + DUMMY_SPACE_HEIGHT * 2
+    val expandedItemHeight = MIN_CARD_HEIGHT + DUMMY_SPACE_HEIGHT * 2 + ADDITIONAL_HEIGHT
+
+    with(LocalDensity.current){
+        itemHeight = if (isExpanded) expandedItemHeight.toPx().toInt()
+                     else            unExpandedItemHeight.toPx().toInt()
+    }
+
+    //is dragged
+    var isDragged by remember { mutableStateOf(false) }
+    val zIndex = if (isDragged) 1.0f else 0.0f
+
+    val verticalTranslation by animateIntAsState(
+        targetValue = when (slideState){
+            SlideState.UP   -> -itemHeight
+            SlideState.DOWN -> itemHeight
+            else -> 0
+        },
+        label = "vertical translation"
+    )
+
+    //item y offset
+    val itemOffsetY = remember { Animatable(0f) }
+
+    //item modifier
+    val dragModifier =
+        //set y offset while dragging or drag end
+        if (isEditMode) modifier
+            .offset {
+                if (isDragged) IntOffset(0, itemOffsetY.value.roundToInt())
+                else IntOffset(0, verticalTranslation)
+            }
+            .zIndex(zIndex)
+        else modifier
+
+    //item ui
+    GraphListItem(
+        modifier = dragModifier,
+        dragHandleModifier = Modifier
+            .dragAndDrop(
+                spot, spotList,
+                itemHeight = itemHeight,
+                updateSlideState = updateSlideState,
+                offsetY = itemOffsetY,
+                onStartDrag = {
+                    isDragged = true
+                },
+                onStopDrag = { currentIndex, destinationIndex ->
+
+                    if (currentIndex != destinationIndex){
+                        updateItemPosition(currentIndex, destinationIndex)
+                    }
+
+                    isDragged = false
+                }
+            ),
+
+        pointColor = pointColor,
+        isEditMode = isEditMode,
+        isExpanded = isExpanded,
+
+        iconText = if (spot.spotType.isNotMove()) spot.iconText.toString()
+        else null,
+        iconTextColor = spot.spotType.group.color.onColor,
+
+        sideText = spot.getStartTimeText(timeFormat) ?: "",
+        mainText = spot.titleText,
+        expandedText = spot.getExpandedText(trip, isEditMode),
+
+        onTitleTextChange = { spotTitleText ->
+            spotList[spot.id].setTitleText(trip, dateId, updateTripState, spotTitleText)
+        },
+
+        isFirstItem = spot.spotType.isNotMove()
+                && spot == spotList.first()
+                && spot.getPrevSpot(dateList, spotList, dateId)?.spotType?.isNotMove() ?: true,
+
+        isLastItem = spot.spotType.isNotMove()
+                && spot == spotList.last()
+                && spot.getNextSpot(dateList, spotList, dateId)?.spotType?.isNotMove() ?: true,
+
+        deleteEnabled = true,
+        dragEnabled = true,
+
+        onItemClick = onItemClick,
+        onExpandedButtonClicked = {
+            isExpanded = !isExpanded
+        },
+        onDeleteClick = onDeleteClick,
+        onSideTextClick = onSideTextClick,
+        onPointClick = onPointClick,
+
+        isLongText = isLongText
+    )
 }
 
 private fun getSpotTypeGroupWithShownList(
