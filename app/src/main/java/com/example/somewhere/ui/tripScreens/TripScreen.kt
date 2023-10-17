@@ -411,7 +411,7 @@ fun TripScreen(
 
                     items(enabledDateList) { date ->
 
-                        key(enabledDateList) {
+                        key(enabledDateList.map { it.id }) {
                             val slideState = slideStates[date.id] ?: SlideState.NONE
 
                             DateListItem(

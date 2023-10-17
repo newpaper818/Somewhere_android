@@ -324,15 +324,26 @@ class SomewhereViewModel(
 
     fun reorderDateList(currentIndex: Int, destinationIndex: Int){
         if (_uiState.value.tempTrip?.dateList != null){
+
             val newDateList = _uiState.value.tempTrip!!.dateList.toMutableList()
+
+            var currDate = newDateList.first().date
+
+            //reorder
             val date = newDateList[currentIndex]
             newDateList.removeAt(currentIndex)
             newDateList.add(destinationIndex, date)
 
+            //update orderId, date
             newDateList.forEach{
-                it.id = newDateList.indexOf(it)
+                if (it.id >= 0) {
+                    it.orderId = newDateList.indexOf(it)
+                    it.date = currDate
+                }
+                currDate = currDate.plusDays(1)
             }
 
+            //update ui state
             val newTempTrip = _uiState.value.tempTrip!!.copy(dateList = newDateList)
 
             _uiState.update {

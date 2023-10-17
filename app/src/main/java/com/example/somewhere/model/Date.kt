@@ -17,6 +17,7 @@ import java.util.Locale
 @JsonClass(generateAdapter = true)
 data class Date(
     var id: Int = 0,
+    var orderId: Int = 0,
 
     val color: MyColor = MyColor(),
 
@@ -30,7 +31,7 @@ data class Date(
 
     public override fun clone(): Date{
         return Date(
-            id, color, date, titleText, spotList.map{ it.clone() }, memo
+            id, orderId, color, date, titleText, spotList.map{ it.clone() }, memo
         )
     }
 
