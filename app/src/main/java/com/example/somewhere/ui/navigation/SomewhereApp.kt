@@ -348,6 +348,9 @@ fun SomewhereApp(
                         organizeAddedDeletedImages = { isClickSave ->
                             somewhereViewModel.organizeAddedDeletedImages(context, isClickSave)
                         },
+                        reorderDateList = { currentIndex, destinationIndex ->
+                            somewhereViewModel.reorderDateList(currentIndex, destinationIndex)
+                        },
 
                         saveTrip = {
                             coroutineScope.launch {

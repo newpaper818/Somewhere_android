@@ -27,20 +27,17 @@ enum class SlideState {
     DOWN
 }
 
-fun  Modifier.dragAndDrop(
-//    item: T,
-    item: Trip,
-//    items: MutableList<T>,
-    items: List<Trip>,
+fun <T> Modifier.dragAndDrop(
+    item: T,
+    items: List<T>,
     itemHeight: Int,
-    updateSlideState: (showingTripList: List<Trip>, itemIdx: Int, slideState: SlideState) -> Unit,
-    isDraggedAfterLongPress: Boolean,
+    updateSlideState: (itemIdx: Int, slideState: SlideState) -> Unit,
     offsetY: Animatable<Float, AnimationVector1D>,
     onStartDrag: () -> Unit,
     onStopDrag: (currentIndex: Int, destinationIndex: Int) -> Unit,
-): Modifier = composed {
-    Log.d("test3", "        on drag drop trip: ${item.titleText} | tripList: ${items.map { it.titleText } }}")
 
+    isDraggedAfterLongPress: Boolean = false,
+): Modifier = composed {
 
     val haptic = LocalHapticFeedback.current
 
@@ -67,14 +64,17 @@ fun  Modifier.dragAndDrop(
 
             //on drag
             val onDrag = {change: PointerInputChange ->
-                Log.d("test2", "    on drag trip: ${item.titleText} | tripList: ${items.map { it.titleText } }}")
                 val verticalDragOffset = offsetY.value + change.positionChange().y
 
                 launch {
                     offsetY.snapTo(verticalDragOffset)
 
+                    // -1, 0, 1
                     val offsetSign = offsetY.value.sign.toInt()
+
                     previousNumberOfItems = numberOfItems
+
+                    //passed item count
                     numberOfItems = calculateNumberOfSlideItems(
                         offsetY.value * offsetSign,
                         itemHeight,
@@ -87,17 +87,16 @@ fun  Modifier.dragAndDrop(
                         if (idx > items.size - 1)    idx = items.size - 1
                         else if (idx < 0)           idx = 0
 
-                        updateSlideState(items, idx, SlideState.NONE)
+                        updateSlideState(idx, SlideState.NONE)
                     } else if (numberOfItems != 0) {
+
                         try {
                             updateSlideState(
-                                items,
                                 itemIdx + numberOfItems * offsetSign,
                                 if (offsetSign == 1) SlideState.UP else SlideState.DOWN
                             )
                         } catch (e: IndexOutOfBoundsException) {
                             numberOfItems = previousNumberOfItems
-                            Log.i("DragToReorder", "Item is outside or at the edge")
                         }
                     }
                     listOffset = numberOfItems * offsetSign
@@ -118,8 +117,6 @@ fun  Modifier.dragAndDrop(
             if (isDraggedAfterLongPress)
                 detectDragGesturesAfterLongPress(
                     onDragStart = {
-                        //haptic feedback?
-
                         onDragStart()
                     },
                     onDrag = { change, _ -> onDrag(change) },
@@ -128,8 +125,6 @@ fun  Modifier.dragAndDrop(
             else
                 detectDragGestures(
                     onDragStart = {
-                        //haptic feedback?
-
                         onDragStart()
                     },
                     onDrag = { change, _ -> onDrag(change) },

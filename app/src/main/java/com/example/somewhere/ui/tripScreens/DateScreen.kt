@@ -26,7 +26,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -76,6 +75,7 @@ import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.ui.tripScreenUtils.AnimatedBottomSaveCancelBar
 import com.example.somewhere.ui.tripScreenUtils.SeeOnMapExtendedFAB
+import com.example.somewhere.ui.tripScreenUtils.cards.MAX_TITLE_LENGTH
 import com.example.somewhere.viewModel.DateTimeFormat
 import kotlinx.coroutines.launch
 
@@ -132,7 +132,11 @@ fun DateScreen(
     )
 
     val snackBarHostState = remember { SnackbarHostState() }
-    var saveButtonEnabled by rememberSaveable { mutableStateOf(true) }
+    var errorCount by rememberSaveable { mutableStateOf(0) }
+
+    LaunchedEffect(isEditMode){
+        errorCount = 0
+    }
 
     //animate progress bar when current page changed
     LaunchedEffect(datePagerState){
@@ -283,7 +287,11 @@ fun DateScreen(
                         setShowBottomSaveCancelBar = {
                             showBottomSaveCancelBar = it
                         },
-                        setSaveButtonEnabled = { saveButtonEnabled = !it },
+                        onErrorCountChange = { plusError ->
+                            if (plusError) errorCount ++
+                            else    errorCount --
+                            Log.d("err1", "err = $errorCount")
+                        },
                         updateTripState = updateTripState,
 
                         addNewSpot = { dateId ->
@@ -325,7 +333,7 @@ fun DateScreen(
                         organizeAddedDeletedImages(true)
                     }
                 },
-                saveEnabled = saveButtonEnabled
+                saveEnabled = errorCount <= 0
             )
         }
     }
@@ -343,7 +351,7 @@ fun DatePage(
     snackBarHostState: SnackbarHostState,
 
     setShowBottomSaveCancelBar: (Boolean) -> Unit,
-    setSaveButtonEnabled: (Boolean) -> Unit,
+    onErrorCountChange: (plusError: Boolean) -> Unit,
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     addNewSpot: (dateId: Int) -> Unit,
     deleteSpot: (dateId: Int, spotId: Int) -> Unit,
@@ -362,6 +370,12 @@ fun DatePage(
     }
 
     val scrollState = rememberLazyListState()
+
+    var spotTitleErrorCount by rememberSaveable { mutableStateOf(0) }
+
+    LaunchedEffect(isEditMode){
+        spotTitleErrorCount = 0
+    }
 
     LaunchedEffect(key1 = scrollState.firstVisibleItemIndex == 0 ){
         setIsFABExpanded(scrollState.firstVisibleItemIndex == 0)
@@ -390,7 +404,7 @@ fun DatePage(
                     Log.d("page", "title ${currentDate.id}")
                 },
                 focusManager = focusManager,
-                isLongText = setSaveButtonEnabled,
+                isLongText = { onErrorCountChange(it) },
 
                 color = currentDate.color,
                 onColorChange = {newDateColor ->
@@ -429,7 +443,7 @@ fun DatePage(
                 onMemoChanged = { newMemoText ->
                     currentDate.setMemoText(showingTrip, updateTripState, newMemoText)
                 },
-                isLongText = setSaveButtonEnabled
+                isLongText = { onErrorCountChange(it) },
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -512,6 +526,16 @@ fun DatePage(
                                             textHeight = it.size.height
                                         }
                                     )
+
+                                    //up to 100 characters
+                                    if (spotTitleErrorCount > 0){
+                                        Spacer(modifier = Modifier.weight(1f))
+
+                                        Text(
+                                            text = stringResource(id = R.string.long_text, MAX_TITLE_LENGTH),
+                                            style = getTextStyle(TextType.CARD__TITLE_ERROR)
+                                        )
+                                    }
                                 }
 
                                 if(firstSpotShowUpperLine)
@@ -523,16 +547,16 @@ fun DatePage(
 
 
                 //list with line
-                items(spotList) {
+                items(spotList) { spot ->
 
-                    if (checkSpotTypeGroupIsShown(it.spotType.group, spotTypeWithShownList)) {
+                    if (checkSpotTypeGroupIsShown(spot.spotType.group, spotTypeWithShownList)) {
 
                         //set point color
                         val pointColor =
-                            if (it.spotType.isMove())
+                            if (spot.spotType.isMove())
                                 Color.Transparent
                             else
-                                Color(it.spotType.group.color.color)
+                                Color(spot.spotType.group.color.color)
 
                         var isExpanded by rememberSaveable { mutableStateOf(false) }
 
@@ -540,46 +564,49 @@ fun DatePage(
                         GraphListItem(
                             isEditMode = isEditMode,
                             isExpanded = isExpanded,
-                            itemId = it.id,
 
-                            iconText = if (it.spotType.isNotMove()) it.orderId.toString()
+                            iconText = if (spot.spotType.isNotMove()) spot.orderId.toString()
                                         else null,
-                            iconTextColor = it.spotType.group.color.onColor,
+                            iconTextColor = spot.spotType.group.color.onColor,
 
-                            sideText = it.getStartTimeText(timeFormat) ?: "",
-                            mainText = it.titleText,
-                            expandedText = it.getExpandedText(showingTrip, isEditMode),
+                            sideText = spot.getStartTimeText(timeFormat) ?: "",
+                            mainText = spot.titleText,
+                            expandedText = spot.getExpandedText(showingTrip, isEditMode),
 
-                            onTitleTextChange = { spotId, spotTitleText ->
-                                spotList[spotId].setTitleText(showingTrip, dateId, updateTripState, spotTitleText)
+                            onTitleTextChange = { spotTitleText ->
+                                spotList[spot.id].setTitleText(showingTrip, dateId, updateTripState, spotTitleText)
                             },
 
-                            isFirstItem = it.spotType.isNotMove()
-                                    && it == spotList.first()
-                                    && it.getPrevSpot(dateList, spotList, dateId)?.spotType?.isNotMove() ?: true,
+                            isFirstItem = spot.spotType.isNotMove()
+                                    && spot == spotList.first()
+                                    && spot.getPrevSpot(dateList, spotList, dateId)?.spotType?.isNotMove() ?: true,
 
-                            isLastItem = it.spotType.isNotMove()
-                                    && it == spotList.last()
-                                    && it.getNextSpot(dateList, spotList, dateId)?.spotType?.isNotMove() ?: true,
+                            isLastItem = spot.spotType.isNotMove()
+                                    && spot == spotList.last()
+                                    && spot.getNextSpot(dateList, spotList, dateId)?.spotType?.isNotMove() ?: true,
 
-                            availableDelete = true,
+                            deleteEnabled = true,
+                            dragEnabled = true,
 
-                            onItemClick = { spotId ->
-                                navigateToSpot(dateId, spotId)
+                            onItemClick = {
+                                navigateToSpot(dateId, spot.id)
                             },
-                            onExpandedButtonClicked = { id ->
+                            onExpandedButtonClicked = {
                                 isExpanded = !isExpanded
                             },
-                            onDeleteClick = { spotId ->
+                            onDeleteClick = {
                                 //dialog: ask delete
-                                deleteSpot(dateId, spotId)
+                                deleteSpot(dateId, spot.id)
                                 spotTypeWithShownList =
                                     updateSpotTypeGroupWithShownList(currentDate, spotTypeWithShownList)
-
                             },
 
                             pointColor = pointColor,
-                            showLongTextSnackBar = showSnackBar,
+                            isLongText = {
+                                if (it) spotTitleErrorCount++
+                                else    spotTitleErrorCount--
+                                onErrorCountChange(it)
+                            },
                             modifier = modifier
                         )
                     }

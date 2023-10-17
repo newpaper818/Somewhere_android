@@ -61,7 +61,7 @@ data class Spot(
         val distanceText = getDistanceText()
 
         return if (isEditMode) "$categoryText | $budgetText | $distanceText"
-                else "$categoryText | $budgetText | $distanceText\nSee more"
+                else "$categoryText | $budgetText | $distanceText"
     }
 
     @Composable

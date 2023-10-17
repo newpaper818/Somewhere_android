@@ -17,14 +17,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -49,7 +50,7 @@ import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getColor
 import com.example.somewhere.ui.theme.getTextStyle
 
-private const val MAX_TITLE_LENGTH = 100
+const val MAX_TITLE_LENGTH = 100
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -188,11 +189,15 @@ private fun TitleCardUi(
 
     modifier: Modifier = Modifier,
     titleTextStyle: TextStyle = getTextStyle(TextType.CARD__TITLE),
-    errTextStyle: TextStyle = getTextStyle(TextType.CARD__TITLE_ERROR),
+    errorTextStyle: TextStyle = getTextStyle(TextType.CARD__TITLE_ERROR),
     bodyTextStyle: TextStyle = getTextStyle(TextType.CARD__BODY),
     bodyNullTextStyle: TextStyle = getTextStyle(TextType.CARD__BODY_NULL)
 ){
     var isTextSizeLimit by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(isEditMode){
+        isTextSizeLimit = (titleText ?: "").length > MAX_TITLE_LENGTH
+    }
 
     val borderColor = if (isTextSizeLimit) getColor(ColorType.ERROR_BORDER)
                     else Color.Transparent
@@ -200,7 +205,7 @@ private fun TitleCardUi(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, borderColor, RoundedCornerShape(16.dp))
+            .border(1.dp, borderColor, MaterialTheme.shapes.medium)
             .onSizeChanged {
                 getCardHeight(it.height)
             }
@@ -227,7 +232,7 @@ private fun TitleCardUi(
 
                             Text(
                                 text = stringResource(id = R.string.long_text, MAX_TITLE_LENGTH),
-                                style = errTextStyle
+                                style = errorTextStyle
                             )
                         }
                     }

@@ -21,6 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -61,6 +62,10 @@ fun MemoCard(
     bodyNullTextStyle: TextStyle = getTextStyle(TextType.CARD__BODY_NULL)
 ){
     var isTextSizeLimit by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(isEditMode){
+        isTextSizeLimit = (memoText ?: "").length > MAX_MEMO_LENGTH
+    }
 
     val borderColor = if (isTextSizeLimit) getColor(ColorType.ERROR_BORDER)
                         else Color.Transparent
