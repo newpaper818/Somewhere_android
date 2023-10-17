@@ -354,9 +354,13 @@ fun SomewhereApp(
 
                         saveTrip = {
                             coroutineScope.launch {
-                                somewhereViewModel.saveTrip{
-                                    coroutineScope.launch { appViewModel.updateAppUiStateFromRepository() }
-                                }
+                                somewhereViewModel.saveTrip(
+                                    updateAppUiState = {
+                                        coroutineScope.launch { appViewModel.updateAppUiStateFromRepository() }
+                                    },
+                                    deleteNotEnabledDate = true
+                                )
+
                             }
                         },
                     )
@@ -408,9 +412,9 @@ fun SomewhereApp(
                         },
                         saveTrip = {
                             coroutineScope.launch {
-                                somewhereViewModel.saveTrip{
+                                somewhereViewModel.saveTrip({
                                     coroutineScope.launch { appViewModel.updateAppUiStateFromRepository() }
-                                }
+                                })
                             }
                         },
 
@@ -476,9 +480,9 @@ fun SomewhereApp(
                         },
                         saveTrip = {
                             coroutineScope.launch {
-                                somewhereViewModel.saveTrip{
+                                somewhereViewModel.saveTrip({
                                     coroutineScope.launch { appViewModel.updateAppUiStateFromRepository() }
-                                }
+                                })
                             }
                         },
 

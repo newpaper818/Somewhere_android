@@ -20,7 +20,7 @@ data class Date(
 
     val color: MyColor = MyColor(),
 
-    val date: LocalDate,
+    var date: LocalDate,
 
     val titleText: String? = null,
 

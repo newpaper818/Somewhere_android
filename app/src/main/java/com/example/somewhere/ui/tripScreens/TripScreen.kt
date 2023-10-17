@@ -405,11 +405,13 @@ fun TripScreen(
                     }
                 }
 
-                if (showingTrip.dateList.isNotEmpty()) {
+                val enabledDateList = showingTrip.dateList.filter { it.id >= 0 }
 
-                    items(showingTrip.dateList) { date ->
+                if (enabledDateList.isNotEmpty()) {
 
-                        key(showingTrip.dateList) {
+                    items(enabledDateList) { date ->
+
+                        key(enabledDateList) {
                             val slideState = slideStates[date.id] ?: SlideState.NONE
 
                             DateListItem(
@@ -420,7 +422,7 @@ fun TripScreen(
 
                                 slideState = slideState,
                                 updateSlideState = { dateId, newSlideState ->
-                                    slideStates[showingTrip.dateList[dateId].id] = newSlideState
+                                    slideStates[enabledDateList[dateId].id] = newSlideState
                                 },
                                 updateItemPosition = { currentIndex, destinationIndex ->
                                     //on drag end
@@ -429,7 +431,7 @@ fun TripScreen(
                                         reorderDateList(currentIndex, destinationIndex)
 
                                         //all slideState to NONE
-                                        slideStates.putAll(showingTrip.dateList.map { it.id }
+                                        slideStates.putAll(enabledDateList.map { it.id }
                                             .associateWith { SlideState.NONE })
                                     }
                                 },

@@ -112,9 +112,16 @@ class SomewhereViewModel(
     }
 
     //save tempTrip
-    suspend fun saveTrip(updateAppUiState: () -> Unit){
+    suspend fun saveTrip(updateAppUiState: () -> Unit, deleteNotEnabledDate: Boolean = false){
         if (_uiState.value.tempTrip != null){
-            val tempTrip = _uiState.value.tempTrip!!.copy(lastModifiedTime = LocalDateTime.now())
+
+            val tempTrip =
+                if (deleteNotEnabledDate)
+                    _uiState.value.tempTrip!!.copy(lastModifiedTime = LocalDateTime.now(),
+                        dateList = _uiState.value.tempTrip!!.dateList.filter { it.id >= 0 })
+                else
+                    _uiState.value.tempTrip!!.copy(lastModifiedTime = LocalDateTime.now())
+
 
             _uiState.update {
                 it.copy(trip = tempTrip, tempTrip = tempTrip)
@@ -149,49 +156,13 @@ class SomewhereViewModel(
     ){
         if (_uiState.value.trip != null && _uiState.value.tempTrip != null) {
 
+
             val currentTrip: Trip = if (toTempTrip) _uiState.value.tempTrip!!
                                     else            _uiState.value.trip!!
 
-            if (currentTrip.dateList.isNotEmpty()) {
-                val dateList: MutableList<Date> = currentTrip.dateList.toMutableList()
 
-                val firstListDate = dateList.first().date
-                val lastListDate = dateList.last().date
-
-                val firstDate = if (firstListDate < startDate) firstListDate
-                else startDate
-
-                val lastDate = if (lastListDate < endDate) endDate
-                else lastListDate
-
-                var currDate = firstDate
-
-                while (currDate != lastDate.plusDays(1)) {
-                    if (currDate !in startDate..endDate) {
-                        //delete
-                        for (date in dateList) {
-                            if (currDate == date.date) {
-                                dateList.remove(date)
-                                break
-                            }
-                        }
-                    } else if (currDate !in firstListDate..lastListDate) {
-                        //add
-                        dateList.add(Date(date = currDate))
-                    }
-
-                    currDate = currDate.plusDays(1)
-                }
-
-                //sort
-                dateList.sortBy { it.date }
-
-                for (id in 0 until dateList.size) {
-                    dateList[id].id = id
-                }
-
-                updateTripState(toTempTrip, currentTrip.copy(dateList = dateList))
-            } else {
+            //if dateList is empty (first create)
+            if (currentTrip.dateList.isEmpty()){
                 val dateList: MutableList<Date> = mutableListOf()
                 var currDate = startDate
                 var id = 0
@@ -203,6 +174,38 @@ class SomewhereViewModel(
                     id++
                     currDate = currDate.plusDays(1)
                 }
+                updateTripState(toTempTrip, currentTrip.copy(dateList = dateList))
+            }
+
+            //if same date range with before
+            else if (currentTrip.dateList.first().date == startDate && currentTrip.dateList.last().date == endDate)
+                return
+
+            //if different date range with before
+            else{
+                val dateList = currentTrip.dateList.toMutableList()
+
+                var currDate = startDate
+                var id = 0
+
+                for (date in dateList){
+
+                    val enabled = if (currDate <= endDate) 1
+                                    else -1
+                    date.id = id * enabled
+                    date.date = currDate
+
+                    currDate = currDate.plusDays(1)
+                    id++
+                }
+
+                while (currDate <= endDate){
+                    dateList.add(Date(id = id, date = currDate))
+
+                    currDate = currDate.plusDays(1)
+                    id++
+                }
+
                 updateTripState(toTempTrip, currentTrip.copy(dateList = dateList))
             }
         }
