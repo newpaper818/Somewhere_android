@@ -232,7 +232,6 @@ fun MyTripsScreen(
                 )
         ) {
             if (showingTripList.isNotEmpty()) {
-                Log.d("reorder", "=============${showingTripList.map { it.titleText }}")
 
                 items(showingTripList){ trip ->
 
@@ -254,14 +253,8 @@ fun MyTripsScreen(
                     }
 
                     //each trip item
-                    key(trip.id){
+                    key(showingTripList){
                         val slideState = slideStates[trip.id] ?: SlideState.NONE
-
-                        if (trip == showingTripList.first())
-                            Log.d("test", "--------------------------------")
-
-                        Log.d("test", "draw item-${trip.titleText}-${trip.id}-${trip.orderId}")
-                        //Log.d("reorder", "[[[ ${trip.titleText} - ${showingTripList.map { it.titleText }}")
 
                         TripListItem(
                             trip = trip,
@@ -276,33 +269,17 @@ fun MyTripsScreen(
                             },
                             dateTimeFormat = dateTimeFormat,
                             slideState = slideState,
-                            updateSlideState = { showingTripList, tripIdx, slideState ->
-                                Log.d("test3", "[update slide state] showingTripList: ${showingTripList.map { it.titleText }} - ${showingTripList[tripIdx].titleText} $slideState")
-//                                    Log.d("reorder", "${trip_.titleText} $slideState")
-
-                                slideStates[showingTripList[tripIdx].id] = slideState
+                            updateSlideState = { tripId, newSlideState ->
+                                slideStates[showingTripList[tripId].id] = newSlideState
                             },
                             updateItemPosition = { currentIndex, destinationIndex ->
-                                //at on drag end
-                                Log.d("reorder", "***************************")
-
-                                Log.d("reorder", "before: ${showingTripList.map { it.titleText }}")
+                                //on drag end
                                 coroutineScope.launch {
-                                    Log.d("test1", "--------- reorder trip list")
+                                    //reorder list
                                     appViewModel.reorderTempTripList(currentIndex, destinationIndex)
 
-//                                        Log.d("reorder", "- showingTripList: ${appViewModel.appUiState.value.tempTripList?.map { it.titleText }}")
-//                                        Log.d("reorder", "- showingTripList: ${showingTripList.map { it.titleText }}")
-//                                        Log.d("reorder", "- showingTripList: ${tempTripList.map { it.titleText }}")
-                                    Log.d("reorder", "1after: ${appViewModel.appUiState.value.tempTripList?.map { it.titleText }}")
-                                    Log.d("reorder", "2after: ${appUiState.tempTripList?.map { it.titleText }}")
-                                    Log.d("reorder", "3after: ${showingTripList.map { it.titleText }}")
-                                }
-
-
-                                coroutineScope.launch {
-                                    Log.d("test1", "--------- slide state all none")
-                                    slideStates.putAll(showingTripList.map { trip -> trip.id }.associateWith { SlideState.NONE })
+                                    //all slideState to NONE
+                                    slideStates.putAll(showingTripList.map { it.id }.associateWith { SlideState.NONE })
                                 }
                             }
                         )
@@ -321,14 +298,19 @@ fun MyTripsScreen(
             }
 
             //TODO remove item{ } before release!
-            item {
-                MySpacerColumn(height = 60.dp)
-                Test()
-            }
+//            item {
+//                MySpacerColumn(height = 60.dp)
+//                Test()
+//            }
         }
     }
 }
 
+/**
+ * TODO
+ *
+ * @param updateSlideState update tripIdx item to slideState
+ */
 @OptIn(ExperimentalAnimationApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun TripListItem(
@@ -341,7 +323,7 @@ private fun TripListItem(
     dateTimeFormat: DateTimeFormat,
 
     slideState: SlideState,
-    updateSlideState: (showingTripList: List<Trip>, tripIdx: Int, slideState: SlideState) -> Unit,
+    updateSlideState: (tripIdx: Int, slideState: SlideState) -> Unit,
     updateItemPosition: (currentIndex: Int, destinationIndex: Int) -> Unit,
 
     modifier: Modifier = Modifier,
@@ -384,7 +366,8 @@ private fun TripListItem(
             SlideState.UP   -> -(cardHeightInt + spacerHeightInt)
             SlideState.DOWN -> cardHeightInt + spacerHeightInt
             else -> 0
-        }
+        },
+        label = "vertical translation"
     )
 
     //========================================================================
@@ -476,8 +459,8 @@ private fun TripListItem(
                     IconButton(
                         modifier = Modifier
                             .dragAndDrop(
-                                trip, tripList, cardHeightInt + spacerHeightInt, updateSlideState,
-                                isDraggedAfterLongPress = false,
+                                trip, tripList, cardHeightInt + spacerHeightInt,
+                                updateSlideState = updateSlideState,
                                 offsetY = itemOffsetY,
                                 onStartDrag = {
                                     isDragged = true
@@ -489,10 +472,10 @@ private fun TripListItem(
                                     }
 
                                     isDragged = false
-
                                 }
-                          )
+                            )
                         ,
+                        //disable touch ripple effect
                         enabled = false,
                         onClick = {  }
                     ) {

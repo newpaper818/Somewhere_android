@@ -2,7 +2,9 @@ package com.example.somewhere.ui.tripScreens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,7 +26,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -38,10 +40,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.example.somewhere.R
+import com.example.somewhere.model.Date
 import com.example.somewhere.model.Trip
 import com.example.somewhere.ui.commonScreenUtils.SomewhereTopAppBar
 import com.example.somewhere.ui.navigation.NavigationDestination
@@ -58,10 +64,17 @@ import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.ui.tripScreenUtils.AnimatedBottomSaveCancelBar
 import com.example.somewhere.ui.tripScreenUtils.SeeOnMapExtendedFAB
+import com.example.somewhere.ui.tripScreenUtils.additionalHeight
+import com.example.somewhere.ui.tripScreenUtils.cards.MAX_TITLE_LENGTH
 import com.example.somewhere.ui.tripScreenUtils.cards.TitleCard
+import com.example.somewhere.ui.tripScreenUtils.dummySpaceHeight
+import com.example.somewhere.ui.tripScreenUtils.minCardHeight
+import com.example.somewhere.utils.SlideState
+import com.example.somewhere.utils.dragAndDrop
 import com.example.somewhere.viewModel.DateTimeFormat
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import kotlin.math.roundToInt
 
 object TripDestination : NavigationDestination {
     override val route = "trip"
@@ -93,6 +106,7 @@ fun TripScreen(
     addAddedImages: (imageFiles: List<String>) -> Unit,
     addDeletedImages: (imageFiles: List<String>) -> Unit,
     organizeAddedDeletedImages: (isClickSave: Boolean) -> Unit,
+    reorderDateList: (currentIndex: Int, destinationIndex: Int) -> Unit,
 
     saveTrip: () -> Unit,
 
@@ -115,8 +129,13 @@ fun TripScreen(
     var showExitDialog by rememberSaveable { mutableStateOf(false) }
     var showSetCurrencyDialog by rememberSaveable { mutableStateOf(false) }
     var showBottomSaveCancelBar by rememberSaveable { mutableStateOf(true) }
-    var saveButtonEnabled by rememberSaveable { mutableStateOf(true) }
+    var errorCount by rememberSaveable { mutableStateOf(0) }
+    var dateTitleErrorCount by rememberSaveable { mutableStateOf(0) }
 
+    //slideStates
+    val slideStates = remember { mutableStateMapOf<Int, SlideState>(
+        *showingTrip.dateList.map { it.id to SlideState.NONE }.toTypedArray()
+    ) }
 
     val locale = LocalConfiguration.current.locales[0]
 
@@ -202,6 +221,7 @@ fun TripScreen(
                 deleteText = stringResource(id = R.string.dialog_button_exit),
                 onDismissRequest = { showExitDialog = false },
                 onDeleteClick = {
+                    errorCount = 0
                     showExitDialog = false
                     changeEditMode(false)
                     updateTripState(true, originalTrip)
@@ -254,7 +274,10 @@ fun TripScreen(
                             showingTrip.setTitleText(updateTripState, newTitleText)
                         },
                         focusManager = focusManager,
-                        isLongText = { saveButtonEnabled = !it }
+                        isLongText = {
+                            if (it) errorCount ++
+                            else    errorCount --
+                        }
                     )
                 }
 
@@ -276,7 +299,10 @@ fun TripScreen(
 
                             showingTrip.setImage(updateTripState, newList.toList())
                         },
-                        isOverImage = { saveButtonEnabled = !it }
+                        isOverImage = {
+                            if (it) errorCount ++
+                            else    errorCount --
+                        }
                     )
                 }
 
@@ -327,7 +353,10 @@ fun TripScreen(
                         onMemoChanged = { newMemoText ->
                             showingTrip.setMemoText(updateTripState, newMemoText)
                         },
-                        isLongText = { saveButtonEnabled = !it }
+                        isLongText = {
+                            if (it) errorCount ++
+                            else    errorCount --
+                        }
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -361,6 +390,16 @@ fun TripScreen(
                                     )
                                     else Modifier.padding(0.dp, 0.dp, 0.dp, 8.dp)
                                 )
+
+                                //up to 100 characters
+                                if (dateTitleErrorCount > 0){
+                                    Spacer(modifier = Modifier.weight(1f))
+
+                                    Text(
+                                        text = stringResource(id = R.string.long_text, MAX_TITLE_LENGTH),
+                                        style = getTextStyle(TextType.CARD__TITLE_ERROR)
+                                    )
+                                }
                             }
                         }
                     }
@@ -368,52 +407,48 @@ fun TripScreen(
 
                 if (showingTrip.dateList.isNotEmpty()) {
 
-                    items(showingTrip.dateList) {
+                    items(showingTrip.dateList) { date ->
 
-                        var isExpanded by rememberSaveable { mutableStateOf(false) }
+                        key(showingTrip.dateList) {
+                            val slideState = slideStates[date.id] ?: SlideState.NONE
 
-                        GraphListItem(
-                            pointColor = Color(it.color.color),
-                            isEditMode = isEditMode,
-                            isExpanded = isExpanded,
-                            itemId = it.id,
+                            DateListItem(
+                                trip = showingTrip,
+                                date = date,
+                                isEditMode = isEditMode,
+                                dateTimeFormat = dateTimeFormat,
 
-                            sideText = it.getDateText(dateTimeFormat.copy(includeDayOfWeek = false), false),
-                            mainText = it.titleText,
-                            expandedText = it.getExpandedText(showingTrip, isEditMode),
+                                slideState = slideState,
+                                updateSlideState = { dateId, newSlideState ->
+                                    slideStates[showingTrip.dateList[dateId].id] = newSlideState
+                                },
+                                updateItemPosition = { currentIndex, destinationIndex ->
+                                    //on drag end
+                                    coroutineScope.launch {
+                                        //reorder list
+                                        reorderDateList(currentIndex, destinationIndex)
 
-                            onTitleTextChange = { dateId, dateTitleText ->
-                                showingTrip.dateList[dateId].setTitleText(showingTrip, updateTripState, dateTitleText)
-                            },
+                                        //all slideState to NONE
+                                        slideStates.putAll(showingTrip.dateList.map { it.id }
+                                            .associateWith { SlideState.NONE })
+                                    }
+                                },
+                                updateTripState = updateTripState,
 
-                            isFirstItem = it == showingTrip.dateList.first(),
-                            isLastItem = it == showingTrip.dateList.last(),
-                            availableDelete = false,
-
-                            onItemClick = { dateId ->
-                                navigateToDate(dateId)
-                            },
-                            onExpandedButtonClicked = { dateId -> //TODO remove dateId?
-                                isExpanded = !isExpanded
-                            },
-                            onSideTextClick = {
-                                //move date
-
-                            },
-                            onPointClick = {
-                                // set date's color
-
-                            },
-                            showLongTextSnackBar = { text, actionLabel, duration ->
-                                coroutineScope.launch {
-                                    snackBarHostState.showSnackbar(
-                                        message = text,
-                                        actionLabel = actionLabel,
-                                        duration = duration
-                                    )
-                                }
-                            }
-                        )
+                                isLongText = {
+                                    if (it) {
+                                        errorCount++
+                                        dateTitleErrorCount++
+                                    } else {
+                                        errorCount--
+                                        dateTitleErrorCount--
+                                    }
+                                },
+                                onItemClick = { navigateToDate(date.id) },
+                                onSideTextClick = { },
+                                onPointClick = { }
+                            )
+                        }
                     }
                 }
                 //no dates
@@ -458,8 +493,115 @@ fun TripScreen(
                         organizeAddedDeletedImages(true)
                     }
                 },
-                saveEnabled = saveButtonEnabled
+                saveEnabled = errorCount <= 0
             )
         }
     }
+}
+
+@Composable
+private fun DateListItem(
+    trip: Trip,
+    date: Date,
+
+    isEditMode: Boolean,
+
+    dateTimeFormat: DateTimeFormat,
+
+    slideState: SlideState,
+    updateSlideState: (tripIdx: Int, slideState: SlideState) -> Unit,
+    updateItemPosition: (currentIndex: Int, destinationIndex: Int) -> Unit,
+
+    updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
+    isLongText: (Boolean) -> Unit,
+
+    onItemClick: () -> Unit,
+    onSideTextClick: () -> Unit,
+    onPointClick: () -> Unit
+){
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
+
+    //get item height(px), use at drag reorder
+    var itemHeight: Int
+    val unExpandedItemHeight = minCardHeight + dummySpaceHeight * 2
+    val expandedItemHeight = minCardHeight + dummySpaceHeight * 2 + additionalHeight
+
+    with(LocalDensity.current){
+        itemHeight = if (isExpanded) expandedItemHeight.toPx().toInt()
+                     else            unExpandedItemHeight.toPx().toInt()
+    }
+
+    //is dragged
+    var isDragged by remember { mutableStateOf(false) }
+    val zIndex = if (isDragged) 1.0f else 0.0f
+
+    val verticalTranslation by animateIntAsState(
+        targetValue = when (slideState){
+            SlideState.UP   -> -itemHeight
+            SlideState.DOWN -> itemHeight
+            else -> 0
+        },
+        label = "vertical translation"
+    )
+
+    //item y offset
+    val itemOffsetY = remember { Animatable(0f) }
+
+    //item modifier
+    val dragModifier =
+        //set y offset while dragging or drag end
+        if (isEditMode) Modifier
+            .offset {
+                if (isDragged) IntOffset(0, itemOffsetY.value.roundToInt())
+                else IntOffset(0, verticalTranslation)
+            }
+            .zIndex(zIndex)
+        else Modifier
+
+    //item ui
+    GraphListItem(
+        modifier = dragModifier,
+        pointColor = Color(date.color.color),
+        isEditMode = isEditMode,
+        isExpanded = isExpanded,
+
+        sideText = date.getDateText(dateTimeFormat.copy(includeDayOfWeek = false), false),
+        mainText = date.titleText,
+        expandedText = date.getExpandedText(trip, isEditMode),
+
+        onTitleTextChange = { dateTitleText ->
+            trip.dateList[date.id].setTitleText(trip, updateTripState, dateTitleText)
+        },
+
+        isFirstItem = date == trip.dateList.first(),
+        isLastItem = date == trip.dateList.last(),
+        deleteEnabled = false,
+        dragEnabled = true,
+
+        onItemClick = onItemClick,
+        onExpandedButtonClicked = {
+            isExpanded = !isExpanded
+        },
+        onSideTextClick = onSideTextClick,
+        onPointClick = onPointClick,
+        isLongText = isLongText,
+        dragHandleModifier = Modifier
+            .dragAndDrop(
+                date, trip.dateList,
+                itemHeight = itemHeight,
+                updateSlideState = updateSlideState,
+                offsetY = itemOffsetY,
+                onStartDrag = {
+                    isDragged = true
+                },
+                onStopDrag = { currentIndex, destinationIndex ->
+
+                    if (currentIndex != destinationIndex){
+                        updateItemPosition(currentIndex, destinationIndex)
+                    }
+
+                    isDragged = false
+                }
+            )
+    )
 }

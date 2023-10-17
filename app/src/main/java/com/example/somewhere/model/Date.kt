@@ -1,6 +1,9 @@
 package com.example.somewhere.model
 
 import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.example.somewhere.R
 import com.example.somewhere.enumUtils.SpotTypeGroup
 import com.example.somewhere.ui.theme.MyColor
 import com.example.somewhere.utils.getNumToText
@@ -33,18 +36,20 @@ data class Date(
 
     // get =========================================================================================
 
+    @Composable
     fun getExpandedText(trip: Trip, isEditMode: Boolean):String{
         val budgetText = getTotalBudgetText(trip)
-        val spotCountText = "${getSpotTypeGroupCount(SpotTypeGroup.TOUR) + getSpotTypeGroupCount(SpotTypeGroup.FOOD)} Spot"
+
+        val spotCountText = "${getSpotTypeGroupCount(SpotTypeGroup.TOUR) + getSpotTypeGroupCount(SpotTypeGroup.FOOD)} " + stringResource(id = R.string.spots)
         val totalDistanceText = getTotalTravelDistanceText(trip)
 
         var expandedText = "$spotCountText | $budgetText | $totalDistanceText"
 
         if (spotList == emptyList<Spot>())
-            expandedText = "Empty Plan"
+            expandedText = stringResource(id = R.string.dates_no_plan)
 
-        if(!isEditMode)
-            expandedText += "\nSee more"
+//        if(!isEditMode)
+//            expandedText += "\nSee more"
 
         return expandedText
     }

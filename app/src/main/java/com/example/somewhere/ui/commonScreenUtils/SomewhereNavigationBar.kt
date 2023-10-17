@@ -23,7 +23,10 @@ fun SomewhereNavigationBar(
 ) {
     NavigationBar {
         NavigationBarItem(
-            icon = { DisplayIcon(icon = MyIcons.myTrips) },
+            icon = {
+                if (currentDestination == MyTripsDestination)   DisplayIcon(icon = MyIcons.myTripsFilled)
+                else                                            DisplayIcon(icon = MyIcons.myTripsOutlined)
+            },
             label = {
                 Text(
                     text = stringResource(id = R.string.my_trips),
@@ -41,7 +44,10 @@ fun SomewhereNavigationBar(
         )
 
         NavigationBarItem(
-            icon = { DisplayIcon(icon = MyIcons.moreHoriz) },
+            icon = {
+                if (currentDestination == MyTripsDestination)   DisplayIcon(icon = MyIcons.moreHorizFilled)
+                else                                            DisplayIcon(icon = MyIcons.moreHorizOutlined)
+            },
             label = {
                 Text(
                     text = stringResource(id = R.string.more),

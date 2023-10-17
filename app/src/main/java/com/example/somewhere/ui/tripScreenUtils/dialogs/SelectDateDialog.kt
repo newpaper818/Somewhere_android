@@ -51,30 +51,28 @@ fun SelectDateDialog(
                     .clip(RoundedCornerShape(16.dp))
                     .background(getColor(ColorType.DIALOG__CARD))
             ) {
-                items(dateList) {
+                items(dateList) { date ->
                     GraphListItem(
                         isEditMode = false,
                         isExpanded = false,
-                        itemId = it.id,
-                        sideText = it.getDateText(
+                        sideText = date.getDateText(
                             dateTimeFormat.copy(includeDayOfWeek = false),
                             false
                         ),
-                        mainText = it.titleText,
+                        mainText = date.titleText,
                         expandedText = null,
-                        onTitleTextChange = { _, _ ->
-
-                        },
-                        isFirstItem = it == dateList.first(),
-                        isLastItem = it == dateList.last(),
-                        availableDelete = false,
-                        onItemClick = { newDateId ->
-                            currentDateId = newDateId
+                        onTitleTextChange = { },
+                        isFirstItem = date == dateList.first(),
+                        isLastItem = date == dateList.last(),
+                        deleteEnabled = false,
+                        dragEnabled = false,
+                        onItemClick = {
+                            currentDateId = date.id
                         },
                         onExpandedButtonClicked = {},
-                        itemColor = if (it.id == currentDateId) getColor(ColorType.CARD_SELECTED)
+                        itemColor = if (date.id == currentDateId) getColor(ColorType.CARD_SELECTED)
                         else Color.Transparent,
-                        showLongTextSnackBar = {_, _,_ ->}
+                        isLongText = { }
                     )
                 }
             }

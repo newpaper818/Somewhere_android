@@ -4,6 +4,8 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Explore
+import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -45,8 +47,11 @@ object MyIcons {
 //    val done = MyIcon(Icons.Filled.Done,  22.dp, null, R.string.save)
 
     //bottom navigation bar
-    val myTrips = MyIcon(Icons.Filled.Flight,   24.dp, null, R.string.my_trips)
-    val moreHoriz = MyIcon(Icons.Filled.MoreHoriz,    24.dp, null, R.string.more)
+    val myTripsFilled = MyIcon(Icons.Filled.Explore,            24.dp, null, R.string.my_trips)
+    val myTripsOutlined = MyIcon(Icons.Outlined.Explore,        24.dp, null, R.string.my_trips)
+
+    val moreHorizFilled = MyIcon(Icons.Filled.MoreHoriz,        24.dp, null, R.string.more)
+    val moreHorizOutlined = MyIcon(Icons.Outlined.MoreHoriz,    24.dp, null, R.string.more)
 
 //    val profileNotSelected = MyIcon(Icons.Outlined.Person,  24.dp, null, R.string.profile)
 //    val profileSelected = MyIcon(Icons.Filled.Person,       24.dp, null, R.string.profile)

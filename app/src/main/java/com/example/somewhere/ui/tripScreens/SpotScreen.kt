@@ -151,11 +151,16 @@ fun SpotScreen(
 
     val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
-    var saveButtonEnabled by rememberSaveable { mutableStateOf(true) }
 
     var isEditLocationMode by rememberSaveable { mutableStateOf(false) }
     var isMapExpand by rememberSaveable { mutableStateOf(false) }
     var mapSize by remember{ mutableStateOf(IntSize(0,0)) }
+
+    var errorCount by rememberSaveable { mutableStateOf(0) }
+
+    LaunchedEffect(isEditMode){
+        errorCount = 0
+    }
 
     val scrollState = rememberLazyListState()
 
@@ -510,7 +515,10 @@ fun SpotScreen(
 
                                             dateTimeFormat = dateTimeFormat,
                                             focusManager = focusManager,
-                                            setSaveButtonEnabled = { saveButtonEnabled = !it },
+                                            onErrorCountChange = {
+                                                if (it) errorCount++
+                                                else    errorCount--
+                                            },
 
                                             addAddedImageList = addAddedImages,
                                             addDeletedImageList = addDeletedImages,
@@ -569,7 +577,7 @@ fun SpotScreen(
                         organizeAddedDeletedImages(true)
                     }
                 },
-                saveEnabled = saveButtonEnabled
+                saveEnabled = errorCount <= 0
             )
 
             //set location page
@@ -617,7 +625,7 @@ fun SpotDetailPage(
     dateTimeFormat: DateTimeFormat,
 
     focusManager: FocusManager,
-    setSaveButtonEnabled: (Boolean) -> Unit,
+    onErrorCountChange: (plusError: Boolean) -> Unit,
 
     addAddedImageList: (List<String>) -> Unit,
     addDeletedImageList: (List<String>) -> Unit,
@@ -669,7 +677,7 @@ fun SpotDetailPage(
                             )
                         },
                         focusManager = focusManager,
-                        isLongText = setSaveButtonEnabled
+                        isLongText = { onErrorCountChange(it) }
                     )
                 else {
                     TitleCardMove(
@@ -684,7 +692,7 @@ fun SpotDetailPage(
                             )
                         },
                         focusManager = focusManager,
-                        isLongText = setSaveButtonEnabled
+                        isLongText = { onErrorCountChange(it) }
                     )
 
                     MySpacerColumn(height = 16.dp)
@@ -713,7 +721,7 @@ fun SpotDetailPage(
 
                         currentSpot.setImage(showingTrip, dateId, updateTripState, newImgList)
                     },
-                    isOverImage = setSaveButtonEnabled
+                    isOverImage = { onErrorCountChange(it) }
                 )
             }
 
@@ -860,7 +868,7 @@ fun SpotDetailPage(
                     onMemoChanged = { newMemoText ->
                         currentSpot.setMemoText(showingTrip, dateId, updateTripState, newMemoText)
                     },
-                    isLongText = setSaveButtonEnabled
+                    isLongText = { onErrorCountChange(it) }
                 )
 
                 MySpacerColumn(height = 16.dp)
