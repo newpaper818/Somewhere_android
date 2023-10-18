@@ -23,8 +23,8 @@ data class SomewhereUiState(
     val isNewTrip: Boolean = false,
 
     val tripId: Int? = null,
-    val dateId: Int? = null,
-    val spotId: Int? = null,
+    val dateIndex: Int? = null,
+    val spotIndex: Int? = null,
 
     val trip: Trip? = null,
     val tempTrip: Trip? = null,
@@ -70,22 +70,22 @@ class SomewhereViewModel(
 
     fun updateId(
         tripId: Int? = null,
-        dateId: Int? = null,
-        spotId: Int? = null,
+        dateIndex: Int? = null,
+        spotIndex: Int? = null,
     ){
         if (tripId != null)
             _uiState.update {
                 it.copy(tripId = tripId)
             }
 
-        if (dateId != null)
+        if (dateIndex != null)
             _uiState.update {
-                it.copy(dateId = dateId)
+                it.copy(dateIndex = dateIndex)
             }
 
-        if (spotId != null)
+        if (spotIndex != null)
             _uiState.update {
-                it.copy(spotId = spotId)
+                it.copy(spotIndex = spotIndex)
             }
     }
 
@@ -169,10 +169,12 @@ class SomewhereViewModel(
                 var currDate = startDate
                 var id = 0
 
-                while (currDate != endDate.plusDays(1)) {
+                val endDateAfter1Day = endDate.plusDays(1)
+
+                while (currDate != endDateAfter1Day) {
 
                     //add Date in dateList
-                    dateList.add(Date(id = id, date = currDate))
+                    dateList.add(Date(id = id, index = id, date = currDate))
                     id++
                     currDate = currDate.plusDays(1)
                 }
@@ -188,23 +190,27 @@ class SomewhereViewModel(
                 val dateList = currentTrip.dateList.toMutableList()
 
                 var currDate = startDate
-                var id = 0
+                var index = 0
+                var maxId = 0
 
                 for (date in dateList){
 
                     date.enabled = currDate <= endDate
                     date.date = currDate
 
+                    if (maxId <= date.id) maxId = date.id
+
                     currDate = currDate.plusDays(1)
-                    id++
+                    index++
                 }
 
                 //create new
                 while (currDate <= endDate){
-                    dateList.add(Date(id = id, date = currDate))
+                    maxId++
+                    dateList.add(Date(id = maxId, index = index, date = currDate))
 
                     currDate = currDate.plusDays(1)
-                    id++
+                    index++
                 }
 
                 updateTripState(toTempTrip, currentTrip.copy(dateList = dateList))

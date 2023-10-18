@@ -311,9 +311,9 @@ fun SomewhereApp(
                             navigateUp()
                             somewhereViewModel.toggleIsNewTrip(false)
                         },
-                        navigateToDate = { dateId ->
+                        navigateToDate = { dateIndex ->
                             somewhereViewModel.toggleIsNewTrip(false)
-                            somewhereViewModel.updateId(dateId = dateId)
+                            somewhereViewModel.updateId(dateIndex = dateIndex)
                             navController.navigate(DateDestination.route)
                         },
                         navigateToTripMap = {
@@ -382,7 +382,7 @@ fun SomewhereApp(
 
                         originalTrip = somewhereUiState.trip!!,
                         tempTrip = somewhereUiState.tempTrip!!,
-                        dateId = somewhereUiState.dateId ?: 0,
+                        dateIndex = somewhereUiState.dateIndex ?: 0,
 
                         dateTimeFormat = appUiState.dateTimeFormat,
                         changeEditMode = {
@@ -424,7 +424,7 @@ fun SomewhereApp(
                             navigateUp()
                         },
                         navigateToSpot = { dateId, spotId ->
-                            somewhereViewModel.updateId(dateId = dateId, spotId = spotId)
+                            somewhereViewModel.updateId(dateIndex = dateId, spotIndex = spotId)
                             navController.navigate(SpotDetailDestination.route)
                         },
                         navigateToDateMap = {
@@ -455,8 +455,8 @@ fun SomewhereApp(
 
                         originalTrip = somewhereUiState.trip!!,
                         tempTrip = somewhereUiState.tempTrip!!,
-                        dateId = somewhereUiState.dateId ?: 0,
-                        spotIndex = somewhereUiState.spotId ?: 0,
+                        dateId = somewhereUiState.dateIndex ?: 0,
+                        spotIndex = somewhereUiState.spotIndex ?: 0,
                         dateTimeFormat = appUiState.dateTimeFormat,
                         changeEditMode = {
                             somewhereViewModel.toggleEditMode(it)

@@ -1,5 +1,6 @@
 package com.example.somewhere.ui.tripScreens
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -96,7 +97,7 @@ fun TripScreen(
     changeEditMode: (editMode: Boolean?) -> Unit,
 
     navigateUp: () -> Unit,
-    navigateToDate: (dateId: Int) -> Unit,
+    navigateToDate: (dateIndex: Int) -> Unit,
     navigateToTripMap: () -> Unit,
     navigateUpAndDeleteTrip: (deleteTrip: Trip) -> Unit,
 
@@ -325,8 +326,8 @@ fun TripScreen(
                         setShowBottomSaveCancelBar = {
                             showBottomSaveCancelBar = it
                         },
-                        setTripDuration = { startDate, endDate ->
-                            updateTripDurationAndTripState(true, startDate, endDate)
+                        setTripDuration = { startDate1, endDate1 ->
+                            updateTripDurationAndTripState(true, startDate1, endDate1)
                         }
                     )
                 }

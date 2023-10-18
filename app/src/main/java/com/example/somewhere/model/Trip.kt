@@ -12,7 +12,6 @@ import com.example.somewhere.viewModel.DateTimeFormat
 import com.google.android.gms.maps.model.LatLng
 import java.time.LocalDateTime
 import java.time.Period
-import java.util.Locale
 
 @Entity(tableName = "trips")
 data class Trip(
@@ -251,31 +250,31 @@ data class Trip(
     // =============================================================================================
     fun moveSpotToDate(
         showingTrip: Trip,
-        dateId: Int,
-        spotId: Int,
+        dateIndex: Int,
+        spotIndex: Int,
 
-        newDateId: Int,
+        newDateIndex: Int,
         updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     ){
         //set date
-        val originalSpotList = showingTrip.dateList[dateId].spotList.toMutableList()
-        originalSpotList[spotId] = originalSpotList[spotId].copy(date = showingTrip.dateList[newDateId].date)
+        val originalSpotList = showingTrip.dateList[dateIndex].spotList.toMutableList()
+        originalSpotList[spotIndex] = originalSpotList[spotIndex].copy(date = showingTrip.dateList[newDateIndex].date)
 
         //add spot to new date
-        val newSpotList = showingTrip.dateList[newDateId].spotList.toMutableList()
-        newSpotList.add(originalSpotList[spotId])
+        val newSpotList = showingTrip.dateList[newDateIndex].spotList.toMutableList()
+        newSpotList.add(originalSpotList[spotIndex])
 
         //remove spot from original
-        originalSpotList.removeAt(spotId)
+        originalSpotList.removeAt(spotIndex)
 
         //update spot list
         val newDateList = showingTrip.dateList.toMutableList()
-        newDateList[dateId] = newDateList[dateId].copy(spotList = originalSpotList.toList())
-        newDateList[newDateId] = newDateList[newDateId].copy(spotList = newSpotList.toList())
+        newDateList[dateIndex] = newDateList[dateIndex].copy(spotList = originalSpotList.toList())
+        newDateList[newDateIndex] = newDateList[newDateIndex].copy(spotList = newSpotList.toList())
 
-        //sort id
-        newDateList[dateId].sortSpotListIndex()
-        newDateList[newDateId].sortSpotListIndex()
+        //sort index
+        newDateList[dateIndex].sortSpotListIndex()
+        newDateList[newDateIndex].sortSpotListIndex()
 
         //update state
         updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
