@@ -134,12 +134,11 @@ fun TripDurationCard(
                                 )
                             }
 
+                            Spacer(modifier = Modifier.weight(1f))
+
                             Text(
                                 text = durationText ?: "",
-                                style = titleTextStyle,
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = if (isEditMode) TextAlign.End
-                                else TextAlign.Center,
+                                style = titleTextStyle
                             )
                         }
 
@@ -151,26 +150,30 @@ fun TripDurationCard(
                 Row(
                     modifier = Modifier.fillMaxWidth()
                 ) {
+                    Spacer(modifier = Modifier.weight(1f))
+
                     //start date
                     Text(
                         text = startDateText1,
                         style = bodyTextStyle1,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .weight(1f)
+                        textAlign = TextAlign.Center
                     )
 
-                    // >
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    // > icon
                     DisplayIcon(MyIcons.rightArrow, color = n60)
+
+                    Spacer(modifier = Modifier.weight(1f))
 
                     //end date
                     Text(
                         text = endDateText1,
                         style = bodyTextStyle1,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .weight(1f)
+                        textAlign = TextAlign.Center
                     )
+                    
+                    Spacer(modifier = Modifier.weight(1f))
                 }
             }
         }

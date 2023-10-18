@@ -48,14 +48,14 @@ data class Trip(
 
     // get =========================================================================================
 
-    fun getStartDateText(locale: Locale, dateTimeFormat: DateTimeFormat, includeYear: Boolean): String?{
+    fun getStartDateText(dateTimeFormat: DateTimeFormat, includeYear: Boolean): String?{
         return if (dateList.isNotEmpty())
             getDateText(dateList.first().date, dateTimeFormat, includeYear = includeYear)
         else
             null
     }
 
-    fun getEndDateText(locale: Locale, dateTimeFormat: DateTimeFormat, includeYear: Boolean): String?{
+    fun getEndDateText(dateTimeFormat: DateTimeFormat, includeYear: Boolean): String?{
         val lastEnabledDate = getLastEnabledDate()
 
         return if (lastEnabledDate != null) {
@@ -65,7 +65,7 @@ data class Trip(
             null
     }
 
-    private fun getLastEnabledDate(): Date?{
+    fun getLastEnabledDate(): Date?{
         if(dateList.isEmpty()){
             return null
         }
@@ -101,17 +101,22 @@ data class Trip(
         }
     }
 
-    fun getStartEndDateText(locale: Locale, dateTimeFormat: DateTimeFormat, includeYear: Boolean): String?{
-        val startDateText = getStartDateText(locale, dateTimeFormat, includeYear)
-        val endDateText = getEndDateText(locale, dateTimeFormat, includeYear)
+    fun getStartEndDateText(dateTimeFormat: DateTimeFormat, includeYear: Boolean): String?{
+        val startDate = dateList.firstOrNull()
+        val lastDate = getLastEnabledDate()
 
-        return if (startDateText == null || endDateText == null)
-            null
-        else
-            if (startDateText == endDateText)
-                startDateText
+        return if (startDate != null && lastDate != null){
+            val startDateText = startDate.getDateText(dateTimeFormat, true)
+
+            val lastDateText = if (startDate.date.year == lastDate.date.year)
+                lastDate.getDateText(dateTimeFormat, false)
             else
-                "$startDateText - $endDateText"
+                lastDate.getDateText(dateTimeFormat, true)
+
+            "$startDateText - $lastDateText"
+        }
+        else
+            null
     }
 
     @Composable

@@ -328,16 +328,12 @@ private fun TripListItem(
     titleNullTextStyle: TextStyle = getTextStyle(TextType.TRIP_LIST_ITEM__TITLE_NULL),
     subtitleTextStyle: TextStyle = getTextStyle(TextType.TRIP_LIST_ITEM__SUBTITLE)
 ){
-    val locale = LocalConfiguration.current.locales[0]
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-
     val titleText = if (trip.titleText == null || trip.titleText == "") stringResource(id = R.string.no_title)
                     else trip.titleText
     val titleTextStyle1 = if (trip.titleText == null || trip.titleText == "") titleNullTextStyle
                             else titleTextStyle
 
-    val subTitleText = trip.getStartEndDateText(locale, dateTimeFormat.copy(includeDayOfWeek = false), true) ?: stringResource(id = R.string.no_date)
+    val subTitleText = trip.getStartEndDateText(dateTimeFormat.copy(includeDayOfWeek = false), true) ?: stringResource(id = R.string.no_date)
 
     val haptic = LocalHapticFeedback.current
 

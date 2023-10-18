@@ -308,11 +308,15 @@ fun TripScreen(
 
                 //trip duration card
                 item {
+                    val startDate = showingTrip.dateList.firstOrNull()
+                    val endDate = showingTrip.getLastEnabledDate()
+                    val sameYear = startDate?.date?.year == endDate?.date?.year
+
                     TripDurationCard(
                         dateList = showingTrip.dateList,
                         isDateListEmpty = showingTrip.dateList.isEmpty(),
-                        startDateText = showingTrip.getStartDateText(locale, dateTimeFormat, true),
-                        endDateText = showingTrip.getEndDateText(locale,dateTimeFormat, true),
+                        startDateText = showingTrip.getStartDateText(dateTimeFormat, true),
+                        endDateText = showingTrip.getEndDateText(dateTimeFormat, !sameYear),
                         durationText = showingTrip.getDurationText(),
 
                         dateTimeFormat = dateTimeFormat,
