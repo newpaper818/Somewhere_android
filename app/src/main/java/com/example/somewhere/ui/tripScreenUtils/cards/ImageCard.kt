@@ -13,14 +13,15 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -44,28 +45,33 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.somewhere.R
 import com.example.somewhere.ui.commonScreenUtils.MySpacerColumn
 import com.example.somewhere.ui.commonScreenUtils.MySpacerRow
@@ -82,6 +88,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
+import java.lang.Integer.min
 import java.text.DecimalFormat
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -330,45 +337,112 @@ fun DisplayImage(
 ){
     val context = LocalContext.current
 
-    val painter = rememberAsyncImagePainter(model = File(context.filesDir, imagePath))
-    val imageState = painter.state
+    var isLoading by rememberSaveable { mutableStateOf(false) }
+    var isError by rememberSaveable { mutableStateOf(false) }
 
-    val alphaTransition by animateFloatAsState(
-        targetValue = if (imageState is AsyncImagePainter.State.Success) 1f else 0f,
-        animationSpec = tween(300),
-        label = ""
-    )
-    val scaleTransition by animateFloatAsState(
-        targetValue = if (imageState is AsyncImagePainter.State.Success) 1f else 0.9f,
-        animationSpec = tween(300),
-        label = ""
-    )
+    if (isLoading){
+        OnLoadingImage()
+    }
 
-    Image(
-        painter = painter,
-        contentDescription = stringResource(id = R.string.image_content_description),
+    if (isError){
+        OnErrorImage()
+    }
+
+    AsyncImage(
+        model = ImageRequest.Builder(context)
+            .data(File(context.filesDir, imagePath))
+            .crossfade(true)
+            .crossfade(5000)
+            .build(),
+        contentDescription = "image",
         contentScale = ContentScale.Crop,
+        modifier = Modifier.fillMaxSize(),
+        onLoading = {
+            isLoading = true
+        },
+        onSuccess = {
+            isLoading = false
+            isError = false
+        },
+        onError = {
+            isLoading = false
+            isError = true
+        }
+    )
+}
+
+@Composable
+private fun OnLoadingImage(){
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .alpha(alphaTransition)
-            .scale(scaleTransition)
+            .background(MaterialTheme.colorScheme.surface)
+            .shimmerEffect()
+    )
+}
+
+@Composable
+private fun OnErrorImage(){
+    var boxSize by remember{
+        mutableStateOf(IntSize.Zero)
+    }
+
+    val minBoxLengthDp = with(LocalDensity.current){
+        min(boxSize.height, boxSize.width).toDp()
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface)
+            .onSizeChanged { boxSize = it },
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            DisplayIcon(icon = MyIcons.imageLoadingError)
+
+            if (minBoxLengthDp > 160.dp) {
+                MySpacerColumn(height = 8.dp)
+
+                Text(
+                    text = stringResource(id = R.string.image_loading_error),
+                )
+            }
+        }
+    }
+}
+
+fun Modifier.shimmerEffect(): Modifier = composed {
+    var size by remember{
+        mutableStateOf(IntSize.Zero)
+    }
+
+    val transition = rememberInfiniteTransition(label = "infinite_transition")
+    val startOffsetX by transition.animateFloat(
+        initialValue = -2 * size.width.toFloat(),
+        targetValue = 2 * size.width.toFloat(),
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000)
+        ),
+        label = "shimmer_effect"
     )
 
-    //TODO prettier
-    if (imageState is AsyncImagePainter.State.Loading){
-        Text(
-            text = "loading...",
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxSize()
+    background(
+        brush = Brush.linearGradient(
+            colors = listOf(
+                MaterialTheme.colorScheme.surface,
+                MaterialTheme.colorScheme.surfaceTint,
+                MaterialTheme.colorScheme.surface
+            ),
+            start = Offset(startOffsetX, 0f),
+            end = Offset(startOffsetX + size.width.toFloat(), size.height.toFloat())
         )
-    }
-    if (imageState is AsyncImagePainter.State.Error){
-        Text(
-            text = "Error!",
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxSize()
-        )
-    }
+    )
+        .onGloballyPositioned {
+            size = it.size
+        }
 }
 
 @Composable

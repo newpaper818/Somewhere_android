@@ -128,6 +128,7 @@
     <string name="close">닫기</string>
     <string name="edit">편집</string>
 
+    <string name="image_loading_error">이미지 로딩 에러</string>
     <string name="selected_color">선택된 색</string>
 
     <string name="previous_date">이전 날짜</string>
