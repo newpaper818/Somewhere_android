@@ -1,6 +1,5 @@
 package com.example.somewhere.ui.tripScreens
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -136,8 +135,6 @@ fun DateScreen(
 
     val showingTrip = if (isEditMode) tempTrip
                       else            originalTrip
-
-//    Log.d("trip", "DateScreen.kt ${showingTrip.dateList.first().spotList.first()}")
 
     val dateList = showingTrip.dateList
 
@@ -308,7 +305,6 @@ fun DateScreen(
                         onErrorCountChange = { plusError ->
                             if (plusError) errorCount ++
                             else    errorCount --
-                            Log.d("err1", "err = $errorCount")
                         },
                         updateTripState = updateTripState,
 
@@ -386,7 +382,6 @@ fun DatePage(
 ){
     val dateList = showingTrip.dateList
     val spotList = currentDate.spotList
-    Log.d("icon", spotList.toString())
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -413,8 +408,7 @@ fun DatePage(
 
 
     //FIXME spotTypeWithShownList order problem
-    //왜 순서가 바뀌지??
-    //Log.d("test", "$spotTypeWithShownList")
+    //왜 순서가 바뀌지?? follow order of spotList
 
     LazyColumn(
         state = scrollState,
@@ -431,7 +425,6 @@ fun DatePage(
                 titleText = currentDate.titleText,
                 onTitleChange = {newTitleText ->
                     currentDate.setTitleText(showingTrip, updateTripState, newTitleText)
-                    Log.d("page", "title ${currentDate.id}")
                 },
                 focusManager = focusManager,
                 isLongText = { onErrorCountChange(it) },
@@ -439,7 +432,6 @@ fun DatePage(
                 color = currentDate.color,
                 onColorChange = {newDateColor ->
                     currentDate.setColor(showingTrip, updateTripState, newDateColor)
-                    Log.d("page", "               color ${currentDate.id}")
                 },
 
                 setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
@@ -578,7 +570,6 @@ fun DatePage(
 
                 //list with line
                 items(spotList) { spot ->
-                    Log.d("icon", "${spot.id} ${spot.index} ${spot.iconText}")
 
                     key(spotList.map { it.id }){
                         val slideState = slideStates[spot.id] ?: SlideState.NONE

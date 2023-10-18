@@ -59,7 +59,9 @@ class AppViewModel(
         viewModelScope.launch {
             while (!_isReady.value) {
                 if (_appUiState.value.tripList != null) {
+                    //copy to tempTripList
                     updateUiState(true, _appUiState.value.tripList)
+
                     _isReady.value = true
                 }
                 delay(100)

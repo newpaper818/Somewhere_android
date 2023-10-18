@@ -34,8 +34,15 @@ data class Trip(
 ): Cloneable {
     public override fun clone(): Trip{
         return Trip(
-            id, orderId, unitOfCurrencyType, titleText, dateList.map{ it.clone() }, memoText,
-            imagePathList, firstCreatedTime, lastModifiedTime
+            id = id,
+            orderId = orderId,
+            unitOfCurrencyType = unitOfCurrencyType,
+            titleText = titleText,
+            dateList = dateList.map{ it.clone() },
+            memoText = memoText,
+            imagePathList = imagePathList,
+            firstCreatedTime = firstCreatedTime,
+            lastModifiedTime = lastModifiedTime
         )
     }
 

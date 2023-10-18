@@ -1,6 +1,5 @@
 package com.example.somewhere.ui.tripScreens
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -116,8 +115,6 @@ fun TripScreen(
     val showingTrip =
         if (isEditMode) tempTrip
         else originalTrip
-
-//    Log.d("trip", "TripScreen.kt ${showingTrip.dateList.first().spotList.first()}")
 
     val context = LocalContext.current
 
@@ -568,7 +565,8 @@ private fun DateListItem(
         modifier = dragModifier,
         dragHandleModifier = Modifier
             .dragAndDrop(
-                date, trip.dateList,
+                item = date,
+                items = trip.dateList,
                 itemHeight = itemHeight,
                 updateSlideState = updateSlideState,
                 offsetY = itemOffsetY,

@@ -1,6 +1,5 @@
 package com.example.somewhere.model
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.example.somewhere.R
@@ -31,7 +30,14 @@ data class Date(
 
     public override fun clone(): Date{
         return Date(
-            id, index, enabled, color, date, titleText, spotList.map{ it.clone() }, memo
+            id = id,
+            index = index,
+            enabled = enabled,
+            color = color,
+            date = date,
+            titleText = titleText,
+            spotList = spotList.map{ it.clone() },
+            memo = memo
         )
     }
 
@@ -175,10 +181,6 @@ data class Date(
 
     //sort =========================================================================================
     fun sortSpotListIndex(){
-//        for ((id, spot) in spotList.withIndex()){
-//            spot.id = id
-//        }
-        Log.d("sort", "sort spot list")
         spotList.forEachIndexed { index, spot ->
             spot.index = index
         }

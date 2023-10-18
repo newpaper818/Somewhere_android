@@ -69,8 +69,23 @@ data class Spot(
 ): Cloneable {
     public override fun clone(): Spot {
         return Spot(
-            id, iconText, index, spotType, iconId, iconColor, iconBackgroundColor, date, location, zoomLevel,
-            titleText, imagePathList, startTime, endTime, budget, travelDistance, memo
+            id = id,
+            index = index,
+            iconText = iconText,
+            spotType = spotType,
+            iconId = iconId,
+            iconColor = iconColor,
+            iconBackgroundColor = iconBackgroundColor,
+            date = date,
+            location = location,
+            zoomLevel = zoomLevel,
+            titleText= titleText,
+            imagePathList = imagePathList,
+            startTime = startTime,
+            endTime = endTime,
+            budget = budget,
+            travelDistance = travelDistance,
+            memo = memo
         )
     }
 

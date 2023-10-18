@@ -118,10 +118,7 @@ fun MyTripsScreen(
     val showingTripList =
         if (isEditMode) tempTripList
         else            originalTripList
-//    Log.d("trip", "MyTripScreen.kt ${showingTripList.first().dateList.first().spotList.first()}")
 
-
-    Log.d("reorder", "----------------------showingTripList: ${showingTripList.map { it.titleText }}")
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -355,7 +352,6 @@ private fun TripListItem(
         spacerHeightInt = spacerHeightDp.toPx().toInt()
     }
 
-    Log.d("test3", "   [trip list item] title = ${trip.titleText} | tripList: ${tripList.map { it.titleText }}")
 
     var isDragged by remember { mutableStateOf(false) }
 
