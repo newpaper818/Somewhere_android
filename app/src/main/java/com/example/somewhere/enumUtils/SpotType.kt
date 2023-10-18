@@ -11,6 +11,12 @@ import com.example.somewhere.ui.theme.foodColor
 import com.example.somewhere.ui.theme.lodgingColor
 import com.example.somewhere.ui.theme.moveColor
 import com.example.somewhere.ui.theme.movePointColor
+import com.example.somewhere.ui.theme.onEtcColor
+import com.example.somewhere.ui.theme.onFoodColor
+import com.example.somewhere.ui.theme.onLodgingColor
+import com.example.somewhere.ui.theme.onMoveColor
+import com.example.somewhere.ui.theme.onMovePointColor
+import com.example.somewhere.ui.theme.onTourColor
 import com.example.somewhere.ui.theme.tourColor
 import com.example.somewhere.ui.theme.whiteInt
 
@@ -19,7 +25,7 @@ enum class SpotTypeGroup(
     val color: MyColor,
     val memberList: List<SpotType>
 ) {
-    TOUR(R.string.tour, MyColor(tourColor, whiteInt),
+    TOUR(R.string.tour, MyColor(tourColor, onTourColor),
         listOf(
             SpotType.TOUR,
             TOURIST_ATTRACTION, HISTORIC_SITE, ARCHITECTURAL_BUILDING, LANDMARK, RELIGIOUS_SITE, MONUMENT_STATUE,
@@ -31,7 +37,7 @@ enum class SpotTypeGroup(
         )
     ),
 
-    MOVE(R.string.move, MyColor(moveColor, blackInt),
+    MOVE(R.string.move, MyColor(moveColor, onMoveColor),
         listOf(
             SpotType.MOVE,
             AIRPLANE, HELICOPTER, HOT_AIR_BALLOON,
@@ -43,28 +49,28 @@ enum class SpotTypeGroup(
         )
     ),
 
-    MOVE_POINT(R.string.move_point, MyColor(movePointColor, whiteInt),
+    MOVE_POINT(R.string.move_point, MyColor(movePointColor, onMovePointColor),
         listOf(
             SpotType.MOVE_POINT,
             TERMINAL, AIRPORT, BUS_TERMINAL, BUS_STOP, SUBWAY_STATION, TRAIN_STATION, PORT
         )
     ),
 
-    FOOD(R.string.food, MyColor(foodColor, blackInt),
+    FOOD(R.string.food, MyColor(foodColor, onFoodColor),
         listOf(
             SpotType.FOOD,
             COFFEE_TEA, RESTAURANT, FAST_FOOD, DESSERT, SNACK, BAR_PUB
         )
     ),
 
-    LODGING(R.string.lodging, MyColor(lodgingColor, whiteInt),
+    LODGING(R.string.lodging, MyColor(lodgingColor, onLodgingColor),
         listOf(
             SpotType.LODGING,
             HOTEL, MOTEL, GUEST_HOUSE, RESORT, HOSTEL, AIR_BNB, PENSION, CAMPING
         )
     ),
 
-    ETC(R.string.etc, MyColor(etcColor, whiteInt),
+    ETC(R.string.etc, MyColor(etcColor, onEtcColor),
         listOf(
             SpotType.ETC
         )

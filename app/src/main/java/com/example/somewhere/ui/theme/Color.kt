@@ -331,19 +331,24 @@ fun getColor(colorType: ColorType): Color {
     }
 }
 
-
-
-
-const val tourColor =       0xff493cfa.toInt()
-const val moveColor =       0xff53ed56.toInt()
-const val movePointColor =  0xff26b502.toInt()
-const val foodColor =       0xFFFFBA5B.toInt()
-const val lodgingColor =    0xff901aeb.toInt()
-const val etcColor =        0xff808080.toInt()
-
-
 const val blackInt = 0xff000000.toInt()
 const val whiteInt = 0xffffffff.toInt()
+
+//spot type group color
+const val tourColor =       0xff493cfa.toInt()
+const val moveColor =       0xff47de9f.toInt()
+const val movePointColor =  0xff26b502.toInt()
+const val foodColor =       0xFFedb25f.toInt()
+const val lodgingColor =    0xff901aeb.toInt()
+const val etcColor =        0xff8c8c8c.toInt()
+
+const val onTourColor =     whiteInt
+const val onMoveColor =     blackInt
+const val onMovePointColor = blackInt
+const val onFoodColor =     blackInt
+const val onLodgingColor =  whiteInt
+const val onEtcColor =      blackInt
+
 
 data class MyColor(
     @ColorInt val color: Int = 0xFF493cfa.toInt(),
