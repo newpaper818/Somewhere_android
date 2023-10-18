@@ -27,7 +27,7 @@ import com.example.somewhere.ui.commonScreenUtils.DisplayIcon
 import com.example.somewhere.ui.commonScreenUtils.MyIcons
 import com.example.somewhere.ui.commonScreenUtils.MySpacerRow
 import com.example.somewhere.ui.theme.MyColor
-import com.example.somewhere.ui.theme.myColorLists
+import com.example.somewhere.ui.theme.dateColorList
 
 @Composable
 fun SetColorDialog(
@@ -52,7 +52,7 @@ fun SetColorDialog(
                     .heightIn(min = 0.dp)
                     .clip(MaterialTheme.shapes.medium)
             ) {
-                items(myColorLists) {
+                items(dateColorList) {
                     OneColor(
                         myColor = it,
                         isSelected = it == dateColor,

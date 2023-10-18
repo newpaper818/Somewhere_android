@@ -219,46 +219,6 @@ val point = Color(0xFF493cfa)
 val lineMove = Color(0xFF7168e8)
 
 
-//val errorColor = Color(0xFFff4040)
-//
-//// Light Theme
-//val background = Color(0xFFececec)          //background (236)
-//val onBackground = black
-//
-//val surface = Color(0xFFf2f2f2)             //card (242)
-//val onSurface = black
-//
-//val primary = Color(0xFF4a4aff)             //selected card text
-//val primaryVariant = Color(0x204a4aff)      //selected card (80,80,255)
-//val onPrimary = white
-//
-//val secondary = Color(0xFFfafafa)           //dialog card surface(250)
-//val secondaryVariant = Color(0xFFd5d5d5)    //card on drag
-//val onSecondary = black
-//
-//val error = errorColor
-//val onError = white
-//
-//// Dark Theme
-//val background_ = Color(0xFF000000)         //background (0)
-//val onBackground_ = white
-//
-//val surface_ = Color(0xFF181818)            //card (12)
-//val onSurface_ = white
-//
-//val primary_ = Color(0xFF7070ff)            //selected card text  7070ff
-//val primaryVariant_ = Color(0x307070ff)     //selected card (112,112,255)
-//val onPrimary_ = white
-//
-//val secondary_ = Color(0xFF222222)          //dialog card surface(16)
-//val secondaryVariant_ = Color(0xFF303030)   //card on drag
-//val onSecondary_ = white
-//
-//val error_ = errorColor
-//val onError_ = white
-
-
-
 enum class ColorType{
     GRAPH__POINT,
     GRAPH__LINE,
@@ -355,41 +315,44 @@ data class MyColor(
     @ColorInt val onColor: Int = whiteInt
 )
 
-val myColorLists = listOf(
-    //
+val dateColorList = listOf(
     MyColor(0xFF493cfa.toInt()),
     MyColor(0xFF7168e8.toInt()),
-    MyColor(0xFF808080.toInt()),
-    MyColor(0xFFf5f0ea.toInt(), blackInt),
+    MyColor(0xFF000000.toInt()),
+    MyColor(0xFFffffff.toInt(), blackInt),
 
-    //
-    MyColor(0xFFff0000.toInt()),
-    MyColor(0xFFd50bd9.toInt()),
-    MyColor(0xFF29a632.toInt()),
-    MyColor(0xFFf28b0c.toInt()),
+    MyColor(0xFF7f7f7f.toInt(), blackInt),
+    MyColor(0xFFc3c3c3.toInt(), blackInt),
+    MyColor(0xFF880015.toInt()),
+    MyColor(0xFFb97a57.toInt()),
 
-    MyColor(0xFFd9a491.toInt()),
-    MyColor(0xFFc37edb.toInt()),
-    MyColor(0xFFb7a6f6.toInt()),
-    MyColor(0xFF88a3e2.toInt()),
+    MyColor(0xFFed1c24.toInt()),
+    MyColor(0xFFffaec9.toInt(), blackInt),
+    MyColor(0xFFff7f27.toInt(), blackInt),
+    MyColor(0xFFffc90e.toInt(), blackInt),
 
-    MyColor(0xFFaaecfc.toInt(), blackInt),
-    MyColor(0xFFe4d6a7.toInt(), blackInt),
-    MyColor(0xFF9b2915.toInt()),
-    MyColor(0xFFff6666.toInt()),
+    MyColor(0xFFfff200.toInt(), blackInt),
+    MyColor(0xFFefe4b0.toInt(), blackInt),
+    MyColor(0xFF22b14c.toInt(), blackInt),
+    MyColor(0xFFb5e61d.toInt(), blackInt),
 
-    MyColor(0xFFff8000.toInt()),
-    MyColor(0xFFffb266.toInt(), blackInt),
-    MyColor(0xFFffff00.toInt(), blackInt),
-    MyColor(0xFF80ff00.toInt(), blackInt),
+    MyColor(0xFF00a2e8.toInt(), blackInt),
+    MyColor(0xFF99d9ea.toInt(), blackInt),
+    MyColor(0xFF3f48cc.toInt()),
+    MyColor(0xFF7092be.toInt(), blackInt),
 
-    MyColor(0xFF00ffff.toInt(), blackInt),
-    MyColor(0xFF66b2ff.toInt()),
-    MyColor(0xFF7f00ff.toInt()),
-    MyColor(0xFFff66b2.toInt()),
+    MyColor(0xFFa349a4.toInt()),
+    MyColor(0xFFc8bfe7.toInt(), blackInt),
+    MyColor(0xFF732bf5.toInt()),
+    MyColor(0xFF3a083e.toInt()),
 
-    MyColor(0xFF71734c.toInt()),
-    MyColor(0xFF40342a.toInt()),
-    MyColor(0xFF146152.toInt()),
-    MyColor(0xFFff5a33.toInt()),
+    MyColor(0xFF75fa8d.toInt(), blackInt),
+    MyColor(0xFF73fbfd.toInt(), blackInt),
+    MyColor(0xFF3a0603.toInt()),
+    MyColor(0xFF183e0c.toInt()),
+
+    MyColor(0xFF817f26.toInt()),
+    MyColor(0xFF0023f5.toInt()),
+    MyColor(0xFF75163f.toInt()),
+    MyColor(0xFF7f82bb.toInt(), blackInt),
 )
