@@ -100,7 +100,7 @@ object DateDestination : NavigationDestination {
     val routeWithArgs = "$route/{$dateIdArg}"
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DateScreen(
     isEditMode: Boolean,
@@ -129,12 +129,15 @@ fun DateScreen(
 
     modifier: Modifier = Modifier
 ){
+
     val coroutineScope = rememberCoroutineScope()
 
     val focusManager = LocalFocusManager.current
 
     val showingTrip = if (isEditMode) tempTrip
                       else            originalTrip
+
+//    Log.d("trip", "DateScreen.kt ${showingTrip.dateList.first().spotList.first()}")
 
     val dateList = showingTrip.dateList
 
@@ -383,6 +386,7 @@ fun DatePage(
 ){
     val dateList = showingTrip.dateList
     val spotList = currentDate.spotList
+    Log.d("icon", spotList.toString())
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -574,6 +578,8 @@ fun DatePage(
 
                 //list with line
                 items(spotList) { spot ->
+                    Log.d("icon", "${spot.id} ${spot.index} ${spot.iconText}")
+
                     key(spotList.map { it.id }){
                         val slideState = slideStates[spot.id] ?: SlideState.NONE
 
@@ -602,6 +608,9 @@ fun DatePage(
                                     }
                                 },
                                 updateTripState = updateTripState,
+                                onTitleTextChange = { spotTitleText ->
+                                    spotList[spot.index].setTitleText(showingTrip, dateId, updateTripState, spotTitleText)
+                                },
                                 isLongText = {
                                     if (it) spotTitleErrorCount++
                                     else    spotTitleErrorCount--
@@ -612,7 +621,7 @@ fun DatePage(
                                 },
                                 onDeleteClick = {
                                     //dialog: ask delete
-                                    deleteSpot(dateId, spot.id)
+                                    deleteSpot(dateId, spot.index)
                                     spotTypeWithShownList =
                                         updateSpotTypeGroupWithShownList(currentDate, spotTypeWithShownList)
                                 },
@@ -682,6 +691,8 @@ fun SpotListItem(
     updateItemPosition: (currentIndex: Int, destinationIndex: Int) -> Unit,
 
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
+
+    onTitleTextChange: (title: String) -> Unit,
     isLongText: (Boolean) -> Unit,
 
     onItemClick: () -> Unit,
@@ -775,9 +786,7 @@ fun SpotListItem(
         mainText = spot.titleText,
         expandedText = spot.getExpandedText(trip, isEditMode),
 
-        onTitleTextChange = { spotTitleText ->
-            spotList[spot.id].setTitleText(trip, dateId, updateTripState, spotTitleText)
-        },
+        onTitleTextChange = onTitleTextChange,
 
         isFirstItem = spot.spotType.isNotMove()
                 && spot == spotList.first()

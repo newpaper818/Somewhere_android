@@ -1,5 +1,6 @@
 package com.example.somewhere.model
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.example.somewhere.R
@@ -14,8 +15,9 @@ import java.time.LocalDate
 
 @JsonClass(generateAdapter = true)
 data class Date(
-    var id: Int = 0,
-    var orderId: Int = 0,
+    val id: Int = 0,
+    var index: Int = 0,
+    var enabled: Boolean = true,
 
     val color: MyColor = MyColor(),
 
@@ -29,7 +31,7 @@ data class Date(
 
     public override fun clone(): Date{
         return Date(
-            id, orderId, color, date, titleText, spotList.map{ it.clone() }, memo
+            id, index, enabled, color, date, titleText, spotList.map{ it.clone() }, memo
         )
     }
 
@@ -39,7 +41,7 @@ data class Date(
     fun getExpandedText(trip: Trip, isEditMode: Boolean):String{
         val budgetText = getTotalBudgetText(trip)
 
-        val spotCountText = "${getSpotTypeGroupCount(SpotTypeGroup.TOUR) + getSpotTypeGroupCount(SpotTypeGroup.FOOD)} " + stringResource(id = R.string.spots)
+        val spotCountText = "${getSpotTypeGroupCountExcludeMove()} " + stringResource(id = R.string.spots)
         val totalDistanceText = getTotalTravelDistanceText(trip)
 
         var expandedText = "$spotCountText | $budgetText | $totalDistanceText"
@@ -84,6 +86,16 @@ data class Date(
         var count = 0
         for (spot in spotList){
             if (spot.spotType.group == spotTypeGroup){
+                count++
+            }
+        }
+        return count
+    }
+
+    private fun getSpotTypeGroupCountExcludeMove(): Int{
+        var count = 0
+        for (spot in spotList){
+            if (spot.spotType.isNotMove()){
                 count++
             }
         }
@@ -166,8 +178,9 @@ data class Date(
 //        for ((id, spot) in spotList.withIndex()){
 //            spot.id = id
 //        }
-        spotList.forEachIndexed { index, value ->
-            value.index = index
+        Log.d("sort", "sort spot list")
+        spotList.forEachIndexed { index, spot ->
+            spot.index = index
         }
     }
 

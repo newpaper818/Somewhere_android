@@ -1,5 +1,6 @@
 package com.example.somewhere.ui.tripScreens
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -115,6 +116,8 @@ fun TripScreen(
     val showingTrip =
         if (isEditMode) tempTrip
         else originalTrip
+
+//    Log.d("trip", "TripScreen.kt ${showingTrip.dateList.first().spotList.first()}")
 
     val context = LocalContext.current
 
@@ -405,7 +408,7 @@ fun TripScreen(
                     }
                 }
 
-                val enabledDateList = showingTrip.dateList.filter { it.id >= 0 }
+                val enabledDateList = showingTrip.dateList.filter { it.enabled }
 
                 if (enabledDateList.isNotEmpty()) {
 
@@ -446,7 +449,7 @@ fun TripScreen(
                                         dateTitleErrorCount--
                                     }
                                 },
-                                onItemClick = { navigateToDate(date.orderId) },
+                                onItemClick = { navigateToDate(date.index) },
                                 onSideTextClick = { },
                                 onPointClick = { }
                             )

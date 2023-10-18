@@ -107,14 +107,13 @@ private fun OneDateRow(
 
     defaultTextStyle: TextStyle = getTextStyle(TextType.CARD__BODY),
 ){
-    val locale = LocalConfiguration.current.locales[0]
     val dateTitle = currentDate.titleText
 
     val dateText =
         if (dateTitle == null)
-            currentSpot.getDateText(locale, dateTimeFormat, includeYear = true)
+            currentSpot.getDateText(dateTimeFormat, includeYear = true)
         else
-            stringResource(id = R.string.date_time_card_date_text, currentSpot.getDateText(locale, dateTimeFormat, includeYear = true), dateTitle)
+            stringResource(id = R.string.date_time_card_date_text, currentSpot.getDateText(dateTimeFormat, includeYear = true), dateTitle)
 
     var showSelDateDialog by rememberSaveable { mutableStateOf(false) }
 

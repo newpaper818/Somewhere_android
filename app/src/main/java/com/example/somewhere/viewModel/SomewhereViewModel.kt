@@ -118,14 +118,17 @@ class SomewhereViewModel(
             val tempTrip =
                 if (deleteNotEnabledDate)
                     _uiState.value.tempTrip!!.copy(lastModifiedTime = LocalDateTime.now(),
-                        dateList = _uiState.value.tempTrip!!.dateList.filter { it.id >= 0 })
+                        dateList = _uiState.value.tempTrip!!.dateList.filter { it.enabled })
                 else
                     _uiState.value.tempTrip!!.copy(lastModifiedTime = LocalDateTime.now())
 
 
+            //update trip state
             _uiState.update {
                 it.copy(trip = tempTrip, tempTrip = tempTrip)
             }
+
+            //save to repository
             tripsRepository.updateTrip(tempTrip)
 
             //update appUiState tripList
@@ -155,7 +158,6 @@ class SomewhereViewModel(
         endDate: LocalDate
     ){
         if (_uiState.value.trip != null && _uiState.value.tempTrip != null) {
-
 
             val currentTrip: Trip = if (toTempTrip) _uiState.value.tempTrip!!
                                     else            _uiState.value.trip!!
@@ -190,15 +192,14 @@ class SomewhereViewModel(
 
                 for (date in dateList){
 
-                    val enabled = if (currDate <= endDate) 1
-                                    else -1
-                    date.id = id * enabled
+                    date.enabled = currDate <= endDate
                     date.date = currDate
 
                     currDate = currDate.plusDays(1)
                     id++
                 }
 
+                //create new
                 while (currDate <= endDate){
                     dateList.add(Date(id = id, date = currDate))
 
@@ -217,34 +218,34 @@ class SomewhereViewModel(
 
 
     // use at Date Screen ==========================================================================
-    fun addNewSpot(dateId: Int, toTempTrip: Boolean = true){
+    fun addNewSpot(dateIndex: Int, toTempTrip: Boolean = true){
 
         if(_uiState.value.tempTrip != null){
-            val newSpotList = _uiState.value.tempTrip!!.dateList[dateId].spotList.toMutableList()
+            val newSpotList = _uiState.value.tempTrip!!.dateList[dateIndex].spotList.toMutableList()
 
-            val date = _uiState.value.tempTrip!!.dateList[dateId].date
+            val date = _uiState.value.tempTrip!!.dateList[dateIndex].date
 
-            //set id, orderId
+            //set id, iconText, index
             val lastId =
                 if (newSpotList.isNotEmpty()) newSpotList.last().id
                 else -1
 
-            val lastOrderId =
+            val lastIconText =
                 if (newSpotList.isNotEmpty()) newSpotList.last().iconText
                 else 0
 
             val lastIndex =
-                if (newSpotList.isNotEmpty()) newSpotList.last().index
-                else 0
+                if (newSpotList.isNotEmpty()) newSpotList.indexOf(newSpotList.last())
+                else -1
 
-            newSpotList.add(Spot(id = lastId + 1, iconText = lastOrderId + 1, index = lastIndex + 1, date = date))
+            newSpotList.add(Spot(id = lastId + 1, index = lastIndex + 1, iconText = lastIconText + 1, date = date))
 
             //update
             val newDateList = _uiState.value.tempTrip!!.dateList.toMutableList()
 
-            val newDate = newDateList[dateId].copy(spotList = newSpotList)
+            val newDate = newDateList[dateIndex].copy(spotList = newSpotList)
 
-            newDateList[dateId] = newDate
+            newDateList[dateIndex] = newDate
 
             val currentTrip = _uiState.value.tempTrip!!
 
@@ -252,20 +253,20 @@ class SomewhereViewModel(
         }
     }
 
-    fun deleteSpot(dateId: Int, spotId: Int, toTempTrip: Boolean = true){
+    fun deleteSpot(dateId: Int, spotIndex: Int, toTempTrip: Boolean = true){
         if(_uiState.value.tempTrip != null){
 
             //tempTrip's spotList
             val newSpotList = _uiState.value.tempTrip!!.clone().dateList[dateId].spotList.toMutableList()
 
             //delete spot
-            newSpotList.removeAt(spotId)
+            newSpotList.removeAt(spotIndex)
 
             //set id, orderId
-            var newIconText = if (spotId == 0) 0
-                            else newSpotList[spotId - 1].iconText
+            var newIconText = if (spotIndex == 0) 0
+                            else newSpotList[spotIndex - 1].iconText
 
-            for (i in spotId until newSpotList.size){
+            for (i in spotIndex until newSpotList.size){
                 newSpotList[i].index = i
 
                 if(newSpotList[i].spotType.isNotMove())
@@ -341,7 +342,7 @@ class SomewhereViewModel(
             //update orderId, date
             newDateList.forEach{
                 if (it.id >= 0) {
-                    it.orderId = newDateList.indexOf(it)
+                    it.index = newDateList.indexOf(it)
                     it.date = currDate
                 }
                 currDate = currDate.plusDays(1)
@@ -366,17 +367,13 @@ class SomewhereViewModel(
             newSpotList.removeAt(currentIndex)
             newSpotList.add(destinationIndex, date)
 
-            //update orderId
-            newSpotList.forEach{
-                it.iconText = newSpotList.indexOf(it)
-            }
-
-            var newOrderId = 0
-            for (i in 0 until newSpotList.size){
-                if (newSpotList[i].spotType.isNotMove())
-                    newOrderId++
-                newSpotList[i].iconText = newOrderId
-                newSpotList[i].index = i
+            //update index and iconText
+            var newIconText = 0
+            for (index in 0 until newSpotList.size){
+                if (newSpotList[index].spotType.isNotMove())
+                    newIconText++
+                newSpotList[index].iconText = newIconText
+                newSpotList[index].index = index
             }
 
             //update ui state

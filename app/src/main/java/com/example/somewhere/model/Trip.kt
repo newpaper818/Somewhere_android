@@ -49,10 +49,49 @@ data class Trip(
     }
 
     fun getEndDateText(locale: Locale, dateTimeFormat: DateTimeFormat, includeYear: Boolean): String?{
-        return if (dateList.isNotEmpty())
-            getDateText(dateList.last().date, dateTimeFormat, includeYear = includeYear)
+        val lastEnabledDate = getLastEnabledDate()
+
+        return if (lastEnabledDate != null) {
+            getDateText(lastEnabledDate.date, dateTimeFormat, includeYear = includeYear)
+        }
         else
             null
+    }
+
+    private fun getLastEnabledDate(): Date?{
+        if(dateList.isEmpty()){
+            return null
+        }
+        else if (dateList.last().enabled){
+            return dateList.last()
+        }
+        else {
+            //binary search
+            val lastEnabledDate: Date
+            var firstIndex = 0
+            var lastIndex = dateList.lastIndex
+
+            var currIndex = (0 + lastIndex) / 2
+
+            while (true) {
+                if (dateList[currIndex].enabled) {
+                    if (!dateList[currIndex + 1].enabled) {
+                        lastEnabledDate = dateList[currIndex]
+                        break
+                    }
+                    firstIndex = currIndex
+                    currIndex = (firstIndex + lastIndex) / 2
+                } else {
+                    if (dateList[currIndex - 1].enabled) {
+                        lastEnabledDate = dateList[currIndex - 1]
+                        break
+                    }
+                    lastIndex = currIndex
+                    currIndex = (firstIndex + lastIndex) / 2
+                }
+            }
+            return lastEnabledDate
+        }
     }
 
     fun getStartEndDateText(locale: Locale, dateTimeFormat: DateTimeFormat, includeYear: Boolean): String?{
@@ -70,8 +109,10 @@ data class Trip(
 
     @Composable
     fun getDurationText(): String?{
-        if (dateList.isNotEmpty()) {
-            val period = Period.between(dateList.first().date, dateList.last().date.plusDays(1))
+        val lastEnabledDate = getLastEnabledDate()
+
+        if (dateList.isNotEmpty() && lastEnabledDate != null) {
+            val period = Period.between(dateList.first().date, lastEnabledDate.date.plusDays(1))
 
             val years = period.years
             val months = period.months
@@ -106,7 +147,7 @@ data class Trip(
     fun getTotalBudgetText(): String{
         val budget = getNumToText(getTotalBudget(), unitOfCurrencyType.numberOfDecimalPlaces)
 
-        return "${unitOfCurrencyType.symbol} ${budget}"
+        return "${unitOfCurrencyType.symbol} $budget"
     }
 
     private fun getTotalBudget(): Float{

@@ -1,5 +1,6 @@
 package com.example.somewhere.ui.tripScreens
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -137,6 +138,8 @@ fun SpotScreen(
     val showingTrip = if (isEditMode) tempTrip
                       else            originalTrip
 
+//    Log.d("trip", "SpotScreen.kt ${showingTrip.dateList.first().spotList.first()}")
+
     val context = LocalContext.current
 
     var currentDateId by rememberSaveable { mutableStateOf(dateId) }
@@ -222,20 +225,13 @@ fun SpotScreen(
 
     val density = LocalDensity.current.density
 
-    //animate progress bar / map spot when current page changed
+    //[when current page changed] -> animate progress bar / map spot
     LaunchedEffect(spotPagerState, spotList){
         snapshotFlow { spotPagerState.currentPage }.collect { currentPageIndex ->
             currentSpotIndex = currentPageIndex
 
             //progress bar animate
             coroutineScope.launch {
-//                val toIdx =
-//                    if (currentPageIndex >= 1 &&
-//                        spotList[currentPageIndex - 1].spotType.isMove()
-//                        && spotList[currentPageIndex].spotType.isNotMove()
-//                    ) currentPageIndex - 1
-//
-//                    else currentPageIndex
                 val toIdx = if (currentPageIndex == 0) 0
                             else currentPageIndex + 1
                 progressBarState.animateScrollToItem(toIdx)
@@ -370,29 +366,19 @@ fun SpotScreen(
                     spotList = spotList,
                     currentSpotIdx = currentSpotIndex,
                     addNewSpot = {
-                        addNewSpot(currentDateId)
-
                         coroutineScope.launch {
-                            delay(100)
+                            addNewSpot(currentDateId)
+                            delay(70)
                             val lastIdx = spotList.size
                             currentSpotIndex = lastIdx
                             spotPagerState.animateScrollToPage(lastIdx)
 
-                            val toIdx = if (
-                                    currentSpotIndex >= 1 &&
-                                    spotList[currentSpotIndex - 1].spotType.isMove()
-                                    && spotList[currentSpotIndex].spotType.isNotMove()
-                                )
-                                    currentSpotIndex -1
-                                else    currentSpotIndex
-
-                            progressBarState.animateScrollToItem(toIdx)
                         }
                     },
                     onClickSpot = {toSpotId ->
                         currentSpotIndex = toSpotId
 
-                        //pager animate
+                        //[when click progress bar item] -> pager animate
                         coroutineScope.launch {
                             spotPagerState.animateScrollToPage(toSpotId)
                         }
@@ -819,10 +805,9 @@ fun SpotDetailPage(
                             setShowBottomSaveCancelBar(true)
                             setImePadding()
                         },
-                        onSaveClick = { newTravelDistance ->
+                        onSaveClick = {
                             showDistanceDialog = false
                             setShowBottomSaveCancelBar(true)
-                            currentSpot.travelDistance = newTravelDistance
                             setImePadding()
                         }
                     )
@@ -830,8 +815,11 @@ fun SpotDetailPage(
 
                 if (currentSpot.spotType.isMove()) {
                     currentSpot.updateDistance(
-                        currentSpot.getPrevSpot(dateList, spotList, dateId)?.location,
-                        currentSpot.getNextSpot(dateList, spotList, dateId)?.location
+                        showingTrip = showingTrip,
+                        currentDateIndex = dateId,
+                        updateTripState = updateTripState,
+                        spotFrom = currentSpot.getPrevSpot(dateList, spotList, dateId)?.location,
+                        spotTo = currentSpot.getNextSpot(dateList, spotList, dateId)?.location
                     )
                 }
 

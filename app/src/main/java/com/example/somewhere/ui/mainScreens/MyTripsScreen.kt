@@ -83,6 +83,7 @@ import com.example.somewhere.utils.SlideState
 import com.example.somewhere.utils.dragAndDrop
 import com.example.somewhere.viewModel.AppViewModel
 import com.example.somewhere.viewModel.DateTimeFormat
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -117,6 +118,8 @@ fun MyTripsScreen(
     val showingTripList =
         if (isEditMode) tempTripList
         else            originalTripList
+//    Log.d("trip", "MyTripScreen.kt ${showingTripList.first().dateList.first().spotList.first()}")
+
 
     Log.d("reorder", "----------------------showingTripList: ${showingTripList.map { it.titleText }}")
 
@@ -184,21 +187,18 @@ fun MyTripsScreen(
 
         floatingActionButton = {
             IconFAB(
-                visible = isEditMode,
+                visible = !isEditMode,
                 icon = MyIcons.add,
                 onClick = {
-                    if (isEditMode) {
-                        coroutineScope.launch {
-                            val newTrip = appViewModel.addAndGetNewTrip()
+                    coroutineScope.launch {
+                        val newTrip = appViewModel.addAndGetNewTrip()
 
-                            if (newTrip != null) {
-                                navigateToTrip(true, newTrip)
-                                changeEditMode(true)
-                            } else
-                                Log.d("debug", "New Trip Button onClick - navigate to new trip - Can't find new trip")
-                        }
+                        if (newTrip != null) {
+                            navigateToTrip(true, newTrip)
+                            changeEditMode(true)
+                        } else
+                            Log.d("debug", "New Trip Button onClick - navigate to new trip - Can't find new trip")
                     }
-                    else changeEditMode(null)
                 }
             )
         }

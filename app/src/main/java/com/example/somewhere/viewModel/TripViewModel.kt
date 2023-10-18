@@ -124,8 +124,8 @@ class TripViewModel(
             //sort
             dateList.sortBy { it.date }
 
-            for (id in 0 until dateList.size){
-                dateList[id].id = id
+            for (index in 0 until dateList.size){
+                dateList[index].index = index
             }
 
             updateTripUiState(toTempTrip, currentTrip.copy(dateList = dateList))
