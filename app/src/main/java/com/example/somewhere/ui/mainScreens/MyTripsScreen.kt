@@ -13,6 +13,8 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.animateScrollBy
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -49,6 +52,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
@@ -77,6 +86,8 @@ import com.example.somewhere.utils.SlideState
 import com.example.somewhere.utils.dragAndDropVertical
 import com.example.somewhere.viewModel.AppViewModel
 import com.example.somewhere.viewModel.DateTimeFormat
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -112,6 +123,9 @@ fun MyTripsScreen(
         if (isEditMode) tempTripList
         else            originalTripList
 
+    val density = LocalDensity.current
+
+    var lazyColumnHeightDp by rememberSaveable { mutableStateOf(0) }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -220,6 +234,11 @@ fun MyTripsScreen(
                     top = paddingValues.calculateTopPadding(),
                     bottom = paddingValues.calculateBottomPadding()
                 )
+                .onSizeChanged {
+                    with(density) {
+                        lazyColumnHeightDp = it.height.toDp().value.toInt()
+                    }
+                }
         ) {
             if (showingTripList.isNotEmpty()) {
 
@@ -258,6 +277,29 @@ fun MyTripsScreen(
                                 addDeletedImages(it.getAllImagesPath())
                             },
                             dateTimeFormat = dateTimeFormat,
+                            lazyColumnHeightDp = lazyColumnHeightDp,
+
+                            isScrollInProgress = scrollState.isScrollInProgress,
+                            canScrollUp = scrollState.canScrollBackward,
+                            canScrollDown = scrollState.canScrollForward,
+                            scrollUp = {
+                                if (!scrollState.isScrollInProgress) {
+                                    coroutineScope.launch {
+                                        with(density) {
+                                            scrollState.animateScrollBy(((-100).dp).toPx(), tween(500))
+                                        }
+                                    }
+                                }
+                            },
+                            scrollDown = {
+                                if (!scrollState.isScrollInProgress) {
+                                    coroutineScope.launch {
+                                        with(density) {
+                                            scrollState.animateScrollBy(((100).dp).toPx(), tween(500))
+                                        }
+                                    }
+                                }
+                            },
                             slideState = slideState,
                             updateSlideState = { tripId, newSlideState ->
                                 slideStates[showingTripList[tripId].id] = newSlideState
@@ -286,12 +328,6 @@ fun MyTripsScreen(
                     MySpacerColumn(height = 16.dp)
                 }
             }
-
-            //TODO remove item{ } before release!
-//            item {
-//                MySpacerColumn(height = 60.dp)
-//                Test()
-//            }
         }
     }
 }
@@ -311,6 +347,13 @@ private fun TripListItem(
     deleteTrip: (Trip) -> Unit,
 
     dateTimeFormat: DateTimeFormat,
+    lazyColumnHeightDp: Int,
+
+    isScrollInProgress: Boolean,
+    canScrollUp: Boolean,
+    canScrollDown: Boolean,
+    scrollUp: () -> Unit,
+    scrollDown: () -> Unit,
 
     slideState: SlideState,
     updateSlideState: (tripIdx: Int, slideState: SlideState) -> Unit,
@@ -330,6 +373,8 @@ private fun TripListItem(
 
     val haptic = LocalHapticFeedback.current
 
+    val density = LocalDensity.current
+    val coroutineScope = rememberCoroutineScope()
 
     var cardHeightInt: Int
     val cardHeightDp = 120.dp
@@ -343,6 +388,8 @@ private fun TripListItem(
 
 
     var isDragged by remember { mutableStateOf(false) }
+
+    var touchOffsetYDp: Int? by remember { mutableStateOf(null) }
 
     val zIndex = if (isDragged) 1.0f else 0.0f
 
@@ -363,22 +410,51 @@ private fun TripListItem(
         label = "scale"
     )
 
-    val dragModifier = if (isEditMode) Modifier
-        .offset {
-            if (isDragged) IntOffset(0, itemOffsetY.value.roundToInt())
-            else IntOffset(0, verticalTranslation)
-        }
+    val offset =
+        if (isDragged) IntOffset(0, itemOffsetY.value.roundToInt())
+        else IntOffset(0, verticalTranslation)
+
+    val dragModifier = if (isEditMode) modifier
+        .offset { offset }
         .scale(scale)
         .zIndex(zIndex)
-    else Modifier
+    else modifier
 
+    val dp100Px = with(density){
+        100.dp.toPx()
+    }
 
-    Box(modifier = dragModifier) {
+    if (isEditMode && isDragged && touchOffsetYDp != null && !isScrollInProgress) {
+        LaunchedEffect(touchOffsetYDp) {
+            if (canScrollUp && touchOffsetYDp!! < 120) {
+                scrollUp()
+//                val verticalDragOffset = itemOffsetY.value.roundToInt() - dp100Px
+//                itemOffsetY.snapTo(verticalDragOffset)
+                delay(2000)
+
+            } else if (canScrollDown && touchOffsetYDp!! > lazyColumnHeightDp - 120) {
+                scrollDown()
+//                val verticalDragOffset = itemOffsetY.value.roundToInt() + dp100Px
+//                itemOffsetY.snapTo(verticalDragOffset)
+                delay(2000)
+            }
+        }
+    }
+
+    Box(modifier = dragModifier
+        .onGloballyPositioned {
+            if (isDragged) {
+                with(density) {
+                    touchOffsetYDp = it.positionInParent().y.toDp().value.toInt() + (cardHeightDp / 2).value.toInt()
+                }
+            }
+            else touchOffsetYDp = null
+    }) {
         Card(
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant,
             ),
-            modifier = modifier
+            modifier = Modifier
                 .clip(RoundedCornerShape(16.dp))
                 .combinedClickable(
                     //go to trip screen

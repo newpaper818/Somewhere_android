@@ -1,10 +1,13 @@
 package com.example.somewhere.utils
 
 
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -13,7 +16,9 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -66,6 +71,7 @@ fun <T> Modifier.dragAndDropVertical(
 
             //on drag
             val onDrag = {change: PointerInputChange ->
+
                 val verticalDragOffset = offsetY.value + change.positionChange().y
 
                 launch {
@@ -128,8 +134,9 @@ fun <T> Modifier.dragAndDropVertical(
                 detectDragGestures(
                     onDragStart = {
                         onDragStart()
+
                     },
-                    onDrag = { change, _ -> onDrag(change) },
+                    onDrag = { change, offset -> onDrag(change) },
                     onDragEnd = { onDragEnd() }
                 )
         }

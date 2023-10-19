@@ -175,7 +175,7 @@ data class Date(
         newColor: MyColor
     ) {
         val newDateList = showingTrip.dateList.toMutableList()
-        newDateList[id] = newDateList[id].copy(color = newColor)
+        newDateList[index] = newDateList[index].copy(color = newColor)
         updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
     }
 

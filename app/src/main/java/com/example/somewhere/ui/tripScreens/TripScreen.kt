@@ -1,5 +1,6 @@
 package com.example.somewhere.ui.tripScreens
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -69,6 +70,7 @@ import com.example.somewhere.ui.tripScreenUtils.cards.MAX_TITLE_LENGTH
 import com.example.somewhere.ui.tripScreenUtils.cards.TitleCard
 import com.example.somewhere.ui.tripScreenUtils.DUMMY_SPACE_HEIGHT
 import com.example.somewhere.ui.tripScreenUtils.MIN_CARD_HEIGHT
+import com.example.somewhere.ui.tripScreenUtils.dialogs.SetColorDialog
 import com.example.somewhere.utils.SlideState
 import com.example.somewhere.utils.dragAndDropVertical
 import com.example.somewhere.viewModel.DateTimeFormat
@@ -131,6 +133,7 @@ fun TripScreen(
     var showExitDialog by rememberSaveable { mutableStateOf(false) }
     var showSetCurrencyDialog by rememberSaveable { mutableStateOf(false) }
     var showBottomSaveCancelBar by rememberSaveable { mutableStateOf(true) }
+
     var errorCount by rememberSaveable { mutableStateOf(0) }
     var dateTitleErrorCount by rememberSaveable { mutableStateOf(0) }
 
@@ -415,8 +418,25 @@ fun TripScreen(
                 val enabledDateList = showingTrip.dateList.filter { it.enabled }
 
                 if (enabledDateList.isNotEmpty()) {
-
                     items(enabledDateList) { date ->
+
+                        var showColorPickerDialog by rememberSaveable { mutableStateOf(false) }
+
+                        if(showColorPickerDialog){
+                            SetColorDialog(
+                                initialColor = date.color,
+                                onDismissRequest = {
+                                    showColorPickerDialog = false
+                                    showBottomSaveCancelBar = true
+                                },
+                                onOkClick = {
+                                    showColorPickerDialog = false
+                                    showBottomSaveCancelBar = true
+                                    date.setColor(showingTrip, updateTripState, it)
+                                }
+                            )
+                        }
+
 
                         key(enabledDateList.map { it.id }) {
                             val slideState = slideStates[date.id] ?: SlideState.NONE
@@ -454,8 +474,14 @@ fun TripScreen(
                                     }
                                 },
                                 onItemClick = { navigateToDate(date.index) },
-                                onSideTextClick = { },
-                                onPointClick = { }
+                                onPointClick =
+                                    if (isEditMode){
+                                        {
+                                            showBottomSaveCancelBar = false
+                                            showColorPickerDialog = true
+                                        }
+                                    }
+                                    else null
                             )
                         }
                     }
@@ -525,8 +551,8 @@ private fun DateListItem(
     isLongText: (Boolean) -> Unit,
 
     onItemClick: () -> Unit,
-    onSideTextClick: () -> Unit,
-    onPointClick: () -> Unit
+    onSideTextClick: (() -> Unit)? = null,
+    onPointClick: (() -> Unit)? = null
 ){
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 

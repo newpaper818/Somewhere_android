@@ -85,10 +85,13 @@ import com.example.somewhere.ui.tripScreenUtils.ADDITIONAL_HEIGHT
 import com.example.somewhere.ui.tripScreenUtils.cards.MAX_TITLE_LENGTH
 import com.example.somewhere.ui.tripScreenUtils.DUMMY_SPACE_HEIGHT
 import com.example.somewhere.ui.tripScreenUtils.MIN_CARD_HEIGHT
+import com.example.somewhere.ui.tripScreenUtils.dialogs.SetSpotTypeDialog
+import com.example.somewhere.ui.tripScreenUtils.dialogs.SetTimeDialog
 import com.example.somewhere.utils.SlideState
 import com.example.somewhere.utils.dragAndDropVertical
 import com.example.somewhere.viewModel.DateTimeFormat
 import kotlinx.coroutines.launch
+import java.time.LocalTime
 import kotlin.math.roundToInt
 
 object DateDestination : NavigationDestination {
@@ -291,7 +294,7 @@ fun DateScreen(
                     DatePage(
                         isEditMode = isEditMode,
                         showingTrip = showingTrip,
-                        dateId = pageIndex,
+                        dateIndex = pageIndex,
                         currentDate = dateList[pageIndex],
                         timeFormat = dateTimeFormat.timeFormat,
 
@@ -359,7 +362,7 @@ fun DateScreen(
 fun DatePage(
     isEditMode: Boolean,
     showingTrip: Trip,
-    dateId: Int,
+    dateIndex: Int,
     currentDate: Date,
     timeFormat: TimeFormat,
 
@@ -392,7 +395,7 @@ fun DatePage(
 
     //slideStates
     val slideStates = remember { mutableStateMapOf<Int, SlideState>(
-        *showingTrip.dateList[dateId].spotList.map { it.id to SlideState.NONE }.toTypedArray()
+        *showingTrip.dateList[dateIndex].spotList.map { it.id to SlideState.NONE }.toTypedArray()
     ) }
 
     var spotTitleErrorCount by rememberSaveable { mutableStateOf(0) }
@@ -475,10 +478,10 @@ fun DatePage(
         if (currentDate.spotList.isNotEmpty()) {
 
             val firstSpotShowUpperLine = spotList.first().spotType.isMove()
-                || spotList[0].getPrevSpot(dateList, spotList, dateId)?.spotType?.isMove() ?: false
+                || spotList[0].getPrevSpot(dateList, spotList, dateIndex)?.spotType?.isMove() ?: false
 
             val lastSpotShowLowerLine = spotList.last().spotType.isMove()
-                    || spotList[spotList.indexOf(spotList.last())].getNextSpot(dateList, spotList, dateId)?.spotType?.isMove() ?: false
+                    || spotList[spotList.indexOf(spotList.last())].getNextSpot(dateList, spotList, dateIndex)?.spotType?.isMove() ?: false
 
             //spot type card list horizontal
             // 3 Tour / 2 Food / 5 Move ...
@@ -569,6 +572,47 @@ fun DatePage(
 
                 //list with line
                 items(spotList) { spot ->
+                    var showSpotTypeDialog by rememberSaveable { mutableStateOf(false) }
+                    var showTimePicker by rememberSaveable { mutableStateOf(false) }
+
+                    if (showSpotTypeDialog) {
+                        SetSpotTypeDialog(
+                            initialSpotType = spot.spotType,
+                            onDismissRequest = {
+                                showSpotTypeDialog = false
+                                setShowBottomSaveCancelBar(true)
+                            },
+                            onOkClick = { newSpotType ->
+                                showSpotTypeDialog = false
+                                setShowBottomSaveCancelBar(true)
+                                spot.setSpotType(
+                                    showingTrip,
+                                    dateIndex,
+                                    updateTripState,
+                                    newSpotType
+                                )
+                            }
+                        )
+                    }
+
+                    if (showTimePicker){
+//                        setUseImePadding(false)
+                        SetTimeDialog(
+                            initialTime = spot.startTime ?: LocalTime.now(),
+                            timeFormat = timeFormat,
+                            isSetStartTime = true,
+                            onDismissRequest = {
+                                showTimePicker = false
+                                setShowBottomSaveCancelBar(true)
+                            },
+                            onConfirm = {newTime ->
+                                spot.setStartTime(showingTrip, dateIndex, updateTripState, newTime)
+                                showTimePicker = false
+                                setShowBottomSaveCancelBar(true)
+                            }
+                        )
+                    }
+
 
                     key(spotList.map { it.id }){
                         val slideState = slideStates[spot.id] ?: SlideState.NONE
@@ -578,7 +622,7 @@ fun DatePage(
                             SpotListItem(
                                 modifier = modifier,
                                 trip = showingTrip,
-                                dateId = dateId,
+                                dateId = dateIndex,
                                 spot = spot,
                                 isEditMode = isEditMode,
                                 timeFormat = timeFormat,
@@ -599,7 +643,7 @@ fun DatePage(
                                 },
                                 updateTripState = updateTripState,
                                 onTitleTextChange = { spotTitleText ->
-                                    spotList[spot.index].setTitleText(showingTrip, dateId, updateTripState, spotTitleText)
+                                    spotList[spot.index].setTitleText(showingTrip, dateIndex, updateTripState, spotTitleText)
                                 },
                                 isLongText = {
                                     if (it) spotTitleErrorCount++
@@ -607,16 +651,30 @@ fun DatePage(
                                     onErrorCountChange(it)
                                 },
                                 onItemClick = {
-                                    navigateToSpot(dateId, spotList.indexOf(spot))
+                                    navigateToSpot(dateIndex, spotList.indexOf(spot))
                                 },
                                 onDeleteClick = {
                                     //dialog: ask delete
-                                    deleteSpot(dateId, spot.index)
+                                    deleteSpot(dateIndex, spot.index)
                                     spotTypeWithShownList =
                                         updateSpotTypeGroupWithShownList(currentDate, spotTypeWithShownList)
                                 },
-                                onSideTextClick = { /*TODO*/ },
-                                onPointClick = { /*TODO*/ }
+                                onSideTextClick =
+                                    if (isEditMode){
+                                        {
+                                            showTimePicker = true
+                                            setShowBottomSaveCancelBar(false)
+                                        }
+                                    }
+                                    else null,
+                                onPointClick =
+                                    if (isEditMode){
+                                        {
+                                            showSpotTypeDialog = true
+                                            setShowBottomSaveCancelBar(false)
+                                        }
+                                    }
+                                    else null
                             )
                         }
                     }
@@ -657,7 +715,7 @@ fun DatePage(
                     text = stringResource(id = R.string.new_spot),
                     onClick = {
                         //add new spot
-                        addNewSpot(dateId)
+                        addNewSpot(dateIndex)
                         spotTypeWithShownList = updateSpotTypeGroupWithShownList(currentDate, spotTypeWithShownList)
                     }
                 )
@@ -687,8 +745,8 @@ fun SpotListItem(
 
     onItemClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    onSideTextClick: () -> Unit,
-    onPointClick: () -> Unit,
+    onSideTextClick: (() -> Unit)?,
+    onPointClick: (() -> Unit)?,
 
     modifier: Modifier = Modifier
 ){

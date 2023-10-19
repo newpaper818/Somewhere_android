@@ -97,8 +97,8 @@ fun GraphListItem(
     dragHandleModifier: Modifier = Modifier,
 
     onDeleteClick: () -> Unit = { },
-    onSideTextClick: () -> Unit = { },
-    onPointClick: () -> Unit = { },
+    onSideTextClick: (() -> Unit)? = null,
+    onPointClick: (() -> Unit)? = null,
 
     iconText: String? = null,
     @ColorInt iconTextColor: Int? = null,
@@ -175,8 +175,8 @@ fun GraphListItem(
                     ClickableBox(
                         modifier = spotDragModifier,
                         shape = MaterialTheme.shapes.small,
-                        enabled = isEditMode,
-                        onClick = onSideTextClick
+                        enabled = onSideTextClick != null,
+                        onClick = onSideTextClick ?: { }
                     ) {
                         Row(
                             modifier = Modifier
@@ -199,8 +199,8 @@ fun GraphListItem(
                             .width(40.dp)
                             .fillMaxHeight(),
                         contentAlignment = Alignment.Center,
-                        enabled = isEditMode,
-                        onClick = onPointClick
+                        enabled = onPointClick != null,
+                        onClick = onPointClick ?: { }
                     ) {
 
                         Column {
