@@ -446,7 +446,7 @@ fun DisplayImage(
         model = ImageRequest.Builder(context)
             .data(File(context.filesDir, imagePath))
             .crossfade(true)
-            .crossfade(500)
+            .crossfade(300)
             .build(),
         contentDescription = "image",
         contentScale = ContentScale.Crop,
