@@ -163,6 +163,9 @@ fun SpotScreen(
 
     LaunchedEffect(isEditMode){
         errorCount = 0
+
+        if (isEditMode)
+            isMapExpand = false
     }
 
     val scrollState = rememberLazyListState()

@@ -276,6 +276,9 @@ data class Trip(
         newDateList[dateIndex].sortSpotListIndex()
         newDateList[newDateIndex].sortSpotListIndex()
 
+        //sort iconText
+        newDateList[newDateIndex].sortSpotListIconText()
+
         //update state
         updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
     }

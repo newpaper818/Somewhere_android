@@ -186,4 +186,14 @@ data class Date(
         }
     }
 
+    fun sortSpotListIconText(){
+        var iconText = 0
+
+        spotList.forEach { spot ->
+            if (spot.spotType.isNotMove())
+                iconText++
+            spot.iconText = iconText
+        }
+    }
+
 }
