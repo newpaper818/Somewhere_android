@@ -86,7 +86,7 @@ import com.example.somewhere.ui.tripScreenUtils.cards.MAX_TITLE_LENGTH
 import com.example.somewhere.ui.tripScreenUtils.DUMMY_SPACE_HEIGHT
 import com.example.somewhere.ui.tripScreenUtils.MIN_CARD_HEIGHT
 import com.example.somewhere.utils.SlideState
-import com.example.somewhere.utils.dragAndDrop
+import com.example.somewhere.utils.dragAndDropVertical
 import com.example.somewhere.viewModel.DateTimeFormat
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -746,7 +746,7 @@ fun SpotListItem(
     GraphListItem(
         modifier = dragModifier,
         dragHandleModifier = Modifier
-            .dragAndDrop(
+            .dragAndDropVertical(
                 spot, spotList,
                 itemHeight = itemHeight,
                 updateSlideState = updateSlideState,

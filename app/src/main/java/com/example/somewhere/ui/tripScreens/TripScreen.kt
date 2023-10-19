@@ -1,6 +1,5 @@
 package com.example.somewhere.ui.tripScreens
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -71,7 +70,7 @@ import com.example.somewhere.ui.tripScreenUtils.cards.TitleCard
 import com.example.somewhere.ui.tripScreenUtils.DUMMY_SPACE_HEIGHT
 import com.example.somewhere.ui.tripScreenUtils.MIN_CARD_HEIGHT
 import com.example.somewhere.utils.SlideState
-import com.example.somewhere.utils.dragAndDrop
+import com.example.somewhere.utils.dragAndDropVertical
 import com.example.somewhere.viewModel.DateTimeFormat
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -107,6 +106,8 @@ fun TripScreen(
     addAddedImages: (imageFiles: List<String>) -> Unit,
     addDeletedImages: (imageFiles: List<String>) -> Unit,
     organizeAddedDeletedImages: (isClickSave: Boolean) -> Unit,
+    reorderTripImageList: (currentIndex: Int, destinationIndex: Int) -> Unit,
+
     reorderDateList: (currentIndex: Int, destinationIndex: Int) -> Unit,
 
     saveTrip: () -> Unit,
@@ -287,7 +288,7 @@ fun TripScreen(
                     ImageCard(
                         tripId = showingTrip.id,
                         isEditMode = isEditMode,
-                        imgList = showingTrip.imagePathList,
+                        imagePathList = showingTrip.imagePathList,
                         onAddImages = { imageFiles ->
                             addAddedImages(imageFiles)
                             showingTrip.setImage(updateTripState, showingTrip.imagePathList + imageFiles)
@@ -303,7 +304,8 @@ fun TripScreen(
                         isOverImage = {
                             if (it) errorCount ++
                             else    errorCount --
-                        }
+                        },
+                        reorderImageList = reorderTripImageList
                     )
                 }
 
@@ -569,7 +571,7 @@ private fun DateListItem(
     GraphListItem(
         modifier = dragModifier,
         dragHandleModifier = Modifier
-            .dragAndDrop(
+            .dragAndDropVertical(
                 item = date,
                 items = trip.dateList,
                 itemHeight = itemHeight,

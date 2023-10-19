@@ -5,27 +5,25 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -49,10 +47,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
@@ -73,17 +69,14 @@ import com.example.somewhere.ui.commonScreenUtils.MySpacerColumn
 import com.example.somewhere.ui.commonScreenUtils.MySpacerRow
 import com.example.somewhere.ui.commonScreenUtils.SomewhereNavigationBar
 import com.example.somewhere.ui.commonScreenUtils.SomewhereTopAppBar
-import com.example.somewhere.ui.theme.ColorType
 import com.example.somewhere.ui.theme.TextType
-import com.example.somewhere.ui.theme.getColor
 import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.ui.tripScreenUtils.BottomSaveCancelBar
 import com.example.somewhere.ui.tripScreenUtils.IconFAB
 import com.example.somewhere.utils.SlideState
-import com.example.somewhere.utils.dragAndDrop
+import com.example.somewhere.utils.dragAndDropVertical
 import com.example.somewhere.viewModel.AppViewModel
 import com.example.somewhere.viewModel.DateTimeFormat
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -362,18 +355,20 @@ private fun TripListItem(
         label = "vertical translation"
     )
 
-    //========================================================================
     //card y offset
     val itemOffsetY = remember { Animatable(0f) }
 
-    val cardColor = if (isDragged)  getColor(ColorType.CARD_ON_DRAG)
-                    else            getColor(ColorType.CARD)
+    val scale by animateFloatAsState(
+        targetValue = if (isDragged) 1.05f else 1f,
+        label = "scale"
+    )
 
     val dragModifier = if (isEditMode) Modifier
         .offset {
             if (isDragged) IntOffset(0, itemOffsetY.value.roundToInt())
             else IntOffset(0, verticalTranslation)
         }
+        .scale(scale)
         .zIndex(zIndex)
     else Modifier
 
@@ -450,7 +445,7 @@ private fun TripListItem(
                 ) {
                     IconButton(
                         modifier = Modifier
-                            .dragAndDrop(
+                            .dragAndDropVertical(
                                 trip, tripList, cardHeightInt + spacerHeightInt,
                                 updateSlideState = updateSlideState,
                                 offsetY = itemOffsetY,
@@ -458,12 +453,11 @@ private fun TripListItem(
                                     isDragged = true
                                 },
                                 onStopDrag = { currentIndex, destinationIndex ->
+                                    isDragged = false
 
                                     if (currentIndex != destinationIndex){
                                         updateItemPosition(currentIndex, destinationIndex)
                                     }
-
-                                    isDragged = false
                                 }
                             )
                         ,
@@ -476,105 +470,5 @@ private fun TripListItem(
                 }
             }
         }
-    }
-}
-
-
-//test ======================================================================
-@Composable
-private fun Test(){
-    Column {
-        TextTest("displayLarge", MaterialTheme.typography.displayLarge)
-        TextTest("displayMedium", MaterialTheme.typography.displayMedium)
-        TextTest("displaySmall", MaterialTheme.typography.displaySmall)
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextTest("headlineLarge", MaterialTheme.typography.headlineLarge)
-        TextTest("headlineMedium", MaterialTheme.typography.headlineMedium)
-        TextTest("headlineSmall", MaterialTheme.typography.headlineSmall)
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextTest("titleLarge", MaterialTheme.typography.titleLarge)
-        TextTest("titleMedium", MaterialTheme.typography.titleMedium)
-        TextTest("titleSmall", MaterialTheme.typography.titleSmall)
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextTest("bodyLarge", MaterialTheme.typography.bodyLarge)
-        TextTest("bodyMedium", MaterialTheme.typography.bodyMedium)
-        TextTest("bodySmall", MaterialTheme.typography.bodySmall)
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextTest("labelLarge", MaterialTheme.typography.labelLarge)
-        TextTest("labelMedium", MaterialTheme.typography.labelMedium)
-        TextTest("labelSmall", MaterialTheme.typography.labelSmall)
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        ColorTest(MaterialTheme.colorScheme.primary,           "primary",            MaterialTheme.colorScheme.onPrimary)
-        ColorTest(MaterialTheme.colorScheme.primaryContainer,  "primaryContainer",   MaterialTheme.colorScheme.onPrimaryContainer)
-        ColorTest(MaterialTheme.colorScheme.inversePrimary,    "inversePrimary",     )
-        Spacer(modifier = Modifier.height(16.dp))
-
-        ColorTest(MaterialTheme.colorScheme.secondary,          "secondary",         MaterialTheme.colorScheme.onSecondary)
-        ColorTest(MaterialTheme.colorScheme.primaryContainer,   "primaryContainer",  MaterialTheme.colorScheme.onSecondaryContainer)
-        Spacer(modifier = Modifier.height(16.dp))
-
-        ColorTest(MaterialTheme.colorScheme.tertiary,           "tertiary",          MaterialTheme.colorScheme.onTertiary)
-        ColorTest(MaterialTheme.colorScheme.tertiaryContainer,  "tertiaryContainer", MaterialTheme.colorScheme.onTertiaryContainer)
-        Spacer(modifier = Modifier.height(16.dp))
-
-        ColorTest(MaterialTheme.colorScheme.error,              "error",             MaterialTheme.colorScheme.onError)
-        ColorTest(MaterialTheme.colorScheme.errorContainer,     "errorContainer",    MaterialTheme.colorScheme.onErrorContainer)
-        Spacer(modifier = Modifier.height(16.dp))
-
-        ColorTest(MaterialTheme.colorScheme.background,         "background",        MaterialTheme.colorScheme.onBackground)
-        Spacer(modifier = Modifier.height(16.dp))
-
-        ColorTest(MaterialTheme.colorScheme.surface,            "surface",           MaterialTheme.colorScheme.onSurface)
-        ColorTest(MaterialTheme.colorScheme.inverseSurface,     "inverseSurface",    MaterialTheme.colorScheme.inverseOnSurface)
-        ColorTest(MaterialTheme.colorScheme.surfaceVariant,     "surfaceVariant",    MaterialTheme.colorScheme.onSurfaceVariant)
-        Spacer(modifier = Modifier.height(16.dp))
-
-        ColorTest(MaterialTheme.colorScheme.outline,            "outline",           )
-        ColorTest(MaterialTheme.colorScheme.outlineVariant,     "outlineVariant",    )
-
-    }
-}
-
-@Composable
-private fun TextTest(
-    text: String,
-    textStyle: TextStyle
-){
-    Text(
-        text = "${textStyle.fontSize}   $text",
-        style = textStyle
-    )
-}
-
-@Composable
-private fun ColorTest(
-    color: Color,
-    text: String,
-    textColor: Color? = null
-){
-    Row {
-        Box(
-            modifier = Modifier
-                .width(100.dp)
-                .height(50.dp)
-                .background(color),
-            contentAlignment = Alignment.Center
-        ){
-            if (textColor != null)
-                Text(
-                    text = "On Text",
-                    style = MaterialTheme.typography.bodyMedium.copy(color = textColor)
-                )
-        }
-
-        Spacer(modifier = Modifier.width(7.dp))
-
-        Text(text = text)
     }
 }

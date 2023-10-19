@@ -333,6 +333,52 @@ class SomewhereViewModel(
         initAddedDeletedImages()
     }
 
+    fun reorderTripImageList(currentIndex: Int, destinationIndex: Int){
+        val imagePathList = _uiState.value.tempTrip?.imagePathList
+
+        if (imagePathList != null){
+            val newImagePathList = imagePathList.toMutableList()
+
+            //reorder
+            val imagePath = newImagePathList[currentIndex]
+            newImagePathList.removeAt(currentIndex)
+            newImagePathList.add(destinationIndex, imagePath)
+
+            //update ui state
+            val newTempTrip = _uiState.value.tempTrip!!.copy(imagePathList = newImagePathList)
+
+            _uiState.update {
+                it.copy(tempTrip = newTempTrip)
+            }
+        }
+    }
+
+    fun reorderSpotImageList(dateIndex: Int, spotIndex: Int, currentIndex: Int, destinationIndex: Int){
+        val imagePathList = _uiState.value.tempTrip?.dateList?.get(dateIndex)?.spotList?.get(spotIndex)?.imagePathList
+
+        if (imagePathList  != null){
+            val newImagePathList = imagePathList.toMutableList()
+
+            //reorder
+            val imagePath = newImagePathList[currentIndex]
+            newImagePathList.removeAt(currentIndex)
+            newImagePathList.add(destinationIndex, imagePath)
+
+            //update ui state
+            val newTempSpot = _uiState.value.tempTrip!!.dateList[dateIndex].spotList[spotIndex].copy(imagePathList = newImagePathList)
+            val newTempSpotList = _uiState.value.tempTrip!!.dateList[dateIndex].spotList.toMutableList()
+            newTempSpotList[spotIndex] = newTempSpot
+            val newTempDate =_uiState.value.tempTrip!!.dateList[dateIndex].copy(spotList = newTempSpotList)
+            val newTempDateList = _uiState.value.tempTrip!!.dateList.toMutableList()
+            newTempDateList[dateIndex] = newTempDate
+            val newTempTrip = _uiState.value.tempTrip!!.copy(dateList = newTempDateList)
+
+            _uiState.update {
+                it.copy(tempTrip = newTempTrip)
+            }
+        }
+    }
+
     fun reorderDateList(currentIndex: Int, destinationIndex: Int){
         if (_uiState.value.tempTrip?.dateList != null){
 

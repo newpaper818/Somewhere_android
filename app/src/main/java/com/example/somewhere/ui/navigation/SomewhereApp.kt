@@ -348,6 +348,9 @@ fun SomewhereApp(
                         organizeAddedDeletedImages = { isClickSave ->
                             somewhereViewModel.organizeAddedDeletedImages(context, isClickSave)
                         },
+                        reorderTripImageList = { currentIndex, destinationIndex ->
+                            somewhereViewModel.reorderTripImageList(currentIndex, destinationIndex)
+                        },
                         reorderDateList = { currentIndex, destinationIndex ->
                             somewhereViewModel.reorderDateList(currentIndex, destinationIndex)
                         },
@@ -455,7 +458,7 @@ fun SomewhereApp(
 
                         originalTrip = somewhereUiState.trip!!,
                         tempTrip = somewhereUiState.tempTrip!!,
-                        dateId = somewhereUiState.dateIndex ?: 0,
+                        dateIndex = somewhereUiState.dateIndex ?: 0,
                         spotIndex = somewhereUiState.spotIndex ?: 0,
                         dateTimeFormat = appUiState.dateTimeFormat,
                         changeEditMode = {
@@ -469,6 +472,9 @@ fun SomewhereApp(
                         },
                         organizeAddedDeletedImages = { isClickSave ->
                             somewhereViewModel.organizeAddedDeletedImages(context, isClickSave)
+                        },
+                        reorderSpotImageList = { dateIndex, spotIndex, currentIndex, destinationIndex ->
+                            somewhereViewModel.reorderSpotImageList(dateIndex, spotIndex, currentIndex, destinationIndex)
                         },
 
                         updateTripState = { toTempTrip, trip ->

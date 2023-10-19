@@ -1,6 +1,5 @@
 package com.example.somewhere.ui.tripScreens
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -109,7 +108,7 @@ fun SpotScreen(
 
     originalTrip: Trip,
     tempTrip: Trip,
-    dateId: Int,
+    dateIndex: Int,
     spotIndex: Int,    //fixed value do not use / use [currentSpotId]
 
     dateTimeFormat: DateTimeFormat,
@@ -118,6 +117,7 @@ fun SpotScreen(
     addAddedImages: (imageFiles: List<String>) -> Unit,
     addDeletedImages: (imageFiles: List<String>) -> Unit,
     organizeAddedDeletedImages: (isClickSave: Boolean) -> Unit,
+    reorderSpotImageList: (dateIndex: Int, spotIndex: Int, currentIndex: Int, destinationIndex: Int) -> Unit,
 
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     addNewSpot: (dateId: Int) -> Unit,
@@ -142,11 +142,11 @@ fun SpotScreen(
 
     val context = LocalContext.current
 
-    var currentDateId by rememberSaveable { mutableStateOf(dateId) }
+    var currentDateIndex by rememberSaveable { mutableStateOf(dateIndex) }
     var currentSpotIndex by rememberSaveable { mutableStateOf(spotIndex) }
 
     val dateList = showingTrip.dateList
-    val spotList = dateList[currentDateId].spotList
+    val spotList = dateList[currentDateIndex].spotList
 
     //var prevSpotId by rememberSaveable { mutableStateOf(currentSpotId) }
 
@@ -208,8 +208,8 @@ fun SpotScreen(
     var spotTo: Spot? = null
 
     if(currentSpot?.spotType?.isMove() == true) {
-        spotFrom = currentSpot.getPrevSpot(dateList, spotList, currentDateId)
-        spotTo = currentSpot.getNextSpot(dateList, spotList, currentDateId)
+        spotFrom = currentSpot.getPrevSpot(dateList, spotList, currentDateIndex)
+        spotTo = currentSpot.getNextSpot(dateList, spotList, currentDateIndex)
     }
 
     val location =
@@ -246,7 +246,7 @@ fun SpotScreen(
                             spotList[currentPageIndex],
                             dateList,
                             spotList,
-                            currentDateId,
+                            currentDateIndex,
                             cameraPositionState,
                             mapSize,
                             density,
@@ -273,15 +273,15 @@ fun SpotScreen(
                 showingTrip.titleText
         }
 
-    val dateTitle = dateList[currentDateId].titleText
+    val dateTitle = dateList[currentDateIndex].titleText
     val subTitle =
         if (isEditLocationMode)
             null
         else {
             if (dateTitle == null)
-                dateList[currentDateId].getDateText(dateTimeFormat, includeYear = true)
+                dateList[currentDateIndex].getDateText(dateTimeFormat, includeYear = true)
             else
-                stringResource(id = R.string.sub_title, dateList[currentDateId].getDateText(dateTimeFormat, includeYear = true), dateTitle)
+                stringResource(id = R.string.sub_title, dateList[currentDateIndex].getDateText(dateTimeFormat, includeYear = true), dateTitle)
         }
 
     val snackBarPadding by animateFloatAsState(
@@ -362,12 +362,12 @@ fun SpotScreen(
 
                     dateTimeFormat = dateTimeFormat,
                     dateList = dateList,
-                    dateId = currentDateId,
+                    dateId = currentDateIndex,
                     spotList = spotList,
                     currentSpotIdx = currentSpotIndex,
                     addNewSpot = {
                         coroutineScope.launch {
-                            addNewSpot(currentDateId)
+                            addNewSpot(currentDateIndex)
                             delay(70)
                             val lastIdx = spotList.size
                             currentSpotIndex = lastIdx
@@ -384,12 +384,12 @@ fun SpotScreen(
                         }
                     },
                     onPrevDateClick = {toDateId ->
-                        currentDateId = toDateId
+                        currentDateIndex = toDateId
                         val lastSpotIndex = dateList[toDateId].spotList.lastIndex
                         currentSpotIndex = if (lastSpotIndex == -1) 0 else lastSpotIndex
                     },
                     onNextDateClick = {toDateId ->
-                        currentDateId = toDateId
+                        currentDateIndex = toDateId
                         currentSpotIndex = 0
                     }
                 )
@@ -451,7 +451,7 @@ fun SpotScreen(
                                     deleteLocation = {
                                         currentSpot.setLocation(
                                             showingTrip,
-                                            currentDateId,
+                                            currentDateIndex,
                                             updateTripState,
                                             null,
                                             null
@@ -482,7 +482,7 @@ fun SpotScreen(
                                     state = spotPagerState,
                                     verticalAlignment = Alignment.Top,
                                     modifier = Modifier.weight(1f)
-                                ) { pageIndex ->     //pageIndex == spotId
+                                ) { pageIndex ->     //pageIndex == spotIndex
 
                                     if (!isEditLocationMode) {
                                         //each page
@@ -492,10 +492,10 @@ fun SpotScreen(
                                             snackBarHostState = snackBarHostState,
 
                                             showingTrip = showingTrip,
-                                            dateId = currentDateId,
-                                            currentDate = dateList[currentDateId],
+                                            dateId = currentDateIndex,
+                                            currentDate = dateList[currentDateIndex],
                                             spotIndex = pageIndex,
-                                            currentSpot = dateList[currentDateId].spotList.getOrNull(
+                                            currentSpot = dateList[currentDateIndex].spotList.getOrNull(
                                                 pageIndex
                                             ),
 
@@ -508,6 +508,9 @@ fun SpotScreen(
 
                                             addAddedImageList = addAddedImages,
                                             addDeletedImageList = addDeletedImages,
+                                            reorderSpotImageList = { currentIndex, destinationIndex ->
+                                                reorderSpotImageList(currentDateIndex, pageIndex, currentIndex, destinationIndex)
+                                            },
 
                                             setShowBottomSaveCancelBar = {
                                                 showBottomSaveCancelBar = it
@@ -523,7 +526,7 @@ fun SpotScreen(
                                                 addDeletedImages(currentSpot.imagePathList)
 
                                                 if (spotList.size <= 1) {
-                                                    deleteSpot(currentDateId, currentSpotIndex)
+                                                    deleteSpot(currentDateIndex, currentSpotIndex)
                                                 } else {
                                                     var toIdx = currentSpotIndex - 1
 
@@ -534,7 +537,7 @@ fun SpotScreen(
                                                     coroutineScope.launch {
                                                         spotPagerState.animateScrollToPage(toIdx)
                                                         progressBarState.animateScrollToItem(toIdx + 1)
-                                                        deleteSpot(currentDateId, currentSpotIndex)
+                                                        deleteSpot(currentDateIndex, currentSpotIndex)
                                                     }
                                                 }
                                             },
@@ -577,7 +580,7 @@ fun SpotScreen(
                     spotList = spotList,
                     currentSpotId = currentSpotIndex,
                     dateList = dateList,
-                    dateId = currentDateId,
+                    dateId = currentDateIndex,
                     isDarkMapTheme = isDarkMapTheme,
                     updateTripState = updateTripState,
                     toggleIsEditLocationMode = {
@@ -615,6 +618,7 @@ fun SpotDetailPage(
 
     addAddedImageList: (List<String>) -> Unit,
     addDeletedImageList: (List<String>) -> Unit,
+    reorderSpotImageList: (currentIndex: Int, destinationIndex: Int) -> Unit,
 
     setShowBottomSaveCancelBar: (Boolean) -> Unit,
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
@@ -683,32 +687,6 @@ fun SpotDetailPage(
 
                     MySpacerColumn(height = 16.dp)
                 }
-            }
-
-            //image card
-            item {
-                ImageCard(
-                    tripId = showingTrip.id,
-                    isEditMode = isEditMode,
-                    imgList = currentSpot.imagePathList,
-                    onAddImages = { imageFiles ->
-                        addAddedImageList(imageFiles)
-
-                        val newImgList = currentSpot.imagePathList + imageFiles
-
-                        currentSpot.setImage(showingTrip, dateId, updateTripState, newImgList)
-                    },
-                    deleteImage = { imageFile ->
-                        addDeletedImageList(listOf(imageFile))
-
-                        val newImgList: MutableList<String> =
-                            currentSpot.imagePathList.toMutableList()
-                        newImgList.remove(imageFile)
-
-                        currentSpot.setImage(showingTrip, dateId, updateTripState, newImgList)
-                    },
-                    isOverImage = { onErrorCountChange(it) }
-                )
             }
 
             //date time card
@@ -860,6 +838,33 @@ fun SpotDetailPage(
                 )
 
                 MySpacerColumn(height = 16.dp)
+            }
+
+            //image card
+            item {
+                ImageCard(
+                    tripId = showingTrip.id,
+                    isEditMode = isEditMode,
+                    imagePathList = currentSpot.imagePathList,
+                    onAddImages = { imageFiles ->
+                        addAddedImageList(imageFiles)
+
+                        val newImgList = currentSpot.imagePathList + imageFiles
+
+                        currentSpot.setImage(showingTrip, dateId, updateTripState, newImgList)
+                    },
+                    deleteImage = { imageFile ->
+                        addDeletedImageList(listOf(imageFile))
+
+                        val newImgList: MutableList<String> =
+                            currentSpot.imagePathList.toMutableList()
+                        newImgList.remove(imageFile)
+
+                        currentSpot.setImage(showingTrip, dateId, updateTripState, newImgList)
+                    },
+                    isOverImage = { onErrorCountChange(it) },
+                    reorderImageList = reorderSpotImageList
+                )
             }
 
             //delete spot button

@@ -14,6 +14,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -35,10 +37,12 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -48,6 +52,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -57,6 +63,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -67,9 +74,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.somewhere.R
@@ -81,6 +89,8 @@ import com.example.somewhere.ui.theme.ColorType
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getColor
 import com.example.somewhere.ui.theme.getTextStyle
+import com.example.somewhere.utils.SlideState
+import com.example.somewhere.utils.dragAndDropHorizontal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -93,6 +103,7 @@ import java.text.DecimalFormat
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 private const val IMAGE_MAX_COUNT = 10
@@ -103,10 +114,11 @@ private const val IMAGE_MAX_SIZE_MB = 2.5    //Mebibyte
 fun ImageCard(
     tripId: Int,
     isEditMode: Boolean,
-    imgList: List<String>,
+    imagePathList: List<String>,
     onAddImages: (List<String>) -> Unit,
     deleteImage: (String) -> Unit,
     isOverImage: (Boolean) -> Unit,
+    reorderImageList: (currentIndex: Int, destinationIndex: Int) -> Unit,
 
     modifier: Modifier = Modifier,
 
@@ -127,7 +139,7 @@ fun ImageCard(
     val borderColor = if (isImageCountLimit) getColor(ColorType.ERROR_BORDER)
                         else Color.Transparent
 
-    val addImageTextStyle = if (!isImageCountLimit && imgList.size < IMAGE_MAX_COUNT) titleTextStyle.copy(color = MaterialTheme.colorScheme.primary)
+    val addImageTextStyle = if (!isImageCountLimit && imagePathList.size < IMAGE_MAX_COUNT) titleTextStyle.copy(color = MaterialTheme.colorScheme.primary)
                             else titleTextStyle
 
     val galleryLauncher = rememberLauncherForActivityResult(
@@ -135,7 +147,7 @@ fun ImageCard(
     ){ uriList ->
         var addUriList = uriList
 
-        if (imgList.size + uriList.size > IMAGE_MAX_COUNT && !isImageCountLimit){
+        if (imagePathList.size + uriList.size > IMAGE_MAX_COUNT && !isImageCountLimit){
             isImageCountLimit = true
             isOverImage(true)
         }
@@ -163,7 +175,7 @@ fun ImageCard(
                     else modifier.sizeIn(maxWidth = 390.dp, maxHeight = 390.dp)
 
     AnimatedVisibility(
-        visible = isEditMode || imgList.isNotEmpty(),
+        visible = isEditMode || imagePathList.isNotEmpty(),
         enter = expandVertically(tween(300)),
         exit = shrinkVertically(tween(300))
     ) {
@@ -191,7 +203,7 @@ fun ImageCard(
 
                             //Images text
                             Text(
-                                text = stringResource(id = R.string.image_card_title, imgList.size, IMAGE_MAX_COUNT),
+                                text = stringResource(id = R.string.image_card_title, imagePathList.size, IMAGE_MAX_COUNT),
                                 style = titleTextStyle1,
                                 modifier = Modifier.padding(16.dp, 14.dp, 0.dp, 8.dp),
                             )
@@ -204,7 +216,7 @@ fun ImageCard(
                                 style = addImageTextStyle,
                                 modifier = Modifier
                                     .clickable(
-                                        enabled = !isImageCountLimit && imgList.size < IMAGE_MAX_COUNT,
+                                        enabled = !isImageCountLimit && imagePathList.size < IMAGE_MAX_COUNT,
                                         onClick = {
                                             galleryLauncher.launch("image/*")
                                         }
@@ -213,8 +225,12 @@ fun ImageCard(
                             )
                         }
 
+                        val slideStates = remember { mutableStateMapOf<String, SlideState>(
+                            *imagePathList.map { it to SlideState.NONE }.toTypedArray()
+                        ) }
+
                         //if no image
-                        if (imgList.isEmpty()) {
+                        if (imagePathList.isEmpty()) {
                             Text(
                                 text = stringResource(id = R.string.image_card_body_no_image),
                                 style = bodyNullTextStyle,
@@ -229,17 +245,35 @@ fun ImageCard(
                             modifier = Modifier
                                 .fillMaxWidth()
                         ) {
-                            item{
-                                imgList.forEach {
+                            items(imagePathList){imagePath ->
+
+                                key(imagePathList){
+                                    val slideState = slideStates[imagePath] ?: SlideState.NONE
+
                                     ImageWithDeleteIcon(
-                                        imagePath = it,
+                                        imagePath = imagePath,
+                                        imagePathList = imagePathList,
                                         onDeleteClick = {
-                                            deleteImage(it)
-                                            Log.d("image", "img size = ${imgList.size}")
-                                            if (imgList.size - 1 <= IMAGE_MAX_COUNT && isImageCountLimit){
+                                            deleteImage(imagePath)
+                                            Log.d("image", "img size = ${imagePathList.size}")
+                                            if (imagePathList.size - 1 <= IMAGE_MAX_COUNT && isImageCountLimit){
                                                 Log.d("image", "to false")
                                                 isImageCountLimit = false
                                                 isOverImage(false)
+                                            }
+                                        },
+                                        slideState = slideState,
+                                        updateSlideState = { imageIndex, newSlideState ->
+                                            slideStates[imagePathList[imageIndex]] = newSlideState
+                                        },
+                                        updateItemPosition = { currentIndex, destinationIndex ->
+                                            //on drag end
+                                            coroutineScope.launch {
+                                                //reorder list
+                                                reorderImageList(currentIndex, destinationIndex)
+
+                                                //all slideState to NONE
+                                                slideStates.putAll(imagePathList.associateWith { SlideState.NONE })
                                             }
                                         }
                                     )
@@ -269,16 +303,16 @@ fun ImageCard(
                             .aspectRatio(1f)
                     ) {
                         HorizontalPager(
-                            pageCount = imgList.size,
+                            pageCount = imagePathList.size,
                             state = pageState,
                             beyondBoundsPageCount = 3
                         ) {
-                            DisplayImage(imagePath = imgList[it])
+                            DisplayImage(imagePath = imagePathList[it])
                         }
 
-                        if (imgList.size != 1)
+                        if (imagePathList.size != 1)
                             ImageIndicateDots(
-                                pageCount = imgList.size,
+                                pageCount = imagePathList.size,
                                 currentPage = pageState.currentPage
                             )
                     }
@@ -294,11 +328,71 @@ fun ImageCard(
 @Composable
 private fun ImageWithDeleteIcon(
     imagePath: String,
-    onDeleteClick: () -> Unit
+    imagePathList: List<String>,
+    onDeleteClick: () -> Unit,
+
+    slideState: SlideState,
+    updateSlideState: (tripIdx: Int, slideState: SlideState) -> Unit,
+    updateItemPosition: (currentIndex: Int, destinationIndex: Int) -> Unit
 ){
+
+    var cardWidthInt: Int
+    val cardWidthDp = 105.dp
+    var spacerWidthInt: Int
+    val spacerWidthDp = 16.dp
+
+    with(LocalDensity.current){
+        cardWidthInt = cardWidthDp.toPx().toInt()
+        spacerWidthInt = spacerWidthDp.toPx().toInt()
+    }
+
+
+    var isDragged by remember { mutableStateOf(false) }
+
+    val zIndex = if (isDragged) 1.0f else 0.0f
+
+    val horizontalTranslation by animateIntAsState(
+        targetValue = when (slideState){
+            SlideState.UP   -> -(cardWidthInt + spacerWidthInt)
+            SlideState.DOWN -> cardWidthInt + spacerWidthInt
+            else -> 0
+        },
+        label = "horizontal translation"
+    )
+
+    //card x offset
+
+    val scale by animateFloatAsState(
+        targetValue = if (isDragged) 1.05f else 1f,
+        label = "scale"
+    )
+
+    val dragModifier = Modifier
+        .offset { IntOffset(horizontalTranslation, 0) }
+        .scale(scale)
+        .zIndex(zIndex)
+
     Card(
         shape = MaterialTheme.shapes.small,
-        modifier = Modifier.size(105.dp)
+        modifier = dragModifier.size(cardWidthDp)
+            .dragAndDropHorizontal(
+                item = imagePath,
+                items = imagePathList,
+                itemWidth = cardWidthInt + spacerWidthInt,
+                updateSlideState = updateSlideState,
+                onStartDrag = {
+                    isDragged = true
+                },
+                onStopDrag = { currentIndex, destinationIndex ->
+                    isDragged = false
+
+                    if (currentIndex != destinationIndex){
+                        updateItemPosition(currentIndex, destinationIndex)
+                    }
+                },
+                isDraggedAfterLongPress = true
+            )
+
     ) {
         Box {
             DisplayImage(imagePath = imagePath)
@@ -352,7 +446,7 @@ fun DisplayImage(
         model = ImageRequest.Builder(context)
             .data(File(context.filesDir, imagePath))
             .crossfade(true)
-            .crossfade(5000)
+            .crossfade(500)
             .build(),
         contentDescription = "image",
         contentScale = ContentScale.Crop,
