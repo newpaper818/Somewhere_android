@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Luggage
 import androidx.compose.material.icons.outlined.MoreHoriz
@@ -62,6 +63,8 @@ object MyIcons {
     //Floating Action Button
     val add = MyIcon(Icons.Filled.Add,        24.dp, null, R.string.new_)
 
+    //image loading error
+    val imageLoadingError = MyIcon(Icons.Rounded.Error,        36.dp, null, R.string.image_loading_error)
 
 
     //color dialog
