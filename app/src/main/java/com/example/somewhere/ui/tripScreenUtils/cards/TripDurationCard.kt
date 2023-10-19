@@ -40,7 +40,7 @@ import java.time.LocalDate
 
 @Composable
 fun TripDurationCard(
-    dateList: List<Date>,
+    defaultDateRange: ClosedRange<LocalDate>,
 
     isDateListEmpty: Boolean,
     startDateText: String?,
@@ -72,11 +72,7 @@ fun TripDurationCard(
     val bodyTextStyle1 = if (!isDateListEmpty) bodyTextStyle else bodyNullTextStyle
 
     //date duration picker dialog
-    val defaultDateRange =
-        if (!isDateListEmpty)
-            dateList.first().date..dateList.last().date
-        else
-            LocalDate.now().let { now -> now.plusDays(1)..now.plusDays(5) }
+
 
     if (showDateRangePickerDialog) {
         DateRangeDialog(
