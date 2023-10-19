@@ -49,6 +49,7 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
@@ -289,7 +290,12 @@ fun SpotScreen(
 
     val snackBarPadding by animateFloatAsState(
         targetValue = if (isMapExpand) 75f
-                        else if (isEditMode) 56f
+                        else if (isEditMode && !isEditLocationMode) 56f
+                        else if (isEditLocationMode) {
+                            if (LocalConfiguration.current.screenWidthDp > 670)
+                                90f
+                            else 150f
+                        }
                         else 0f,
         animationSpec = tween(300),
         label = "snackbar padding"
