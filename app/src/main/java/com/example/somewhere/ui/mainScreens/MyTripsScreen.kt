@@ -420,36 +420,37 @@ private fun TripListItem(
         .zIndex(zIndex)
     else modifier
 
-    val dp100Px = with(density){
-        100.dp.toPx()
-    }
+//    val dp100Px = with(density){
+//        100.dp.toPx()
+//    }
 
-    if (isEditMode && isDragged && touchOffsetYDp != null && !isScrollInProgress) {
-        LaunchedEffect(touchOffsetYDp) {
-            if (canScrollUp && touchOffsetYDp!! < 120) {
-                scrollUp()
-//                val verticalDragOffset = itemOffsetY.value.roundToInt() - dp100Px
-//                itemOffsetY.snapTo(verticalDragOffset)
-                delay(2000)
-
-            } else if (canScrollDown && touchOffsetYDp!! > lazyColumnHeightDp - 120) {
-                scrollDown()
-//                val verticalDragOffset = itemOffsetY.value.roundToInt() + dp100Px
-//                itemOffsetY.snapTo(verticalDragOffset)
-                delay(2000)
-            }
-        }
-    }
+//    if (isEditMode && isDragged && touchOffsetYDp != null && !isScrollInProgress) {
+//        LaunchedEffect(touchOffsetYDp) {
+//            if (canScrollUp && touchOffsetYDp!! < 120) {
+//                scrollUp()
+////                val verticalDragOffset = itemOffsetY.value.roundToInt() - dp100Px
+////                itemOffsetY.snapTo(verticalDragOffset)
+//                delay(2000)
+//
+//            } else if (canScrollDown && touchOffsetYDp!! > lazyColumnHeightDp - 120) {
+//                scrollDown()
+////                val verticalDragOffset = itemOffsetY.value.roundToInt() + dp100Px
+////                itemOffsetY.snapTo(verticalDragOffset)
+//                delay(2000)
+//            }
+//        }
+//    }
 
     Box(modifier = dragModifier
-        .onGloballyPositioned {
-            if (isDragged) {
-                with(density) {
-                    touchOffsetYDp = it.positionInParent().y.toDp().value.toInt() + (cardHeightDp / 2).value.toInt()
-                }
-            }
-            else touchOffsetYDp = null
-    }) {
+//        .onGloballyPositioned {
+//            if (isDragged) {
+//                with(density) {
+//                    touchOffsetYDp = it.positionInParent().y.toDp().value.toInt() + (cardHeightDp / 2).value.toInt()
+//                }
+//            }
+//            else touchOffsetYDp = null
+//        }
+    ) {
         Card(
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant,
