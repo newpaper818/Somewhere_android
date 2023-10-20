@@ -2,8 +2,15 @@ package com.example.somewhere.ui.tripScreens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -721,14 +728,22 @@ fun SpotDetailPage(
                         }
                     },
                     setStartTime = { startTime ->
-                        currentSpot.setStartTime(showingTrip, dateId, updateTripState, startTime)
+                        currentSpot.setStartTime(
+                            showingTrip,
+                            dateId,
+                            updateTripState,
+                            startTime
+                        )
                     },
                     setEndTime = { endTime ->
-                        currentSpot.setEndTime(showingTrip, dateId, updateTripState, endTime)
+                        currentSpot.setEndTime(
+                            showingTrip,
+                            dateId,
+                            updateTripState,
+                            endTime
+                        )
                     }
                 )
-
-                MySpacerColumn(height = 16.dp)
             }
 
             //spot type, budget, travel distance card

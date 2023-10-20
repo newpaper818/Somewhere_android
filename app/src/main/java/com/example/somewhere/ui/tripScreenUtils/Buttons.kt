@@ -69,7 +69,7 @@ fun ToPrevDateButton(
             horizontalArrangement = Arrangement.Center
         ) {
             DisplayIcon(
-                icon = MyIcons.leftArrow,
+                icon = MyIcons.dateLeftArrow,
                 onColor = iconColor == null,
                 color = iconColor
             )
@@ -111,7 +111,7 @@ fun ToNextDateButton(
             }
 
             DisplayIcon(
-                icon = MyIcons.rightArrow,
+                icon = MyIcons.dateRightArrow,
                 onColor = iconColor == null,
                 color = iconColor
             )

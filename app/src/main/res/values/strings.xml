@@ -134,6 +134,9 @@
     <string name="previous_date">Previous date</string>
     <string name="next_date">Next date</string>
 
+    <string name="previous_spot">Previous spot</string>
+    <string name="next_spot">Next spot</string>
+
     <string name="date">Date</string>
     <string name="time">Time</string>
 
@@ -167,10 +170,10 @@
     <string name="cancel_edit_location">Cancel edit location</string>
     <string name="save_location">Save location</string>
 
-    <string name="zoom_out_more">Zoom out more</string>
     <string name="zoom_out">Zoom out</string>
+    <string name="zoom_out_less">Zoom out less</string>
+    <string name="zoom_in_less">Zoom in less</string>
     <string name="zoom_in">Zoom in</string>
-    <string name="zoom_in_more">Zoom in more</string>
 
     <string name="open_in_new">Open in new</string>
 

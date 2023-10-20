@@ -96,8 +96,8 @@ data class Spot(
         val budgetText = getBudgetText(trip)
         val distanceText = getDistanceText()
 
-        return if (isEditMode) "$categoryText | $budgetText | $distanceText"
-                else "$categoryText | $budgetText | $distanceText"
+        return if (isEditMode) "$categoryText / $budgetText / $distanceText"
+                else "$categoryText / $budgetText / $distanceText"
     }
 
     @Composable

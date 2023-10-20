@@ -1,9 +1,15 @@
 package com.example.somewhere.ui.tripScreenUtils.cards
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
@@ -36,6 +42,7 @@ import com.example.somewhere.model.Spot
 import com.example.somewhere.ui.commonScreenUtils.MySpacerRow
 import com.example.somewhere.ui.commonScreenUtils.DisplayIcon
 import com.example.somewhere.ui.commonScreenUtils.MyIcons
+import com.example.somewhere.ui.commonScreenUtils.MySpacerColumn
 import com.example.somewhere.ui.tripScreenUtils.dialogs.SelectDateDialog
 import com.example.somewhere.ui.tripScreenUtils.dialogs.SetTimeDialog
 import com.example.somewhere.ui.theme.TextType
@@ -43,6 +50,7 @@ import com.example.somewhere.ui.theme.getTextStyle
 import com.example.somewhere.viewModel.DateTimeFormat
 import java.time.LocalTime
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun DateTimeCard(
     setUseImePadding: (useImePadding: Boolean) -> Unit,
@@ -60,36 +68,52 @@ fun DateTimeCard(
 
     modifier: Modifier = Modifier,
 ){
-    Card(
-        modifier = modifier.fillMaxWidth()
+    AnimatedVisibility(
+        visible = isEditMode || spot.startTime != null || spot.endTime != null,
+        enter =
+        scaleIn(animationSpec = tween(170, 0, LinearEasing))
+                + expandVertically(animationSpec = tween(190, 0, LinearEasing))
+                + fadeIn(animationSpec = tween(300, 100)),
+        exit =
+        scaleOut(animationSpec = tween(250, 100))
+                + shrinkVertically(animationSpec = tween(320, 100))
+                + fadeOut(animationSpec = tween(300, 100))
     ) {
-        Column(modifier = Modifier.padding(8.dp)) {
-            AnimatedVisibility(
-                visible = isEditMode,
-                enter = expandVertically(animationSpec = tween(300)),
-                exit = shrinkVertically(animationSpec = tween(300))
+        Column {
+            Card(
+                modifier = modifier.fillMaxWidth()
             ) {
-                OneDateRow(
-                    setUseImePadding = setUseImePadding,
-                    setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
-                    dateList = dateList,
-                    currentDate = date,
-                    currentSpot = spot,
-                    dateTimeFormat = dateTimeFormat,
-                    isEditMode = isEditMode,
-                    changeDate = changeDate
-                )
+                Column(modifier = Modifier.padding(8.dp)) {
+                    AnimatedVisibility(
+                        visible = isEditMode,
+                        enter = expandVertically(animationSpec = tween(300)),
+                        exit = shrinkVertically(animationSpec = tween(300))
+                    ) {
+                        OneDateRow(
+                            setUseImePadding = setUseImePadding,
+                            setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
+                            dateList = dateList,
+                            currentDate = date,
+                            currentSpot = spot,
+                            dateTimeFormat = dateTimeFormat,
+                            isEditMode = isEditMode,
+                            changeDate = changeDate
+                        )
+                    }
+
+                    TwoTimesRow(
+                        setUseImePadding = setUseImePadding,
+                        setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
+                        spot = spot,
+                        isEditMode = isEditMode,
+                        setStartTime = setStartTime,
+                        setEndTime = setEndTime,
+                        timeFormat = dateTimeFormat.timeFormat
+                    )
+                }
             }
 
-            TwoTimesRow(
-                setUseImePadding = setUseImePadding,
-                setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
-                spot = spot,
-                isEditMode = isEditMode,
-                setStartTime = setStartTime,
-                setEndTime = setEndTime,
-                timeFormat = dateTimeFormat.timeFormat
-            )
+            MySpacerColumn(height = 16.dp)
         }
     }
 }
@@ -189,6 +213,7 @@ private fun TwoTimesRow(
     ) {
         MySpacerRow(width = 8.dp)
 
+        //time icon
         Box(
             modifier = Modifier.size(30.dp),
             contentAlignment = Alignment.Center
@@ -196,38 +221,43 @@ private fun TwoTimesRow(
             DisplayIcon(icon = MyIcons.time)
         }
 
-
         MySpacerRow(width = 8.dp)
 
-        OneTimeRow(
-            setUseImePadding = setUseImePadding,
-            setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
-            spot = spot,
-            isStart = true,
-            isEditMode = isEditMode,
-            setTime = { startTime ->
-                setStartTime(startTime)
-            },
-            timeFormat = timeFormat
-        )
+        if (isEditMode || spot.startTime != null) {
+            OneTimeRow(
+                setUseImePadding = setUseImePadding,
+                setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
+                spot = spot,
+                isStart = true,
+                isEditMode = isEditMode,
+                setTime = { startTime ->
+                    setStartTime(startTime)
+                },
+                timeFormat = timeFormat
+            )
+        }
 
-        MySpacerRow(width = 4.dp)
+        if (isEditMode || spot.startTime != null && spot.endTime != null){
+            MySpacerRow(width = 4.dp)
 
-        DisplayIcon(icon = MyIcons.rightArrowTo)
+            DisplayIcon(icon = MyIcons.rightArrowTo)
 
-        MySpacerRow(width = 4.dp)
+            MySpacerRow(width = 4.dp)
+        }
 
-        OneTimeRow(
-            setUseImePadding = setUseImePadding,
-            setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
-            spot = spot,
-            isStart = false,
-            isEditMode = isEditMode,
-            setTime = { endTime ->
-                setEndTime(endTime)
-            },
-            timeFormat = timeFormat
-        )
+        if (isEditMode || spot.endTime != null) {
+            OneTimeRow(
+                setUseImePadding = setUseImePadding,
+                setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
+                spot = spot,
+                isStart = false,
+                isEditMode = isEditMode,
+                setTime = { endTime ->
+                    setEndTime(endTime)
+                },
+                timeFormat = timeFormat
+            )
+        }
     }
 }
 
@@ -253,8 +283,8 @@ private fun OneTimeRow(
     val timeText1 = timeText ?: if (isStart) stringResource(id = R.string.date_time_card_starts)
                                 else         stringResource(id = R.string.date_time_card_ends)
 
-    val initialTime = if  (isStart) spot.startTime ?: LocalTime.now()
-                        else        spot.endTime ?: LocalTime.now()
+    val initialTime = if  (isStart) spot.startTime ?: LocalTime.of(12,0)
+                        else        spot.endTime ?: LocalTime.of(12,0)
 
 
     var showTimePicker by rememberSaveable { mutableStateOf(false) }

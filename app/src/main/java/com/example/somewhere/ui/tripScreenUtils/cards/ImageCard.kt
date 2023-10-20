@@ -12,6 +12,7 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
@@ -22,6 +23,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -109,7 +112,7 @@ import kotlin.math.sqrt
 private const val IMAGE_MAX_COUNT = 10
 private const val IMAGE_MAX_SIZE_MB = 2.5    //Mebibyte
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun ImageCard(
     tripId: Int,
@@ -176,8 +179,14 @@ fun ImageCard(
 
     AnimatedVisibility(
         visible = isEditMode || imagePathList.isNotEmpty(),
-        enter = expandVertically(tween(300)),
-        exit = shrinkVertically(tween(300))
+        enter =
+        scaleIn(animationSpec = tween(170, 0, LinearEasing))
+                + expandVertically(animationSpec = tween(190, 0, LinearEasing))
+                + fadeIn(animationSpec = tween(300, 100)),
+        exit =
+        scaleOut(animationSpec = tween(250, 100))
+                + shrinkVertically(animationSpec = tween(320, 100))
+                + fadeOut(animationSpec = tween(300, 100))
     ) {
 
         Column(

@@ -25,7 +25,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.somewhere.R
-import com.example.somewhere.model.Date
 import com.example.somewhere.ui.commonScreenUtils.ClickableBox
 import com.example.somewhere.ui.commonScreenUtils.DisplayIcon
 import com.example.somewhere.ui.tripScreenUtils.dialogs.DateRangeDialog
@@ -158,7 +157,7 @@ fun TripDurationCard(
                     Spacer(modifier = Modifier.weight(1f))
 
                     // > icon
-                    DisplayIcon(MyIcons.rightArrow, color = n60)
+                    DisplayIcon(MyIcons.dateRightArrow, color = n60)
 
                     Spacer(modifier = Modifier.weight(1f))
 

@@ -56,11 +56,11 @@ fun ZoomCard(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = { mapZoomTo(roundZoomLevel(zoomLevel - 1.0f)) }) {
-                        DisplayIcon(icon = MyIcons.zoomOutMore)
+                        DisplayIcon(icon = MyIcons.zoomOut)
                     }
 
                     IconButton(onClick = { mapZoomTo(roundZoomLevel(zoomLevel - 0.5f)) }) {
-                        DisplayIcon(icon = MyIcons.zoomOut)
+                        DisplayIcon(icon = MyIcons.zoomOutLess)
                     }
 
                     val df1 = DecimalFormat("0.0")
@@ -72,11 +72,11 @@ fun ZoomCard(
                     )
 
                     IconButton(onClick = { mapZoomTo(roundZoomLevel(zoomLevel + 0.5f)) }) {
-                        DisplayIcon(icon = MyIcons.zoomIn)
+                        DisplayIcon(icon = MyIcons.zoomInLess)
                     }
 
                     IconButton(onClick = { mapZoomTo(roundZoomLevel(zoomLevel + 1.0f)) }) {
-                        DisplayIcon(icon = MyIcons.zoomInMore)
+                        DisplayIcon(icon = MyIcons.zoomIn)
                     }
                 }
             }

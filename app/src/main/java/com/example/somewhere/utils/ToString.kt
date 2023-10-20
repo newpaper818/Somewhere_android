@@ -102,10 +102,11 @@ fun getTimeText(
 
     val hour24 = time.hour
     val hour12 = if (hour24 > 12) hour24 - 12
-                    else            hour24
+                 else if (hour24 == 0)   12
+                 else hour24
     val minute = df1.format(time.minute)
 
-    val isPm = time.isAfter(LocalTime.of(12,0))
+    val isPm = time.isAfter(LocalTime.of(11,59))
     val amPm = if (isPm) "PM"   else "AM"
 
     return if (timeFormat == TimeFormat.T24H) "$hour24:$minute"

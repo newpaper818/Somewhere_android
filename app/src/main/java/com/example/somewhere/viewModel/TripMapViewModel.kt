@@ -22,6 +22,10 @@ data class SpotTypeGroupWithBoolean(
 data class TripMapUiState(
     val currentDateIndex: Int = 0,
     val oneDateShown: Boolean = false,
+
+    val currentSpotIndex: Int = 0,
+    val oneSpotShown: Boolean = false,
+
     val focusOnToSpotEnabled: Boolean = true,
 
     val dateWithShownMarkerList: List<DateWithBoolean> = listOf(),
@@ -40,7 +44,7 @@ class TripMapViewModel(
     init{
         initDateListWithShownMarkerList()
         initSpotTypeGroupWithShownMarkerList()
-        checkOnlyCurrentDateShown()
+        checkOnlyOneCurrentDateShown()
     }
 
 
@@ -102,7 +106,31 @@ class TripMapViewModel(
         }
     }
 
-    private fun checkOnlyCurrentDateShown(){
+    private fun checkOnlyOneCurrentDateShown(){
+        val dateWithShownMarkerList = tripMapUiState.value.dateWithShownMarkerList
+        val currentDateIndex = tripMapUiState.value.currentDateIndex
+
+        for (dateWithBoolean in dateWithShownMarkerList){
+            if (dateWithShownMarkerList.indexOf(dateWithBoolean) == currentDateIndex && !dateWithBoolean.isShown) {
+                _tripMapUiState.update {
+                    it.copy(oneDateShown = false)
+                }
+                return
+            }
+            else if (dateWithShownMarkerList.indexOf(dateWithBoolean) != currentDateIndex && dateWithBoolean.isShown){
+                _tripMapUiState.update {
+                    it.copy(oneDateShown = false)
+                }
+                return
+            }
+        }
+
+        _tripMapUiState.update {
+            it.copy(oneDateShown = true)
+        }
+    }
+
+    private fun checkOnlyOneCurrentSpotShown(){
         val dateWithShownMarkerList = tripMapUiState.value.dateWithShownMarkerList
         val currentDateIndex = tripMapUiState.value.currentDateIndex
 
@@ -153,7 +181,7 @@ class TripMapViewModel(
         }
 
         checkFocusOnToSpotEnabled()
-        checkOnlyCurrentDateShown()
+        checkOnlyOneCurrentDateShown()
     }
 
     fun toggleSpotTypeGroupWithShownMarkerList(spotTypeGroup: SpotTypeGroup){
@@ -186,7 +214,7 @@ class TripMapViewModel(
         }
 
         checkFocusOnToSpotEnabled()
-        checkOnlyCurrentDateShown()
+        checkOnlyOneCurrentDateShown()
 
         return newList
     }

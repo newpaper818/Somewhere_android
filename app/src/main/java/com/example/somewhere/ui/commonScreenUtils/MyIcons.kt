@@ -5,10 +5,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.Error
-import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Luggage
 import androidx.compose.material.icons.outlined.MoreHoriz
-import androidx.compose.material.icons.outlined.Work
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -71,8 +69,11 @@ object MyIcons {
     val selectedColor = MyIcon(Icons.Filled.Done,  22.dp, white, R.string.selected_color)
 
     //date < >
-    val leftArrow = MyIcon(Icons.Filled.KeyboardArrowLeft,   30.dp, null, R.string.previous_date)
-    val rightArrow = MyIcon(Icons.Filled.KeyboardArrowRight, 30.dp, null, R.string.next_date)
+    val dateLeftArrow = MyIcon(Icons.Filled.KeyboardArrowLeft,   30.dp, null, R.string.previous_date)
+    val dateRightArrow = MyIcon(Icons.Filled.KeyboardArrowRight, 30.dp, null, R.string.next_date)
+
+    val spotLeftArrow = MyIcon(Icons.Filled.KeyboardArrowLeft,   30.dp, null, R.string.previous_spot)
+    val spotRightArrow = MyIcon(Icons.Filled.KeyboardArrowRight, 30.dp, null, R.string.next_spot)
 
     //date time
     val date = MyIcon(Icons.Filled.CalendarMonth,   22.dp, gray, R.string.date)
@@ -104,10 +105,10 @@ object MyIcons {
 //    val expandControlBox = MyIcon(Icons.Filled.ExpandLess,         24.dp, null, R.string.expand_control_box)
 //    val collapseControlBox = MyIcon(Icons.Filled.ExpandMore,       24.dp, null, R.string.collapse_control_box)
 
-    val zoomOutMore = MyIcon(Icons.Filled.Remove,                   26.dp, null, R.string.zoom_out_more)
-    val zoomOut = MyIcon(Icons.Filled.Remove,                       18.dp, null, R.string.zoom_out)
-    val zoomIn = MyIcon(Icons.Filled.Add,                           18.dp, null, R.string.zoom_in)
-    val zoomInMore = MyIcon(Icons.Filled.Add,                       26.dp, null, R.string.zoom_in_more)
+    val zoomOut = MyIcon(Icons.Filled.Remove,                   26.dp, null, R.string.zoom_out)
+    val zoomOutLess = MyIcon(Icons.Filled.Remove,                       18.dp, null, R.string.zoom_out_less)
+    val zoomInLess = MyIcon(Icons.Filled.Add,                           18.dp, null, R.string.zoom_in_less)
+    val zoomIn = MyIcon(Icons.Filled.Add,                       26.dp, null, R.string.zoom_in)
 
     val editLocation = MyIcon(Icons.Filled.Edit,        22.dp, null, R.string.edit_location)
     val deleteLocation = MyIcon(Icons.Filled.Delete,    22.dp, null, R.string.delete_location)

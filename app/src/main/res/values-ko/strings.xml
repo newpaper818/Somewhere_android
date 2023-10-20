@@ -134,6 +134,9 @@
     <string name="previous_date">이전 날짜</string>
     <string name="next_date">다음 날짜</string>
 
+    <string name="previous_spot">이전 장소</string>
+    <string name="next_spot">다음 장소</string>
+
     <string name="date">날짜</string>
     <string name="time">시간</string>
 
@@ -167,10 +170,10 @@
     <string name="cancel_edit_location">위치 설정 취소</string>
     <string name="save_location">위치 저장</string>
 
-    <string name="zoom_out_more">축소</string>
-    <string name="zoom_out">조금 축소</string>
-    <string name="zoom_in">조금 확대</string>
-    <string name="zoom_in_more">확대</string>
+    <string name="zoom_out">축소</string>
+    <string name="zoom_out_less">조금 축소</string>
+    <string name="zoom_in_less">조금 확대</string>
+    <string name="zoom_in">확대</string>
 
     <string name="open_in_new">새 창에서 열기</string>
 

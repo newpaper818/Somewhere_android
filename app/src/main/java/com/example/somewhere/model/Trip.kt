@@ -277,6 +277,7 @@ data class Trip(
         newDateList[newDateIndex].sortSpotListIndex()
 
         //sort iconText
+        newDateList[dateIndex].sortSpotListIconText()
         newDateList[newDateIndex].sortSpotListIconText()
 
         //update state

@@ -1,5 +1,6 @@
 package com.example.somewhere.ui.tripScreens
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -598,7 +599,7 @@ fun DatePage(
                     if (showTimePicker){
 //                        setUseImePadding(false)
                         SetTimeDialog(
-                            initialTime = spot.startTime ?: LocalTime.now(),
+                            initialTime = spot.startTime ?: LocalTime.of(12,0),
                             timeFormat = timeFormat,
                             isSetStartTime = true,
                             onDismissRequest = {
@@ -606,6 +607,7 @@ fun DatePage(
                                 setShowBottomSaveCancelBar(true)
                             },
                             onConfirm = {newTime ->
+                                Log.d("timee", "$newTime")
                                 spot.setStartTime(showingTrip, dateIndex, updateTripState, newTime)
                                 showTimePicker = false
                                 setShowBottomSaveCancelBar(true)
@@ -830,6 +832,7 @@ fun SpotListItem(
         else null,
         iconTextColor = spot.spotType.group.color.onColor,
 
+        sideTextPlaceHolderIcon = MyIcons.time,
         sideText = spot.getStartTimeText(timeFormat) ?: "",
         mainText = spot.titleText,
         expandedText = spot.getExpandedText(trip, isEditMode),

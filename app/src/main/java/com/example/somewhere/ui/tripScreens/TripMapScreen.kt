@@ -89,11 +89,14 @@ import com.example.somewhere.ui.theme.ColorType
 import com.example.somewhere.ui.theme.TextType
 import com.example.somewhere.ui.theme.getColor
 import com.example.somewhere.ui.theme.getTextStyle
+import com.example.somewhere.ui.tripScreenUtils.MAX_ZOOM_LEVEL
+import com.example.somewhere.ui.tripScreenUtils.MIN_ZOOM_LEVEL
 import com.example.somewhere.viewModel.DateTimeFormat
 import com.example.somewhere.viewModel.DateWithBoolean
 import com.example.somewhere.viewModel.SpotTypeGroupWithBoolean
 import com.example.somewhere.viewModel.TripMapViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.rememberCameraPositionState
@@ -220,7 +223,7 @@ fun TripMapScreen(
                             )
                         }
                     }
-                ) { _ ->
+                ) { _->
 
                     Log.d("padding", "$paddingValue")
 
@@ -236,6 +239,7 @@ fun TripMapScreen(
 
                     //map
                     Box(
+                        contentAlignment = Alignment.BottomEnd,
                         modifier = Modifier
                             .fillMaxSize()
                             .onSizeChanged {
@@ -258,6 +262,23 @@ fun TripMapScreen(
                                     spotTypeGroupWithShownMarkerList,
                                     cameraPositionState
                                 )
+                            }
+                        )
+
+                        //map buttons
+                        MapButtons(
+                            paddingValues = PaddingValues(end = 16.dp, bottom = bottomPadding.dp + 16.dp),
+                            cameraPositionState = cameraPositionState,
+                            fusedLocationClient = fusedLocationClient,
+                            setUserLocationEnabled = setUserLocationEnabled,
+                            showSnackBar = { text, actionLabel, duration ->
+                                coroutineScope.launch {
+                                    snackBarHostState.showSnackbar(
+                                        message = text,
+                                        actionLabel = actionLabel,
+                                        duration = duration
+                                    )
+                                }
                             }
                         )
                     }
@@ -370,8 +391,24 @@ fun TripMapScreen(
                                 snackBarHostState
                             )
                         }
-
                     }
+
+                    //map buttons
+                    MapButtons(
+                        paddingValues = PaddingValues(end = cardWidth.dp + 16.dp, bottom = 16.dp),
+                        cameraPositionState = cameraPositionState,
+                        fusedLocationClient = fusedLocationClient,
+                        setUserLocationEnabled = setUserLocationEnabled,
+                        showSnackBar = { text, actionLabel, duration ->
+                            coroutineScope.launch {
+                                snackBarHostState.showSnackbar(
+                                    message = text,
+                                    actionLabel = actionLabel,
+                                    duration = duration
+                                )
+                            }
+                        }
+                    )
                 }
             }
         }
@@ -592,6 +629,73 @@ private fun BottomSheetHandel(
     MySpacerColumn(height = 14.dp)
 }
 
+@Composable
+private fun MapButtons(
+    paddingValues: PaddingValues,
+    cameraPositionState: CameraPositionState,
+    fusedLocationClient: FusedLocationProviderClient,
+    setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
+    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit
+){
+    val coroutineScope = rememberCoroutineScope()
+
+    Column(
+        modifier = Modifier.padding(paddingValues),
+    ) {
+        //zoom in, out buttons
+        Column(
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceVariant),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            IconButton(
+                enabled = cameraPositionState.position.zoom < MAX_ZOOM_LEVEL,
+                onClick = {
+                    coroutineScope.launch {
+                        cameraPositionState.animate(
+                            CameraUpdateFactory.zoomIn()
+                        )
+                    }
+                }
+            ) {
+                DisplayIcon(icon = MyIcons.zoomIn)
+            }
+
+            IconButton(
+                enabled = cameraPositionState.position.zoom > MIN_ZOOM_LEVEL,
+                onClick = {
+                    coroutineScope.launch {
+                        cameraPositionState.animate(
+                            CameraUpdateFactory.zoomOut()
+                        )
+                    }
+                }
+            ) {
+                DisplayIcon(icon = MyIcons.zoomOut)
+            }
+        }
+
+        MySpacerColumn(height = 16.dp)
+
+        //user location button
+        Row(
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceVariant),
+            verticalAlignment = Alignment . CenterVertically,
+        ) {
+            //my location button
+            UserLocationButton(
+                fusedLocationClient,
+                cameraPositionState,
+                setUserLocationEnabled,
+                showSnackBar = showSnackBar
+            )
+        }
+    }
+}
+
 /*
 have to Column()
 */
@@ -619,7 +723,7 @@ private fun ControlPanel(
 ){
     val density = LocalDensity.current.density
 
-    ButtonsRow(
+    ControlButtonsRow(
         mapSize = mapSize,
         focusOnToTargetEnabled = focusOnToSpotEnabled,
         isDateShown = oneDateShown,
@@ -678,12 +782,16 @@ private fun ControlPanel(
                 newCurrentDateIndex
             )
         },
+        onPreviousSpotClicked = {
+
+        },
+        onNextSpotClicked = {
+
+        },
 
         cameraPositionState = cameraPositionState,
         dateListWithShownIconList = dateWithShownMarkerList,
         spotTypeGroupWithShownIconList = spotTypeGroupWithShownMarkerList,
-        setUserLocationEnabled = setUserLocationEnabled,
-        fusedLocationClient = fusedLocationClient,
         onBackButtonClicked = navigateUp,
         showSnackBar = { text_, actionLabel_, duration_ ->
             coroutineScope.launch {
@@ -729,7 +837,7 @@ private fun ControlPanel(
 }
 
 @Composable
-private fun ButtonsRow(
+private fun ControlButtonsRow(
     mapSize: IntSize,
 
     focusOnToTargetEnabled: Boolean,
@@ -740,14 +848,13 @@ private fun ButtonsRow(
     onOneDateClicked: () -> Unit,
     onPreviousDateClicked: () -> Unit,
     onNextDateClicked: () -> Unit,
+    onPreviousSpotClicked: () -> Unit,
+    onNextSpotClicked: () -> Unit,
 
     cameraPositionState: CameraPositionState,
 
     dateListWithShownIconList:List<DateWithBoolean>,
     spotTypeGroupWithShownIconList: List<SpotTypeGroupWithBoolean>,
-
-    setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
-    fusedLocationClient: FusedLocationProviderClient,
 
     showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit,
 
@@ -764,25 +871,17 @@ private fun ButtonsRow(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // my location & focus on target buttons
         Row(
-            modifier = Modifier.width(278.dp),
+//            modifier = Modifier.width(278.dp),
             horizontalArrangement = Arrangement.Center
         ) {
+            // my location & focus on target buttons
             Row(
                 modifier = Modifier
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.surfaceVariant),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                //my location button
-                UserLocationButton(
-                    fusedLocationClient,
-                    cameraPositionState,
-                    setUserLocationEnabled,
-                    showSnackBar
-                )
-
                 //focus on to target button
                 FocusOnToSpotButton(
                     mapSize = mapSize,
@@ -806,7 +905,7 @@ private fun ButtonsRow(
                 IconButton(
                     onClick = onPreviousDateClicked
                 ) {
-                    DisplayIcon(icon = MyIcons.leftArrow)
+                    DisplayIcon(icon = MyIcons.dateLeftArrow)
                 }
 
                 val dateTextStyle = if (isDateShown) getTextStyle(TextType.BUTTON)
@@ -829,18 +928,43 @@ private fun ButtonsRow(
                     )
                 }
 
-
                 IconButton(
                     onClick = onNextDateClicked
                 ) {
-                    DisplayIcon(icon = MyIcons.rightArrow)
+                    DisplayIcon(icon = MyIcons.dateRightArrow)
+                }
+            }
+
+            MySpacerRow(width = 16.dp)
+
+            //spot < >
+            Row(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                IconButton(
+                    onClick = onPreviousSpotClicked
+                ) {
+                    DisplayIcon(icon = MyIcons.spotLeftArrow)
+                }
+
+                //text icon?
+
+                IconButton(
+                    onClick = onNextSpotClicked
+                ) {
+                    DisplayIcon(icon = MyIcons.spotRightArrow)
                 }
             }
         }
 
-        Spacer(modifier = Modifier.weight(1f))
+        MySpacerRow(width = 12.dp)
 
-        Spacer(modifier = Modifier.width(40.dp))
+//        Spacer(modifier = Modifier.weight(1f))
+//
+//        Spacer(modifier = Modifier.width(40.dp))
     }
 }
 
@@ -1022,7 +1146,7 @@ private fun DateItem(
 
             //spot count
             Text(
-                text = "${date.spotList.size - date.getSpotTypeGroupCount(SpotTypeGroup.MOVE)} Spot",
+                text = "${date.spotList.size - date.getSpotTypeGroupCount(SpotTypeGroup.MOVE)} " + stringResource(id = R.string.spots),
                 style = dateSpotTextStyle
             )
         }

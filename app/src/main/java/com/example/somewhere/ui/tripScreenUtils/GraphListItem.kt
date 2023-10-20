@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import com.example.somewhere.R
 import com.example.somewhere.ui.commonScreenUtils.ClickableBox
 import com.example.somewhere.ui.commonScreenUtils.DisplayIcon
+import com.example.somewhere.ui.commonScreenUtils.MyIcon
 import com.example.somewhere.ui.commonScreenUtils.MyIcons
 import com.example.somewhere.ui.commonScreenUtils.MySpacerRow
 import com.example.somewhere.ui.theme.ColorType
@@ -104,6 +105,7 @@ fun GraphListItem(
     @ColorInt iconTextColor: Int? = null,
 
     isShown: Boolean = true,
+    sideTextPlaceHolderIcon: MyIcon? = null,
 
     itemColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     pointColor: Color = getColor(ColorType.GRAPH__POINT),
@@ -185,10 +187,15 @@ fun GraphListItem(
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Text(
-                                text = sideText,
-                                style = sideTextStyle
-                            )
+                            if (sideText != "") {
+                                Text(
+                                    text = sideText,
+                                    style = sideTextStyle
+                                )
+                            }
+                            else if (sideTextPlaceHolderIcon != null && isEditMode) {
+                                DisplayIcon(icon = sideTextPlaceHolderIcon)
+                            }
                         }
                     }
 
