@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.example.somewhere.R
 import com.example.somewhere.model.Date
 import com.example.somewhere.model.Spot
+import com.example.somewhere.ui.commonScreenUtils.ClickableBox
 import com.example.somewhere.ui.commonScreenUtils.MySpacerRow
 import com.example.somewhere.ui.theme.ColorType
 import com.example.somewhere.ui.theme.TextType
@@ -360,70 +361,72 @@ fun OneProgressBar(
     itemWidth =  if (isHighlight) 200
                 else            130
 
-    Column(
+    ClickableBox(
         modifier = Modifier
             .width(width)
-            .height(PROGRESS_BAR_HEIGHT)
-            .clickable {
-                onClickItem()
-            },
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .height(PROGRESS_BAR_HEIGHT),
+        onClick = onClickItem
     ) {
+        Column(
 
-        //upper text
-        Box(
-            modifier = Modifier.height(30.dp),
-            contentAlignment = Alignment.BottomCenter
-        ){
-            Text(
-                text = upperText1,
-                style = upperTextStyle
-            )
-        }
-
-        //point with line
-        Box(
-            modifier = Modifier.height(25.dp),
-            contentAlignment = Alignment.Center
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Line(
-                    isShown = !isFirst,
-                    isHighlight = isLeftHighlight,
-                    modifier = Modifier.weight(1f),
-                    color = lineColor,
-                    isMove = prevSpotIsMove,
-                )
-                Line(
-                    isShown = !isLast,
-                    isHighlight = isRightHighlight,
-                    modifier = Modifier.weight(1f),
-                    color = lineColor,
-                    isMove = nextSpotIsMove,
+
+            //upper text
+            Box(
+                modifier = Modifier.height(30.dp),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                Text(
+                    text = upperText1,
+                    style = upperTextStyle
                 )
             }
 
-            //point line
-            Point(
-                isHighlightPoint = isHighlight,
-                color = pointColor,
-                text = iconText,
-                textColor = iconTextColor,
-                includeNum = includeIconNum
+            //point with line
+            Box(
+                modifier = Modifier.height(25.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Line(
+                        isShown = !isFirst,
+                        isHighlight = isLeftHighlight,
+                        modifier = Modifier.weight(1f),
+                        color = lineColor,
+                        isMove = prevSpotIsMove,
+                    )
+                    Line(
+                        isShown = !isLast,
+                        isHighlight = isRightHighlight,
+                        modifier = Modifier.weight(1f),
+                        color = lineColor,
+                        isMove = nextSpotIsMove,
+                    )
+                }
+
+                //point line
+                Point(
+                    isHighlightPoint = isHighlight,
+                    color = pointColor,
+                    text = iconText,
+                    textColor = iconTextColor,
+                    includeNum = includeIconNum
+                )
+            }
+
+            //lower text
+            Text(
+                text = titleText1,
+                style = titleTextStyle,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .padding(horizontal = 5.dp)
+                    .height(30.dp)
             )
         }
-
-        //lower text
-        Text(
-            text = titleText1,
-            style = titleTextStyle,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .padding(horizontal = 5.dp)
-                .height(30.dp)
-        )
     }
 }
 
