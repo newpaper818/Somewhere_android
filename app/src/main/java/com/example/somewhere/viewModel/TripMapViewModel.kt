@@ -23,9 +23,6 @@ data class TripMapUiState(
     val currentDateIndex: Int = 0,
     val oneDateShown: Boolean = false,
 
-    val currentSpotIndex: Int = 0,
-    val oneSpotShown: Boolean = false,
-
     val focusOnToSpotEnabled: Boolean = true,
 
     val dateWithShownMarkerList: List<DateWithBoolean> = listOf(),
@@ -130,31 +127,6 @@ class TripMapViewModel(
         }
     }
 
-    private fun checkOnlyOneCurrentSpotShown(){
-        val dateWithShownMarkerList = tripMapUiState.value.dateWithShownMarkerList
-        val currentDateIndex = tripMapUiState.value.currentDateIndex
-
-        for (dateWithBoolean in dateWithShownMarkerList){
-            if (dateWithShownMarkerList.indexOf(dateWithBoolean) == currentDateIndex && !dateWithBoolean.isShown) {
-                _tripMapUiState.update {
-                    it.copy(oneDateShown = false)
-                }
-                return
-            }
-            else if (dateWithShownMarkerList.indexOf(dateWithBoolean) != currentDateIndex && dateWithBoolean.isShown){
-                _tripMapUiState.update {
-                    it.copy(oneDateShown = false)
-                }
-                return
-            }
-        }
-
-        _tripMapUiState.update {
-            it.copy(oneDateShown = true)
-        }
-    }
-
-
 
 
     fun toggleOneDateShown(date: Date){
@@ -256,5 +228,4 @@ class TripMapViewModel(
 
         return newCurrentDateIndex
     }
-
 }

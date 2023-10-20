@@ -646,7 +646,7 @@ private fun MapButtons(
         Column(
             modifier = Modifier
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant),
+                .background(getColor(ColorType.BUTTON__MAP)),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             IconButton(
@@ -682,7 +682,7 @@ private fun MapButtons(
         Row(
             modifier = Modifier
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant),
+                .background(getColor(ColorType.BUTTON__MAP)),
             verticalAlignment = Alignment . CenterVertically,
         ) {
             //my location button
@@ -782,12 +782,6 @@ private fun ControlPanel(
                 newCurrentDateIndex
             )
         },
-        onPreviousSpotClicked = {
-
-        },
-        onNextSpotClicked = {
-
-        },
 
         cameraPositionState = cameraPositionState,
         dateListWithShownIconList = dateWithShownMarkerList,
@@ -848,8 +842,6 @@ private fun ControlButtonsRow(
     onOneDateClicked: () -> Unit,
     onPreviousDateClicked: () -> Unit,
     onNextDateClicked: () -> Unit,
-    onPreviousSpotClicked: () -> Unit,
-    onNextSpotClicked: () -> Unit,
 
     cameraPositionState: CameraPositionState,
 
@@ -872,7 +864,7 @@ private fun ControlButtonsRow(
         Spacer(modifier = Modifier.weight(1f))
 
         Row(
-//            modifier = Modifier.width(278.dp),
+            modifier = Modifier.width(278.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             // my location & focus on target buttons
@@ -934,37 +926,13 @@ private fun ControlButtonsRow(
                     DisplayIcon(icon = MyIcons.dateRightArrow)
                 }
             }
-
-            MySpacerRow(width = 16.dp)
-
-            //spot < >
-            Row(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                IconButton(
-                    onClick = onPreviousSpotClicked
-                ) {
-                    DisplayIcon(icon = MyIcons.spotLeftArrow)
-                }
-
-                //text icon?
-
-                IconButton(
-                    onClick = onNextSpotClicked
-                ) {
-                    DisplayIcon(icon = MyIcons.spotRightArrow)
-                }
-            }
         }
 
-        MySpacerRow(width = 12.dp)
+//        MySpacerRow(width = 12.dp)
 
-//        Spacer(modifier = Modifier.weight(1f))
-//
-//        Spacer(modifier = Modifier.width(40.dp))
+        Spacer(modifier = Modifier.weight(1f))
+
+        Spacer(modifier = Modifier.width(40.dp))
     }
 }
 

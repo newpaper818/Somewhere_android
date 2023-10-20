@@ -1,16 +1,10 @@
 package com.example.somewhere.ui.tripScreens
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -31,7 +25,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
@@ -403,10 +396,21 @@ fun SpotScreen(
                         currentDateIndex = toDateId
                         val lastSpotIndex = dateList[toDateId].spotList.lastIndex
                         currentSpotIndex = if (lastSpotIndex == -1) 0 else lastSpotIndex
+
+                        Log.d("pagee", "to $currentSpotIndex")
+                        coroutineScope.launch {
+//                            delay(100)
+                            spotPagerState.animateScrollToPage(currentSpotIndex)
+                        }
                     },
                     onNextDateClick = {toDateId ->
                         currentDateIndex = toDateId
                         currentSpotIndex = 0
+
+                        Log.d("pagee", "to $currentSpotIndex")
+                        coroutineScope.launch {
+                            spotPagerState.animateScrollToPage(currentSpotIndex)
+                        }
                     }
                 )
 
@@ -427,118 +431,163 @@ fun SpotScreen(
                     userScrollEnabled = !isMapExpand
                 ) {
 
+                    //map card
+                    item {
+                        MapCard(
+                            isEditMode = isEditMode,
+                            isMapExpand = isMapExpand,
+                            expandHeight = (lazyColumnHeight / LocalDensity.current.density).toInt() - 1,
+                            mapSize = mapSize,
+
+                            isDarkMapTheme = isDarkMapTheme,
+                            fusedLocationClient = fusedLocationClient,
+                            userLocationEnabled = userLocationEnabled,
+                            setUserLocationEnabled = setUserLocationEnabled,
+                            cameraPositionState = cameraPositionState,
+
+                            dateList = dateList,
+                            dateIndex = currentDateIndex,
+                            spotList = spotList,
+                            currentSpot = currentSpot,
+                            onFullScreenClicked = {
+                                isMapExpand = !isMapExpand
+
+                                //scroll to top(map)
+                                if (isMapExpand)
+                                    coroutineScope.launch {
+                                        scrollState.animateScrollToItem(0)
+                                    }
+                            },
+
+                            toPrevSpot = {
+                                if (currentSpotIndex > 0) {
+                                    currentSpotIndex--
+                                    Log.d("pagee", "to $currentSpotIndex")
+
+                                    coroutineScope.launch {
+                                        spotPagerState.animateScrollToPage(currentSpotIndex)
+                                    }
+                                }
+                                //to prev date and last spot
+                                else{
+                                    //first date and first spot will not be here
+                                    currentDateIndex--
+                                    val lastSpotIndex = dateList[currentDateIndex].spotList.lastIndex
+                                    currentSpotIndex = if (lastSpotIndex == -1) 0 else lastSpotIndex
+                                    Log.d("pagee", "to $currentSpotIndex")
+
+                                    coroutineScope.launch {
+                                        spotPagerState.animateScrollToPage(currentSpotIndex)
+                                    }
+                                }
+                            },
+                            toNextSpot = {
+                                if (currentSpotIndex < spotList.lastIndex) {
+                                    currentSpotIndex++
+                                    Log.d("pagee", "to $currentSpotIndex")
+
+                                    coroutineScope.launch {
+                                        spotPagerState.animateScrollToPage(currentSpotIndex)
+                                    }
+                                }
+                                //to next date
+                                else{
+                                    //last date and last spot will not be here
+                                    currentDateIndex++
+                                    currentSpotIndex = 0
+                                    Log.d("pagee", "to $currentSpotIndex")
+
+                                    coroutineScope.launch {
+                                        spotPagerState.animateScrollToPage(currentSpotIndex)
+                                    }
+                                }
+                            },
+
+                            toggleIsEditLocation = {
+                                isEditLocationMode = !isEditLocationMode
+                            },
+                            deleteLocation = {
+                                currentSpot?.setLocation(
+                                    showingTrip,
+                                    currentDateIndex,
+                                    updateTripState,
+                                    null,
+                                    null
+                                )
+                            },
+                            setMapSize = {
+                                mapSize = it
+                            },
+                            showSnackBar = { text_, actionLabel_, duration_ ->
+                                coroutineScope.launch {
+                                    snackBarHostState.showSnackbar(
+                                        text_,
+                                        actionLabel_,
+                                        duration = duration_
+                                    )
+                                }
+                            },
+                            spotFrom = spotFrom,
+                            spotTo = spotTo
+                        )
+                    }
+
                     if (spotList.isEmpty()){
                         item{
+                            MySpacerColumn(height = 16.dp)
                             Text(stringResource(id = R.string.no_spot))
                         }
                     }
                     else {
-                        if (currentSpot != null) {
-                            //map card
-                            item {
+                        //each spot page
+                        item {
+                            HorizontalPager(
+                                pageCount = spotList.size,
+                                state = spotPagerState,
+                                verticalAlignment = Alignment.Top,
+                                modifier = Modifier.weight(1f)
+                            ) { pageIndex ->     //pageIndex == spotIndex
 
-                                MapCard(
-                                    isEditMode = isEditMode,
-                                    isMapExpand = isMapExpand,
-                                    expandHeight = (lazyColumnHeight / LocalDensity.current.density).toInt() - 1,
-                                    mapSize = mapSize,
+                                if (!isEditLocationMode) {
+                                    //each page
+                                    SpotDetailPage(
+                                        isEditMode = isEditMode,
+                                        setUseImePadding = setUseImePadding,
+                                        snackBarHostState = snackBarHostState,
 
-                                    isDarkMapTheme = isDarkMapTheme,
-                                    fusedLocationClient = fusedLocationClient,
-                                    userLocationEnabled = userLocationEnabled,
-                                    setUserLocationEnabled = setUserLocationEnabled,
-                                    cameraPositionState = cameraPositionState,
+                                        showingTrip = showingTrip,
+                                        dateIndex = currentDateIndex,
+                                        currentDate = dateList[currentDateIndex],
+                                        spotIndex = pageIndex,
+                                        currentSpot = dateList[currentDateIndex].spotList.getOrNull(
+                                            pageIndex
+                                        ),
 
-                                    spotList = spotList,
-                                    currentSpot = currentSpot,
-                                    onFullScreenClicked = {
-                                        isMapExpand = !isMapExpand
+                                        dateTimeFormat = dateTimeFormat,
+                                        focusManager = focusManager,
+                                        onErrorCountChange = {
+                                            if (it) errorCount++
+                                            else    errorCount--
+                                        },
 
-                                        //scroll to top(map)
-                                        if (isMapExpand)
-                                            coroutineScope.launch {
-                                                scrollState.animateScrollToItem(0)
-                                            }
-                                    },
+                                        addAddedImageList = addAddedImages,
+                                        addDeletedImageList = addDeletedImages,
+                                        reorderSpotImageList = { currentIndex, destinationIndex ->
+                                            reorderSpotImageList(currentDateIndex, pageIndex, currentIndex, destinationIndex)
+                                        },
 
-                                    toggleIsEditLocation = {
-                                        isEditLocationMode = !isEditLocationMode
-                                    },
-                                    deleteLocation = {
-                                        currentSpot.setLocation(
-                                            showingTrip,
-                                            currentDateIndex,
-                                            updateTripState,
-                                            null,
-                                            null
-                                        )
-                                    },
-                                    setMapSize = {
-                                        mapSize = it
-                                    },
-                                    showSnackBar = { text_, actionLabel_, duration_ ->
-                                        coroutineScope.launch {
-                                            snackBarHostState.showSnackbar(
-                                                text_,
-                                                actionLabel_,
-                                                duration = duration_
-                                            )
-                                        }
-                                    },
-                                    spotFrom = spotFrom,
-                                    spotTo = spotTo
-                                )
-                            }
+                                        setShowBottomSaveCancelBar = {
+                                            showBottomSaveCancelBar = it
+                                        },
+                                        updateTripState = updateTripState,
 
+                                        toggleIsEditLocation = {
+                                            isEditLocationMode = !isEditLocationMode
+                                        },
 
-                            //each spot page
-                            item {
-                                HorizontalPager(
-                                    pageCount = spotList.size,
-                                    state = spotPagerState,
-                                    verticalAlignment = Alignment.Top,
-                                    modifier = Modifier.weight(1f)
-                                ) { pageIndex ->     //pageIndex == spotIndex
-
-                                    if (!isEditLocationMode) {
-                                        //each page
-                                        SpotDetailPage(
-                                            isEditMode = isEditMode,
-                                            setUseImePadding = setUseImePadding,
-                                            snackBarHostState = snackBarHostState,
-
-                                            showingTrip = showingTrip,
-                                            dateId = currentDateIndex,
-                                            currentDate = dateList[currentDateIndex],
-                                            spotIndex = pageIndex,
-                                            currentSpot = dateList[currentDateIndex].spotList.getOrNull(
-                                                pageIndex
-                                            ),
-
-                                            dateTimeFormat = dateTimeFormat,
-                                            focusManager = focusManager,
-                                            onErrorCountChange = {
-                                                if (it) errorCount++
-                                                else    errorCount--
-                                            },
-
-                                            addAddedImageList = addAddedImages,
-                                            addDeletedImageList = addDeletedImages,
-                                            reorderSpotImageList = { currentIndex, destinationIndex ->
-                                                reorderSpotImageList(currentDateIndex, pageIndex, currentIndex, destinationIndex)
-                                            },
-
-                                            setShowBottomSaveCancelBar = {
-                                                showBottomSaveCancelBar = it
-                                            },
-                                            updateTripState = updateTripState,
-
-                                            toggleIsEditLocation = {
-                                                isEditLocationMode = !isEditLocationMode
-                                            },
-
-                                            onImageClicked = onImageClicked,
-                                            deleteSpot = {
+                                        onImageClicked = onImageClicked,
+                                        deleteSpot = {
+                                            if (currentSpot != null) {
                                                 addDeletedImages(currentSpot.imagePathList)
 
                                                 if (spotList.size <= 1) {
@@ -553,14 +602,17 @@ fun SpotScreen(
                                                     coroutineScope.launch {
                                                         spotPagerState.animateScrollToPage(toIdx)
                                                         progressBarState.animateScrollToItem(toIdx + 1)
-                                                        deleteSpot(currentDateIndex, currentSpotIndex)
+                                                        deleteSpot(
+                                                            currentDateIndex,
+                                                            currentSpotIndex
+                                                        )
                                                     }
                                                 }
-                                            },
-                                            navigateUp = navigateUp,
-                                            modifier = modifier.padding(16.dp, 0.dp)
-                                        )
-                                    }
+                                            }
+                                        },
+                                        navigateUp = navigateUp,
+                                        modifier = modifier.padding(16.dp, 0.dp)
+                                    )
                                 }
                             }
                         }
@@ -622,7 +674,7 @@ fun SpotDetailPage(
     snackBarHostState: SnackbarHostState,
 
     showingTrip: Trip,
-    dateId: Int,
+    dateIndex: Int,
     currentDate: Date,
     spotIndex: Int,
     currentSpot: Spot?,
@@ -648,7 +700,7 @@ fun SpotDetailPage(
     modifier: Modifier = Modifier
 ){
     val dateList = showingTrip.dateList
-    val spotList = showingTrip.dateList[dateId].spotList
+    val spotList = showingTrip.dateList[dateIndex].spotList
 
     val scrollState = rememberLazyListState()
     val context = LocalContext.current
@@ -677,7 +729,7 @@ fun SpotDetailPage(
                         onTitleChange = { newTitleText ->
                             currentSpot.setTitleText(
                                 showingTrip,
-                                dateId,
+                                dateIndex,
                                 updateTripState,
                                 newTitleText
                             )
@@ -692,7 +744,7 @@ fun SpotDetailPage(
                         onTitleChange = { newTitleText ->
                             currentSpot.setTitleText(
                                 showingTrip,
-                                dateId,
+                                dateIndex,
                                 updateTripState,
                                 newTitleText
                             )
@@ -716,11 +768,11 @@ fun SpotDetailPage(
                     dateTimeFormat = dateTimeFormat,
                     setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
                     changeDate = { newDateId ->
-                        if (dateId != newDateId) {
+                        if (dateIndex != newDateId) {
                             navigateUp()
                             showingTrip.moveSpotToDate(
                                 showingTrip,
-                                dateId,
+                                dateIndex,
                                 spotIndex,
                                 newDateId,
                                 updateTripState
@@ -730,7 +782,7 @@ fun SpotDetailPage(
                     setStartTime = { startTime ->
                         currentSpot.setStartTime(
                             showingTrip,
-                            dateId,
+                            dateIndex,
                             updateTripState,
                             startTime
                         )
@@ -738,7 +790,7 @@ fun SpotDetailPage(
                     setEndTime = { endTime ->
                         currentSpot.setEndTime(
                             showingTrip,
-                            dateId,
+                            dateIndex,
                             updateTripState,
                             endTime
                         )
@@ -771,7 +823,7 @@ fun SpotDetailPage(
                             setShowBottomSaveCancelBar(true)
                             currentSpot.setSpotType(
                                 showingTrip,
-                                dateId,
+                                dateIndex,
                                 updateTripState,
                                 newSpotType
                             )
@@ -792,7 +844,7 @@ fun SpotDetailPage(
                         onSaveClick = { newBudget ->
                             showBudgetDialog = false
                             setShowBottomSaveCancelBar(true)
-                            currentSpot.setBudget(showingTrip, dateId, updateTripState, newBudget)
+                            currentSpot.setBudget(showingTrip, dateIndex, updateTripState, newBudget)
                             setImePadding()
                         }
                     )
@@ -818,10 +870,10 @@ fun SpotDetailPage(
                 if (currentSpot.spotType.isMove()) {
                     currentSpot.updateDistance(
                         showingTrip = showingTrip,
-                        currentDateIndex = dateId,
+                        currentDateIndex = dateIndex,
                         updateTripState = updateTripState,
-                        spotFrom = currentSpot.getPrevSpot(dateList, spotList, dateId)?.location,
-                        spotTo = currentSpot.getNextSpot(dateList, spotList, dateId)?.location
+                        spotFrom = currentSpot.getPrevSpot(dateList, spotList, dateIndex)?.location,
+                        spotTo = currentSpot.getNextSpot(dateList, spotList, dateIndex)?.location
                     )
                 }
 
@@ -856,7 +908,7 @@ fun SpotDetailPage(
                     isEditMode = isEditMode,
                     memoText = currentSpot.memo,
                     onMemoChanged = { newMemoText ->
-                        currentSpot.setMemoText(showingTrip, dateId, updateTripState, newMemoText)
+                        currentSpot.setMemoText(showingTrip, dateIndex, updateTripState, newMemoText)
                     },
                     isLongText = { onErrorCountChange(it) }
                 )
@@ -875,7 +927,7 @@ fun SpotDetailPage(
 
                         val newImgList = currentSpot.imagePathList + imageFiles
 
-                        currentSpot.setImage(showingTrip, dateId, updateTripState, newImgList)
+                        currentSpot.setImage(showingTrip, dateIndex, updateTripState, newImgList)
                     },
                     deleteImage = { imageFile ->
                         addDeletedImageList(listOf(imageFile))
@@ -884,7 +936,7 @@ fun SpotDetailPage(
                             currentSpot.imagePathList.toMutableList()
                         newImgList.remove(imageFile)
 
-                        currentSpot.setImage(showingTrip, dateId, updateTripState, newImgList)
+                        currentSpot.setImage(showingTrip, dateIndex, updateTripState, newImgList)
                     },
                     isOverImage = { onErrorCountChange(it) },
                     reorderImageList = reorderSpotImageList
@@ -1125,18 +1177,18 @@ private fun SetLocationPage(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
-suspend fun scrollToPage(
-    coroutineScope: CoroutineScope,
-    spotPagerState: PagerState,
-    progressBarState: LazyListState,
-    spotId: Int
-){
-    coroutineScope.launch {
-        spotPagerState.animateScrollToPage(spotId)
-        progressBarState.animateScrollToItem(spotId)
-    }
-}
+//@OptIn(ExperimentalFoundationApi::class)
+//suspend fun scrollToPage(
+//    coroutineScope: CoroutineScope,
+//    spotPagerState: PagerState,
+//    progressBarState: LazyListState,
+//    spotIndex: Int
+//){
+//    coroutineScope.launch {
+//        spotPagerState.animateScrollToPage(spotIndex)
+//        progressBarState.animateScrollToItem(spotIndex)
+//    }
+//}
 
 private fun mapAnimateToSpot(
     scrollState: LazyListState,

@@ -179,7 +179,7 @@ fun MapForSpot(
     mapSize: IntSize,
 
     spotList: List<Spot>,
-    spot: Spot,
+    spot: Spot?,
 
     spotFrom: Spot? = null,
     spotTo: Spot? = null
@@ -203,8 +203,6 @@ fun MapForSpot(
             )
         )
     }
-
-    val density = LocalDensity.current.density
 
     GoogleMap(
         modifier = Modifier

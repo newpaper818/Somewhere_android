@@ -2,6 +2,7 @@ package com.example.somewhere.ui.tripScreenUtils.cards
 
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,11 +10,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,15 +24,16 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.example.somewhere.model.Date
 import com.example.somewhere.model.Spot
 import com.example.somewhere.ui.commonScreenUtils.MySpacerColumn
 import com.example.somewhere.ui.commonScreenUtils.DisplayIcon
 import com.example.somewhere.ui.tripScreenUtils.FocusOnToSpotButton
 import com.example.somewhere.ui.tripScreenUtils.MapForSpot
 import com.example.somewhere.ui.commonScreenUtils.MyIcons
+import com.example.somewhere.ui.commonScreenUtils.MySpacerRow
 import com.example.somewhere.ui.tripScreenUtils.UserLocationButton
 import com.example.somewhere.ui.theme.ColorType
-import com.example.somewhere.ui.theme.Shapes
 import com.example.somewhere.ui.theme.getColor
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.maps.android.compose.CameraPositionState
@@ -50,9 +51,14 @@ fun MapCard(
     setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
     cameraPositionState: CameraPositionState,
 
+    dateList: List<Date>,
+    dateIndex: Int,
     spotList: List<Spot>,
-    currentSpot: Spot,
+    currentSpot: Spot?,
     onFullScreenClicked: () -> Unit,
+
+    toPrevSpot: () -> Unit,
+    toNextSpot: () -> Unit,
 
     toggleIsEditLocation: () -> Unit,
     deleteLocation: () -> Unit,
@@ -74,6 +80,12 @@ fun MapCard(
         animationSpec = tween(300),
         label = "card height"
     )
+
+    val toPrevSpotEnabled =
+        currentSpot?.prevSpotOrDateIsExist(dateIndex) ?: (dateIndex > 0)
+
+    val toNextSpotEnabled =
+        currentSpot?.nextSpotOrDateIsExist(spotList, dateList, dateIndex) ?: (dateIndex < dateList.lastIndex)
 
 
     Box(
@@ -102,7 +114,7 @@ fun MapCard(
             Spacer(modifier = Modifier.weight(1f))
             
             //buttons
-            MapButtons(
+            MapSpotMapButtons(
                 isEditMode = isEditMode,
                 spot = currentSpot,
                 spotFrom = spotFrom,
@@ -111,6 +123,12 @@ fun MapCard(
                 mapSize = mapSize,
                 cameraPositionState = cameraPositionState,
                 setUserLocationEnabled = setUserLocationEnabled,
+
+                toPrevSpotEnabled = toPrevSpotEnabled,
+                toNextSpotEnabled = toNextSpotEnabled,
+                toPrevSpot = toPrevSpot,
+                toNextSpot = toNextSpot,
+
                 onFullScreenClicked = onFullScreenClicked,
                 toggleIsEditLocation = toggleIsEditLocation,
                 deleteLocation = deleteLocation,
@@ -203,10 +221,10 @@ fun MapCard(
 }
 
 @Composable
-fun MapButtons(
+fun MapSpotMapButtons(
     isEditMode: Boolean,
 
-    spot: Spot,
+    spot: Spot?,
     spotFrom: Spot?,
     spotTo: Spot?,
 
@@ -215,41 +233,72 @@ fun MapButtons(
     cameraPositionState: CameraPositionState,
     setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
 
+    toPrevSpotEnabled: Boolean,
+    toNextSpotEnabled: Boolean,
+    toPrevSpot: () -> Unit,
+    toNextSpot: () -> Unit,
+
     onFullScreenClicked: () -> Unit,
     toggleIsEditLocation: () -> Unit,
     deleteLocation: () -> Unit,
     showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit
 ){
+    val focusOnToSpotEnabled =
+        if (spot == null) false
+        else
+            spot.spotType.isMove() && spotFrom?.location != null && spotTo?.location != null
+                    || spot.spotType.isNotMove() && spot.location != null
 
-    if (!(isEditMode && spot.spotType.isMove())) {
-        Card(
-            shape = MaterialTheme.shapes.extraLarge,
-            colors = CardDefaults.cardColors(containerColor = getColor(ColorType.BUTTON__MAP))
-        ) {
-            Row(
-                modifier = Modifier.padding(2.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+    val deleteEnabled =
+        if (spot == null) false
+        else spot.location != null
 
-                if (isEditMode) {
-                    if (spot.spotType.isNotMove())
-                        MapButtonsEditNotMove(
-                            deleteEnabled = spot.location != null,
-                            toggleIsEditLocation = toggleIsEditLocation,
-                            deleteLocation = deleteLocation
-                        )
-                } else {
-                    MapButtonsNotEdit(spot, spotFrom, spotTo, fusedLocationClient, mapSize, cameraPositionState, setUserLocationEnabled, onFullScreenClicked, showSnackBar)
-                }
-            }
+    val spotList =
+        if (spot == null) listOf()
+        else if (spot.spotType.isMove() && spotFrom != null && spotTo != null)  listOf(spotFrom, spotTo)
+        else listOf(spot)
+
+
+    Row {
+        if (!isEditMode){
+            UserLocationAndFullScreenButtons(
+                fusedLocationClient = fusedLocationClient,
+                cameraPositionState = cameraPositionState,
+                setUserLocationEnabled = setUserLocationEnabled,
+                onFullScreenClicked = onFullScreenClicked,
+                showSnackBar = showSnackBar
+            )
+
+            MySpacerRow(width = 16.dp)
         }
+        else if (spot?.spotType?.isNotMove() == true){
+            EditAndDeleteLocationButtons(
+                deleteEnabled = deleteEnabled,
+                toggleIsEditLocation = toggleIsEditLocation,
+                deleteLocation = deleteLocation
+            )
+
+            MySpacerRow(width = 16.dp)
+        }
+
+        SpotNavigateWithFocusOnToSpotButtons(
+            toPrevSpotEnabled = toPrevSpotEnabled,
+            toNextSpotEnabled = toNextSpotEnabled,
+            toPrevSpot = toPrevSpot,
+            toNextSpot = toNextSpot,
+            mapSize = mapSize,
+            focusOnToSpotEnabled = focusOnToSpotEnabled,
+            cameraPositionState = cameraPositionState,
+            spotList = spotList,
+            showSnackBar = showSnackBar
+        )
     }
 }
 
 @Composable
 //map buttons at [not edit]
 fun MapButtonsNotEdit(
-    spot: Spot,
+    spot: Spot?,
     spotFrom: Spot?,
     spotTo: Spot?,
 
@@ -260,41 +309,128 @@ fun MapButtonsNotEdit(
     onFullScreenClicked: () -> Unit,
     showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit
 ){
-    val focusOnToSpotEnabled = (spot.spotType.isMove() && spotFrom?.location != null && spotTo?.location != null
-                                    || spot.spotType.isNotMove() && spot.location != null)
+    val focusOnToSpotEnabled =
+        if (spot == null) false
+        else
+            (spot.spotType.isMove() && spotFrom?.location != null && spotTo?.location != null
+            || spot.spotType.isNotMove() && spot.location != null)
 
-    val spotList = if (spot.spotType.isMove() && spotFrom != null && spotTo != null)  listOf(spotFrom, spotTo)
-                    else                                                                listOf(spot)
 
-    //user location
-    UserLocationButton(fusedLocationClient, cameraPositionState, setUserLocationEnabled, showSnackBar)
+    val spotList =
+        if (spot == null) listOf()
+        else if (spot.spotType.isMove() && spotFrom != null && spotTo != null)  listOf(spotFrom, spotTo)
+        else listOf(spot)
+
 
     //focus on to spot
     FocusOnToSpotButton(mapSize, focusOnToSpotEnabled, cameraPositionState, spotList, showSnackBar)
 
-    //fullscreen map
-    IconButton(onClick = onFullScreenClicked) {
-        DisplayIcon(icon = MyIcons.fullscreen)
+
+}
+
+//user location / full screen buttons
+@Composable
+fun UserLocationAndFullScreenButtons(
+    fusedLocationClient: FusedLocationProviderClient,
+    cameraPositionState: CameraPositionState,
+    setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
+    onFullScreenClicked: () -> Unit,
+    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit
+){
+    MapButtonsRow {
+        //user location
+        UserLocationButton(fusedLocationClient, cameraPositionState, setUserLocationEnabled, showSnackBar)
+
+        //fullscreen map
+        IconButton(onClick = onFullScreenClicked) {
+            DisplayIcon(icon = MyIcons.fullscreen)
+        }
     }
 }
 
+// edit location / delete location buttons
 @Composable
-//map buttons at [edit] [not move]
-fun MapButtonsEditNotMove(
+fun EditAndDeleteLocationButtons(
     deleteEnabled: Boolean,
     toggleIsEditLocation: () -> Unit,
     deleteLocation: () -> Unit,
 ){
-    //edit location
-    IconButton(onClick = toggleIsEditLocation) {
-        DisplayIcon(icon = MyIcons.editLocation)
-    }
+    MapButtonsRow {
+        //edit location
+        IconButton(onClick = toggleIsEditLocation) {
+            DisplayIcon(icon = MyIcons.editLocation)
+        }
 
-    //delete location
-    IconButton(
-        enabled = deleteEnabled,
-        onClick = deleteLocation
+        //delete location
+        IconButton(
+            enabled = deleteEnabled,
+            onClick = deleteLocation
+        ) {
+            DisplayIcon(icon = MyIcons.deleteLocation, enabled = deleteEnabled)
+        }
+    }
+}
+
+// < spot >
+@Composable
+fun SpotNavigateWithFocusOnToSpotButtons(
+    toPrevSpotEnabled: Boolean,
+    toNextSpotEnabled: Boolean,
+    toPrevSpot: () -> Unit,
+    toNextSpot: () -> Unit,
+
+    mapSize: IntSize,
+    focusOnToSpotEnabled: Boolean,
+    cameraPositionState: CameraPositionState,
+    spotList: List<Spot>,
+    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit
+){
+    MapButtonsRow {
+        //to prev spot
+        IconButton(
+            enabled = toPrevSpotEnabled,
+            onClick = toPrevSpot
+        ) {
+            DisplayIcon(icon = MyIcons.spotLeftArrow, enabled = toPrevSpotEnabled)
+        }
+
+        //focus on to spot
+        FocusOnToSpotButton(mapSize, focusOnToSpotEnabled, cameraPositionState, spotList, showSnackBar)
+
+        //to next spot
+        IconButton(
+            enabled = toNextSpotEnabled,
+            onClick = toNextSpot
+        ) {
+            DisplayIcon(icon = MyIcons.spotRightArrow, enabled = toNextSpotEnabled)
+        }
+    }
+}
+
+@Composable
+fun MapButtonsRow(
+    buttonsContent: @Composable () -> Unit
+){
+    Row(
+        modifier = Modifier
+            .clip(CircleShape)
+            .background(getColor(ColorType.BUTTON__MAP)),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        DisplayIcon(icon = MyIcons.deleteLocation, enabled = deleteEnabled)
+        buttonsContent()
+    }
+}
+
+@Composable
+fun MapButtonsColumn(
+    buttonsContent: @Composable () -> Unit
+){
+    Column(
+        modifier = Modifier
+            .clip(CircleShape)
+            .background(getColor(ColorType.BUTTON__MAP)),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        buttonsContent()
     }
 }

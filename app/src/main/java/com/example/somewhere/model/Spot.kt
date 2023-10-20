@@ -157,7 +157,7 @@ data class Spot(
 
     /**
      * get next spot of current spot.
-     * if don't exist, get next date's last spot
+     * if don't exist, get next date's first spot
      */
     fun getNextSpot(
         dateList: List<Date>,
@@ -174,6 +174,26 @@ data class Spot(
         }
 
         return nextSpot
+    }
+
+    fun prevSpotOrDateIsExist(
+        currentDateIndex: Int,
+    ): Boolean{
+        return if (index > 0){
+            true
+        }
+        else currentDateIndex > 0
+    }
+
+    fun nextSpotOrDateIsExist(
+        currentSpotList: List<Spot>,
+        currentDateList: List<Date>,
+        currentDateIndex: Int,
+    ): Boolean{
+        return if (index < currentSpotList.lastIndex){
+            true
+        }
+        else currentDateIndex < currentDateList.lastIndex
     }
 
     /**
