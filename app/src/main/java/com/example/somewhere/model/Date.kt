@@ -50,7 +50,7 @@ data class Date(
         val spotCountText = "${getSpotTypeGroupCountExcludeMove()} " + stringResource(id = R.string.spots)
         val totalDistanceText = getTotalTravelDistanceText(trip)
 
-        var expandedText = "$spotCountText / $budgetText / $totalDistanceText"
+        var expandedText = "$spotCountText   $totalDistanceText   $budgetText"
 
         if (spotList == emptyList<Spot>())
             expandedText = stringResource(id = R.string.dates_no_plan)
