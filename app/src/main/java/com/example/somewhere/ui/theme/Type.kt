@@ -265,7 +265,7 @@ fun getTextStyle(textType: TextType): TextStyle {
         // SETTING =================================================================================
         MAIN                        -> MaterialTheme.typography.headlineMedium
         APP_NAME                    -> MaterialTheme.typography.headlineMedium
-        GROUP_CARD_TITLE            -> MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold, color = n60)
+        GROUP_CARD_TITLE            -> MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold, color = n60)
         GROUP_CARD_ITEM_BODY1       -> MaterialTheme.typography.bodyLarge
         GROUP_CARD_ITEM_BODY2       -> MaterialTheme.typography.bodyMedium.copy(color = n60)
     }
