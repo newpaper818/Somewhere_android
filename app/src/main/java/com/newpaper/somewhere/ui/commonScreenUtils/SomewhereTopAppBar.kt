@@ -42,7 +42,7 @@ fun SomewhereTopAppBar(
                     MySpacerRow(width = 16.dp)
                 
                 Column(
-                    modifier = Modifier.fillMaxHeight(),
+                    modifier = Modifier,
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
