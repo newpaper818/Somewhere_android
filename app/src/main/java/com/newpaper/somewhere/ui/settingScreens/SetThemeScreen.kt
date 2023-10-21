@@ -1,0 +1,131 @@
+package com.newpaper.somewhere.ui.settingScreens
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.newpaper.somewhere.R
+import com.newpaper.somewhere.enumUtils.AppTheme
+import com.newpaper.somewhere.enumUtils.MapTheme
+import com.newpaper.somewhere.ui.navigation.NavigationDestination
+import com.newpaper.somewhere.ui.settingScreenUtils.ItemWithRadioButton
+import com.newpaper.somewhere.ui.settingScreenUtils.ListGroupCard
+import com.newpaper.somewhere.ui.commonScreenUtils.MyIcons
+import com.newpaper.somewhere.ui.commonScreenUtils.SomewhereTopAppBar
+import com.newpaper.somewhere.viewModel.Theme
+
+object SetThemeScreenDestination: NavigationDestination {
+    override val route = "setTheme"
+    override var title = ""
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SetThemeScreen(
+    theme: Theme,
+    saveUserPreferences: (appTheme: AppTheme?, mapTheme: MapTheme?) -> Unit,
+    navigateUp: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    var appTheme by rememberSaveable { mutableStateOf(theme.appTheme) }
+    var mapTheme by rememberSaveable { mutableStateOf(theme.mapTheme) }
+
+    Scaffold(
+        topBar = {
+            SomewhereTopAppBar(
+                title = stringResource(id = R.string.theme),
+                navigationIcon = MyIcons.back,
+                navigationIconOnClick = { navigateUp() }
+            )
+        }
+    ){ paddingValues ->
+
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(16.dp),
+            modifier = modifier
+                .fillMaxSize()
+                .padding(top = paddingValues.calculateTopPadding())
+        ) {
+
+            //setting app theme
+            item {
+                ListGroupCard(title = stringResource(id = R.string.app_theme)) {
+                    SelectAppTheme(
+                        selectedAppTheme = appTheme,
+                        onClickAppTheme = {
+                            if (it != appTheme){
+                                appTheme = it
+                                saveUserPreferences(it, null)
+                            }
+                        }
+                    )
+                }
+            }
+
+            //setting map theme
+            item {
+                ListGroupCard(title = stringResource(id = R.string.map_theme)) {
+                    SelectMapTheme(
+                        selectedMapTheme = mapTheme,
+                        onClickMapTheme = {
+                            if (it != mapTheme){
+                                mapTheme = it
+                                saveUserPreferences(null, it)
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SelectAppTheme(
+    selectedAppTheme: AppTheme,
+    onClickAppTheme: (AppTheme) -> Unit
+){
+    val appThemeList = rememberSaveable { enumValues<AppTheme>() }
+
+    for (appTheme in appThemeList){
+        ItemWithRadioButton(
+            isSelected = selectedAppTheme == appTheme,
+            text = stringResource(id = appTheme.textId),
+            onItemClick = {
+                onClickAppTheme(appTheme)
+            }
+        )
+    }
+}
+
+@Composable
+private fun SelectMapTheme(
+    selectedMapTheme: MapTheme,
+    onClickMapTheme: (MapTheme) -> Unit
+){
+    val mapThemeList = rememberSaveable { enumValues<MapTheme>() }
+
+    for (mapTheme in mapThemeList){
+        ItemWithRadioButton(
+            isSelected = selectedMapTheme == mapTheme,
+            text = stringResource(id = mapTheme.textId),
+            onItemClick = {
+                onClickMapTheme(mapTheme)
+            }
+        )
+    }
+}

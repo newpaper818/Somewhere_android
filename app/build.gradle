@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.somewhere'
+    namespace 'com.newpaper.somewhere'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.somewhere"
+        applicationId 'com.newpaper.somewhere'
         minSdk 26
         targetSdk 34
         versionCode 1
