@@ -13,23 +13,14 @@
 
     <!--enumUtils ===============================================================================-->
     <!--CurrencyType.kt-->
-    <string name="aud_code">AUD</string>
-    <string name="cad_code">AUD</string>
-    <string name="eur_code">EUR</string>
-    <string name="jpy_code">JPY</string>
-    <string name="krw_code">KRW</string>
-    <string name="cny_code">CNY</string>
-    <string name="rub_code">RUB</string>
-    <string name="thb_code">THB</string>
-    <string name="usd_code">USD</string>
-
     <string name="aud_name">호주 달러</string>
     <string name="cad_name">캐나다 달러</string>
     <string name="eur_name">유럽 연합 유로</string>
     <string name="jpy_name">일본 엔</string>
-    <string name="krw_name">한화 원</string>
+    <string name="krw_name">대한민국 원</string>
     <string name="cny_name">중국 위안</string>
     <string name="rub_name">러시아 루블</string>
+    <string name="vnd_name">베트남 동</string>
     <string name="thb_name">태국 바트</string>
     <string name="usd_name">미국 달러</string>
 
@@ -128,10 +119,14 @@
     <string name="close">닫기</string>
     <string name="edit">편집</string>
 
+    <string name="image_loading_error">이미지 로딩 에러</string>
     <string name="selected_color">선택된 색</string>
 
     <string name="previous_date">이전 날짜</string>
     <string name="next_date">다음 날짜</string>
+
+    <string name="previous_spot">이전 장소</string>
+    <string name="next_spot">다음 장소</string>
 
     <string name="date">날짜</string>
     <string name="time">시간</string>
@@ -166,10 +161,10 @@
     <string name="cancel_edit_location">위치 설정 취소</string>
     <string name="save_location">위치 저장</string>
 
-    <string name="zoom_out_more">축소</string>
-    <string name="zoom_out">조금 축소</string>
-    <string name="zoom_in">조금 확대</string>
-    <string name="zoom_in_more">확대</string>
+    <string name="zoom_out">축소</string>
+    <string name="zoom_out_less">조금 축소</string>
+    <string name="zoom_in_less">조금 확대</string>
+    <string name="zoom_in">확대</string>
 
     <string name="open_in_new">새 창에서 열기</string>
 
@@ -177,7 +172,7 @@
 
     <!--snack bar ===============================================================================-->
     <string name="snack_bar_location_permission_denied">사용자 위치 권한 거부됨</string>
-    <string name="snack_bar_no_location_to_show">장소 없음</string>
+    <string name="snack_bar_no_location_to_show">위치 없음</string>
     <string name="snack_bar_no_user_location">현 위치 찾을 수 없음</string>
     <string name="snack_bar_settings">설정</string>
 
