@@ -13,23 +13,25 @@
 
     <!--enumUtils ===============================================================================-->
     <!--CurrencyType.kt-->
-    <string name="aud_code">AUD</string>
-    <string name="cad_code">AUD</string>
-    <string name="eur_code">EUR</string>
-    <string name="jpy_code">JPY</string>
-    <string name="krw_code">KRW</string>
-    <string name="cny_code">CNY</string>
-    <string name="rub_code">RUB</string>
-    <string name="thb_code">THB</string>
-    <string name="usd_code">USD</string>
+    <string name="aud_code" translatable="false">AUD</string>
+    <string name="cad_code" translatable="false">AUD</string>
+    <string name="eur_code" translatable="false">EUR</string>
+    <string name="jpy_code" translatable="false">JPY</string>
+    <string name="krw_code" translatable="false">KRW</string>
+    <string name="cny_code" translatable="false">CNY</string>
+    <string name="rub_code" translatable="false">RUB</string>
+    <string name="vnd_code" translatable="false">VND</string>
+    <string name="thb_code" translatable="false">THB</string>
+    <string name="usd_code" translatable="false">USD</string>
 
     <string name="aud_name">Australian dollar</string>
     <string name="cad_name">Canadian dollar</string>
     <string name="eur_name">Euro</string>
     <string name="jpy_name">Japanese yen</string>
     <string name="krw_name">South Korean won</string>
-    <string name="cny_name">Renminbi</string>
+    <string name="cny_name">China Yuan</string>
     <string name="rub_name">Russian ruble</string>
+    <string name="vnd_name">Vietnam dong</string>
     <string name="thb_name">Thai baht</string>
     <string name="usd_name">United States dollar</string>
 

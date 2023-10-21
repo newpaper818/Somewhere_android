@@ -13,23 +13,14 @@
 
     <!--enumUtils ===============================================================================-->
     <!--CurrencyType.kt-->
-    <string name="aud_code">AUD</string>
-    <string name="cad_code">AUD</string>
-    <string name="eur_code">EUR</string>
-    <string name="jpy_code">JPY</string>
-    <string name="krw_code">KRW</string>
-    <string name="cny_code">CNY</string>
-    <string name="rub_code">RUB</string>
-    <string name="thb_code">THB</string>
-    <string name="usd_code">USD</string>
-
     <string name="aud_name">호주 달러</string>
     <string name="cad_name">캐나다 달러</string>
     <string name="eur_name">유럽 연합 유로</string>
     <string name="jpy_name">일본 엔</string>
-    <string name="krw_name">한화 원</string>
+    <string name="krw_name">대한민국 원</string>
     <string name="cny_name">중국 위안</string>
     <string name="rub_name">러시아 루블</string>
+    <string name="vnd_name">베트남 동</string>
     <string name="thb_name">태국 바트</string>
     <string name="usd_name">미국 달러</string>
 
