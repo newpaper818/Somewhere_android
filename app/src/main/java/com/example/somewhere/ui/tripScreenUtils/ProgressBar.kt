@@ -368,7 +368,6 @@ fun OneProgressBar(
         onClick = onClickItem
     ) {
         Column(
-
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
