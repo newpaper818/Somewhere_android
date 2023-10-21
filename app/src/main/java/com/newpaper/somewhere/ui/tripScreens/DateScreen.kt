@@ -607,7 +607,6 @@ fun DatePage(
                                 setShowBottomSaveCancelBar(true)
                             },
                             onConfirm = {newTime ->
-                                Log.d("timee", "$newTime")
                                 spot.setStartTime(showingTrip, dateIndex, updateTripState, newTime)
                                 showTimePicker = false
                                 setShowBottomSaveCancelBar(true)

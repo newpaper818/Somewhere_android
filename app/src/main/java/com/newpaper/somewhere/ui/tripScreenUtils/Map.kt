@@ -590,11 +590,11 @@ fun UserLocationButton(
     ) { permissionsMap ->
         val areGranted = permissionsMap.values.reduce { acc, next -> acc && next }
         if (areGranted) {
-            Log.d("permission", "agree")
+            //Log.d("permission", "agree")
             permissionRequestEnd = true
         }
         else {
-            Log.d("permission", "deny")
+            //Log.d("permission", "deny")
             permissionRequestEnd = true
         }
     }

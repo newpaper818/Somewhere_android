@@ -225,8 +225,6 @@ fun TripMapScreen(
                     }
                 ) { _->
 
-                    Log.d("padding", "$paddingValue")
-
                     //get map bottom padding
                     val bottomPadding: Float by animateFloatAsState(
                         if (bottomSheetState.bottomSheetState.currentValue == SheetValue.Expanded)

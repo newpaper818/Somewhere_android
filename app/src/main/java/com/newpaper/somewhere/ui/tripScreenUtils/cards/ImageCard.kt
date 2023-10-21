@@ -263,9 +263,9 @@ fun ImageCard(
                                         imagePathList = imagePathList,
                                         onDeleteClick = {
                                             deleteImage(imagePath)
-                                            Log.d("image", "img size = ${imagePathList.size}")
+                                                //Log.d("image", "img size = ${imagePathList.size}")
                                             if (imagePathList.size - 1 <= IMAGE_MAX_COUNT && isImageCountLimit){
-                                                Log.d("image", "to false")
+                                                //Log.d("image", "to false")
                                                 isImageCountLimit = false
                                                 isOverImage(false)
                                             }

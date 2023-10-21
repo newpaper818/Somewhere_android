@@ -397,7 +397,7 @@ fun SpotScreen(
                         val lastSpotIndex = dateList[toDateId].spotList.lastIndex
                         currentSpotIndex = if (lastSpotIndex == -1) 0 else lastSpotIndex
 
-                        Log.d("pagee", "to $currentSpotIndex")
+                        //Log.d("pagee", "to $currentSpotIndex")
                         coroutineScope.launch {
 //                            delay(100)
                             spotPagerState.animateScrollToPage(currentSpotIndex)
@@ -407,7 +407,7 @@ fun SpotScreen(
                         currentDateIndex = toDateId
                         currentSpotIndex = 0
 
-                        Log.d("pagee", "to $currentSpotIndex")
+                        //Log.d("pagee", "to $currentSpotIndex")
                         coroutineScope.launch {
                             spotPagerState.animateScrollToPage(currentSpotIndex)
                         }
@@ -462,7 +462,7 @@ fun SpotScreen(
                             toPrevSpot = {
                                 if (currentSpotIndex > 0) {
                                     currentSpotIndex--
-                                    Log.d("pagee", "to $currentSpotIndex")
+                                    //Log.d("pagee", "to $currentSpotIndex")
 
                                     coroutineScope.launch {
                                         spotPagerState.animateScrollToPage(currentSpotIndex)
@@ -474,7 +474,7 @@ fun SpotScreen(
                                     currentDateIndex--
                                     val lastSpotIndex = dateList[currentDateIndex].spotList.lastIndex
                                     currentSpotIndex = if (lastSpotIndex == -1) 0 else lastSpotIndex
-                                    Log.d("pagee", "to $currentSpotIndex")
+                                    //Log.d("pagee", "to $currentSpotIndex")
 
                                     coroutineScope.launch {
                                         spotPagerState.animateScrollToPage(currentSpotIndex)
@@ -484,7 +484,7 @@ fun SpotScreen(
                             toNextSpot = {
                                 if (currentSpotIndex < spotList.lastIndex) {
                                     currentSpotIndex++
-                                    Log.d("pagee", "to $currentSpotIndex")
+                                    //Log.d("pagee", "to $currentSpotIndex")
 
                                     coroutineScope.launch {
                                         spotPagerState.animateScrollToPage(currentSpotIndex)
@@ -495,7 +495,7 @@ fun SpotScreen(
                                     //last date and last spot will not be here
                                     currentDateIndex++
                                     currentSpotIndex = 0
-                                    Log.d("pagee", "to $currentSpotIndex")
+                                    //Log.d("pagee", "to $currentSpotIndex")
 
                                     coroutineScope.launch {
                                         spotPagerState.animateScrollToPage(currentSpotIndex)
