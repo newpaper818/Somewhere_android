@@ -30,10 +30,10 @@ fun SelectDateDialog(
     dateTimeFormat: DateTimeFormat,
     initialDate: Date,
     dateList: List<Date>,
-    onOkClick: (dateId: Int) -> Unit,
+    onOkClick: (dateIndex: Int) -> Unit,
     onDismissRequest: () -> Unit
 ){
-    var currentDateId by rememberSaveable { mutableStateOf(initialDate.id) }
+    var currentDateIndex by rememberSaveable { mutableStateOf(initialDate.index) }
 
     val maxHeight = 26.dp + 16.dp + 60.dp * dateList.size + 12.dp + 48.dp
 
@@ -67,10 +67,10 @@ fun SelectDateDialog(
                         deleteEnabled = false,
                         dragEnabled = false,
                         onItemClick = {
-                            currentDateId = date.id
+                            currentDateIndex = date.index
                         },
                         onExpandedButtonClicked = {},
-                        itemColor = if (date.id == currentDateId) getColor(ColorType.CARD_SELECTED)
+                        itemColor = if (date.index == currentDateIndex) getColor(ColorType.CARD_SELECTED)
                         else Color.Transparent,
                         isLongText = { }
                     )
@@ -91,7 +91,7 @@ fun SelectDateDialog(
                 DialogButton(
                     text = stringResource(id = R.string.dialog_button_ok),
                     onClick = {
-                        onOkClick(currentDateId)
+                        onOkClick(currentDateIndex)
                     }
                 )
             }

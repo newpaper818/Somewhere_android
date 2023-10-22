@@ -151,7 +151,7 @@ data class Date(
             else newTitleText
 
         val newDateList = showingTrip.dateList.toMutableList()
-        newDateList[id] = newDateList[id].copy(titleText = titleText)
+        newDateList[index] = newDateList[index].copy(titleText = titleText)
         updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
     }
 
@@ -165,7 +165,7 @@ data class Date(
             else newMemoText
 
         val newDateList = showingTrip.dateList.toMutableList()
-        newDateList[id] = newDateList[id].copy(memo = memoText)
+        newDateList[index] = newDateList[index].copy(memo = memoText)
         updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
     }
 

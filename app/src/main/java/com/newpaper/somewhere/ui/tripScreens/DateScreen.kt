@@ -269,15 +269,15 @@ fun DateScreen(
                     dateList = dateList,
                     currentDateIdx = datePagerState.currentPage,
                     dateTimeFormat = dateTimeFormat,
-                    onClickDate = { toDateId ->
+                    onClickDate = { toDateIndex ->
                         //progress bar animate
                         coroutineScope.launch {
-                            progressBarState.animateScrollToItem(toDateId)
+                            progressBarState.animateScrollToItem(toDateIndex)
                         }
 
                         //page animate
                         coroutineScope.launch {
-                            datePagerState.animateScrollToPage(toDateId)
+                            datePagerState.animateScrollToPage(toDateIndex)
                         }
                     }
                 )

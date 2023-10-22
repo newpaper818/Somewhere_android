@@ -472,9 +472,8 @@ private fun TripListItem(
                 //image
                 if (trip.imagePathList.isNotEmpty()) {
                     Card(
-                        modifier = Modifier
-                            .size(98.dp)
-                            .clip(RoundedCornerShape(8.dp)),
+                        shape = MaterialTheme.shapes.small,
+                        modifier = Modifier.size(98.dp),
                     ) {
 
                         DisplayImage(imagePath = trip.imagePathList.first())

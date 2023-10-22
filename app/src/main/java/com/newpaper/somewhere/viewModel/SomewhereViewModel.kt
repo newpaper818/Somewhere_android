@@ -391,13 +391,13 @@ class SomewhereViewModel(
             newDateList.removeAt(currentIndex)
             newDateList.add(destinationIndex, date)
 
-            //update orderId, date
+            //update date index
             newDateList.forEach{
-                if (it.id >= 0) {
+                if (it.enabled) {
                     it.index = newDateList.indexOf(it)
                     it.date = currDate
+                    currDate = currDate.plusDays(1)
                 }
-                currDate = currDate.plusDays(1)
             }
 
             //update ui state

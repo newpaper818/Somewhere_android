@@ -634,7 +634,7 @@ private fun DateListItem(
         expandedText = date.getExpandedText(trip, isEditMode),
 
         onTitleTextChange = { dateTitleText ->
-            trip.dateList[date.id].setTitleText(trip, updateTripState, dateTitleText)
+            trip.dateList[date.index].setTitleText(trip, updateTripState, dateTitleText)
         },
 
         isFirstItem = date == trip.dateList.first(),

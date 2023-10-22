@@ -67,16 +67,16 @@ class TripViewModel(
                         else TripUiState(trip = trip, tempTrip = tripUiState.tempTrip)
     }
 
-    fun updateDateTitle(toTempTrip: Boolean, id: Int, titleText: String){
+    fun updateDateTitle(toTempTrip: Boolean, index: Int, titleText: String){
         val newTitleText: String? = if (titleText == "") null
                                     else titleText
 
         val currentTrip = if (toTempTrip) tripUiState.tempTrip
                             else tripUiState.trip
 
-        val newDate = currentTrip.dateList[id].copy(titleText = newTitleText)
+        val newDate = currentTrip.dateList[index].copy(titleText = newTitleText)
         val newDateList = currentTrip.dateList.toMutableList()
-        newDateList[id] = newDate
+        newDateList[index] = newDate
 
         updateTripUiState(toTempTrip, currentTrip.copy(dateList = newDateList.toList()))
     }

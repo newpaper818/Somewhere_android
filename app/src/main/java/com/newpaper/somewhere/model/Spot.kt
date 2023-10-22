@@ -201,7 +201,7 @@ data class Spot(
      * searching backward.
      *
      * @param dateList trip's dateList
-     * @param currentDateIndex this spot's date id
+     * @param currentDateIndex this spot's date index
      * @return
      */
     fun getPrevLocation(

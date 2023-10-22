@@ -75,7 +75,7 @@ fun DateListProgressBar(
     currentDateIdx: Int,
     dateTimeFormat: DateTimeFormat,
 
-    onClickDate: (dateId: Int) -> Unit
+    onClickDate: (dateIndex: Int) -> Unit
 ){
     LazyRow(
         state = progressBarState,
@@ -95,7 +95,7 @@ fun DateListProgressBar(
                 isFirst = it == dateList.first(),
                 isLast = it == dateList.last(),
                 onClickItem = {
-                    onClickDate(it.id)
+                    onClickDate(it.index)
                 },
                 pointColor = it.color.color,
                 lineColor = getColor(ColorType.PROGRESS_BAR__LINE_DEFAULT_MOVE)
