@@ -315,20 +315,6 @@ data class Spot(
         updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
     }
 
-//    fun setDate(
-//        showingTrip: Trip,
-//        currentDateIndex: Int,
-//        updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
-//
-//        newDateId: Int
-//    ){
-//        val newSpotList = showingTrip.dateList[currentDateIndex].spotList.toMutableList()
-//        newSpotList[index] = newSpotList[index].copy(date = showingTrip.dateList[newDateId].date)
-//        val newDateList = showingTrip.dateList.toMutableList()
-//        newDateList[currentDateIndex] = newDateList[currentDateIndex].copy(spotList = newSpotList.toList())
-//        updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
-//    }
-
     fun setStartTime(
         showingTrip: Trip,
         currentDateIndex: Int,

@@ -39,8 +39,6 @@ fun MoreScreen(
     navigateTo: (NavigationDestination) -> Unit,
     navigateToMain: (NavigationDestination) -> Unit,
 
-//    navigateUp: () -> Unit,
-
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()

@@ -96,64 +96,6 @@ val Typography = Typography(
     )
 )
 
-//val Typography = Typography(
-//    h1 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Bold,
-//        fontSize = 24.sp
-//    ),
-//    h2 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        fontSize = 22.sp
-//    ),
-//    h3 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        fontSize = 20.sp
-//    ),
-//    h4 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        fontSize = 18.sp
-//    ),
-//    h5 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        color = gray,
-//        fontSize = 16.sp
-//    ),
-//    h6 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        fontSize = 14.sp
-//    ),
-//
-//    subtitle1 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        color = gray,
-//        fontSize = 18.sp
-//    ),
-//    subtitle2 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        color = gray,
-//        fontSize = 16.sp
-//    ),
-//
-//    body1 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        fontSize = 18.sp
-//    ),
-//    body2 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        fontSize = 16.sp
-//    )
-//)
-
 enum class TextType{
 
     TOP_BAR__TITLE,

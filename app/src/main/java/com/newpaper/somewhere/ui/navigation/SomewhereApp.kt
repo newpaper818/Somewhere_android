@@ -206,52 +206,6 @@ fun SomewhereApp(
             }
 
 
-            // MY TRIPS ============================================================================
-//            composable(
-//                route = MyTripsDestination.route,
-//                enterTransition = { enterTransition },
-//                exitTransition = { exitTransition },
-//                popEnterTransition = { popEnterTransition },
-//                popExitTransition = { popExitTransition }
-//            ) {
-//                //update current screen
-//                somewhereViewModel.updateCurrentScreen(MyTripsDestination)
-//
-//                MyTripsScreen(
-//                    isEditMode = somewhereUiState.isEditMode,
-////                    originalTripList = appUiState.tripList ?: listOf(),
-////                    tempTripList = appUiState.tempTripList ?: listOf(),
-//                    dateTimeFormat = appUiState.dateTimeFormat,
-//                    changeEditMode = {
-//                        somewhereViewModel.toggleEditMode(it)
-//                    },
-//                    navigateToTrip = { isNewTrip, trip ->
-//                        coroutineScope.launch {
-//                            somewhereViewModel.changeTrip(tripId = trip.id)
-//                        }
-//                        somewhereViewModel.toggleIsNewTrip(isNewTrip)
-//                        navController.navigate(TripDestination.route)
-//                    },
-//                    navigateTo = { navController.navigate(it.route) },
-//                    appViewModel = appViewModel
-//                )
-//            }
-//
-//            // PROFILE =============================================================================
-//            composable(
-//                route = ProfileDestination.route,
-//                enterTransition = { enterTransition },
-//                exitTransition = { exitTransition },
-//                popEnterTransition = { popEnterTransition },
-//                popExitTransition = { popExitTransition }
-//            ) {
-//                //update current screen
-//                somewhereViewModel.updateCurrentScreen(ProfileDestination)
-//
-//                ProfileScreen(
-//                    navigateTo = { navController.navigate(it.route) }
-//                )
-//            }
 
             // TRIP MAP ============================================================================
             composable(
@@ -523,22 +477,6 @@ fun SomewhereApp(
             }
 
 
-            // MAIN SETTING ========================================================================
-//            composable(
-//                route = MoreDestination.route,
-//                enterTransition = { enterTransition },
-//                exitTransition = { exitTransition },
-//                popEnterTransition = { popEnterTransition },
-//                popExitTransition = { popExitTransition }
-//            ){
-//                somewhereViewModel.updateCurrentScreen(MoreDestination)
-//
-//                MoreScreen(
-//                    navigateTo = { navController.navigate(it.route) },
-//                    navigateUp = { navigateUp() }
-//                )
-//            }
-
             // THEME SETTING =======================================================================
             composable(
                 route = SetThemeScreenDestination.route,
@@ -557,7 +495,6 @@ fun SomewhereApp(
                     navigateUp = { navigateUp() }
                 )
             }
-
 
 
             // SET DATE FORMAT =====================================================================

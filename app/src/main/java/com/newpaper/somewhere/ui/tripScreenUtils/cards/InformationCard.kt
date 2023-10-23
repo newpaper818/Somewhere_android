@@ -85,7 +85,6 @@ fun InformationCard(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun IconTextRow(
     isEditMode: Boolean,
@@ -104,18 +103,6 @@ private fun IconTextRow(
             onClick?.let { it() }
         }
     ) {
-//
-//    }
-//    Card (
-//        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-//        shape = MaterialTheme.shapes.small,
-//        modifier = Modifier.height(48.dp),
-//        enabled = isEditMode && onClick != null,
-//        onClick = {
-//            onClick?.let { it() }
-//        },
-//
-//    ){
         Row(
             modifier = Modifier
                 .padding(8.dp)

@@ -18,7 +18,7 @@ val USER_LOCATION_PERMISSION_LIST = listOf(
     android.Manifest.permission.ACCESS_FINE_LOCATION
 )
 
-val USER_LOCATION_PERMISSION_FINE = android.Manifest.permission.ACCESS_FINE_LOCATION
+const val USER_LOCATION_PERMISSION_FINE = android.Manifest.permission.ACCESS_FINE_LOCATION
 val USER_LOCATION_PERMISSION_COARSE = android.Manifest.permission.ACCESS_COARSE_LOCATION
 
 val USER_LOCATION_PERMISSION_ARRAY = arrayOf(

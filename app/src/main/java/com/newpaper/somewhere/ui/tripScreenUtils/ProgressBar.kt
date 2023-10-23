@@ -125,26 +125,6 @@ fun SpotListProgressBar(
 ){
     val spot = spotList.getOrNull(currentSpotIdx)
 
-//    val coroutineScope = rememberCoroutineScope()
-
-//    var prevIdx by rememberSaveable{ mutableStateOf(initialIdx) }
-
-//    if (prevIdx != currentSpotIdx) {
-//
-//        coroutineScope.launch {
-//            val toIdx = if (
-//                currentSpotIdx >= 1 &&
-//                spotList[currentSpotIdx - 1].spotType.isMove()
-//                && spotList[currentSpotIdx].spotType.isNotMove()
-//            )
-//                currentSpotIdx - 1
-//            else currentSpotIdx
-//
-//            progressBarState.animateScrollToItem(toIdx)
-//        }
-//        prevIdx = currentSpotIdx
-//    }
-
     val moveIdx =
         if (spot?.spotType?.isMove() == true){
             currentSpotIdx - 1

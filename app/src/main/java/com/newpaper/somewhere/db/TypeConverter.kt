@@ -81,46 +81,6 @@ class LocalDateTimeTypeConverter(
     }
 }
 
-@ProvidedTypeConverter
-class UriTypeConverter(
-    //private val context: Context
-) {
-    //Uri -> json
-    @TypeConverter
-    fun uriToJson(value: Uri?): String?{
-        return value?.toString()
-
-//        return if (value == null)
-//            null
-//        else {
-//            val contentResolver = context.contentResolver
-//            val inputStream = contentResolver.openInputStream(value)
-//
-//            val imageFile = File(context.filesDir, "image_${System.currentTimeMillis()}.jpg")
-//            inputStream?.use { input ->
-//                imageFile.outputStream().use { output ->
-//                    input.copyTo(output)
-//                }
-//            }
-//
-//            imageFile.absolutePath
-//        }
-    }
-
-    //json -> Uri
-    @TypeConverter
-    fun jsonToUri(value: String?): Uri? {
-        //return Uri.fromFile(File(value))
-        //return Uri.parse(value)
-
-        return if (value != null) {
-            Uri.fromFile(File(value))
-        } else {
-            null
-        }
-    }
-}
-
 class LocalDateColorAdapter{
     @ToJson fun toJson(myColor: MyColor): String {
         return myColor.color.toString() + "/" + myColor.onColor.toString()
@@ -175,16 +135,3 @@ class LocalTimeAdapter {
     }
 }
 
-class UriAdapter {
-    @ToJson fun toJson(uri: Uri?): String? {
-        return uri?.toString()
-    }
-
-    @FromJson fun fromJson(json: String?): Uri?{
-        return if (json != null) {
-            Uri.fromFile(File(json))
-        } else {
-            null
-        }
-    }
-}
