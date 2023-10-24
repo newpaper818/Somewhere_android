@@ -20,5 +20,6 @@ enum class CurrencyType(
     RUB(R.string.rub_code, "₽",643, 2, R.string.rub_name),
     VND(R.string.vnd_code, "₫",704, 0, R.string.vnd_name),
     THB(R.string.thb_code, "฿",764, 2, R.string.thb_name),
-    USD(R.string.usd_code, "$",840, 2, R.string.usd_name)
+    USD(R.string.usd_code, "$",840, 2, R.string.usd_name),
+    TWD(R.string.twd_code, "$",901, 2, R.string.twd_name)
 }

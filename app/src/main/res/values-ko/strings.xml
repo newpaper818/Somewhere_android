@@ -23,6 +23,8 @@
     <string name="vnd_name">베트남 동</string>
     <string name="thb_name">태국 바트</string>
     <string name="usd_name">미국 달러</string>
+    <string name="twd_name">신 대만 달러</string>
+
 
     <!--DateTime.kt-->
     <string name="ymd">년월일</string>
