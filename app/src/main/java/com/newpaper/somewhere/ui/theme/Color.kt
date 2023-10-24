@@ -230,6 +230,9 @@ enum class ColorType{
     PROGRESS_BAR__LINE_DEFAULT_MOVE,
     PROGRESS_BAR__LINE_HIGHLIGHT,
 
+    MAP_LINE_DEFAULT,
+    SPOT_MAP_LINE_MOVE,
+
 
 
     BACKGROUND,
@@ -267,6 +270,8 @@ fun getColor(colorType: ColorType): Color {
         PROGRESS_BAR__LINE_DEFAULT_MOVE -> lineMove
         PROGRESS_BAR__LINE_HIGHLIGHT    -> point
 
+        MAP_LINE_DEFAULT                -> MaterialTheme.colorScheme.outline.copy(alpha = 0.6f)
+        SPOT_MAP_LINE_MOVE              -> point
 
 
         BACKGROUND                      -> MaterialTheme.colorScheme.background

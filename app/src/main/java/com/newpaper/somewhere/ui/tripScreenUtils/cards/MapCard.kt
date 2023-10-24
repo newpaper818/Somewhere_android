@@ -101,8 +101,10 @@ fun MapCard(
             cameraPositionState = cameraPositionState,
             userLocationEnabled = userLocationEnabled,
             mapSize = mapSize,
+            dateList = dateList,
+            dateIndex = dateIndex,
             spotList = spotList,
-            spot = currentSpot,
+            currentSpot = currentSpot,
             spotFrom = spotFrom,
             spotTo = spotTo
         )

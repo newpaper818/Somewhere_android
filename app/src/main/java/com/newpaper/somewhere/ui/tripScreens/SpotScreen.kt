@@ -1,6 +1,5 @@
 package com.newpaper.somewhere.ui.tripScreens
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -25,7 +24,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerScope
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
@@ -664,7 +662,7 @@ fun SpotScreen(
                     spotList = spotList,
                     currentSpotId = currentSpotIndex,
                     dateList = dateList,
-                    dateId = currentDateIndex,
+                    dateIndex = currentDateIndex,
                     isDarkMapTheme = isDarkMapTheme,
                     updateTripState = updateTripState,
                     toggleIsEditLocationMode = {
@@ -998,7 +996,7 @@ private fun SetLocationPage(
     spotList: List<Spot>,
     currentSpotId: Int,
     dateList: List<Date>,
-    dateId: Int,
+    dateIndex: Int,
 
     isDarkMapTheme: Boolean,
     fusedLocationClient: FusedLocationProviderClient,
@@ -1010,7 +1008,7 @@ private fun SetLocationPage(
 ){
     val coroutineScope = rememberCoroutineScope()
 
-    val firstLocation = spotList[currentSpotId].getPrevLocation(dateList, dateId)
+    val firstLocation = spotList[currentSpotId].getPrevLocation(dateList, dateIndex)
     var newLocation: LatLng by rememberSaveable { mutableStateOf(firstLocation) }
 
     var newZoomLevel: Float by rememberSaveable { mutableStateOf(spotList[currentSpotId].zoomLevel ?: DEFAULT_ZOOM_LEVEL) }
@@ -1043,8 +1041,11 @@ private fun SetLocationPage(
                 context = LocalContext.current,
                 isDarkMapTheme = isDarkMapTheme,
                 cameraPositionState = cameraPositionState,
-                date = dateList[dateId],
-                spot = spotList[currentSpotId],
+                dateList = dateList,
+                dateIndex = dateIndex,
+                spotList = spotList,
+                currentDate = dateList[dateIndex],
+                currentSpot = spotList[currentSpotId],
                 onLocationChange = { newLocation_ ->
                     newLocation = newLocation_
                 },
@@ -1154,7 +1155,7 @@ private fun SetLocationPage(
                             //spotList[currentSpotId].zoomLevel = zoomLevel
                             spotList[currentSpotId].setLocation(
                                 showingTrip,
-                                dateId,
+                                dateIndex,
                                 updateTripState,
                                 newLocation,
                                 newZoomLevel
@@ -1179,7 +1180,7 @@ private fun SetLocationPage(
                     //spotList[currentSpotId].zoomLevel = zoomLevel
                     spotList[currentSpotId].setLocation(
                         showingTrip,
-                        dateId,
+                        dateIndex,
                         updateTripState,
                         newLocation,
                         newZoomLevel

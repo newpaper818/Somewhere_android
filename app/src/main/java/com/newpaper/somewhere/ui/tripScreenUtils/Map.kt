@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.Rect
-import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,11 +23,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.R
 import com.newpaper.somewhere.model.Date
 import com.newpaper.somewhere.model.Spot
@@ -55,6 +56,9 @@ import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.Polyline
+import com.newpaper.somewhere.ui.theme.ColorType
+import com.newpaper.somewhere.ui.theme.getColor
 import kotlinx.coroutines.launch
 import kotlin.math.min
 
@@ -110,6 +114,7 @@ fun MapForTrip(
     isDarkMapTheme: Boolean,
     userLocationEnabled: Boolean,
     cameraPositionState: CameraPositionState,
+    dateList: List<Date>,
     dateListWithShownMarkerList: List<DateWithBoolean>,
     spotTypeGroupWithShownMarkerList: List<SpotTypeGroupWithBoolean>,
     firstFocusOnToSpot: () -> Unit
@@ -140,8 +145,11 @@ fun MapForTrip(
         },
         contentPadding = mapPadding
     ){
-        for (dateWithBoolean in dateListWithShownMarkerList){
+        dateListWithShownMarkerList.forEachIndexed { dateIndex, dateWithBoolean ->
             if (dateWithBoolean.isShown){
+
+                val polyLinePointList = mutableListOf<LatLng>()
+
                 for (spot in dateWithBoolean.date.spotList){
 
                     if (spot.location != null &&
@@ -156,8 +164,35 @@ fun MapForTrip(
                             iconColor = dateWithBoolean.date.color.color,
                             onIconColor = dateWithBoolean.date.color.onColor
                         )
+
+                        //add poly line point
+                        polyLinePointList.add(spot.location)
+                    }
+
+                    //move line
+                    if(spot.spotType.isMove()) {
+                        val spotFrom = spot.getPrevSpot(dateList, dateWithBoolean.date.spotList, dateIndex)
+                        val spotTo = spot.getNextSpot(dateList, dateWithBoolean.date.spotList, dateIndex)
+
+                        if (
+                            spotFrom?.location != null && spotTo?.location != null
+                            && SpotTypeGroupWithBoolean(spotFrom.spotType.group, true) in spotTypeGroupWithShownMarkerList
+                            && SpotTypeGroupWithBoolean(spotTo.spotType.group, true) in spotTypeGroupWithShownMarkerList
+                        )
+                            MapMoveLine(
+                                isTripMap = true,
+                                locationFrom = spotFrom.location,
+                                locationTo = spotTo.location,
+                                lineColor = Color(dateList[dateIndex].color.color).copy(alpha = 0.8f)
+                            )
                     }
                 }
+
+                //draw poly line
+                MapLine(
+                    pointList = polyLinePointList,
+                    lineColor = Color(dateList[dateIndex].color.color).copy(alpha = 0.6f)
+                )
             }
         }
     }
@@ -171,16 +206,14 @@ fun MapForSpot(
     userLocationEnabled: Boolean,
     mapSize: IntSize,
 
+    dateList: List<Date>,
+    dateIndex: Int,
     spotList: List<Spot>,
-    spot: Spot?,
+    currentSpot: Spot?,
 
     spotFrom: Spot? = null,
     spotTo: Spot? = null
 ){
-    val isDarkTheme = isSystemInDarkTheme()
-
-    val coroutineScope = rememberCoroutineScope()
-
     val uiSettings = remember {
         MapUiSettings(myLocationButtonEnabled = false, zoomControlsEnabled = false)
     }
@@ -218,18 +251,39 @@ fun MapForSpot(
 //            }
         }
     ){
-        for(spot1 in spotList) {
-            if (spot1.spotType.isNotMove() && spot1.location != null) {
+        val polyLinePointList = mutableListOf<LatLng>()
+
+        for(spot in spotList) {
+            if (spot.spotType.isNotMove() && spot.location != null) {
+
+                //draw map marker
                 MapMarker(
-                    location = spot1.location,
-                    title = spot1.titleText ?: stringResource(id = R.string.no_title),
-                    isBigMarker = spot1 == spot || spot1 == spotFrom || spot1 == spotTo,
-                    text = spot1.iconText.toString(),
-                    iconColor = spot1.spotType.group.color.color,
-                    onIconColor = spot1.spotType.group.color.onColor
+                    location = spot.location,
+                    title = spot.titleText ?: stringResource(id = R.string.no_title),
+                    isBigMarker = spot == currentSpot || spot == spotFrom || spot == spotTo,
+                    text = spot.iconText.toString(),
+                    iconColor = spot.spotType.group.color.color,
+                    onIconColor = spot.spotType.group.color.onColor
                 )
+
+                //add poly line point
+                polyLinePointList.add(spot.location)
+            }
+            if(spot.spotType.isMove()) {
+                val spotFrom1 = spot.getPrevSpot(dateList, spotList, dateIndex)
+                val spotTo1 = spot.getNextSpot(dateList, spotList, dateIndex)
+
+                if (spotFrom1?.location != null && spotTo1?.location != null)
+                    MapMoveLine(
+                        isTripMap = false,
+                        locationFrom = spotFrom1.location,
+                        locationTo = spotTo1.location
+                    )
             }
         }
+
+        //draw poly line
+        MapLine(pointList = polyLinePointList)
     }
 }
 
@@ -240,8 +294,11 @@ fun MapChooseLocation(
     isDarkMapTheme: Boolean,
     cameraPositionState: CameraPositionState,
 
-    date: Date,
-    spot: Spot,
+    dateList: List<Date>,
+    dateIndex: Int,
+    spotList: List<Spot>,
+    currentDate: Date,
+    currentSpot: Spot,
 
     onLocationChange: (LatLng) -> Unit,
     onZoomChange: (Float) -> Unit
@@ -289,19 +346,39 @@ fun MapChooseLocation(
 
         }
     ){
+        val polyLinePointList = mutableListOf<LatLng>()
+
         //show today's around marker
-        for(spot1 in date.spotList) {
-            if (spot1.spotType.isNotMove() && spot1.location != null && spot1 != spot) {
+        for(spot in currentDate.spotList) {
+            if (spot.spotType.isNotMove() && spot.location != null && spot != currentSpot) {
                 MapMarker(
-                    location = spot1.location,
-                    title = spot1.titleText ?: stringResource(id = R.string.no_title),
+                    location = spot.location,
+                    title = spot.titleText ?: stringResource(id = R.string.no_title),
                     isBigMarker = false,
-                    text = spot1.iconText.toString(),
-                    iconColor = spot1.spotType.group.color.color,
-                    onIconColor = spot1.spotType.group.color.onColor
+                    text = spot.iconText.toString(),
+                    iconColor = spot.spotType.group.color.color,
+                    onIconColor = spot.spotType.group.color.onColor
                 )
+
+                //add poly line point
+                polyLinePointList.add(spot.location)
+            }
+            if(spot.spotType.isMove()) {
+                val spotFrom1 = spot.getPrevSpot(dateList, spotList, dateIndex)
+                val spotTo1 = spot.getNextSpot(dateList, spotList, dateIndex)
+
+                if (spotFrom1?.location != null && spotTo1?.location != null
+                    && spotFrom1 != currentSpot && spotTo1 != currentSpot)
+                    MapMoveLine(
+                        isTripMap = false,
+                        locationFrom = spotFrom1.location,
+                        locationTo = spotTo1.location
+                    )
             }
         }
+
+        //draw poly line
+        MapLine(pointList = polyLinePointList)
     }
 }
 
@@ -321,6 +398,47 @@ private fun MapMarker(
         icon = bitmapDescriptor(isBigMarker, text, iconColor, onIconColor),
         anchor = Offset(0.5f,0.5f),
         zIndex = if (isBigMarker) 1.0f else 0.0f
+    )
+}
+
+@Composable
+private fun MapLine(
+    pointList: List<LatLng>,
+    lineColor: Color? = null
+){
+    val lineWidth = with(LocalDensity.current){
+        4.dp.toPx()
+    }
+
+    Polyline(
+        points = pointList,
+        color = lineColor ?: getColor(ColorType.MAP_LINE_DEFAULT),
+        width = lineWidth,
+        zIndex = -2f
+    )
+}
+
+@Composable
+private fun MapMoveLine(
+    isTripMap: Boolean,
+    locationFrom: LatLng,
+    locationTo: LatLng,
+    lineColor: Color? = null
+){
+    val lineWidth = with(LocalDensity.current){
+        if (isTripMap)  4.dp.toPx()
+        else            6.dp.toPx()
+    }
+
+    val lineColor1 =
+        if (lineColor != null)  lineColor
+        else                    getColor(ColorType.SPOT_MAP_LINE_MOVE)
+
+    Polyline(
+        points = listOf(locationFrom, locationTo),
+        color = lineColor1,
+        width = lineWidth,
+        zIndex = -1f
     )
 }
 

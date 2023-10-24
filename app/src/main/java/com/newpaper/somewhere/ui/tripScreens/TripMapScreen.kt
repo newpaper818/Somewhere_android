@@ -250,6 +250,7 @@ fun TripMapScreen(
                             isDarkMapTheme = isDarkMapTheme,
                             userLocationEnabled = userLocationEnabled,
                             cameraPositionState = cameraPositionState,
+                            dateList = currentTrip.dateList,
                             dateListWithShownMarkerList = dateWithShownMarkerList,
                             spotTypeGroupWithShownMarkerList = spotTypeGroupWithShownMarkerList,
                             firstFocusOnToSpot = {
@@ -324,6 +325,7 @@ fun TripMapScreen(
                             isDarkMapTheme = isDarkMapTheme,
                             userLocationEnabled = userLocationEnabled,
                             cameraPositionState = cameraPositionState,
+                            dateList = currentTrip.dateList,
                             dateListWithShownMarkerList = dateWithShownMarkerList,
                             spotTypeGroupWithShownMarkerList = spotTypeGroupWithShownMarkerList,
                             firstFocusOnToSpot = {
