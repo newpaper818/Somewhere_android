@@ -104,15 +104,25 @@ data class Trip(
         val startDate = dateList.firstOrNull()
         val lastDate = getLastEnabledDate()
 
+        //if both date is not null
         return if (startDate != null && lastDate != null){
-            val startDateText = startDate.getDateText(dateTimeFormat, true)
 
-            val lastDateText = if (startDate.date.year == lastDate.date.year)
-                lastDate.getDateText(dateTimeFormat, false)
-            else
-                lastDate.getDateText(dateTimeFormat, true)
+            //if same date (1 day)
+            if (startDate == lastDate){
+                startDate.getDateText(dateTimeFormat, true)
+            }
 
-            "$startDateText - $lastDateText"
+            //if not same date (2 days or over)
+            else {
+                val startDateText = startDate.getDateText(dateTimeFormat, true)
+
+                val lastDateText = if (startDate.date.year == lastDate.date.year)
+                    lastDate.getDateText(dateTimeFormat, false)
+                else
+                    lastDate.getDateText(dateTimeFormat, true)
+
+                "$startDateText - $lastDateText"
+            }
         }
         else
             null

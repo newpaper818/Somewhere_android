@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.ui.tripScreenUtils.cards
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
@@ -156,19 +157,21 @@ fun TripDurationCard(
 
                     Spacer(modifier = Modifier.weight(1f))
 
-                    // > icon
-                    DisplayIcon(MyIcons.dateRightArrow, color = n60)
+                    if (defaultDateRange.start != defaultDateRange.endInclusive) {
+                        // > icon
+                        DisplayIcon(MyIcons.dateRightArrow, color = n60)
 
-                    Spacer(modifier = Modifier.weight(1f))
+                        Spacer(modifier = Modifier.weight(1f))
 
-                    //end date
-                    Text(
-                        text = endDateText1,
-                        style = bodyTextStyle1,
-                        textAlign = TextAlign.Center
-                    )
-                    
-                    Spacer(modifier = Modifier.weight(1f))
+                        //end date
+                        Text(
+                            text = endDateText1,
+                            style = bodyTextStyle1,
+                            textAlign = TextAlign.Center
+                        )
+
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
                 }
             }
         }
