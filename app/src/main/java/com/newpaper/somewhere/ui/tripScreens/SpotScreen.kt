@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerScope
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
@@ -172,7 +173,8 @@ fun SpotScreen(
     val scrollState = rememberLazyListState()
 
     val spotPagerState = rememberPagerState(
-        initialPage = currentSpotIndex
+        initialPage = currentSpotIndex,
+        pageCount = { spotList.size }
     )
 
     val progressBarState = rememberLazyListState(
@@ -541,80 +543,94 @@ fun SpotScreen(
                     else {
                         //each spot page
                         item {
+                            //each page
+                            //pageIndex == spotIndex
+
                             HorizontalPager(
-                                pageCount = spotList.size,
-                                state = spotPagerState,
+                                modifier = Modifier.weight(1f),
                                 verticalAlignment = Alignment.Top,
-                                modifier = Modifier.weight(1f)
-                            ) { pageIndex ->     //pageIndex == spotIndex
+                                state = spotPagerState,
+                                pageContent = {pageIndex ->
+                                    //pageIndex == spotIndex
 
-                                if (!isEditLocationMode) {
-                                    //each page
-                                    SpotDetailPage(
-                                        isEditMode = isEditMode,
-                                        setUseImePadding = setUseImePadding,
-                                        snackBarHostState = snackBarHostState,
+                                    if (!isEditLocationMode) {
+                                        //each page
+                                        SpotDetailPage(
+                                            isEditMode = isEditMode,
+                                            setUseImePadding = setUseImePadding,
+                                            snackBarHostState = snackBarHostState,
 
-                                        showingTrip = showingTrip,
-                                        dateIndex = currentDateIndex,
-                                        currentDate = dateList[currentDateIndex],
-                                        spotIndex = pageIndex,
-                                        currentSpot = dateList[currentDateIndex].spotList.getOrNull(
-                                            pageIndex
-                                        ),
+                                            showingTrip = showingTrip,
+                                            dateIndex = currentDateIndex,
+                                            currentDate = dateList[currentDateIndex],
+                                            spotIndex = pageIndex,
+                                            currentSpot = dateList[currentDateIndex].spotList.getOrNull(
+                                                pageIndex
+                                            ),
 
-                                        dateTimeFormat = dateTimeFormat,
-                                        focusManager = focusManager,
-                                        onErrorCountChange = {
-                                            if (it) errorCount++
-                                            else    errorCount--
-                                        },
+                                            dateTimeFormat = dateTimeFormat,
+                                            focusManager = focusManager,
+                                            onErrorCountChange = {
+                                                if (it) errorCount++
+                                                else errorCount--
+                                            },
 
-                                        addAddedImageList = addAddedImages,
-                                        addDeletedImageList = addDeletedImages,
-                                        reorderSpotImageList = { currentIndex, destinationIndex ->
-                                            reorderSpotImageList(currentDateIndex, pageIndex, currentIndex, destinationIndex)
-                                        },
+                                            addAddedImageList = addAddedImages,
+                                            addDeletedImageList = addDeletedImages,
+                                            reorderSpotImageList = { currentIndex, destinationIndex ->
+                                                reorderSpotImageList(
+                                                    currentDateIndex,
+                                                    pageIndex,
+                                                    currentIndex,
+                                                    destinationIndex
+                                                )
+                                            },
 
-                                        setShowBottomSaveCancelBar = {
-                                            showBottomSaveCancelBar = it
-                                        },
-                                        updateTripState = updateTripState,
+                                            setShowBottomSaveCancelBar = {
+                                                showBottomSaveCancelBar = it
+                                            },
+                                            updateTripState = updateTripState,
 
-                                        toggleIsEditLocation = {
-                                            isEditLocationMode = !isEditLocationMode
-                                        },
+                                            toggleIsEditLocation = {
+                                                isEditLocationMode = !isEditLocationMode
+                                            },
 
-                                        onImageClicked = onImageClicked,
-                                        deleteSpot = {
-                                            if (currentSpot != null) {
-                                                addDeletedImages(currentSpot.imagePathList)
+                                            onImageClicked = onImageClicked,
+                                            deleteSpot = {
+                                                if (currentSpot != null) {
+                                                    addDeletedImages(currentSpot.imagePathList)
 
-                                                if (spotList.size <= 1) {
-                                                    deleteSpot(currentDateIndex, currentSpotIndex)
-                                                } else {
-                                                    var toIdx = currentSpotIndex - 1
-
-                                                    if (toIdx < 0) {
-                                                        toIdx = currentSpotIndex
-                                                    }
-
-                                                    coroutineScope.launch {
-                                                        spotPagerState.animateScrollToPage(toIdx)
-                                                        progressBarState.animateScrollToItem(toIdx + 1)
+                                                    if (spotList.size <= 1) {
                                                         deleteSpot(
                                                             currentDateIndex,
                                                             currentSpotIndex
                                                         )
+                                                    } else {
+                                                        var toIdx = currentSpotIndex - 1
+
+                                                        if (toIdx < 0) {
+                                                            toIdx = currentSpotIndex
+                                                        }
+
+                                                        coroutineScope.launch {
+                                                            spotPagerState.animateScrollToPage(toIdx)
+                                                            progressBarState.animateScrollToItem(
+                                                                toIdx + 1
+                                                            )
+                                                            deleteSpot(
+                                                                currentDateIndex,
+                                                                currentSpotIndex
+                                                            )
+                                                        }
                                                     }
                                                 }
-                                            }
-                                        },
-                                        navigateUp = navigateUp,
-                                        modifier = modifier.padding(16.dp, 0.dp)
-                                    )
+                                            },
+                                            navigateUp = navigateUp,
+                                            modifier = modifier.padding(16.dp, 0.dp)
+                                        )
+                                    }
                                 }
-                            }
+                            )
                         }
                     }
                 }

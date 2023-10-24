@@ -47,6 +47,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerScope
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -303,7 +304,7 @@ fun ImageCard(
                         shrinkTowards = Alignment.Bottom
                     )
                 ) {
-                    val pageState = rememberPagerState()
+                    val pageState = rememberPagerState{ imagePathList.size }
 
                     Box(
                         modifier = Modifier
@@ -311,12 +312,12 @@ fun ImageCard(
                             .aspectRatio(1f)
                     ) {
                         HorizontalPager(
-                            pageCount = imagePathList.size,
                             state = pageState,
-                            beyondBoundsPageCount = 3
-                        ) {
-                            DisplayImage(imagePath = imagePathList[it])
-                        }
+                            beyondBoundsPageCount = 3,
+                            pageContent = {
+                                DisplayImage(imagePath = imagePathList[it])
+                            }
+                        )
 
                         if (imagePathList.size != 1)
                             ImageIndicateDots(

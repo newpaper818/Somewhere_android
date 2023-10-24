@@ -27,6 +27,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerScope
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -137,7 +138,7 @@ fun DateScreen(
     val focusManager = LocalFocusManager.current
 
     val showingTrip = if (isEditMode) tempTrip
-                      else            originalTrip
+    else            originalTrip
 
     val dateList = showingTrip.dateList
 
@@ -146,7 +147,8 @@ fun DateScreen(
     )
 
     val datePagerState = rememberPagerState(
-        initialPage = dateIndex
+        initialPage = dateIndex,
+        pageCount = { dateList.size }
     )
 
     val snackBarHostState = remember { SnackbarHostState() }
@@ -285,58 +287,59 @@ fun DateScreen(
                 MySpacerColumn(height = 8.dp)
 
                 //spot pages
+                //pageIndex == dateOrderId
                 HorizontalPager(
-                    pageCount = dateList.size,
                     state = datePagerState,
-//                    beyondBoundsPageCount = 1,
-                    modifier = Modifier.weight(1f)
-                ) { pageIndex ->    //pageIndex == dateOrderId
+                    modifier = Modifier.weight(1f),
+                    pageContent =  {pageIndex ->
+                        //pageIndex == dateOrderId
 
-                    DatePage(
-                        isEditMode = isEditMode,
-                        showingTrip = showingTrip,
-                        dateIndex = pageIndex,
-                        currentDate = dateList[pageIndex],
-                        timeFormat = dateTimeFormat.timeFormat,
+                        DatePage(
+                            isEditMode = isEditMode,
+                            showingTrip = showingTrip,
+                            dateIndex = pageIndex,
+                            currentDate = dateList[pageIndex],
+                            timeFormat = dateTimeFormat.timeFormat,
 
-                        focusManager = focusManager,
-                        snackBarHostState = snackBarHostState,
+                            focusManager = focusManager,
+                            snackBarHostState = snackBarHostState,
 
-                        setShowBottomSaveCancelBar = {
-                            showBottomSaveCancelBar = it
-                        },
-                        onErrorCountChange = { plusError ->
-                            if (plusError) errorCount ++
-                            else    errorCount --
-                        },
-                        updateTripState = updateTripState,
+                            setShowBottomSaveCancelBar = {
+                                showBottomSaveCancelBar = it
+                            },
+                            onErrorCountChange = { plusError ->
+                                if (plusError) errorCount++
+                                else errorCount--
+                            },
+                            updateTripState = updateTripState,
 
-                        addNewSpot = { dateId ->
-                            addNewSpot(dateId)
-                        },
-                        deleteSpot = { dateIndex, spotIndex ->
-                            deleteSpot(dateIndex, spotIndex)
-                            addDeletedImages(dateList[dateIndex].spotList[spotIndex].imagePathList)
-                        },
-                        navigateToSpot = navigateToSpot,
-                        setIsFABExpanded = {
-                            isFABExpanded = it
-                        },
-                        showSnackBar = { text_, actionLabel_, duration_ ->
-                            coroutineScope.launch {
-                                snackBarHostState.showSnackbar(
-                                    message = text_,
-                                    actionLabel = actionLabel_,
-                                    duration = duration_
-                                )
-                            }
-                        },
-                        reorderSpotList = { currentIndex, destinationIndex ->
-                            reorderSpotList(pageIndex, currentIndex, destinationIndex)
-                        },
-                        modifier = modifier.padding(16.dp, 0.dp)
-                    )
-                }
+                            addNewSpot = { dateId ->
+                                addNewSpot(dateId)
+                            },
+                            deleteSpot = { dateIndex, spotIndex ->
+                                deleteSpot(dateIndex, spotIndex)
+                                addDeletedImages(dateList[dateIndex].spotList[spotIndex].imagePathList)
+                            },
+                            navigateToSpot = navigateToSpot,
+                            setIsFABExpanded = {
+                                isFABExpanded = it
+                            },
+                            showSnackBar = { text_, actionLabel_, duration_ ->
+                                coroutineScope.launch {
+                                    snackBarHostState.showSnackbar(
+                                        message = text_,
+                                        actionLabel = actionLabel_,
+                                        duration = duration_
+                                    )
+                                }
+                            },
+                            reorderSpotList = { currentIndex, destinationIndex ->
+                                reorderSpotList(pageIndex, currentIndex, destinationIndex)
+                            },
+                            modifier = modifier.padding(16.dp, 0.dp)
+                        )
+                    }
+                )
             }
 
             //bottom save cancel bar
