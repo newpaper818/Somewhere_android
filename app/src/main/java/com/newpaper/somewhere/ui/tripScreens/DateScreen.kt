@@ -482,10 +482,10 @@ fun DatePage(
         if (currentDate.spotList.isNotEmpty()) {
 
             val firstSpotShowUpperLine = spotList.first().spotType.isMove()
-                || spotList[0].getPrevSpot(dateList, spotList, dateIndex)?.spotType?.isMove() ?: false
+                || spotList[0].getPrevSpot(dateList, dateIndex)?.spotType?.isMove() ?: false
 
             val lastSpotShowLowerLine = spotList.last().spotType.isMove()
-                    || spotList[spotList.indexOf(spotList.last())].getNextSpot(dateList, spotList, dateIndex)?.spotType?.isMove() ?: false
+                    || spotList[spotList.indexOf(spotList.last())].getNextSpot(dateList, dateIndex)?.spotType?.isMove() ?: false
 
             //spot type card list horizontal
             // 3 Tour / 2 Food / 5 Move ...
@@ -697,7 +697,7 @@ fun DatePage(
                 //no chosen spot type
                 item {
                     MySpacerColumn(height = 16.dp)
-                    
+
                     NoChosenSpotTypeGroupText()
                 }
             }
@@ -843,11 +843,11 @@ fun SpotListItem(
 
         isFirstItem = spot.spotType.isNotMove()
                 && spot == spotList.first()
-                && spot.getPrevSpot(dateList, spotList, dateId)?.spotType?.isNotMove() ?: true,
+                && spot.getPrevSpot(dateList, dateId)?.spotType?.isNotMove() ?: true,
 
         isLastItem = spot.spotType.isNotMove()
                 && spot == spotList.last()
-                && spot.getNextSpot(dateList, spotList, dateId)?.spotType?.isNotMove() ?: true,
+                && spot.getNextSpot(dateList, dateId)?.spotType?.isNotMove() ?: true,
 
         deleteEnabled = true,
         dragEnabled = true,

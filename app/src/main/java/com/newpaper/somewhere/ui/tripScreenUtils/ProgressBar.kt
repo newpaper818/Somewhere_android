@@ -158,7 +158,7 @@ fun SpotListProgressBar(
             if (spotList.isNotEmpty()) {
                 val currentSpotSpotTypeIsMove = spotList[0].spotType.isMove()
                 val prevSpotSpotTypeIsMove =
-                    spotList[0].getPrevSpot(dateList, spotList, dateId)?.spotType?.isMove() ?: false
+                    spotList[0].getPrevSpot(dateList, dateId)?.spotType?.isMove() ?: false
 
                 Column(
                     modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
@@ -197,13 +197,13 @@ fun SpotListProgressBar(
                             moveIdx != null && (it.index == moveIdx || it.index == moveIdx + 2),
                     isLeftHighlight = moveIdx != null && it.index == moveIdx + 2,
                     isRightHighlight = moveIdx != null && it.index == moveIdx,
-                    isFirst = it == spotList.first() && it.getPrevSpot(dateList, spotList, dateId)?.spotType?.isNotMove() ?: true,
-                    isLast = it == spotList.last() && it.getNextSpot(dateList, spotList, dateId)?.spotType?.isNotMove() ?: true,
+                    isFirst = it == spotList.first() && it.getPrevSpot(dateList, dateId)?.spotType?.isNotMove() ?: true,
+                    isLast = it == spotList.last() && it.getNextSpot(dateList, dateId)?.spotType?.isNotMove() ?: true,
                     onClickItem = {
                         onClickSpot(it.index)
                     },
-                    prevSpotIsMove = it.getPrevSpot(dateList, spotList, dateId)?.spotType?.isMove() ?: false,
-                    nextSpotIsMove = it.getNextSpot(dateList, spotList, dateId)?.spotType?.isMove() ?: false
+                    prevSpotIsMove = it.getPrevSpot(dateList, dateId)?.spotType?.isMove() ?: false,
+                    nextSpotIsMove = it.getNextSpot(dateList, dateId)?.spotType?.isMove() ?: false
                 )
             }
         }
@@ -213,11 +213,7 @@ fun SpotListProgressBar(
             if (spotList.isNotEmpty()) {
                 val lastSpotIdx = spotList.lastIndexOf(spotList.last())
                 val currentSpotSpotTypeIsMove = spotList[lastSpotIdx].spotType.isMove()
-                val nextSpotSpotTypeIsMove = spotList[lastSpotIdx].getNextSpot(
-                    dateList,
-                    spotList,
-                    dateId
-                )?.spotType?.isMove() ?: false
+                val nextSpotSpotTypeIsMove = spotList[lastSpotIdx].getNextSpot(dateList, dateId)?.spotType?.isMove() ?: false
 
                 Column(
                     modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
