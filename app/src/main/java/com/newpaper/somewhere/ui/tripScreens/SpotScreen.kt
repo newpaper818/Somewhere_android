@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.ui.tripScreens
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -91,6 +92,7 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.newpaper.somewhere.enumUtils.SpotTypeGroup
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -212,8 +214,8 @@ fun SpotScreen(
     var spotTo: Spot? = null
 
     if(currentSpot?.spotType?.isMove() == true) {
-        spotFrom = currentSpot.getPrevSpot(dateList, spotList, currentDateIndex)
-        spotTo = currentSpot.getNextSpot(dateList, spotList, currentDateIndex)
+        spotFrom = currentSpot.getPrevSpot(dateList, currentDateIndex)
+        spotTo = currentSpot.getNextSpot(dateList, currentDateIndex)
     }
 
     val location =
@@ -507,13 +509,46 @@ fun SpotScreen(
                                 isEditLocationMode = !isEditLocationMode
                             },
                             deleteLocation = {
-                                currentSpot?.setLocation(
-                                    showingTrip,
-                                    currentDateIndex,
-                                    updateTripState,
-                                    null,
-                                    null
-                                )
+                                coroutineScope.launch {
+                                    currentSpot?.setLocationAndUpdateTravelDistance(
+                                        showingTrip, dateIndex, dateList, spotList, updateTripState, null, null
+                                    )
+                                }
+
+//                                currentSpot?.setLocation(
+//                                    showingTrip,
+//                                    currentDateIndex,
+//                                    updateTripState,
+//                                    null,
+//                                    null
+//                                )
+//
+//                                //update travel distance (set to 0.0 km)
+//                                val prevSpot = currentSpot?.getPrevSpot(dateList, spotList, dateIndex)
+//                                if (prevSpot?.spotType?.isMove() == true){
+//                                    if (currentSpot.index == 0) {
+//                                        val prevSpotList = dateList.getOrNull(dateIndex - 1)?.spotList
+//                                        if (prevSpotList != null) {
+//                                            prevSpot.updateDistance(showingTrip, dateIndex - 1, dateList, prevSpotList, updateTripState)
+//                                        }
+//                                    }
+//                                    else{
+//                                        prevSpot.updateDistance(showingTrip, dateIndex, dateList, spotList, updateTripState)
+//                                    }
+//                                }
+//
+//                                val nextSpot = currentSpot?.getNextSpot(dateList, spotList, dateIndex)
+//                                if (nextSpot?.spotType?.isMove() == true){
+//                                    if (currentSpot.index == spotList.lastIndex) {
+//                                        val nextSpotList = dateList.getOrNull(dateIndex + 1)?.spotList
+//                                        if (nextSpotList != null) {
+//                                            nextSpot.updateDistance(showingTrip, dateIndex + 1, dateList, nextSpotList, updateTripState)
+//                                        }
+//                                    }
+//                                    else{
+//                                        nextSpot.updateDistance(showingTrip, dateIndex, dateList, spotList, updateTripState)
+//                                    }
+//                                }
                             },
                             setMapSize = {
                                 mapSize = it
@@ -841,6 +876,15 @@ fun SpotDetailPage(
                                 updateTripState,
                                 newSpotType
                             )
+                            if (newSpotType.group == SpotTypeGroup.MOVE) {
+                                currentSpot.updateDistance(
+                                    showingTrip = showingTrip,
+                                    currentDateIndex = dateIndex,
+                                    updateTripState = updateTripState,
+                                    spotFrom = currentSpot.getPrevSpot(dateList, dateIndex)?.location,
+                                    spotTo = currentSpot.getNextSpot(dateList, dateIndex)?.location
+                                )
+                            }
                         }
                     )
                 }
@@ -881,15 +925,15 @@ fun SpotDetailPage(
                     )
                 }
 
-                if (currentSpot.spotType.isMove()) {
-                    currentSpot.updateDistance(
-                        showingTrip = showingTrip,
-                        currentDateIndex = dateIndex,
-                        updateTripState = updateTripState,
-                        spotFrom = currentSpot.getPrevSpot(dateList, spotList, dateIndex)?.location,
-                        spotTo = currentSpot.getNextSpot(dateList, spotList, dateIndex)?.location
-                    )
-                }
+//                if (currentSpot.spotType.isMove()) {
+//                    currentSpot.updateDistance(
+//                        showingTrip = showingTrip,
+//                        currentDateIndex = dateIndex,
+//                        updateTripState = updateTripState,
+//                        spotFrom = currentSpot.getPrevSpot(dateList, spotList, dateIndex)?.location,
+//                        spotTo = currentSpot.getNextSpot(dateList, spotList, dateIndex)?.location
+//                    )
+//                }
 
                 InformationCard(
                     isEditMode = isEditMode,
@@ -1160,6 +1204,7 @@ private fun SetLocationPage(
                                 newLocation,
                                 newZoomLevel
                             )
+
                             toggleIsEditLocationMode()
                         },
                         modifier = Modifier.background(MaterialTheme.colorScheme.background),
@@ -1176,16 +1221,31 @@ private fun SetLocationPage(
             SaveCancelButtons(
                 onCancelClick = toggleIsEditLocationMode,
                 onSaveClick = {
+                    coroutineScope.launch {
+//                        spotList[currentSpotId].setLocation(showingTrip, dateIndex, updateTripState, newLocation, newZoomLevel)
+
+                        spotList[currentSpotId].setLocationAndUpdateTravelDistance(
+                            showingTrip, dateIndex, dateList, spotList, updateTripState, newLocation, newZoomLevel
+                        )
+
+                        toggleIsEditLocationMode()
+                    }
+
+
+
                     //set location and zoom level
                     //spotList[currentSpotId].zoomLevel = zoomLevel
-                    spotList[currentSpotId].setLocation(
-                        showingTrip,
-                        dateIndex,
-                        updateTripState,
-                        newLocation,
-                        newZoomLevel
-                    )
-                    toggleIsEditLocationMode()
+//                    spotList[currentSpotId].setLocation(
+//                        showingTrip,
+//                        dateIndex,
+//                        updateTripState,
+//                        newLocation,
+//                        newZoomLevel
+//                    )
+
+                    //set travel distance prevSpot, nextSpot
+
+
                 },
                 modifier = Modifier.background(MaterialTheme.colorScheme.background),
                 positiveText = stringResource(id = R.string.dialog_button_ok)
@@ -1218,8 +1278,8 @@ private fun mapAnimateToSpot(
     density: Float,
     coroutineScope: CoroutineScope
 ){
-    val spotFrom = currentSpot.getPrevSpot(dateList, spotList, dateId)
-    val spotTo = currentSpot.getNextSpot(dateList, spotList, dateId)
+    val spotFrom = currentSpot.getPrevSpot(dateList, dateId)
+    val spotTo = currentSpot.getNextSpot(dateList, dateId)
 
     if (scrollState.firstVisibleItemIndex == 0) {
         //if spot is move

@@ -171,8 +171,8 @@ fun MapForTrip(
 
                     //move line
                     if(spot.spotType.isMove()) {
-                        val spotFrom = spot.getPrevSpot(dateList, dateWithBoolean.date.spotList, dateIndex)
-                        val spotTo = spot.getNextSpot(dateList, dateWithBoolean.date.spotList, dateIndex)
+                        val spotFrom = spot.getPrevSpot(dateList, dateIndex)
+                        val spotTo = spot.getNextSpot(dateList, dateIndex)
 
                         if (
                             spotFrom?.location != null && spotTo?.location != null
@@ -270,8 +270,8 @@ fun MapForSpot(
                 polyLinePointList.add(spot.location)
             }
             if(spot.spotType.isMove()) {
-                val spotFrom1 = spot.getPrevSpot(dateList, spotList, dateIndex)
-                val spotTo1 = spot.getNextSpot(dateList, spotList, dateIndex)
+                val spotFrom1 = spot.getPrevSpot(dateList, dateIndex)
+                val spotTo1 = spot.getNextSpot(dateList, dateIndex)
 
                 if (spotFrom1?.location != null && spotTo1?.location != null)
                     MapMoveLine(
@@ -364,8 +364,8 @@ fun MapChooseLocation(
                 polyLinePointList.add(spot.location)
             }
             if(spot.spotType.isMove()) {
-                val spotFrom1 = spot.getPrevSpot(dateList, spotList, dateIndex)
-                val spotTo1 = spot.getNextSpot(dateList, spotList, dateIndex)
+                val spotFrom1 = spot.getPrevSpot(dateList, dateIndex)
+                val spotTo1 = spot.getNextSpot(dateList, dateIndex)
 
                 if (spotFrom1?.location != null && spotTo1?.location != null
                     && spotFrom1 != currentSpot && spotTo1 != currentSpot)
