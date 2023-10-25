@@ -1,6 +1,7 @@
 package com.newpaper.somewhere.model
 
 import android.location.Location
+import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
@@ -13,6 +14,7 @@ import com.newpaper.somewhere.utils.getTimeText
 import com.newpaper.somewhere.viewModel.DateTimeFormat
 import com.google.android.gms.maps.model.LatLng
 import com.squareup.moshi.JsonClass
+import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -137,14 +139,14 @@ data class Spot(
 
     /**
      * get previous spot of current spot.
-     * if don't exist, get previous date's last spot
+     * if don't exist(first index), get previous date's last spot
      */
     fun getPrevSpot(
         dateList: List<Date>,
-        currentSpotList: List<Spot>,
         currentDateIndex: Int,
     ): Spot?{
-        var prevSpot = currentSpotList.getOrNull(index - 1)
+        val currentSpotList = dateList.getOrNull(currentDateIndex)?.spotList
+        var prevSpot = currentSpotList?.getOrNull(index - 1)
         if (prevSpot == null){
             val prevDate = dateList.getOrNull(currentDateIndex - 1)
             if (prevDate != null){
@@ -157,15 +159,14 @@ data class Spot(
 
     /**
      * get next spot of current spot.
-     * if don't exist, get next date's first spot
+     * if don't exist(last index), get next date's first spot
      */
     fun getNextSpot(
         dateList: List<Date>,
-        currentSpotList: List<Spot>,
         currentDateIndex: Int,
     ): Spot?{
-
-        var nextSpot = currentSpotList.getOrNull(index + 1)
+        val currentSpotList = dateList.getOrNull(currentDateIndex)?.spotList
+        var nextSpot = currentSpotList?.getOrNull(index + 1)
         if (nextSpot == null){
             val nextDate = dateList.getOrNull(currentDateIndex + 1)
             if (nextDate != null){
@@ -368,12 +369,74 @@ data class Spot(
 
         newLocation: LatLng?,
         newZoomLevel: Float?
-    ) {
+    ){
         val newSpotList = showingTrip.dateList[currentDateIndex].spotList.toMutableList()
         newSpotList[index] = newSpotList[index].copy(location = newLocation, zoomLevel = newZoomLevel)
         val newDateList = showingTrip.dateList.toMutableList()
         newDateList[currentDateIndex] = newDateList[currentDateIndex].copy(spotList = newSpotList.toList())
         updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
+
+    }
+
+    suspend fun setLocationAndUpdateTravelDistance(
+        showingTrip: Trip,
+        currentDateIndex: Int,
+        dateList: List<Date>,
+        spotList: List<Spot>,
+        updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
+
+        newLocation: LatLng?,
+        newZoomLevel: Float?,
+    ) {
+        var newSpotList = showingTrip.dateList[currentDateIndex].spotList.toMutableList()
+        newSpotList[index] = newSpotList[index].copy(location = newLocation, zoomLevel = newZoomLevel)
+        var newDateList = showingTrip.dateList.toMutableList()
+        newDateList[currentDateIndex] = newDateList[currentDateIndex].copy(spotList = newSpotList.toList())
+        var newTrip = showingTrip.copy(dateList = newDateList.toList())
+        updateTripState(true, newTrip)
+
+
+        var newPrevSpotTravelDistance: Float? = null
+        var newNextSpotTravelDistance: Float? = null
+
+        //update travel distance
+        val prevSpot = getPrevSpot(dateList, currentDateIndex)
+        if (prevSpot?.spotType?.isMove() == true){
+            val moveDateIndex = if (index == 0) currentDateIndex - 1 else currentDateIndex
+            val moveSpotIndex = if (index == 0) dateList[moveDateIndex].spotList.lastIndex else index
+            newPrevSpotTravelDistance = prevSpot.getTravelDistance(dateList, moveDateIndex)
+
+            Log.d("distance", "1 / $newPrevSpotTravelDistance")
+
+            //update travel distance
+            val newSpotList1 = newTrip.dateList[moveDateIndex].spotList.toMutableList()
+            newSpotList1[moveSpotIndex] = newSpotList1[moveSpotIndex].copy(travelDistance = newPrevSpotTravelDistance ?: 0f)
+            val newDateList1 = newTrip.dateList.toMutableList()
+            newDateList1[moveDateIndex] = newDateList1[moveDateIndex].copy(spotList = newSpotList1.toList())
+            newTrip = newTrip.copy(dateList = newDateList1.toList())
+
+            Log.d("distance", "2 / ${newTrip.dateList[moveDateIndex].spotList[moveSpotIndex].travelDistance}")
+
+            updateTripState(true, newTrip)
+        }
+
+        val nextSpot = getNextSpot(dateList, currentDateIndex)
+        if (nextSpot?.spotType?.isMove() == true){
+            val moveDateIndex = if (index == spotList.lastIndex) currentDateIndex + 1 else currentDateIndex
+            val moveSpotIndex = if (index == spotList.lastIndex) 0 else index
+            newNextSpotTravelDistance = nextSpot.getTravelDistance(dateList, moveDateIndex)
+
+            //update travel distance
+            if (newNextSpotTravelDistance != null){
+                val newSpotList1 = newTrip.dateList[moveDateIndex].spotList.toMutableList()
+                newSpotList1[moveSpotIndex] = newSpotList1[moveSpotIndex].copy(travelDistance = newNextSpotTravelDistance)
+                val newDateList1 = newTrip.dateList.toMutableList()
+                newDateList1[moveDateIndex] = newDateList1[moveDateIndex].copy(spotList = newSpotList1.toList())
+                newTrip = newTrip.copy(dateList = newDateList1.toList())
+
+                updateTripState(true, newTrip)
+            }
+        }
     }
 
 
@@ -388,27 +451,63 @@ data class Spot(
         spotTo: LatLng?
     ) {
 
-        val newTravelDistance: Float
-
-        if (spotFrom != null && spotTo != null) {
-            val locationA = Location("a")
-            locationA.latitude = spotFrom.latitude
-            locationA.longitude = spotFrom.longitude
-
-            val locationB = Location("b")
-            locationB.latitude = spotTo.latitude
-            locationB.longitude = spotTo.longitude
-
-            newTravelDistance = locationA.distanceTo(locationB) / 1000
-        }
-        else{
-            newTravelDistance = 0f
-        }
+        val newTravelDistance = getTravelDistanceFrom2Location(spotFrom, spotTo) ?: 0f
 
         val newSpotList = showingTrip.dateList[currentDateIndex].spotList.toMutableList()
         newSpotList[index] = newSpotList[index].copy(travelDistance = newTravelDistance)
         val newDateList = showingTrip.dateList.toMutableList()
         newDateList[currentDateIndex] = newDateList[currentDateIndex].copy(spotList = newSpotList.toList())
         updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
+    }
+
+    fun updateDistance(
+        showingTrip: Trip,
+        currentDateIndex: Int,
+        dateList: List<Date>,
+        spotList: List<Spot>,
+        updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
+    ) {
+        val spotFrom = getPrevSpot(dateList, currentDateIndex)?.location
+        val spotTo = getNextSpot(dateList, currentDateIndex)?.location
+
+        val newTravelDistance = getTravelDistanceFrom2Location(spotFrom, spotTo) ?: 0f
+
+        val newSpotList = showingTrip.dateList[currentDateIndex].spotList.toMutableList()
+        newSpotList[index] = newSpotList[index].copy(travelDistance = newTravelDistance)
+        val newDateList = showingTrip.dateList.toMutableList()
+        newDateList[currentDateIndex] = newDateList[currentDateIndex].copy(spotList = newSpotList.toList())
+        updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
+    }
+
+    fun getTravelDistance(
+        dateList: List<Date>,
+        dateIndex: Int
+    ): Float?{
+        val prevSpot = getPrevSpot(dateList, dateIndex)
+        val nextSpot = getNextSpot(dateList, dateIndex)
+
+        return getTravelDistanceFrom2Location(prevSpot?.location, nextSpot?.location)
+    }
+
+
+}
+
+private fun getTravelDistanceFrom2Location(
+    from: LatLng?,
+    to: LatLng?
+): Float?{
+    return if (from != null && to != null) {
+        val locationA = Location("a")
+        locationA.latitude = from.latitude
+        locationA.longitude = from.longitude
+
+        val locationB = Location("b")
+        locationB.latitude = to.latitude
+        locationB.longitude = to.longitude
+
+        locationA.distanceTo(locationB) / 1000
+    }
+    else{
+        null
     }
 }
