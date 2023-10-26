@@ -80,7 +80,7 @@ object MyIcons {
     val rightArrowTo = MyIcon(Icons.Rounded.ArrowRightAlt, 30.dp, gray, R.string.to)
 
     //set time
-    val switchToTextInput = MyIcon(Icons.Rounded.Keyboard,   22.dp, gray, R.string.switch_to_text_input)
+    val switchToTextInput = MyIcon(Icons.Outlined.Keyboard,   22.dp, gray, R.string.switch_to_text_input)
     val switchToTouchInput = MyIcon(Icons.Rounded.Schedule,   22.dp, gray, R.string.switch_to_touch_input)
 
 
