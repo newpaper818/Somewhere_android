@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.outlined.Luggage
 import androidx.compose.material.icons.outlined.MoreHoriz
+import androidx.compose.material.icons.rounded.ArrowRightAlt
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -23,7 +24,7 @@ data class MyIcon(
     val imageVector: ImageVector,
     val size: Dp,
     val color: Color?,  /**if null, set [color] to Material.colors.onSurface, onBackground...*/
-    @StringRes val descriptionTextId: Int
+    @StringRes val descriptionTextId: Int?
 )
 
 
@@ -36,7 +37,9 @@ object MyIcons {
 
     //    val add = MyIcon(Icons.Filled.Add,                  22.dp, null, R.string.new_)
     val deleteImage = MyIcon(Icons.Filled.Close,        16.dp, null, R.string.delete_image)
-    val dragHandle = MyIcon(Icons.Filled.DragHandle,    22.dp, gray, R.string.drag_handle)
+    val dragHandle = MyIcon(Icons.Filled.DragHandle,    22.dp, gray, null)
+
+    val clickableItem = MyIcon(Icons.Filled.NavigateNext,    22.dp, gray, R.string.drag_handle)
 
     //app bar
     val menu = MyIcon(Icons.Filled.Menu,      22.dp, null, R.string.menu)
@@ -78,7 +81,7 @@ object MyIcons {
     //date time
     val date = MyIcon(Icons.Filled.CalendarMonth,   22.dp, gray, R.string.date)
     val time = MyIcon(Icons.Filled.AccessTime,      20.dp, gray, R.string.time)
-    val rightArrowTo = MyIcon(Icons.Filled.KeyboardArrowRight, 30.dp, gray, R.string.to)
+    val rightArrowTo = MyIcon(Icons.Rounded.ArrowRightAlt, 30.dp, gray, R.string.to)
 
     //set time
     val switchToTextInput = MyIcon(Icons.Filled.Keyboard,   22.dp, gray, R.string.switch_to_text_input)
@@ -134,7 +137,10 @@ fun DisplayIcon(
     @StringRes descriptionTextId: Int? = null
 ){
     val imageVector = icon.imageVector
-    val contentDescription = stringResource(id = descriptionTextId ?: icon.descriptionTextId)
+    val contentDescription =
+        if (icon.descriptionTextId == null) null
+        else stringResource(id = descriptionTextId ?: icon.descriptionTextId)
+
     val modifier = Modifier.size(size ?: icon.size)
 
     if (!enabled) {
