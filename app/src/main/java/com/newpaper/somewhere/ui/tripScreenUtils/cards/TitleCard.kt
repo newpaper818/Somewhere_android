@@ -30,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
@@ -40,6 +41,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.R
+import com.newpaper.somewhere.ui.commonScreenUtils.ClickableBox
+import com.newpaper.somewhere.ui.commonScreenUtils.DisplayIcon
+import com.newpaper.somewhere.ui.commonScreenUtils.MyIcons
 import com.newpaper.somewhere.ui.commonScreenUtils.MySpacerColumn
 import com.newpaper.somewhere.ui.commonScreenUtils.MySpacerRow
 import com.newpaper.somewhere.ui.theme.ColorType
@@ -148,15 +152,16 @@ fun TitleWithColorCard(
                 MySpacerRow(width = 16.dp)
 
                 //color card
-                Card(
-                    colors = CardDefaults.cardColors(containerColor = Color(color.color)),
+                ClickableBox(
+                    containerColor = Color(color.color),
                     modifier = Modifier.size((cardHeight / LocalDensity.current.density).toInt().dp),
+                    contentAlignment = Alignment.Center,
                     onClick = {
                         showColorPickerDialog = true
                         setShowBottomSaveCancelBar(false)
                     }
                 ) {
-
+                    DisplayIcon(icon = MyIcons.setColor, color = Color(color.onColor))
                 }
             }
 

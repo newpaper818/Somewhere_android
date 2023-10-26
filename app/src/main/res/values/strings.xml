@@ -133,6 +133,7 @@
     <string name="edit">Edit</string>
 
     <string name="image_loading_error">Image loading error</string>
+    <string name="set_color">Set color</string>
     <string name="selected_color">Selected color</string>
 
     <string name="previous_date">Previous date</string>
