@@ -167,6 +167,8 @@
     <string name="fullscreen_map">Fullscreen map</string>
     <string name="my_location">My location</string>
     <string name="disabled_my_location">My location disabled</string>
+    <string name="clear_text">Clear text</string>
+    <string name="search_location">Search location</string>
     <string name="expand_control_box">Expand control box</string>
     <string name="collapse_control_box">Collapse control box</string>
 

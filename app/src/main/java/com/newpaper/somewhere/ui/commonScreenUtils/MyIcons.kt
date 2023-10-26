@@ -101,6 +101,8 @@ object MyIcons {
     val fullscreen = MyIcon(Icons.Rounded.Fullscreen,               24.dp, null, R.string.fullscreen_map)
     val myLocation = MyIcon(Icons.Rounded.MyLocation,               24.dp, null, R.string.my_location)
     val disabledMyLocation = MyIcon(Icons.Rounded.LocationDisabled, 24.dp, gray, R.string.disabled_my_location)
+    val mapClearSearchText = MyIcon(Icons.Rounded.Close,           22.dp, null, R.string.clear_text)
+    val mapSearch = MyIcon(Icons.Rounded.Search,                    24.dp, null, R.string.disabled_my_location)
 //    val expandControlBox = MyIcon(Icons.Filled.ExpandLess,         24.dp, null, R.string.expand_control_box)
 //    val collapseControlBox = MyIcon(Icons.Filled.ExpandMore,       24.dp, null, R.string.collapse_control_box)
 

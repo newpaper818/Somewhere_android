@@ -156,6 +156,8 @@
     <string name="fullscreen_map">지도 화면에 채우기</string>
     <string name="my_location">현 위치</string>
     <string name="disabled_my_location">현 위치 사용 불가</string>
+    <string name="clear_text">모두 지우기</string>
+    <string name="search_location">위치 검색</string>
     <string name="expand_control_box">컨트롤 패널 열기</string>
     <string name="collapse_control_box">컨트롤 패널 닫기</string>
 

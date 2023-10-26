@@ -142,7 +142,9 @@ enum class TextType{
     DIALOG__BODY_SMALL,
     DIALOG__BUTTON,
 
-
+    //MAP
+    MAP__SEARCH,
+    MAP__SEARCH_PLACEHOLDER,
 
 
 
@@ -202,6 +204,10 @@ fun getTextStyle(textType: TextType): TextStyle {
         DIALOG__BODY_NULL           -> MaterialTheme.typography.bodyLarge.copy(color = n60)
         DIALOG__BODY_SMALL          -> MaterialTheme.typography.bodyMedium
         DIALOG__BUTTON              -> MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
+
+        //MAP
+        MAP__SEARCH                 -> MaterialTheme.typography.displayMedium
+        MAP__SEARCH_PLACEHOLDER     -> MaterialTheme.typography.displayMedium.copy(color = n60)
 
         // SETTING =================================================================================
         MAIN                        -> MaterialTheme.typography.headlineMedium

@@ -291,6 +291,7 @@ fun MapForSpot(
 @Composable
 fun MapChooseLocation(
     context: Context,
+    mapPadding: PaddingValues,
     isDarkMapTheme: Boolean,
     cameraPositionState: CameraPositionState,
 
@@ -336,6 +337,7 @@ fun MapChooseLocation(
         cameraPositionState = cameraPositionState,
         properties = properties,
         uiSettings = uiSettings,
+        contentPadding = mapPadding,
         onMapLoaded = {
 //            coroutineScope.launch {
 //                cameraPositionState.animate(

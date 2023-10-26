@@ -15,17 +15,22 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -53,6 +58,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.R
@@ -92,6 +98,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.newpaper.somewhere.enumUtils.SpotTypeGroup
+import com.newpaper.somewhere.ui.commonScreenUtils.DisplayIcon
+import com.newpaper.somewhere.ui.commonScreenUtils.MySpacerRow
+import com.newpaper.somewhere.ui.tripScreenUtils.MyTextField
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -973,205 +982,7 @@ fun SpotDetailPage(
     }
 }
 
-@Composable
-private fun SetLocationPage(
-    showingTrip: Trip,
-    spotList: List<Spot>,
-    currentSpotId: Int,
-    dateList: List<Date>,
-    dateIndex: Int,
 
-    isDarkMapTheme: Boolean,
-    fusedLocationClient: FusedLocationProviderClient,
-    setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
-
-    updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
-    toggleIsEditLocationMode: () -> Unit,
-    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit
-){
-    val coroutineScope = rememberCoroutineScope()
-
-    val firstLocation = spotList[currentSpotId].getPrevLocation(dateList, dateIndex)
-    var newLocation: LatLng by rememberSaveable { mutableStateOf(firstLocation) }
-
-    var newZoomLevel: Float by rememberSaveable { mutableStateOf(spotList[currentSpotId].zoomLevel ?: DEFAULT_ZOOM_LEVEL) }
-
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(firstLocation, newZoomLevel)
-    }
-
-    var screenWidthDp by rememberSaveable { mutableStateOf(0) }
-    val density = LocalDensity.current.density
-
-    //edit location
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .onSizeChanged {
-                screenWidthDp = (it.width.toFloat() / density).toInt()
-            }
-    ) {
-        //google map
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        ) {
-            MapChooseLocation(
-                context = LocalContext.current,
-                isDarkMapTheme = isDarkMapTheme,
-                cameraPositionState = cameraPositionState,
-                dateList = dateList,
-                dateIndex = dateIndex,
-                spotList = spotList,
-                currentDate = dateList[dateIndex],
-                currentSpot = spotList[currentSpotId],
-                onLocationChange = { newLocation_ ->
-                    newLocation = newLocation_
-                },
-                onZoomChange = {newZoomLevel_ ->
-                    newZoomLevel = newZoomLevel_
-                }
-            )
-
-            //center marker
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size(26.dp)
-                    .clip(CircleShape)
-                    .background(Color(spotList[currentSpotId].spotType.group.color.color))
-            ){
-                Text(
-                    text = spotList[currentSpotId].iconText.toString(),
-                    style = getTextStyle(TextType.PROGRESS_BAR__ICON_TEXT_HIGHLIGHT)
-                        .copy(color = Color(spotList[currentSpotId].spotType.group.color.onColor))
-                )
-            }
-        }
-
-//        LazyVerticalGrid(
-//            columns = GridCells.Adaptive(320.dp),
-//            horizontalArrangement = Arrangement.Center,
-//            modifier = Modifier.fillMaxWidth()
-//        ){
-//            item {
-//                //zoom card
-////                Box(modifier = Modifier.width(335.dp)) {
-//                    ZoomCard(
-//                        zoomLevel = newZoomLevel,
-//                        mapZoomTo = { newZoomLevel_ ->
-//                            newZoomLevel = newZoomLevel_
-//                            coroutineScope.launch {
-//                                cameraPositionState.animate(
-//                                    CameraUpdateFactory.zoomTo(newZoomLevel), 300
-//                                )
-//                            }
-//                        },
-//                        fusedLocationClient = fusedLocationClient,
-//                        cameraPositionState = cameraPositionState,
-//                        setUserLocationEnabled = setUserLocationEnabled,
-//                        showSnackBar = showSnackBar
-//                    )
-////                }
-//            }
-//            item {
-//                //cancel save buttons
-//                SaveCancelButtons(
-//                    onCancelClick = toggleIsEditLocationMode,
-//                    onSaveClick = {
-//                        //set location and zoom level
-//                        //spotList[currentSpotId].zoomLevel = zoomLevel
-//                        spotList[currentSpotId].setLocation(
-//                            showingTrip,
-//                            dateId,
-//                            updateTripState,
-//                            newLocation,
-//                            newZoomLevel
-//                        )
-//                        toggleIsEditLocationMode()
-//                    },
-//                    modifier = Modifier.background(MaterialTheme.colorScheme.background),
-//                    positiveText = stringResource(id = R.string.dialog_button_ok)
-//                )
-//            }
-//        }
-
-
-        Row(
-            verticalAlignment = Alignment.Bottom
-        ) {
-            Box(
-                contentAlignment = Alignment.BottomCenter,
-                modifier = Modifier.weight(1f)
-            ) {
-                ZoomCard(
-                    zoomLevel = newZoomLevel,
-                    mapZoomTo = { newZoomLevel1 ->
-                        newZoomLevel = newZoomLevel1
-                        coroutineScope.launch {
-                            cameraPositionState.animate(
-                                CameraUpdateFactory.zoomTo(newZoomLevel), 300
-                            )
-                        }
-                    },
-                    fusedLocationClient = fusedLocationClient,
-                    cameraPositionState = cameraPositionState,
-                    setUserLocationEnabled = setUserLocationEnabled,
-                    showSnackBar = showSnackBar
-                )
-            }
-
-            if (screenWidthDp >= 670){
-                Box(
-                    contentAlignment = Alignment.BottomCenter,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    //cancel save buttons
-                    SaveCancelButtons(
-                        onCancelClick = toggleIsEditLocationMode,
-                        onSaveClick = {
-                            //set location and zoom level
-                            //spotList[currentSpotId].zoomLevel = zoomLevel
-                            spotList[currentSpotId].setLocation(
-                                showingTrip,
-                                dateIndex,
-                                updateTripState,
-                                newLocation,
-                                newZoomLevel
-                            )
-
-                            toggleIsEditLocationMode()
-                        },
-                        modifier = Modifier.background(MaterialTheme.colorScheme.background),
-                        positiveText = stringResource(id = R.string.dialog_button_ok)
-                    )
-                }
-            }
-        }
-        if (screenWidthDp < 670) {
-
-            MySpacerColumn(height = 8.dp)
-
-            //cancel save buttons
-            SaveCancelButtons(
-                onCancelClick = toggleIsEditLocationMode,
-                onSaveClick = {
-                    spotList[currentSpotId].setLocationAndUpdateTravelDistance(
-                        showingTrip, dateIndex, updateTripState, newLocation, newZoomLevel
-                    )
-
-                    toggleIsEditLocationMode()
-                },
-                modifier = Modifier.background(MaterialTheme.colorScheme.background),
-                positiveText = stringResource(id = R.string.dialog_button_ok)
-            )
-        }
-    }
-}
 
 //@OptIn(ExperimentalFoundationApi::class)
 //suspend fun scrollToPage(
