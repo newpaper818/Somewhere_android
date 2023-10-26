@@ -1,7 +1,6 @@
 package com.newpaper.somewhere.viewModel
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.newpaper.somewhere.db.TripRepository
 import com.newpaper.somewhere.model.Date
@@ -262,7 +261,6 @@ class SomewhereViewModel(
 
     fun deleteSpot(dateIndex: Int, spotIndex: Int, toTempTrip: Boolean = true){
 
-        Log.d("delete", "$dateIndex / $spotIndex")
         if(_uiState.value.tempTrip != null){
 
             val dateList = _uiState.value.tempTrip!!.clone().dateList

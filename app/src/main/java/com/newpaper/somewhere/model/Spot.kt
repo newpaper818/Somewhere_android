@@ -1,7 +1,6 @@
 package com.newpaper.somewhere.model
 
 import android.location.Location
-import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
@@ -259,8 +258,6 @@ data class Spot(
 
         //not MOVE -> MOVE or MOVE -> not MOVE
         val setIconText = newSpotList[index].spotType.isMove() != newSpotType.isMove()
-
-        Log.d("move", "new spot type : $newSpotType")
 
         if (newSpotType.isNotMove() && setIconText)
             newSpotList[index] = newSpotList[index].copy(spotType = newSpotType, travelDistance = 0f)
