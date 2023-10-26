@@ -851,9 +851,10 @@ fun SpotDetailPage(
                             setShowBottomSaveCancelBar(true)
                             setImePadding()
                         },
-                        onSaveClick = {
+                        onSaveClick = { newTravelDistance ->
                             showDistanceDialog = false
                             setShowBottomSaveCancelBar(true)
+                            currentSpot.setTravelDistance(showingTrip, dateIndex, updateTripState, newTravelDistance)
                             setImePadding()
                         }
                     )
@@ -882,12 +883,16 @@ fun SpotDetailPage(
                             setShowBottomSaveCancelBar(false)
                         },
 
-                        Triple(MyIcons.travelDistance, currentSpot.getDistanceText()) {
+                        Triple(MyIcons.travelDistance, currentSpot.getDistanceText(),
                             if (currentSpot.spotType.isNotMove()) {
-                                showDistanceDialog = true
-                                setShowBottomSaveCancelBar(false)
+                                {
+                                    showDistanceDialog = true
+                                    setShowBottomSaveCancelBar(false)
+                                }
                             }
-                        }
+                            else null
+
+                            )
                     )
                 )
 
