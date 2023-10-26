@@ -77,7 +77,7 @@ object MyIcons {
     //date time
     val date = MyIcon(Icons.Rounded.CalendarMonth,   22.dp, gray, R.string.date)
     val time = MyIcon(Icons.Rounded.AccessTime,      20.dp, gray, R.string.time)
-    val rightArrowTo = MyIcon(Icons.Rounded.ArrowRightAlt, 30.dp, gray, R.string.to)
+    val rightArrowTo = MyIcon(Icons.Rounded.East, 22.dp, gray, R.string.to)
 
     //set time
     val switchToTextInput = MyIcon(Icons.Outlined.Keyboard,   22.dp, gray, R.string.switch_to_text_input)
