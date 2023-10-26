@@ -284,7 +284,7 @@ fun getColor(colorType: ColorType): Color {
         BUTTON__NEGATIVE                -> gray
         BUTTON__POSITIVE                -> MaterialTheme.colorScheme.primaryContainer.copy(1f)
         BUTTON__DELETE                  -> MaterialTheme.colorScheme.error
-        BUTTON__MAP                     -> MaterialTheme.colorScheme.surface.copy(0.7f)
+        BUTTON__MAP                     -> MaterialTheme.colorScheme.surface.copy(0.85f)
 
         BUTTON__ON_NEGATIVE             -> white
 

@@ -187,18 +187,17 @@ fun MapSpotMapButtons(
                 onFullScreenClicked = onFullScreenClicked,
                 showSnackBar = showSnackBar
             )
-
-            MySpacerRow(width = 16.dp)
         }
-        else if (spot?.spotType?.isNotMove() == true){
+        else {
             EditAndDeleteLocationButtons(
+                editEnabled = spot?.spotType?.isNotMove() == true,
                 deleteEnabled = deleteEnabled,
                 toggleIsEditLocation = toggleIsEditLocation,
                 deleteLocation = deleteLocation
             )
-
-            MySpacerRow(width = 16.dp)
         }
+
+        MySpacerRow(width = 16.dp)
 
         SpotNavigateWithFocusOnToSpotButtons(
             toPrevSpotEnabled = toPrevSpotEnabled,
@@ -212,39 +211,6 @@ fun MapSpotMapButtons(
             showSnackBar = showSnackBar
         )
     }
-}
-
-@Composable
-//map buttons at [not edit]
-fun MapButtonsNotEdit(
-    spot: Spot?,
-    spotFrom: Spot?,
-    spotTo: Spot?,
-
-    fusedLocationClient: FusedLocationProviderClient,
-    mapSize: IntSize,
-    cameraPositionState: CameraPositionState,
-    setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
-    onFullScreenClicked: () -> Unit,
-    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit
-){
-    val focusOnToSpotEnabled =
-        if (spot == null) false
-        else
-            (spot.spotType.isMove() && spotFrom?.location != null && spotTo?.location != null
-            || spot.spotType.isNotMove() && spot.location != null)
-
-
-    val spotList =
-        if (spot == null) listOf()
-        else if (spot.spotType.isMove() && spotFrom != null && spotTo != null)  listOf(spotFrom, spotTo)
-        else listOf(spot)
-
-
-    //focus on to spot
-    FocusOnToSpotButton(mapSize, focusOnToSpotEnabled, cameraPositionState, spotList, showSnackBar)
-
-
 }
 
 //user location / full screen buttons
@@ -270,14 +236,18 @@ fun UserLocationAndFullScreenButtons(
 // edit location / delete location buttons
 @Composable
 fun EditAndDeleteLocationButtons(
+    editEnabled: Boolean,
     deleteEnabled: Boolean,
     toggleIsEditLocation: () -> Unit,
     deleteLocation: () -> Unit,
 ){
     MapButtonsRow {
         //edit location
-        IconButton(onClick = toggleIsEditLocation) {
-            DisplayIcon(icon = MyIcons.editLocation)
+        IconButton(
+            enabled = editEnabled,
+            onClick = toggleIsEditLocation
+        ) {
+            DisplayIcon(icon = MyIcons.editLocation, enabled = editEnabled)
         }
 
         //delete location
@@ -335,20 +305,6 @@ fun MapButtonsRow(
             .clip(CircleShape)
             .background(getColor(ColorType.BUTTON__MAP)),
         verticalAlignment = Alignment.CenterVertically
-    ) {
-        buttonsContent()
-    }
-}
-
-@Composable
-fun MapButtonsColumn(
-    buttonsContent: @Composable () -> Unit
-){
-    Column(
-        modifier = Modifier
-            .clip(CircleShape)
-            .background(getColor(ColorType.BUTTON__MAP)),
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         buttonsContent()
     }
