@@ -1,6 +1,7 @@
 package com.newpaper.somewhere.viewModel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.newpaper.somewhere.db.TripRepository
 import com.newpaper.somewhere.model.Date
@@ -259,16 +260,24 @@ class SomewhereViewModel(
         }
     }
 
-    fun deleteSpot(dateId: Int, spotIndex: Int, toTempTrip: Boolean = true){
+    fun deleteSpot(dateIndex: Int, spotIndex: Int, toTempTrip: Boolean = true){
+
+        Log.d("delete", "$dateIndex / $spotIndex")
         if(_uiState.value.tempTrip != null){
 
+            val dateList = _uiState.value.tempTrip!!.clone().dateList
+
             //tempTrip's spotList
-            val newSpotList = _uiState.value.tempTrip!!.clone().dateList[dateId].spotList.toMutableList()
+            val newSpotList = _uiState.value.tempTrip!!.clone().dateList[dateIndex].spotList.toMutableList()
+
+            //get prev, next spot
+//            val prevSpot = newSpotList[spotIndex].getPrevSpot(dateList, dateIndex)
+//            val nextSpot = newSpotList[spotIndex].getNextSpot(dateList, dateIndex)
 
             //delete spot
             newSpotList.removeAt(spotIndex)
 
-            //set id, orderId
+            //set index, iconText
             var newIconText = if (spotIndex == 0) 0
                             else newSpotList[spotIndex - 1].iconText
 
@@ -281,11 +290,14 @@ class SomewhereViewModel(
                 newSpotList[i].iconText = newIconText
             }
 
+            //check prev or next spot is MOVE and update travel distance
+
+
 
             //tempTrip's dateList
             val newDateList = _uiState.value.tempTrip!!.clone().dateList.toMutableList()
-            val newDate = newDateList[dateId].copy(spotList = newSpotList.toList())
-            newDateList[dateId] = newDate
+            val newDate = newDateList[dateIndex].copy(spotList = newSpotList.toList())
+            newDateList[dateIndex] = newDate
 
             val currentTrip = _uiState.value.tempTrip!!
 

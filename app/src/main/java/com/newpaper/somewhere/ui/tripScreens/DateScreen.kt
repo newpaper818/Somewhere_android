@@ -121,9 +121,9 @@ fun DateScreen(
     organizeAddedDeletedImages: (isClickSave: Boolean) -> Unit,
 
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
-    addNewSpot: (dateId: Int) -> Unit,
-    deleteSpot: (dateId: Int, spotId: Int) -> Unit,
-    reorderSpotList: (dateId: Int, currentIndex: Int, destinationIndex: Int) -> Unit,
+    addNewSpot: (dateIndex: Int) -> Unit,
+    deleteSpot: (dateIndex: Int, spotIndex: Int) -> Unit,
+    reorderSpotList: (dateIndex: Int, currentIndex: Int, destinationIndex: Int) -> Unit,
     saveTrip: () -> Unit,
 
     navigateUp: () -> Unit,

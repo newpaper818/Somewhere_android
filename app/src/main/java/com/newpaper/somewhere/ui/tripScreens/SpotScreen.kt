@@ -595,30 +595,10 @@ fun SpotScreen(
                                             deleteSpot = {
                                                 if (currentSpot != null) {
                                                     addDeletedImages(currentSpot.imagePathList)
-
-                                                    if (spotList.size <= 1) {
-                                                        deleteSpot(
-                                                            currentDateIndex,
-                                                            currentSpotIndex
-                                                        )
-                                                    } else {
-                                                        var toIdx = currentSpotIndex - 1
-
-                                                        if (toIdx < 0) {
-                                                            toIdx = currentSpotIndex
-                                                        }
-
-                                                        coroutineScope.launch {
-                                                            spotPagerState.animateScrollToPage(toIdx)
-                                                            progressBarState.animateScrollToItem(
-                                                                toIdx + 1
-                                                            )
-                                                            deleteSpot(
-                                                                currentDateIndex,
-                                                                currentSpotIndex
-                                                            )
-                                                        }
-                                                    }
+                                                    deleteSpot(
+                                                        currentDateIndex,
+                                                        currentSpotIndex
+                                                    )
                                                 }
                                             },
                                             navigateUp = navigateUp,
