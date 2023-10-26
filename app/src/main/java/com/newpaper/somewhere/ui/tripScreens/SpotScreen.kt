@@ -509,46 +509,9 @@ fun SpotScreen(
                                 isEditLocationMode = !isEditLocationMode
                             },
                             deleteLocation = {
-                                coroutineScope.launch {
-                                    currentSpot?.setLocationAndUpdateTravelDistance(
-                                        showingTrip, dateIndex, dateList, spotList, updateTripState, null, null
-                                    )
-                                }
-
-//                                currentSpot?.setLocation(
-//                                    showingTrip,
-//                                    currentDateIndex,
-//                                    updateTripState,
-//                                    null,
-//                                    null
-//                                )
-//
-//                                //update travel distance (set to 0.0 km)
-//                                val prevSpot = currentSpot?.getPrevSpot(dateList, spotList, dateIndex)
-//                                if (prevSpot?.spotType?.isMove() == true){
-//                                    if (currentSpot.index == 0) {
-//                                        val prevSpotList = dateList.getOrNull(dateIndex - 1)?.spotList
-//                                        if (prevSpotList != null) {
-//                                            prevSpot.updateDistance(showingTrip, dateIndex - 1, dateList, prevSpotList, updateTripState)
-//                                        }
-//                                    }
-//                                    else{
-//                                        prevSpot.updateDistance(showingTrip, dateIndex, dateList, spotList, updateTripState)
-//                                    }
-//                                }
-//
-//                                val nextSpot = currentSpot?.getNextSpot(dateList, spotList, dateIndex)
-//                                if (nextSpot?.spotType?.isMove() == true){
-//                                    if (currentSpot.index == spotList.lastIndex) {
-//                                        val nextSpotList = dateList.getOrNull(dateIndex + 1)?.spotList
-//                                        if (nextSpotList != null) {
-//                                            nextSpot.updateDistance(showingTrip, dateIndex + 1, dateList, nextSpotList, updateTripState)
-//                                        }
-//                                    }
-//                                    else{
-//                                        nextSpot.updateDistance(showingTrip, dateIndex, dateList, spotList, updateTripState)
-//                                    }
-//                                }
+                                currentSpot?.setLocationAndUpdateTravelDistance(
+                                    showingTrip, dateIndex, updateTripState, null, null
+                                )
                             },
                             setMapSize = {
                                 mapSize = it
@@ -1221,31 +1184,11 @@ private fun SetLocationPage(
             SaveCancelButtons(
                 onCancelClick = toggleIsEditLocationMode,
                 onSaveClick = {
-                    coroutineScope.launch {
-//                        spotList[currentSpotId].setLocation(showingTrip, dateIndex, updateTripState, newLocation, newZoomLevel)
+                    spotList[currentSpotId].setLocationAndUpdateTravelDistance(
+                        showingTrip, dateIndex, updateTripState, newLocation, newZoomLevel
+                    )
 
-                        spotList[currentSpotId].setLocationAndUpdateTravelDistance(
-                            showingTrip, dateIndex, dateList, spotList, updateTripState, newLocation, newZoomLevel
-                        )
-
-                        toggleIsEditLocationMode()
-                    }
-
-
-
-                    //set location and zoom level
-                    //spotList[currentSpotId].zoomLevel = zoomLevel
-//                    spotList[currentSpotId].setLocation(
-//                        showingTrip,
-//                        dateIndex,
-//                        updateTripState,
-//                        newLocation,
-//                        newZoomLevel
-//                    )
-
-                    //set travel distance prevSpot, nextSpot
-
-
+                    toggleIsEditLocationMode()
                 },
                 modifier = Modifier.background(MaterialTheme.colorScheme.background),
                 positiveText = stringResource(id = R.string.dialog_button_ok)
