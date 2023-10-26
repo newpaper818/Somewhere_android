@@ -591,6 +591,7 @@ fun DatePage(
                                 setShowBottomSaveCancelBar(true)
                                 spot.setSpotType(
                                     showingTrip,
+                                    dateList,
                                     dateIndex,
                                     updateTripState,
                                     newSpotType

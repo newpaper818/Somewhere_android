@@ -13,8 +13,8 @@ import com.newpaper.somewhere.utils.getNumToText
 import com.newpaper.somewhere.utils.getTimeText
 import com.newpaper.somewhere.viewModel.DateTimeFormat
 import com.google.android.gms.maps.model.LatLng
+import com.newpaper.somewhere.enumUtils.SpotTypeGroup
 import com.squareup.moshi.JsonClass
-import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -250,6 +250,7 @@ data class Spot(
 
     fun setSpotType(
         showingTrip: Trip,
+        dateList: List<Date>,
         currentDateIndex: Int,
         updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
 
@@ -257,19 +258,28 @@ data class Spot(
     ) {
         val newSpotList = showingTrip.dateList[currentDateIndex].spotList.toMutableList()
 
-        val isMove = newSpotList[index].spotType.isMove() != newSpotType.isMove()
+        //not MOVE -> MOVE or MOVE -> not MOVE
+        val setIconText = newSpotList[index].spotType.isMove() != newSpotType.isMove()
 
-        if (newSpotType.isNotMove())
+        Log.d("move", "new spot type : $newSpotType")
+
+        if (newSpotType.isNotMove() && setIconText)
+            newSpotList[index] = newSpotList[index].copy(spotType = newSpotType, travelDistance = 0f)
+        else if (newSpotType.isNotMove() && !setIconText)
             newSpotList[index] = newSpotList[index].copy(spotType = newSpotType)
-        else
-            newSpotList[index] = newSpotList[index].copy(spotType = newSpotType, location = null, zoomLevel = null)
+        else {
+            //update travel distance
+            val travelDistance = getTravelDistance(dateList, currentDateIndex)
+            newSpotList[index] = newSpotList[index].copy(
+                spotType = newSpotType, location = null, zoomLevel = null, travelDistance = travelDistance ?: 0f)
+        }
 
         //set iconText
-        if (isMove) {
+        if (setIconText) {
             var newIconText = if (index == 0) 0
                             else newSpotList[index - 1].iconText
 
-            for (i in index until newSpotList.size) {
+            for (i in index .. newSpotList.lastIndex) {
                 if(newSpotList[i].spotType.isNotMove())
                     newIconText++
 

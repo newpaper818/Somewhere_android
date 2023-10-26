@@ -835,19 +835,11 @@ fun SpotDetailPage(
                             setShowBottomSaveCancelBar(true)
                             currentSpot.setSpotType(
                                 showingTrip,
+                                dateList,
                                 dateIndex,
                                 updateTripState,
                                 newSpotType
                             )
-                            if (newSpotType.group == SpotTypeGroup.MOVE) {
-                                currentSpot.updateDistance(
-                                    showingTrip = showingTrip,
-                                    currentDateIndex = dateIndex,
-                                    updateTripState = updateTripState,
-                                    spotFrom = currentSpot.getPrevSpot(dateList, dateIndex)?.location,
-                                    spotTo = currentSpot.getNextSpot(dateList, dateIndex)?.location
-                                )
-                            }
                         }
                     )
                 }
