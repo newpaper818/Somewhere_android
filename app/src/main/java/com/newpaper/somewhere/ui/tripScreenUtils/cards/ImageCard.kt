@@ -93,6 +93,8 @@ import com.newpaper.somewhere.ui.theme.ColorType
 import com.newpaper.somewhere.ui.theme.TextType
 import com.newpaper.somewhere.ui.theme.getColor
 import com.newpaper.somewhere.ui.theme.getTextStyle
+import com.newpaper.somewhere.ui.theme.n92
+import com.newpaper.somewhere.ui.theme.s50
 import com.newpaper.somewhere.utils.SlideState
 import com.newpaper.somewhere.utils.dragAndDropHorizontal
 import kotlinx.coroutines.Dispatchers
@@ -565,8 +567,8 @@ private fun ImageIndicateDots(
         ) {
             repeat(pageCount) {
                 val color =
-                    if (currentPage == it) Color.LightGray
-                    else Color.DarkGray
+                    if (currentPage == it) s50
+                    else n92
 
                 Box(
                     modifier = Modifier
