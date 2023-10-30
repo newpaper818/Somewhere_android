@@ -8,7 +8,6 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.ColorInt
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.IconButton
@@ -59,6 +58,7 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.newpaper.somewhere.ui.theme.ColorType
 import com.newpaper.somewhere.ui.theme.getColor
+import com.newpaper.somewhere.viewModel.LocationInfo
 import kotlinx.coroutines.launch
 import kotlin.math.min
 
@@ -160,7 +160,7 @@ fun MapForTrip(
                             location = spot.location,
                             title = spot.titleText ?: stringResource(id = R.string.no_title),
                             isBigMarker = false,
-                            text = spot.iconText.toString(),
+                            iconText = spot.iconText.toString(),
                             iconColor = dateWithBoolean.date.color.color,
                             onIconColor = dateWithBoolean.date.color.onColor
                         )
@@ -261,7 +261,7 @@ fun MapForSpot(
                     location = spot.location,
                     title = spot.titleText ?: stringResource(id = R.string.no_title),
                     isBigMarker = spot == currentSpot || spot == spotFrom || spot == spotTo,
-                    text = spot.iconText.toString(),
+                    iconText = spot.iconText.toString(),
                     iconColor = spot.spotType.group.color.color,
                     onIconColor = spot.spotType.group.color.onColor
                 )
@@ -301,6 +301,10 @@ fun MapChooseLocation(
     currentDate: Date,
     currentSpot: Spot,
 
+    showSearchLocationMarker: Boolean,
+    searchLocationMarkerList: List<LocationInfo>,
+
+    onMapLoaded: () -> Unit,
     onLocationChange: (LatLng) -> Unit,
     onZoomChange: (Float) -> Unit
 ){
@@ -338,15 +342,7 @@ fun MapChooseLocation(
         properties = properties,
         uiSettings = uiSettings,
         contentPadding = mapPadding,
-        onMapLoaded = {
-//            coroutineScope.launch {
-//                cameraPositionState.animate(
-//                    //FIXME set location to lat lng bounds
-//                    CameraUpdateFactory.newLatLngZoom(LatLng(37.532600, 127.024600), 13f),500
-//                )
-//            }
-
-        }
+        onMapLoaded = onMapLoaded
     ){
         val polyLinePointList = mutableListOf<LatLng>()
 
@@ -357,7 +353,7 @@ fun MapChooseLocation(
                     location = spot.location,
                     title = spot.titleText ?: stringResource(id = R.string.no_title),
                     isBigMarker = false,
-                    text = spot.iconText.toString(),
+                    iconText = spot.iconText.toString(),
                     iconColor = spot.spotType.group.color.color,
                     onIconColor = spot.spotType.group.color.onColor
                 )
@@ -381,6 +377,22 @@ fun MapChooseLocation(
 
         //draw poly line
         MapLine(pointList = polyLinePointList)
+        
+        //draw search location markers
+        if (showSearchLocationMarker) {
+            for (locationInfo in searchLocationMarkerList) {
+                if (locationInfo.location != null) {
+                    MapMarker(
+                        location = locationInfo.location!!,
+                        title = locationInfo.title,
+                        iconText = "",
+                        isBigMarker = false,
+                        iconColor = 0xFFff0000.toInt(),
+                        onIconColor = 0xFFff0000.toInt()
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -389,7 +401,7 @@ private fun MapMarker(
     location: LatLng,
     title: String,
     isBigMarker: Boolean,
-    text: String? = null,
+    iconText: String? = null,
     @ColorInt iconColor: Int,
     @ColorInt onIconColor: Int,
 ){
@@ -397,7 +409,7 @@ private fun MapMarker(
     Marker(
         state = MarkerState(position = location),
         title = title,
-        icon = bitmapDescriptor(isBigMarker, text, iconColor, onIconColor),
+        icon = bitmapDescriptor(isBigMarker, iconText, iconColor, onIconColor),
         anchor = Offset(0.5f,0.5f),
         zIndex = if (isBigMarker) 1.0f else 0.0f
     )
@@ -731,6 +743,40 @@ suspend fun focusOnToSpot(
                 )
             }
         }
+    }
+}
+
+suspend fun focusOnToLatLng(
+    cameraPositionState: CameraPositionState,
+    mapSize: IntSize,
+    locationList: List<LatLng?>
+){
+    val newLocationList: List<LatLng> = locationList.filterNotNull()
+
+    if (newLocationList.size == 1){
+        val location = newLocationList.first()
+
+        cameraPositionState.animate(
+            CameraUpdateFactory.newLatLngZoom(location, 16f), 300
+        )
+    }
+    else if (newLocationList.size > 1){
+        val latLngBounds = LatLngBounds.Builder()
+
+
+        for(location in newLocationList){
+            latLngBounds.include(location)
+        }
+
+        val mapSizeMin = min(mapSize.width, mapSize.height)
+
+        val padding =
+            if (mapSizeMin * 0.2 > LAT_LNG_BOUND_PADDING) LAT_LNG_BOUND_PADDING
+            else                                            (mapSizeMin * 0.2).toInt()
+
+        cameraPositionState.animate(
+            CameraUpdateFactory.newLatLngBounds(latLngBounds.build(), padding), 300
+        )
     }
 }
 

@@ -12,28 +12,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -48,17 +38,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.R
@@ -66,13 +52,11 @@ import com.newpaper.somewhere.model.Date
 import com.newpaper.somewhere.model.Spot
 import com.newpaper.somewhere.model.Trip
 import com.newpaper.somewhere.ui.navigation.NavigationDestination
-import com.newpaper.somewhere.ui.tripScreenUtils.SaveCancelButtons
 import com.newpaper.somewhere.ui.tripScreenUtils.DeleteItemButton
 import com.newpaper.somewhere.ui.tripScreenUtils.dialogs.DeleteOrNotDialog
 import com.newpaper.somewhere.ui.tripScreenUtils.cards.ImageCard
 import com.newpaper.somewhere.ui.tripScreenUtils.cards.InformationCard
 import com.newpaper.somewhere.ui.tripScreenUtils.cards.MapCard
-import com.newpaper.somewhere.ui.tripScreenUtils.MapChooseLocation
 import com.newpaper.somewhere.ui.tripScreenUtils.cards.MemoCard
 import com.newpaper.somewhere.ui.commonScreenUtils.MyIcons
 import com.newpaper.somewhere.ui.tripScreenUtils.dialogs.SetSpotTypeDialog
@@ -82,25 +66,16 @@ import com.newpaper.somewhere.ui.tripScreenUtils.dialogs.SetBudgetOrDistanceDial
 import com.newpaper.somewhere.ui.tripScreenUtils.SpotListProgressBar
 import com.newpaper.somewhere.ui.tripScreenUtils.cards.DateTimeCard
 import com.newpaper.somewhere.ui.tripScreenUtils.cards.TitleCardMove
-import com.newpaper.somewhere.ui.tripScreenUtils.cards.ZoomCard
 import com.newpaper.somewhere.ui.tripScreenUtils.focusOnToSpot
 import com.newpaper.somewhere.ui.tripScreenUtils.DEFAULT_ZOOM_LEVEL
 import com.newpaper.somewhere.ui.tripScreenUtils.SEOUL_LOCATION
-import com.newpaper.somewhere.ui.theme.TextType
-import com.newpaper.somewhere.ui.theme.getTextStyle
 import com.newpaper.somewhere.ui.tripScreenUtils.AnimatedBottomSaveCancelBar
 import com.newpaper.somewhere.ui.tripScreenUtils.cards.TitleCard
 import com.newpaper.somewhere.viewModel.DateTimeFormat
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.rememberCameraPositionState
-import com.newpaper.somewhere.enumUtils.SpotTypeGroup
-import com.newpaper.somewhere.ui.commonScreenUtils.DisplayIcon
-import com.newpaper.somewhere.ui.commonScreenUtils.MySpacerRow
-import com.newpaper.somewhere.ui.tripScreenUtils.MyTextField
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -646,7 +621,7 @@ fun SpotScreen(
                 SetLocationPage(
                     showingTrip = showingTrip,
                     spotList = spotList,
-                    currentSpotId = currentSpotIndex,
+                    currentSpotIndex = currentSpotIndex,
                     dateList = dateList,
                     dateIndex = currentDateIndex,
                     isDarkMapTheme = isDarkMapTheme,

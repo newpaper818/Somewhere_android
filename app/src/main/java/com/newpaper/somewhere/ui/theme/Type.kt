@@ -145,6 +145,8 @@ enum class TextType{
     //MAP
     MAP__SEARCH,
     MAP__SEARCH_PLACEHOLDER,
+    MAP__SEARCH_LIST_TITLE,
+    MAP__SEARCH_LIST_SUBTITLE,
 
 
 
@@ -208,6 +210,8 @@ fun getTextStyle(textType: TextType): TextStyle {
         //MAP
         MAP__SEARCH                 -> MaterialTheme.typography.displayMedium
         MAP__SEARCH_PLACEHOLDER     -> MaterialTheme.typography.displayMedium.copy(color = n60)
+        MAP__SEARCH_LIST_TITLE      -> MaterialTheme.typography.bodyMedium
+        MAP__SEARCH_LIST_SUBTITLE   -> MaterialTheme.typography.labelMedium.copy(color = n60)
 
         // SETTING =================================================================================
         MAIN                        -> MaterialTheme.typography.headlineMedium
