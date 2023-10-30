@@ -110,7 +110,6 @@ fun SetLocationPage(
 
     val firstLocation = spotList[currentSpotIndex].getPrevLocation(dateList, dateIndex)
     var newLocation: LatLng by rememberSaveable { mutableStateOf(firstLocation) }
-
     var newZoomLevel: Float by rememberSaveable { mutableFloatStateOf(spotList[currentSpotIndex].zoomLevel ?: DEFAULT_ZOOM_LEVEL) }
 
     val cameraPositionState = rememberCameraPositionState {
