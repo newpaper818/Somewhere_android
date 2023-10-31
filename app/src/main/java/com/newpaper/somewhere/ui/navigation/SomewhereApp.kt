@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.newpaper.somewhere.enumUtils.AppContentType
 import com.newpaper.somewhere.enumUtils.MapTheme
@@ -39,7 +40,6 @@ import com.newpaper.somewhere.ui.tripScreens.DateDestination
 import com.newpaper.somewhere.ui.tripScreens.DateScreen
 import com.newpaper.somewhere.ui.tripScreens.SpotDetailDestination
 import com.newpaper.somewhere.ui.tripScreens.SpotScreen
-import com.newpaper.somewhere.ui.tripScreens.SpotImageDestination
 import com.newpaper.somewhere.ui.tripScreens.TripDestination
 import com.newpaper.somewhere.ui.tripScreens.TripMapDestination
 import com.newpaper.somewhere.ui.tripScreens.TripMapScreen
@@ -56,6 +56,13 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.newpaper.somewhere.ui.theme.ColorType
+import com.newpaper.somewhere.ui.theme.getColor
+import com.newpaper.somewhere.ui.theme.n10
+import com.newpaper.somewhere.ui.theme.n20
+import com.newpaper.somewhere.ui.theme.n50
+import com.newpaper.somewhere.ui.tripScreens.ImageDestination
+import com.newpaper.somewhere.ui.tripScreens.ImageScreen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalAnimationApi::class)
@@ -107,19 +114,25 @@ fun SomewhereApp(
     //navigation bar color
     systemUiController.setNavigationBarColor(color = MaterialTheme.colorScheme.surface)
 
-    //trip map's status bar
-    if (somewhereUiState.currentScreen == TripMapDestination && isDarkMapTheme) {
+    //set status bar color
+    //image
+    if (somewhereUiState.currentScreen == ImageDestination) {
         systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = false)
+        systemUiController.setNavigationBarColor(color = Color.Transparent)
     }
-    else if (somewhereUiState.currentScreen == TripMapDestination && !isDarkMapTheme){
-        systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = true)
-    }
-    else if (isDarkAppTheme){
+
+    //trip map
+    else if (somewhereUiState.currentScreen == TripMapDestination && isDarkMapTheme)
         systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = false)
-    }
-    else {
+    else if (somewhereUiState.currentScreen == TripMapDestination && !isDarkMapTheme)
         systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = true)
-    }
+
+    //else
+    else if (isDarkAppTheme)
+        systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = false)
+    else
+        systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = true)
+
 
 
     // for tablet
@@ -144,6 +157,15 @@ fun SomewhereApp(
         fadeIn(tween(300)) + scaleIn(animationSpec = tween(300), initialScale = 0.7f)
     val popExitTransition = slideOutHorizontally(animationSpec = tween(300), targetOffsetX = { it })
 
+    //page animation for image
+    val imageEnterTransition = fadeIn(tween(300)) + scaleIn(animationSpec = tween(300), initialScale = 0.7f)
+    val imageExitTransition =
+        fadeOut(tween(3)) + scaleOut(animationSpec = tween(300), targetScale = 0.7f)
+    val imagePopEnterTransition =
+        fadeIn(tween(300)) + scaleIn(animationSpec = tween(300), initialScale = 0.7f)
+    val imagePopExitTransition = fadeOut(tween(300)) + scaleOut(animationSpec = tween(300), targetScale = 0.7f)
+
+
     var useImePadding by rememberSaveable { mutableStateOf(true) }
 
 //    val boxModifier = if(useImePadding) Modifier//.imePadding()
@@ -152,8 +174,13 @@ fun SomewhereApp(
     val boxModifier =
         if (somewhereUiState.currentScreen == TripMapDestination)
             Modifier.navigationBarsPadding()
+        else if (somewhereUiState.currentScreen == ImageDestination)
+            Modifier
         else
-            Modifier.navigationBarsPadding().statusBarsPadding().displayCutoutPadding()
+            Modifier
+                .navigationBarsPadding()
+                .statusBarsPadding()
+                .displayCutoutPadding()
 
     Box(
         modifier = boxModifier.fillMaxSize()
@@ -264,6 +291,10 @@ fun SomewhereApp(
                         navigateUp = {
                             navigateUp()
                             somewhereViewModel.toggleIsNewTrip(false)
+                        },
+                        navigateToImage = { imageList, initialImageIndex ->
+                            somewhereViewModel.updateImageListAndInitialImageIndex(imageList, initialImageIndex)
+                            navController.navigate(ImageDestination.route)
                         },
                         navigateToDate = { dateIndex ->
                             somewhereViewModel.toggleIsNewTrip(false)
@@ -392,7 +423,7 @@ fun SomewhereApp(
                 }
             }
 
-            // SPOT DETAIL =========================================================================
+            // SPOT ================================================================================
             composable(
                 route = SpotDetailDestination.route,
                 enterTransition = { enterTransition },
@@ -462,19 +493,24 @@ fun SomewhereApp(
                 }
             }
 
-            // SPOT IMAGE ==========================================================================
+            // IMAGE ===============================================================================
             composable(
-                route = SpotImageDestination.route,
-                enterTransition = { enterTransition },
-                exitTransition = { exitTransition },
-                popEnterTransition = { popEnterTransition },
-                popExitTransition = { popExitTransition }
-            ) {
-                //update current screen
-                somewhereViewModel.updateCurrentScreen(SpotImageDestination)
+                route = ImageDestination.route,
+                enterTransition = { imageEnterTransition },
+                exitTransition = { imageExitTransition },
+                popEnterTransition = { imagePopEnterTransition },
+                popExitTransition = { imagePopExitTransition }
+            ){
+                somewhereViewModel.updateCurrentScreen(ImageDestination)
 
+                ImageScreen(
+                    imagePathList = somewhereUiState.imageList ?: listOf(),
+                    initialImageIndex = somewhereUiState.initialImageIndex,
 
+                    navigateUp = { navigateUp() }
+                )
             }
+
 
 
             // THEME SETTING =======================================================================

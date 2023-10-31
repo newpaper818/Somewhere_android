@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.R
 import com.newpaper.somewhere.ui.theme.gray
+import com.newpaper.somewhere.ui.theme.n100
 import com.newpaper.somewhere.ui.theme.white
 
 data class MyIcon(
@@ -42,6 +43,7 @@ object MyIcons {
     val back = MyIcon(Icons.Rounded.ArrowBack, 22.dp, null, R.string.back)
     val close = MyIcon(Icons.Rounded.Close,    22.dp, null, R.string.close)
     val edit = MyIcon(Icons.Rounded.Edit,      24.dp, null, R.string.edit)
+    val imageScreenClose = MyIcon(Icons.Rounded.Close,    24.dp, n100, R.string.close)
 
 //    val more = MyIcon(Icons.Filled.MoreVert,  22.dp, null, R.string.more)
 //    val done = MyIcon(Icons.Filled.Done,  22.dp, null, R.string.save)

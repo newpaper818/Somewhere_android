@@ -85,6 +85,7 @@ import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.newpaper.somewhere.R
+import com.newpaper.somewhere.ui.commonScreenUtils.ClickableBox
 import com.newpaper.somewhere.ui.commonScreenUtils.MySpacerColumn
 import com.newpaper.somewhere.ui.commonScreenUtils.MySpacerRow
 import com.newpaper.somewhere.ui.commonScreenUtils.DisplayIcon
@@ -93,8 +94,11 @@ import com.newpaper.somewhere.ui.theme.ColorType
 import com.newpaper.somewhere.ui.theme.TextType
 import com.newpaper.somewhere.ui.theme.getColor
 import com.newpaper.somewhere.ui.theme.getTextStyle
+import com.newpaper.somewhere.ui.theme.n40
+import com.newpaper.somewhere.ui.theme.n60
 import com.newpaper.somewhere.ui.theme.n92
 import com.newpaper.somewhere.ui.theme.s50
+import com.newpaper.somewhere.ui.theme.s70
 import com.newpaper.somewhere.utils.SlideState
 import com.newpaper.somewhere.utils.dragAndDropHorizontal
 import kotlinx.coroutines.Dispatchers
@@ -120,6 +124,7 @@ fun ImageCard(
     tripId: Int,
     isEditMode: Boolean,
     imagePathList: List<String>,
+    onClickImage: (Int) -> Unit,
     onAddImages: (List<String>) -> Unit,
     deleteImage: (String) -> Unit,
     isOverImage: (Boolean) -> Unit,
@@ -181,14 +186,12 @@ fun ImageCard(
 
     AnimatedVisibility(
         visible = isEditMode || imagePathList.isNotEmpty(),
-        enter =
-        scaleIn(animationSpec = tween(170, 0, LinearEasing))
-                + expandVertically(animationSpec = tween(190, 0, LinearEasing))
-                + fadeIn(animationSpec = tween(300, 100)),
-        exit =
-        scaleOut(animationSpec = tween(250, 100))
-                + shrinkVertically(animationSpec = tween(320, 100))
-                + fadeOut(animationSpec = tween(300, 100))
+        enter = scaleIn(animationSpec = tween(300))
+                + expandVertically(animationSpec = tween(300))
+                + fadeIn(animationSpec = tween(300)),
+        exit = scaleOut(animationSpec = tween(300))
+                + shrinkVertically(animationSpec = tween(300))
+                + fadeOut(animationSpec = tween(300))
     ) {
 
         Column(
@@ -199,135 +202,154 @@ fun ImageCard(
                     .fillMaxWidth()
                     .border(1.dp, borderColor, RoundedCornerShape(16.dp))
             ) {
-                //edit mode
-                AnimatedVisibility(
-                    visible = isEditMode,
-                    enter = fadeIn(animationSpec = tween(100, 0)),
-                    exit = fadeOut(animationSpec = tween(500, 0))
-                ) {
-
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
+                Box {
+                    Column {
+                        //edit mode
+                        AnimatedVisibility(
+                            visible = isEditMode,
+                            enter = fadeIn(animationSpec = tween(0, 0)),
+                            exit = fadeOut(animationSpec = tween(500, 0))
                         ) {
 
-                            //Images text
-                            Text(
-                                text = stringResource(id = R.string.image_card_title, imagePathList.size, IMAGE_MAX_COUNT),
-                                style = titleTextStyle1,
-                                modifier = Modifier.padding(16.dp, 14.dp, 0.dp, 8.dp),
-                            )
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                ) {
 
-                            Spacer(modifier = Modifier.weight(1f))
-
-                            //add images text
-                            Text(
-                                text = stringResource(id = R.string.image_card_subtitle_add_images),
-                                style = addImageTextStyle,
-                                modifier = Modifier
-                                    .clickable(
-                                        enabled = !isImageCountLimit && imagePathList.size < IMAGE_MAX_COUNT,
-                                        onClick = {
-                                            galleryLauncher.launch("image/*")
-                                        }
+                                    //Images text
+                                    Text(
+                                        text = stringResource(
+                                            id = R.string.image_card_title,
+                                            imagePathList.size,
+                                            IMAGE_MAX_COUNT
+                                        ),
+                                        style = titleTextStyle1,
+                                        modifier = Modifier.padding(16.dp, 14.dp, 0.dp, 8.dp),
                                     )
-                                    .padding(16.dp, 14.dp, 16.dp, 8.dp)
-                            )
-                        }
 
-                        val slideStates = remember { mutableStateMapOf<String, SlideState>(
-                            *imagePathList.map { it to SlideState.NONE }.toTypedArray()
-                        ) }
+                                    Spacer(modifier = Modifier.weight(1f))
 
-                        //if no image
-                        if (imagePathList.isEmpty()) {
-                            Text(
-                                text = stringResource(id = R.string.image_card_body_no_image),
-                                style = bodyNullTextStyle,
-                                modifier = Modifier.padding(16.dp, 0.dp)
-                            )
-                        }
-
-                        //images
-                        LazyRow(
-                            verticalAlignment = Alignment.CenterVertically,
-                            contentPadding = PaddingValues(16.dp, 0.dp, 0.dp, 0.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        ) {
-                            items(imagePathList){imagePath ->
-
-                                key(imagePathList){
-                                    val slideState = slideStates[imagePath] ?: SlideState.NONE
-
-                                    ImageWithDeleteIcon(
-                                        imagePath = imagePath,
-                                        imagePathList = imagePathList,
-                                        onDeleteClick = {
-                                            deleteImage(imagePath)
-                                                //Log.d("image", "img size = ${imagePathList.size}")
-                                            if (imagePathList.size - 1 <= IMAGE_MAX_COUNT && isImageCountLimit){
-                                                //Log.d("image", "to false")
-                                                isImageCountLimit = false
-                                                isOverImage(false)
-                                            }
-                                        },
-                                        slideState = slideState,
-                                        updateSlideState = { imageIndex, newSlideState ->
-                                            slideStates[imagePathList[imageIndex]] = newSlideState
-                                        },
-                                        updateItemPosition = { currentIndex, destinationIndex ->
-                                            //on drag end
-                                            coroutineScope.launch {
-                                                //reorder list
-                                                reorderImageList(currentIndex, destinationIndex)
-
-                                                //all slideState to NONE
-                                                slideStates.putAll(imagePathList.associateWith { SlideState.NONE })
-                                            }
-                                        }
+                                    //add images text
+                                    Text(
+                                        text = stringResource(id = R.string.image_card_subtitle_add_images),
+                                        style = addImageTextStyle,
+                                        modifier = Modifier
+                                            .clickable(
+                                                enabled = !isImageCountLimit && imagePathList.size < IMAGE_MAX_COUNT,
+                                                onClick = {
+                                                    galleryLauncher.launch("image/*")
+                                                }
+                                            )
+                                            .padding(16.dp, 14.dp, 16.dp, 8.dp)
                                     )
-                                    MySpacerRow(width = 16.dp)
                                 }
+
+                                val slideStates = remember {
+                                    mutableStateMapOf<String, SlideState>(
+                                        *imagePathList.map { it to SlideState.NONE }.toTypedArray()
+                                    )
+                                }
+
+                                //if no image
+                                if (imagePathList.isEmpty()) {
+                                    Text(
+                                        text = stringResource(id = R.string.image_card_body_no_image),
+                                        style = bodyNullTextStyle,
+                                        modifier = Modifier.padding(16.dp, 0.dp)
+                                    )
+                                }
+
+                                //images
+                                LazyRow(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    contentPadding = PaddingValues(16.dp, 0.dp, 0.dp, 0.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                ) {
+                                    items(imagePathList) { imagePath ->
+
+                                        key(imagePathList) {
+                                            val slideState =
+                                                slideStates[imagePath] ?: SlideState.NONE
+
+                                            ImageWithDeleteIcon(
+                                                imagePath = imagePath,
+                                                imagePathList = imagePathList,
+                                                onDeleteClick = {
+                                                    deleteImage(imagePath)
+                                                    //Log.d("image", "img size = ${imagePathList.size}")
+                                                    if (imagePathList.size - 1 <= IMAGE_MAX_COUNT && isImageCountLimit) {
+                                                        //Log.d("image", "to false")
+                                                        isImageCountLimit = false
+                                                        isOverImage(false)
+                                                    }
+                                                },
+                                                slideState = slideState,
+                                                updateSlideState = { imageIndex, newSlideState ->
+                                                    slideStates[imagePathList[imageIndex]] =
+                                                        newSlideState
+                                                },
+                                                updateItemPosition = { currentIndex, destinationIndex ->
+                                                    //on drag end
+                                                    coroutineScope.launch {
+                                                        //reorder list
+                                                        reorderImageList(
+                                                            currentIndex,
+                                                            destinationIndex
+                                                        )
+
+                                                        //all slideState to NONE
+                                                        slideStates.putAll(imagePathList.associateWith { SlideState.NONE })
+                                                    }
+                                                }
+                                            )
+                                            MySpacerRow(width = 16.dp)
+                                        }
+                                    }
+                                }
+
+                                MySpacerColumn(height = 16.dp)
                             }
                         }
-
-                        MySpacerColumn(height = 16.dp)
                     }
-                }
+                    Column {
+                        //not edit mode showing images
+                        AnimatedVisibility(
+                            visible = !isEditMode,
+                            enter = expandVertically(tween(500)),
+                            exit = shrinkVertically(tween(500))
+                        ) {
+                            val pageState = rememberPagerState { imagePathList.size }
 
-                //not edit mode showing images
-                AnimatedVisibility(
-                    visible = !isEditMode,
-                    enter = expandVertically(tween(400), expandFrom = Alignment.Bottom),
-                    exit = shrinkVertically(
-                        tween(350, easing = LinearEasing),
-                        shrinkTowards = Alignment.Bottom
-                    )
-                ) {
-                    val pageState = rememberPagerState{ imagePathList.size }
+                            ClickableBox(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(1f),
+                                onClick = {
+                                    onClickImage(pageState.currentPage)
+                                }
+                            ) {
+                                HorizontalPager(
+                                    state = pageState,
+                                    beyondBoundsPageCount = 3,
+                                    pageContent = {
+                                        DisplayImage(
+                                            imagePath = imagePathList[it],
+                                            modifier = Modifier.fillMaxSize()
+                                        )
+                                    }
+                                )
 
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1f)
-                    ) {
-                        HorizontalPager(
-                            state = pageState,
-                            beyondBoundsPageCount = 3,
-                            pageContent = {
-                                DisplayImage(imagePath = imagePathList[it])
+                                if (imagePathList.size != 1)
+                                    ImageIndicateDots(
+                                        pageCount = imagePathList.size,
+                                        currentPage = pageState.currentPage
+                                    )
                             }
-                        )
 
-                        if (imagePathList.size != 1)
-                            ImageIndicateDots(
-                                pageCount = imagePathList.size,
-                                currentPage = pageState.currentPage
-                            )
+                        }
                     }
-
                 }
             }
 
@@ -385,7 +407,8 @@ private fun ImageWithDeleteIcon(
 
     Card(
         shape = MaterialTheme.shapes.small,
-        modifier = dragModifier.size(cardWidthDp)
+        modifier = dragModifier
+            .size(cardWidthDp)
             .dragAndDropHorizontal(
                 item = imagePath,
                 items = imagePathList,
@@ -397,7 +420,7 @@ private fun ImageWithDeleteIcon(
                 onStopDrag = { currentIndex, destinationIndex ->
                     isDragged = false
 
-                    if (currentIndex != destinationIndex){
+                    if (currentIndex != destinationIndex) {
                         updateItemPosition(currentIndex, destinationIndex)
                     }
                 },
@@ -406,7 +429,10 @@ private fun ImageWithDeleteIcon(
 
     ) {
         Box {
-            DisplayImage(imagePath = imagePath)
+            DisplayImage(
+                imagePath = imagePath,
+                modifier = Modifier.fillMaxSize()
+            )
 
             Column {
                 MySpacerColumn(height = 4.dp)
@@ -438,7 +464,9 @@ private fun ImageWithDeleteIcon(
 
 @Composable
 fun DisplayImage(
-    imagePath: String
+    imagePath: String,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Crop
 ){
     val context = LocalContext.current
 
@@ -460,8 +488,8 @@ fun DisplayImage(
             .crossfade(300)
             .build(),
         contentDescription = "image",
-        contentScale = ContentScale.Crop,
-        modifier = Modifier.fillMaxSize(),
+        contentScale = contentScale,
+        modifier = modifier,
         onLoading = {
             isLoading = true
         },
@@ -567,8 +595,8 @@ private fun ImageIndicateDots(
         ) {
             repeat(pageCount) {
                 val color =
-                    if (currentPage == it) s50
-                    else n92
+                    if (currentPage == it) s70
+                    else n40
 
                 Box(
                     modifier = Modifier

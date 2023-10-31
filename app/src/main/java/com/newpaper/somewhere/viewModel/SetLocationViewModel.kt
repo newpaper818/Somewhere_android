@@ -14,7 +14,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
-import com.newpaper.somewhere.BuildConfig.MAPS_API_KEY
+import com.newpaper.somewhere.BuildConfig
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -46,7 +46,7 @@ class SetLocationViewModel(
         searchLocationList.clear()
 
         if (!Places.isInitialized()) {
-            Places.initialize(context, MAPS_API_KEY)
+            Places.initialize(context, BuildConfig.MAPS_API_KEY)
             placesClient = Places.createClient(context)
         }
     }

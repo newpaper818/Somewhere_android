@@ -69,14 +69,12 @@ fun TitleCard(
 ){
     AnimatedVisibility(
         visible = isEditMode,
-        enter =
-        scaleIn(animationSpec = tween(170, 0, LinearEasing))
-                + expandVertically(animationSpec = tween(190, 0, LinearEasing))
-                + fadeIn(animationSpec = tween(300, 100)),
-        exit =
-        scaleOut(animationSpec = tween(250, 100))
-                + shrinkVertically(animationSpec = tween(320, 100))
-                + fadeOut(animationSpec = tween(300, 100))
+        enter = scaleIn(animationSpec = tween(300))
+                + expandVertically(animationSpec = tween(300))
+                + fadeIn(animationSpec = tween(300)),
+        exit = scaleOut(animationSpec = tween(300))
+                + shrinkVertically(animationSpec = tween(300))
+                + fadeOut(animationSpec = tween(300))
     ) {
         Column(modifier = modifier) {
             Row {
@@ -114,14 +112,12 @@ fun TitleWithColorCard(
 
     AnimatedVisibility(
         visible = isEditMode,
-        enter =
-        scaleIn(animationSpec = tween(170, 0, LinearEasing))
-                + expandVertically(animationSpec = tween(190, 0, LinearEasing))
-                + fadeIn(animationSpec = tween(300, 100)),
-        exit =
-        scaleOut(animationSpec = tween(250, 100))
-                + shrinkVertically(animationSpec = tween(320, 100))
-                + fadeOut(animationSpec = tween(300, 100))
+        enter = scaleIn(animationSpec = tween(300))
+                + expandVertically(animationSpec = tween(300))
+                + fadeIn(animationSpec = tween(300)),
+        exit = scaleOut(animationSpec = tween(300))
+                + shrinkVertically(animationSpec = tween(300))
+                + fadeOut(animationSpec = tween(300))
     ) {
         Column(modifier = modifier) {
             Row {

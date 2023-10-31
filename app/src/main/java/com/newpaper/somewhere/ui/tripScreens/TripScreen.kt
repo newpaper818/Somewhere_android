@@ -97,6 +97,7 @@ fun TripScreen(
     changeEditMode: (editMode: Boolean?) -> Unit,
 
     navigateUp: () -> Unit,
+    navigateToImage: (imageList: List<String>, initialImageIndex: Int) -> Unit,
     navigateToDate: (dateIndex: Int) -> Unit,
     navigateToTripMap: () -> Unit,
     navigateUpAndDeleteTrip: (deleteTrip: Trip) -> Unit,
@@ -119,8 +120,6 @@ fun TripScreen(
         if (isEditMode) tempTrip
         else originalTrip
 
-    val context = LocalContext.current
-
     val focusManager = LocalFocusManager.current
 
     val scrollState = rememberLazyListState()
@@ -133,15 +132,13 @@ fun TripScreen(
     var showSetCurrencyDialog by rememberSaveable { mutableStateOf(false) }
     var showBottomSaveCancelBar by rememberSaveable { mutableStateOf(true) }
 
-    var errorCount by rememberSaveable { mutableStateOf(0) }
-    var dateTitleErrorCount by rememberSaveable { mutableStateOf(0) }
+    var errorCount by rememberSaveable { mutableIntStateOf(0) }
+    var dateTitleErrorCount by rememberSaveable { mutableIntStateOf(0) }
 
     //slideStates
     val slideStates = remember { mutableStateMapOf<Int, SlideState>(
         *showingTrip.dateList.map { it.id to SlideState.NONE }.toTypedArray()
     ) }
-
-    val locale = LocalConfiguration.current.locales[0]
 
     val onBackButtonClick = {
         if (originalTrip != tempTrip)
@@ -200,7 +197,7 @@ fun TripScreen(
                 navigationIcon = MyIcons.back,
                 navigationIconOnClick = {
                     if (!isEditMode) navigateUp()
-                    else             onBackButtonClick()
+                    else onBackButtonClick()
                 },
 
                 actionIcon1 = if (!isEditMode) MyIcons.edit else null,
@@ -221,7 +218,7 @@ fun TripScreen(
     ) { paddingValues ->
 
         //dialogs
-        if(showExitDialog){
+        if (showExitDialog) {
             DeleteOrNotDialog(
                 bodyText = stringResource(id = R.string.dialog_body_are_you_sure_to_exit),
                 deleteText = stringResource(id = R.string.dialog_button_exit),
@@ -232,7 +229,7 @@ fun TripScreen(
                     changeEditMode(false)
                     updateTripState(true, originalTrip)
 
-                    if (isNewTrip){
+                    if (isNewTrip) {
                         navigateUpAndDeleteTrip(originalTrip)
                     }
 
@@ -241,7 +238,7 @@ fun TripScreen(
             )
         }
 
-        if (showSetCurrencyDialog){
+        if (showSetCurrencyDialog) {
             SetCurrencyTypeDialog(
                 initialCurrencyType = showingTrip.unitOfCurrencyType,
                 onOkClick = { newCurrencyType ->
@@ -281,8 +278,8 @@ fun TripScreen(
                         },
                         focusManager = focusManager,
                         isLongText = {
-                            if (it) errorCount ++
-                            else    errorCount --
+                            if (it) errorCount++
+                            else errorCount--
                         }
                     )
                 }
@@ -293,21 +290,28 @@ fun TripScreen(
                         tripId = showingTrip.id,
                         isEditMode = isEditMode,
                         imagePathList = showingTrip.imagePathList,
+                        onClickImage = { initialImageIndex ->
+                            navigateToImage(showingTrip.imagePathList, initialImageIndex)
+                        },
                         onAddImages = { imageFiles ->
                             addAddedImages(imageFiles)
-                            showingTrip.setImage(updateTripState, showingTrip.imagePathList + imageFiles)
+                            showingTrip.setImage(
+                                updateTripState,
+                                showingTrip.imagePathList + imageFiles
+                            )
                         },
                         deleteImage = { imageFile ->
                             addDeletedImages(listOf(imageFile))
 
-                            val newList: MutableList<String> = showingTrip.imagePathList.toMutableList()
+                            val newList: MutableList<String> =
+                                showingTrip.imagePathList.toMutableList()
                             newList.remove(imageFile)
 
                             showingTrip.setImage(updateTripState, newList.toList())
                         },
                         isOverImage = {
-                            if (it) errorCount ++
-                            else    errorCount --
+                            if (it) errorCount++
+                            else errorCount--
                         },
                         reorderImageList = reorderTripImageList
                     )
@@ -322,9 +326,9 @@ fun TripScreen(
 
                     val defaultDateRange =
                         if (showingTrip.dateList.isNotEmpty()) {
-                            showingTrip.dateList.first().date..showingTrip.dateList[endDateIndex ?: 0].date
-                        }
-                        else
+                            showingTrip.dateList.first().date..showingTrip.dateList[endDateIndex
+                                ?: 0].date
+                        } else
                             LocalDate.now().let { now -> now.plusDays(1)..now.plusDays(5) }
 
                     TripDurationCard(
@@ -355,7 +359,11 @@ fun TripScreen(
                                 showSetCurrencyDialog = true
                                 showBottomSaveCancelBar = false
                             },
-                            Triple(MyIcons.travelDistance, showingTrip.getTotalTravelDistanceText(), null)
+                            Triple(
+                                MyIcons.travelDistance,
+                                showingTrip.getTotalTravelDistanceText(),
+                                null
+                            )
                         )
                     )
 
@@ -373,8 +381,8 @@ fun TripScreen(
                             showingTrip.setMemoText(updateTripState, newMemoText)
                         },
                         isLongText = {
-                            if (it) errorCount ++
-                            else    errorCount --
+                            if (it) errorCount++
+                            else errorCount--
                         }
                     )
 
@@ -397,7 +405,7 @@ fun TripScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(MaterialTheme.colorScheme.surfaceVariant)
-                        ){
+                        ) {
                             Row(
                                 modifier = Modifier.padding(16.dp, 0.dp)
                             ) {
@@ -411,11 +419,14 @@ fun TripScreen(
                                 )
 
                                 //up to 100 characters
-                                if (dateTitleErrorCount > 0){
+                                if (dateTitleErrorCount > 0) {
                                     Spacer(modifier = Modifier.weight(1f))
 
                                     Text(
-                                        text = stringResource(id = R.string.long_text, MAX_TITLE_LENGTH),
+                                        text = stringResource(
+                                            id = R.string.long_text,
+                                            MAX_TITLE_LENGTH
+                                        ),
                                         style = getTextStyle(TextType.CARD__TITLE_ERROR)
                                     )
                                 }
@@ -431,7 +442,7 @@ fun TripScreen(
 
                         var showColorPickerDialog by rememberSaveable { mutableStateOf(false) }
 
-                        if(showColorPickerDialog){
+                        if (showColorPickerDialog) {
                             SetColorDialog(
                                 initialColor = date.color,
                                 onDismissRequest = {
@@ -484,13 +495,12 @@ fun TripScreen(
                                 },
                                 onItemClick = { navigateToDate(date.index) },
                                 onPointClick =
-                                    if (isEditMode){
-                                        {
-                                            showBottomSaveCancelBar = false
-                                            showColorPickerDialog = true
-                                        }
+                                if (isEditMode) {
+                                    {
+                                        showBottomSaveCancelBar = false
+                                        showColorPickerDialog = true
                                     }
-                                    else null
+                                } else null
                             )
                         }
                     }
@@ -499,8 +509,9 @@ fun TripScreen(
                 else {
                     item {
                         //empty dates
-                        val text = if (isEditMode) stringResource(id = R.string.set_trip_duration)
-                                    else stringResource(id = R.string.dates_no_plan)
+                        val text =
+                            if (isEditMode) stringResource(id = R.string.set_trip_duration)
+                            else stringResource(id = R.string.dates_no_plan)
 
                         Card(
                             shape = RectangleShape,

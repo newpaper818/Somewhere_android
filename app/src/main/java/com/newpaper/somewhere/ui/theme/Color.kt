@@ -150,7 +150,8 @@ enum class ColorType{
     MAP_LINE_DEFAULT,
     SPOT_MAP_LINE_MOVE,
 
-
+    IMAGE_BACKGROUND,
+    IMAGE_FOREGROUND,
 
     BACKGROUND,
     CARD,
@@ -190,6 +191,8 @@ fun getColor(colorType: ColorType): Color {
         MAP_LINE_DEFAULT                -> MaterialTheme.colorScheme.outline.copy(alpha = 0.6f)
         SPOT_MAP_LINE_MOVE              -> point
 
+        IMAGE_BACKGROUND                -> n05
+        IMAGE_FOREGROUND                -> n05.copy(alpha = 0.7f)
 
         BACKGROUND                      -> MaterialTheme.colorScheme.background
         CARD                            -> MaterialTheme.colorScheme.surfaceVariant

@@ -903,6 +903,9 @@ fun SpotDetailPage(
                     tripId = showingTrip.id,
                     isEditMode = isEditMode,
                     imagePathList = currentSpot.imagePathList,
+                    onClickImage = { imageIndex ->
+
+                    },
                     onAddImages = { imageFiles ->
                         addAddedImageList(imageFiles)
 

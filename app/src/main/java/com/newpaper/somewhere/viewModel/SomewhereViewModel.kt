@@ -28,6 +28,8 @@ data class SomewhereUiState(
 
     val trip: Trip? = null,
     val tempTrip: Trip? = null,
+    val imageList: List<String>? = null,
+    val initialImageIndex: Int = 0,
 
     val addedImages: List<String> = listOf(),
     val deletedImages: List<String> = listOf(),
@@ -53,6 +55,12 @@ class SomewhereViewModel(
     fun updateCurrentScreen(screenTo: NavigationDestination) {
         _uiState.update {
             it.copy(currentScreen = screenTo)
+        }
+    }
+
+    fun updateImageListAndInitialImageIndex(newImageList: List<String>, newInitialImageIndex: Int) {
+        _uiState.update {
+            it.copy(imageList = newImageList, initialImageIndex = newInitialImageIndex)
         }
     }
 
