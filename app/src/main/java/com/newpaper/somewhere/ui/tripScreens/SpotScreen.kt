@@ -104,6 +104,7 @@ fun SpotScreen(
     organizeAddedDeletedImages: (isClickSave: Boolean) -> Unit,
     reorderSpotImageList: (dateIndex: Int, spotIndex: Int, currentIndex: Int, destinationIndex: Int) -> Unit,
 
+    navigateToImage: (imageList: List<String>, initialImageIndex: Int) -> Unit,
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     addNewSpot: (dateId: Int) -> Unit,
     deleteSpot: (dateId: Int, spotId: Int) -> Unit,
@@ -554,6 +555,7 @@ fun SpotScreen(
                                                 else errorCount--
                                             },
 
+                                            navigateToImage = navigateToImage,
                                             addAddedImageList = addAddedImages,
                                             addDeletedImageList = addDeletedImages,
                                             reorderSpotImageList = { currentIndex, destinationIndex ->
@@ -659,6 +661,7 @@ fun SpotDetailPage(
     focusManager: FocusManager,
     onErrorCountChange: (plusError: Boolean) -> Unit,
 
+    navigateToImage: (imageList: List<String>, initialImageIndex: Int) -> Unit,
     addAddedImageList: (List<String>) -> Unit,
     addDeletedImageList: (List<String>) -> Unit,
     reorderSpotImageList: (currentIndex: Int, destinationIndex: Int) -> Unit,
@@ -903,8 +906,8 @@ fun SpotDetailPage(
                     tripId = showingTrip.id,
                     isEditMode = isEditMode,
                     imagePathList = currentSpot.imagePathList,
-                    onClickImage = { imageIndex ->
-
+                    onClickImage = { initialImageIndex ->
+                        navigateToImage(currentSpot.imagePathList, initialImageIndex)
                     },
                     onAddImages = { imageFiles ->
                         addAddedImageList(imageFiles)

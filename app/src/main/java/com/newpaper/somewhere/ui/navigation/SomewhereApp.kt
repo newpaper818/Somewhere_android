@@ -462,6 +462,10 @@ fun SomewhereApp(
                             somewhereViewModel.reorderSpotImageList(dateIndex, spotIndex, currentIndex, destinationIndex)
                         },
 
+                        navigateToImage = { imageList, initialImageIndex ->
+                            somewhereViewModel.updateImageListAndInitialImageIndex(imageList, initialImageIndex)
+                            navController.navigate(ImageDestination.route)
+                        },
                         updateTripState = { toTempTrip, trip ->
                             somewhereViewModel.updateTripState(toTempTrip, trip)
                         },
