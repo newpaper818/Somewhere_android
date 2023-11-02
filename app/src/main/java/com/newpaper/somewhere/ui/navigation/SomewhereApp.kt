@@ -56,11 +56,6 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.newpaper.somewhere.ui.theme.ColorType
-import com.newpaper.somewhere.ui.theme.getColor
-import com.newpaper.somewhere.ui.theme.n10
-import com.newpaper.somewhere.ui.theme.n20
-import com.newpaper.somewhere.ui.theme.n50
 import com.newpaper.somewhere.ui.tripScreens.ImageDestination
 import com.newpaper.somewhere.ui.tripScreens.ImageScreen
 import kotlinx.coroutines.launch
@@ -160,7 +155,7 @@ fun SomewhereApp(
     //page animation for image
     val imageEnterTransition = fadeIn(tween(300)) + scaleIn(animationSpec = tween(300), initialScale = 0.7f)
     val imageExitTransition =
-        fadeOut(tween(3)) + scaleOut(animationSpec = tween(300), targetScale = 0.7f)
+        fadeOut(tween(300)) + scaleOut(animationSpec = tween(300), targetScale = 0.7f)
     val imagePopEnterTransition =
         fadeIn(tween(300)) + scaleIn(animationSpec = tween(300), initialScale = 0.7f)
     val imagePopExitTransition = fadeOut(tween(300)) + scaleOut(animationSpec = tween(300), targetScale = 0.7f)

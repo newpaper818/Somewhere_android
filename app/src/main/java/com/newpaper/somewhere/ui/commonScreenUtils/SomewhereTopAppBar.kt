@@ -1,5 +1,9 @@
 package com.newpaper.somewhere.ui.commonScreenUtils
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -96,6 +100,7 @@ fun SomewhereTopAppBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ImageTopAppBar(
+    visible: Boolean,
     title: String,
 
     navigationIcon: MyIcon? = MyIcons.imageScreenClose,
@@ -106,30 +111,37 @@ fun ImageTopAppBar(
 
     containerColor: Color = getColor(ColorType.IMAGE_FOREGROUND)
 ) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(tween(500)),
+        exit = fadeOut(tween(500))
+    ) {
 
-    CenterAlignedTopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = containerColor),
-        title = {
-            Text(
-                text = title,
-                style = getTextStyle(TextType.TOP_BAR__SUBTITLE).copy(color = n100),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        },
-        navigationIcon = {
-            if (navigationIcon != null) {
-                IconButton(onClick = navigationIconOnClick) {
-                    DisplayIcon(icon = navigationIcon)
+
+        CenterAlignedTopAppBar(
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = containerColor),
+            title = {
+                Text(
+                    text = title,
+                    style = getTextStyle(TextType.TOP_BAR__SUBTITLE).copy(color = n100),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            },
+            navigationIcon = {
+                if (navigationIcon != null) {
+                    IconButton(onClick = navigationIconOnClick) {
+                        DisplayIcon(icon = navigationIcon)
+                    }
+                }
+            },
+            actions = {
+                if (actionIcon1 != null) {
+                    IconButton(onClick = actionIcon1Onclick) {
+                        DisplayIcon(icon = actionIcon1, color = n100)
+                    }
                 }
             }
-        },
-        actions = {
-            if (actionIcon1 != null) {
-                IconButton(onClick = actionIcon1Onclick) {
-                    DisplayIcon(icon = actionIcon1, color = n100)
-                }
-            }
-        }
-    )
+        )
+    }
 }

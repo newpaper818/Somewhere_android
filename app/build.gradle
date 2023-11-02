@@ -116,6 +116,9 @@ dependencies {
     //image
     implementation "io.coil-kt:coil-compose:2.4.0"
 
+    //zoomable image
+    implementation "net.engawapg.lib:zoomable:1.5.2"
+
     //splash screen
     implementation "androidx.core:core-splashscreen:1.0.1"
 
