@@ -28,7 +28,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -43,8 +42,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -62,8 +59,6 @@ import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.ImageCard
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.InformationCard
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.MemoCard
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MyIcons
-import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SomewhereNavigationBar
-import com.newpaper.somewhere.ui.screens.mainScreens.MyTripsDestination
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.dialogs.SetCurrencyTypeDialog
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.StartEndDummySpaceWithRoundedCorner
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.TripDurationCard
@@ -72,7 +67,6 @@ import com.newpaper.somewhere.ui.theme.getTextStyle
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.AnimatedBottomSaveCancelBar
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.SeeOnMapExtendedFAB
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.ADDITIONAL_HEIGHT
-import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.BottomSaveCancelBar
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.MAX_TITLE_LENGTH
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.TitleCard
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.DUMMY_SPACE_HEIGHT

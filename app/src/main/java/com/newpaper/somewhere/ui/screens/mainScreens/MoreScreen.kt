@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.R
-import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SomewhereNavigationBar
+import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SomewhereNavigationBottomBar
 import com.newpaper.somewhere.ui.navigation.NavigationDestination
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SomewhereTopAppBar
 import com.newpaper.somewhere.ui.screenUtils.settingScreenUtils.ItemDivider
@@ -58,7 +58,7 @@ fun MoreScreen(
             )
         },
         bottomBar = {
-            SomewhereNavigationBar(
+            SomewhereNavigationBottomBar(
                 currentDestination = MoreDestination,
                 navigateTo = navigateToMain,
                 scrollToTop = {

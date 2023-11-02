@@ -3,7 +3,6 @@ package com.newpaper.somewhere.ui.screens.mainScreens
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
@@ -73,7 +72,7 @@ import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.dialogs.DeleteOrNot
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.DisplayImage
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MySpacerColumn
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MySpacerRow
-import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SomewhereNavigationBar
+import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SomewhereNavigationBottomBar
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SomewhereTopAppBar
 import com.newpaper.somewhere.ui.theme.TextType
 import com.newpaper.somewhere.ui.theme.getTextStyle
@@ -164,7 +163,7 @@ fun MyTripsScreen(
         },
         bottomBar = {
             if (!isEditMode)
-                SomewhereNavigationBar(
+                SomewhereNavigationBottomBar(
                     currentDestination = MyTripsDestination,
                     navigateTo = navigateToMain,
                     scrollToTop = {
