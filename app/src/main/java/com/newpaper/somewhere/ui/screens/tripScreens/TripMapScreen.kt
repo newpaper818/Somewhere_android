@@ -294,7 +294,7 @@ fun TripMapScreen(
             var cardWidth by rememberSaveable { mutableIntStateOf(0) }
 
             Scaffold(
-                modifier = Modifier.navigationBarsPadding(),
+                modifier = Modifier.fillMaxSize().navigationBarsPadding(),
 
                 snackbarHost = {
                     Box(
@@ -307,13 +307,12 @@ fun TripMapScreen(
                         )
                     }
                 }
-            ) { paddingValue ->
+            ) { paddingValues ->
 
-                val mapPadding = PaddingValues(0.dp, paddingValue.calculateTopPadding(), cardWidth.dp, 0.dp)
+                val mapPadding = PaddingValues(0.dp, paddingValues.calculateTopPadding(), cardWidth.dp, 0.dp)
 
                 Box(
-                    contentAlignment = Alignment.BottomEnd,
-                    modifier = Modifier.navigationBarsPadding()
+                    contentAlignment = Alignment.BottomEnd
                 ) {
 
                     //map
@@ -361,7 +360,7 @@ fun TripMapScreen(
                         }
 
                     //get status bar padding value - get top padding
-                    val statusBarPaddingValue = paddingValue.calculateTopPadding()
+                    val statusBarPaddingValue = paddingValues.calculateTopPadding()
                     val topPadding = if (statusBarPaddingValue == 0.dp) 16.dp
                                     else statusBarPaddingValue
 
@@ -371,7 +370,6 @@ fun TripMapScreen(
                         shape = MaterialTheme.shapes.extraLarge,
                         modifier = Modifier
                             .width(cardWidth.dp)
-//                            .displayCutoutPadding()
                             .padding(0.dp, topPadding, 16.dp, 16.dp)
                             .fillMaxHeight()
                     ) {

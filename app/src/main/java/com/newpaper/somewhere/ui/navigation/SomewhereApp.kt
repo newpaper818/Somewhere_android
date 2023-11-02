@@ -106,15 +106,10 @@ fun SomewhereApp(
     //system ui controller for status bar icon color
     val systemUiController = rememberSystemUiController()
 
-    //navigation bar color
-    systemUiController.setNavigationBarColor(color = MaterialTheme.colorScheme.surface)
-
     //set status bar color
     //image
-    if (somewhereUiState.currentScreen == ImageDestination) {
+    if (somewhereUiState.currentScreen == ImageDestination)
         systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = false)
-        systemUiController.setNavigationBarColor(color = Color.Transparent)
-    }
 
     //trip map
     else if (somewhereUiState.currentScreen == TripMapDestination && isDarkMapTheme)
@@ -128,6 +123,12 @@ fun SomewhereApp(
     else
         systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = true)
 
+
+    //set navigation bar color
+    if (somewhereUiState.currentScreen == ImageDestination)
+        systemUiController.setNavigationBarColor(color = Color.Transparent)
+    else
+        systemUiController.setNavigationBarColor(color = MaterialTheme.colorScheme.surface)
 
 
     // for tablet
