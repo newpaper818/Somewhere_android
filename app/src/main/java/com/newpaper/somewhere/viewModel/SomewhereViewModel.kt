@@ -6,9 +6,9 @@ import com.newpaper.somewhere.db.TripRepository
 import com.newpaper.somewhere.model.Date
 import com.newpaper.somewhere.model.Spot
 import com.newpaper.somewhere.model.Trip
-import com.newpaper.somewhere.ui.mainScreens.MyTripsDestination
+import com.newpaper.somewhere.ui.screens.mainScreens.MyTripsDestination
 import com.newpaper.somewhere.ui.navigation.NavigationDestination
-import com.newpaper.somewhere.ui.tripScreenUtils.cards.deleteFilesFromInternalStorage
+import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.deleteFilesFromInternalStorage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first

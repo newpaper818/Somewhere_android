@@ -27,23 +27,23 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.newpaper.somewhere.enumUtils.AppContentType
 import com.newpaper.somewhere.enumUtils.MapTheme
-import com.newpaper.somewhere.ui.mainScreens.MainDestination
-import com.newpaper.somewhere.ui.mainScreens.MainScreen
-import com.newpaper.somewhere.ui.mainScreens.MyTripsDestination
-import com.newpaper.somewhere.ui.settingScreens.AboutDestination
-import com.newpaper.somewhere.ui.settingScreens.AboutScreen
-import com.newpaper.somewhere.ui.settingScreens.SetDateFormatDestination
-import com.newpaper.somewhere.ui.settingScreens.SetDateTimeFormatScreen
-import com.newpaper.somewhere.ui.settingScreens.SetThemeScreen
-import com.newpaper.somewhere.ui.settingScreens.SetThemeScreenDestination
-import com.newpaper.somewhere.ui.tripScreens.DateDestination
-import com.newpaper.somewhere.ui.tripScreens.DateScreen
-import com.newpaper.somewhere.ui.tripScreens.SpotDetailDestination
-import com.newpaper.somewhere.ui.tripScreens.SpotScreen
-import com.newpaper.somewhere.ui.tripScreens.TripDestination
-import com.newpaper.somewhere.ui.tripScreens.TripMapDestination
-import com.newpaper.somewhere.ui.tripScreens.TripMapScreen
-import com.newpaper.somewhere.ui.tripScreens.TripScreen
+import com.newpaper.somewhere.ui.screens.mainScreens.MainDestination
+import com.newpaper.somewhere.ui.screens.mainScreens.MainScreen
+import com.newpaper.somewhere.ui.screens.mainScreens.MyTripsDestination
+import com.newpaper.somewhere.ui.screens.settingScreens.AboutDestination
+import com.newpaper.somewhere.ui.screens.settingScreens.AboutScreen
+import com.newpaper.somewhere.ui.screens.settingScreens.SetDateFormatDestination
+import com.newpaper.somewhere.ui.screens.settingScreens.SetDateTimeFormatScreen
+import com.newpaper.somewhere.ui.screens.settingScreens.SetThemeScreen
+import com.newpaper.somewhere.ui.screens.settingScreens.SetThemeScreenDestination
+import com.newpaper.somewhere.ui.screens.tripScreens.DateDestination
+import com.newpaper.somewhere.ui.screens.tripScreens.DateScreen
+import com.newpaper.somewhere.ui.screens.tripScreens.SpotDetailDestination
+import com.newpaper.somewhere.ui.screens.tripScreens.SpotScreen
+import com.newpaper.somewhere.ui.screens.tripScreens.TripDestination
+import com.newpaper.somewhere.ui.screens.tripScreens.TripMapDestination
+import com.newpaper.somewhere.ui.screens.tripScreens.TripMapScreen
+import com.newpaper.somewhere.ui.screens.tripScreens.TripScreen
 import com.newpaper.somewhere.utils.USER_LOCATION_PERMISSION_LIST
 import com.newpaper.somewhere.utils.checkPermissionUserLocation
 import com.newpaper.somewhere.viewModel.AppViewModel
@@ -56,8 +56,8 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.newpaper.somewhere.ui.tripScreens.ImageDestination
-import com.newpaper.somewhere.ui.tripScreens.ImageScreen
+import com.newpaper.somewhere.ui.screens.tripScreens.ImageDestination
+import com.newpaper.somewhere.ui.screens.tripScreens.ImageScreen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalAnimationApi::class)
@@ -166,26 +166,26 @@ fun SomewhereApp(
 //    val boxModifier = if(useImePadding) Modifier//.imePadding()
 //                      else              Modifier
 
-    val boxModifier =
-        if (somewhereUiState.currentScreen == TripMapDestination)
-            Modifier.navigationBarsPadding()
-        else if (somewhereUiState.currentScreen == ImageDestination)
-            Modifier
-        else
-            Modifier
-                .navigationBarsPadding()
-                .statusBarsPadding()
-                .displayCutoutPadding()
+//    val boxModifier =
+//        if (somewhereUiState.currentScreen == TripMapDestination)
+//            Modifier.navigationBarsPadding()
+//        else if (somewhereUiState.currentScreen == ImageDestination)
+//            Modifier
+//        else
+//            Modifier
+//                .navigationBarsPadding()
+//                .statusBarsPadding()
+//                .displayCutoutPadding()
 
-    Box(
-        modifier = boxModifier.fillMaxSize()
-    ) {
+//    Box(
+//        modifier = Modifier.fillMaxSize()
+//    ) {
         AnimatedNavHost(
             navController = navController,
             startDestination = MyTripsDestination.route
         ) {
 
-            // MAIN ===============================================================================
+            // MAIN ================================================================================
             composable(
                 route = MyTripsDestination.route,
                 enterTransition = { enterTransition },
@@ -570,5 +570,5 @@ fun SomewhereApp(
 
         //for phone
 
-    }
+//    }
 }
