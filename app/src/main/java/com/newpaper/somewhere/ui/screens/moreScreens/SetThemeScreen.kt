@@ -1,4 +1,4 @@
-package com.newpaper.somewhere.ui.screens.settingScreens
+package com.newpaper.somewhere.ui.screens.moreScreens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,40 +18,41 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.R
 import com.newpaper.somewhere.enumUtils.AppTheme
 import com.newpaper.somewhere.enumUtils.MapTheme
-import com.newpaper.somewhere.ui.navigation.NavigationDestination
 import com.newpaper.somewhere.ui.screenUtils.settingScreenUtils.ItemWithRadioButton
 import com.newpaper.somewhere.ui.screenUtils.settingScreenUtils.ListGroupCard
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MyIcons
+import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SPACER_BIG
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SomewhereTopAppBar
 import com.newpaper.somewhere.viewModel.Theme
 
-object SetThemeScreenDestination: NavigationDestination {
-    override val route = "setTheme"
-    override var title = ""
-}
-
 @Composable
 fun SetThemeScreen(
+    startSpacerValue: Dp,
+    endSpacerValue: Dp,
     theme: Theme,
     saveUserPreferences: (appTheme: AppTheme?, mapTheme: MapTheme?) -> Unit,
     navigateUp: () -> Unit,
-    modifier: Modifier = Modifier
+
+    modifier: Modifier = Modifier,
+    use2Panes: Boolean = false
 ){
     var appTheme by rememberSaveable { mutableStateOf(theme.appTheme) }
     var mapTheme by rememberSaveable { mutableStateOf(theme.mapTheme) }
 
     Scaffold(
-        modifier = Modifier.displayCutoutPadding().statusBarsPadding().navigationBarsPadding(),
+        modifier = modifier,
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {
             SomewhereTopAppBar(
+                startPadding = startSpacerValue,
                 title = stringResource(id = R.string.theme),
-                navigationIcon = MyIcons.back,
+                navigationIcon = if (!use2Panes) MyIcons.back else null,
                 navigationIconOnClick = { navigateUp() }
             )
         }
@@ -61,8 +61,8 @@ fun SetThemeScreen(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(16.dp, 16.dp, 16.dp, 200.dp),
-            modifier = modifier
+            contentPadding = PaddingValues(startSpacerValue, 16.dp, endSpacerValue, 200.dp),
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {

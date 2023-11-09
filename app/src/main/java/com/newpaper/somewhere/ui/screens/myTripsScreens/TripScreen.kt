@@ -1,4 +1,4 @@
-package com.newpaper.somewhere.ui.screens.tripScreens
+package com.newpaper.somewhere.ui.screens.myTripsScreens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -52,13 +53,13 @@ import com.newpaper.somewhere.R
 import com.newpaper.somewhere.model.Date
 import com.newpaper.somewhere.model.Trip
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SomewhereTopAppBar
-import com.newpaper.somewhere.ui.navigation.NavigationDestination
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.dialogs.DeleteOrNotDialog
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.GraphListItem
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.ImageCard
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.InformationCard
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.MemoCard
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MyIcons
+import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MyScaffold
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.dialogs.SetCurrencyTypeDialog
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.StartEndDummySpaceWithRoundedCorner
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.TripDurationCard
@@ -79,15 +80,10 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import kotlin.math.roundToInt
 
-object TripDestination : NavigationDestination {
-    override val route = "trip"
-    override var title = "Trip screen"
-    const val tripIdArg = "tripId"
-    val routeWithArgs = "$route/{$tripIdArg}"
-}
-
 @Composable
 fun TripScreen(
+    startSpacerValue: Dp,
+    endSpacerValue: Dp,
     isEditMode: Boolean,
 
     originalTrip: Trip,
@@ -117,6 +113,8 @@ fun TripScreen(
     saveTrip: () -> Unit,
 
     modifier: Modifier = Modifier,
+    use2Panes: Boolean = false,
+    setShowTripBottomSaveCancelBar: (Boolean) -> Unit = {}
 ){
     val showingTrip =
         if (isEditMode) tempTrip
@@ -182,10 +180,8 @@ fun TripScreen(
     val isFABExpanded by remember { derivedStateOf { scrollState.firstVisibleItemIndex == 0 } }
 
 
-    Scaffold (
-        modifier = Modifier.displayCutoutPadding().statusBarsPadding().navigationBarsPadding(),
-        contentWindowInsets = WindowInsets(bottom = 0),
-
+    MyScaffold (
+        modifier = modifier,
         snackbarHost = { SnackbarHost(
             hostState = snackBarHostState,
             modifier = Modifier
@@ -205,7 +201,7 @@ fun TripScreen(
                     else onBackButtonClick()
                 },
 
-                actionIcon1 = if (!isEditMode) MyIcons.edit else null,
+                actionIcon1 = if (!isEditMode && !use2Panes) MyIcons.edit else null,
                 actionIcon1Onclick = {
                     changeEditMode(null)
                 }
@@ -214,12 +210,29 @@ fun TripScreen(
 
         //bottom floating button
         floatingActionButton = {
-            SeeOnMapExtendedFAB(
-                visible = !isEditMode && showingTrip.getFirstLocation() != null,
-                onClick = navigateToTripMap,
-                expanded = isFABExpanded
-            )
-        }
+            if (!use2Panes)
+                SeeOnMapExtendedFAB(
+                    visible = !isEditMode && showingTrip.getFirstLocation() != null,
+                    onClick = navigateToTripMap,
+                    expanded = isFABExpanded
+                )
+        },
+
+        //bottom save cancel button
+        bottomSaveCancelBarVisible = isEditMode && showBottomSaveCancelBar && !use2Panes,
+        onCancelClick = {
+            focusManager.clearFocus()
+            onBackButtonClick()
+        },
+        onSaveClick = {
+            coroutineScope.launch {
+                saveTrip()
+
+                organizeAddedDeletedImages(true)
+            }
+        },
+        saveEnabled = errorCount <= 0
+
     ) { paddingValues ->
 
         //dialogs
@@ -250,10 +263,12 @@ fun TripScreen(
                     showingTrip.setCurrencyType(updateTripState, newCurrencyType)
                     showSetCurrencyDialog = false
                     showBottomSaveCancelBar = true
+                    setShowTripBottomSaveCancelBar(true)
                 },
                 onDismissRequest = {
                     showSetCurrencyDialog = false
                     showBottomSaveCancelBar = true
+                    setShowTripBottomSaveCancelBar(true)
                 }
             )
         }
@@ -267,8 +282,8 @@ fun TripScreen(
             LazyColumn(
                 state = scrollState,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                contentPadding = PaddingValues(16.dp, 16.dp, 16.dp, 200.dp),
-                modifier = modifier.fillMaxSize()
+                contentPadding = PaddingValues(startSpacerValue, 16.dp, endSpacerValue, 200.dp),
+                modifier = Modifier.fillMaxSize()
             ) {
 
                 //title card
@@ -348,6 +363,7 @@ fun TripScreen(
                         isEditMode = isEditMode,
                         setShowBottomSaveCancelBar = {
                             showBottomSaveCancelBar = it
+                            setShowTripBottomSaveCancelBar(it)
                         },
                         setTripDuration = { startDate1, endDate1 ->
                             updateTripDurationAndTripState(true, startDate1, endDate1)
@@ -363,6 +379,7 @@ fun TripScreen(
                             Triple(MyIcons.budget, showingTrip.getTotalBudgetText()) {
                                 showSetCurrencyDialog = true
                                 showBottomSaveCancelBar = false
+                                setShowTripBottomSaveCancelBar(false)
                             },
                             Triple(
                                 MyIcons.travelDistance,
@@ -453,10 +470,13 @@ fun TripScreen(
                                 onDismissRequest = {
                                     showColorPickerDialog = false
                                     showBottomSaveCancelBar = true
+                                    setShowTripBottomSaveCancelBar(true)
+
                                 },
                                 onOkClick = {
                                     showColorPickerDialog = false
                                     showBottomSaveCancelBar = true
+                                    setShowTripBottomSaveCancelBar(true)
                                     date.setColor(showingTrip, updateTripState, it)
                                 }
                             )
@@ -503,6 +523,7 @@ fun TripScreen(
                                 if (isEditMode) {
                                     {
                                         showBottomSaveCancelBar = false
+                                        setShowTripBottomSaveCancelBar(false)
                                         showColorPickerDialog = true
                                     }
                                 } else null
@@ -538,23 +559,6 @@ fun TripScreen(
                     StartEndDummySpaceWithRoundedCorner(isFirst = false, isLast = true)
                 }
             }
-
-            //bottom save cancel bar
-            AnimatedBottomSaveCancelBar(
-                visible = isEditMode && showBottomSaveCancelBar,
-                onCancelClick = {
-                    focusManager.clearFocus()
-                    onBackButtonClick()
-                },
-                onSaveClick = {
-                    coroutineScope.launch {
-                        saveTrip()
-
-                        organizeAddedDeletedImages(true)
-                    }
-                },
-                saveEnabled = errorCount <= 0
-            )
         }
     }
 }

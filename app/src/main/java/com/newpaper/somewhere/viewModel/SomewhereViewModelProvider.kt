@@ -21,7 +21,7 @@ object SomewhereViewModelProvider {
 
         //SomewhereViewModel
         initializer {
-            SomewhereViewModel(
+            TripViewModel(
                 SomewhereApplication().container.tripsRepository
             )
         }
@@ -32,21 +32,6 @@ object SomewhereViewModelProvider {
 //
 //            )
 //        }
-
-        //MainViewModel delete?
-        initializer {
-            MainViewModel(
-                SomewhereApplication().container.tripsRepository
-            )
-        }
-
-        //TripViewModel delete?
-        initializer {
-            TripViewModel(
-                this.createSavedStateHandle(),
-                SomewhereApplication().container.tripsRepository
-            )
-        }
     }
 }
 

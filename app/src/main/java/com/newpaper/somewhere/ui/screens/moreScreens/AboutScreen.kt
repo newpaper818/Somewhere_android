@@ -1,4 +1,4 @@
-package com.newpaper.somewhere.ui.screens.settingScreens
+package com.newpaper.somewhere.ui.screens.moreScreens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,36 +21,37 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.BuildConfig
 import com.newpaper.somewhere.R
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MyIcons
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MySpacerColumn
-import com.newpaper.somewhere.ui.navigation.NavigationDestination
+import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SPACER_BIG
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SomewhereTopAppBar
 import com.newpaper.somewhere.ui.screenUtils.settingScreenUtils.ItemWithText
 import com.newpaper.somewhere.ui.screenUtils.settingScreenUtils.ListGroupCard
 import com.newpaper.somewhere.ui.theme.TextType
 import com.newpaper.somewhere.ui.theme.getTextStyle
 
-object AboutDestination: NavigationDestination {
-    override val route = "about"
-    override var title = ""
-}
-
 @Composable
 fun AboutScreen(
+    startSpacerValue: Dp,
+    endSpacerValue: Dp,
     navigateUp: () -> Unit,
-    modifier: Modifier = Modifier
+
+    modifier: Modifier = Modifier,
+    use2Panes: Boolean = false
 ){
     Scaffold(
-        modifier = Modifier.displayCutoutPadding().statusBarsPadding().navigationBarsPadding(),
+        modifier = modifier,
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {
             SomewhereTopAppBar(
+                startPadding = startSpacerValue,
                 title = stringResource(id = R.string.about),
-                navigationIcon = MyIcons.back,
+                navigationIcon = if (!use2Panes) MyIcons.back else null,
                 navigationIconOnClick = { navigateUp() }
             )
         }
@@ -60,8 +60,8 @@ fun AboutScreen(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(16.dp, 16.dp, 16.dp, 200.dp),
-            modifier = modifier
+            contentPadding = PaddingValues(startSpacerValue, 16.dp, endSpacerValue, 200.dp),
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {

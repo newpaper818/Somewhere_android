@@ -1,4 +1,4 @@
-package com.newpaper.somewhere.ui.screens.tripScreens
+package com.newpaper.somewhere.ui.screens.myTripsScreens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -30,7 +30,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerScope
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -59,6 +58,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -68,7 +68,7 @@ import com.newpaper.somewhere.model.Trip
 import com.newpaper.somewhere.enumUtils.SpotTypeGroup
 import com.newpaper.somewhere.enumUtils.TimeFormat
 import com.newpaper.somewhere.model.Spot
-import com.newpaper.somewhere.ui.navigation.NavigationDestination
+import com.newpaper.somewhere.ui.navigation.DateScreenDestination
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.DateListProgressBar
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.dialogs.DeleteOrNotDialog
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.DummySpaceWithLine
@@ -76,6 +76,7 @@ import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.GraphListItem
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.InformationCard
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.MemoCard
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MyIcons
+import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MyScaffold
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MySpacerColumn
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SomewhereTopAppBar
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.NewItemButton
@@ -99,16 +100,12 @@ import kotlinx.coroutines.launch
 import java.time.LocalTime
 import kotlin.math.roundToInt
 
-object DateDestination : NavigationDestination {
-    override val route = "date"
-    override var title = "Date screen"
-    const val dateIdArg = "dateId"
-    val routeWithArgs = "$route/{$dateIdArg}"
-}
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DateScreen(
+    startSpacerValue: Dp,
+    endSpacerValue: Dp,
+
     isEditMode: Boolean,
 
     originalTrip: Trip,
@@ -133,7 +130,9 @@ fun DateScreen(
     navigateToSpot: (dateId: Int, spotId: Int) -> Unit,
     navigateToDateMap: () -> Unit,
 
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    use2Panes: Boolean = false,
+    showTripBottomSaveCancelBar: Boolean = true
 ){
 
     val coroutineScope = rememberCoroutineScope()
@@ -190,22 +189,16 @@ fun DateScreen(
     }
 
     //set top bar title
-    DateDestination.title =
+    DateScreenDestination.title =
         if (isEditMode) stringResource(id = R.string.edit_date)
-        else {
-            if (showingTrip.titleText == null || showingTrip.titleText == "")
-                stringResource(id = R.string.no_title)
-            else
-                showingTrip.titleText
-        }
+        else ""
+
 
     //for expanded fab animation
     var isFABExpanded by rememberSaveable { mutableStateOf(true) }
 
-    Scaffold(
-        modifier = Modifier.displayCutoutPadding().statusBarsPadding().navigationBarsPadding(),
-        contentWindowInsets = WindowInsets(bottom = 0),
-
+    MyScaffold(
+        modifier = modifier,
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarHostState,
@@ -217,10 +210,11 @@ fun DateScreen(
         //top app bar
         topBar = {
             SomewhereTopAppBar(
-                title = DateDestination.title,
+                startPadding = startSpacerValue,
+                title = DateScreenDestination.title,
 
                 //back button
-                navigationIcon = MyIcons.back,
+                navigationIcon = if (!use2Panes) MyIcons.back else null,
                 navigationIconOnClick = {
                     onBackButtonClick()
                 },
@@ -239,7 +233,23 @@ fun DateScreen(
                 onClick = navigateToDateMap,
                 expanded = isFABExpanded
             )
-        }
+        },
+
+       //bottom save cancel bar
+        bottomSaveCancelBarVisible = isEditMode && showBottomSaveCancelBar && showTripBottomSaveCancelBar,
+        onCancelClick = {
+            focusManager.clearFocus()
+            onBackButtonClick()
+        },
+        onSaveClick = {
+            coroutineScope.launch {
+                saveTrip()
+
+                organizeAddedDeletedImages(true)
+            }
+        },
+        saveEnabled = errorCount <= 0
+
     ) { paddingValues ->
 
         if(showExitDialog){
@@ -257,119 +267,124 @@ fun DateScreen(
             )
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
+        if (dateList.isEmpty()){
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
             ) {
-
-                MySpacerColumn(height = 4.dp)
-
-                //progress bar
-                DateListProgressBar(
-                    progressBarState = progressBarState,
-                    dateList = dateList,
-                    currentDateIdx = datePagerState.currentPage,
-                    dateTimeFormat = dateTimeFormat,
-                    onClickDate = { toDateIndex ->
-                        //progress bar animate
-                        coroutineScope.launch {
-                            progressBarState.animateScrollToItem(toDateIndex)
-                        }
-
-                        //page animate
-                        coroutineScope.launch {
-                            datePagerState.animateScrollToPage(toDateIndex)
-                        }
-                    }
-                )
-
-                MySpacerColumn(height = 8.dp)
-
-                //spot pages
-                //pageIndex == dateOrderId
-                HorizontalPager(
-                    state = datePagerState,
-                    modifier = Modifier.weight(1f),
-                    pageContent =  {pageIndex ->
-                        //pageIndex == dateOrderId
-
-                        DatePage(
-                            isEditMode = isEditMode,
-                            showingTrip = showingTrip,
-                            dateIndex = pageIndex,
-                            currentDate = dateList[pageIndex],
-                            timeFormat = dateTimeFormat.timeFormat,
-
-                            focusManager = focusManager,
-                            snackBarHostState = snackBarHostState,
-
-                            setShowBottomSaveCancelBar = {
-                                showBottomSaveCancelBar = it
-                            },
-                            onErrorCountChange = { plusError ->
-                                if (plusError) errorCount++
-                                else errorCount--
-                            },
-                            updateTripState = updateTripState,
-
-                            addNewSpot = { dateId ->
-                                addNewSpot(dateId)
-                            },
-                            deleteSpot = { dateIndex, spotIndex ->
-                                deleteSpot(dateIndex, spotIndex)
-                                addDeletedImages(dateList[dateIndex].spotList[spotIndex].imagePathList)
-                            },
-                            navigateToSpot = navigateToSpot,
-                            setIsFABExpanded = {
-                                isFABExpanded = it
-                            },
-                            showSnackBar = { text_, actionLabel_, duration_ ->
-                                coroutineScope.launch {
-                                    snackBarHostState.showSnackbar(
-                                        message = text_,
-                                        actionLabel = actionLabel_,
-                                        duration = duration_
-                                    )
-                                }
-                            },
-                            reorderSpotList = { currentIndex, destinationIndex ->
-                                reorderSpotList(pageIndex, currentIndex, destinationIndex)
-                            },
-                            modifier = modifier.padding(16.dp, 0.dp)
-                        )
-                    }
+                Text(
+                    text = stringResource(id = R.string.no_date),
+                    style = getTextStyle(TextType.CARD__BODY_NULL)
                 )
             }
+        }
+        else {
 
-            //bottom save cancel bar
-            AnimatedBottomSaveCancelBar(
-                visible = isEditMode && showBottomSaveCancelBar,
-                onCancelClick = {
-                    focusManager.clearFocus()
-                    onBackButtonClick()
-                },
-                onSaveClick = {
-                    coroutineScope.launch {
-                        saveTrip()
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                ) {
 
-                        organizeAddedDeletedImages(true)
-                    }
-                },
-                saveEnabled = errorCount <= 0
-            )
+
+                    MySpacerColumn(height = 4.dp)
+
+                    //progress bar
+                    DateListProgressBar(
+                        startSpacerValue = startSpacerValue,
+                        endSpacerValue = endSpacerValue,
+                        progressBarState = progressBarState,
+                        dateList = dateList,
+                        currentDateIdx = datePagerState.currentPage,
+                        dateTimeFormat = dateTimeFormat,
+                        onClickDate = { toDateIndex ->
+                            //progress bar animate
+                            coroutineScope.launch {
+                                progressBarState.animateScrollToItem(toDateIndex)
+                            }
+
+                            //page animate
+                            coroutineScope.launch {
+                                datePagerState.animateScrollToPage(toDateIndex)
+                            }
+                        }
+                    )
+
+                    MySpacerColumn(height = 8.dp)
+
+                    //spot pages
+                    //pageIndex == dateOrderId
+                    HorizontalPager(
+                        state = datePagerState,
+                        modifier = Modifier.weight(1f),
+                        pageContent = { pageIndex ->
+                            //pageIndex == dateOrderId
+
+                            DatePage(
+                                startSpacerValue = startSpacerValue,
+                                endSpacerValue = endSpacerValue,
+                                isEditMode = isEditMode,
+                                showingTrip = showingTrip,
+                                dateIndex = pageIndex,
+                                currentDate = dateList[pageIndex],
+                                timeFormat = dateTimeFormat.timeFormat,
+
+                                focusManager = focusManager,
+                                snackBarHostState = snackBarHostState,
+
+                                setShowBottomSaveCancelBar = {
+                                    showBottomSaveCancelBar = it
+                                },
+                                onErrorCountChange = { plusError ->
+                                    if (plusError) errorCount++
+                                    else errorCount--
+                                },
+                                updateTripState = updateTripState,
+
+                                addNewSpot = { dateId ->
+                                    addNewSpot(dateId)
+                                },
+                                deleteSpot = { dateIndex, spotIndex ->
+                                    deleteSpot(dateIndex, spotIndex)
+                                    addDeletedImages(dateList[dateIndex].spotList[spotIndex].imagePathList)
+                                },
+                                navigateToSpot = navigateToSpot,
+                                setIsFABExpanded = {
+                                    isFABExpanded = it
+                                },
+                                showSnackBar = { text_, actionLabel_, duration_ ->
+                                    coroutineScope.launch {
+                                        snackBarHostState.showSnackbar(
+                                            message = text_,
+                                            actionLabel = actionLabel_,
+                                            duration = duration_
+                                        )
+                                    }
+                                },
+                                reorderSpotList = { currentIndex, destinationIndex ->
+                                    reorderSpotList(pageIndex, currentIndex, destinationIndex)
+                                }
+                            )
+                        }
+                    )
+                }
+            }
+
+
         }
     }
 }
 
 @Composable
 fun DatePage(
+    startSpacerValue: Dp,
+    endSpacerValue: Dp,
     isEditMode: Boolean,
     showingTrip: Trip,
     dateIndex: Int,
@@ -426,7 +441,7 @@ fun DatePage(
         state = scrollState,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
-        contentPadding = PaddingValues(top = 8.dp, bottom = 200.dp),
+        contentPadding = PaddingValues(startSpacerValue, 8.dp, endSpacerValue, 200.dp),
         modifier = Modifier.fillMaxSize()
     ) {
         //title card
@@ -447,15 +462,12 @@ fun DatePage(
                 },
 
                 setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
-
-                modifier = modifier
             )
         }
 
         //budget, travel distance info card
         item {
             InformationCard(
-                modifier = modifier,
                 list = listOf(
                     Pair(MyIcons.budget, currentDate.getTotalBudgetText(showingTrip)),
                     Pair(
@@ -473,7 +485,6 @@ fun DatePage(
             MemoCard(
                 isEditMode = isEditMode,
                 memoText = currentDate.memo,
-                modifier = modifier,
                 onMemoChanged = { newMemoText ->
                     currentDate.setMemoText(showingTrip, updateTripState, newMemoText)
                 },
@@ -520,8 +531,7 @@ fun DatePage(
                     StartEndDummySpaceWithRoundedCorner(
                         showLine = firstSpotShowUpperLine,
                         isFirst = true,
-                        isLast = false,
-                        modifier = modifier
+                        isLast = false
                     )
                 }
 
@@ -540,7 +550,7 @@ fun DatePage(
                         exit = shrinkVertically(tween(400))
                     ) {
                         Box(
-                            modifier = modifier
+                            modifier = Modifier
                                 .fillMaxWidth()
                                 .background(MaterialTheme.colorScheme.surfaceVariant)
                         ) {
@@ -631,7 +641,6 @@ fun DatePage(
                         if (checkSpotTypeGroupIsShown(spot.spotType.group, spotTypeWithShownList)) {
 
                             SpotListItem(
-                                modifier = modifier,
                                 trip = showingTrip,
                                 dateId = dateIndex,
                                 spot = spot,
@@ -696,7 +705,6 @@ fun DatePage(
                         showLine = lastSpotShowLowerLine,
                         isFirst = false,
                         isLast = true,
-                        modifier = modifier
                     )
                 }
             }

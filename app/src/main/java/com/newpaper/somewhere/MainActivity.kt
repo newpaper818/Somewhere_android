@@ -9,10 +9,11 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.newpaper.somewhere.enumUtils.AppTheme
@@ -21,6 +22,7 @@ import com.newpaper.somewhere.viewModel.SomewhereViewModelProvider
 import com.newpaper.somewhere.ui.theme.SomewhereTheme
 import com.newpaper.somewhere.viewModel.AppViewModel
 import com.google.android.gms.location.LocationServices
+import com.newpaper.somewhere.utils.calculateWindowSizeClass
 
 class MainActivity : ComponentActivity() {
 
@@ -29,7 +31,6 @@ class MainActivity : ComponentActivity() {
         factoryProducer = { SomewhereViewModelProvider.Factory }
     )
 
-    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -40,7 +41,6 @@ class MainActivity : ComponentActivity() {
         installSplashScreen().apply {
             setKeepOnScreenCondition{
                 !appViewModel.isReady.value
-
             }
         }
 
@@ -58,21 +58,22 @@ class MainActivity : ComponentActivity() {
                 //user location fused client
                 val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-                //window size for phone or tablet
-                val windowSize = calculateWindowSizeClass(activity = this)
-
+                //window size
+                val configuration = LocalConfiguration.current
+                val windowSize = DpSize(configuration.screenWidthDp.dp, configuration.screenHeightDp.dp)
+                val windowSizeClass = calculateWindowSizeClass(windowSize = windowSize)
+                
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     SomewhereApp(
                         isDarkAppTheme = isDarkAppTheme,
-                        windowSize = windowSize.widthSizeClass,
+                        windowSizeClass = windowSizeClass,
                         fusedLocationClient = fusedLocationClient,
                         appViewModel = appViewModel
                     )
                 }
-
             }
         }
     }

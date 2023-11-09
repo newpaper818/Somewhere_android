@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.ui.theme.ColorType
 import com.newpaper.somewhere.ui.theme.TextType
@@ -43,7 +44,8 @@ fun SomewhereTopAppBar(
     actionIcon2: MyIcon? = null,
     actionIcon2Onclick: () -> Unit = {},
 
-    containerColor: Color = MaterialTheme.colorScheme.background
+    containerColor: Color = MaterialTheme.colorScheme.background,
+    startPadding: Dp = SPACER_SMALL
 ) {
 
     //app bar
@@ -52,7 +54,7 @@ fun SomewhereTopAppBar(
         title = {
             Row {
                 if (navigationIcon == null)
-                    MySpacerRow(width = 16.dp)
+                    MySpacerRow(width = startPadding)
 
                 Column(
                     modifier = Modifier,
@@ -77,9 +79,11 @@ fun SomewhereTopAppBar(
 
         },
         navigationIcon = {
-            if (navigationIcon != null) {
-                IconButton(onClick = navigationIconOnClick) {
-                    DisplayIcon(icon = navigationIcon)
+            Row {
+                if (navigationIcon != null) {
+                    IconButton(onClick = navigationIconOnClick) {
+                        DisplayIcon(icon = navigationIcon)
+                    }
                 }
             }
         },

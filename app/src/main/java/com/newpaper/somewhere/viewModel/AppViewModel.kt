@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.newpaper.somewhere.db.TripRepository
@@ -9,6 +10,10 @@ import com.newpaper.somewhere.enumUtils.DateFormat
 import com.newpaper.somewhere.enumUtils.MapTheme
 import com.newpaper.somewhere.enumUtils.TimeFormat
 import com.newpaper.somewhere.model.Trip
+import com.newpaper.somewhere.ui.navigation.MainNavigationDestination
+import com.newpaper.somewhere.ui.navigation.MyTripsScreenDestination
+import com.newpaper.somewhere.ui.navigation.ScreenDestination
+import com.newpaper.somewhere.ui.navigation.MyTripsMainDestination
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,10 +40,15 @@ data class AppUiState(
     val theme: Theme = Theme(),
     val dateTimeFormat: DateTimeFormat = DateTimeFormat(),
 
+    val currentMainNavigationDestination: MainNavigationDestination = MyTripsMainDestination,
+    val currentScreen: ScreenDestination = MyTripsScreenDestination,
+
     val tripList: List<Trip>? = null,
     val tempTripList: List<Trip>? = null
 )
 
+
+//use at entire app?
 class AppViewModel(
     private val tripsRepository: TripRepository,
     private val userPreferencesRepository: UserPreferencesRepository
@@ -94,6 +104,18 @@ class AppViewModel(
     }
 
     //==============================================================================================
+
+    fun updateCurrentMainNavDestination(screenTo: MainNavigationDestination){
+        _appUiState.update {
+            it.copy(currentMainNavigationDestination = screenTo)
+        }
+    }
+
+    fun updateCurrentScreen(screenTo: ScreenDestination) {
+        _appUiState.update {
+            it.copy(currentScreen = screenTo)
+        }
+    }
 
     fun saveThemeUserPreferences(
         appTheme: AppTheme? = null,

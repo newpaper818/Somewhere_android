@@ -70,6 +70,8 @@ private fun getSize(shape: Shape): Dp {
 
 @Composable
 fun DateListProgressBar(
+    startSpacerValue: Dp,
+    endSpacerValue: Dp,
     progressBarState: LazyListState,
     dateList: List<Date>,
     currentDateIdx: Int,
@@ -81,7 +83,7 @@ fun DateListProgressBar(
         state = progressBarState,
         modifier = Modifier.fillMaxWidth()
     ){
-        item{ MySpacerRow(width = 16.dp) }
+        item{ MySpacerRow(width = startSpacerValue) }
 
         items(dateList){
 
@@ -102,12 +104,13 @@ fun DateListProgressBar(
             )
         }
 
-        item{ MySpacerRow(width = 16.dp) }
+        item{ MySpacerRow(width = endSpacerValue) }
     }
 }
 
 @Composable
 fun SpotListProgressBar(
+    spacerValue: Dp,
     initialIdx: Int,
     progressBarState: LazyListState,
     isEditMode: Boolean,
@@ -139,7 +142,7 @@ fun SpotListProgressBar(
         //to prev date button
         item {
             if (!isEditMode && dateList.first() != dateList[dateId]) {
-                MySpacerRow(width = 16.dp)
+                MySpacerRow(width = spacerValue)
 
                 Column(
                     modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
@@ -167,7 +170,7 @@ fun SpotListProgressBar(
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
-                            .width(10.dp)
+                            .width(spacerValue)
                             .height(25.dp)
                     ) {
                         Line(
@@ -252,7 +255,7 @@ fun SpotListProgressBar(
                     })
                 }
 
-                MySpacerRow(width = 16.dp)
+                MySpacerRow(width = spacerValue)
             }
         }
 
@@ -272,7 +275,7 @@ fun SpotListProgressBar(
                     )
                 }
 
-                MySpacerRow(width = 16.dp)
+                MySpacerRow(width = spacerValue)
             }
         }
     }

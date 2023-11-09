@@ -1,7 +1,6 @@
-package com.newpaper.somewhere.ui.screens.tripScreens
+package com.newpaper.somewhere.ui.screens.myTripsScreens
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -15,8 +14,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -79,7 +76,6 @@ import com.newpaper.somewhere.model.Spot
 import com.newpaper.somewhere.model.Trip
 import com.newpaper.somewhere.enumUtils.SpotTypeGroup
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.ClickableBox
-import com.newpaper.somewhere.ui.navigation.NavigationDestination
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.DisplayIcon
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.MapForTrip
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MyIcons
@@ -104,11 +100,6 @@ import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-
-object TripMapDestination : NavigationDestination {
-    override val route = "trip map"
-    override var title = ""
-}
 
 val SHEET_PEEK_HEIGHT = 150.dp
 const val CONTROL_PANEL_MAX_WIDTH = 420 //use at horizontal layout-

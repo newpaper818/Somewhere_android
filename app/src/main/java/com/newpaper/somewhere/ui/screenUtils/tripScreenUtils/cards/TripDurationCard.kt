@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +33,9 @@ import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.DisplayIcon
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.dialogs.DateRangeDialog
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MyIcons
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MySpacerColumn
+import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MySpacerRow
+import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SPACER_BIG
+import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SPACER_SMALL
 import com.newpaper.somewhere.ui.theme.TextType
 import com.newpaper.somewhere.ui.theme.getTextStyle
 import com.newpaper.somewhere.ui.theme.n60

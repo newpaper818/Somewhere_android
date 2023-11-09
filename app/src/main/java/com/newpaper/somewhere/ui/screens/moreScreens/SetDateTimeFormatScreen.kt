@@ -1,4 +1,4 @@
-package com.newpaper.somewhere.ui.screens.settingScreens
+package com.newpaper.somewhere.ui.screens.moreScreens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,19 +31,20 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.R
 import com.newpaper.somewhere.enumUtils.DateFormat
 import com.newpaper.somewhere.enumUtils.TimeFormat
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.ClickableBox
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MySpacerRow
-import com.newpaper.somewhere.ui.navigation.NavigationDestination
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SomewhereTopAppBar
 import com.newpaper.somewhere.ui.screenUtils.settingScreenUtils.ItemWithRadioButton
 import com.newpaper.somewhere.ui.screenUtils.settingScreenUtils.ItemDivider
 import com.newpaper.somewhere.ui.screenUtils.settingScreenUtils.ItemWithSwitch
 import com.newpaper.somewhere.ui.screenUtils.settingScreenUtils.ListGroupCard
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MyIcons
+import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SPACER_BIG
 import com.newpaper.somewhere.ui.theme.TextType
 import com.newpaper.somewhere.ui.theme.getTextStyle
 import com.newpaper.somewhere.utils.getDateText
@@ -53,19 +54,17 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.util.Locale
 
-object SetDateFormatDestination: NavigationDestination {
-    override val route = "setDateTimeFormat"
-    override var title = ""
-}
-
 @Composable
 fun SetDateTimeFormatScreen(
+    startSpacerValue: Dp,
+    endSpacerValue: Dp,
     dateTimeFormat: DateTimeFormat,
 
     saveUserPreferences: (dateFormat: DateFormat?, useMonthName: Boolean?, includeDayOfWeek: Boolean?, timeFormat: TimeFormat?) -> Unit,
 
     navigateUp: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    use2Panes: Boolean = false
 ){
     val locale = LocalConfiguration.current.locales[0]
 
@@ -79,13 +78,14 @@ fun SetDateTimeFormatScreen(
 
     
     Scaffold(
-        modifier = Modifier.displayCutoutPadding().statusBarsPadding().navigationBarsPadding(),
+        modifier = modifier,
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {
             SomewhereTopAppBar(
+                startPadding = startSpacerValue,
                 title = stringResource(id = R.string.date_time_format),
-                navigationIcon = MyIcons.back,
+                navigationIcon = if (!use2Panes) MyIcons.back else null,
                 navigationIconOnClick = { navigateUp() }
             )
         }
@@ -93,8 +93,8 @@ fun SetDateTimeFormatScreen(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(16.dp, 16.dp, 16.dp, 200.dp),
-            modifier = modifier
+            contentPadding = PaddingValues(startSpacerValue, 16.dp, endSpacerValue, 200.dp),
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
@@ -216,7 +216,7 @@ private fun UpperDateTimeExampleBox(
             Text(
                 text = dateText,
                 style = textStyle,
-                modifier = Modifier.widthIn(min = 190.dp),
+                modifier = Modifier.widthIn(min = 170.dp),
                 textAlign = TextAlign.Start
             )
 

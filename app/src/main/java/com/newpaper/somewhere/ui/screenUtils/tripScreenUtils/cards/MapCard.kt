@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
@@ -64,8 +65,7 @@ fun MapCard(
     modifier: Modifier = Modifier,
 
     showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit,
-
-
+    use2Panes: Boolean = false,
     spotFrom: Spot? = null,
     spotTo: Spot? = null
 ) {
@@ -84,15 +84,21 @@ fun MapCard(
     val toNextSpotEnabled =
         currentSpot?.nextSpotOrDateIsExist(spotList, dateList, dateIndex) ?: (dateIndex < dateList.lastIndex)
 
-
-    Box(
-        contentAlignment = Alignment.BottomCenter,
-        modifier = Modifier
+    val boxModifier = if (!use2Panes) Modifier
             .fillMaxWidth()
             .height(cardHeight.dp)
             .onSizeChanged {
                 setMapSize(it)
             }
+        else Modifier
+            .fillMaxSize()
+            .onSizeChanged {
+                setMapSize(it)
+            }
+
+    Box(
+        contentAlignment = Alignment.BottomCenter,
+        modifier = boxModifier
     ) {
         //map for spot
         MapForSpot(
@@ -128,6 +134,7 @@ fun MapCard(
                 toPrevSpot = toPrevSpot,
                 toNextSpot = toNextSpot,
 
+                showFullScreenButton = !use2Panes,
                 onFullScreenClicked = onFullScreenClicked,
                 toggleIsEditLocation = toggleIsEditLocation,
                 deleteLocation = deleteLocation,
@@ -157,6 +164,7 @@ fun MapSpotMapButtons(
     toPrevSpot: () -> Unit,
     toNextSpot: () -> Unit,
 
+    showFullScreenButton: Boolean,
     onFullScreenClicked: () -> Unit,
     toggleIsEditLocation: () -> Unit,
     deleteLocation: () -> Unit,
@@ -185,7 +193,8 @@ fun MapSpotMapButtons(
                 cameraPositionState = cameraPositionState,
                 setUserLocationEnabled = setUserLocationEnabled,
                 onFullScreenClicked = onFullScreenClicked,
-                showSnackBar = showSnackBar
+                showSnackBar = showSnackBar,
+                showFullScreenButton = showFullScreenButton
             )
         }
         else {
@@ -220,16 +229,18 @@ fun UserLocationAndFullScreenButtons(
     cameraPositionState: CameraPositionState,
     setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
     onFullScreenClicked: () -> Unit,
-    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit
+    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit,
+    showFullScreenButton: Boolean = true
 ){
     MapButtonsRow {
         //user location
         UserLocationButton(fusedLocationClient, cameraPositionState, setUserLocationEnabled, showSnackBar)
 
         //fullscreen map
-        IconButton(onClick = onFullScreenClicked) {
-            DisplayIcon(icon = MyIcons.fullscreen)
-        }
+        if (showFullScreenButton)
+            IconButton(onClick = onFullScreenClicked) {
+                DisplayIcon(icon = MyIcons.fullscreen)
+            }
     }
 }
 

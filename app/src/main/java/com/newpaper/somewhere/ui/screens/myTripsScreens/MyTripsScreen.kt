@@ -1,4 +1,4 @@
-package com.newpaper.somewhere.ui.screens.mainScreens
+package com.newpaper.somewhere.ui.screens.myTripsScreens
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
@@ -18,25 +18,20 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -60,6 +55,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -67,16 +63,14 @@ import com.newpaper.somewhere.R
 import com.newpaper.somewhere.model.Trip
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.DisplayIcon
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MyIcons
-import com.newpaper.somewhere.ui.navigation.NavigationDestination
+import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MyScaffold
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.dialogs.DeleteOrNotDialog
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.DisplayImage
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MySpacerColumn
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MySpacerRow
-import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SomewhereNavigationBottomBar
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SomewhereTopAppBar
 import com.newpaper.somewhere.ui.theme.TextType
 import com.newpaper.somewhere.ui.theme.getTextStyle
-import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.BottomSaveCancelBar
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.IconFAB
 import com.newpaper.somewhere.utils.SlideState
 import com.newpaper.somewhere.utils.dragAndDropVertical
@@ -85,26 +79,21 @@ import com.newpaper.somewhere.viewModel.DateTimeFormat
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-object MyTripsDestination : NavigationDestination {
-    override val route = "my_trips"
-    override var title = ""
-}
+
 
 @Composable
 fun MyTripsScreen(
+    spacerValue: Dp,
     isEditMode: Boolean,
-
+    scrollState: LazyListState,
     dateTimeFormat: DateTimeFormat,
 
     changeEditMode: (editMode: Boolean?) -> Unit,
 
-    addAddedImages: (imageFiles: List<String>) -> Unit,
     addDeletedImages: (imageFiles: List<String>) -> Unit,
     organizeAddedDeletedImages: (isClickSave: Boolean) -> Unit,
 
     navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
-    navigateTo: (NavigationDestination) -> Unit,
-    navigateToMain: (NavigationDestination) -> Unit,
 
     appViewModel: AppViewModel,
     modifier: Modifier = Modifier
@@ -122,8 +111,6 @@ fun MyTripsScreen(
     var lazyColumnHeightDp by rememberSaveable { mutableStateOf(0) }
 
     val coroutineScope = rememberCoroutineScope()
-
-    val scrollState = rememberLazyListState()
 
     //TODO move to viewModel?
     val slideStates = remember { mutableStateMapOf<Int, SlideState>(
@@ -145,48 +132,24 @@ fun MyTripsScreen(
             onBackButtonClick()
         }
 
-    Scaffold (
-        modifier = Modifier.displayCutoutPadding().statusBarsPadding().navigationBarsPadding(),
-        contentWindowInsets = WindowInsets(bottom = 0),
+    MyScaffold(
+        modifier = Modifier,
 
         //top app bar
         topBar = {
             SomewhereTopAppBar(
-                title = if (!isEditMode) stringResource(id = R.string.app_name)
-                        else stringResource(id = R.string.edit_trips),
+                title = if (!isEditMode) stringResource(id = R.string.my_trips)
+                else stringResource(id = R.string.edit_trips),
 
                 actionIcon1 = if (!isEditMode) MyIcons.edit else null,
                 actionIcon1Onclick = {
                     changeEditMode(null)
-                }
+                },
+                startPadding = spacerValue
             )
         },
-        bottomBar = {
-            if (!isEditMode)
-                SomewhereNavigationBottomBar(
-                    currentDestination = MyTripsDestination,
-                    navigateTo = navigateToMain,
-                    scrollToTop = {
-                        coroutineScope.launch {
-                            scrollState.animateScrollToItem(0)
-                        }
-                    }
-                )
-            else
-                BottomSaveCancelBar(
-                    modifier = Modifier.navigationBarsPadding(),
-                    onCancelClick = { onBackButtonClick() },
-                    onSaveClick = {
-                        coroutineScope.launch {
-                            appViewModel.saveTempTripList {
-                                changeEditMode(false)
-                            }
-                        }
-                        organizeAddedDeletedImages(true)
-                    }
-                )
-        },
 
+        //fab
         floatingActionButton = {
             IconFAB(
                 visible = !isEditMode,
@@ -199,10 +162,25 @@ fun MyTripsScreen(
                             navigateToTrip(true, newTrip)
                             changeEditMode(true)
                         } else
-                            Log.d("debug", "New Trip Button onClick - navigate to new trip - Can't find new trip")
+                            Log.d(
+                                "debug",
+                                "New Trip Button onClick - navigate to new trip - Can't find new trip"
+                            )
                     }
                 }
             )
+        },
+
+        //bottom save cancel button
+        bottomSaveCancelBarVisible = isEditMode,
+        onCancelClick = { onBackButtonClick() },
+        onSaveClick = {
+            coroutineScope.launch {
+                appViewModel.saveTempTripList {
+                    changeEditMode(false)
+                }
+            }
+            organizeAddedDeletedImages(true)
         }
     ) { paddingValues ->
 
@@ -220,112 +198,123 @@ fun MyTripsScreen(
             )
         }
 
-        //display trips list
-        LazyColumn(
-            state = scrollState,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(16.dp, 16.dp, 16.dp, 200.dp),
-            modifier = modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .onSizeChanged {
-                    with(density) {
-                        lazyColumnHeightDp = it.height.toDp().value.toInt()
+            //display trips list
+            LazyColumn(
+                state = scrollState,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(spacerValue, 16.dp, spacerValue, 200.dp),
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(top = paddingValues.calculateTopPadding())
+                    .onSizeChanged {
+                        with(density) {
+                            lazyColumnHeightDp = it.height.toDp().value.toInt()
+                        }
                     }
-                }
-        ) {
-            if (showingTripList.isNotEmpty()) {
+            ) {
+                if (showingTripList.isNotEmpty()) {
 
-                items(showingTripList){ trip ->
+                    items(showingTripList) { trip ->
 
-                    //delete trip dialog
-                    var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
+                        //delete trip dialog
+                        var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
 
-                    if (showDeleteDialog) {
-                        DeleteOrNotDialog(
-                            bodyText = stringResource(id = R.string.dialog_body_delete_trip),
-                            deleteText = stringResource(id = R.string.dialog_button_delete),
-                            onDismissRequest = { showDeleteDialog = false },
-                            onDeleteClick = {
-                                coroutineScope.launch {
-                                    appViewModel.deleteTripFromTempTrip(trip)
-                                }
-                                showDeleteDialog = false
-                            }
-                        )
-                    }
-
-                    //each trip item
-                    key(showingTripList){
-                        val slideState = slideStates[trip.id] ?: SlideState.NONE
-
-                        TripListItem(
-                            trip = trip,
-                            tripList = showingTripList,
-                            isEditMode = isEditMode,
-                            onTripClick = { trip ->
-                                navigateToTrip(false, trip)
-                            },
-                            deleteTrip = {
-                                showDeleteDialog = true
-                                addDeletedImages(it.getAllImagesPath())
-                            },
-                            dateTimeFormat = dateTimeFormat,
-                            lazyColumnHeightDp = lazyColumnHeightDp,
-
-                            isScrollInProgress = scrollState.isScrollInProgress,
-                            canScrollUp = scrollState.canScrollBackward,
-                            canScrollDown = scrollState.canScrollForward,
-                            scrollUp = {
-                                if (!scrollState.isScrollInProgress) {
+                        if (showDeleteDialog) {
+                            DeleteOrNotDialog(
+                                bodyText = stringResource(id = R.string.dialog_body_delete_trip),
+                                deleteText = stringResource(id = R.string.dialog_button_delete),
+                                onDismissRequest = { showDeleteDialog = false },
+                                onDeleteClick = {
                                     coroutineScope.launch {
-                                        with(density) {
-                                            scrollState.animateScrollBy(((-100).dp).toPx(), tween(500))
+                                        appViewModel.deleteTripFromTempTrip(trip)
+                                    }
+                                    showDeleteDialog = false
+                                }
+                            )
+                        }
+
+                        //each trip item
+                        key(showingTripList) {
+                            val slideState = slideStates[trip.id] ?: SlideState.NONE
+
+                            TripListItem(
+                                trip = trip,
+                                tripList = showingTripList,
+                                isEditMode = isEditMode,
+                                onTripClick = { trip ->
+                                    navigateToTrip(false, trip)
+                                },
+                                deleteTrip = {
+                                    showDeleteDialog = true
+                                    addDeletedImages(it.getAllImagesPath())
+                                },
+                                dateTimeFormat = dateTimeFormat,
+                                lazyColumnHeightDp = lazyColumnHeightDp,
+
+                                isScrollInProgress = scrollState.isScrollInProgress,
+                                canScrollUp = scrollState.canScrollBackward,
+                                canScrollDown = scrollState.canScrollForward,
+                                scrollUp = {
+                                    if (!scrollState.isScrollInProgress) {
+                                        coroutineScope.launch {
+                                            with(density) {
+                                                scrollState.animateScrollBy(
+                                                    ((-100).dp).toPx(),
+                                                    tween(500)
+                                                )
+                                            }
                                         }
                                     }
-                                }
-                            },
-                            scrollDown = {
-                                if (!scrollState.isScrollInProgress) {
-                                    coroutineScope.launch {
-                                        with(density) {
-                                            scrollState.animateScrollBy(((100).dp).toPx(), tween(500))
+                                },
+                                scrollDown = {
+                                    if (!scrollState.isScrollInProgress) {
+                                        coroutineScope.launch {
+                                            with(density) {
+                                                scrollState.animateScrollBy(
+                                                    ((100).dp).toPx(),
+                                                    tween(500)
+                                                )
+                                            }
                                         }
                                     }
-                                }
-                            },
-                            slideState = slideState,
-                            updateSlideState = { tripId, newSlideState ->
-                                slideStates[showingTripList[tripId].id] = newSlideState
-                            },
-                            updateItemPosition = { currentIndex, destinationIndex ->
-                                //on drag end
-                                coroutineScope.launch {
-                                    //reorder list
-                                    appViewModel.reorderTempTripList(currentIndex, destinationIndex)
+                                },
+                                slideState = slideState,
+                                updateSlideState = { tripId, newSlideState ->
+                                    slideStates[showingTripList[tripId].id] = newSlideState
+                                },
+                                updateItemPosition = { currentIndex, destinationIndex ->
+                                    //on drag end
+                                    coroutineScope.launch {
+                                        //reorder list
+                                        appViewModel.reorderTempTripList(
+                                            currentIndex,
+                                            destinationIndex
+                                        )
 
-                                    //all slideState to NONE
-                                    slideStates.putAll(showingTripList.map { it.id }.associateWith { SlideState.NONE })
+                                        //all slideState to NONE
+                                        slideStates.putAll(showingTripList.map { it.id }
+                                            .associateWith { SlideState.NONE })
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
-                }
-            } else {
-                //TODO prettier img / text
-                item {
-                    Text(
-                        text = stringResource(id = R.string.no_trip),
-                        style = getTextStyle(TextType.CARD__BODY),
-                        textAlign = TextAlign.Center
-                    )
-                    MySpacerColumn(height = 16.dp)
+                } else {
+                    //TODO prettier img / text
+                    item {
+                        Text(
+                            text = stringResource(id = R.string.no_trip),
+                            style = getTextStyle(TextType.CARD__BODY),
+                            textAlign = TextAlign.Center
+                        )
+                        MySpacerColumn(height = 16.dp)
+                    }
                 }
             }
         }
     }
-}
+//}
 
 /**
  * TODO
