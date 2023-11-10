@@ -181,7 +181,7 @@ fun ImageCard(
     }
 
 
-    val modifier1 = if (isEditMode) modifier
+    val modifier1 = if (isEditMode) modifier.sizeIn(maxHeight = 390.dp)
                     else modifier.sizeIn(maxWidth = 390.dp, maxHeight = 390.dp)
 
     AnimatedVisibility(
@@ -313,8 +313,9 @@ fun ImageCard(
                             }
                         }
                     }
+
+                    //not edit mode showing images
                     Column {
-                        //not edit mode showing images
                         AnimatedVisibility(
                             visible = !isEditMode,
                             enter = expandVertically(tween(500)),
