@@ -149,6 +149,7 @@ fun DateScreen(
 
     val dateList = showingTrip.dateList
 
+
     val progressBarState = rememberLazyListState(
         initialFirstVisibleItemIndex = dateIndex
     )
@@ -157,6 +158,11 @@ fun DateScreen(
         initialPage = dateIndex,
         pageCount = { dateList.size }
     )
+
+    //at large screen, when change dateIndex(click date at trip screen), update screen
+    LaunchedEffect(dateIndex){
+        datePagerState.animateScrollToPage(dateIndex)
+    }
 
     val snackBarHostState = remember { SnackbarHostState() }
     var errorCount by rememberSaveable { mutableStateOf(0) }
