@@ -35,7 +35,6 @@ object AboutDestination: NavigationDestination {
     override var title = ""
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
     navigateUp: () -> Unit,

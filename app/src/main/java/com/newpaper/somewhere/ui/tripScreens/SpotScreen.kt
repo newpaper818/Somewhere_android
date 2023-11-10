@@ -1,6 +1,5 @@
 package com.newpaper.somewhere.ui.tripScreens
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -13,23 +12,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -44,11 +38,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -61,13 +52,11 @@ import com.newpaper.somewhere.model.Date
 import com.newpaper.somewhere.model.Spot
 import com.newpaper.somewhere.model.Trip
 import com.newpaper.somewhere.ui.navigation.NavigationDestination
-import com.newpaper.somewhere.ui.tripScreenUtils.SaveCancelButtons
 import com.newpaper.somewhere.ui.tripScreenUtils.DeleteItemButton
 import com.newpaper.somewhere.ui.tripScreenUtils.dialogs.DeleteOrNotDialog
 import com.newpaper.somewhere.ui.tripScreenUtils.cards.ImageCard
 import com.newpaper.somewhere.ui.tripScreenUtils.cards.InformationCard
 import com.newpaper.somewhere.ui.tripScreenUtils.cards.MapCard
-import com.newpaper.somewhere.ui.tripScreenUtils.MapChooseLocation
 import com.newpaper.somewhere.ui.tripScreenUtils.cards.MemoCard
 import com.newpaper.somewhere.ui.commonScreenUtils.MyIcons
 import com.newpaper.somewhere.ui.tripScreenUtils.dialogs.SetSpotTypeDialog
@@ -77,19 +66,14 @@ import com.newpaper.somewhere.ui.tripScreenUtils.dialogs.SetBudgetOrDistanceDial
 import com.newpaper.somewhere.ui.tripScreenUtils.SpotListProgressBar
 import com.newpaper.somewhere.ui.tripScreenUtils.cards.DateTimeCard
 import com.newpaper.somewhere.ui.tripScreenUtils.cards.TitleCardMove
-import com.newpaper.somewhere.ui.tripScreenUtils.cards.ZoomCard
 import com.newpaper.somewhere.ui.tripScreenUtils.focusOnToSpot
 import com.newpaper.somewhere.ui.tripScreenUtils.DEFAULT_ZOOM_LEVEL
 import com.newpaper.somewhere.ui.tripScreenUtils.SEOUL_LOCATION
-import com.newpaper.somewhere.ui.theme.TextType
-import com.newpaper.somewhere.ui.theme.getTextStyle
 import com.newpaper.somewhere.ui.tripScreenUtils.AnimatedBottomSaveCancelBar
 import com.newpaper.somewhere.ui.tripScreenUtils.cards.TitleCard
 import com.newpaper.somewhere.viewModel.DateTimeFormat
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.CoroutineScope
@@ -172,7 +156,8 @@ fun SpotScreen(
     val scrollState = rememberLazyListState()
 
     val spotPagerState = rememberPagerState(
-        initialPage = currentSpotIndex
+        initialPage = currentSpotIndex,
+        pageCount = { spotList.size }
     )
 
     val progressBarState = rememberLazyListState(
@@ -212,8 +197,8 @@ fun SpotScreen(
     var spotTo: Spot? = null
 
     if(currentSpot?.spotType?.isMove() == true) {
-        spotFrom = currentSpot.getPrevSpot(dateList, spotList, currentDateIndex)
-        spotTo = currentSpot.getNextSpot(dateList, spotList, currentDateIndex)
+        spotFrom = currentSpot.getPrevSpot(dateList, currentDateIndex)
+        spotTo = currentSpot.getNextSpot(dateList, currentDateIndex)
     }
 
     val location =
@@ -397,7 +382,7 @@ fun SpotScreen(
                         val lastSpotIndex = dateList[toDateId].spotList.lastIndex
                         currentSpotIndex = if (lastSpotIndex == -1) 0 else lastSpotIndex
 
-                        Log.d("pagee", "to $currentSpotIndex")
+                        //Log.d("pagee", "to $currentSpotIndex")
                         coroutineScope.launch {
 //                            delay(100)
                             spotPagerState.animateScrollToPage(currentSpotIndex)
@@ -407,7 +392,7 @@ fun SpotScreen(
                         currentDateIndex = toDateId
                         currentSpotIndex = 0
 
-                        Log.d("pagee", "to $currentSpotIndex")
+                        //Log.d("pagee", "to $currentSpotIndex")
                         coroutineScope.launch {
                             spotPagerState.animateScrollToPage(currentSpotIndex)
                         }
@@ -462,7 +447,7 @@ fun SpotScreen(
                             toPrevSpot = {
                                 if (currentSpotIndex > 0) {
                                     currentSpotIndex--
-                                    Log.d("pagee", "to $currentSpotIndex")
+                                    //Log.d("pagee", "to $currentSpotIndex")
 
                                     coroutineScope.launch {
                                         spotPagerState.animateScrollToPage(currentSpotIndex)
@@ -474,7 +459,7 @@ fun SpotScreen(
                                     currentDateIndex--
                                     val lastSpotIndex = dateList[currentDateIndex].spotList.lastIndex
                                     currentSpotIndex = if (lastSpotIndex == -1) 0 else lastSpotIndex
-                                    Log.d("pagee", "to $currentSpotIndex")
+                                    //Log.d("pagee", "to $currentSpotIndex")
 
                                     coroutineScope.launch {
                                         spotPagerState.animateScrollToPage(currentSpotIndex)
@@ -484,7 +469,7 @@ fun SpotScreen(
                             toNextSpot = {
                                 if (currentSpotIndex < spotList.lastIndex) {
                                     currentSpotIndex++
-                                    Log.d("pagee", "to $currentSpotIndex")
+                                    //Log.d("pagee", "to $currentSpotIndex")
 
                                     coroutineScope.launch {
                                         spotPagerState.animateScrollToPage(currentSpotIndex)
@@ -495,7 +480,7 @@ fun SpotScreen(
                                     //last date and last spot will not be here
                                     currentDateIndex++
                                     currentSpotIndex = 0
-                                    Log.d("pagee", "to $currentSpotIndex")
+                                    //Log.d("pagee", "to $currentSpotIndex")
 
                                     coroutineScope.launch {
                                         spotPagerState.animateScrollToPage(currentSpotIndex)
@@ -507,12 +492,8 @@ fun SpotScreen(
                                 isEditLocationMode = !isEditLocationMode
                             },
                             deleteLocation = {
-                                currentSpot?.setLocation(
-                                    showingTrip,
-                                    currentDateIndex,
-                                    updateTripState,
-                                    null,
-                                    null
+                                currentSpot?.setLocationAndUpdateTravelDistance(
+                                    showingTrip, dateIndex, updateTripState, null, null
                                 )
                             },
                             setMapSize = {
@@ -541,80 +522,74 @@ fun SpotScreen(
                     else {
                         //each spot page
                         item {
+                            //each page
+                            //pageIndex == spotIndex
+
                             HorizontalPager(
-                                pageCount = spotList.size,
-                                state = spotPagerState,
+                                modifier = Modifier.weight(1f),
                                 verticalAlignment = Alignment.Top,
-                                modifier = Modifier.weight(1f)
-                            ) { pageIndex ->     //pageIndex == spotIndex
+                                state = spotPagerState,
+                                pageContent = {pageIndex ->
+                                    //pageIndex == spotIndex
 
-                                if (!isEditLocationMode) {
-                                    //each page
-                                    SpotDetailPage(
-                                        isEditMode = isEditMode,
-                                        setUseImePadding = setUseImePadding,
-                                        snackBarHostState = snackBarHostState,
+                                    if (!isEditLocationMode) {
+                                        //each page
+                                        SpotDetailPage(
+                                            isEditMode = isEditMode,
+                                            setUseImePadding = setUseImePadding,
+                                            snackBarHostState = snackBarHostState,
 
-                                        showingTrip = showingTrip,
-                                        dateIndex = currentDateIndex,
-                                        currentDate = dateList[currentDateIndex],
-                                        spotIndex = pageIndex,
-                                        currentSpot = dateList[currentDateIndex].spotList.getOrNull(
-                                            pageIndex
-                                        ),
+                                            showingTrip = showingTrip,
+                                            dateIndex = currentDateIndex,
+                                            currentDate = dateList[currentDateIndex],
+                                            spotIndex = pageIndex,
+                                            currentSpot = dateList[currentDateIndex].spotList.getOrNull(
+                                                pageIndex
+                                            ),
 
-                                        dateTimeFormat = dateTimeFormat,
-                                        focusManager = focusManager,
-                                        onErrorCountChange = {
-                                            if (it) errorCount++
-                                            else    errorCount--
-                                        },
+                                            dateTimeFormat = dateTimeFormat,
+                                            focusManager = focusManager,
+                                            onErrorCountChange = {
+                                                if (it) errorCount++
+                                                else errorCount--
+                                            },
 
-                                        addAddedImageList = addAddedImages,
-                                        addDeletedImageList = addDeletedImages,
-                                        reorderSpotImageList = { currentIndex, destinationIndex ->
-                                            reorderSpotImageList(currentDateIndex, pageIndex, currentIndex, destinationIndex)
-                                        },
+                                            addAddedImageList = addAddedImages,
+                                            addDeletedImageList = addDeletedImages,
+                                            reorderSpotImageList = { currentIndex, destinationIndex ->
+                                                reorderSpotImageList(
+                                                    currentDateIndex,
+                                                    pageIndex,
+                                                    currentIndex,
+                                                    destinationIndex
+                                                )
+                                            },
 
-                                        setShowBottomSaveCancelBar = {
-                                            showBottomSaveCancelBar = it
-                                        },
-                                        updateTripState = updateTripState,
+                                            setShowBottomSaveCancelBar = {
+                                                showBottomSaveCancelBar = it
+                                            },
+                                            updateTripState = updateTripState,
 
-                                        toggleIsEditLocation = {
-                                            isEditLocationMode = !isEditLocationMode
-                                        },
+                                            toggleIsEditLocation = {
+                                                isEditLocationMode = !isEditLocationMode
+                                            },
 
-                                        onImageClicked = onImageClicked,
-                                        deleteSpot = {
-                                            if (currentSpot != null) {
-                                                addDeletedImages(currentSpot.imagePathList)
-
-                                                if (spotList.size <= 1) {
-                                                    deleteSpot(currentDateIndex, currentSpotIndex)
-                                                } else {
-                                                    var toIdx = currentSpotIndex - 1
-
-                                                    if (toIdx < 0) {
-                                                        toIdx = currentSpotIndex
-                                                    }
-
-                                                    coroutineScope.launch {
-                                                        spotPagerState.animateScrollToPage(toIdx)
-                                                        progressBarState.animateScrollToItem(toIdx + 1)
-                                                        deleteSpot(
-                                                            currentDateIndex,
-                                                            currentSpotIndex
-                                                        )
-                                                    }
+                                            onImageClicked = onImageClicked,
+                                            deleteSpot = {
+                                                if (currentSpot != null) {
+                                                    addDeletedImages(currentSpot.imagePathList)
+                                                    deleteSpot(
+                                                        currentDateIndex,
+                                                        currentSpotIndex
+                                                    )
                                                 }
-                                            }
-                                        },
-                                        navigateUp = navigateUp,
-                                        modifier = modifier.padding(16.dp, 0.dp)
-                                    )
+                                            },
+                                            navigateUp = navigateUp,
+                                            modifier = modifier.padding(16.dp, 0.dp)
+                                        )
+                                    }
                                 }
-                            }
+                            )
                         }
                     }
                 }
@@ -646,9 +621,9 @@ fun SpotScreen(
                 SetLocationPage(
                     showingTrip = showingTrip,
                     spotList = spotList,
-                    currentSpotId = currentSpotIndex,
+                    currentSpotIndex = currentSpotIndex,
                     dateList = dateList,
-                    dateId = currentDateIndex,
+                    dateIndex = currentDateIndex,
                     isDarkMapTheme = isDarkMapTheme,
                     updateTripState = updateTripState,
                     toggleIsEditLocationMode = {
@@ -823,6 +798,7 @@ fun SpotDetailPage(
                             setShowBottomSaveCancelBar(true)
                             currentSpot.setSpotType(
                                 showingTrip,
+                                dateList,
                                 dateIndex,
                                 updateTripState,
                                 newSpotType
@@ -859,23 +835,24 @@ fun SpotDetailPage(
                             setShowBottomSaveCancelBar(true)
                             setImePadding()
                         },
-                        onSaveClick = {
+                        onSaveClick = { newTravelDistance ->
                             showDistanceDialog = false
                             setShowBottomSaveCancelBar(true)
+                            currentSpot.setTravelDistance(showingTrip, dateIndex, updateTripState, newTravelDistance)
                             setImePadding()
                         }
                     )
                 }
 
-                if (currentSpot.spotType.isMove()) {
-                    currentSpot.updateDistance(
-                        showingTrip = showingTrip,
-                        currentDateIndex = dateIndex,
-                        updateTripState = updateTripState,
-                        spotFrom = currentSpot.getPrevSpot(dateList, spotList, dateIndex)?.location,
-                        spotTo = currentSpot.getNextSpot(dateList, spotList, dateIndex)?.location
-                    )
-                }
+//                if (currentSpot.spotType.isMove()) {
+//                    currentSpot.updateDistance(
+//                        showingTrip = showingTrip,
+//                        currentDateIndex = dateIndex,
+//                        updateTripState = updateTripState,
+//                        spotFrom = currentSpot.getPrevSpot(dateList, spotList, dateIndex)?.location,
+//                        spotTo = currentSpot.getNextSpot(dateList, spotList, dateIndex)?.location
+//                    )
+//                }
 
                 InformationCard(
                     isEditMode = isEditMode,
@@ -890,12 +867,16 @@ fun SpotDetailPage(
                             setShowBottomSaveCancelBar(false)
                         },
 
-                        Triple(MyIcons.travelDistance, currentSpot.getDistanceText()) {
+                        Triple(MyIcons.travelDistance, currentSpot.getDistanceText(),
                             if (currentSpot.spotType.isNotMove()) {
-                                showDistanceDialog = true
-                                setShowBottomSaveCancelBar(false)
+                                {
+                                    showDistanceDialog = true
+                                    setShowBottomSaveCancelBar(false)
+                                }
                             }
-                        }
+                            else null
+
+                            )
                     )
                 )
 
@@ -976,206 +957,7 @@ fun SpotDetailPage(
     }
 }
 
-@Composable
-private fun SetLocationPage(
-    showingTrip: Trip,
-    spotList: List<Spot>,
-    currentSpotId: Int,
-    dateList: List<Date>,
-    dateId: Int,
 
-    isDarkMapTheme: Boolean,
-    fusedLocationClient: FusedLocationProviderClient,
-    setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
-
-    updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
-    toggleIsEditLocationMode: () -> Unit,
-    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit
-){
-    val coroutineScope = rememberCoroutineScope()
-
-    val firstLocation = spotList[currentSpotId].getPrevLocation(dateList, dateId)
-    var newLocation: LatLng by rememberSaveable { mutableStateOf(firstLocation) }
-
-    var newZoomLevel: Float by rememberSaveable { mutableStateOf(spotList[currentSpotId].zoomLevel ?: DEFAULT_ZOOM_LEVEL) }
-
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(firstLocation, newZoomLevel)
-    }
-
-    var screenWidthDp by rememberSaveable { mutableStateOf(0) }
-    val density = LocalDensity.current.density
-
-    //edit location
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .onSizeChanged {
-                screenWidthDp = (it.width.toFloat() / density).toInt()
-            }
-    ) {
-        //google map
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        ) {
-            MapChooseLocation(
-                context = LocalContext.current,
-                isDarkMapTheme = isDarkMapTheme,
-                cameraPositionState = cameraPositionState,
-                date = dateList[dateId],
-                spot = spotList[currentSpotId],
-                onLocationChange = { newLocation_ ->
-                    newLocation = newLocation_
-                },
-                onZoomChange = {newZoomLevel_ ->
-                    newZoomLevel = newZoomLevel_
-                }
-            )
-
-            //center marker
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size(26.dp)
-                    .clip(CircleShape)
-                    .background(Color(spotList[currentSpotId].spotType.group.color.color))
-            ){
-                Text(
-                    text = spotList[currentSpotId].iconText.toString(),
-                    style = getTextStyle(TextType.PROGRESS_BAR__ICON_TEXT_HIGHLIGHT)
-                        .copy(color = Color(spotList[currentSpotId].spotType.group.color.onColor))
-                )
-            }
-        }
-
-//        LazyVerticalGrid(
-//            columns = GridCells.Adaptive(320.dp),
-//            horizontalArrangement = Arrangement.Center,
-//            modifier = Modifier.fillMaxWidth()
-//        ){
-//            item {
-//                //zoom card
-////                Box(modifier = Modifier.width(335.dp)) {
-//                    ZoomCard(
-//                        zoomLevel = newZoomLevel,
-//                        mapZoomTo = { newZoomLevel_ ->
-//                            newZoomLevel = newZoomLevel_
-//                            coroutineScope.launch {
-//                                cameraPositionState.animate(
-//                                    CameraUpdateFactory.zoomTo(newZoomLevel), 300
-//                                )
-//                            }
-//                        },
-//                        fusedLocationClient = fusedLocationClient,
-//                        cameraPositionState = cameraPositionState,
-//                        setUserLocationEnabled = setUserLocationEnabled,
-//                        showSnackBar = showSnackBar
-//                    )
-////                }
-//            }
-//            item {
-//                //cancel save buttons
-//                SaveCancelButtons(
-//                    onCancelClick = toggleIsEditLocationMode,
-//                    onSaveClick = {
-//                        //set location and zoom level
-//                        //spotList[currentSpotId].zoomLevel = zoomLevel
-//                        spotList[currentSpotId].setLocation(
-//                            showingTrip,
-//                            dateId,
-//                            updateTripState,
-//                            newLocation,
-//                            newZoomLevel
-//                        )
-//                        toggleIsEditLocationMode()
-//                    },
-//                    modifier = Modifier.background(MaterialTheme.colorScheme.background),
-//                    positiveText = stringResource(id = R.string.dialog_button_ok)
-//                )
-//            }
-//        }
-
-
-        Row(
-            verticalAlignment = Alignment.Bottom
-        ) {
-            Box(
-                contentAlignment = Alignment.BottomCenter,
-                modifier = Modifier.weight(1f)
-            ) {
-                ZoomCard(
-                    zoomLevel = newZoomLevel,
-                    mapZoomTo = { newZoomLevel1 ->
-                        newZoomLevel = newZoomLevel1
-                        coroutineScope.launch {
-                            cameraPositionState.animate(
-                                CameraUpdateFactory.zoomTo(newZoomLevel), 300
-                            )
-                        }
-                    },
-                    fusedLocationClient = fusedLocationClient,
-                    cameraPositionState = cameraPositionState,
-                    setUserLocationEnabled = setUserLocationEnabled,
-                    showSnackBar = showSnackBar
-                )
-            }
-
-            if (screenWidthDp >= 670){
-                Box(
-                    contentAlignment = Alignment.BottomCenter,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    //cancel save buttons
-                    SaveCancelButtons(
-                        onCancelClick = toggleIsEditLocationMode,
-                        onSaveClick = {
-                            //set location and zoom level
-                            //spotList[currentSpotId].zoomLevel = zoomLevel
-                            spotList[currentSpotId].setLocation(
-                                showingTrip,
-                                dateId,
-                                updateTripState,
-                                newLocation,
-                                newZoomLevel
-                            )
-                            toggleIsEditLocationMode()
-                        },
-                        modifier = Modifier.background(MaterialTheme.colorScheme.background),
-                        positiveText = stringResource(id = R.string.dialog_button_ok)
-                    )
-                }
-            }
-        }
-        if (screenWidthDp < 670) {
-
-            MySpacerColumn(height = 8.dp)
-
-            //cancel save buttons
-            SaveCancelButtons(
-                onCancelClick = toggleIsEditLocationMode,
-                onSaveClick = {
-                    //set location and zoom level
-                    //spotList[currentSpotId].zoomLevel = zoomLevel
-                    spotList[currentSpotId].setLocation(
-                        showingTrip,
-                        dateId,
-                        updateTripState,
-                        newLocation,
-                        newZoomLevel
-                    )
-                    toggleIsEditLocationMode()
-                },
-                modifier = Modifier.background(MaterialTheme.colorScheme.background),
-                positiveText = stringResource(id = R.string.dialog_button_ok)
-            )
-        }
-    }
-}
 
 //@OptIn(ExperimentalFoundationApi::class)
 //suspend fun scrollToPage(
@@ -1201,8 +983,8 @@ private fun mapAnimateToSpot(
     density: Float,
     coroutineScope: CoroutineScope
 ){
-    val spotFrom = currentSpot.getPrevSpot(dateList, spotList, dateId)
-    val spotTo = currentSpot.getNextSpot(dateList, spotList, dateId)
+    val spotFrom = currentSpot.getPrevSpot(dateList, dateId)
+    val spotTo = currentSpot.getNextSpot(dateList, dateId)
 
     if (scrollState.firstVisibleItemIndex == 0) {
         //if spot is move

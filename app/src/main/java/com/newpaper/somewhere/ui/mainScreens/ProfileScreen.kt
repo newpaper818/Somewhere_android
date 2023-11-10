@@ -22,7 +22,6 @@ object ProfileDestination : NavigationDestination {
     override var title = "Profile"
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     navigateTo: (NavigationDestination) -> Unit,

@@ -30,7 +30,6 @@ import com.newpaper.somewhere.ui.theme.getTextStyle
  */
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItemWithSwitch(
     text: String,

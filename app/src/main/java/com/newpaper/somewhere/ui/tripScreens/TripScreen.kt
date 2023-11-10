@@ -162,7 +162,9 @@ fun TripScreen(
         }
 
     //set top bar title
-    TripDestination.title
+    var topBarTitle by rememberSaveable { mutableStateOf("") }
+
+    topBarTitle =
         if (isEditMode) stringResource(id = R.string.edit_trip)
         else {
             if (showingTrip.titleText == null || showingTrip.titleText == "")
@@ -193,7 +195,7 @@ fun TripScreen(
         //top app bar
         topBar = {
             SomewhereTopAppBar(
-                title = TripDestination.title,
+                title = topBarTitle,
 
                 navigationIcon = MyIcons.back,
                 navigationIconOnClick = {
@@ -632,7 +634,7 @@ private fun DateListItem(
         expandedText = date.getExpandedText(trip, isEditMode),
 
         onTitleTextChange = { dateTitleText ->
-            trip.dateList[date.id].setTitleText(trip, updateTripState, dateTitleText)
+            trip.dateList[date.index].setTitleText(trip, updateTripState, dateTitleText)
         },
 
         isFirstItem = date == trip.dateList.first(),

@@ -11,89 +11,6 @@ val gray = Color(0xFF878690)
 val black = Color(0xff000000)
 val white = Color(0xffffffff)
 
-//
-val md_theme_light_primary = Color(0xFF534FC0)
-val md_theme_light_onPrimary = Color(0xFFFFFFFF)
-val md_theme_light_primaryContainer = Color(0xFFE2DFFF)
-val md_theme_light_onPrimaryContainer = Color(0xFF0F0069)
-val md_theme_light_inversePrimary = Color(0xFFC3C0FF)
-
-val md_theme_light_secondary = Color(0xFF006687)
-val md_theme_light_onSecondary = Color(0xFFFFFFFF)
-val md_theme_light_secondaryContainer = Color(0xFFC1E8FF)
-val md_theme_light_onSecondaryContainer = Color(0xFF001E2B)
-
-val md_theme_light_tertiary = Color(0xFF006C45)
-val md_theme_light_onTertiary = Color(0xFFFFFFFF)
-val md_theme_light_tertiaryContainer = Color(0xFF81F9BB)
-val md_theme_light_onTertiaryContainer = Color(0xFF002112)
-
-val md_theme_light_error = Color(0xFFBA1A1A)
-val md_theme_light_errorContainer = Color(0xFFFFDAD6)
-val md_theme_light_onError = Color(0xFFFFFFFF)
-val md_theme_light_onErrorContainer = Color(0xFF410002)
-
-val md_theme_light_background = Color(0xFFFFFBFF)
-val md_theme_light_onBackground = black //Color(0xFF1C1B1F)
-
-val md_theme_light_surface = Color(0xFFFFFBFF)
-val md_theme_light_onSurface = black //Color(0xFF1C1B1F)
-val md_theme_light_surfaceVariant = Color(0xFFE4E1EC)
-val md_theme_light_onSurfaceVariant = black //Color(0xFF47464F)
-val md_theme_light_inverseOnSurface = Color(0xFFF3EFF4)
-val md_theme_light_inverseSurface = Color(0xFF313034)
-val md_theme_light_surfaceTint = Color(0xFF534FC0)
-
-val md_theme_light_outline = Color(0xFF787680)
-val md_theme_light_outlineVariant = Color(0xFFC8C5D0)
-
-val md_theme_light_shadow = Color(0xFF000000)
-
-val md_theme_light_scrim = Color(0xFF000000)
-
-
-
-val md_theme_dark_primary = Color(0xFFC3C0FF)
-val md_theme_dark_onPrimary = Color(0xFF221790)
-val md_theme_dark_primaryContainer = Color(0xFF3B35A7)
-val md_theme_dark_onPrimaryContainer = Color(0xFFE2DFFF)
-val md_theme_dark_inversePrimary = Color(0xFF534FC0)
-
-val md_theme_dark_secondary = Color(0xFF72D2FF)
-val md_theme_dark_onSecondary = Color(0xFF003548)
-val md_theme_dark_secondaryContainer = Color(0xFF004D66)
-val md_theme_dark_onSecondaryContainer = Color(0xFFC1E8FF)
-
-val md_theme_dark_tertiary = Color(0xFF64DCA0)
-val md_theme_dark_onTertiary = Color(0xFF003822)
-val md_theme_dark_tertiaryContainer = Color(0xFF005233)
-val md_theme_dark_onTertiaryContainer = Color(0xFF81F9BB)
-
-val md_theme_dark_error = Color(0xFFFFB4AB)
-val md_theme_dark_errorContainer = Color(0xFF93000A)
-val md_theme_dark_onError = Color(0xFF690005)
-val md_theme_dark_onErrorContainer = Color(0xFFFFDAD6)
-
-val md_theme_dark_background = Color(0xFF1C1B1F)
-val md_theme_dark_onBackground = white //Color(0xFFE5E1E6)
-
-val md_theme_dark_surface = Color(0xFF1C1B1F)
-val md_theme_dark_onSurface = white //Color(0xFFE5E1E6)
-val md_theme_dark_surfaceVariant = Color(0xFF47464F)
-val md_theme_dark_onSurfaceVariant = white //Color(0xFFC8C5D0)
-val md_theme_dark_inverseOnSurface = Color(0xFF1C1B1F)
-val md_theme_dark_inverseSurface = Color(0xFFE5E1E6)
-val md_theme_dark_surfaceTint = Color(0xFFC3C0FF)
-
-val md_theme_dark_outline = Color(0xFF928F9A)
-val md_theme_dark_shadow = Color(0xFF000000)
-val md_theme_dark_outlineVariant = Color(0xFF37363F)
-val md_theme_dark_scrim = Color(0xFF000000)
-
-
-val seed = Color(0xFF8E8BFF)
-
-
 
 //primary Hue Chroma Tone 280 47 40
 val p0 = Color(0xFF000000)
@@ -104,7 +21,7 @@ val p30 = Color(0xFF323f90)
 val p35 = Color(0xFF3f4b9c)
 val p40 = Color(0xFF4b57a9)
 val p50 = Color(0xFF6471c4)
-val p60 = Color(0xFF7e8ae0)  //primary?
+val p60 = Color(0xFF7e8ae0)
 val p70 = Color(0xFF99a5fd)
 val p80 = Color(0xFFbbc3ff)
 val p90 = Color(0xFFdfe0ff)
@@ -230,6 +147,9 @@ enum class ColorType{
     PROGRESS_BAR__LINE_DEFAULT_MOVE,
     PROGRESS_BAR__LINE_HIGHLIGHT,
 
+    MAP_LINE_DEFAULT,
+    SPOT_MAP_LINE_MOVE,
+
 
 
     BACKGROUND,
@@ -267,6 +187,8 @@ fun getColor(colorType: ColorType): Color {
         PROGRESS_BAR__LINE_DEFAULT_MOVE -> lineMove
         PROGRESS_BAR__LINE_HIGHLIGHT    -> point
 
+        MAP_LINE_DEFAULT                -> MaterialTheme.colorScheme.outline.copy(alpha = 0.6f)
+        SPOT_MAP_LINE_MOVE              -> point
 
 
         BACKGROUND                      -> MaterialTheme.colorScheme.background
@@ -279,7 +201,7 @@ fun getColor(colorType: ColorType): Color {
         BUTTON__NEGATIVE                -> gray
         BUTTON__POSITIVE                -> MaterialTheme.colorScheme.primaryContainer.copy(1f)
         BUTTON__DELETE                  -> MaterialTheme.colorScheme.error
-        BUTTON__MAP                     -> MaterialTheme.colorScheme.surface.copy(0.7f)
+        BUTTON__MAP                     -> MaterialTheme.colorScheme.surface.copy(0.85f)
 
         BUTTON__ON_NEGATIVE             -> white
 

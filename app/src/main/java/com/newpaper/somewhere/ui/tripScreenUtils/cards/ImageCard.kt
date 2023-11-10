@@ -47,6 +47,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerScope
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -92,6 +93,8 @@ import com.newpaper.somewhere.ui.theme.ColorType
 import com.newpaper.somewhere.ui.theme.TextType
 import com.newpaper.somewhere.ui.theme.getColor
 import com.newpaper.somewhere.ui.theme.getTextStyle
+import com.newpaper.somewhere.ui.theme.n92
+import com.newpaper.somewhere.ui.theme.s50
 import com.newpaper.somewhere.utils.SlideState
 import com.newpaper.somewhere.utils.dragAndDropHorizontal
 import kotlinx.coroutines.Dispatchers
@@ -263,9 +266,9 @@ fun ImageCard(
                                         imagePathList = imagePathList,
                                         onDeleteClick = {
                                             deleteImage(imagePath)
-                                            Log.d("image", "img size = ${imagePathList.size}")
+                                                //Log.d("image", "img size = ${imagePathList.size}")
                                             if (imagePathList.size - 1 <= IMAGE_MAX_COUNT && isImageCountLimit){
-                                                Log.d("image", "to false")
+                                                //Log.d("image", "to false")
                                                 isImageCountLimit = false
                                                 isOverImage(false)
                                             }
@@ -303,7 +306,7 @@ fun ImageCard(
                         shrinkTowards = Alignment.Bottom
                     )
                 ) {
-                    val pageState = rememberPagerState()
+                    val pageState = rememberPagerState{ imagePathList.size }
 
                     Box(
                         modifier = Modifier
@@ -311,12 +314,12 @@ fun ImageCard(
                             .aspectRatio(1f)
                     ) {
                         HorizontalPager(
-                            pageCount = imagePathList.size,
                             state = pageState,
-                            beyondBoundsPageCount = 3
-                        ) {
-                            DisplayImage(imagePath = imagePathList[it])
-                        }
+                            beyondBoundsPageCount = 3,
+                            pageContent = {
+                                DisplayImage(imagePath = imagePathList[it])
+                            }
+                        )
 
                         if (imagePathList.size != 1)
                             ImageIndicateDots(
@@ -564,8 +567,8 @@ private fun ImageIndicateDots(
         ) {
             repeat(pageCount) {
                 val color =
-                    if (currentPage == it) Color.LightGray
-                    else Color.DarkGray
+                    if (currentPage == it) s50
+                    else n92
 
                 Box(
                     modifier = Modifier

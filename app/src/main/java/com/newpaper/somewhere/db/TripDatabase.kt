@@ -13,8 +13,6 @@ import com.squareup.moshi.Moshi
     DateListTypeConverter::class,
     LocalDateTimeTypeConverter::class,
     StringListTypeConverter::class,
-    //DateColorConverter::class
-    //UriTypeConverter::class
 ])
 abstract class TripDatabase : RoomDatabase() {
 
@@ -23,12 +21,10 @@ abstract class TripDatabase : RoomDatabase() {
 
     companion object {
 
-        val moshi = Moshi.Builder()
-            //.addLast(KotlinJsonAdapterFactory())
+        private val moshi: Moshi = Moshi.Builder()
             .add(LocalDateAdapter())
             .add(LocalTimeAdapter())
             .add(LocalDateColorAdapter())
-            //.add(UriAdapter())
             .build()
 
         @Volatile
@@ -48,7 +44,6 @@ abstract class TripDatabase : RoomDatabase() {
                     .addTypeConverter(DateListTypeConverter(moshi))
                     .addTypeConverter(LocalDateTimeTypeConverter())
                     .addTypeConverter(StringListTypeConverter(moshi))
-                    //.addTypeConverter(UriTypeConverter())
                     .build()
                     .also { Instance = it }
             }

@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.ui.commonScreenUtils.MySpacerColumn
 import com.newpaper.somewhere.ui.commonScreenUtils.MySpacerRow
@@ -44,11 +45,11 @@ fun ListGroupCard(
 
 @Composable
 fun ItemDivider(
-
+    horizontalPadding: Dp = 16.dp
 ){
     Row {
-        MySpacerRow(width = 16.dp)
+        MySpacerRow(width = horizontalPadding)
         Divider(modifier = Modifier.weight(1f))
-        MySpacerRow(width = 16.dp)
+        MySpacerRow(width = horizontalPadding)
     }
 }

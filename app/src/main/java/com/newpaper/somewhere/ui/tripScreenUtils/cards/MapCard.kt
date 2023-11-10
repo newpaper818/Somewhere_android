@@ -101,8 +101,10 @@ fun MapCard(
             cameraPositionState = cameraPositionState,
             userLocationEnabled = userLocationEnabled,
             mapSize = mapSize,
+            dateList = dateList,
+            dateIndex = dateIndex,
             spotList = spotList,
-            spot = currentSpot,
+            currentSpot = currentSpot,
             spotFrom = spotFrom,
             spotTo = spotTo
         )
@@ -135,86 +137,6 @@ fun MapCard(
             MySpacerColumn(height = 16.dp)
         }
     }
-
-
-
-
-
-
-
-
-    //=====================
-
-//    Card(
-//        modifier = modifier
-//            .clip(RoundedCornerShape(16.dp))
-//            .fillMaxWidth(),
-//        elevation = 0.dp
-//    ) {
-//        Column(
-//            modifier = Modifier.fillMaxWidth()
-//        ) {
-//
-//            Row {
-//                //Location title
-//                AnimatedVisibility(
-//                    visible = isEditMode,
-//                    enter = expandHorizontally(tween(400)),
-//                    exit = shrinkHorizontally(tween(400))
-//                ) {
-//                    Text(
-//                        text = stringResource(id = R.string.location_card_title),
-//                        style = titleTextStyle,
-//                        modifier = Modifier.padding(16.dp, 14.dp, 50.dp, 13.dp)
-//                    )
-//                }
-//
-//                //map buttons
-//                MapButtons(
-//                    isEditMode = isEditMode,
-//
-//                    spot = currentSpot,
-//                    spotFrom = spotFrom,
-//                    spotTo = spotTo,
-//                    cameraPositionState = cameraPositionState,
-//                    onMapClicked = onMapClicked,
-//
-//                    toggleIsEditLocation = toggleIsEditLocation,
-//                    setLocationNotMove = setLocation
-//                )
-//            }
-//
-//            //map
-//            if(currentSpot.spotType.isNotMove() && currentSpot.location != null
-//                || (currentSpot.spotType.isMove() && spotFrom?.location != null && spotTo?.location != null)) {
-//
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .height(390.dp)
-//                ) {
-//                    //map for spot
-//                    MapForSpot(
-//                        context = context,
-//                        cameraPositionState = cameraPositionState,
-//                        date = currentDate,
-//                        spot = currentSpot,
-//                        isFullScreen = false,
-//                        spotFrom = spotFrom,
-//                        spotTo = spotTo
-//                    )
-//                }
-//            }
-//            else if (!isEditMode){
-//                Text(
-//                    text = "No location",
-//                    style = bodyNullTextStyle,
-//                    modifier = Modifier.padding(16.dp, 14.dp)
-//                )
-//            }
-//        }
-//
-//    }
 }
 
 @Composable
@@ -265,18 +187,17 @@ fun MapSpotMapButtons(
                 onFullScreenClicked = onFullScreenClicked,
                 showSnackBar = showSnackBar
             )
-
-            MySpacerRow(width = 16.dp)
         }
-        else if (spot?.spotType?.isNotMove() == true){
+        else {
             EditAndDeleteLocationButtons(
+                editEnabled = spot?.spotType?.isNotMove() == true,
                 deleteEnabled = deleteEnabled,
                 toggleIsEditLocation = toggleIsEditLocation,
                 deleteLocation = deleteLocation
             )
-
-            MySpacerRow(width = 16.dp)
         }
+
+        MySpacerRow(width = 16.dp)
 
         SpotNavigateWithFocusOnToSpotButtons(
             toPrevSpotEnabled = toPrevSpotEnabled,
@@ -290,39 +211,6 @@ fun MapSpotMapButtons(
             showSnackBar = showSnackBar
         )
     }
-}
-
-@Composable
-//map buttons at [not edit]
-fun MapButtonsNotEdit(
-    spot: Spot?,
-    spotFrom: Spot?,
-    spotTo: Spot?,
-
-    fusedLocationClient: FusedLocationProviderClient,
-    mapSize: IntSize,
-    cameraPositionState: CameraPositionState,
-    setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
-    onFullScreenClicked: () -> Unit,
-    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit
-){
-    val focusOnToSpotEnabled =
-        if (spot == null) false
-        else
-            (spot.spotType.isMove() && spotFrom?.location != null && spotTo?.location != null
-            || spot.spotType.isNotMove() && spot.location != null)
-
-
-    val spotList =
-        if (spot == null) listOf()
-        else if (spot.spotType.isMove() && spotFrom != null && spotTo != null)  listOf(spotFrom, spotTo)
-        else listOf(spot)
-
-
-    //focus on to spot
-    FocusOnToSpotButton(mapSize, focusOnToSpotEnabled, cameraPositionState, spotList, showSnackBar)
-
-
 }
 
 //user location / full screen buttons
@@ -348,14 +236,18 @@ fun UserLocationAndFullScreenButtons(
 // edit location / delete location buttons
 @Composable
 fun EditAndDeleteLocationButtons(
+    editEnabled: Boolean,
     deleteEnabled: Boolean,
     toggleIsEditLocation: () -> Unit,
     deleteLocation: () -> Unit,
 ){
     MapButtonsRow {
         //edit location
-        IconButton(onClick = toggleIsEditLocation) {
-            DisplayIcon(icon = MyIcons.editLocation)
+        IconButton(
+            enabled = editEnabled,
+            onClick = toggleIsEditLocation
+        ) {
+            DisplayIcon(icon = MyIcons.editLocation, enabled = editEnabled)
         }
 
         //delete location
@@ -413,20 +305,6 @@ fun MapButtonsRow(
             .clip(CircleShape)
             .background(getColor(ColorType.BUTTON__MAP)),
         verticalAlignment = Alignment.CenterVertically
-    ) {
-        buttonsContent()
-    }
-}
-
-@Composable
-fun MapButtonsColumn(
-    buttonsContent: @Composable () -> Unit
-){
-    Column(
-        modifier = Modifier
-            .clip(CircleShape)
-            .background(getColor(ColorType.BUTTON__MAP)),
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         buttonsContent()
     }

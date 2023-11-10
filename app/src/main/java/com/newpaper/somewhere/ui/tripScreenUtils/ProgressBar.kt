@@ -75,7 +75,7 @@ fun DateListProgressBar(
     currentDateIdx: Int,
     dateTimeFormat: DateTimeFormat,
 
-    onClickDate: (dateId: Int) -> Unit
+    onClickDate: (dateIndex: Int) -> Unit
 ){
     LazyRow(
         state = progressBarState,
@@ -95,7 +95,7 @@ fun DateListProgressBar(
                 isFirst = it == dateList.first(),
                 isLast = it == dateList.last(),
                 onClickItem = {
-                    onClickDate(it.id)
+                    onClickDate(it.index)
                 },
                 pointColor = it.color.color,
                 lineColor = getColor(ColorType.PROGRESS_BAR__LINE_DEFAULT_MOVE)
@@ -124,26 +124,6 @@ fun SpotListProgressBar(
     onNextDateClick: (dateId: Int) -> Unit,
 ){
     val spot = spotList.getOrNull(currentSpotIdx)
-
-//    val coroutineScope = rememberCoroutineScope()
-
-//    var prevIdx by rememberSaveable{ mutableStateOf(initialIdx) }
-
-//    if (prevIdx != currentSpotIdx) {
-//
-//        coroutineScope.launch {
-//            val toIdx = if (
-//                currentSpotIdx >= 1 &&
-//                spotList[currentSpotIdx - 1].spotType.isMove()
-//                && spotList[currentSpotIdx].spotType.isNotMove()
-//            )
-//                currentSpotIdx - 1
-//            else currentSpotIdx
-//
-//            progressBarState.animateScrollToItem(toIdx)
-//        }
-//        prevIdx = currentSpotIdx
-//    }
 
     val moveIdx =
         if (spot?.spotType?.isMove() == true){
@@ -178,7 +158,7 @@ fun SpotListProgressBar(
             if (spotList.isNotEmpty()) {
                 val currentSpotSpotTypeIsMove = spotList[0].spotType.isMove()
                 val prevSpotSpotTypeIsMove =
-                    spotList[0].getPrevSpot(dateList, spotList, dateId)?.spotType?.isMove() ?: false
+                    spotList[0].getPrevSpot(dateList, dateId)?.spotType?.isMove() ?: false
 
                 Column(
                     modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
@@ -217,13 +197,13 @@ fun SpotListProgressBar(
                             moveIdx != null && (it.index == moveIdx || it.index == moveIdx + 2),
                     isLeftHighlight = moveIdx != null && it.index == moveIdx + 2,
                     isRightHighlight = moveIdx != null && it.index == moveIdx,
-                    isFirst = it == spotList.first() && it.getPrevSpot(dateList, spotList, dateId)?.spotType?.isNotMove() ?: true,
-                    isLast = it == spotList.last() && it.getNextSpot(dateList, spotList, dateId)?.spotType?.isNotMove() ?: true,
+                    isFirst = it == spotList.first() && it.getPrevSpot(dateList, dateId)?.spotType?.isNotMove() ?: true,
+                    isLast = it == spotList.last() && it.getNextSpot(dateList, dateId)?.spotType?.isNotMove() ?: true,
                     onClickItem = {
                         onClickSpot(it.index)
                     },
-                    prevSpotIsMove = it.getPrevSpot(dateList, spotList, dateId)?.spotType?.isMove() ?: false,
-                    nextSpotIsMove = it.getNextSpot(dateList, spotList, dateId)?.spotType?.isMove() ?: false
+                    prevSpotIsMove = it.getPrevSpot(dateList, dateId)?.spotType?.isMove() ?: false,
+                    nextSpotIsMove = it.getNextSpot(dateList, dateId)?.spotType?.isMove() ?: false
                 )
             }
         }
@@ -233,11 +213,7 @@ fun SpotListProgressBar(
             if (spotList.isNotEmpty()) {
                 val lastSpotIdx = spotList.lastIndexOf(spotList.last())
                 val currentSpotSpotTypeIsMove = spotList[lastSpotIdx].spotType.isMove()
-                val nextSpotSpotTypeIsMove = spotList[lastSpotIdx].getNextSpot(
-                    dateList,
-                    spotList,
-                    dateId
-                )?.spotType?.isMove() ?: false
+                val nextSpotSpotTypeIsMove = spotList[lastSpotIdx].getNextSpot(dateList, dateId)?.spotType?.isMove() ?: false
 
                 Column(
                     modifier = Modifier.height(PROGRESS_BAR_HEIGHT),

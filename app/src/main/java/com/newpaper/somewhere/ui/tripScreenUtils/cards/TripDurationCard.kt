@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.ui.tripScreenUtils.cards
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
@@ -19,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -143,7 +145,8 @@ fun TripDurationCard(
 
                 //start date > end date
                 Row(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Spacer(modifier = Modifier.weight(1f))
 
@@ -156,19 +159,21 @@ fun TripDurationCard(
 
                     Spacer(modifier = Modifier.weight(1f))
 
-                    // > icon
-                    DisplayIcon(MyIcons.dateRightArrow, color = n60)
+                    if (defaultDateRange.start != defaultDateRange.endInclusive) {
+                        // > icon
+                        DisplayIcon(MyIcons.rightArrowTo)
 
-                    Spacer(modifier = Modifier.weight(1f))
+                        Spacer(modifier = Modifier.weight(1f))
 
-                    //end date
-                    Text(
-                        text = endDateText1,
-                        style = bodyTextStyle1,
-                        textAlign = TextAlign.Center
-                    )
-                    
-                    Spacer(modifier = Modifier.weight(1f))
+                        //end date
+                        Text(
+                            text = endDateText1,
+                            style = bodyTextStyle1,
+                            textAlign = TextAlign.Center
+                        )
+
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
                 }
             }
         }

@@ -18,7 +18,7 @@ val USER_LOCATION_PERMISSION_LIST = listOf(
     android.Manifest.permission.ACCESS_FINE_LOCATION
 )
 
-val USER_LOCATION_PERMISSION_FINE = android.Manifest.permission.ACCESS_FINE_LOCATION
+const val USER_LOCATION_PERMISSION_FINE = android.Manifest.permission.ACCESS_FINE_LOCATION
 val USER_LOCATION_PERMISSION_COARSE = android.Manifest.permission.ACCESS_COARSE_LOCATION
 
 val USER_LOCATION_PERMISSION_ARRAY = arrayOf(
@@ -112,32 +112,32 @@ fun checkPermissionsIsGranted(
     return permissionsState.allPermissionsGranted
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
-@Composable
-fun requestPermissions(
-    coroutineScope: CoroutineScope,
-    permissionsState: MultiplePermissionsState
-): Boolean{
-
-    //permissionsState.launchMultiplePermissionRequest()
-
-
-    val requestPermissionLauncher = rememberLauncherForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()
-        ){ permissionsMap ->
-            val areGranted = permissionsMap.values.reduce { acc, next -> acc && next }
-
-            if (areGranted){
-                Log.d("test", "granted")
-            }
-            else{
-                Log.d("test", "denied")
-            }
-        }
-
-
-    return checkPermissionsIsGranted(permissionsState)
-}
+//@OptIn(ExperimentalPermissionsApi::class)
+//@Composable
+//fun requestPermissions(
+//    coroutineScope: CoroutineScope,
+//    permissionsState: MultiplePermissionsState
+//): Boolean{
+//
+//    //permissionsState.launchMultiplePermissionRequest()
+//
+//
+//    val requestPermissionLauncher = rememberLauncherForActivityResult(
+//            ActivityResultContracts.RequestMultiplePermissions()
+//        ){ permissionsMap ->
+//            val areGranted = permissionsMap.values.reduce { acc, next -> acc && next }
+//
+//            if (areGranted){
+//                Log.d("test", "granted")
+//            }
+//            else{
+//                Log.d("test", "denied")
+//            }
+//        }
+//
+//
+//    return checkPermissionsIsGranted(permissionsState)
+//}
 
 //@OptIn(ExperimentalPermissionsApi::class)
 //@Composable

@@ -96,64 +96,6 @@ val Typography = Typography(
     )
 )
 
-//val Typography = Typography(
-//    h1 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Bold,
-//        fontSize = 24.sp
-//    ),
-//    h2 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        fontSize = 22.sp
-//    ),
-//    h3 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        fontSize = 20.sp
-//    ),
-//    h4 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        fontSize = 18.sp
-//    ),
-//    h5 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        color = gray,
-//        fontSize = 16.sp
-//    ),
-//    h6 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        fontSize = 14.sp
-//    ),
-//
-//    subtitle1 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        color = gray,
-//        fontSize = 18.sp
-//    ),
-//    subtitle2 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        color = gray,
-//        fontSize = 16.sp
-//    ),
-//
-//    body1 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        fontSize = 18.sp
-//    ),
-//    body2 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        fontSize = 16.sp
-//    )
-//)
-
 enum class TextType{
 
     TOP_BAR__TITLE,
@@ -200,7 +142,11 @@ enum class TextType{
     DIALOG__BODY_SMALL,
     DIALOG__BUTTON,
 
-
+    //MAP
+    MAP__SEARCH,
+    MAP__SEARCH_PLACEHOLDER,
+    MAP__SEARCH_LIST_TITLE,
+    MAP__SEARCH_LIST_SUBTITLE,
 
 
 
@@ -260,6 +206,12 @@ fun getTextStyle(textType: TextType): TextStyle {
         DIALOG__BODY_NULL           -> MaterialTheme.typography.bodyLarge.copy(color = n60)
         DIALOG__BODY_SMALL          -> MaterialTheme.typography.bodyMedium
         DIALOG__BUTTON              -> MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
+
+        //MAP
+        MAP__SEARCH                 -> MaterialTheme.typography.displayMedium
+        MAP__SEARCH_PLACEHOLDER     -> MaterialTheme.typography.displayMedium.copy(color = n60)
+        MAP__SEARCH_LIST_TITLE      -> MaterialTheme.typography.bodyMedium
+        MAP__SEARCH_LIST_SUBTITLE   -> MaterialTheme.typography.labelMedium.copy(color = n60)
 
         // SETTING =================================================================================
         MAIN                        -> MaterialTheme.typography.headlineMedium

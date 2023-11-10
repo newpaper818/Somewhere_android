@@ -3,6 +3,7 @@ package com.newpaper.somewhere.ui.tripScreenUtils.cards
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,7 @@ import com.newpaper.somewhere.ui.commonScreenUtils.ClickableBox
 import com.newpaper.somewhere.ui.commonScreenUtils.MySpacerRow
 import com.newpaper.somewhere.ui.commonScreenUtils.DisplayIcon
 import com.newpaper.somewhere.ui.commonScreenUtils.MyIcon
+import com.newpaper.somewhere.ui.commonScreenUtils.MyIcons
 import com.newpaper.somewhere.ui.theme.TextType
 import com.newpaper.somewhere.ui.theme.getTextStyle
 
@@ -85,7 +87,6 @@ fun InformationCard(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun IconTextRow(
     isEditMode: Boolean,
@@ -96,26 +97,16 @@ private fun IconTextRow(
 
     onClick: (() -> Unit)? = null
 ) {
+    val enabled = isEditMode && onClick != null
+
     ClickableBox(
         shape = MaterialTheme.shapes.small,
         modifier = Modifier.height(48.dp),
-        enabled = isEditMode && onClick != null,
+        enabled = enabled,
         onClick = {
             onClick?.let { it() }
         }
     ) {
-//
-//    }
-//    Card (
-//        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-//        shape = MaterialTheme.shapes.small,
-//        modifier = Modifier.height(48.dp),
-//        enabled = isEditMode && onClick != null,
-//        onClick = {
-//            onClick?.let { it() }
-//        },
-//
-//    ){
         Row(
             modifier = Modifier
                 .padding(8.dp)
@@ -135,6 +126,12 @@ private fun IconTextRow(
                 text = text,
                 style = textStyle
             )
+
+            if (enabled) {
+                Spacer(modifier = Modifier.weight(1f))
+
+                DisplayIcon(icon = MyIcons.clickableItem)
+            }
         }
     }
 }

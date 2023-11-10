@@ -23,6 +23,7 @@
     <string name="vnd_code" translatable="false">VND</string>
     <string name="thb_code" translatable="false">THB</string>
     <string name="usd_code" translatable="false">USD</string>
+    <string name="twd_code" translatable="false">TWD</string>
 
     <string name="aud_name">Australian dollar</string>
     <string name="cad_name">Canadian dollar</string>
@@ -34,6 +35,7 @@
     <string name="vnd_name">Vietnam dong</string>
     <string name="thb_name">Thai baht</string>
     <string name="usd_name">United States dollar</string>
+    <string name="twd_name">New Taiwan dollar</string>
 
     <!--DateTime.kt-->
     <string name="ymd">YMD</string>
@@ -131,6 +133,7 @@
     <string name="edit">Edit</string>
 
     <string name="image_loading_error">Image loading error</string>
+    <string name="set_color">Set color</string>
     <string name="selected_color">Selected color</string>
 
     <string name="previous_date">Previous date</string>
@@ -164,6 +167,8 @@
     <string name="fullscreen_map">Fullscreen map</string>
     <string name="my_location">My location</string>
     <string name="disabled_my_location">My location disabled</string>
+    <string name="clear_text">Clear text</string>
+    <string name="search_location">Search location</string>
     <string name="expand_control_box">Expand control box</string>
     <string name="collapse_control_box">Collapse control box</string>
 

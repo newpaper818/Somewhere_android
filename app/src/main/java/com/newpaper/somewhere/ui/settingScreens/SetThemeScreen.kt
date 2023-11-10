@@ -31,7 +31,6 @@ object SetThemeScreenDestination: NavigationDestination {
     override var title = ""
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetThemeScreen(
     theme: Theme,

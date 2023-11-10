@@ -22,48 +22,6 @@ import com.newpaper.somewhere.ui.theme.TextType
 import com.newpaper.somewhere.ui.theme.getTextStyle
 import com.newpaper.somewhere.ui.theme.white
 
-//@Composable
-//fun EditAndMapFAB(
-//    visible: Boolean,
-//    onEditClick: () -> Unit,
-//
-//    showMapFAB: Boolean,
-//    onMapClick: () -> Unit,
-//    isMapFABExpanded: Boolean,
-//    modifier: Modifier = Modifier
-//){
-//    AnimatedVisibility(
-//        visible = visible,
-//        enter = slideInHorizontally(
-//            animationSpec = tween(1000),
-//            initialOffsetX = { (it * 2) }
-//        ),
-//        exit = slideOutHorizontally(
-//            animationSpec = tween(1000),
-//            targetOffsetX = { (it * 2) }
-//        )
-//    ) {
-//        Column(
-//            horizontalAlignment = Alignment.End,
-//            modifier = modifier
-//        ) {
-//            FloatingActionButton(onClick = onEditClick) {
-//                DisplayIcon(icon = MyIcons.edit)
-//            }
-//
-//            if (showMapFAB) {
-//                MySpacerColumn(height = 16.dp)
-//
-//                //trip map floating button
-//                SeeOnMapExtendedFAB(
-//                    onClick = onMapClick,
-//                    expanded = isMapFABExpanded
-//                )
-//            }
-//        }
-//    }
-//}
-
 @Composable
 fun IconFAB(
     onClick: () -> Unit,

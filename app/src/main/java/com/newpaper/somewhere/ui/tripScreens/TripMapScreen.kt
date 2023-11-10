@@ -225,8 +225,6 @@ fun TripMapScreen(
                     }
                 ) { _->
 
-                    Log.d("padding", "$paddingValue")
-
                     //get map bottom padding
                     val bottomPadding: Float by animateFloatAsState(
                         if (bottomSheetState.bottomSheetState.currentValue == SheetValue.Expanded)
@@ -252,6 +250,7 @@ fun TripMapScreen(
                             isDarkMapTheme = isDarkMapTheme,
                             userLocationEnabled = userLocationEnabled,
                             cameraPositionState = cameraPositionState,
+                            dateList = currentTrip.dateList,
                             dateListWithShownMarkerList = dateWithShownMarkerList,
                             spotTypeGroupWithShownMarkerList = spotTypeGroupWithShownMarkerList,
                             firstFocusOnToSpot = {
@@ -326,6 +325,7 @@ fun TripMapScreen(
                             isDarkMapTheme = isDarkMapTheme,
                             userLocationEnabled = userLocationEnabled,
                             cameraPositionState = cameraPositionState,
+                            dateList = currentTrip.dateList,
                             dateListWithShownMarkerList = dateWithShownMarkerList,
                             spotTypeGroupWithShownMarkerList = spotTypeGroupWithShownMarkerList,
                             firstFocusOnToSpot = {
@@ -414,197 +414,6 @@ fun TripMapScreen(
         }
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    Scaffold(
-//        snackbarHost = { androidx.compose.material3.SnackbarHost(
-//            hostState = snackBarHostState,
-//            modifier = Modifier
-//                .padding(snackBarPaddingValues)
-//                .width(500.dp)
-//        ) },
-//    ) { paddingValue ->
-//
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .background(MaterialTheme.colorScheme.background)
-//                .padding(PaddingValues(0.dp, 0.dp, 0.dp, paddingValue.calculateBottomPadding()))
-//        ) {
-//
-//            //map
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .weight(1f)
-//                    .onSizeChanged {
-//                        mapSize = it
-//                    }
-//            ) {
-//                MapForTrip(
-//                    context = context,
-//                    isDarkMapTheme = isDarkMapTheme,
-//                    userLocationEnabled = userLocationEnabled,
-//                    cameraPositionState = cameraPositionState,
-//                    dateListWithShownMarkerList = dateWithShownMarkerList,
-//                    spotTypeGroupWithShownMarkerList = spotTypeGroupWithShownMarkerList,
-//                    firstFocusOnToSpot = {
-//                        focusOnToSpot(
-//                            mapSize,
-//                            coroutineScope,
-//                            dateWithShownMarkerList,
-//                            spotTypeGroupWithShownMarkerList,
-//                            cameraPositionState
-//                        )
-//                    }
-//                )
-//            }
-//
-//
-//            //control
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .background(getColor(ColorType.BACKGROUND))
-//                    .onSizeChanged {
-//                        controlBoxHeight = it.height
-//                    }
-//            ) {
-//
-//                Column(
-//                    modifier = Modifier
-//                ) {
-//                    MySpacerColumn(height = 8.dp)
-//
-//                    ButtonsRow(
-//                        isExpanded = isControlExpanded,
-//                        mapSize = mapSize,
-//                        onExpandButtonClicked = {
-//                            isControlExpanded = !isControlExpanded
-//                        },
-//
-//                        focusOnToTargetEnabled = focusOnToSpotEnabled,
-//
-//                        isDateShown = oneDateShown,
-//                        dateTimeFormat = dateTimeFormat,
-//
-//                        currentDateIndex = currentDateIndex,
-//
-//                        onOneDateClicked = {
-//                            val newDateShownList =
-//                                tripMapViewModel.updateDateWithShownMarkerListToCurrentDate()
-//                            focusOnToSpot(
-//                                mapSize,
-//                                coroutineScope,
-//                                newDateShownList,
-//                                spotTypeGroupWithShownMarkerList,
-//                                cameraPositionState
-//                            )
-//                            animateToDate(
-//                                coroutineScope,
-//                                isControlExpanded,
-//                                dateListState,
-//                                currentDateIndex
-//                            )
-//                        },
-//                        onPreviousDateClicked = {
-//                            val newCurrentDateIndex = tripMapViewModel.currentDateIndexToPrevious()
-//                            val newDateShownList =
-//                                tripMapViewModel.updateDateWithShownMarkerListToCurrentDate()
-//                            focusOnToSpot(
-//                                mapSize,
-//                                coroutineScope,
-//                                newDateShownList,
-//                                spotTypeGroupWithShownMarkerList,
-//                                cameraPositionState
-//                            )
-//                            animateToDate(
-//                                coroutineScope,
-//                                isControlExpanded,
-//                                dateListState,
-//                                newCurrentDateIndex
-//                            )
-//                        },
-//                        onNextDateClicked = {
-//                            val newCurrentDateIndex = tripMapViewModel.currentDateIndexToNext()
-//                            val newDateShownList =
-//                                tripMapViewModel.updateDateWithShownMarkerListToCurrentDate()
-//                            focusOnToSpot(
-//                                mapSize,
-//                                coroutineScope,
-//                                newDateShownList,
-//                                spotTypeGroupWithShownMarkerList,
-//                                cameraPositionState
-//                            )
-//                            animateToDate(
-//                                coroutineScope,
-//                                isControlExpanded,
-//                                dateListState,
-//                                newCurrentDateIndex
-//                            )
-//                        },
-//
-//                        cameraPositionState = cameraPositionState,
-//                        dateListWithShownIconList = dateWithShownMarkerList,
-//                        spotTypeGroupWithShownIconList = spotTypeGroupWithShownMarkerList,
-//                        setUserLocationEnabled = setUserLocationEnabled,
-//                        fusedLocationClient = fusedLocationClient,
-//                        onBackButtonClicked = navigateUp,
-//                        showSnackBar = { text_, actionLabel_ ->
-//                            coroutineScope.launch {
-//                                snackBarHostState.showSnackbar(text_, actionLabel_)
-//                            }
-//                        }
-//                    )
-//
-//                    SpotTypeList(
-//                        spotTypeGroupWithShownIconList = spotTypeGroupWithShownMarkerList,
-//                        onSpotTypeItemClicked = { spotTypeGroup ->
-//                            tripMapViewModel.toggleSpotTypeGroupWithShownMarkerList(spotTypeGroup)
-//                        }
-//                    )
-//
-//                    MySpacerColumn(height = 8.dp)
-//
-//                    AnimatedVisibility(
-//                        visible = isControlExpanded,
-//                        enter =
-//                        expandVertically(
-//                            animationSpec = tween(durationMillis = 400),
-//                            expandFrom = Alignment.Top
-//                        ),
-//                        exit =
-//                        shrinkVertically(
-//                            animationSpec = tween(durationMillis = 400),
-//                            shrinkTowards = Alignment.Top
-//                        )
-//                    )
-//                    {
-//                        DateList(
-//                            dateTimeFormat = dateTimeFormat,
-//                            dateListState = dateListState,
-//                            dateListWithShownIconList = dateWithShownMarkerList,
-//                            onDateItemClicked = { date ->
-//                                tripMapViewModel.toggleOneDateShown(date)
-//                            }
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//    }
 }
 
 @Composable

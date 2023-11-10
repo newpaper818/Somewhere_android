@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
@@ -13,8 +13,8 @@ android {
         applicationId 'com.newpaper.somewhere'
         minSdk 26
         targetSdk 34
-        versionCode 1
-        versionName "1.0.0"
+        versionCode 2
+        versionName "1.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -39,7 +39,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.2.0'
+        kotlinCompilerExtensionVersion '1.5.0'
     }
     packagingOptions {
         resources {
@@ -50,17 +50,21 @@ android {
 
 dependencies {
     // Import the Compose BOM
-    implementation platform('androidx.compose:compose-bom:2023.01.00')
-
+    implementation platform('androidx.compose:compose-bom:2023.10.01')
+    //ui
     implementation "androidx.compose.ui:ui"
+    //preview
     implementation "androidx.compose.ui:ui-tooling"
     implementation "androidx.compose.ui:ui-tooling-preview"
+    //material icon
     implementation "androidx.compose.material:material-icons-extended"
+    //material 3
     implementation "androidx.compose.material3:material3"
     implementation "androidx.compose.material3:material3-window-size-class"
 
+
     //core
-    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.core:core-ktx:1.12.0'
 
     //lifecycle
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
@@ -77,29 +81,18 @@ dependencies {
     //room
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
+    ksp "androidx.room:room-compiler:$room_version"
 
     //moshi serialization json
     implementation("com.squareup.moshi:moshi:$moshi_version")
-    //implementation("com.squareup.moshi:moshi-kotlin-codegen:$moshi_version")
-    kapt("com.squareup.moshi:moshi-kotlin-codegen:$moshi_version")
-    //implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:$moshi_version")
 
-
-    //dialog
-    implementation "com.maxkeppeler.sheets-compose-dialogs:core:$dialog_version"
-    implementation "com.maxkeppeler.sheets-compose-dialogs:calendar:$dialog_version"
-    implementation "com.maxkeppeler.sheets-compose-dialogs:date-time:$dialog_version"
-    implementation "com.maxkeppeler.sheets-compose-dialogs:clock:$dialog_version"
-    implementation "com.maxkeppeler.sheets-compose-dialogs:option:$dialog_version"
-    implementation "com.maxkeppeler.sheets-compose-dialogs:input:$dialog_version"
-    implementation "com.maxkeppeler.sheets-compose-dialogs:color:$dialog_version"
 
     //status bar color
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.30.1"
 
     //navigation
-    implementation "androidx.navigation:navigation-compose:2.5.3"
+    implementation "androidx.navigation:navigation-compose:2.7.4"
     implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_version"
 
     //pager
@@ -109,15 +102,14 @@ dependencies {
     //permission
     implementation "com.google.accompanist:accompanist-permissions:$accompanist_version"
 
-    //google map
+    //google map / places
     implementation 'com.google.maps.android:maps-compose:2.11.0'
-    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'com.google.android.gms:play-services-maps:18.2.0'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.google.android.libraries.places:places:3.2.0'
 
     //image
     implementation "io.coil-kt:coil-compose:2.4.0"
-//    implementation "com.github.bumptech.glide:compose:1.0.0-beta01"
-//    implementation "com.github.skydoves:landscapist-glide:2.2.10"
 
     //splash screen
     implementation "androidx.core:core-splashscreen:1.0.1"
@@ -127,11 +119,12 @@ dependencies {
 
 
 
-    //
+    //TEST
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
+    //from compose bom
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4"
+    debugImplementation "androidx.compose.ui:ui-tooling"
+    debugImplementation "androidx.compose.ui:ui-test-manifest"
 }

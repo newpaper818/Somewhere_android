@@ -1,6 +1,5 @@
 package com.newpaper.somewhere.ui.tripScreens
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -27,6 +26,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerScope
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -120,9 +120,9 @@ fun DateScreen(
     organizeAddedDeletedImages: (isClickSave: Boolean) -> Unit,
 
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
-    addNewSpot: (dateId: Int) -> Unit,
-    deleteSpot: (dateId: Int, spotId: Int) -> Unit,
-    reorderSpotList: (dateId: Int, currentIndex: Int, destinationIndex: Int) -> Unit,
+    addNewSpot: (dateIndex: Int) -> Unit,
+    deleteSpot: (dateIndex: Int, spotIndex: Int) -> Unit,
+    reorderSpotList: (dateIndex: Int, currentIndex: Int, destinationIndex: Int) -> Unit,
     saveTrip: () -> Unit,
 
     navigateUp: () -> Unit,
@@ -137,7 +137,7 @@ fun DateScreen(
     val focusManager = LocalFocusManager.current
 
     val showingTrip = if (isEditMode) tempTrip
-                      else            originalTrip
+    else            originalTrip
 
     val dateList = showingTrip.dateList
 
@@ -146,7 +146,8 @@ fun DateScreen(
     )
 
     val datePagerState = rememberPagerState(
-        initialPage = dateIndex
+        initialPage = dateIndex,
+        pageCount = { dateList.size }
     )
 
     val snackBarHostState = remember { SnackbarHostState() }
@@ -269,15 +270,15 @@ fun DateScreen(
                     dateList = dateList,
                     currentDateIdx = datePagerState.currentPage,
                     dateTimeFormat = dateTimeFormat,
-                    onClickDate = { toDateId ->
+                    onClickDate = { toDateIndex ->
                         //progress bar animate
                         coroutineScope.launch {
-                            progressBarState.animateScrollToItem(toDateId)
+                            progressBarState.animateScrollToItem(toDateIndex)
                         }
 
                         //page animate
                         coroutineScope.launch {
-                            datePagerState.animateScrollToPage(toDateId)
+                            datePagerState.animateScrollToPage(toDateIndex)
                         }
                     }
                 )
@@ -285,58 +286,59 @@ fun DateScreen(
                 MySpacerColumn(height = 8.dp)
 
                 //spot pages
+                //pageIndex == dateOrderId
                 HorizontalPager(
-                    pageCount = dateList.size,
                     state = datePagerState,
-//                    beyondBoundsPageCount = 1,
-                    modifier = Modifier.weight(1f)
-                ) { pageIndex ->    //pageIndex == dateOrderId
+                    modifier = Modifier.weight(1f),
+                    pageContent =  {pageIndex ->
+                        //pageIndex == dateOrderId
 
-                    DatePage(
-                        isEditMode = isEditMode,
-                        showingTrip = showingTrip,
-                        dateIndex = pageIndex,
-                        currentDate = dateList[pageIndex],
-                        timeFormat = dateTimeFormat.timeFormat,
+                        DatePage(
+                            isEditMode = isEditMode,
+                            showingTrip = showingTrip,
+                            dateIndex = pageIndex,
+                            currentDate = dateList[pageIndex],
+                            timeFormat = dateTimeFormat.timeFormat,
 
-                        focusManager = focusManager,
-                        snackBarHostState = snackBarHostState,
+                            focusManager = focusManager,
+                            snackBarHostState = snackBarHostState,
 
-                        setShowBottomSaveCancelBar = {
-                            showBottomSaveCancelBar = it
-                        },
-                        onErrorCountChange = { plusError ->
-                            if (plusError) errorCount ++
-                            else    errorCount --
-                        },
-                        updateTripState = updateTripState,
+                            setShowBottomSaveCancelBar = {
+                                showBottomSaveCancelBar = it
+                            },
+                            onErrorCountChange = { plusError ->
+                                if (plusError) errorCount++
+                                else errorCount--
+                            },
+                            updateTripState = updateTripState,
 
-                        addNewSpot = { dateId ->
-                            addNewSpot(dateId)
-                        },
-                        deleteSpot = { dateIndex, spotIndex ->
-                            deleteSpot(dateIndex, spotIndex)
-                            addDeletedImages(dateList[dateIndex].spotList[spotIndex].imagePathList)
-                        },
-                        navigateToSpot = navigateToSpot,
-                        setIsFABExpanded = {
-                            isFABExpanded = it
-                        },
-                        showSnackBar = { text_, actionLabel_, duration_ ->
-                            coroutineScope.launch {
-                                snackBarHostState.showSnackbar(
-                                    message = text_,
-                                    actionLabel = actionLabel_,
-                                    duration = duration_
-                                )
-                            }
-                        },
-                        reorderSpotList = { currentIndex, destinationIndex ->
-                            reorderSpotList(pageIndex, currentIndex, destinationIndex)
-                        },
-                        modifier = modifier.padding(16.dp, 0.dp)
-                    )
-                }
+                            addNewSpot = { dateId ->
+                                addNewSpot(dateId)
+                            },
+                            deleteSpot = { dateIndex, spotIndex ->
+                                deleteSpot(dateIndex, spotIndex)
+                                addDeletedImages(dateList[dateIndex].spotList[spotIndex].imagePathList)
+                            },
+                            navigateToSpot = navigateToSpot,
+                            setIsFABExpanded = {
+                                isFABExpanded = it
+                            },
+                            showSnackBar = { text_, actionLabel_, duration_ ->
+                                coroutineScope.launch {
+                                    snackBarHostState.showSnackbar(
+                                        message = text_,
+                                        actionLabel = actionLabel_,
+                                        duration = duration_
+                                    )
+                                }
+                            },
+                            reorderSpotList = { currentIndex, destinationIndex ->
+                                reorderSpotList(pageIndex, currentIndex, destinationIndex)
+                            },
+                            modifier = modifier.padding(16.dp, 0.dp)
+                        )
+                    }
+                )
             }
 
             //bottom save cancel bar
@@ -479,10 +481,10 @@ fun DatePage(
         if (currentDate.spotList.isNotEmpty()) {
 
             val firstSpotShowUpperLine = spotList.first().spotType.isMove()
-                || spotList[0].getPrevSpot(dateList, spotList, dateIndex)?.spotType?.isMove() ?: false
+                || spotList[0].getPrevSpot(dateList, dateIndex)?.spotType?.isMove() ?: false
 
             val lastSpotShowLowerLine = spotList.last().spotType.isMove()
-                    || spotList[spotList.indexOf(spotList.last())].getNextSpot(dateList, spotList, dateIndex)?.spotType?.isMove() ?: false
+                    || spotList[spotList.indexOf(spotList.last())].getNextSpot(dateList, dateIndex)?.spotType?.isMove() ?: false
 
             //spot type card list horizontal
             // 3 Tour / 2 Food / 5 Move ...
@@ -588,6 +590,7 @@ fun DatePage(
                                 setShowBottomSaveCancelBar(true)
                                 spot.setSpotType(
                                     showingTrip,
+                                    dateList,
                                     dateIndex,
                                     updateTripState,
                                     newSpotType
@@ -607,7 +610,6 @@ fun DatePage(
                                 setShowBottomSaveCancelBar(true)
                             },
                             onConfirm = {newTime ->
-                                Log.d("timee", "$newTime")
                                 spot.setStartTime(showingTrip, dateIndex, updateTripState, newTime)
                                 showTimePicker = false
                                 setShowBottomSaveCancelBar(true)
@@ -695,7 +697,7 @@ fun DatePage(
                 //no chosen spot type
                 item {
                     MySpacerColumn(height = 16.dp)
-                    
+
                     NoChosenSpotTypeGroupText()
                 }
             }
@@ -841,11 +843,11 @@ fun SpotListItem(
 
         isFirstItem = spot.spotType.isNotMove()
                 && spot == spotList.first()
-                && spot.getPrevSpot(dateList, spotList, dateId)?.spotType?.isNotMove() ?: true,
+                && spot.getPrevSpot(dateList, dateId)?.spotType?.isNotMove() ?: true,
 
         isLastItem = spot.spotType.isNotMove()
                 && spot == spotList.last()
-                && spot.getNextSpot(dateList, spotList, dateId)?.spotType?.isNotMove() ?: true,
+                && spot.getNextSpot(dateList, dateId)?.spotType?.isNotMove() ?: true,
 
         deleteEnabled = true,
         dragEnabled = true,

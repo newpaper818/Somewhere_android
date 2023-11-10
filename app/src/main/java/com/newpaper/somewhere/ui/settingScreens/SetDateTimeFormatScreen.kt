@@ -180,14 +180,14 @@ private fun getFixedDateText(
     dateTimeFormat: DateTimeFormat
 ): String{
     //app release date
-    val localDate = LocalDate.of(2023,10,20)
+    val localDate = LocalDate.of(2023,10,22)
     return getDateText(localDate, dateTimeFormat, true)
 }
 
 private fun getFixedTimeText(
     dateTimeFormat: DateTimeFormat
 ): String{
-    val localTime = LocalTime.of(14,0)
+    val localTime = LocalTime.of(21,24)
     return getTimeText(localTime, dateTimeFormat.timeFormat)
 }
 

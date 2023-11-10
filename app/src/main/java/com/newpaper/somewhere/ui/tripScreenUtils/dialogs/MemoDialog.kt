@@ -56,15 +56,6 @@ fun MemoDialog(
                     }
                 }
             }
-        },
-//        buttonContent = {
-//            Row {
-//                //cancel button
-//                DialogButton(
-//                    text = stringResource(id = R.string.dialog_button_close),
-//                    onClick = onDismissRequest
-//                )
-//            }
-//        }
+        }
     )
 }

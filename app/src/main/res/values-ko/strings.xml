@@ -23,6 +23,8 @@
     <string name="vnd_name">베트남 동</string>
     <string name="thb_name">태국 바트</string>
     <string name="usd_name">미국 달러</string>
+    <string name="twd_name">신 대만 달러</string>
+
 
     <!--DateTime.kt-->
     <string name="ymd">년월일</string>
@@ -120,6 +122,7 @@
     <string name="edit">편집</string>
 
     <string name="image_loading_error">이미지 로딩 에러</string>
+    <string name="set_color">색 설정</string>
     <string name="selected_color">선택된 색</string>
 
     <string name="previous_date">이전 날짜</string>
@@ -153,6 +156,8 @@
     <string name="fullscreen_map">지도 화면에 채우기</string>
     <string name="my_location">현 위치</string>
     <string name="disabled_my_location">현 위치 사용 불가</string>
+    <string name="clear_text">모두 지우기</string>
+    <string name="search_location">위치 검색</string>
     <string name="expand_control_box">컨트롤 패널 열기</string>
     <string name="collapse_control_box">컨트롤 패널 닫기</string>
 
