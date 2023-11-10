@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
@@ -44,6 +45,7 @@ fun SomewhereTopAppBar(
     actionIcon2: MyIcon? = null,
     actionIcon2Onclick: () -> Unit = {},
 
+    useHorizontalLayoutTitles: Boolean = false,
     containerColor: Color = MaterialTheme.colorScheme.background,
     startPadding: Dp = SPACER_SMALL
 ) {
@@ -56,23 +58,50 @@ fun SomewhereTopAppBar(
                 if (navigationIcon == null)
                     MySpacerRow(width = startPadding)
 
-                Column(
-                    modifier = Modifier,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = title,
-                        style = getTextStyle(TextType.TOP_BAR__TITLE),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    if (subTitle != null) {
+                if (!useHorizontalLayoutTitles) {
+                    Column(
+                        modifier = Modifier,
+                        verticalArrangement = Arrangement.Center
+                    ) {
                         Text(
-                            text = subTitle,
-                            style = getTextStyle(TextType.TOP_BAR__SUBTITLE),
+                            text = title,
+                            style = getTextStyle(TextType.TOP_BAR__TITLE),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
+                        if (subTitle != null) {
+                            MySpacerColumn(height = 2.dp)
+                            
+                            Text(
+                                text = subTitle,
+                                style = getTextStyle(TextType.TOP_BAR__SUBTITLE),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                }
+                else {
+                    Row(
+                        modifier = Modifier,
+                        verticalAlignment = Alignment.Bottom
+                    ) {
+                        Text(
+                            text = title,
+                            style = getTextStyle(TextType.TOP_BAR__TITLE),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        if (subTitle != null) {
+                            MySpacerRow(width = SPACER_BIG)
+                            
+                            Text(
+                                text = subTitle,
+                                style = getTextStyle(TextType.TOP_BAR__SUBTITLE),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     }
                 }
             }

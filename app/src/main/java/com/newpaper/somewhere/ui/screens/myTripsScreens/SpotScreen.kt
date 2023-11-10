@@ -307,6 +307,7 @@ fun SpotScreen(
         //top bar
         topBar = {
             SomewhereTopAppBar(
+                useHorizontalLayoutTitles = use2Panes,
                 title = DateScreenDestination.title,
                 subTitle = subTitle,
 
