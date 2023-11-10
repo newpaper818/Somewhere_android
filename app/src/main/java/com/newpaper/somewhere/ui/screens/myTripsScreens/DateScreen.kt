@@ -202,8 +202,13 @@ fun DateScreen(
     //set top bar title
     DateScreenDestination.title =
         if (isEditMode) stringResource(id = R.string.edit_date)
-        else ""
-
+        else if (use2Panes) ""
+        else {
+            if (showingTrip.titleText == null || showingTrip.titleText == "")
+                stringResource(id = R.string.no_title)
+            else
+                showingTrip.titleText
+        }
 
     //for expanded fab animation
     var isFABExpanded by rememberSaveable { mutableStateOf(true) }
