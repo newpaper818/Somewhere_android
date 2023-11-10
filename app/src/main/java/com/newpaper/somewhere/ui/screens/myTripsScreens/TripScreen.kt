@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.ui.screens.myTripsScreens
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -72,6 +73,9 @@ import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.MAX_TITLE_LEN
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.TitleCard
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.DUMMY_SPACE_HEIGHT
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.MIN_CARD_HEIGHT
+import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.budgetItem
+import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.currencyItem
+import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.travelDistanceItem
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.dialogs.SetColorDialog
 import com.newpaper.somewhere.utils.SlideState
 import com.newpaper.somewhere.utils.dragAndDropVertical
@@ -376,16 +380,14 @@ fun TripScreen(
                     InformationCard(
                         isEditMode = isEditMode,
                         list = listOf(
-                            Triple(MyIcons.budget, showingTrip.getTotalBudgetText()) {
-                                showSetCurrencyDialog = true
-                                showBottomSaveCancelBar = false
-                                setShowTripBottomSaveCancelBar(false)
-                            },
-                            Triple(
-                                MyIcons.travelDistance,
-                                showingTrip.getTotalTravelDistanceText(),
-                                null
-                            )
+                            currencyItem.copy(
+                                text = showingTrip.getTotalBudgetText(),
+                                onClick = {
+                                    showSetCurrencyDialog = true
+                                    showBottomSaveCancelBar = false
+                                    setShowTripBottomSaveCancelBar(false)
+                                }),
+                            travelDistanceItem.copy(text =  showingTrip.getTotalTravelDistanceText())
                         )
                     )
 
@@ -471,7 +473,6 @@ fun TripScreen(
                                     showColorPickerDialog = false
                                     showBottomSaveCancelBar = true
                                     setShowTripBottomSaveCancelBar(true)
-
                                 },
                                 onOkClick = {
                                     showColorPickerDialog = false

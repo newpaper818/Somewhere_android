@@ -144,6 +144,7 @@
 
     <string name="date">Date</string>
     <string name="time">Time</string>
+    <string name="set_time">Set time</string>
 
     <string name="switch_to_text_input">Switch to text input</string>
     <string name="switch_to_touch_input">Switch to touch input</string>
@@ -205,7 +206,12 @@
     <string name="image_card_subtitle_add_images">+ Add images</string>
     <string name="image_card_body_no_image">No Image</string>
 
-    <!--InformationCard.kt none-->
+    <!--InformationCard.kt-->
+    <string name="move_date">move date</string>
+    <string name="select_spot_type">move date</string>
+    <string name="set_currency_type">set currency type</string>
+    <string name="set_budget">set budget</string>
+    <string name="set_travel_distance">set travel distance</string>
 
     <!--MapCard.kt none-->
 

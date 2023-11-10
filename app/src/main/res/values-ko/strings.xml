@@ -133,6 +133,7 @@
 
     <string name="date">날짜</string>
     <string name="time">시간</string>
+    <string name="set_time">시간 설정</string>
 
     <string name="switch_to_text_input">키보드 입력으로 변경</string>
     <string name="switch_to_touch_input">터치 입력으로 변경</string>
@@ -194,7 +195,12 @@
     <string name="image_card_subtitle_add_images">+ 사진 추가</string>
     <string name="image_card_body_no_image">사진 없음</string>
 
-    <!--InformationCard.kt none-->
+    <!--InformationCard.kt-->
+    <string name="move_date">날짜 이동</string>
+    <string name="select_spot_type">유형 선택</string>
+    <string name="set_currency_type">통화 유형 선택</string>
+    <string name="set_budget">예산 설정</string>
+    <string name="set_travel_distance">이동 거리 설정</string>
 
     <!--MapCard.kt none-->
 

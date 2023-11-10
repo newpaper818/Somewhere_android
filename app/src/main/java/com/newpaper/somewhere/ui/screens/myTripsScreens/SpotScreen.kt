@@ -81,6 +81,9 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.newpaper.somewhere.ui.navigation.DateScreenDestination
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MyScaffold
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SPACER_BIG
+import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.budgetItem
+import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.spotTypeItem
+import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.travelDistanceItem
 import com.newpaper.somewhere.ui.theme.TextType
 import com.newpaper.somewhere.ui.theme.getTextStyle
 import kotlinx.coroutines.CoroutineScope
@@ -1099,26 +1102,25 @@ fun SpotDetailPage(
                 InformationCard(
                     isEditMode = isEditMode,
                     list = listOf(
-                        Triple(MyIcons.category, currentSpot.getSpotTypeText()) {
-                            showSpotTypeDialog = true
-                            setShowBottomSaveCancelBar(false)
-                        },
-
-                        Triple(MyIcons.budget, currentSpot.getBudgetText(showingTrip)) {
-                            showBudgetDialog = true
-                            setShowBottomSaveCancelBar(false)
-                        },
-
-                        Triple(
-                            MyIcons.travelDistance, currentSpot.getDistanceText(),
-                            if (currentSpot.spotType.isNotMove()) {
-                                {
-                                    showDistanceDialog = true
-                                    setShowBottomSaveCancelBar(false)
+                        spotTypeItem.copy(text = currentSpot.getSpotTypeText(),
+                            onClick = {
+                                showSpotTypeDialog = true
+                                setShowBottomSaveCancelBar(false)
+                            }),
+                        budgetItem.copy(text = currentSpot.getBudgetText(showingTrip),
+                            onClick = {
+                                showBudgetDialog = true
+                                setShowBottomSaveCancelBar(false)
+                            }),
+                        travelDistanceItem.copy(text = currentSpot.getDistanceText(),
+                            onClick =
+                                if (currentSpot.spotType.isNotMove()) {
+                                    {
+                                        showDistanceDialog = true
+                                        setShowBottomSaveCancelBar(false)
+                                    }
                                 }
-                            }
-                            else null
-
+                                else null
                             )
                     )
                 )

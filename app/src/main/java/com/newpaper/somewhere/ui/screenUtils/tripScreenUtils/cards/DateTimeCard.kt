@@ -80,22 +80,17 @@ fun DateTimeCard(
                 modifier = modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(8.dp)) {
-                    AnimatedVisibility(
-                        visible = isEditMode,
-                        enter = expandVertically(animationSpec = tween(300)),
-                        exit = shrinkVertically(animationSpec = tween(300))
-                    ) {
-                        OneDateRow(
-                            setUseImePadding = setUseImePadding,
-                            setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
-                            dateList = dateList,
-                            currentDate = date,
-                            currentSpot = spot,
-                            dateTimeFormat = dateTimeFormat,
-                            isEditMode = isEditMode,
-                            changeDate = changeDate
-                        )
-                    }
+
+                    OneDateRow(
+                        setUseImePadding = setUseImePadding,
+                        setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
+                        dateList = dateList,
+                        currentDate = date,
+                        currentSpot = spot,
+                        dateTimeFormat = dateTimeFormat,
+                        isEditMode = isEditMode,
+                        changeDate = changeDate
+                    )
 
                     TwoTimesRow(
                         setUseImePadding = setUseImePadding,
@@ -124,8 +119,6 @@ private fun OneDateRow(
     dateTimeFormat: DateTimeFormat,
     isEditMode: Boolean,
     changeDate: (dateId: Int) -> Unit,
-
-    defaultTextStyle: TextStyle = getTextStyle(TextType.CARD__BODY),
 ){
     val dateTitle = currentDate.titleText
 
@@ -155,43 +148,15 @@ private fun OneDateRow(
         )
     }
 
-    val modifier =
-        if (isEditMode){
-            Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(8.dp))
-                .clickable {
-                    showSelDateDialog = true
-                    setShowBottomSaveCancelBar(false)
-                }
-        }
-        else Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-
-
-    Card(
-        modifier = modifier
-    ) {
-        Row(
-            modifier = Modifier.padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier.size(30.dp),
-                contentAlignment = Alignment.Center
-            ){
-                DisplayIcon(icon = MyIcons.date)
-            }
-
-            MySpacerRow(width = 16.dp)
-
-            Text(
-                text = dateText,
-                style = defaultTextStyle
-            )
-        }
-    }
+    IconTextRow(
+        isVisible = isEditMode,
+        isClickable = true,
+        informationItem = dateItem.copy(text = dateText,
+            onClick = {
+                showSelDateDialog = true
+                setShowBottomSaveCancelBar(false)
+            })
+    )
 }
 
 @Composable

@@ -6,6 +6,10 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -85,12 +89,13 @@ import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.FilterCards
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.TitleWithColorCard
 import com.newpaper.somewhere.ui.theme.TextType
 import com.newpaper.somewhere.ui.theme.getTextStyle
-import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.AnimatedBottomSaveCancelBar
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.SeeOnMapExtendedFAB
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.ADDITIONAL_HEIGHT
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.MAX_TITLE_LENGTH
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.DUMMY_SPACE_HEIGHT
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.MIN_CARD_HEIGHT
+import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.budgetItem
+import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.travelDistanceItem
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.dialogs.SetSpotTypeDialog
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.dialogs.SetTimeDialog
 import com.newpaper.somewhere.utils.SlideState
@@ -467,17 +472,27 @@ fun DatePage(
 
         //budget, travel distance info card
         item {
-            InformationCard(
-                list = listOf(
-                    Pair(MyIcons.budget, currentDate.getTotalBudgetText(showingTrip)),
-                    Pair(
-                        MyIcons.travelDistance,
-                        currentDate.getTotalTravelDistanceText(showingTrip)
+            AnimatedVisibility(
+                visible = !isEditMode,
+                enter = scaleIn(animationSpec = tween(300))
+                        + expandVertically(animationSpec = tween(300))
+                        + fadeIn(animationSpec = tween(300)),
+                exit = scaleOut(animationSpec = tween(300))
+                        + shrinkVertically(animationSpec = tween(300))
+                        + fadeOut(animationSpec = tween(300))
+            ) {
+                Column {
+                    InformationCard(
+                        isEditMode = false,
+                        list = listOf(
+                            budgetItem.copy(text = currentDate.getTotalBudgetText(showingTrip)),
+                            travelDistanceItem.copy(text = currentDate.getTotalTravelDistanceText(showingTrip))
+                        )
                     )
-                )
-            )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
         }
 
         //memo card
@@ -849,7 +864,7 @@ fun SpotListItem(
         else null,
         iconTextColor = spot.spotType.group.color.onColor,
 
-        sideTextPlaceHolderIcon = MyIcons.time,
+        sideTextPlaceHolderIcon = MyIcons.setTime,
         sideText = spot.getStartTimeText(timeFormat) ?: "",
         mainText = spot.titleText,
         expandedText = spot.getExpandedText(trip, isEditMode),

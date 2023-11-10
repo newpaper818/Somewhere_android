@@ -225,7 +225,7 @@ fun SpotListProgressBar(
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
-                            .width(10.dp)
+                            .width(spacerValue)
                             .height(25.dp)
                     ) {
                         Line(
