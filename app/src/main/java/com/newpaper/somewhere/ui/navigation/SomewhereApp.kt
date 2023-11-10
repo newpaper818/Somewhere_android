@@ -192,7 +192,6 @@ fun SomewhereApp(
 
 
 
-
     ScreenLayout(
         showNavigationBar = showNavigationBar,
         windowSizeClass = windowSizeClass,
