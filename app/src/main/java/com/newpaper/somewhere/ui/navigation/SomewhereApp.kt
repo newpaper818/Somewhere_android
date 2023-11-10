@@ -168,6 +168,31 @@ fun SomewhereApp(
             appUiState.currentScreen == AboutScreenDestination
         }
 
+//    LaunchedEffect(windowSizeClass.use2Panes){
+//        if (appUiState.currentScreen == DateScreenDestination)
+//            appViewModel.updateCurrentScreen(TripScreenDestination)
+//    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     ScreenLayout(
         showNavigationBar = showNavigationBar,
         windowSizeClass = windowSizeClass,
@@ -213,7 +238,6 @@ fun SomewhereApp(
                         spacerValue = windowSizeClass.spacerValue,
                         isEditMode = tripUiState.isEditMode,
                         scrollState = myTripsScrollState,
-//                    parentPaddingValues = ,
                         dateTimeFormat = appUiState.dateTimeFormat,
                         changeEditMode = { tripViewModel.toggleEditMode(it) },
                         addDeletedImages = { newImages ->
@@ -229,8 +253,7 @@ fun SomewhereApp(
                             tripViewModel.toggleIsNewTrip(isNewTrip)
                             navController.navigate(TripScreenDestination.route)
                         },
-                        appViewModel = appViewModel,
-//                    modifier = modifier
+                        appViewModel = appViewModel
                     )
                 }
 
@@ -642,8 +665,24 @@ fun SomewhereApp(
                 }
             }
 
+
+
+
+
+
+
+
+
+
+
             //====================================================================================================================
             //====================================================================================================================
+
+
+
+
+
+
 
             //2 panes (large screen)
             else{
@@ -679,8 +718,7 @@ fun SomewhereApp(
                             tripViewModel.toggleIsNewTrip(isNewTrip)
                             navController.navigate(TripScreenDestination.route)
                         },
-                        appViewModel = appViewModel,
-//                    modifier = modifier
+                        appViewModel = appViewModel
                     )
                 }
 
@@ -820,6 +858,180 @@ fun SomewhereApp(
                                 },
 
                                 navigateUp = {
+                                    navigateUp()
+                                    tripViewModel.toggleIsNewTrip(false)
+                                },
+                                navigateToImage = { imageList, initialImageIndex ->
+                                    tripViewModel.updateImageListAndInitialImageIndex(
+                                        imageList,
+                                        initialImageIndex
+                                    )
+                                    navController.navigate(ImageScreenDestination.route)
+                                },
+                                navigateToDate = { dateIndex ->
+                                    tripViewModel.toggleIsNewTrip(false)
+                                    tripViewModel.updateId(dateIndex = dateIndex)
+//                                    navController.navigate(DateScreenDestination.route)
+                                },
+                                navigateToTripMap = {
+                                    navController.navigate(TripMapScreenDestination.route)
+                                    tripViewModel.toggleIsNewTrip(false)
+                                },
+                                navigateUpAndDeleteTrip = { deleteTrip ->
+                                    navigateUp()
+                                    coroutineScope.launch {
+                                        tripViewModel.deleteTrip(deleteTrip)
+                                        appViewModel.updateAppUiStateFromRepository()
+                                    }
+                                },
+
+                                updateTripState = { toTempTrip, trip ->
+                                    tripViewModel.updateTripState(toTempTrip, trip)
+                                },
+                                updateTripDurationAndTripState = { toTempTrip, startDate, endDate ->
+                                    tripViewModel.updateTripDurationAndTripState(
+                                        toTempTrip,
+                                        startDate,
+                                        endDate
+                                    )
+                                },
+
+                                addAddedImages = { newImages ->
+                                    tripViewModel.addAddedImages(newImages)
+                                },
+                                addDeletedImages = { newImages ->
+                                    tripViewModel.addDeletedImages(newImages)
+                                },
+                                organizeAddedDeletedImages = { isClickSave ->
+                                    tripViewModel.organizeAddedDeletedImages(context, isClickSave)
+                                },
+                                reorderTripImageList = { currentIndex, destinationIndex ->
+                                    tripViewModel.reorderTripImageList(
+                                        currentIndex,
+                                        destinationIndex
+                                    )
+                                },
+                                reorderDateList = { currentIndex, destinationIndex ->
+                                    tripViewModel.reorderDateList(currentIndex, destinationIndex)
+                                },
+
+                                saveTrip = {
+                                    coroutineScope.launch {
+                                        tripViewModel.saveTrip(
+                                            updateAppUiState = {
+                                                coroutineScope.launch { appViewModel.updateAppUiStateFromRepository() }
+                                            },
+                                            deleteNotEnabledDate = true
+                                        )
+                                    }
+                                },
+                                modifier = Modifier.weight(1f)
+                            )
+
+                            DateScreen(
+                                showTripBottomSaveCancelBar = showTripBottomSaveCancelBar,
+                                use2Panes = true,
+                                startSpacerValue = windowSizeClass.spacerValue / 2,
+                                endSpacerValue = windowSizeClass.spacerValue,
+                                isEditMode = tripUiState.isEditMode,
+
+                                originalTrip = tripUiState.trip!!,
+                                tempTrip = tripUiState.tempTrip!!,
+                                dateIndex = tripUiState.dateIndex ?: 0,
+
+                                dateTimeFormat = appUiState.dateTimeFormat,
+                                changeEditMode = {
+                                    tripViewModel.toggleEditMode(it)
+                                },
+
+                                addAddedImages = { newImages ->
+                                    tripViewModel.addAddedImages(newImages)
+                                },
+                                addDeletedImages = { newImages ->
+                                    tripViewModel.addDeletedImages(newImages)
+                                },
+                                organizeAddedDeletedImages = { isClickSave ->
+                                    tripViewModel.organizeAddedDeletedImages(context, isClickSave)
+                                },
+
+                                updateTripState = { toTempTrip, trip ->
+                                    tripViewModel.updateTripState(toTempTrip, trip)
+                                },
+
+                                addNewSpot = { dateId ->
+                                    tripViewModel.addNewSpot(dateId)
+                                },
+                                deleteSpot = { dateId, spotId ->
+                                    tripViewModel.deleteSpot(dateId, spotId)
+                                },
+                                reorderSpotList = { dateId, currentIndex, destinationIndex ->
+                                    tripViewModel.reorderSpotList(
+                                        dateId,
+                                        currentIndex,
+                                        destinationIndex
+                                    )
+                                },
+                                saveTrip = {
+                                    coroutineScope.launch {
+                                        tripViewModel.saveTrip({
+                                            coroutineScope.launch { appViewModel.updateAppUiStateFromRepository() }
+                                        })
+                                    }
+                                },
+
+                                navigateUp = {
+                                    navigateUp()
+                                },
+                                navigateToSpot = { dateId, spotId ->
+                                    tripViewModel.updateId(dateIndex = dateId, spotIndex = spotId)
+                                    navController.navigate(SpotScreenDestination.route)
+                                },
+                                navigateToDateMap = {
+                                    navController.navigate(TripMapScreenDestination.route)
+                                    tripViewModel.toggleIsNewTrip(false)
+                                },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                }
+
+                // TRIP / DATE =====================================================================
+                composable(
+                    route = DateScreenDestination.route,
+                    enterTransition = { enterTransition },
+                    exitTransition = { exitTransition },
+                    popEnterTransition = { popEnterTransition },
+                    popExitTransition = { popExitTransition }
+                ) {
+                    //update current screen
+                    LaunchedEffect(Unit) {
+                        appViewModel.updateCurrentScreen(TripScreenDestination)
+                    }
+
+                    var showTripBottomSaveCancelBar by rememberSaveable{ mutableStateOf(true) }
+
+                    if (tripUiState.trip != null && tripUiState.tempTrip != null) {
+                        Row {
+                            TripScreen(
+                                setShowTripBottomSaveCancelBar = { showTripBottomSaveCancelBar = it},
+                                use2Panes = true,
+                                startSpacerValue = windowSizeClass.spacerValue,
+                                endSpacerValue = windowSizeClass.spacerValue / 2,
+                                isEditMode = tripUiState.isEditMode,
+
+                                originalTrip = tripUiState.trip!!,
+                                tempTrip = tripUiState.tempTrip!!,
+                                isNewTrip = tripUiState.isNewTrip,
+
+                                dateTimeFormat = appUiState.dateTimeFormat,
+
+                                changeEditMode = {
+                                    tripViewModel.toggleEditMode(it)
+                                },
+
+                                navigateUp = {
+                                    navController.popBackStack()
                                     navigateUp()
                                     tripViewModel.toggleIsNewTrip(false)
                                 },
