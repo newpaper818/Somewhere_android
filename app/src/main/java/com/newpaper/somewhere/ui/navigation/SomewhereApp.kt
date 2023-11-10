@@ -217,44 +217,184 @@ fun SomewhereApp(
             startDestination = MyTripsScreenDestination.route
         ) {
 
-            //single pane (phone)
-            if (!windowSizeClass.use2Panes){
-                // MY TRIPS  ===========================================================================
-                composable(
-                    route = MyTripsScreenDestination.route,
-                    enterTransition = { noEnterTransition },
-                    exitTransition = { exitTransition },
-                    popEnterTransition = { popEnterTransition },
-                    popExitTransition = { popExitTransition }
-                ) {
-                    LaunchedEffect(Unit) {
-                        appViewModel.updateCurrentScreen(MyTripsScreenDestination)
-                    }
 
-                    val myTripsScrollState = rememberLazyListState()
+            //use at any screen size
+            // MY TRIPS  ===========================================================================
+            composable(
+                route = MyTripsScreenDestination.route,
+                enterTransition = { noEnterTransition },
+                exitTransition = { exitTransition },
+                popEnterTransition = { popEnterTransition },
+                popExitTransition = { popExitTransition }
+            ) {
+                LaunchedEffect(Unit) {
+                    appViewModel.updateCurrentScreen(MyTripsScreenDestination)
+                }
 
-                    MyTripsScreen(
+                val myTripsScrollState = rememberLazyListState()
+
+                MyTripsScreen(
+                    spacerValue = windowSizeClass.spacerValue,
+                    isEditMode = tripUiState.isEditMode,
+                    scrollState = myTripsScrollState,
+                    dateTimeFormat = appUiState.dateTimeFormat,
+                    changeEditMode = { tripViewModel.toggleEditMode(it) },
+                    addDeletedImages = { newImages ->
+                        tripViewModel.addDeletedImages(newImages)
+                    },
+                    organizeAddedDeletedImages = { isClickSave ->
+                        tripViewModel.organizeAddedDeletedImages(context, isClickSave)
+                    },
+                    navigateToTrip = { isNewTrip, trip ->
+                        coroutineScope.launch {
+                            tripViewModel.changeTrip(tripId = trip.id)
+                        }
+                        tripViewModel.toggleIsNewTrip(isNewTrip)
+                        navController.navigate(TripScreenDestination.route)
+                    },
+                    appViewModel = appViewModel
+                )
+            }
+
+            // TRIP MAP ============================================================================
+            composable(
+                route = TripMapScreenDestination.route,
+                enterTransition = { enterTransition },
+                exitTransition = { exitTransition },
+                popEnterTransition = { popEnterTransition },
+                popExitTransition = { popExitTransition }
+            ) {
+                //update current screen
+                LaunchedEffect(Unit) {
+                    appViewModel.updateCurrentScreen(TripMapScreenDestination)
+                }
+
+                if (tripUiState.trip != null) {
+                    TripMapScreen(
+                        currentTrip = tripUiState.trip!!,
+                        dateTimeFormat = appUiState.dateTimeFormat,
+                        navigateUp = { navigateUp() },
+                        isDarkMapTheme = isDarkMapTheme,
+                        userLocationEnabled = userLocationEnabled,
+                        setUserLocationEnabled = {
+                            userLocationEnabled = it
+                        },
+                        fusedLocationClient = fusedLocationClient
+                    )
+                }
+            }
+
+            // SPOT ================================================================================
+            composable(
+                route = SpotScreenDestination.route,
+                enterTransition = { enterTransition },
+                exitTransition = { exitTransition },
+                popEnterTransition = { popEnterTransition },
+                popExitTransition = { popExitTransition }
+            ) {
+                //update current screen
+                LaunchedEffect(Unit) {
+                    appViewModel.updateCurrentScreen(SpotScreenDestination)
+                }
+
+                if (tripUiState.trip != null && tripUiState.tempTrip != null) {
+                    SpotScreen(
+                        use2Panes = windowSizeClass.use2Panes,
                         spacerValue = windowSizeClass.spacerValue,
                         isEditMode = tripUiState.isEditMode,
-                        scrollState = myTripsScrollState,
+                        setUseImePadding = {
+                            useImePadding = it
+                        },
+
+                        originalTrip = tripUiState.trip!!,
+                        tempTrip = tripUiState.tempTrip!!,
+                        dateIndex = tripUiState.dateIndex ?: 0,
+                        spotIndex = tripUiState.spotIndex ?: 0,
                         dateTimeFormat = appUiState.dateTimeFormat,
-                        changeEditMode = { tripViewModel.toggleEditMode(it) },
+                        changeEditMode = {
+                            tripViewModel.toggleEditMode(it)
+                        },
+                        addAddedImages = { newImages ->
+                            tripViewModel.addAddedImages(newImages)
+                        },
                         addDeletedImages = { newImages ->
                             tripViewModel.addDeletedImages(newImages)
                         },
                         organizeAddedDeletedImages = { isClickSave ->
                             tripViewModel.organizeAddedDeletedImages(context, isClickSave)
                         },
-                        navigateToTrip = { isNewTrip, trip ->
-                            coroutineScope.launch {
-                                tripViewModel.changeTrip(tripId = trip.id)
-                            }
-                            tripViewModel.toggleIsNewTrip(isNewTrip)
-                            navController.navigate(TripScreenDestination.route)
+                        reorderSpotImageList = { dateIndex, spotIndex, currentIndex, destinationIndex ->
+                            tripViewModel.reorderSpotImageList(
+                                dateIndex,
+                                spotIndex,
+                                currentIndex,
+                                destinationIndex
+                            )
                         },
-                        appViewModel = appViewModel
+
+                        navigateToImage = { imageList, initialImageIndex ->
+                            tripViewModel.updateImageListAndInitialImageIndex(
+                                imageList,
+                                initialImageIndex
+                            )
+                            navController.navigate(ImageScreenDestination.route)
+                        },
+                        updateTripState = { toTempTrip, trip ->
+                            tripViewModel.updateTripState(toTempTrip, trip)
+                        },
+                        addNewSpot = { dateId ->
+                            tripViewModel.addNewSpot(dateId)
+                        },
+                        deleteSpot = { dateId, spotId ->
+                            tripViewModel.deleteSpot(dateId, spotId)
+                        },
+                        saveTrip = {
+                            coroutineScope.launch {
+                                tripViewModel.saveTrip({
+                                    coroutineScope.launch { appViewModel.updateAppUiStateFromRepository() }
+                                })
+                            }
+                        },
+
+                        isDarkMapTheme = isDarkMapTheme,
+                        fusedLocationClient = fusedLocationClient,
+                        onImageClicked = { /*TODO*/ },
+                        userLocationEnabled = userLocationEnabled,
+                        setUserLocationEnabled = {
+                            userLocationEnabled = it
+                        },
+                        navigateUp = {
+                            navigateUp()
+                        }
                     )
                 }
+            }
+
+            // IMAGE ===============================================================================
+            composable(
+                route = ImageScreenDestination.route,
+                enterTransition = { imageEnterTransition },
+                exitTransition = { imageExitTransition },
+                popEnterTransition = { imagePopEnterTransition },
+                popExitTransition = { imagePopExitTransition }
+            ) {
+                LaunchedEffect(Unit) {
+                    appViewModel.updateCurrentScreen(ImageScreenDestination)
+                }
+
+                ImageScreen(
+                    imagePathList = tripUiState.imageList ?: listOf(),
+                    initialImageIndex = tripUiState.initialImageIndex,
+
+                    navigateUp = { navigateUp() }
+                )
+            }
+
+
+
+            //single pane (phone)
+            if (!windowSizeClass.use2Panes){
+
 
                 // MORE ================================================================================
                 composable(
@@ -279,33 +419,7 @@ fun SomewhereApp(
 
                 }
 
-                // TRIP MAP ============================================================================
-                composable(
-                    route = TripMapScreenDestination.route,
-                    enterTransition = { enterTransition },
-                    exitTransition = { exitTransition },
-                    popEnterTransition = { popEnterTransition },
-                    popExitTransition = { popExitTransition }
-                ) {
-                    //update current screen
-                    LaunchedEffect(Unit) {
-                        appViewModel.updateCurrentScreen(TripMapScreenDestination)
-                    }
 
-                    if (tripUiState.trip != null) {
-                        TripMapScreen(
-                            currentTrip = tripUiState.trip!!,
-                            dateTimeFormat = appUiState.dateTimeFormat,
-                            navigateUp = { navigateUp() },
-                            isDarkMapTheme = isDarkMapTheme,
-                            userLocationEnabled = userLocationEnabled,
-                            setUserLocationEnabled = {
-                                userLocationEnabled = it
-                            },
-                            fusedLocationClient = fusedLocationClient
-                        )
-                    }
-                }
 
                 // TRIP ================================================================================
                 composable(
@@ -485,111 +599,7 @@ fun SomewhereApp(
                     }
                 }
 
-                // SPOT ================================================================================
-                composable(
-                    route = SpotScreenDestination.route,
-                    enterTransition = { enterTransition },
-                    exitTransition = { exitTransition },
-                    popEnterTransition = { popEnterTransition },
-                    popExitTransition = { popExitTransition }
-                ) {
-                    //update current screen
-                    LaunchedEffect(Unit) {
-                        appViewModel.updateCurrentScreen(SpotScreenDestination)
-                    }
 
-                    if (tripUiState.trip != null && tripUiState.tempTrip != null) {
-                        SpotScreen(
-                            use2Panes = false,
-                            spacerValue = windowSizeClass.spacerValue,
-                            isEditMode = tripUiState.isEditMode,
-                            setUseImePadding = {
-                                useImePadding = it
-                            },
-
-                            originalTrip = tripUiState.trip!!,
-                            tempTrip = tripUiState.tempTrip!!,
-                            dateIndex = tripUiState.dateIndex ?: 0,
-                            spotIndex = tripUiState.spotIndex ?: 0,
-                            dateTimeFormat = appUiState.dateTimeFormat,
-                            changeEditMode = {
-                                tripViewModel.toggleEditMode(it)
-                            },
-                            addAddedImages = { newImages ->
-                                tripViewModel.addAddedImages(newImages)
-                            },
-                            addDeletedImages = { newImages ->
-                                tripViewModel.addDeletedImages(newImages)
-                            },
-                            organizeAddedDeletedImages = { isClickSave ->
-                                tripViewModel.organizeAddedDeletedImages(context, isClickSave)
-                            },
-                            reorderSpotImageList = { dateIndex, spotIndex, currentIndex, destinationIndex ->
-                                tripViewModel.reorderSpotImageList(
-                                    dateIndex,
-                                    spotIndex,
-                                    currentIndex,
-                                    destinationIndex
-                                )
-                            },
-
-                            navigateToImage = { imageList, initialImageIndex ->
-                                tripViewModel.updateImageListAndInitialImageIndex(
-                                    imageList,
-                                    initialImageIndex
-                                )
-                                navController.navigate(ImageScreenDestination.route)
-                            },
-                            updateTripState = { toTempTrip, trip ->
-                                tripViewModel.updateTripState(toTempTrip, trip)
-                            },
-                            addNewSpot = { dateId ->
-                                tripViewModel.addNewSpot(dateId)
-                            },
-                            deleteSpot = { dateId, spotId ->
-                                tripViewModel.deleteSpot(dateId, spotId)
-                            },
-                            saveTrip = {
-                                coroutineScope.launch {
-                                    tripViewModel.saveTrip({
-                                        coroutineScope.launch { appViewModel.updateAppUiStateFromRepository() }
-                                    })
-                                }
-                            },
-
-                            isDarkMapTheme = isDarkMapTheme,
-                            fusedLocationClient = fusedLocationClient,
-                            onImageClicked = { /*TODO*/ },
-                            userLocationEnabled = userLocationEnabled,
-                            setUserLocationEnabled = {
-                                userLocationEnabled = it
-                            },
-                            navigateUp = {
-                                navigateUp()
-                            }
-                        )
-                    }
-                }
-
-                // IMAGE ===============================================================================
-                composable(
-                    route = ImageScreenDestination.route,
-                    enterTransition = { imageEnterTransition },
-                    exitTransition = { imageExitTransition },
-                    popEnterTransition = { imagePopEnterTransition },
-                    popExitTransition = { imagePopExitTransition }
-                ) {
-                    LaunchedEffect(Unit) {
-                        appViewModel.updateCurrentScreen(ImageScreenDestination)
-                    }
-
-                    ImageScreen(
-                        imagePathList = tripUiState.imageList ?: listOf(),
-                        initialImageIndex = tripUiState.initialImageIndex,
-
-                        navigateUp = { navigateUp() }
-                    )
-                }
 
 
                 // THEME SETTING =======================================================================
@@ -685,44 +695,6 @@ fun SomewhereApp(
 
             //2 panes (large screen)
             else{
-                // MY TRIPS  ===========================================================================
-                composable(
-                    route = MyTripsScreenDestination.route,
-                    enterTransition = { noEnterTransition },
-                    exitTransition = { exitTransition },
-                    popEnterTransition = { popEnterTransition },
-                    popExitTransition = { popExitTransition }
-                ) {
-                    LaunchedEffect(Unit) {
-                        appViewModel.updateCurrentScreen(MyTripsScreenDestination)
-                    }
-                    val myTripsScrollState = rememberLazyListState()
-
-                    MyTripsScreen(
-                        spacerValue = windowSizeClass.spacerValue,
-                        isEditMode = tripUiState.isEditMode,
-                        scrollState = myTripsScrollState,
-                        dateTimeFormat = appUiState.dateTimeFormat,
-                        changeEditMode = { tripViewModel.toggleEditMode(it) },
-                        addDeletedImages = { newImages ->
-                            tripViewModel.addDeletedImages(newImages)
-                        },
-                        organizeAddedDeletedImages = { isClickSave ->
-                            tripViewModel.organizeAddedDeletedImages(context, isClickSave)
-                        },
-                        navigateToTrip = { isNewTrip, trip ->
-                            coroutineScope.launch {
-                                tripViewModel.changeTrip(tripId = trip.id)
-                            }
-                            tripViewModel.toggleIsNewTrip(isNewTrip)
-                            navController.navigate(TripScreenDestination.route)
-                        },
-                        appViewModel = appViewModel
-                    )
-                }
-
-
-
 
                 // MORE ================================================================================
                 composable(
@@ -791,34 +763,6 @@ fun SomewhereApp(
                             }
                         }
 
-                    }
-                }
-
-                // TRIP MAP ============================================================================
-                composable(
-                    route = TripMapScreenDestination.route,
-                    enterTransition = { enterTransition },
-                    exitTransition = { exitTransition },
-                    popEnterTransition = { popEnterTransition },
-                    popExitTransition = { popExitTransition }
-                ) {
-                    //update current screen
-                    LaunchedEffect(Unit) {
-                        appViewModel.updateCurrentScreen(TripMapScreenDestination)
-                    }
-
-                    if (tripUiState.trip != null) {
-                        TripMapScreen(
-                            currentTrip = tripUiState.trip!!,
-                            dateTimeFormat = appUiState.dateTimeFormat,
-                            navigateUp = { navigateUp() },
-                            isDarkMapTheme = isDarkMapTheme,
-                            userLocationEnabled = userLocationEnabled,
-                            setUserLocationEnabled = {
-                                userLocationEnabled = it
-                            },
-                            fusedLocationClient = fusedLocationClient
-                        )
                     }
                 }
 
@@ -1169,111 +1113,8 @@ fun SomewhereApp(
                     }
                 }
 
-                // SPOT ================================================================================
-                composable(
-                    route = SpotScreenDestination.route,
-                    enterTransition = { enterTransition },
-                    exitTransition = { exitTransition },
-                    popEnterTransition = { popEnterTransition },
-                    popExitTransition = { popExitTransition }
-                ) {
-                    //update current screen
-                    LaunchedEffect(Unit) {
-                        appViewModel.updateCurrentScreen(SpotScreenDestination)
-                    }
 
-                    if (tripUiState.trip != null && tripUiState.tempTrip != null) {
-                        SpotScreen(
-                            use2Panes = true,
-                            spacerValue = windowSizeClass.spacerValue,
-                            isEditMode = tripUiState.isEditMode,
-                            setUseImePadding = {
-                                useImePadding = it
-                            },
 
-                            originalTrip = tripUiState.trip!!,
-                            tempTrip = tripUiState.tempTrip!!,
-                            dateIndex = tripUiState.dateIndex ?: 0,
-                            spotIndex = tripUiState.spotIndex ?: 0,
-                            dateTimeFormat = appUiState.dateTimeFormat,
-                            changeEditMode = {
-                                tripViewModel.toggleEditMode(it)
-                            },
-                            addAddedImages = { newImages ->
-                                tripViewModel.addAddedImages(newImages)
-                            },
-                            addDeletedImages = { newImages ->
-                                tripViewModel.addDeletedImages(newImages)
-                            },
-                            organizeAddedDeletedImages = { isClickSave ->
-                                tripViewModel.organizeAddedDeletedImages(context, isClickSave)
-                            },
-                            reorderSpotImageList = { dateIndex, spotIndex, currentIndex, destinationIndex ->
-                                tripViewModel.reorderSpotImageList(
-                                    dateIndex,
-                                    spotIndex,
-                                    currentIndex,
-                                    destinationIndex
-                                )
-                            },
-
-                            navigateToImage = { imageList, initialImageIndex ->
-                                tripViewModel.updateImageListAndInitialImageIndex(
-                                    imageList,
-                                    initialImageIndex
-                                )
-                                navController.navigate(ImageScreenDestination.route)
-                            },
-                            updateTripState = { toTempTrip, trip ->
-                                tripViewModel.updateTripState(toTempTrip, trip)
-                            },
-                            addNewSpot = { dateId ->
-                                tripViewModel.addNewSpot(dateId)
-                            },
-                            deleteSpot = { dateId, spotId ->
-                                tripViewModel.deleteSpot(dateId, spotId)
-                            },
-                            saveTrip = {
-                                coroutineScope.launch {
-                                    tripViewModel.saveTrip({
-                                        coroutineScope.launch { appViewModel.updateAppUiStateFromRepository() }
-                                    })
-                                }
-                            },
-
-                            isDarkMapTheme = isDarkMapTheme,
-                            fusedLocationClient = fusedLocationClient,
-                            onImageClicked = { /*TODO*/ },
-                            userLocationEnabled = userLocationEnabled,
-                            setUserLocationEnabled = {
-                                userLocationEnabled = it
-                            },
-                            navigateUp = {
-                                navigateUp()
-                            }
-                        )
-                    }
-                }
-
-                // IMAGE ===============================================================================
-                composable(
-                    route = ImageScreenDestination.route,
-                    enterTransition = { imageEnterTransition },
-                    exitTransition = { imageExitTransition },
-                    popEnterTransition = { imagePopEnterTransition },
-                    popExitTransition = { imagePopExitTransition }
-                ) {
-                    LaunchedEffect(Unit) {
-                        appViewModel.updateCurrentScreen(ImageScreenDestination)
-                    }
-
-                    ImageScreen(
-                        imagePathList = tripUiState.imageList ?: listOf(),
-                        initialImageIndex = tripUiState.initialImageIndex,
-
-                        navigateUp = { navigateUp() }
-                    )
-                }
 
             }
         }
