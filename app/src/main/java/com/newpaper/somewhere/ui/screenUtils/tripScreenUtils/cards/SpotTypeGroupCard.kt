@@ -19,9 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.model.Date
 import com.newpaper.somewhere.enumUtils.SpotTypeGroup
+import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SPACER_SMALL
 import com.newpaper.somewhere.ui.theme.ColorType
 import com.newpaper.somewhere.ui.theme.TextType
 import com.newpaper.somewhere.ui.theme.getColor
@@ -33,13 +35,15 @@ fun FilterCards(
     spotTypeWithShownList: List<Pair<SpotTypeGroup, Boolean>>,
     onCardClicked: (SpotTypeGroup) -> Unit,
 
+    startPadding: Dp = SPACER_SMALL,
+    endPadding: Dp = SPACER_SMALL,
     textStyle: TextStyle = getTextStyle(TextType.CARD__SPOT_TYPE),
     isShownColor: Color = getColor(ColorType.BUTTON),
     isNotShownColor: Color = getColor(ColorType.CARD),
 ){
     LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(0.dp),
-        contentPadding = PaddingValues(16.dp, 0.dp, 4.dp, 0.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(startPadding, 0.dp, endPadding, 0.dp),
         modifier = Modifier.fillMaxWidth()
     ){
         items(spotTypeWithShownList){
@@ -56,8 +60,6 @@ fun FilterCards(
                             onCardClicked(spotType)
                         }
                     )
-
-                    Spacer(modifier = Modifier.width(12.dp))
                 }
             }
         }

@@ -457,12 +457,13 @@ fun DatePage(
         state = scrollState,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
-        contentPadding = PaddingValues(startSpacerValue, 8.dp, endSpacerValue, 200.dp),
+        contentPadding = PaddingValues(0.dp, 8.dp, 0.dp, 200.dp),
         modifier = Modifier.fillMaxSize()
     ) {
         //title card
         item {
             TitleWithColorCard(
+                modifier = Modifier.padding(startSpacerValue, 0.dp, endSpacerValue, 0.dp),
                 isEditMode = isEditMode,
 
                 titleText = currentDate.titleText,
@@ -494,6 +495,7 @@ fun DatePage(
             ) {
                 Column {
                     InformationCard(
+                        modifier = Modifier.padding(startSpacerValue, 0.dp, endSpacerValue, 0.dp),
                         isEditMode = false,
                         list = listOf(
                             budgetItem.copy(text = currentDate.getTotalBudgetText(showingTrip)),
@@ -509,6 +511,7 @@ fun DatePage(
         //memo card
         item {
             MemoCard(
+                modifier = Modifier.padding(startSpacerValue, 0.dp, endSpacerValue, 0.dp),
                 isEditMode = isEditMode,
                 memoText = currentDate.memo,
                 onMemoChanged = { newMemoText ->
@@ -534,6 +537,8 @@ fun DatePage(
             // 3 Tour / 2 Food / 5 Move ...
             item{
                 FilterCards(
+                    startPadding = startSpacerValue,
+                    endPadding = endSpacerValue,
                     date = currentDate,
                     spotTypeWithShownList = spotTypeWithShownList,
                     onCardClicked = {spotType ->
@@ -555,6 +560,7 @@ fun DatePage(
             if(checkSpotListIsShown(spotTypeWithShownList)) {
                 item {
                     StartEndDummySpaceWithRoundedCorner(
+                        modifier = Modifier.padding(startSpacerValue, 0.dp, endSpacerValue, 0.dp),
                         showLine = firstSpotShowUpperLine,
                         isFirst = true,
                         isLast = false
@@ -577,6 +583,7 @@ fun DatePage(
                     ) {
                         Box(
                             modifier = Modifier
+                                .padding(startSpacerValue, 0.dp, endSpacerValue, 0.dp)
                                 .fillMaxWidth()
                                 .background(MaterialTheme.colorScheme.surfaceVariant)
                         ) {
@@ -667,6 +674,7 @@ fun DatePage(
                         if (checkSpotTypeGroupIsShown(spot.spotType.group, spotTypeWithShownList)) {
 
                             SpotListItem(
+                                modifier = Modifier.padding(startSpacerValue, 0.dp, endSpacerValue, 0.dp),
                                 trip = showingTrip,
                                 dateId = dateIndex,
                                 spot = spot,
@@ -728,6 +736,7 @@ fun DatePage(
 
                 item {
                     StartEndDummySpaceWithRoundedCorner(
+                        modifier = Modifier.padding(startSpacerValue, 0.dp, endSpacerValue, 0.dp),
                         showLine = lastSpotShowLowerLine,
                         isFirst = false,
                         isLast = true,
