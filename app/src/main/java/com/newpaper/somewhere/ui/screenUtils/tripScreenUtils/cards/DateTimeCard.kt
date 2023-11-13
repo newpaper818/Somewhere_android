@@ -13,8 +13,11 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,14 +28,18 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.R
 import com.newpaper.somewhere.enumUtils.TimeFormat
@@ -159,6 +166,7 @@ private fun OneDateRow(
     )
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun TwoTimesRow(
     setUseImePadding: (useImePadding: Boolean) -> Unit,
@@ -169,55 +177,71 @@ private fun TwoTimesRow(
     setEndTime: (startTime: LocalTime?) -> Unit,
     timeFormat: TimeFormat
 ){
-    Row(
-        verticalAlignment = Alignment.CenterVertically
+    var rowHeight by rememberSaveable { mutableIntStateOf(40) }
+    val density = LocalDensity.current
+
+    FlowRow(
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.onSizeChanged { rowHeight = with(density){it.height.toDp()}.value.toInt() }
     ) {
-        MySpacerRow(width = 8.dp)
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            MySpacerRow(width = 8.dp)
 
-        //time icon
-        Box(
-            modifier = Modifier.size(30.dp),
-            contentAlignment = Alignment.Center
-        ){
-            DisplayIcon(icon = MyIcons.time)
+            //time icon
+            Box(
+                modifier = Modifier.size(30.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                DisplayIcon(icon = MyIcons.time)
+            }
+
+            MySpacerRow(width = 8.dp)
+
+            if (isEditMode || spot.startTime != null) {
+                OneTimeRow(
+                    setUseImePadding = setUseImePadding,
+                    setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
+                    spot = spot,
+                    isStart = true,
+                    isEditMode = isEditMode,
+                    setTime = { startTime ->
+                        setStartTime(startTime)
+                    },
+                    timeFormat = timeFormat
+                )
+            }
         }
 
-        MySpacerRow(width = 8.dp)
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (rowHeight > 50){
+                MySpacerRow(width = 50.dp)
+            }
 
-        if (isEditMode || spot.startTime != null) {
-            OneTimeRow(
-                setUseImePadding = setUseImePadding,
-                setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
-                spot = spot,
-                isStart = true,
-                isEditMode = isEditMode,
-                setTime = { startTime ->
-                    setStartTime(startTime)
-                },
-                timeFormat = timeFormat
-            )
-        }
+            if (isEditMode || spot.startTime != null && spot.endTime != null) {
+                MySpacerRow(width = 4.dp)
 
-        if (isEditMode || spot.startTime != null && spot.endTime != null){
-            MySpacerRow(width = 4.dp)
+                DisplayIcon(icon = MyIcons.rightArrowTo)
 
-            DisplayIcon(icon = MyIcons.rightArrowTo)
+                MySpacerRow(width = 4.dp)
+            }
 
-            MySpacerRow(width = 4.dp)
-        }
-
-        if (isEditMode || spot.endTime != null) {
-            OneTimeRow(
-                setUseImePadding = setUseImePadding,
-                setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
-                spot = spot,
-                isStart = false,
-                isEditMode = isEditMode,
-                setTime = { endTime ->
-                    setEndTime(endTime)
-                },
-                timeFormat = timeFormat
-            )
+            if (isEditMode || spot.endTime != null) {
+                OneTimeRow(
+                    setUseImePadding = setUseImePadding,
+                    setShowBottomSaveCancelBar = setShowBottomSaveCancelBar,
+                    spot = spot,
+                    isStart = false,
+                    isEditMode = isEditMode,
+                    setTime = { endTime ->
+                        setEndTime(endTime)
+                    },
+                    timeFormat = timeFormat
+                )
+            }
         }
     }
 }
