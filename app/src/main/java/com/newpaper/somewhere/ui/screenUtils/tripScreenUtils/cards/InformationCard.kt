@@ -23,8 +23,15 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -95,6 +102,14 @@ fun IconTextRow(
     textStyle: TextStyle = getTextStyle(TextType.CARD__BODY),
     subTextStyle: TextStyle = getTextStyle(TextType.CARD__BODY_NULL)
 ) {
+
+    var itemHeight by rememberSaveable { mutableIntStateOf(0) }
+    val density = LocalDensity.current
+
+    LaunchedEffect(informationItem.text){
+        itemHeight = 0
+    }
+
     AnimatedVisibility(
         visible = isVisible,
         enter = expandVertically(tween(300)),
@@ -103,13 +118,19 @@ fun IconTextRow(
 
         ClickableBox(
             shape = MaterialTheme.shapes.small,
-            modifier = Modifier.heightIn(min = 48.dp, max = 100.dp).fillMaxWidth(),
+            modifier = Modifier
+                .heightIn(min = 48.dp, max = 100.dp)
+                .fillMaxWidth(),
             enabled = isClickable,
             onClick = informationItem.onClick ?: { }
 
         ) {
             FlowRow(
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth()
+                    .onSizeChanged { with(density) { itemHeight = it.height.toDp().value.toInt() } },
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -133,13 +154,14 @@ fun IconTextRow(
 
                 if (isClickable) {
                     Row(
-                        modifier = Modifier.height(30.dp).weight(1f),
+                        modifier = Modifier.height(30.dp),
                         horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         MySpacerRow(width = 6.dp)
 
-//                        Spacer(modifier = Modifier.weight(1f))
+                        if (itemHeight > 50)
+                            Spacer(modifier = Modifier.weight(1f))
 
                         //sub text
                         if (informationItem.subTextId != null)
