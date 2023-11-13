@@ -7,7 +7,11 @@ import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,7 +46,9 @@ import com.newpaper.somewhere.ui.theme.n60
 import com.newpaper.somewhere.utils.millisToLocalDate
 import com.newpaper.somewhere.viewModel.DateTimeFormat
 import java.time.LocalDate
+import java.util.concurrent.Flow
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TripDurationCard(
     defaultDateRange: ClosedRange<LocalDate>,
@@ -148,11 +154,10 @@ fun TripDurationCard(
                 }
 
                 //start date > end date
-                Row(
+                FlowRow(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Spacer(modifier = Modifier.weight(1f))
 
                     //start date
                     Text(
@@ -161,22 +166,27 @@ fun TripDurationCard(
                         textAlign = TextAlign.Center
                     )
 
-                    Spacer(modifier = Modifier.weight(1f))
-
                     if (defaultDateRange.start != defaultDateRange.endInclusive) {
-                        // > icon
-                        DisplayIcon(MyIcons.rightArrowTo)
+                        Row {
+                            MySpacerRow(width = 16.dp)
 
-                        Spacer(modifier = Modifier.weight(1f))
+                            // > icon
+                            Box(
+                                modifier = Modifier.height(24.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                DisplayIcon(MyIcons.rightArrowTo)
+                            }
 
-                        //end date
-                        Text(
-                            text = endDateText1,
-                            style = bodyTextStyle1,
-                            textAlign = TextAlign.Center
-                        )
+                            MySpacerRow(width = 16.dp)
 
-                        Spacer(modifier = Modifier.weight(1f))
+                            //end date
+                            Text(
+                                text = endDateText1,
+                                style = bodyTextStyle1,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                 }
             }
