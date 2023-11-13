@@ -321,6 +321,9 @@ fun OneProgressBar(
     val titleText1 =    if (isHighlight)  titleText ?: stringResource(id = R.string.no_title)
                         else            titleText ?: ""
 
+    val boxColor = if (isHighlight) Color(pointColor ?: 0x00000000).copy(alpha = 0.2f)
+                    else Color.Transparent
+
 
     var itemWidth by rememberSaveable {
         mutableStateOf(
@@ -343,6 +346,7 @@ fun OneProgressBar(
         modifier = Modifier
             .width(width)
             .height(PROGRESS_BAR_HEIGHT),
+        containerColor = boxColor,
         onClick = onClickItem
     ) {
         Column(

@@ -445,6 +445,8 @@ fun SpotScreen(
 
                         //map card
                         item {
+                            MySpacerColumn(height = 8.dp)
+
                             MapCard(
                                 isEditMode = isEditMode,
                                 isMapExpand = isMapExpand,
@@ -626,6 +628,8 @@ fun SpotScreen(
                     }
                 }
                 else{
+                    MySpacerColumn(height = 8.dp)
+
                     Row {
                         Card(
                             modifier = Modifier
