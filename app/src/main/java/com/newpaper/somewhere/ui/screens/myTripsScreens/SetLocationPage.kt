@@ -11,6 +11,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +23,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -91,6 +94,7 @@ import kotlinx.coroutines.launch
 
 val SEARCH_BOX_LIST_PADDING = 14.dp
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SetLocationPage(
     showingTrip: Trip,
@@ -207,7 +211,7 @@ fun SetLocationPage(
 
             Column(
                 modifier = Modifier
-                    .widthIn(max = 700.dp)
+                    .widthIn(max = 600.dp)
                     .fillMaxHeight()
                     .padding(SEARCH_BOX_LIST_PADDING)
             ) {
@@ -277,60 +281,15 @@ fun SetLocationPage(
             }
         }
 
-//        LazyVerticalGrid(
-//            columns = GridCells.Adaptive(320.dp),
-//            horizontalArrangement = Arrangement.Center,
-//            modifier = Modifier.fillMaxWidth()
-//        ){
-//            item {
-//                //zoom card
-////                Box(modifier = Modifier.width(335.dp)) {
-//                    ZoomCard(
-//                        zoomLevel = newZoomLevel,
-//                        mapZoomTo = { newZoomLevel_ ->
-//                            newZoomLevel = newZoomLevel_
-//                            coroutineScope.launch {
-//                                cameraPositionState.animate(
-//                                    CameraUpdateFactory.zoomTo(newZoomLevel), 300
-//                                )
-//                            }
-//                        },
-//                        fusedLocationClient = fusedLocationClient,
-//                        cameraPositionState = cameraPositionState,
-//                        setUserLocationEnabled = setUserLocationEnabled,
-//                        showSnackBar = showSnackBar
-//                    )
-////                }
-//            }
-//            item {
-//                //cancel save buttons
-//                SaveCancelButtons(
-//                    onCancelClick = toggleIsEditLocationMode,
-//                    onSaveClick = {
-//                        //set location and zoom level
-//                        //spotList[currentSpotId].zoomLevel = zoomLevel
-//                        spotList[currentSpotId].setLocation(
-//                            showingTrip,
-//                            dateId,
-//                            updateTripState,
-//                            newLocation,
-//                            newZoomLevel
-//                        )
-//                        toggleIsEditLocationMode()
-//                    },
-//                    modifier = Modifier.background(MaterialTheme.colorScheme.background),
-//                    positiveText = stringResource(id = R.string.dialog_button_ok)
-//                )
-//            }
-//        }
-
-
-        Row(
-            verticalAlignment = Alignment.Bottom
+        //buttons
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalArrangement = Arrangement.Bottom
         ) {
             Box(
                 contentAlignment = Alignment.BottomCenter,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.width(330.dp)
             ) {
                 ZoomCard(
                     zoomLevel = newZoomLevel,
@@ -349,51 +308,32 @@ fun SetLocationPage(
                 )
             }
 
-            if (screenWidthDp >= 670){
-                Box(
-                    contentAlignment = Alignment.BottomCenter,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    //cancel save buttons
-                    SaveCancelButtons(
-                        onCancelClick = toggleIsEditLocationMode,
-                        onSaveClick = {
-                            //set location and zoom level
-                            //spotList[currentSpotId].zoomLevel = zoomLevel
-                            spotList[currentSpotIndex].setLocation(
-                                showingTrip,
-                                dateIndex,
-                                updateTripState,
-                                newLocation,
-                                newZoomLevel
-                            )
+            Box(
+                contentAlignment = Alignment.BottomCenter,
+                modifier = Modifier.align(Alignment.Bottom).width(330.dp)
+            ) {
+                //cancel save buttons
+                SaveCancelButtons(
+                    onCancelClick = toggleIsEditLocationMode,
+                    onSaveClick = {
+                        //set location and zoom level
+                        //spotList[currentSpotId].zoomLevel = zoomLevel
+                        spotList[currentSpotIndex].setLocation(
+                            showingTrip,
+                            dateIndex,
+                            updateTripState,
+                            newLocation,
+                            newZoomLevel
+                        )
 
-                            toggleIsEditLocationMode()
-                        },
-                        modifier = Modifier.background(MaterialTheme.colorScheme.background),
-                        positiveText = stringResource(id = R.string.dialog_button_ok)
-                    )
-                }
+                        toggleIsEditLocationMode()
+                    },
+                    modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                    positiveText = stringResource(id = R.string.dialog_button_ok)
+                )
             }
         }
-        if (screenWidthDp < 670) {
 
-            MySpacerColumn(height = 8.dp)
-
-            //cancel save buttons
-            SaveCancelButtons(
-                onCancelClick = toggleIsEditLocationMode,
-                onSaveClick = {
-                    spotList[currentSpotIndex].setLocationAndUpdateTravelDistance(
-                        showingTrip, dateIndex, updateTripState, newLocation, newZoomLevel
-                    )
-
-                    toggleIsEditLocationMode()
-                },
-                modifier = Modifier.background(MaterialTheme.colorScheme.background),
-                positiveText = stringResource(id = R.string.dialog_button_ok)
-            )
-        }
     }
 }
 
