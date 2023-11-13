@@ -5,14 +5,20 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -79,6 +85,7 @@ fun InformationCard(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun IconTextRow(
     isVisible: Boolean,
@@ -96,49 +103,60 @@ fun IconTextRow(
 
         ClickableBox(
             shape = MaterialTheme.shapes.small,
-            modifier = Modifier.height(48.dp),
-            enabled = informationItem.onClick != null,
+            modifier = Modifier.heightIn(min = 48.dp, max = 100.dp).fillMaxWidth(),
+            enabled = isClickable,
             onClick = informationItem.onClick ?: { }
 
         ) {
-            Row(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+            FlowRow(
+                modifier = Modifier.padding(8.dp)
             ) {
-                //icon
-                Box(
-                    modifier = Modifier.size(30.dp),
-                    contentAlignment = Alignment.Center
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    DisplayIcon(icon = informationItem.icon)
+                    //icon
+                    Box(
+                        modifier = Modifier.size(30.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        DisplayIcon(icon = informationItem.icon)
+                    }
+
+                    MySpacerRow(width = 16.dp)
+
+                    //text
+                    Text(
+                        text = informationItem.text ?: "",
+                        style = textStyle
+                    )
                 }
-
-                MySpacerRow(width = 16.dp)
-
-                //text
-                Text(
-                    text = informationItem.text ?: "",
-                    style = textStyle
-                )
 
                 if (isClickable) {
-                    Spacer(modifier = Modifier.weight(1f))
+                    Row(
+                        modifier = Modifier.height(30.dp).weight(1f),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        MySpacerRow(width = 6.dp)
 
-                    //sub text
-                    if (informationItem.subTextId != null)
-                        Text(
-                            text = stringResource(id = informationItem.subTextId),
-                            style = subTextStyle
-                        )
+//                        Spacer(modifier = Modifier.weight(1f))
 
-                    MySpacerRow(width = 4.dp)
+                        //sub text
+                        if (informationItem.subTextId != null)
+                            Text(
+                                text = stringResource(id = informationItem.subTextId),
+                                style = subTextStyle,
+                                maxLines = 1
+                            )
 
-                    //clickable icon
-                    DisplayIcon(icon = MyIcons.clickableItem)
+                        MySpacerRow(width = 4.dp)
+
+                        //clickable icon
+                        DisplayIcon(icon = MyIcons.clickableItem)
+                    }
                 }
             }
+
         }
     }
 }
