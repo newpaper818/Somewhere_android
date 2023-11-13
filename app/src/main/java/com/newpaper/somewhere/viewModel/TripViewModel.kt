@@ -59,25 +59,22 @@ class TripViewModel(
         }
     }
 
-    fun updateId(
-        tripId: Int? = null,
-        dateIndex: Int? = null,
-        spotIndex: Int? = null,
-    ){
-        if (tripId != null)
-            _uiState.update {
-                it.copy(tripId = tripId)
-            }
+    fun updateTripId(tripId: Int?){
+        _uiState.update {
+            it.copy(tripId = tripId)
+        }
+    }
 
-        if (dateIndex != null)
-            _uiState.update {
-                it.copy(dateIndex = dateIndex)
-            }
+    fun updateDateIndex(dateIndex: Int?){
+        _uiState.update {
+            it.copy(dateIndex = dateIndex)
+        }
+    }
 
-        if (spotIndex != null)
-            _uiState.update {
-                it.copy(spotIndex = spotIndex)
-            }
+    fun updateSpotIndex(spotIndex: Int?){
+        _uiState.update {
+            it.copy(spotIndex = spotIndex)
+        }
     }
 
     //use at Main Screen ===========================================================================

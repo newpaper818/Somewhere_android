@@ -115,7 +115,7 @@ fun DateScreen(
 
     originalTrip: Trip,
     tempTrip: Trip,
-    dateIndex: Int,
+    dateIndex: Int?,
 
     dateTimeFormat: DateTimeFormat,
 
@@ -137,7 +137,8 @@ fun DateScreen(
 
     modifier: Modifier = Modifier,
     use2Panes: Boolean = false,
-    showTripBottomSaveCancelBar: Boolean = true
+    showTripBottomSaveCancelBar: Boolean = true,
+    updateDateIndex: (dateIndex: Int) -> Unit = {}
 ){
 
     val coroutineScope = rememberCoroutineScope()
@@ -151,17 +152,18 @@ fun DateScreen(
 
 
     val progressBarState = rememberLazyListState(
-        initialFirstVisibleItemIndex = dateIndex
+        initialFirstVisibleItemIndex = dateIndex ?: 0
     )
 
     val datePagerState = rememberPagerState(
-        initialPage = dateIndex,
+        initialPage = dateIndex ?: 0,
         pageCount = { dateList.size }
     )
 
     //at large screen, when change dateIndex(click date at trip screen), update screen
     LaunchedEffect(dateIndex){
-        datePagerState.animateScrollToPage(dateIndex)
+        if (dateIndex != null)
+            datePagerState.animateScrollToPage(dateIndex)
     }
 
     val snackBarHostState = remember { SnackbarHostState() }
@@ -171,10 +173,11 @@ fun DateScreen(
         errorCount = 0
     }
 
-    //animate progress bar when current page changed
-    LaunchedEffect(datePagerState){
-        snapshotFlow { datePagerState.currentPage }.collect {currentPage_ ->
-            progressBarState.animateScrollToItem(currentPage_)
+    //when current page changed, animate progress bar / update trip screen's current date index
+    LaunchedEffect(datePagerState.currentPage){
+        snapshotFlow { datePagerState.currentPage }.collect {currentPage ->
+            progressBarState.animateScrollToItem(currentPage)
+            updateDateIndex(currentPage)
         }
     }
 

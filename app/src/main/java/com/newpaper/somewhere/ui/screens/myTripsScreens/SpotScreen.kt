@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.ui.screens.myTripsScreens
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -113,6 +114,7 @@ fun SpotScreen(
 
     navigateToImage: (imageList: List<String>, initialImageIndex: Int) -> Unit,
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
+    updateDateIndex: (dateIndex: Int) -> Unit,
     addNewSpot: (dateId: Int) -> Unit,
     deleteSpot: (dateId: Int, spotId: Int) -> Unit,
     saveTrip: () -> Unit,
@@ -128,6 +130,10 @@ fun SpotScreen(
 
     modifier: Modifier = Modifier
 ){
+    LaunchedEffect(Unit){
+        updateDateIndex(dateIndex)
+    }
+
     val showingTrip = if (isEditMode) tempTrip
                       else            originalTrip
 
@@ -135,8 +141,13 @@ fun SpotScreen(
 
     val context = LocalContext.current
 
-    var currentDateIndex by rememberSaveable { mutableStateOf(dateIndex) }
-    var currentSpotIndex by rememberSaveable { mutableStateOf(spotIndex) }
+    var currentDateIndex by rememberSaveable { mutableIntStateOf(dateIndex) }
+    var currentSpotIndex by rememberSaveable { mutableIntStateOf(spotIndex) }
+
+    LaunchedEffect(currentDateIndex){
+        updateDateIndex(currentDateIndex)
+        Log.d("ddd", "in spot screen  $currentDateIndex")
+    }
 
     val dateList = showingTrip.dateList
     val spotList = dateList[currentDateIndex].spotList
@@ -403,9 +414,9 @@ fun SpotScreen(
                             spotPagerState.animateScrollToPage(toSpotId)
                         }
                     },
-                    onPrevDateClick = {toDateId ->
-                        currentDateIndex = toDateId
-                        val lastSpotIndex = dateList[toDateId].spotList.lastIndex
+                    onPrevDateClick = {toDateIndex ->
+                        currentDateIndex = toDateIndex
+                        val lastSpotIndex = dateList[toDateIndex].spotList.lastIndex
                         currentSpotIndex = if (lastSpotIndex == -1) 0 else lastSpotIndex
 
                         //Log.d("pagee", "to $currentSpotIndex")
@@ -414,8 +425,9 @@ fun SpotScreen(
                             spotPagerState.animateScrollToPage(currentSpotIndex)
                         }
                     },
-                    onNextDateClick = {toDateId ->
-                        currentDateIndex = toDateId
+                    onNextDateClick = {toDateIndex ->
+                        currentDateIndex = toDateIndex
+
                         currentSpotIndex = 0
 
                         //Log.d("pagee", "to $currentSpotIndex")

@@ -97,6 +97,8 @@ fun GraphListItem(
     spotDragModifier: Modifier = Modifier,
     dragHandleModifier: Modifier = Modifier,
 
+    isHighlighted: Boolean = false,
+
     onDeleteClick: () -> Unit = { },
     onSideTextClick: (() -> Unit)? = null,
     onPointClick: (() -> Unit)? = null,
@@ -140,6 +142,9 @@ fun GraphListItem(
     val borderColor = if (isTextSizeLimit) getColor(ColorType.ERROR_BORDER)
                         else Color.Transparent
 
+    val clickableBoxColor = if (isHighlighted) pointColor.copy(alpha = 0.2f)
+                            else Color.Transparent
+
     LaunchedEffect(isEditMode){
         isTextSizeLimit = (mainText ?: "").length > MAX_TITLE_LENGTH
     }
@@ -147,6 +152,7 @@ fun GraphListItem(
 
     Box(modifier.background(itemColor)) {
         ClickableBox(
+            containerColor = clickableBoxColor,
             shape = MaterialTheme.shapes.medium,
             modifier = Modifier.border(1.dp, borderColor, MaterialTheme.shapes.medium),
             onClick = {

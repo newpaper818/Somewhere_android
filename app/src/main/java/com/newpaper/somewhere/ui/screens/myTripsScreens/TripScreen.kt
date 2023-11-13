@@ -118,9 +118,11 @@ fun TripScreen(
 
     modifier: Modifier = Modifier,
     use2Panes: Boolean = false,
+    currentDateIndex: Int? = null,
     setShowTripBottomSaveCancelBar: (Boolean) -> Unit = {}
 ){
     val showingTrip =
+
         if (isEditMode) tempTrip
         else originalTrip
 
@@ -491,6 +493,7 @@ fun TripScreen(
                                 trip = showingTrip,
                                 date = date,
                                 isEditMode = isEditMode,
+                                isHighlighted = date.index == currentDateIndex && use2Panes,
                                 dateTimeFormat = dateTimeFormat,
 
                                 slideState = slideState,
@@ -519,7 +522,9 @@ fun TripScreen(
                                         dateTitleErrorCount--
                                     }
                                 },
-                                onItemClick = { navigateToDate(date.index) },
+                                onItemClick = {
+                                    navigateToDate(date.index)
+                                },
                                 onPointClick =
                                 if (isEditMode) {
                                     {
@@ -570,6 +575,7 @@ private fun DateListItem(
     date: Date,
 
     isEditMode: Boolean,
+    isHighlighted: Boolean,
 
     dateTimeFormat: DateTimeFormat,
 
@@ -649,6 +655,7 @@ private fun DateListItem(
         pointColor = Color(date.color.color),
         isEditMode = isEditMode,
         isExpanded = isExpanded,
+        isHighlighted = isHighlighted,
 
         sideText = date.getDateText(dateTimeFormat.copy(includeDayOfWeek = false), false),
         mainText = date.titleText,

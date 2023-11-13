@@ -11,8 +11,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
@@ -229,6 +227,7 @@ fun SomewhereApp(
             ) {
                 LaunchedEffect(Unit) {
                     appViewModel.updateCurrentScreen(MyTripsScreenDestination)
+                    tripViewModel.updateDateIndex(null)
                 }
 
                 val myTripsScrollState = rememberLazyListState()
@@ -341,6 +340,9 @@ fun SomewhereApp(
                         },
                         updateTripState = { toTempTrip, trip ->
                             tripViewModel.updateTripState(toTempTrip, trip)
+                        },
+                        updateDateIndex = {dateIndex ->
+                            tripViewModel.updateDateIndex(dateIndex)
                         },
                         addNewSpot = { dateId ->
                             tripViewModel.addNewSpot(dateId)
@@ -466,7 +468,7 @@ fun SomewhereApp(
                             },
                             navigateToDate = { dateIndex ->
                                 tripViewModel.toggleIsNewTrip(false)
-                                tripViewModel.updateId(dateIndex = dateIndex)
+                                tripViewModel.updateDateIndex(dateIndex)
                                 navController.navigate(DateScreenDestination.route)
                             },
                             navigateToTripMap = {
@@ -542,7 +544,7 @@ fun SomewhereApp(
 
                             originalTrip = tripUiState.trip!!,
                             tempTrip = tripUiState.tempTrip!!,
-                            dateIndex = tripUiState.dateIndex ?: 0,
+                            dateIndex = tripUiState.dateIndex,
 
                             dateTimeFormat = appUiState.dateTimeFormat,
                             changeEditMode = {
@@ -587,8 +589,9 @@ fun SomewhereApp(
                             navigateUp = {
                                 navigateUp()
                             },
-                            navigateToSpot = { dateId, spotId ->
-                                tripViewModel.updateId(dateIndex = dateId, spotIndex = spotId)
+                            navigateToSpot = { dateIndex, spotIndex ->
+                                tripViewModel.updateDateIndex(dateIndex)
+                                tripViewModel.updateSpotIndex(spotIndex)
                                 navController.navigate(SpotScreenDestination.route)
                             },
                             navigateToDateMap = {
@@ -766,7 +769,7 @@ fun SomewhereApp(
                     }
                 }
 
-                // TRIP / DATE =====================================================================
+                // TRIP / DATE - trip screen =======================================================
                 composable(
                     route = TripScreenDestination.route,
                     enterTransition = { enterTransition },
@@ -780,6 +783,13 @@ fun SomewhereApp(
                     }
 
                     var showTripBottomSaveCancelBar by rememberSaveable{ mutableStateOf(true) }
+                    var tripCurrentDateIndex: Int? by rememberSaveable { mutableStateOf(null) }
+                    var dateCurrentDateIndex: Int? by rememberSaveable { mutableStateOf(null) }
+
+                    LaunchedEffect(Unit) {
+                        tripCurrentDateIndex = tripUiState.dateIndex
+                        dateCurrentDateIndex = tripUiState.dateIndex
+                    }
 
                     if (tripUiState.trip != null && tripUiState.tempTrip != null) {
                         Row {
@@ -793,6 +803,7 @@ fun SomewhereApp(
                                 originalTrip = tripUiState.trip!!,
                                 tempTrip = tripUiState.tempTrip!!,
                                 isNewTrip = tripUiState.isNewTrip,
+                                currentDateIndex = tripCurrentDateIndex,
 
                                 dateTimeFormat = appUiState.dateTimeFormat,
 
@@ -813,8 +824,9 @@ fun SomewhereApp(
                                 },
                                 navigateToDate = { dateIndex ->
                                     tripViewModel.toggleIsNewTrip(false)
-                                    tripViewModel.updateId(dateIndex = dateIndex)
-//                                    navController.navigate(DateScreenDestination.route)
+                                    tripViewModel.updateDateIndex(dateIndex)
+                                    tripCurrentDateIndex = dateIndex
+                                    dateCurrentDateIndex = dateIndex
                                 },
                                 navigateToTripMap = {
                                     navController.navigate(TripMapScreenDestination.route)
@@ -880,7 +892,7 @@ fun SomewhereApp(
 
                                 originalTrip = tripUiState.trip!!,
                                 tempTrip = tripUiState.tempTrip!!,
-                                dateIndex = tripUiState.dateIndex ?: 0,
+                                dateIndex = dateCurrentDateIndex,
 
                                 dateTimeFormat = appUiState.dateTimeFormat,
                                 changeEditMode = {
@@ -899,6 +911,9 @@ fun SomewhereApp(
 
                                 updateTripState = { toTempTrip, trip ->
                                     tripViewModel.updateTripState(toTempTrip, trip)
+                                },
+                                updateDateIndex = { newDateIndex ->
+                                    tripCurrentDateIndex = newDateIndex
                                 },
 
                                 addNewSpot = { dateId ->
@@ -925,8 +940,9 @@ fun SomewhereApp(
                                 navigateUp = {
                                     navigateUp()
                                 },
-                                navigateToSpot = { dateId, spotId ->
-                                    tripViewModel.updateId(dateIndex = dateId, spotIndex = spotId)
+                                navigateToSpot = { dateIndex, spotIndex ->
+                                    tripViewModel.updateDateIndex(dateIndex)
+                                    tripViewModel.updateSpotIndex(spotIndex)
                                     navController.navigate(SpotScreenDestination.route)
                                 },
                                 navigateToDateMap = {
@@ -939,7 +955,7 @@ fun SomewhereApp(
                     }
                 }
 
-                // TRIP / DATE =====================================================================
+                // TRIP / DATE - date screen =======================================================
                 composable(
                     route = DateScreenDestination.route,
                     enterTransition = { enterTransition },
@@ -952,7 +968,10 @@ fun SomewhereApp(
                         appViewModel.updateCurrentScreen(TripScreenDestination)
                     }
 
+
                     var showTripBottomSaveCancelBar by rememberSaveable{ mutableStateOf(true) }
+                    var tripCurrentDateIndex by rememberSaveable { mutableStateOf(tripUiState.dateIndex) }
+                    var dateCurrentDateIndex by rememberSaveable { mutableStateOf(tripUiState.dateIndex) }
 
                     if (tripUiState.trip != null && tripUiState.tempTrip != null) {
                         Row {
@@ -966,6 +985,7 @@ fun SomewhereApp(
                                 originalTrip = tripUiState.trip!!,
                                 tempTrip = tripUiState.tempTrip!!,
                                 isNewTrip = tripUiState.isNewTrip,
+                                currentDateIndex = tripCurrentDateIndex,
 
                                 dateTimeFormat = appUiState.dateTimeFormat,
 
@@ -974,7 +994,6 @@ fun SomewhereApp(
                                 },
 
                                 navigateUp = {
-                                    navController.popBackStack()
                                     navigateUp()
                                     tripViewModel.toggleIsNewTrip(false)
                                 },
@@ -987,8 +1006,9 @@ fun SomewhereApp(
                                 },
                                 navigateToDate = { dateIndex ->
                                     tripViewModel.toggleIsNewTrip(false)
-                                    tripViewModel.updateId(dateIndex = dateIndex)
-//                                    navController.navigate(DateScreenDestination.route)
+                                    tripViewModel.updateDateIndex(dateIndex)
+                                    tripCurrentDateIndex = dateIndex
+                                    dateCurrentDateIndex = dateIndex
                                 },
                                 navigateToTripMap = {
                                     navController.navigate(TripMapScreenDestination.route)
@@ -1054,7 +1074,7 @@ fun SomewhereApp(
 
                                 originalTrip = tripUiState.trip!!,
                                 tempTrip = tripUiState.tempTrip!!,
-                                dateIndex = tripUiState.dateIndex ?: 0,
+                                dateIndex = dateCurrentDateIndex,
 
                                 dateTimeFormat = appUiState.dateTimeFormat,
                                 changeEditMode = {
@@ -1073,6 +1093,9 @@ fun SomewhereApp(
 
                                 updateTripState = { toTempTrip, trip ->
                                     tripViewModel.updateTripState(toTempTrip, trip)
+                                },
+                                updateDateIndex = { newDateIndex ->
+                                    tripCurrentDateIndex = newDateIndex
                                 },
 
                                 addNewSpot = { dateId ->
@@ -1099,8 +1122,9 @@ fun SomewhereApp(
                                 navigateUp = {
                                     navigateUp()
                                 },
-                                navigateToSpot = { dateId, spotId ->
-                                    tripViewModel.updateId(dateIndex = dateId, spotIndex = spotId)
+                                navigateToSpot = { dateIndex, spotIndex ->
+                                    tripViewModel.updateDateIndex(dateIndex)
+                                    tripViewModel.updateSpotIndex(spotIndex)
                                     navController.navigate(SpotScreenDestination.route)
                                 },
                                 navigateToDateMap = {
