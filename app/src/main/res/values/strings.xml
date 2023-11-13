@@ -206,12 +206,7 @@
     <string name="image_card_subtitle_add_images">+ Add images</string>
     <string name="image_card_body_no_image">No Image</string>
 
-    <!--InformationCard.kt-->
-    <string name="move_date">move date</string>
-    <string name="select_spot_type">move date</string>
-    <string name="set_currency_type">set currency type</string>
-    <string name="set_budget">set budget</string>
-    <string name="set_travel_distance">set travel distance</string>
+    <!--InformationCard.kt none-->
 
     <!--MapCard.kt none-->
 
@@ -249,21 +244,21 @@
     <string name="memo_dialog_title">Memo</string>
 
     <!--SelectDateDialog.kt-->
-    <string name="select_date_dialog_title">Move Date</string>
+    <string name="select_date_dialog_title">Move date</string>
 
     <!--SetBudgetOrDistanceDialog.kt-->
-    <string name="set_budget_dialog_title">Set Budget</string>
-    <string name="set_travel_distance_dialog_title">Set Travel Distance</string>
+    <string name="set_budget_dialog_title">Set budget</string>
+    <string name="set_travel_distance_dialog_title">Set travel distance</string>
     <string name="set_distance_dialog_km">km</string>
 
     <!--SetColorDialog.kt-->
-    <string name="set_color_dialog_title">Set Color</string>
+    <string name="set_color_dialog_title">Set color</string>
 
     <!--SetCurrencyDialog.kt-->
-    <string name="set_currency_type_dialog_title">Set Currency Type</string>
+    <string name="set_currency_type_dialog_title">Set currency type</string>
 
     <!--SetSpotTypeDialog.kt-->
-    <string name="set_spot_type_dialog_title">Set Spot Type</string>
+    <string name="set_spot_type_dialog_title">Set spot type</string>
 
     <!--SetTimeDialog.kt-->
     <string name="set_start_time_dialog_title">Set start time</string>

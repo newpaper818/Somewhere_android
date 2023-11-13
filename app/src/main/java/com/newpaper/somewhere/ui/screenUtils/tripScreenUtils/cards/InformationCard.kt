@@ -46,11 +46,11 @@ data class InformationCardItem(
     }
 }
 
-val dateItem = InformationCardItem(icon = MyIcons.date, subTextId = R.string.move_date)
-val spotTypeItem = InformationCardItem(icon = MyIcons.category, subTextId = R.string.select_spot_type)
-val currencyItem = InformationCardItem(icon = MyIcons.budget, subTextId = R.string.set_currency_type)
-val budgetItem = InformationCardItem(icon = MyIcons.budget, subTextId = R.string.set_budget)
-val travelDistanceItem = InformationCardItem(icon = MyIcons.travelDistance, subTextId = R.string.set_travel_distance)
+val dateItem = InformationCardItem(icon = MyIcons.date, subTextId = R.string.select_date_dialog_title)
+val spotTypeItem = InformationCardItem(icon = MyIcons.category, subTextId = R.string.set_spot_type_dialog_title)
+val currencyItem = InformationCardItem(icon = MyIcons.budget, subTextId = R.string.set_currency_type_dialog_title)
+val budgetItem = InformationCardItem(icon = MyIcons.budget, subTextId = R.string.set_budget_dialog_title)
+val travelDistanceItem = InformationCardItem(icon = MyIcons.travelDistance, subTextId = R.string.set_travel_distance_dialog_title)
 
 @Composable
 fun InformationCard(
