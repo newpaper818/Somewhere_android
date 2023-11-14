@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -33,7 +34,7 @@ fun SelectDateDialog(
     onOkClick: (dateIndex: Int) -> Unit,
     onDismissRequest: () -> Unit
 ){
-    var currentDateIndex by rememberSaveable { mutableStateOf(initialDate.index) }
+    var currentDateIndex by rememberSaveable { mutableIntStateOf(initialDate.index) }
 
     val maxHeight = 26.dp + 16.dp + 60.dp * dateList.size + 12.dp + 48.dp
 
@@ -70,9 +71,12 @@ fun SelectDateDialog(
                             currentDateIndex = date.index
                         },
                         onExpandedButtonClicked = {},
-                        itemColor = if (date.index == currentDateIndex) getColor(ColorType.CARD_SELECTED)
-                        else Color.Transparent,
-                        isLongText = { }
+//                        itemColor = if (date.index == currentDateIndex) getColor(ColorType.CARD_SELECTED)
+//                        else Color.Transparent,
+                        isLongText = { },
+
+                        pointColor = Color(date.color.color),
+                        isHighlighted = date.index == currentDateIndex
                     )
                 }
             }
