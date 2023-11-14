@@ -411,7 +411,7 @@ private fun MapMarker(
         title = title,
         icon = bitmapDescriptor(isBigMarker, iconText, iconColor, onIconColor),
         anchor = Offset(0.5f,0.5f),
-        zIndex = if (isBigMarker) 1.0f else 0.0f
+        zIndex = if (isBigMarker) 2f else 1.5f
     )
 }
 
@@ -428,7 +428,7 @@ private fun MapLine(
         points = pointList,
         color = lineColor ?: getColor(ColorType.MAP_LINE_DEFAULT),
         width = lineWidth,
-        zIndex = -2f
+        zIndex = 1.1f
     )
 }
 
@@ -452,7 +452,7 @@ private fun MapMoveLine(
         points = listOf(locationFrom, locationTo),
         color = lineColor1,
         width = lineWidth,
-        zIndex = -1f
+        zIndex = 1.3f
     )
 }
 
