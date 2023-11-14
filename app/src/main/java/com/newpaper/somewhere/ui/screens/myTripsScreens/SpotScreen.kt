@@ -95,6 +95,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SpotScreen(
     use2Panes: Boolean,
+    isCompactWindow: Boolean,
     spacerValue: Dp,
     isEditMode: Boolean,
     setUseImePadding: (useImePadding: Boolean) -> Unit,
@@ -386,6 +387,7 @@ fun SpotScreen(
 
                 //progress bar
                 SpotListProgressBar(
+                    useLargeItemWidth = !isCompactWindow,
                     spacerValue = spacerValue,
                     initialIdx = currentSpotIndex,
                     progressBarState = progressBarState,

@@ -88,6 +88,7 @@ fun DateListProgressBar(
         items(dateList){
 
             OneProgressBar(
+                useLargeItemWidth = true,
                 includeIconNum = false,
                 upperText = it.getDateText(dateTimeFormat, includeYear = false),
                 titleText = it.titleText,
@@ -110,6 +111,7 @@ fun DateListProgressBar(
 
 @Composable
 fun SpotListProgressBar(
+    useLargeItemWidth: Boolean,
     spacerValue: Dp,
     initialIdx: Int,
     progressBarState: LazyListState,
@@ -177,7 +179,7 @@ fun SpotListProgressBar(
                             isShown = currentSpotSpotTypeIsMove || prevSpotSpotTypeIsMove,
                             isHighlight = currentSpotIdx == 0 && spotList[0].spotType.isMove(),
                             modifier = Modifier.fillMaxWidth(),
-                            isMove = currentSpotSpotTypeIsMove || prevSpotSpotTypeIsMove
+                            useMoveColor = currentSpotSpotTypeIsMove || prevSpotSpotTypeIsMove
                         )
                     }
                 }
@@ -187,28 +189,31 @@ fun SpotListProgressBar(
         //each spot
         items(spotList){
 
-            if (it.spotType.isNotMove()) {
-
+//            if (it.spotType.isNotMove()) {
                 OneProgressBar(
-                    includeIconNum = true,
+                    useLargeItemWidth = useLargeItemWidth,
+                    includeIconNum = it.spotType.isNotMove(),
                     pointColor = it.spotType.group.color.color,
+                    showPoint = it.spotType.isNotMove(),
                     iconText = it.iconText.toString(),
                     iconTextColor = it.spotType.group.color.onColor,
                     upperText = it.getStartTimeText(dateTimeFormat.timeFormat) ?: "",
                     titleText = it.titleText,
                     isHighlight = it == spot ||
                             moveIdx != null && (it.index == moveIdx || it.index == moveIdx + 2),
-                    isLeftHighlight = moveIdx != null && it.index == moveIdx + 2,
-                    isRightHighlight = moveIdx != null && it.index == moveIdx,
+                    isLeftHighlight = moveIdx != null && it.index == moveIdx + 2
+                            || it.spotType.isMove() && it.index == currentSpotIdx,
+                    isRightHighlight = moveIdx != null && it.index == moveIdx
+                            || it.spotType.isMove() && it.index == currentSpotIdx,
                     isFirst = it == spotList.first() && it.getPrevSpot(dateList, dateId)?.spotType?.isNotMove() ?: true,
                     isLast = it == spotList.last() && it.getNextSpot(dateList, dateId)?.spotType?.isNotMove() ?: true,
                     onClickItem = {
                         onClickSpot(it.index)
                     },
-                    prevSpotIsMove = it.getPrevSpot(dateList, dateId)?.spotType?.isMove() ?: false,
-                    nextSpotIsMove = it.getNextSpot(dateList, dateId)?.spotType?.isMove() ?: false
+                    useLeftLineMoveColor = it.getPrevSpot(dateList, dateId)?.spotType?.isMove() ?: false || it.spotType.isMove(),
+                    useRightLineMoveColor = it.getNextSpot(dateList, dateId)?.spotType?.isMove() ?: false || it.spotType.isMove()
                 )
-            }
+//            }
         }
 
         //if next date's first spot is move or this date last spot is move : show line
@@ -232,7 +237,7 @@ fun SpotListProgressBar(
                             isShown = currentSpotSpotTypeIsMove || nextSpotSpotTypeIsMove,
                             isHighlight = currentSpotIdx == lastSpotIdx && spotList[lastSpotIdx].spotType.isMove(),
                             modifier = Modifier.fillMaxWidth(),
-                            isMove = currentSpotSpotTypeIsMove || nextSpotSpotTypeIsMove
+                            useMoveColor = currentSpotSpotTypeIsMove || nextSpotSpotTypeIsMove
                         )
                     }
                 }
@@ -283,6 +288,7 @@ fun SpotListProgressBar(
 
 @Composable
 fun OneProgressBar(
+    useLargeItemWidth: Boolean,
     upperText: String?,
     titleText: String?,
 
@@ -294,8 +300,9 @@ fun OneProgressBar(
     isLast: Boolean,
     onClickItem: () -> Unit,
 
-    prevSpotIsMove: Boolean = false,
-    nextSpotIsMove: Boolean = false,
+    showPoint: Boolean = true,
+    useLeftLineMoveColor: Boolean = false,
+    useRightLineMoveColor: Boolean = false,
 
     includeIconNum: Boolean = false,
     pointColor: Int? = null,
@@ -327,7 +334,10 @@ fun OneProgressBar(
 
     var itemWidth by rememberSaveable {
         mutableStateOf(
-            if (isHighlight) 200
+            if (isHighlight && showPoint) {
+                if (useLargeItemWidth)    200
+                else                160
+            }
             else             130
         )
     }
@@ -339,8 +349,12 @@ fun OneProgressBar(
         label = "progress bar item width"
     )
 
-    itemWidth =  if (isHighlight) 200
-                else            130
+    itemWidth =
+        if (isHighlight && showPoint) {
+            if (useLargeItemWidth)    200
+            else                160
+        }
+        else             130
 
     ClickableBox(
         modifier = Modifier
@@ -376,25 +390,26 @@ fun OneProgressBar(
                         isHighlight = isLeftHighlight,
                         modifier = Modifier.weight(1f),
                         color = lineColor,
-                        isMove = prevSpotIsMove,
+                        useMoveColor = useLeftLineMoveColor,
                     )
                     Line(
                         isShown = !isLast,
                         isHighlight = isRightHighlight,
                         modifier = Modifier.weight(1f),
                         color = lineColor,
-                        isMove = nextSpotIsMove,
+                        useMoveColor = useRightLineMoveColor,
                     )
                 }
 
                 //point line
-                Point(
-                    isHighlightPoint = isHighlight,
-                    color = pointColor,
-                    text = iconText,
-                    textColor = iconTextColor,
-                    includeNum = includeIconNum
-                )
+                if (showPoint)
+                    Point(
+                        isHighlightPoint = isHighlight,
+                        color = pointColor,
+                        text = iconText,
+                        textColor = iconTextColor,
+                        includeNum = includeIconNum
+                    )
             }
 
             //lower text
@@ -445,7 +460,7 @@ private fun Point(
             .clip(CircleShape)
             .background(pointColor)
     ){
-        if (text != null){
+        if (includeNum && text != null){
             Text(
                 text = text,
                 style = iconTextStyle
@@ -462,7 +477,7 @@ private fun Line(
 
     modifier: Modifier = Modifier,
     color: Color? = null,
-    isMove: Boolean = false
+    useMoveColor: Boolean = false
 ){
     if (isShown) {
         if (isHighlight)
@@ -472,7 +487,7 @@ private fun Line(
                     .background(getColor(ColorType.PROGRESS_BAR__LINE_HIGHLIGHT))
             )
         else{
-            if (isMove){
+            if (useMoveColor){
                 Box(
                     modifier = modifier
                         .height(getSize(Shape.DEFAULT_LINE))

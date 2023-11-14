@@ -45,6 +45,7 @@ import com.newpaper.somewhere.ui.screens.moreScreens.MoreScreen
 import com.newpaper.somewhere.ui.screens.myTripsScreens.MyTripsScreen
 import com.newpaper.somewhere.ui.screens.myTripsScreens.ImageScreen
 import com.newpaper.somewhere.utils.WindowSizeClass
+import com.newpaper.somewhere.utils.WindowWidthSizeClass
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -299,6 +300,7 @@ fun SomewhereApp(
                 if (tripUiState.trip != null && tripUiState.tempTrip != null) {
                     SpotScreen(
                         use2Panes = windowSizeClass.use2Panes,
+                        isCompactWindow = windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact,
                         spacerValue = windowSizeClass.spacerValue,
                         isEditMode = tripUiState.isEditMode,
                         setUseImePadding = {
