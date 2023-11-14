@@ -182,7 +182,7 @@ fun ImageCard(
 
 
     val modifier1 = if (isEditMode) modifier.sizeIn(maxHeight = 390.dp)
-                    else modifier.sizeIn(maxWidth = 390.dp, maxHeight = 390.dp)
+                    else modifier.sizeIn(maxWidth = 650.dp, maxHeight = 390.dp)
 
     AnimatedVisibility(
         visible = isEditMode || imagePathList.isNotEmpty(),
@@ -325,8 +325,7 @@ fun ImageCard(
 
                             ClickableBox(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .aspectRatio(1f),
+                                    .fillMaxWidth(),
                                 onClick = {
                                     onClickImage(pageState.currentPage)
                                 }
