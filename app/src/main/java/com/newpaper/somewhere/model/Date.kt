@@ -179,6 +179,14 @@ data class Date(
         updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
     }
 
+    fun setAllSpotDate(
+        trip: Trip
+    ){
+        for (spot in spotList){
+            spot.date = date
+        }
+    }
+
     //sort =========================================================================================
     fun sortSpotListIndex(){
         spotList.forEachIndexed { index, spot ->

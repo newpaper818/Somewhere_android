@@ -318,7 +318,7 @@ fun SetLocationPage(
                     onSaveClick = {
                         //set location and zoom level
                         //spotList[currentSpotId].zoomLevel = zoomLevel
-                        spotList[currentSpotIndex].setLocation(
+                        spotList[currentSpotIndex].setLocationAndUpdateTravelDistance(
                             showingTrip,
                             dateIndex,
                             updateTripState,

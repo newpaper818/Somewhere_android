@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.model
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.room.Entity
@@ -290,7 +291,17 @@ data class Trip(
         newDateList[dateIndex].sortSpotListIconText()
         newDateList[newDateIndex].sortSpotListIconText()
 
+        var newTrip = showingTrip.copy(dateList = newDateList.toList())
+
+        if (newTrip.dateList[dateIndex].spotList.getOrNull(spotIndex) != null)
+            newTrip = newTrip.dateList[dateIndex].spotList[spotIndex].updateTravelDistanceCurrPrevNextSpot(newTrip, dateIndex)
+
+        else if (newTrip.dateList[dateIndex].spotList.isNotEmpty()) 
+            newTrip = newTrip.dateList[dateIndex].spotList.last().updateTravelDistanceCurrPrevNextSpot(newTrip, dateIndex)
+
+        newTrip = newTrip.dateList[newDateIndex].spotList.last().updateTravelDistanceCurrPrevNextSpot(newTrip,newDateIndex)
+
         //update state
-        updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
+        updateTripState(true, newTrip)
     }
 }

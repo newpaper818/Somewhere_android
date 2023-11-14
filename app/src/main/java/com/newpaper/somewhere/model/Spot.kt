@@ -1,6 +1,7 @@
 package com.newpaper.somewhere.model
 
 import android.location.Location
+import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
@@ -52,7 +53,7 @@ data class Spot(
     @ColorInt
     val iconBackgroundColor: Int = 0xffffffff.toInt(),
 
-    val date: LocalDate,
+    var date: LocalDate,
 
     val location: LatLng? = null,
     val zoomLevel: Float? = null,
@@ -143,6 +144,7 @@ data class Spot(
         dateList: List<Date>,
         currentDateIndex: Int,
     ): Spot?{
+
         val currentSpotList = dateList.getOrNull(currentDateIndex)?.spotList
         var prevSpot = currentSpotList?.getOrNull(index - 1)
         if (prevSpot == null){
@@ -173,6 +175,52 @@ data class Spot(
         }
 
         return nextSpot
+    }
+
+    /**
+     * get Pair(previous spot, prev spot's date index) of current spot.
+     * if don't exist(first index), get previous date's last spot
+     */
+    fun getPrevSpotWithDateIndex(
+        dateList: List<Date>,
+        currentDateIndex: Int,
+    ): Pair<Spot?, Int>{
+        var dateIndex = currentDateIndex
+
+        val currentSpotList = dateList.getOrNull(dateIndex)?.spotList
+        var prevSpot = currentSpotList?.getOrNull(index - 1)
+        if (prevSpot == null){
+            dateIndex--
+            val prevDate = dateList.getOrNull(dateIndex)
+            if (prevDate != null){
+                prevSpot = prevDate.spotList.lastOrNull()
+            }
+        }
+
+        return Pair(prevSpot, dateIndex)
+    }
+
+    /**
+     * get Pair(next spot, next spot's date index) of current spot.
+     * if don't exist(last index), get next date's first spot
+     */
+    fun getNextSpotWithDateIndex(
+        dateList: List<Date>,
+        currentDateIndex: Int,
+    ): Pair<Spot?, Int>{
+        var dateIndex = currentDateIndex
+
+        val currentSpotList = dateList.getOrNull(dateIndex)?.spotList
+        var nextSpot = currentSpotList?.getOrNull(index + 1)
+        if (nextSpot == null){
+            dateIndex++
+            val nextDate = dateList.getOrNull(dateIndex)
+            if (nextDate != null){
+                nextSpot = nextDate.spotList.firstOrNull()
+            }
+        }
+
+        return Pair(nextSpot, dateIndex)
     }
 
     fun prevSpotOrDateIsExist(
@@ -265,7 +313,7 @@ data class Spot(
             newSpotList[index] = newSpotList[index].copy(spotType = newSpotType)
         else {
             //update travel distance
-            val travelDistance = setTravelDistance(dateList, currentDateIndex)
+            val travelDistance = getTravelDistance(dateList, currentDateIndex)
             newSpotList[index] = newSpotList[index].copy(
                 spotType = newSpotType, location = null, zoomLevel = null, travelDistance = travelDistance ?: 0f)
         }
@@ -398,42 +446,101 @@ data class Spot(
 
     }
 
+    //==============================================================================================
+    fun getTravelDistance(
+        dateList: List<Date>,
+        dateIndex: Int
+    ): Float?{
+        val prevSpot = getPrevSpot(dateList, dateIndex)
+        val nextSpot = getNextSpot(dateList, dateIndex)
+
+        return calcTravelDistanceFrom2Location(prevSpot?.location, nextSpot?.location)
+    }
+
+    /**
+     * if spot is MOVE, get travel distance from prev spot and next spot
+     *
+     * @param showingTrip
+     * @param currentDateIndex
+     * @return
+     */
+    fun updateTravelDistanceCurrentSpot(
+        showingTrip: Trip,
+        currentDateIndex: Int,
+    ): Trip{
+        var newTrip = showingTrip
+
+        if (spotType.isMove()){
+            val newTravelDistance = getTravelDistance(newTrip.dateList, currentDateIndex)
+            Log.d("aaa", "            is move / $newTravelDistance")
+
+            //update travel distance
+            val newSpotList1 = newTrip.dateList[currentDateIndex].spotList.toMutableList()
+            newSpotList1[index] = newSpotList1[index].copy(travelDistance = newTravelDistance ?: 0f)
+            val newDateList1 = newTrip.dateList.toMutableList()
+            newDateList1[currentDateIndex] = newDateList1[currentDateIndex].copy(spotList = newSpotList1.toList())
+            newTrip = newTrip.copy(dateList = newDateList1.toList())
+        }
+
+        return newTrip
+    }
+
+    /**
+     * update travel distances: current spot's previous spot, current spot's next spot
+     *
+     * @param showingTrip
+     * @param currentDateIndex
+     * @return
+     */
     fun updateTravelDistancePrevNextSpot(
         showingTrip: Trip,
         currentDateIndex: Int,
     ): Trip{
         var newTrip = showingTrip
 
-        var newPrevSpotTravelDistance: Float? = null
-        var newNextSpotTravelDistance: Float? = null
-
         //update travel distance
-        val prevSpot = newTrip.dateList[currentDateIndex].spotList[index].getPrevSpot(newTrip.dateList, currentDateIndex)
+        val (prevSpot, prevSpotDateIndex) = newTrip.dateList[currentDateIndex].spotList[index].getPrevSpotWithDateIndex(newTrip.dateList, currentDateIndex)
         if (prevSpot?.spotType?.isMove() == true){
-            val moveDateIndex = if (index == 0) currentDateIndex - 1 else currentDateIndex
-            val moveSpotIndex = if (index == 0) newTrip.dateList[moveDateIndex].spotList.lastIndex else index - 1
-            newPrevSpotTravelDistance = prevSpot.setTravelDistance(newTrip.dateList, moveDateIndex)
-
-            //update travel distance
-            val newSpotList1 = newTrip.dateList[moveDateIndex].spotList.toMutableList()
-            newSpotList1[moveSpotIndex] = newSpotList1[moveSpotIndex].copy(travelDistance = newPrevSpotTravelDistance ?: 0f)
-            val newDateList1 = newTrip.dateList.toMutableList()
-            newDateList1[moveDateIndex] = newDateList1[moveDateIndex].copy(spotList = newSpotList1.toList())
-            newTrip = newTrip.copy(dateList = newDateList1.toList())
+            newTrip = prevSpot.updateTravelDistanceCurrentSpot(newTrip, prevSpotDateIndex)
         }
 
-        val nextSpot = newTrip.dateList[currentDateIndex].spotList[index].getNextSpot(newTrip.dateList, currentDateIndex)
+        val (nextSpot, nextSpotDateIndex) = newTrip.dateList[currentDateIndex].spotList[index].getNextSpotWithDateIndex(newTrip.dateList, currentDateIndex)
         if (nextSpot?.spotType?.isMove() == true){
-            val moveDateIndex = if (index == newTrip.dateList[currentDateIndex].spotList.lastIndex) currentDateIndex + 1 else currentDateIndex
-            val moveSpotIndex = if (index == newTrip.dateList[currentDateIndex].spotList.lastIndex) 0 else index + 1
-            newNextSpotTravelDistance = nextSpot.setTravelDistance(newTrip.dateList, moveDateIndex)
+            newTrip = nextSpot.updateTravelDistanceCurrentSpot(newTrip, nextSpotDateIndex)
+        }
 
-            //update travel distance
-            val newSpotList1 = newTrip.dateList[moveDateIndex].spotList.toMutableList()
-            newSpotList1[moveSpotIndex] = newSpotList1[moveSpotIndex].copy(travelDistance = newNextSpotTravelDistance ?: 0f)
-            val newDateList1 = newTrip.dateList.toMutableList()
-            newDateList1[moveDateIndex] = newDateList1[moveDateIndex].copy(spotList = newSpotList1.toList())
-            newTrip = newTrip.copy(dateList = newDateList1.toList())
+        return newTrip
+    }
+
+    /**
+     * update travel distances: current spot, current spot's previous spot, current spot's next spot
+     *
+     * @param showingTrip
+     * @param currentDateIndex
+     * @return
+     */
+    fun updateTravelDistanceCurrPrevNextSpot(
+        showingTrip: Trip,
+        currentDateIndex: Int,
+    ): Trip{
+        var newTrip = showingTrip
+
+        //update travel distance
+        if (newTrip.dateList[currentDateIndex].spotList[index].spotType.isMove()){
+            Log.d("aaa", "     1")
+            newTrip = newTrip.dateList[currentDateIndex].spotList[index].updateTravelDistanceCurrentSpot(newTrip, currentDateIndex)
+        }
+
+        val (prevSpot, prevSpotDateIndex) = newTrip.dateList[currentDateIndex].spotList[index].getPrevSpotWithDateIndex(newTrip.dateList, currentDateIndex)
+        if (prevSpot?.spotType?.isMove() == true){
+            Log.d("aaa", "     2")
+            newTrip = prevSpot.updateTravelDistanceCurrentSpot(newTrip, prevSpotDateIndex)
+        }
+
+        val (nextSpot, nextSpotDateIndex) = newTrip.dateList[currentDateIndex].spotList[index].getNextSpotWithDateIndex(newTrip.dateList, currentDateIndex)
+        if (nextSpot?.spotType?.isMove() == true){
+            Log.d("aaa", "     3")
+            newTrip = nextSpot.updateTravelDistanceCurrentSpot(newTrip, nextSpotDateIndex)
         }
 
         return newTrip
@@ -461,7 +568,7 @@ data class Spot(
 
 
     // update ======================================================================================
-    //TODO move to view model?
+    //TODO move to view model? delete?
     fun updateDistance(
         showingTrip: Trip,
         currentDateIndex: Int,
@@ -479,15 +586,7 @@ data class Spot(
         updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
     }
 
-    fun setTravelDistance(
-        dateList: List<Date>,
-        dateIndex: Int
-    ): Float?{
-        val prevSpot = getPrevSpot(dateList, dateIndex)
-        val nextSpot = getNextSpot(dateList, dateIndex)
 
-        return calcTravelDistanceFrom2Location(prevSpot?.location, nextSpot?.location)
-    }
 
 
 }

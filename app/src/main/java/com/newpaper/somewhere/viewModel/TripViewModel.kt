@@ -150,6 +150,7 @@ class TripViewModel(
             val currentTrip: Trip = if (toTempTrip) _uiState.value.tempTrip!!
                                     else            _uiState.value.trip!!
 
+            var newTrip = currentTrip
 
             //if dateList is empty (first create)
             if (currentTrip.dateList.isEmpty()){
@@ -166,7 +167,8 @@ class TripViewModel(
                     id++
                     currDate = currDate.plusDays(1)
                 }
-                updateTripState(toTempTrip, currentTrip.copy(dateList = dateList))
+
+                newTrip = newTrip.copy(dateList = dateList)
             }
 
             //if same date range with before
@@ -201,8 +203,16 @@ class TripViewModel(
                     index++
                 }
 
-                updateTripState(toTempTrip, currentTrip.copy(dateList = dateList))
+                newTrip = newTrip.copy(dateList = dateList)
             }
+
+            //update all spot's date
+            for (date in newTrip.dateList) {
+                date.setAllSpotDate(newTrip)
+            }
+
+            updateTripState(toTempTrip, newTrip)
+
         }
     }
 
@@ -241,9 +251,12 @@ class TripViewModel(
 
             newDateList[dateIndex] = newDate
 
-            val currentTrip = _uiState.value.tempTrip!!
+            //update travel distance
+            var newTrip = _uiState.value.tempTrip!!.copy(dateList = newDateList)
 
-            updateTripState(true, currentTrip.copy(dateList = newDateList))
+            newTrip = newTrip.dateList[dateIndex].spotList.last().updateTravelDistancePrevNextSpot(newTrip, dateIndex)
+
+            updateTripState(true, newTrip)
         }
     }
 
@@ -255,10 +268,6 @@ class TripViewModel(
 
             //tempTrip's spotList
             val newSpotList = _uiState.value.tempTrip!!.clone().dateList[dateIndex].spotList.toMutableList()
-
-            //get prev, next spot
-//            val prevSpot = newSpotList[spotIndex].getPrevSpot(dateList, dateIndex)
-//            val nextSpot = newSpotList[spotIndex].getNextSpot(dateList, dateIndex)
 
             //delete spot
             newSpotList.removeAt(spotIndex)
@@ -276,19 +285,22 @@ class TripViewModel(
                 newSpotList[i].iconText = newIconText
             }
 
-            //check prev or next spot is MOVE and update travel distance
-
-
-
             //tempTrip's dateList
             val newDateList = _uiState.value.tempTrip!!.clone().dateList.toMutableList()
             val newDate = newDateList[dateIndex].copy(spotList = newSpotList.toList())
             newDateList[dateIndex] = newDate
 
-            val currentTrip = _uiState.value.tempTrip!!
+            var newTrip = _uiState.value.tempTrip!!.copy(dateList = newDateList.toList())
+
+            //check prev or next spot is MOVE and update travel distance
+            val newSpotIndex = if (newTrip.dateList[dateIndex].spotList.getOrNull(spotIndex) != null) spotIndex
+                                else spotIndex - 1
+
+            if (newTrip.dateList[dateIndex].spotList.getOrNull(newSpotIndex) != null)
+                newTrip = newTrip.dateList[dateIndex].spotList[newSpotIndex].updateTravelDistanceCurrPrevNextSpot(newTrip, dateIndex)
 
             //update tempTrip
-            updateTripState(true, currentTrip.copy(dateList = newDateList.toList()))
+            updateTripState(true, newTrip)
         }
     }
 
@@ -407,10 +419,10 @@ class TripViewModel(
         }
     }
 
-    fun reorderSpotList(dateId: Int, currentIndex: Int, destinationIndex: Int){
-        if (_uiState.value.tempTrip?.dateList?.get(dateId)?.spotList != null){
+    fun reorderSpotListAndUpdateTravelDistance(dateIndex: Int, currentIndex: Int, destinationIndex: Int){
+        if (_uiState.value.tempTrip?.dateList?.get(dateIndex)?.spotList != null){
 
-            val newSpotList = _uiState.value.tempTrip!!.dateList[dateId].spotList.toMutableList()
+            val newSpotList = _uiState.value.tempTrip!!.dateList[dateIndex].spotList.toMutableList()
 
             //reorder
             val date = newSpotList[currentIndex]
@@ -426,12 +438,17 @@ class TripViewModel(
                 newSpotList[index].index = index
             }
 
-            //update ui state
-            val newDate = _uiState.value.tempTrip!!.dateList[dateId].copy(spotList = newSpotList)
+            //
+            val newDate = _uiState.value.tempTrip!!.dateList[dateIndex].copy(spotList = newSpotList)
             val newDateList = _uiState.value.tempTrip!!.dateList.toMutableList()
-            newDateList[dateId] = newDate
-            val newTempTrip = _uiState.value.tempTrip!!.copy(dateList = newDateList)
+            newDateList[dateIndex] = newDate
+            var newTempTrip = _uiState.value.tempTrip!!.copy(dateList = newDateList)
 
+            //update travel distance
+            newTempTrip = newTempTrip.dateList[dateIndex].spotList[currentIndex].updateTravelDistanceCurrPrevNextSpot(newTempTrip, dateIndex)
+            newTempTrip = newTempTrip.dateList[dateIndex].spotList[destinationIndex].updateTravelDistanceCurrPrevNextSpot(newTempTrip, dateIndex)
+
+            //update ui state
             _uiState.update {
                 it.copy(tempTrip = newTempTrip)
             }

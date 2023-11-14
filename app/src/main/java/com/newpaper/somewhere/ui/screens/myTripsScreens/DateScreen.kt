@@ -690,7 +690,8 @@ fun DatePage(
                                 updateItemPosition = { currentIndex, destinationIndex ->
                                     //on drag end
                                     coroutineScope.launch {
-                                        //reorder list
+
+                                        //reorder list & update travel distance
                                         reorderSpotList(currentIndex, destinationIndex)
 
                                         //all slideState to NONE

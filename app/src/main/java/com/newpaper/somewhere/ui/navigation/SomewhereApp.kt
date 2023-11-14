@@ -572,7 +572,7 @@ fun SomewhereApp(
                                 tripViewModel.deleteSpot(dateId, spotId)
                             },
                             reorderSpotList = { dateId, currentIndex, destinationIndex ->
-                                tripViewModel.reorderSpotList(
+                                tripViewModel.reorderSpotListAndUpdateTravelDistance(
                                     dateId,
                                     currentIndex,
                                     destinationIndex
@@ -923,7 +923,7 @@ fun SomewhereApp(
                                     tripViewModel.deleteSpot(dateId, spotId)
                                 },
                                 reorderSpotList = { dateId, currentIndex, destinationIndex ->
-                                    tripViewModel.reorderSpotList(
+                                    tripViewModel.reorderSpotListAndUpdateTravelDistance(
                                         dateId,
                                         currentIndex,
                                         destinationIndex
@@ -931,9 +931,12 @@ fun SomewhereApp(
                                 },
                                 saveTrip = {
                                     coroutineScope.launch {
-                                        tripViewModel.saveTrip({
-                                            coroutineScope.launch { appViewModel.updateAppUiStateFromRepository() }
-                                        })
+                                        tripViewModel.saveTrip(
+                                            {
+                                                coroutineScope.launch { appViewModel.updateAppUiStateFromRepository() }
+                                            },
+                                            deleteNotEnabledDate = true
+                                        )
                                     }
                                 },
 
@@ -1105,7 +1108,7 @@ fun SomewhereApp(
                                     tripViewModel.deleteSpot(dateId, spotId)
                                 },
                                 reorderSpotList = { dateId, currentIndex, destinationIndex ->
-                                    tripViewModel.reorderSpotList(
+                                    tripViewModel.reorderSpotListAndUpdateTravelDistance(
                                         dateId,
                                         currentIndex,
                                         destinationIndex
@@ -1113,9 +1116,12 @@ fun SomewhereApp(
                                 },
                                 saveTrip = {
                                     coroutineScope.launch {
-                                        tripViewModel.saveTrip({
-                                            coroutineScope.launch { appViewModel.updateAppUiStateFromRepository() }
-                                        })
+                                        tripViewModel.saveTrip(
+                                            {
+                                                coroutineScope.launch { appViewModel.updateAppUiStateFromRepository() }
+                                            },
+                                                deleteNotEnabledDate = true
+                                        )
                                     }
                                 },
 

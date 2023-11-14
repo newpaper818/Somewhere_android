@@ -71,8 +71,6 @@ fun SelectDateDialog(
                             currentDateIndex = date.index
                         },
                         onExpandedButtonClicked = {},
-//                        itemColor = if (date.index == currentDateIndex) getColor(ColorType.CARD_SELECTED)
-//                        else Color.Transparent,
                         isLongText = { },
 
                         pointColor = Color(date.color.color),
