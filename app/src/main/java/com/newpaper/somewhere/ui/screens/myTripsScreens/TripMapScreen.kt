@@ -766,7 +766,7 @@ private fun FocusOnToSpotButton(
 ){
     val coroutineScope = rememberCoroutineScope()
     val spotTypeShownList = mutableListOf<SpotTypeGroup>()
-    val snackBarText = stringResource(id = R.string.snack_bar_no_location_to_show)
+    val snackBarText = stringResource(id = R.string.snackbar_no_location_to_show)
     val density = LocalDensity.current.density
 
     for (spotTypeWithBoolean in spotTypeGroupWithShownIconList){

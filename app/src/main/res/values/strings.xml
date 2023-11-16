@@ -187,11 +187,11 @@
 
 
 
-    <!--snack bar ===============================================================================-->
-    <string name="snack_bar_location_permission_denied">User location permission denied</string>
-    <string name="snack_bar_no_location_to_show">No location to show</string>
-    <string name="snack_bar_no_user_location">Can\'t find your location</string>
-    <string name="snack_bar_settings">Settings</string>
+    <!--snackbar ===============================================================================-->
+    <string name="snackbar_location_permission_denied">User location permission denied</string>
+    <string name="snackbar_no_location_to_show">No location to show</string>
+    <string name="snackbar_no_user_location">Can\'t find your location</string>
+    <string name="snackbar_settings">Settings</string>
 
 
     <!--Cards ===================================================================================-->

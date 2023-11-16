@@ -44,7 +44,7 @@ fun FocusOnToSpotButton(
 ){
     val coroutineScope = rememberCoroutineScope()
     val density = LocalDensity.current.density
-    val snackBarText = stringResource(id = R.string.snack_bar_no_location_to_show)
+    val snackBarText = stringResource(id = R.string.snackbar_no_location_to_show)
 
     if (focusOnToSpotEnabled){
         IconButton(
@@ -86,10 +86,10 @@ fun UserLocationButton(
     }
 
     //snackbar
-    val snackBarNoUserLocation = stringResource(id = R.string.snack_bar_no_user_location)
+    val snackBarNoUserLocation = stringResource(id = R.string.snackbar_no_user_location)
     val snackBarLocationPermissionDenied =
-        stringResource(id = R.string.snack_bar_location_permission_denied)
-    val snackBarSettings = stringResource(id = R.string.snack_bar_settings)
+        stringResource(id = R.string.snackbar_location_permission_denied)
+    val snackBarSettings = stringResource(id = R.string.snackbar_settings)
 
     val noLocationSnackbar = {
         showSnackBar(snackBarNoUserLocation, null, SnackbarDuration.Short){ }
