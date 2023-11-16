@@ -60,7 +60,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -82,8 +81,9 @@ import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MySpacerRow
 import com.newpaper.somewhere.ui.screenUtils.settingScreenUtils.ItemDivider
 import com.newpaper.somewhere.ui.theme.TextType
 import com.newpaper.somewhere.ui.theme.getTextStyle
-import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.DEFAULT_ZOOM_LEVEL
-import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.MapChooseLocation
+import com.newpaper.somewhere.ui.screenUtils.map.DEFAULT_ZOOM_LEVEL
+import com.newpaper.somewhere.ui.screenUtils.map.MapForChooseLocation
+import com.newpaper.somewhere.ui.screenUtils.map.focusOnToLatLng
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.MyTextField
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.SaveCancelButtons
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.ZoomCard
@@ -168,14 +168,13 @@ fun SetLocationPage(
                     mapSize = it
                 }
         ) {
-            MapChooseLocation(
+            MapForChooseLocation(
                 context = LocalContext.current,
                 mapPadding = mapPaddingValues,
                 isDarkMapTheme = isDarkMapTheme,
                 cameraPositionState = cameraPositionState,
                 dateList = dateList,
                 dateIndex = dateIndex,
-                spotList = spotList,
                 currentDate = dateList[dateIndex],
                 currentSpot = spotList[currentSpotIndex],
                 showSearchLocationMarker = searchText != "",
@@ -494,7 +493,7 @@ private fun mapAnimateToLatLng(
     coroutineScope: CoroutineScope
 ){
     coroutineScope.launch {
-        com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.focusOnToLatLng(
+        focusOnToLatLng(
             cameraPositionState,
             mapSize,
             locationList.map { it.location },

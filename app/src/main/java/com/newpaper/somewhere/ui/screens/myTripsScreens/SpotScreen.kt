@@ -12,7 +12,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -70,10 +69,9 @@ import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.SomewhereTopAppBa
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.dialogs.SetBudgetOrDistanceDialog
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.SpotListProgressBar
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.DateTimeCard
-import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.TitleCardMove
-import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.focusOnToSpot
-import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.DEFAULT_ZOOM_LEVEL
-import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.SEOUL_LOCATION
+import com.newpaper.somewhere.ui.screenUtils.map.focusOnToSpots
+import com.newpaper.somewhere.ui.screenUtils.map.DEFAULT_ZOOM_LEVEL
+import com.newpaper.somewhere.ui.screenUtils.map.SEOUL_LOCATION
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.TitleCard
 import com.newpaper.somewhere.viewModel.DateTimeFormat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -1256,13 +1254,13 @@ private fun mapAnimateToSpot(
         //if spot is move
         if (currentSpot.spotType.isMove() && spotFrom?.location != null && spotTo?.location != null) {
             coroutineScope.launch {
-                focusOnToSpot(cameraPositionState, mapSize, listOf(spotFrom, spotTo), density)
+                focusOnToSpots(cameraPositionState, mapSize, listOf(spotFrom, spotTo), density)
             }
         }
         //if spot is not move
         else if (currentSpot.spotType.isNotMove() && currentSpot.location != null) {
             coroutineScope.launch {
-                focusOnToSpot(cameraPositionState, mapSize, listOf(currentSpot))
+                focusOnToSpots(cameraPositionState, mapSize, listOf(currentSpot))
             }
         }
     }

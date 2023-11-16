@@ -19,7 +19,7 @@ import com.newpaper.somewhere.R
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.DisplayIcon
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MyIcons
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MySpacerRow
-import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.UserLocationButton
+import com.newpaper.somewhere.ui.screenUtils.map.UserLocationButton
 import com.newpaper.somewhere.ui.theme.TextType
 import com.newpaper.somewhere.ui.theme.getTextStyle
 import com.google.android.gms.location.FusedLocationProviderClient

@@ -1,7 +1,6 @@
 package com.newpaper.somewhere.ui.screens.myTripsScreens
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -79,9 +78,9 @@ import com.newpaper.somewhere.model.Trip
 import com.newpaper.somewhere.enumUtils.SpotTypeGroup
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.ClickableBox
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.DisplayIcon
-import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.MapForTrip
+import com.newpaper.somewhere.ui.screenUtils.map.MapForTripMap
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MyIcons
-import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.UserLocationButton
+import com.newpaper.somewhere.ui.screenUtils.map.UserLocationButton
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MySpacerColumn
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MySpacerRow
 import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.cards.SpotTypeGroupCard
@@ -89,8 +88,8 @@ import com.newpaper.somewhere.ui.theme.ColorType
 import com.newpaper.somewhere.ui.theme.TextType
 import com.newpaper.somewhere.ui.theme.getColor
 import com.newpaper.somewhere.ui.theme.getTextStyle
-import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.MAX_ZOOM_LEVEL
-import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.MIN_ZOOM_LEVEL
+import com.newpaper.somewhere.ui.screenUtils.map.MAX_ZOOM_LEVEL
+import com.newpaper.somewhere.ui.screenUtils.map.MIN_ZOOM_LEVEL
 import com.newpaper.somewhere.viewModel.DateTimeFormat
 import com.newpaper.somewhere.viewModel.DateWithBoolean
 import com.newpaper.somewhere.viewModel.SpotTypeGroupWithBoolean
@@ -100,6 +99,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.newpaper.somewhere.ui.screenUtils.map.focusOnToSpotForTripMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -241,7 +241,7 @@ fun TripMapScreen(
                                 mapSize = getMapSizeWithOutPadding(it, mapPadding, density)
                             }
                     ) {
-                        MapForTrip(
+                        MapForTripMap(
                             context = context,
                             mapPadding = mapPadding,
                             isDarkMapTheme = isDarkMapTheme,
@@ -323,7 +323,7 @@ fun TripMapScreen(
                                 mapSize = getMapSizeWithOutPadding(it, mapPadding, density)
                             }
                     ) {
-                        MapForTrip(
+                        MapForTripMap(
                             context = context,
                             mapPadding = mapPadding,
                             isDarkMapTheme = isDarkMapTheme,
@@ -974,7 +974,7 @@ private fun focusOnToSpot(
 
     //focus on to spot
     coroutineScope.launch {
-        com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.focusOnToSpotForTripMap(
+        focusOnToSpotForTripMap(
             mapSize, cameraPositionState, spotList.toList()
         )
     }

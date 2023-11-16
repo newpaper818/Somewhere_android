@@ -26,11 +26,11 @@ import com.newpaper.somewhere.model.Date
 import com.newpaper.somewhere.model.Spot
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MySpacerColumn
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.DisplayIcon
-import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.FocusOnToSpotButton
-import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.MapForSpot
+import com.newpaper.somewhere.ui.screenUtils.map.FocusOnToSpotButton
+import com.newpaper.somewhere.ui.screenUtils.map.MapForSpot
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MyIcons
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MySpacerRow
-import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.UserLocationButton
+import com.newpaper.somewhere.ui.screenUtils.map.UserLocationButton
 import com.newpaper.somewhere.ui.theme.ColorType
 import com.newpaper.somewhere.ui.theme.getColor
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -106,7 +106,6 @@ fun MapCard(
             isDarkMapTheme = isDarkMapTheme,
             cameraPositionState = cameraPositionState,
             userLocationEnabled = userLocationEnabled,
-            mapSize = mapSize,
             dateList = dateList,
             dateIndex = dateIndex,
             spotList = spotList,

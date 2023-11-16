@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.newpaper.somewhere.enumUtils.SpotType
 import com.newpaper.somewhere.enumUtils.TimeFormat
-import com.newpaper.somewhere.ui.screenUtils.tripScreenUtils.SEOUL_LOCATION
+import com.newpaper.somewhere.ui.screenUtils.map.SEOUL_LOCATION
 import com.newpaper.somewhere.utils.getNumToText
 import com.newpaper.somewhere.utils.getTimeText
 import com.newpaper.somewhere.viewModel.DateTimeFormat
