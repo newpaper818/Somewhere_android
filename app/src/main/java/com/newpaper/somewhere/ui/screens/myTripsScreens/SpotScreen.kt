@@ -957,44 +957,23 @@ fun SpotDetailPage(
         if (currentSpot != null){
 
             //title card
-//            item {
                 if (!use2Panes)
                     MySpacerColumn(height = 16.dp)
 
-                if (currentSpot.spotType.isNotMove())
-                    TitleCard(
-                        isEditMode = isEditMode,
-                        titleText = currentSpot.titleText,
-                        onTitleChange = { newTitleText ->
-                            currentSpot.setTitleText(
-                                showingTrip,
-                                dateIndex,
-                                updateTripState,
-                                newTitleText
-                            )
-                        },
-                        focusManager = focusManager,
-                        isLongText = { onErrorCountChange(it) }
-                    )
-                else {
-                    TitleCardMove(
-                        isEditMode = isEditMode,
-                        titleText = currentSpot.titleText,
-                        onTitleChange = { newTitleText ->
-                            currentSpot.setTitleText(
-                                showingTrip,
-                                dateIndex,
-                                updateTripState,
-                                newTitleText
-                            )
-                        },
-                        focusManager = focusManager,
-                        isLongText = { onErrorCountChange(it) }
-                    )
-
-                    MySpacerColumn(height = 16.dp)
-                }
-//            }
+                TitleCard(
+                    isEditMode = isEditMode,
+                    titleText = currentSpot.titleText,
+                    onTitleChange = { newTitleText ->
+                        currentSpot.setTitleText(
+                            showingTrip,
+                            dateIndex,
+                            updateTripState,
+                            newTitleText
+                        )
+                    },
+                    focusManager = focusManager,
+                    isLongText = { onErrorCountChange(it) }
+                )
 
             //date time card
 //            item {

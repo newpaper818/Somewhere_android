@@ -205,8 +205,8 @@ fun SpotListProgressBar(
                             || it.spotType.isMove() && it.index == currentSpotIdx,
                     isRightHighlight = moveIdx != null && it.index == moveIdx
                             || it.spotType.isMove() && it.index == currentSpotIdx,
-                    isFirst = it == spotList.first() && it.getPrevSpot(dateList, dateId)?.spotType?.isNotMove() ?: true,
-                    isLast = it == spotList.last() && it.getNextSpot(dateList, dateId)?.spotType?.isNotMove() ?: true,
+                    isFirst = it == spotList.first() && it.getPrevSpot(dateList, dateId)?.spotType?.isNotMove() ?: true && it.spotType.isNotMove(),
+                    isLast = it == spotList.last() && it.getNextSpot(dateList, dateId)?.spotType?.isNotMove() ?: true && it.spotType.isNotMove(),
                     onClickItem = {
                         onClickSpot(it.index)
                     },
