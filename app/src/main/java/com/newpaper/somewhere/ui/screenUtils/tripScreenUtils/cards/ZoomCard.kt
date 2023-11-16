@@ -35,7 +35,7 @@ fun ZoomCard(
     fusedLocationClient: FusedLocationProviderClient,
     cameraPositionState: CameraPositionState,
     setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
-    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit
+    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
 ){
     Row(
         verticalAlignment = Alignment.Bottom,

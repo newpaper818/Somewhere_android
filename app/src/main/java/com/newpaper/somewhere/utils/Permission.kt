@@ -52,6 +52,14 @@ val USER_LOCATION_PERMISSION_ARRAY = arrayOf(
 //    return re
 //}
 
+/**
+ * check permission is granted
+ *
+ * @param context
+ * @param permission what you will checked permission
+ * @return true: permission is granted
+ *         false: permission is denied
+ */
 fun checkPermission(
     context: Context,
     permission: String
@@ -69,6 +77,13 @@ fun checkPermissions(
     }
 }
 
+/**
+ * check user location permission is granted
+ *
+ * @param context
+ * @return true: user location permission is granted,
+ *         false: user location permission is denied
+ */
 fun checkPermissionUserLocation(
     context: Context,
 ): Boolean{

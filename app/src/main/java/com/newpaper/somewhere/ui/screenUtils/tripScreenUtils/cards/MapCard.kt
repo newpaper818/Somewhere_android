@@ -64,7 +64,7 @@ fun MapCard(
 
     modifier: Modifier = Modifier,
 
-    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit,
+    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
     use2Panes: Boolean = false,
     spotFrom: Spot? = null,
     spotTo: Spot? = null
@@ -168,7 +168,7 @@ fun MapSpotMapButtons(
     onFullScreenClicked: () -> Unit,
     toggleIsEditLocation: () -> Unit,
     deleteLocation: () -> Unit,
-    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit
+    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
 ){
     val focusOnToSpotEnabled =
         if (spot == null) false
@@ -229,7 +229,7 @@ fun UserLocationAndFullScreenButtons(
     cameraPositionState: CameraPositionState,
     setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
     onFullScreenClicked: () -> Unit,
-    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit,
+    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
     showFullScreenButton: Boolean = true
 ){
     MapButtonsRow {
@@ -283,7 +283,7 @@ fun SpotNavigateWithFocusOnToSpotButtons(
     focusOnToSpotEnabled: Boolean,
     cameraPositionState: CameraPositionState,
     spotList: List<Spot>,
-    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit
+    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
 ){
     MapButtonsRow {
         //to prev spot

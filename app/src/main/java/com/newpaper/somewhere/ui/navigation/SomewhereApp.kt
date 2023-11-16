@@ -65,7 +65,7 @@ fun SomewhereApp(
     val userLocationPermissionState =
         rememberMultiplePermissionsState(permissions = USER_LOCATION_PERMISSION_LIST)
 
-    //is user location permission enabled
+    //is user location permission granted
     var userLocationEnabled by rememberSaveable {
         mutableStateOf(checkPermissionUserLocation(context))
     }

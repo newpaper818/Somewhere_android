@@ -1,6 +1,7 @@
 package com.newpaper.somewhere.ui.screens.myTripsScreens
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -40,6 +41,7 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
@@ -265,13 +267,18 @@ fun TripMapScreen(
                             cameraPositionState = cameraPositionState,
                             fusedLocationClient = fusedLocationClient,
                             setUserLocationEnabled = setUserLocationEnabled,
-                            showSnackBar = { text, actionLabel, duration ->
+                            showSnackBar = { text, actionLabel, duration, onActionClick ->
                                 coroutineScope.launch {
                                     snackBarHostState.showSnackbar(
                                         message = text,
                                         actionLabel = actionLabel,
                                         duration = duration
-                                    )
+                                    ).run {
+                                        when (this){
+                                            SnackbarResult.Dismissed -> { }
+                                            SnackbarResult.ActionPerformed -> onActionClick()
+                                        }
+                                    }
                                 }
                             }
                         )
@@ -285,7 +292,9 @@ fun TripMapScreen(
             var cardWidth by rememberSaveable { mutableIntStateOf(0) }
 
             Scaffold(
-                modifier = Modifier.fillMaxSize().navigationBarsPadding(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .navigationBarsPadding(),
 
                 snackbarHost = {
                     Box(
@@ -393,13 +402,18 @@ fun TripMapScreen(
                         cameraPositionState = cameraPositionState,
                         fusedLocationClient = fusedLocationClient,
                         setUserLocationEnabled = setUserLocationEnabled,
-                        showSnackBar = { text, actionLabel, duration ->
+                        showSnackBar = { text, actionLabel, duration, onActionClick ->
                             coroutineScope.launch {
                                 snackBarHostState.showSnackbar(
                                     message = text,
                                     actionLabel = actionLabel,
                                     duration = duration
-                                )
+                                ).run {
+                                    when (this){
+                                        SnackbarResult.Dismissed -> { }
+                                        SnackbarResult.ActionPerformed -> onActionClick()
+                                    }
+                                }
                             }
                         }
                     )
@@ -438,7 +452,7 @@ private fun MapButtons(
     cameraPositionState: CameraPositionState,
     fusedLocationClient: FusedLocationProviderClient,
     setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
-    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit
+    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
 ){
     val coroutineScope = rememberCoroutineScope()
 

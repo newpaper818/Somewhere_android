@@ -1,10 +1,14 @@
 package com.newpaper.somewhere.ui.screenUtils.tripScreenUtils
 
+import android.Manifest
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.Rect
-import androidx.activity.compose.ManagedActivityResultLauncher
+import android.net.Uri
+import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.ColorInt
@@ -29,13 +33,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import com.newpaper.somewhere.R
 import com.newpaper.somewhere.model.Date
 import com.newpaper.somewhere.model.Spot
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.DisplayIcon
 import com.newpaper.somewhere.ui.screenUtils.commonScreenUtils.MyIcons
 import com.newpaper.somewhere.utils.USER_LOCATION_PERMISSION_LIST
-import com.newpaper.somewhere.utils.checkAndRequestPermissionForUserLocation
 import com.newpaper.somewhere.utils.checkPermissionUserLocation
 import com.newpaper.somewhere.utils.checkPermissionsIsGranted
 import com.newpaper.somewhere.viewModel.DateWithBoolean
@@ -58,6 +62,7 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.newpaper.somewhere.ui.theme.ColorType
 import com.newpaper.somewhere.ui.theme.getColor
+import com.newpaper.somewhere.utils.USER_LOCATION_PERMISSION_ARRAY
 import com.newpaper.somewhere.viewModel.LocationInfo
 import kotlinx.coroutines.launch
 import kotlin.math.min
@@ -445,8 +450,7 @@ private fun MapMoveLine(
     }
 
     val lineColor1 =
-        if (lineColor != null)  lineColor
-        else                    getColor(ColorType.SPOT_MAP_LINE_MOVE)
+        lineColor ?: getColor(ColorType.SPOT_MAP_LINE_MOVE)
 
     Polyline(
         points = listOf(locationFrom, locationTo),
@@ -511,7 +515,7 @@ fun FocusOnToSpotButton(
     focusOnToSpotEnabled: Boolean,
     cameraPositionState: CameraPositionState,
     spotList: List<Spot>,
-    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit
+    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
 ){
     val coroutineScope = rememberCoroutineScope()
     val density = LocalDensity.current.density
@@ -531,7 +535,7 @@ fun FocusOnToSpotButton(
     else{
         IconButton(
             onClick = {
-                showSnackBar(snackBarText, null, SnackbarDuration.Short)
+                showSnackBar(snackBarText, null, SnackbarDuration.Short) {}
             }
         ) {
             DisplayIcon(icon = MyIcons.disabledFocusOnToTarget)
@@ -544,157 +548,128 @@ fun UserLocationButton(
     fusedLocationClient: FusedLocationProviderClient,
     cameraPositionState: CameraPositionState,
     setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
-    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit,
-    context: Context = LocalContext.current
+    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
+    context: Context = LocalContext.current,
+    userLocationPermissions: Array<String> = USER_LOCATION_PERMISSION_ARRAY
 ){
     val coroutineScope = rememberCoroutineScope()
 
-    var permissionRequestEnd by rememberSaveable{ mutableStateOf(checkPermissionUserLocation(context)) }
-    var userLocationButtonEnabled by rememberSaveable{ mutableStateOf(checkPermissionUserLocation(context)) }
-
-    if (permissionRequestEnd) {
-        val userLocationPermissionGranted = checkPermissionUserLocation(context)
-        userLocationButtonEnabled = userLocationPermissionGranted
-        setUserLocationEnabled(userLocationPermissionGranted)
-    }
-
-    var userLocationPermissionGranted: Boolean? by rememberSaveable {
-        mutableStateOf(checkPermissionUserLocation(context))
-    }
-
-    var userLocation: LatLng? by rememberSaveable{ mutableStateOf(null) }
-
-    //permission launcher
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissionsMap ->
-        val areGranted = permissionsMap.values.reduce { acc, next -> acc && next }
-        if (areGranted) {
-            //Log.d("permission", "agree")
-            permissionRequestEnd = true
-        }
-        else {
-            //Log.d("permission", "deny")
-            permissionRequestEnd = true
-        }
-    }
+    var userLocationPermissionGranted: Boolean by rememberSaveable{ mutableStateOf(checkPermissionUserLocation(context)) }
 
     val snackBarNoUserLocation = stringResource(id = R.string.snack_bar_no_user_location)
     val snackBarLocationPermissionDenied = stringResource(id = R.string.snack_bar_location_permission_denied)
     val snackBarSettings = stringResource(id = R.string.snack_bar_settings)
 
-    IconButton(
-        onClick = {
-            getUserLocation(context, fusedLocationClient, permissionLauncher, permissionRequestEnd,
-                ){ userLocationPermissionGranted_, userLocation_ ->
-                    userLocationPermissionGranted = userLocationPermissionGranted_
-                    userLocation = userLocation_
-                }
 
-            //focus to user location
-            if (userLocationPermissionGranted == true){
+    val getUserLocationAndAnimateToUserLocation = {
+        //get user location
+        getUserLocation(
+            context = context,
+            fusedLocationClient = fusedLocationClient,
+            onLocationChanged = { userLocation ->
+                //focus to user location
                 if (userLocation != null) {
-                    //focus to user location
                     coroutineScope.launch {
-                        focusOnUserLocation(cameraPositionState, userLocation!!)
+                        focusOnUserLocation(cameraPositionState, userLocation)
                     }
                 }
-                else {
-                    //user location is null
-                    showSnackBar(snackBarNoUserLocation, null, SnackbarDuration.Short)
-                }
-            }
 
-            //user location permission denied show snack bar
-            else if (userLocationPermissionGranted == false){
-                showSnackBar(snackBarLocationPermissionDenied, snackBarSettings, SnackbarDuration.Short)
+                //user location is null
+                else {
+                    showSnackBar(snackBarNoUserLocation, null, SnackbarDuration.Short){ }
+                }
+
+            }
+        )
+    }
+
+
+    //permission launcher
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { _ ->
+        //after end permission dialog
+        userLocationPermissionGranted = checkPermissionUserLocation(context)
+
+        if (userLocationPermissionGranted) {
+            setUserLocationEnabled(true)
+            getUserLocationAndAnimateToUserLocation()
+        }
+        else {
+            setUserLocationEnabled(false)
+            showSnackBar(snackBarLocationPermissionDenied, snackBarSettings, SnackbarDuration.Short) {
+                //go to app settings
+                val intent = Intent(
+                    ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.fromParts("package", context.packageName, null)
+                )
+                context.startActivity(intent)
+            }
+        }
+    }
+
+
+    //icon ui
+    IconButton(
+        onClick = {
+            if (userLocationPermissionGranted){
+                getUserLocationAndAnimateToUserLocation()
+            }
+            else {
+                //request permissions & check granted & get location & animate to location
+                permissionLauncher.launch(userLocationPermissions)
             }
         }
     ) {
-        if (userLocationButtonEnabled)  DisplayIcon(icon = MyIcons.myLocation)
+        //icon
+        if (userLocationPermissionGranted)  DisplayIcon(icon = MyIcons.myLocation)
         else                            DisplayIcon(icon = MyIcons.disabledMyLocation)
     }
 }
 
 //==================================================================================================
+/**
+ * get user location.
+ * check user location permission before use
+ *
+ * @param fusedLocationClient
+ * @return
+ */
 private fun getUserLocation(
     context: Context,
     fusedLocationClient: FusedLocationProviderClient,
-    permissionLauncher: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>,
-    permissionRequestEnd: Boolean,
-    onLocationResult: (userLocationPermissionGranted: Boolean?, userLocation: LatLng?) -> Unit
+    onLocationChanged: (userLocation: LatLng?) -> Unit
 ) {
-    val userLocationPermissionGranted = checkAndRequestPermissionForUserLocation(context, permissionLauncher, permissionRequestEnd)
+    if (ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED
 
-    if (userLocationPermissionGranted == true) {
+        && ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED
+    ) {
+        // TODO: Consider calling
+        //    ActivityCompat#requestPermissions
+        // here to request the missing permissions, and then overriding
+        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+        //                                          int[] grantResults)
+        // to handle the case where the user grants the permission. See the documentation
+        // for ActivityCompat#requestPermissions for more details.
 
-//        var locationRequest: LocationRequest =
-//            LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10*1000)
-//                .setMinUpdateDistanceMeters(0f)
-//                .build()
-//
-//        val currentLocationRequest = CurrentLocationRequest.Builder()
-//            .setDurationMillis(5 * 1000)
-//            .setMaxUpdateAgeMillis(5 * 1000)
-//            .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-//            .build()
-//
-//        val cancellationToken = object : CancellationToken(){
-//            override fun onCanceledRequested(p0: OnTokenCanceledListener): CancellationToken =
-//                CancellationTokenSource().token
-//
-//            override fun isCancellationRequested(): Boolean = false
-//        }
-//
-//        val locationCallBack  = object : LocationCallback(){
-//            override fun onLocationResult(locationResult: LocationResult) {
-//                super.onLocationResult(locationResult)
-//
-//                locationResult.let { locationResult_ ->
-//                    val lastLocation = locationResult_.lastLocation
-//                    lastLocation?.let { lastLocation_ ->
-//                        var latitude = lastLocation_.latitude
-//                        var longitude = lastLocation_.longitude
-//                        var altitude = lastLocation_.altitude
-//                    }
-//                }
-//            }
-//        }
-
-
-
-//        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED
-//            && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED
-//        ) {
-//
-//        }
-
-//        //update user location
-//        fusedLocationClient.requestLocationUpdates(
-//            locationRequest, locationCallBack, Looper.getMainLooper()
-//        )
-
-        //FIXME can't find location when first tap
-        //get user last location
-        fusedLocationClient.lastLocation.addOnSuccessListener { userLocation_ ->
-            if (userLocation_ != null){
-                val lat = userLocation_.latitude
-                val lng = userLocation_.longitude
-
-                onLocationResult(true, LatLng(lat, lng))
-            }
-            else{
-                onLocationResult(true, null)
-            }
-        }
+        return
     }
-    else if (userLocationPermissionGranted == false){
-        onLocationResult(false, null)
-    }
-    else{
-        onLocationResult(null, null)
+
+    //get user last location
+    fusedLocationClient.lastLocation.addOnSuccessListener { userLocation1 ->
+            if (userLocation1 != null){
+                val lat = userLocation1.latitude
+                val lng = userLocation1.longitude
+                onLocationChanged(LatLng(lat, lng))
+            } else{
+                onLocationChanged(null)
+            }
     }
 }
 

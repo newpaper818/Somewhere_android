@@ -29,6 +29,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -542,13 +543,18 @@ fun SpotScreen(
                                 setMapSize = {
                                     mapSize = it
                                 },
-                                showSnackBar = { text_, actionLabel_, duration_ ->
+                                showSnackBar = { text, actionLabel, duration, onActionClick ->
                                     coroutineScope.launch {
                                         snackBarHostState.showSnackbar(
-                                            text_,
-                                            actionLabel_,
-                                            duration = duration_
-                                        )
+                                            message = text,
+                                            actionLabel = actionLabel,
+                                            duration = duration
+                                        ).run {
+                                            when (this){
+                                                SnackbarResult.Dismissed -> { }
+                                                SnackbarResult.ActionPerformed -> onActionClick()
+                                            }
+                                        }
                                     }
                                 },
                                 spotFrom = spotFrom,
@@ -734,13 +740,18 @@ fun SpotScreen(
                                 setMapSize = {
                                     mapSize = it
                                 },
-                                showSnackBar = { text_, actionLabel_, duration_ ->
+                                showSnackBar = { text, actionLabel, duration, onActionClick ->
                                     coroutineScope.launch {
                                         snackBarHostState.showSnackbar(
-                                            text_,
-                                            actionLabel_,
-                                            duration = duration_
-                                        )
+                                            message = text,
+                                            actionLabel = actionLabel,
+                                            duration = duration
+                                        ).run {
+                                            when (this){
+                                                SnackbarResult.Dismissed -> { }
+                                                SnackbarResult.ActionPerformed -> onActionClick()
+                                            }
+                                        }
                                     }
                                 },
                                 spotFrom = spotFrom,
@@ -879,9 +890,18 @@ fun SpotScreen(
                     },
                     fusedLocationClient = fusedLocationClient,
                     setUserLocationEnabled = setUserLocationEnabled,
-                    showSnackBar = { text, actionLabel, duration ->
+                    showSnackBar = { text, actionLabel, duration, onActionClick ->
                         coroutineScope.launch {
-                            snackBarHostState.showSnackbar(text, actionLabel, duration = duration)
+                            snackBarHostState.showSnackbar(
+                                message = text,
+                                actionLabel = actionLabel,
+                                duration = duration
+                            ).run {
+                                when (this){
+                                    SnackbarResult.Dismissed -> { }
+                                    SnackbarResult.ActionPerformed -> onActionClick()
+                                }
+                            }
                         }
                     }
                 )

@@ -109,7 +109,7 @@ fun SetLocationPage(
 
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     toggleIsEditLocationMode: () -> Unit,
-    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration) -> Unit
+    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClick: () -> Unit) -> Unit
 ){
     val coroutineScope = rememberCoroutineScope()
 
