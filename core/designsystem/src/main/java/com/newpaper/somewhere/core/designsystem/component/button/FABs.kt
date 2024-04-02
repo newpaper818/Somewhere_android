@@ -1,0 +1,136 @@
+package com.newpaper.somewhere.ui.components.buttons
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.dp
+import com.newpaper.somewhere.R
+import com.newpaper.somewhere.ui.components.icons.DisplayIcon
+import com.newpaper.somewhere.ui.components.icons.FabIcon
+import com.newpaper.somewhere.ui.components.icons.MyIcon
+import com.newpaper.somewhere.ui.theme.SomewhereTheme
+
+@Composable
+fun IconFAB(
+    onClick: () -> Unit,
+    visible: Boolean,
+    icon: MyIcon
+){
+    AnimatedVisibility(
+        visible = visible,
+        enter = slideInVertically(
+            animationSpec = tween(500),
+            initialOffsetY = { (it * 2.5f).toInt() }),
+        exit = slideOutVertically(
+            animationSpec = tween(500),
+            targetOffsetY = { (it * 2.5f).toInt() })
+    ) {
+        FloatingActionButton(onClick = onClick) {
+            DisplayIcon(icon = icon)
+        }
+    }
+}
+
+@Composable
+fun SeeOnMapExtendedFAB(
+    visible: Boolean,
+    onClick: () -> Unit,
+    expanded: Boolean
+){
+    AnimatedVisibility(
+        visible = visible,
+        enter = slideInVertically(
+            animationSpec = tween(500),
+            initialOffsetY = { (it * 2.5f).toInt() }),
+        exit = slideOutVertically(
+            animationSpec = tween(500),
+            targetOffsetY = { (it * 2.5f).toInt() })
+    ) {
+        SomewhereFAB(
+            text = stringResource(id = R.string.see_on_map),
+            icon = FabIcon.map,
+            onClick = onClick,
+            expanded = expanded,
+            modifier = Modifier
+        )
+    }
+}
+
+@Composable
+private fun SomewhereFAB(
+    text: String,
+    icon: MyIcon,
+    onClick: () -> Unit,
+    expanded: Boolean,
+    modifier: Modifier = Modifier
+) {
+    ExtendedFloatingActionButton(
+        text = { Text(text = text, style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)) },
+        icon = { DisplayIcon(icon) },
+        onClick = onClick,
+        expanded = expanded,
+        modifier = modifier
+    )
+}
+
+
+
+
+
+
+
+
+
+
+@Composable
+@PreviewLightDark
+private fun SeeOnMapFABPreview(){
+    SomewhereTheme {
+        Box(
+            contentAlignment = Alignment.BottomEnd,
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp).width(200.dp)
+        ) {
+            SeeOnMapExtendedFAB(
+                visible = true,
+                onClick = { },
+                expanded = true
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewLightDark
+private fun SeeOnMapFABPreviewCollapse(){
+    SomewhereTheme {
+        Box(
+            contentAlignment = Alignment.BottomEnd,
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp).width(200.dp)
+        ) {
+            SeeOnMapExtendedFAB(
+                visible = true,
+                onClick = { },
+                expanded = false
+            )
+        }
+    }
+}

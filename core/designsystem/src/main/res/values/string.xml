@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--SomewhereIcons.kt ==============================================================================-->
+    <!--NavigationBarIcon-->
+    <string name="trips">Trips</string>
+    <string name="profile">Profile</string>
+    <string name="more">More</string>
+
+    <!--TopBarIcon-->
+    <string name="back">Go Back</string>
+    <string name="edit">Edit</string>
+    <string name="close">Close</string>
+    <string name="download_image">Download image</string>
+    <string name="invite_friend">Invite friend</string>
+
+    <!--IconTextButtonIcon-->
+    <string name="add">Add</string>
+    <string name="delete">Delete</string>
+    <string name="previous_date">Previous date</string>
+    <string name="next_date">Next date</string>
+
+    <!--FabIcon-->
+    <string name="map">Map</string>
+
+    <!--MapButtonIcon-->
+    <string name="focus_on_to_target">Focus on to target</string>
+    <string name="disabled_focus_on_to_target">Focus on to target disabled</string>
+    <string name="fullscreen_map">Fullscreen map</string>
+    <string name="my_location">My location</string>
+    <string name="disabled_my_location">My location disabled</string>
+    <string name="zoom_out">Zoom out</string>
+    <string name="zoom_out_less">Zoom out less</string>
+    <string name="zoom_in_less">Zoom in less</string>
+    <string name="zoom_in">Zoom in</string>
+    <string name="edit_location">Edit location</string>
+    <string name="delete_location">Delete location</string>
+    <string name="previous_spot">Previous spot</string>
+    <string name="next_spot">Next spot</string>
+
+    <!--SelectSwitchIcon-->
+    <string name="view_only">View only</string>
+    <string name="allow_edit">Allow edit</string>
+
+    <!--MyIcons-->
+    <string name="sign_in">Sign in</string>
+    <string name="internet_unavailable">Internet unavailable</string>
+    <string name="edit_profile_image">Edit profile image</string>
+    <string name="delete_profile_image">Delete profile image</string>
+    <string name="delete_image">Delete image</string>
+    <string name="image_loading_error">Image loading error</string>
+    <string name="search_location">Search location</string>
+    <string name="clear_text">Clear text</string>
+    <string name="expand">Expand</string>
+    <string name="collapse">Collapse</string>
+    <string name="delete_start_time">Delete start time</string>
+    <string name="delete_end_time">Delete end time</string>
+    <string name="drag_handle">Drag handle</string>
+    <string name="set_color">Set color</string>
+    <string name="selected_color">Selected color</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="to">To</string>
+    <string name="switch_to_text_input">Switch to text input</string>
+    <string name="switch_to_touch_input">Switch to touch input</string>
+    <string name="category">Category</string>
+    <string name="budget">Budget</string>
+    <string name="travel_distance">Travel distance</string>
+    <string name="open_in_new">Open in new</string>
+    <string name="delete_friend">Delete friend</string>
+    <string name="number_of_trip_mates">Number of trip mates</string>
+    <string name="manager">Manager</string>
+    <string name="get_out">Get out</string>
+
+
+    <!--snackbar toast ==========================================================================-->
+    <string name="snackbar_location_permission_denied">User location permission denied</string>
+    <string name="snackbar_no_location_to_show">No location to show</string>
+    <string name="snackbar_no_user_location">Can\'t find your location</string>
+    <string name="snackbar_settings">Settings</string>
+    <string name="snackbar_invite_friend_success">Invite friend success!</string>
+    <string name="snackbar_no_user">Can\'t find user</string>
+    <string name="snackbar_same_email">Do not enter your email</string>
+    <string name="snackbar_invalid_email">Invalid email format</string>
+    <string name="snackbar_share_trip_error">Share trip error</string>
+    <string name="snackbar_delete_friend_error">Delete friend error</string>
+    <string name="snackbar_set_editable_error">Set permission error</string>
+    <string name="snackbar_success_update_profile">Update profile success</string>
+    <string name="snackbar_fail_update_profile">Update profile error. Do it later.</string>
+    <string name="snackbar_no_changed">No changed</string>
+
+    <string name="toast_download_complete">Download complete</string>
+    <string name="toast_download_error">Download error</string>
+
+    <!--button ==============================================================================-->
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="sign_in_with_apple">Sign in with Apple</string>
+    <string name="authentication_with_google">Authenticate with Google</string>
+    <string name="authentication_with_apple">Authenticate with Apple</string>
+    <string name="authentication_done">Authentication complete</string>
+    <string name="authenticating">Authenticating…</string>
+
+
+</resources>
