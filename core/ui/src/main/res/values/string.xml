@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--card/ ===================================================================================-->
+    <!-- AppIconWithAppNameCard.kt -->
+    <string name="app_name_big" translatable="false">SOMEWHERE</string>
+    <string name="somewhere_app_icon">Somewhere app icon</string>
+    <string name="trip_planner_app">Trip Planner App</string>
+
+    <!-- DeveloperCard.kt -->
+    <string name="developer">Developer</string>
+    <string name="developer_info">Sejong Lee, Sejong Univ. 19 CS</string>
+
+    <!-- ShareAppCard.kt -->
+    <string name="or">or</string>
+
+    <!-- UserProfileCard.kt -->
+    <string name="no_name">No name</string>
+    <string name="connected_with">Connected with</string>
+    <string name="my_profile_image">Profile image</string>
+    <string name="default_profile_image">Default profile image</string>
+
+    <!-- VersionCard.kt -->
+    <string name="version">Version</string>
+    <string name="latest">(latest)</string>
+    <string name="old_version">(old ver)</string>
+
+    <!--card/trip/ ==============================================================================-->
+
+
+    <!--dialog/ =================================================================================-->
+    <!--DateRangeDialog.kt-->
+    <string name="dialog_title_date_range">Set date range</string>
+    <string name="dialog_starts">Starts</string>
+    <string name="dialog_ends">Ends</string>
+    <string name="dialog_date_range_headline">%s - %s</string>
+
+    <!--DeleteOrNotDialog.kt-->
+    <string name="dialog_title_delete_friend">Delete friend from this trip?</string>
+    <string name="dialog_title_get_out_shared_trip">Get out this shared trip?</string>
+    <string name="get_out">Get out</string>
+
+    <!--DeletingAccountDialog.kt-->
+    <string name="deleting_account">Deleting account…</string>
+
+    <!--MemoDialog.kt-->
+    <string name="dialog_title_memo">Memo</string>
+
+    <!--SelectDateDialog.kt-->
+    <string name="dialog_title_select_date">Move date</string>
+
+    <!--SetBudgetOrDistanceDialog.kt-->
+    <string name="dialog_title_set_budget">Set budget</string>
+    <string name="dialog_title_set_travel_distance">Set travel distance</string>
+    <string name="dialog_set_distance_km">km</string>
+
+    <!--SetColorDialog.kt-->
+    <string name="dialog_title_set_color">Set color</string>
+
+    <!--SetCurrencyDialog.kt-->
+    <string name="dialog_title_set_currency_type">Set currency type</string>
+
+    <!--SetEditableDialog.kt-->
+    <string name="dialog_title_set_editable">Set permission</string>
+
+    <!--SetSpotTypeDialog.kt-->
+    <string name="dialog_title_set_spot_type">Set spot type</string>
+
+    <!--SetTimeDialog.kt-->
+    <string name="dialog_title_set_start_time_">Set start time</string>
+    <string name="dialog_title_set_end_time">Set end time</string>
+
+    <!--SetCurrencyTypeDialog.kt-->
+    <string name="aud_name">Australian dollar</string>
+    <string name="cad_name">Canadian dollar</string>
+    <string name="cny_name">China Yuan</string>
+    <string name="egp_name">Egyptian pound</string>
+    <string name="eur_name">Euro</string>
+    <string name="gbp_name">Pound sterling</string>
+    <string name="inr_name">Indian rupee</string>
+    <string name="jpy_name">Japanese yen</string>
+    <string name="krw_name">South Korean won</string>
+    <string name="rub_name">Russian ruble</string>
+    <string name="thb_name">Thai baht</string>
+    <string name="twd_name">New Taiwan dollar</string>
+    <string name="usd_name">United States dollar</string>
+    <string name="vnd_name">Vietnam dong</string>
+
+    <!---->
+    <string name="dialog_body_are_you_sure_to_exit">Are you sure to exit?\nUnsaved data will be delete</string>
+    <string name="dialog_body_delete_trip">Delete this Trip?\nFriend you invited won\'t be able to see this trip</string>
+    <string name="dialog_body_delete_spot">Delete this Spot?</string>
+    <string name="dialog_body_sign_out">Do you want to sign out?</string>
+
+    <string name="dialog_button_close">Close</string>
+    <string name="dialog_button_cancel">Cancel</string>
+    <string name="dialog_button_delete">Delete</string>
+    <string name="dialog_button_exit">Exit</string>
+    <string name="dialog_button_save">Save</string>
+    <string name="dialog_button_ok">OK</string>
+
+
+    <!--item/ ===================================================================================-->
+
+
+
+    <!--selectSwitch/ ===========================================================================-->
+    <string name="view_only">View only</string>
+    <string name="allow_edit">Allow edit</string>
+    <string name="_24h">24h</string>
+    <string name="_12h">12h</string>
+
+
+    <!--tripScreenUtils/ ========================================================================-->
+    <!--GraphListItem.kt-->
+    <string name="no_title">No Title</string>
+    <string name="add_a_title">Add a Title</string>
+    <string name="delete_spot">Delete spot</string>
+
+
+
+
+    <!--FriendInfo.kt-->
+    <string name="unknown">Unknown</string>
+
+
+</resources>

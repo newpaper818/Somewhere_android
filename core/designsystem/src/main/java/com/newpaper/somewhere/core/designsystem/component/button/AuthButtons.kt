@@ -1,9 +1,9 @@
 package com.newpaper.somewhere.core.designsystem.component.button
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,77 +17,116 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.R
+import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
+import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
+import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
-import com.newpaper.somewhere.enumUtils.ProviderId
-import com.newpaper.somewhere.ui.components.ClickableBox
-import com.newpaper.somewhere.ui.components.MySpacerColumn
-import com.newpaper.somewhere.ui.components.MySpacerRow
-import com.newpaper.somewhere.ui.components.cards.ImageFromDrawable
-import com.newpaper.somewhere.ui.theme.SomewhereTheme
-import com.newpaper.somewhere.ui.theme.n60
+import com.newpaper.somewhere.core.designsystem.theme.n60
+
+private const val googleProviderName = "Google"
+private const val appleProviderName = "Apple"
 
 @Composable
-fun SignInWithGoogleButton(
-    buttonEnabled: Boolean,
+fun SignInWithButton(
+    providerName: String,
     onClick: () -> Unit,
-
-    useBorder: Boolean,
-
-    useCenterAlignText: Boolean = false,
-    width: Dp? = 270.dp,
-    text: String = stringResource(id = R.string.sign_in_with_google)
+    buttonEnabled: Boolean,
+    isDarkAppTheme: Boolean,
 ){
-    SignInWithButton(
-        iconDrawable = R.drawable.google_logo,
-        text = text,
+    when (providerName){
+        googleProviderName -> {
+            SignInAuthButton(
+                iconDrawable = R.drawable.google_logo,
+                text = stringResource(id = R.string.sign_in_with_google),
 
-        containerColor = Color.White,
-        textColor = Color.Black,
-        useBorder = useBorder,
+                containerColor = Color.White,
+                textColor = Color.Black,
+                useBorder = !isDarkAppTheme,
 
-        buttonEnabled = buttonEnabled,
-        onClick = onClick,
+                buttonEnabled = buttonEnabled,
+                onClick = onClick,
 
-        useCenterAlignText = useCenterAlignText,
-        width = width
-    )
+                isSignIn = true
+            )
+        }
+        appleProviderName ->{
+            SignInAuthButton(
+                iconDrawable = R.drawable.apple_logo,
+                text = stringResource(id = R.string.sign_in_with_apple),
+
+                containerColor = Color.Black,
+                textColor = Color.White,
+                useBorder = isDarkAppTheme,
+
+                buttonEnabled = buttonEnabled,
+                onClick = onClick,
+
+                isSignIn = true
+            )
+        }
+        else -> {
+
+        }
+    }
 }
 
 @Composable
-fun SignInWithAppleButton(
-    buttonEnabled: Boolean,
+fun AuthWithButton(
+    providerName: String,
+    authingWithThis: Boolean,
     onClick: () -> Unit,
-
-    useBorder: Boolean,
-
-    useCenterAlignText: Boolean = false,
-    width: Dp? = 270.dp,
-    text: String = stringResource(id = R.string.sign_in_with_apple)
+    enabled: Boolean,
+    isDarkAppTheme: Boolean,
+    isAuthDone: Boolean
 ){
-    SignInWithButton(
-        iconDrawable = R.drawable.apple_logo,
-        text = text,
+    when (providerName){
+        googleProviderName -> {
+            SignInAuthButton(
+                iconDrawable = R.drawable.google_logo,
+                text = if (authingWithThis && isAuthDone) stringResource(id = R.string.authentication_complete)
+                    else if (authingWithThis) stringResource(id = R.string.authenticating)
+                    else stringResource(id = R.string.authentication_with_google),
+                containerColor = Color.White,
+                textColor = Color.Black,
+                useBorder = !isDarkAppTheme,
 
-        containerColor = Color.Black,
-        textColor = Color.White,
-        useBorder = useBorder,
+                buttonEnabled = enabled,
+                onClick = onClick,
 
-        buttonEnabled = buttonEnabled,
-        onClick = onClick,
+                isSignIn = false
+            )
+        }
+        appleProviderName ->{
+            SignInAuthButton(
+                iconDrawable = R.drawable.apple_logo,
+                text = if (authingWithThis && isAuthDone) stringResource(id = R.string.authentication_complete)
+                    else if (authingWithThis) stringResource(id = R.string.authenticating)
+                    else stringResource(id = R.string.authentication_with_apple),
+                containerColor = Color.Black,
+                textColor = Color.White,
+                useBorder = isDarkAppTheme,
 
-        useCenterAlignText = useCenterAlignText,
-        width = width,
-    )
+                buttonEnabled = enabled,
+                onClick = onClick,
+
+                isSignIn = false
+            )
+        }
+        else -> {
+
+        }
+    }
 }
 
 @Composable
-private fun SignInWithButton(
+private fun SignInAuthButton(
     iconDrawable: Int,
     text: String,
 
@@ -98,9 +137,7 @@ private fun SignInWithButton(
     buttonEnabled: Boolean,
     onClick: () -> Unit,
 
-    useCenterAlignText: Boolean = false,
-    width: Dp? = 270.dp,
-    logoImageDescription: String = "",
+    isSignIn: Boolean, // or auth
 ){
     val modifier = if (useBorder) Modifier.border(1.dp, MaterialTheme.colorScheme.outline,
         CircleShape
@@ -117,23 +154,26 @@ private fun SignInWithButton(
 
     ) {
         val rowModifier =
-            if (width != null) Modifier
-                .width(width)
+            if (isSignIn) Modifier
+                .width(270.dp)
                 .padding(16.dp)
-            else Modifier.padding(16.dp)
+            else Modifier
+                .width(300.dp)
+                .padding(16.dp)
 
         Row(
             modifier = rowModifier,
             verticalAlignment = Alignment.CenterVertically
         ) {
             //icon
-            ImageFromDrawable(
-                imageDrawable = iconDrawable,
-                contentDescription = logoImageDescription,
+            Image(
+                painter = painterResource(id = iconDrawable),
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
                 modifier = Modifier.size(26.dp)
             )
 
-            if (!useCenterAlignText)
+            if (isSignIn)
                 MySpacerRow(width = 24.dp)
 
             //text
@@ -141,9 +181,9 @@ private fun SignInWithButton(
                 text = text,
                 style = if (buttonEnabled) MaterialTheme.typography.labelLarge.copy(color = textColor)
                         else MaterialTheme.typography.labelLarge.copy(color = n60),
-                textAlign = if (useCenterAlignText) TextAlign.Center
+                textAlign = if (!isSignIn) TextAlign.Center
                             else TextAlign.Left,
-                modifier = if (useCenterAlignText && width != null) Modifier
+                modifier = if (!isSignIn) Modifier
                                 .fillMaxWidth()
                                 .padding(4.dp, 0.dp, 6.dp, 0.dp)
                             else Modifier
@@ -152,46 +192,6 @@ private fun SignInWithButton(
     }
 }
 
-@Composable
-fun AuthButtons(
-    providerIdList: List<ProviderId>,
-    enabled: Boolean,
-    onClick: (providerId: ProviderId) -> Unit,
-    authingWith: ProviderId?,
-    isDarkAppTheme: Boolean,
-    isAuthing: Boolean,
-    isAuthDone: Boolean
-){
-    if (ProviderId.GOOGLE in providerIdList){
-        MySpacerColumn(height = 16.dp)
-
-        SignInWithGoogleButton(
-            buttonEnabled = enabled && !isAuthDone,
-            onClick = { onClick(ProviderId.GOOGLE) },
-            useBorder = !isDarkAppTheme,
-            useCenterAlignText = true,
-            width = 300.dp,
-            text = if (authingWith == ProviderId.GOOGLE && isAuthDone) stringResource(id = R.string.authentication_done)
-            else if (authingWith == ProviderId.GOOGLE && isAuthing) stringResource(id = R.string.authenticating)
-            else stringResource(id = R.string.authentication_with_google)
-        )
-    }
-    if (ProviderId.APPLE in providerIdList){
-        MySpacerColumn(height = 16.dp)
-
-        SignInWithAppleButton(
-            buttonEnabled = enabled && !isAuthDone,
-            onClick = { onClick(ProviderId.APPLE) },
-            useBorder = isDarkAppTheme,
-            useCenterAlignText = true,
-            width = 300.dp,
-            text = if (authingWith == ProviderId.APPLE && isAuthDone) stringResource(id = R.string.authentication_done)
-            else if (authingWith == ProviderId.APPLE && isAuthing) stringResource(id = R.string.authenticating)
-            else stringResource(id = R.string.authentication_with_apple)
-        )
-    }
-}
-
 
 
 
@@ -215,47 +215,7 @@ fun AuthButtons(
 
 @Composable
 @PreviewLightDark
-private fun Preview_SignInWithGoogleButton(){
-    SomewhereTheme {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(16.dp)
-                .width(300.dp)
-        ) {
-            SignInWithGoogleButton(
-                buttonEnabled = true,
-                onClick = {},
-                useBorder = !isSystemInDarkTheme()
-            )
-        }
-    }
-}
-
-@Composable
-@PreviewLightDark
-private fun Preview_SignInWithAppleButton(){
-    SomewhereTheme {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(16.dp)
-                .width(300.dp)
-        ) {
-            SignInWithAppleButton(
-                buttonEnabled = true,
-                onClick = {},
-                useBorder = isSystemInDarkTheme()
-            )
-        }
-    }
-}
-
-@Composable
-@PreviewLightDark
-private fun Preview_AuthButtons(){
+private fun SignInButtonsPreview(){
     SomewhereTheme {
         Column(
             modifier = Modifier
@@ -263,13 +223,81 @@ private fun Preview_AuthButtons(){
                 .padding(16.dp)
                 .width(300.dp)
         ) {
-            AuthButtons(
-                providerIdList = listOf(ProviderId.GOOGLE, ProviderId.APPLE),
+            SignInWithButton(
+                providerName = googleProviderName,
+                onClick = {  },
+                buttonEnabled = true,
+                isDarkAppTheme = isSystemInDarkTheme()
+            )
+
+            MySpacerColumn(height = 16.dp)
+
+            SignInWithButton(
+                providerName = appleProviderName,
+                onClick = {  },
+                buttonEnabled = true,
+                isDarkAppTheme = isSystemInDarkTheme()
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewLightDark
+private fun SignInDisabledPreview(){
+    SomewhereTheme {
+        Column(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp)
+                .width(300.dp)
+        ) {
+            SignInWithButton(
+                providerName = googleProviderName,
+                onClick = {  },
+                buttonEnabled = false,
+                isDarkAppTheme = isSystemInDarkTheme()
+            )
+
+            MySpacerColumn(height = 16.dp)
+
+            SignInWithButton(
+                providerName = appleProviderName,
+                onClick = {  },
+                buttonEnabled = false,
+                isDarkAppTheme = isSystemInDarkTheme()
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewLightDark
+private fun AuthButtonsPreview(){
+    SomewhereTheme {
+        Column(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp)
+                .width(300.dp)
+        ) {
+            AuthWithButton(
+                providerName = googleProviderName,
+                authingWithThis = false,
+                onClick = { },
                 enabled = true,
-                onClick = {},
-                authingWith = null,
                 isDarkAppTheme = isSystemInDarkTheme(),
-                isAuthing = false,
+                isAuthDone = false
+            )
+
+            MySpacerColumn(height = 16.dp)
+            
+            AuthWithButton(
+                providerName = appleProviderName,
+                authingWithThis = false,
+                onClick = { },
+                enabled = true,
+                isDarkAppTheme = isSystemInDarkTheme(),
                 isAuthDone = false
             )
         }
@@ -277,32 +305,11 @@ private fun Preview_AuthButtons(){
 }
 
 
-@Composable
-@PreviewLightDark
-private fun Preview_AuthButtons1(){
-    SomewhereTheme {
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(16.dp)
-                .width(300.dp)
-        ) {
-            AuthButtons(
-                providerIdList = listOf(ProviderId.GOOGLE, ProviderId.APPLE),
-                enabled = false,
-                onClick = {},
-                authingWith = null,
-                isDarkAppTheme = isSystemInDarkTheme(),
-                isAuthing = false,
-                isAuthDone = false
-            )
-        }
-    }
-}
+
 
 @Composable
 @PreviewLightDark
-private fun Preview_AuthButtons2(){
+private fun AuthDisabledPreview(){
     SomewhereTheme {
         Column(
             modifier = Modifier
@@ -310,13 +317,23 @@ private fun Preview_AuthButtons2(){
                 .padding(16.dp)
                 .width(300.dp)
         ) {
-            AuthButtons(
-                providerIdList = listOf(ProviderId.GOOGLE, ProviderId.APPLE),
+            AuthWithButton(
+                providerName = googleProviderName,
+                authingWithThis = false,
+                onClick = { },
                 enabled = false,
-                onClick = {},
-                authingWith = ProviderId.GOOGLE,
                 isDarkAppTheme = isSystemInDarkTheme(),
-                isAuthing = true,
+                isAuthDone = false
+            )
+
+            MySpacerColumn(height = 16.dp)
+
+            AuthWithButton(
+                providerName = appleProviderName,
+                authingWithThis = false,
+                onClick = { },
+                enabled = false,
+                isDarkAppTheme = isSystemInDarkTheme(),
                 isAuthDone = false
             )
         }
@@ -325,7 +342,7 @@ private fun Preview_AuthButtons2(){
 
 @Composable
 @PreviewLightDark
-private fun Preview_AuthButtons3(){
+private fun AuthingPreview(){
     SomewhereTheme {
         Column(
             modifier = Modifier
@@ -333,13 +350,56 @@ private fun Preview_AuthButtons3(){
                 .padding(16.dp)
                 .width(300.dp)
         ) {
-            AuthButtons(
-                providerIdList = listOf(ProviderId.GOOGLE, ProviderId.APPLE),
+            AuthWithButton(
+                providerName = googleProviderName,
+                authingWithThis = true,
+                onClick = { },
                 enabled = false,
-                onClick = {},
-                authingWith = ProviderId.GOOGLE,
                 isDarkAppTheme = isSystemInDarkTheme(),
-                isAuthing = true,
+                isAuthDone = false
+            )
+
+            MySpacerColumn(height = 16.dp)
+
+            AuthWithButton(
+                providerName = appleProviderName,
+                authingWithThis = false,
+                onClick = { },
+                enabled = false,
+                isDarkAppTheme = isSystemInDarkTheme(),
+                isAuthDone = false
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewLightDark
+private fun AuthCompletePreview(){
+    SomewhereTheme {
+        Column(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp)
+                .width(300.dp)
+        ) {
+            AuthWithButton(
+                providerName = googleProviderName,
+                authingWithThis = true,
+                onClick = { },
+                enabled = false,
+                isDarkAppTheme = isSystemInDarkTheme(),
+                isAuthDone = true
+            )
+
+            MySpacerColumn(height = 16.dp)
+
+            AuthWithButton(
+                providerName = appleProviderName,
+                authingWithThis = false,
+                onClick = { },
+                enabled = false,
+                isDarkAppTheme = isSystemInDarkTheme(),
                 isAuthDone = true
             )
         }

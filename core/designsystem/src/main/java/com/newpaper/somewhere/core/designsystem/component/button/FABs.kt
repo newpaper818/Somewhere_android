@@ -1,4 +1,4 @@
-package com.newpaper.somewhere.ui.components.buttons
+package com.newpaper.somewhere.core.designsystem.component.button
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -19,11 +19,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import com.newpaper.somewhere.R
-import com.newpaper.somewhere.ui.components.icons.DisplayIcon
-import com.newpaper.somewhere.ui.components.icons.FabIcon
-import com.newpaper.somewhere.ui.components.icons.MyIcon
-import com.newpaper.somewhere.ui.theme.SomewhereTheme
+import com.newpaper.somewhere.core.designsystem.R
+import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
+import com.newpaper.somewhere.core.designsystem.icon.FabIcon
+import com.newpaper.somewhere.core.designsystem.icon.MyIcon
+import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 
 @Composable
 fun IconFAB(
@@ -97,6 +97,21 @@ private fun SomewhereFAB(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @Composable
 @PreviewLightDark
 private fun SeeOnMapFABPreview(){
@@ -118,7 +133,7 @@ private fun SeeOnMapFABPreview(){
 
 @Composable
 @PreviewLightDark
-private fun SeeOnMapFABPreviewCollapse(){
+private fun SeeOnMapFABCollapsePreview(){
     SomewhereTheme {
         Box(
             contentAlignment = Alignment.BottomEnd,

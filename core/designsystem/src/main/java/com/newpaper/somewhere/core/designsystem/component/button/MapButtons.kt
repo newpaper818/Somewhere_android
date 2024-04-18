@@ -1,13 +1,5 @@
-package com.newpaper.somewhere.ui.components.buttons
+package com.newpaper.somewhere.core.designsystem.component.button
 
-import android.Manifest
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.provider.Settings
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,196 +8,122 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.CameraPositionState
-import com.newpaper.somewhere.R
-import com.newpaper.somewhere.model.Spot
-import com.newpaper.somewhere.ui.components.MyScaffold
-import com.newpaper.somewhere.ui.components.MySpacerRow
-import com.newpaper.somewhere.ui.components.cards.MyCard
-import com.newpaper.somewhere.ui.components.icons.DisplayIcon
-import com.newpaper.somewhere.ui.components.icons.MapButtonIcon
-import com.newpaper.somewhere.ui.components.map.ANIMATION_DURATION_MS
-import com.newpaper.somewhere.ui.theme.SomewhereTheme
-import com.newpaper.somewhere.utils.USER_LOCATION_PERMISSION_ARRAY
-import com.newpaper.somewhere.utils.checkPermissionUserLocation
-import com.newpaper.somewhere.utils.focusOnToSpots
-import kotlinx.coroutines.launch
+import com.newpaper.somewhere.core.designsystem.R
+import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
+import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
+import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
+import com.newpaper.somewhere.core.designsystem.icon.MapButtonIcon
+import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import java.text.DecimalFormat
-import kotlin.math.roundToInt
 
-//map button =======================================================================================
 @Composable
 fun FocusOnToSpotButton(
-    mapSize: IntSize,
     focusOnToSpotEnabled: Boolean,
-    cameraPositionState: CameraPositionState,
-    spotList: List<Spot>,
-    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
+    onClickEnabled: () -> Unit,
+    onClickDisabled: () -> Unit
 ){
-    val coroutineScope = rememberCoroutineScope()
-    val density = LocalDensity.current.density
-    val snackBarText = stringResource(id = R.string.snackbar_no_location_to_show)
-
-    if (focusOnToSpotEnabled){
-        IconButton(
-            onClick = {
-                coroutineScope.launch {
-                    focusOnToSpots(cameraPositionState, mapSize, spotList, density)
-                }
-            }
-        ) {
-            DisplayIcon(icon = MapButtonIcon.focusOnToTarget)
+    IconButton(
+        onClick = {
+            if (focusOnToSpotEnabled)
+                onClickEnabled()
+            else
+                onClickDisabled()
         }
-    }
-    else{
-        IconButton(
-            onClick = {
-                showSnackBar(snackBarText, null, SnackbarDuration.Short) {}
-            }
-        ) {
-            DisplayIcon(icon = MapButtonIcon.disabledFocusOnToTarget)
-        }
+    ) {
+        DisplayIcon(
+            icon =
+                if (focusOnToSpotEnabled ) MapButtonIcon.focusOnToTarget
+                else MapButtonIcon.disabledFocusOnToTarget
+        )
     }
 }
-
 
 @Composable
 fun UserLocationButton(
-    fusedLocationClient: FusedLocationProviderClient,
-    cameraPositionState: CameraPositionState,
-    setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
-    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
-    context: Context = LocalContext.current,
-    userLocationPermissions: Array<String> = USER_LOCATION_PERMISSION_ARRAY
+    userLocationPermissionGranted: Boolean,
+    onClickLocationPermissionGranted: () -> Unit,
+    onClickLocationPermissionNotGranted: () -> Unit
 ){
-    val coroutineScope = rememberCoroutineScope()
-
-    var userLocationPermissionGranted: Boolean by rememberSaveable {
-        mutableStateOf(
-            checkPermissionUserLocation(context)
-        )
-    }
-
-    //snackbar
-    val snackBarNoUserLocation = stringResource(id = R.string.snackbar_no_user_location)
-    val snackBarLocationPermissionDenied =
-        stringResource(id = R.string.snackbar_location_permission_denied)
-    val snackBarSettings = stringResource(id = R.string.snackbar_settings)
-
-    val noLocationSnackbar = {
-        showSnackBar(snackBarNoUserLocation, null, SnackbarDuration.Short){ }
-    }
-
-    val permissionsDeniedSnackbar = {
-        showSnackBar(snackBarLocationPermissionDenied, snackBarSettings, SnackbarDuration.Short) {
-            //go to app settings
-            val intent = Intent(
-                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                Uri.fromParts("package", context.packageName, null)
-            )
-            context.startActivity(intent)
-        }
-    }
-
-
-
-    //get user location & focus to location
-    val getUserLocationAndAnimateToUserLocation = {
-        //get user location
-        getUserLocation(
-            context = context,
-            fusedLocationClient = fusedLocationClient,
-            onPermissionsDenied = {
-                permissionsDeniedSnackbar()
-            },
-            onLocationChanged = { userLocation ->
-                //focus to user location
-                if (userLocation != null) {
-                    coroutineScope.launch {
-                        focusOnUserLocation(cameraPositionState, userLocation)
-                    }
-                }
-
-                //user location is null
-                else {
-                    noLocationSnackbar()
-                }
-
-            }
-        )
-    }
-
-
-    //permission launcher
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { _ ->
-        //after end permission dialog
-        userLocationPermissionGranted = checkPermissionUserLocation(context)
-
-        if (userLocationPermissionGranted) {
-            setUserLocationEnabled(true)
-            getUserLocationAndAnimateToUserLocation()
-        } else {
-            setUserLocationEnabled(false)
-            permissionsDeniedSnackbar()
-        }
-    }
-
-
-    //user location icon ui
     IconButton(
         onClick = {
-            if (userLocationPermissionGranted) {
-                getUserLocationAndAnimateToUserLocation()
-            } else {
-                //request permissions & check granted & get location & animate to location
-                permissionLauncher.launch(userLocationPermissions)
-            }
+            if (userLocationPermissionGranted)
+                onClickLocationPermissionGranted()
+            else
+                onClickLocationPermissionNotGranted()
         }
     ) {
-        //icon
-        if (userLocationPermissionGranted) DisplayIcon(icon = MapButtonIcon.myLocation)
-        else DisplayIcon(icon = MapButtonIcon.disabledMyLocation)
+        DisplayIcon(
+            icon =
+                if (userLocationPermissionGranted) MapButtonIcon.myLocation
+                else MapButtonIcon.disabledMyLocation
+        )
     }
 }
 
 @Composable
+fun ZoomButtonsForSetLocation(
+    zoomLevel: Float,
+    onClickZoomOut: () -> Unit,
+    onClickZoomOutLess: () -> Unit,
+    onClickZoomInLess: () -> Unit,
+    onClickZoomIn: () -> Unit,
+){
+    MyCard(
+        shape = MaterialTheme.shapes.extraLarge
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            IconButton(onClick = onClickZoomOut) {
+                DisplayIcon(icon = MapButtonIcon.zoomOut)
+            }
+
+            IconButton(onClick = onClickZoomOutLess) {
+                DisplayIcon(icon = MapButtonIcon.zoomOutLess)
+            }
+
+            Text(
+                text = DecimalFormat("0.0").format(zoomLevel),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.width(50.dp)
+            )
+
+            IconButton(onClick = onClickZoomInLess) {
+                DisplayIcon(icon = MapButtonIcon.zoomInLess)
+            }
+
+            IconButton(onClick = onClickZoomIn) {
+                DisplayIcon(icon = MapButtonIcon.zoomIn)
+            }
+        }
+    }
+}
+
+/**
+ * use at set location
+ */
+@Composable
 fun ZoomButtons(
     zoomLevel: Float,
-    mapZoomTo: (zoomLevel: Float) -> Unit,
+    onClickZoomOut: () -> Unit,
+    onClickZoomOutLess: () -> Unit,
+    onClickZoomInLess: () -> Unit,
+    onClickZoomIn: () -> Unit,
 
-    fusedLocationClient: FusedLocationProviderClient,
-    cameraPositionState: CameraPositionState,
-    setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
-    showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
+    userLocationPermissionGranted: Boolean,
+    onClickLocationPermissionGranted: () -> Unit,
+    onClickLocationPermissionNotGranted: () -> Unit
 ){
     Row(
         verticalAlignment = Alignment.Bottom,
-        modifier = Modifier
-//            .background(MaterialTheme.colorScheme.background)
-            .padding(0.dp, 10.dp)
+        modifier = Modifier.padding(0.dp, 10.dp)
     ) {
         //set zoom level
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -215,35 +133,13 @@ fun ZoomButtons(
                 modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 3.dp)
             )
 
-            MyCard(
-                shape = MaterialTheme.shapes.extraLarge
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = { mapZoomTo(roundZoomLevel(zoomLevel - 1.0f)) }) {
-                        DisplayIcon(icon = MapButtonIcon.zoomOut)
-                    }
-
-                    IconButton(onClick = { mapZoomTo(roundZoomLevel(zoomLevel - 0.5f)) }) {
-                        DisplayIcon(icon = MapButtonIcon.zoomOutLess)
-                    }
-
-                    val df1 = DecimalFormat("0.0")
-                    Text(
-                        text = df1.format(zoomLevel),
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.width(50.dp)
-                    )
-
-                    IconButton(onClick = { mapZoomTo(roundZoomLevel(zoomLevel + 0.5f)) }) {
-                        DisplayIcon(icon = MapButtonIcon.zoomInLess)
-                    }
-
-                    IconButton(onClick = { mapZoomTo(roundZoomLevel(zoomLevel + 1.0f)) }) {
-                        DisplayIcon(icon = MapButtonIcon.zoomIn)
-                    }
-                }
-            }
+            ZoomButtonsForSetLocation(
+                zoomLevel = zoomLevel,
+                onClickZoomOut = onClickZoomOut,
+                onClickZoomOutLess = onClickZoomOutLess,
+                onClickZoomInLess = onClickZoomInLess,
+                onClickZoomIn = onClickZoomIn
+            )
         }
 
         MySpacerRow(width = 16.dp)
@@ -253,76 +149,17 @@ fun ZoomButtons(
             shape = MaterialTheme.shapes.extraLarge
         ) {
             UserLocationButton(
-                fusedLocationClient,
-                cameraPositionState,
-                setUserLocationEnabled,
-                showSnackBar
+                userLocationPermissionGranted = userLocationPermissionGranted,
+                onClickLocationPermissionGranted = onClickLocationPermissionGranted,
+                onClickLocationPermissionNotGranted = onClickLocationPermissionNotGranted
             )
         }
     }
 }
 
-private fun roundZoomLevel(zoomLevel: Float): Float{
-    val newZoomLevel = (zoomLevel * 2).roundToInt() / 2.0f
 
-    return if (newZoomLevel < 0)
-        0.0f
-    else if (newZoomLevel > 21)
-        21.0f
-    else
-        newZoomLevel
-}
 
-/**
- * get user location.
- * check user location permission before use
- *
- * @param fusedLocationClient
- * @return
- */
-private fun getUserLocation(
-    context: Context,
-    fusedLocationClient: FusedLocationProviderClient,
-    onPermissionsDenied: () -> Unit,
-    onLocationChanged: (userLocation: LatLng?) -> Unit
-) {
-    //if permissions denied
-    if (ActivityCompat.checkSelfPermission(context,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) != PackageManager.PERMISSION_GRANTED
-        && ActivityCompat.checkSelfPermission(context,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        ) != PackageManager.PERMISSION_GRANTED
-    ) {
-        onPermissionsDenied()
-        return
-    }
 
-    //if permissions granted - get user location
-    else {
-        //get user last location
-        fusedLocationClient.lastLocation.addOnSuccessListener { userLocation1 ->
-            if (userLocation1 != null) {
-                val lat = userLocation1.latitude
-                val lng = userLocation1.longitude
-                onLocationChanged(LatLng(lat, lng))
-            } else {
-                onLocationChanged(null)
-            }
-        }
-    }
-}
-
-private suspend fun focusOnUserLocation(
-    cameraPositionState: CameraPositionState,
-    userLocation: LatLng,
-){
-    cameraPositionState.animate(
-        CameraUpdateFactory.newLatLngZoom(
-            userLocation, 13f
-        ), ANIMATION_DURATION_MS
-    )
-}
 
 
 
@@ -348,20 +185,31 @@ private suspend fun focusOnUserLocation(
 @PreviewLightDark
 private fun FocusOnToSpotButtonPreview(){
     SomewhereTheme {
-        MyScaffold {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.surface)
-                    .padding(16.dp)
-                    .width(200.dp)
+        Row(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp)
+                .width(300.dp)
+        ) {
+            MyCard(
+                shape = MaterialTheme.shapes.extraLarge
             ) {
                 FocusOnToSpotButton(
-                    mapSize = IntSize(500, 500),
                     focusOnToSpotEnabled = true,
-                    cameraPositionState = CameraPositionState(),
-                    spotList = listOf(),
-                    showSnackBar = { _, _, _, _ -> }
+                    onClickEnabled = { },
+                    onClickDisabled = { }
+                )
+            }
+
+            MySpacerRow(width = 16.dp)
+
+            MyCard(
+                shape = MaterialTheme.shapes.extraLarge
+            ) {
+                FocusOnToSpotButton(
+                    focusOnToSpotEnabled = false,
+                    onClickEnabled = { },
+                    onClickDisabled = { }
                 )
             }
         }
@@ -370,21 +218,85 @@ private fun FocusOnToSpotButtonPreview(){
 
 @Composable
 @PreviewLightDark
-private fun FocusOnToSpotButtonPreviewDisabled(){
+private fun UserLocationButtonPreview(){
+    SomewhereTheme {
+        Row(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp)
+                .width(300.dp)
+        ) {
+            MyCard(
+                shape = MaterialTheme.shapes.extraLarge
+            ) {
+                UserLocationButton(
+                    userLocationPermissionGranted = true,
+                    onClickLocationPermissionGranted = { },
+                    onClickLocationPermissionNotGranted = { }
+                )
+            }
+
+            MySpacerRow(width = 16.dp)
+
+            MyCard(
+                shape = MaterialTheme.shapes.extraLarge
+            ) {
+                UserLocationButton(
+                    userLocationPermissionGranted = false,
+                    onClickLocationPermissionGranted = { },
+                    onClickLocationPermissionNotGranted = { }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+@PreviewLightDark
+private fun ZoomButtonsForSetLocationPreview(){
     SomewhereTheme {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface.copy(0.85f))
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)
-                .width(200.dp)
+                .width(300.dp)
         ) {
-            FocusOnToSpotButton(
-                mapSize = IntSize(100,100),
-                focusOnToSpotEnabled = false,
-                cameraPositionState = CameraPositionState(),
-                spotList = listOf(),
-                showSnackBar = {_,_,_,_ -> }
+            MyCard(
+                shape = MaterialTheme.shapes.extraLarge
+            ) {
+                ZoomButtonsForSetLocation(
+                    zoomLevel = 10.5f,
+                    onClickZoomOut = { },
+                    onClickZoomOutLess = { },
+                    onClickZoomInLess = { },
+                    onClickZoomIn = { }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+@PreviewLightDark
+private fun ZoomButtonsPreview(){
+    SomewhereTheme {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp)
+                .width(300.dp)
+        ) {
+            ZoomButtons(
+                zoomLevel = 16.0f,
+                onClickZoomOut = { },
+                onClickZoomOutLess = { },
+                onClickZoomInLess = { },
+                onClickZoomIn = { },
+                userLocationPermissionGranted = true,
+                onClickLocationPermissionGranted = { },
+                onClickLocationPermissionNotGranted = { }
             )
         }
     }

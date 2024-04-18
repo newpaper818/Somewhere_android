@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--dialog/ =================================================================================-->
+    <!--DateRangeDialog.kt-->
+    <string name="set_date_range">여행 기간 설정</string>
+    <string name="starts">시작일</string>
+    <string name="ends">종료일</string>
+    <string name="date_range_headline">%s - %s</string>
+
+    <!--DeleteOrNotDialog.kt-->
+    <string name="delete_friend">친구를 여행에서 삭제할까요?</string>
+    <string name="get_out_shared_trip">공유받은 여행에서 나갈까요?</string>
+
+    <!--DeletingAccountDialog.kt-->
+    <string name="deleting_account">계정 삭제하는 중…</string>
+
+    <!--MemoDialog.kt-->
+    <string name="memo">메모</string>
+
+    <!--SelectDateDialog.kt-->
+    <string name="move_date">날짜 이동</string>
+
+    <!--SetBudgetOrDistanceDialog.kt-->
+    <string name="set_budget">예산 설정</string>
+    <string name="set_travel_distance">이동 거리 설정</string>
+    <string name="km">km</string>
+
+    <!--SetColorDialog.kt-->
+    <string name="set_color">색상 설정</string>
+
+    <!--SetCurrencyDialog.kt-->
+    <string name="set_currency_type">통화 유형 선택</string>
+
+    <!--SetEditableDialog.kt-->
+    <string name="set_editable">권한 설정</string>
+
+    <!--SetSpotTypeDialog.kt-->
+    <string name="set_spot_type">장소 유형 선택</string>
+
+    <!--SetTimeDialog.kt-->
+    <string name="set_start_time">시작 시간 설정</string>
+    <string name="set_end_time">종료 시간 설정</string>
+
+    <!---->
+    <string name="button_close">닫기</string>
+    <string name="button_get_out">나가기</string>
+    <string name="button_cancel">취소</string>
+    <string name="button_delete">삭제</string>
+    <string name="button_ok">확인</string>
+
+</resources>

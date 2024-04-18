@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--enums/===================================================================================-->
+    <!--CurrencyType.kt-->
+    <string name="aud_name">Australian dollar</string>
+    <string name="cad_name">Canadian dollar</string>
+    <string name="cny_name">China Yuan</string>
+    <string name="egp_name">Egyptian pound</string>
+    <string name="eur_name">Euro</string>
+    <string name="gbp_name">Pound sterling</string>
+    <string name="inr_name">Indian rupee</string>
+    <string name="jpy_name">Japanese yen</string>
+    <string name="krw_name">South Korean won</string>
+    <string name="rub_name">Russian ruble</string>
+    <string name="thb_name">Thai baht</string>
+    <string name="twd_name">New Taiwan dollar</string>
+    <string name="usd_name">United States dollar</string>
+    <string name="vnd_name">Vietnam dong</string>
+
+    <!--DateTime.kt-->
+    <string name="ymd">YMD</string>
+    <string name="dmy">DMY</string>
+    <string name="mdy">MDY</string>
+    <string name="_24h">24h</string>
+    <string name="_12h">12h</string>
+
+    <!--SpotType.kt-->
+    <string name="tour">Tour</string>
+    <string name="move">Move</string>
+    <string name="move_point">Move Point</string>
+    <string name="food">Food</string>
+    <string name="lodging">Lodging</string>
+    <string name="etc">Etc</string>
+
+    <string name="airplane">Airplane</string>
+    <string name="helicopter">Helicopter</string>
+    <string name="hot_air_balloon">Hot Air Balloon</string>
+    <string name="train">Train</string>
+    <string name="subway">Subway</string>
+    <string name="tram">Tram</string>
+    <string name="bus">Bus</string>
+    <string name="taxi">Taxi</string>
+    <string name="car">Car</string>
+    <string name="bicycle">Bicycle</string>
+    <string name="electric_kickboard">Electric Kickboard</string>
+    <string name="walk">Walk</string>
+    <string name="running">Running</string>
+    <string name="hiking">Hiking</string>
+    <string name="ship">Ship</string>
+    <string name="yacht">Yacht</string>
+    <string name="cable_car">Cable car</string>
+    <string name="terminal">Terminal</string>
+    <string name="airport">Airport</string>
+    <string name="bus_terminal">Bus Terminal</string>
+    <string name="bus_stop">Bus Stop</string>
+    <string name="subway_station">Subway Station</string>
+    <string name="train_station">Train Station</string>
+    <string name="port">Port</string>
+    <string name="tourist_attraction">Tourist Attraction</string>
+    <string name="historic_site">Historic Site</string>
+    <string name="architectural_building">Architectural Building</string>
+    <string name="landmark">Landmark</string>
+    <string name="religious_site">Religious Site</string>
+    <string name="monument_statue">Monument &amp; Statue</string>
+    <string name="activity">Activity</string>
+    <string name="leisure">Leisure</string>
+    <string name="sport">Sport</string>
+    <string name="outdoor">Outdoor</string>
+    <string name="adventure">Adventure</string>
+    <string name="entertainment">Entertainment</string>
+    <string name="festival">Festival</string>
+    <string name="art">Art</string>
+    <string name="music">Music</string>
+    <string name="movie">Movie</string>
+    <string name="museum">Museum</string>
+    <string name="exhibition">Exhibition</string>
+    <string name="park">Park</string>
+    <string name="garden">Garden</string>
+    <string name="beach">Beach</string>
+    <string name="street_market">Street Market</string>
+    <string name="gift_shop">Gift Shop</string>
+    <string name="shopping">Shopping</string>
+    <string name="coffee_tea">Coffee / Tea</string>
+    <string name="restaurant">Restaurant</string>
+    <string name="fast_food">Fast Food</string>
+    <string name="dessert">Dessert</string>
+    <string name="snack">Snack</string>
+    <string name="bar_pub">Bar / Pub</string>
+    <string name="hotel">Hotel</string>
+    <string name="motel">Motel</string>
+    <string name="guest_house">Guest House</string>
+    <string name="resort">Resort</string>
+    <string name="hostel">Hostel</string>
+    <string name="air_bnb">Air BnB</string>
+    <string name="pension">Pension</string>
+    <string name="camping">Camping</string>
+    <string name="home">Home</string>
+
+    <!--Theme.kt-->
+    <string name="theme_light">Light theme</string>
+    <string name="theme_dark">Dark theme</string>
+    <string name="theme_auto">Same as device theme</string>
+    <string name="map_theme_auto">Same as app theme</string>
+
+</resources>

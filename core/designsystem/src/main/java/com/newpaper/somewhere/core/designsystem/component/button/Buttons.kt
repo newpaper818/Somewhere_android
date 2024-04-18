@@ -1,4 +1,4 @@
-package com.newpaper.somewhere.ui.components.buttons
+package com.newpaper.somewhere.core.designsystem.component.button
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -31,12 +31,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import com.newpaper.somewhere.R
-import com.newpaper.somewhere.ui.components.MySpacerRow
-import com.newpaper.somewhere.ui.components.icons.DisplayIcon
-import com.newpaper.somewhere.ui.components.icons.IconTextButtonIcon
-import com.newpaper.somewhere.ui.components.icons.MyIcon
-import com.newpaper.somewhere.ui.theme.SomewhereTheme
+import com.newpaper.somewhere.core.designsystem.R
+import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
+import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
+import com.newpaper.somewhere.core.designsystem.icon.IconTextButtonIcon
+import com.newpaper.somewhere.core.designsystem.icon.MyIcon
+import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 
 
 @Composable
@@ -380,7 +380,7 @@ private fun InviteButtonPreview(){
 
 @Composable
 @PreviewLightDark
-private fun InviteButtonPreviewDisabled(){
+private fun InviteButtonDisabledPreview(){
     SomewhereTheme {
         Box(
             contentAlignment = Alignment.Center,
@@ -418,7 +418,7 @@ private fun SaveButtonPreview(){
 
 @Composable
 @PreviewLightDark
-private fun SaveButtonPreviewDisabled(){
+private fun SaveButtonDisabledPreview(){
     SomewhereTheme {
         Box(
             contentAlignment = Alignment.Center,
@@ -472,7 +472,7 @@ private fun DeleteAccountButtonPreview(){
 
 @Composable
 @PreviewLightDark
-private fun DeleteAccountButtonPreviewDisabled(){
+private fun DeleteAccountButtonDisabledPreview(){
     SomewhereTheme {
         Box(
             contentAlignment = Alignment.Center,
@@ -586,7 +586,7 @@ private fun MyTextButtonPreview(){
 
 @Composable
 @PreviewLightDark
-private fun MyTextButtonPreviewDisabled(){
+private fun MyTextButtonDisabledPreview(){
     SomewhereTheme {
         Box(
             contentAlignment = Alignment.Center,
@@ -606,7 +606,7 @@ private fun MyTextButtonPreviewDisabled(){
 
 @Composable
 @PreviewLightDark
-private fun MyTextButtonPreviewTransparent(){
+private fun MyTextButtonTransparentPreview(){
     SomewhereTheme {
         Box(
             contentAlignment = Alignment.Center,
@@ -626,7 +626,7 @@ private fun MyTextButtonPreviewTransparent(){
 
 @Composable
 @PreviewLightDark
-private fun MyTextButtonPreviewTransparentDisabled(){
+private fun MyTextButtonTransparentDisabledPreview(){
     SomewhereTheme {
         Box(
             contentAlignment = Alignment.Center,

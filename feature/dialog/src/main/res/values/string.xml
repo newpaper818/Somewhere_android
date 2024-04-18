@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--dialog/ =================================================================================-->
+    <!--DateRangeDialog.kt-->
+    <string name="set_date_range">Set date range</string>
+    <string name="starts">Starts</string>
+    <string name="ends">Ends</string>
+    <string name="date_range_headline">%s - %s</string>
+
+    <!--DeleteOrNotDialog.kt-->
+    <string name="delete_friend">Delete friend from this trip?</string>
+    <string name="get_out_shared_trip">Get out this shared trip?</string>
+
+    <!--DeletingAccountDialog.kt-->
+    <string name="deleting_account">Deleting account…</string>
+
+    <!--MemoDialog.kt-->
+    <string name="memo">Memo</string>
+
+    <!--SelectDateDialog.kt-->
+    <string name="move_date">Move date</string>
+
+    <!--SetBudgetOrDistanceDialog.kt-->
+    <string name="set_budget">Set budget</string>
+    <string name="set_travel_distance">Set travel distance</string>
+    <string name="km">km</string>
+
+    <!--SetColorDialog.kt-->
+    <string name="set_color">Set color</string>
+
+    <!--SetCurrencyDialog.kt-->
+    <string name="set_currency_type">Set currency type</string>
+
+    <!--SetEditableDialog.kt-->
+    <string name="set_editable">Set permission</string>
+
+    <!--SetSpotTypeDialog.kt-->
+    <string name="set_spot_type">Set spot type</string>
+
+    <!--SetTimeDialog.kt-->
+    <string name="set_start_time">Set start time</string>
+    <string name="set_end_time">Set end time</string>
+
+    <!---->
+    <string name="button_close">Close</string>
+    <string name="button_get_out">Get out</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_delete">Delete</string>
+    <string name="button_ok">OK</string>
+
+</resources>

@@ -1,30 +1,33 @@
 package com.newpaper.somewhere.core.model.enums
 
+import androidx.annotation.StringRes
+import com.newpaper.somewhere.core.model.R
 import com.newpaper.somewhere.core.model.data.MyColor
 
-const val blackInt = 0xff000000.toInt()
-const val whiteInt = 0xffffffff.toInt()
+private const val blackInt = 0xff000000.toInt()
+private const val whiteInt = 0xffffffff.toInt()
 
 //spot type group color
-const val tourColor =       0xff493cfa.toInt()
-const val moveColor =       0xff47de9f.toInt()
-const val movePointColor =  0xff26b502.toInt()
-const val foodColor =       0xFFedb25f.toInt()
-const val lodgingColor =    0xff901aeb.toInt()
-const val etcColor =        0xff8c8c8c.toInt()
+private const val tourColor =       0xff493cfa.toInt()
+private const val moveColor =       0xff47de9f.toInt()
+private const val movePointColor =  0xff26b502.toInt()
+private const val foodColor =       0xFFedb25f.toInt()
+private const val lodgingColor =    0xff901aeb.toInt()
+private const val etcColor =        0xff8c8c8c.toInt()
 
-const val onTourColor =     whiteInt
-const val onMoveColor =     blackInt
-const val onMovePointColor = blackInt
-const val onFoodColor =     blackInt
-const val onLodgingColor =  whiteInt
-const val onEtcColor =      blackInt
+private const val onTourColor =     whiteInt
+private const val onMoveColor =     blackInt
+private const val onMovePointColor = blackInt
+private const val onFoodColor =     blackInt
+private const val onLodgingColor =  whiteInt
+private const val onEtcColor =      blackInt
 
 enum class SpotTypeGroup(
+    @StringRes val textId: Int,
     val color: MyColor,
     val memberList: List<SpotType>
 ) {
-    TOUR(MyColor(tourColor, onTourColor),
+    TOUR(R.string.tour, MyColor(tourColor, onTourColor),
         listOf(
             SpotType.TOUR,
             SpotType.TOURIST_ATTRACTION, SpotType.HISTORIC_SITE, SpotType.ARCHITECTURAL_BUILDING, SpotType.LANDMARK, SpotType.RELIGIOUS_SITE, SpotType.MONUMENT_STATUE,
@@ -36,149 +39,149 @@ enum class SpotTypeGroup(
         )
     ),
 
-    MOVE(MyColor(moveColor, onMoveColor),
+    MOVE(R.string.move, MyColor(moveColor, onMoveColor),
         listOf(
             SpotType.MOVE,
             SpotType.AIRPLANE, SpotType.HELICOPTER, SpotType.HOT_AIR_BALLOON,
             SpotType.TRAIN, SpotType.SUBWAY, SpotType.TRAM,
             SpotType.BUS, SpotType.TAXI, SpotType.CAR,
-            SpotType.SHIP, SpotType.YACHT,
+            SpotType.SHIP, SpotType.YACHT, SpotType.CABLE_CAR,
             SpotType.BICYCLE, SpotType.ELECTRIC_KICKBOARD,
             SpotType.WALK, SpotType.RUNNING, SpotType.HIKING
         )
     ),
 
-    MOVE_POINT(MyColor(movePointColor, onMovePointColor),
+    MOVE_POINT(R.string.move_point, MyColor(movePointColor, onMovePointColor),
         listOf(
             SpotType.MOVE_POINT,
             SpotType.TERMINAL, SpotType.AIRPORT, SpotType.BUS_TERMINAL, SpotType.BUS_STOP, SpotType.SUBWAY_STATION, SpotType.TRAIN_STATION, SpotType.PORT
         )
     ),
 
-    FOOD(MyColor(foodColor, onFoodColor),
+    FOOD(R.string.food, MyColor(foodColor, onFoodColor),
         listOf(
             SpotType.FOOD,
             SpotType.COFFEE_TEA, SpotType.RESTAURANT, SpotType.FAST_FOOD, SpotType.DESSERT, SpotType.SNACK, SpotType.BAR_PUB
         )
     ),
 
-    LODGING(MyColor(lodgingColor, onLodgingColor),
+    LODGING(R.string.lodging, MyColor(lodgingColor, onLodgingColor),
         listOf(
             SpotType.LODGING,
             SpotType.HOTEL, SpotType.MOTEL, SpotType.GUEST_HOUSE, SpotType.RESORT, SpotType.HOSTEL, SpotType.AIR_BNB, SpotType.PENSION, SpotType.CAMPING
         )
     ),
 
-    ETC(MyColor(etcColor, onEtcColor),
+    ETC(R.string.etc, MyColor(etcColor, onEtcColor),
         listOf(
-            SpotType.ETC,
-            SpotType.HOME
+            SpotType.ETC
         )
     )
 }
 
 enum class SpotType(
+    @StringRes val textId: Int,
     val group: SpotTypeGroup
 ){
-    TOUR(SpotTypeGroup.TOUR),
-    MOVE(SpotTypeGroup.MOVE),
-    MOVE_POINT(SpotTypeGroup.MOVE_POINT),
-    FOOD(SpotTypeGroup.FOOD),
-    LODGING(SpotTypeGroup.LODGING),
-    ETC(SpotTypeGroup.ETC),
+    TOUR(R.string.tour, SpotTypeGroup.TOUR),
+    MOVE(R.string.move, SpotTypeGroup.MOVE),
+    MOVE_POINT(R.string.move_point, SpotTypeGroup.MOVE_POINT),
+    FOOD(R.string.food, SpotTypeGroup.FOOD),
+    LODGING(R.string.lodging, SpotTypeGroup.LODGING),
+    ETC(R.string.etc, SpotTypeGroup.ETC),
 
     //MOVE
-    AIRPLANE(SpotTypeGroup.MOVE),
-    HELICOPTER(SpotTypeGroup.MOVE),
-    HOT_AIR_BALLOON(SpotTypeGroup.MOVE),
+    AIRPLANE(R.string.airplane, SpotTypeGroup.MOVE),
+    HELICOPTER(R.string.helicopter, SpotTypeGroup.MOVE),
+    HOT_AIR_BALLOON(R.string.hot_air_balloon, SpotTypeGroup.MOVE),
 
-    TRAIN(SpotTypeGroup.MOVE),
-    SUBWAY(SpotTypeGroup.MOVE),
-    TRAM(SpotTypeGroup.MOVE),
+    TRAIN(R.string.train, SpotTypeGroup.MOVE),
+    SUBWAY(R.string.subway, SpotTypeGroup.MOVE),
+    TRAM(R.string.tram, SpotTypeGroup.MOVE),
 
-    BUS(SpotTypeGroup.MOVE),
-    TAXI(SpotTypeGroup.MOVE),
-    CAR(SpotTypeGroup.MOVE),
+    BUS(R.string.bus, SpotTypeGroup.MOVE),
+    TAXI(R.string.taxi, SpotTypeGroup.MOVE),
+    CAR(R.string.car, SpotTypeGroup.MOVE),
 
-    SHIP(SpotTypeGroup.MOVE),
-    YACHT(SpotTypeGroup.MOVE),
-    CABLE_CAR( SpotTypeGroup.MOVE),
+    SHIP(R.string.ship, SpotTypeGroup.MOVE),
+    YACHT(R.string.yacht, SpotTypeGroup.MOVE),
+    CABLE_CAR(R.string.cable_car, SpotTypeGroup.MOVE),
 
-    BICYCLE(SpotTypeGroup.MOVE),
-    ELECTRIC_KICKBOARD(SpotTypeGroup.MOVE),
+    BICYCLE(R.string.bicycle, SpotTypeGroup.MOVE),
+    ELECTRIC_KICKBOARD(R.string.electric_kickboard, SpotTypeGroup.MOVE),
 
-    WALK(SpotTypeGroup.MOVE),
-    RUNNING(SpotTypeGroup.MOVE),
-    HIKING(SpotTypeGroup.MOVE),
+    WALK(R.string.walk, SpotTypeGroup.MOVE),
+    RUNNING(R.string.running, SpotTypeGroup.MOVE),
+    HIKING(R.string.hiking, SpotTypeGroup.MOVE),
 
 
 
     //MOVE POINT
-    TERMINAL(SpotTypeGroup.MOVE_POINT),
-    AIRPORT(SpotTypeGroup.MOVE_POINT),
-    BUS_TERMINAL(SpotTypeGroup.MOVE_POINT),
-    BUS_STOP(SpotTypeGroup.MOVE_POINT),
-    SUBWAY_STATION(SpotTypeGroup.MOVE_POINT),
-    TRAIN_STATION(SpotTypeGroup.MOVE_POINT),
-    PORT(SpotTypeGroup.MOVE_POINT),
+    TERMINAL(R.string.terminal, SpotTypeGroup.MOVE_POINT),
+    AIRPORT(R.string.airport, SpotTypeGroup.MOVE_POINT),
+    BUS_TERMINAL(R.string.bus_terminal, SpotTypeGroup.MOVE_POINT),
+    BUS_STOP(R.string.bus_stop, SpotTypeGroup.MOVE_POINT),
+    SUBWAY_STATION(R.string.subway_station, SpotTypeGroup.MOVE_POINT),
+    TRAIN_STATION(R.string.train_station, SpotTypeGroup.MOVE_POINT),
+    PORT(R.string.port, SpotTypeGroup.MOVE_POINT),
 
 
 
     //TOUR
-    TOURIST_ATTRACTION(SpotTypeGroup.TOUR),
-    HISTORIC_SITE(SpotTypeGroup.TOUR),
-    ARCHITECTURAL_BUILDING(SpotTypeGroup.TOUR),
-    LANDMARK(SpotTypeGroup.TOUR),
-    RELIGIOUS_SITE(SpotTypeGroup.TOUR),
-    MONUMENT_STATUE(SpotTypeGroup.TOUR),
+    TOURIST_ATTRACTION(R.string.tourist_attraction, SpotTypeGroup.TOUR),
+    HISTORIC_SITE(R.string.historic_site, SpotTypeGroup.TOUR),
+    ARCHITECTURAL_BUILDING(R.string.architectural_building, SpotTypeGroup.TOUR),
+    LANDMARK(R.string.landmark, SpotTypeGroup.TOUR),
+    RELIGIOUS_SITE(R.string.religious_site, SpotTypeGroup.TOUR),
+    MONUMENT_STATUE(R.string.monument_statue, SpotTypeGroup.TOUR),
 
-    ACTIVITY(SpotTypeGroup.TOUR),
-    LEISURE(SpotTypeGroup.TOUR),
-    SPORT(SpotTypeGroup.TOUR),
-    OUTDOOR(SpotTypeGroup.TOUR),
-    ADVENTURE(SpotTypeGroup.TOUR),
+    ACTIVITY(R.string.activity, SpotTypeGroup.TOUR),
+    LEISURE(R.string.leisure, SpotTypeGroup.TOUR),
+    SPORT(R.string.sport, SpotTypeGroup.TOUR),
+    OUTDOOR(R.string.outdoor, SpotTypeGroup.TOUR),
+    ADVENTURE(R.string.adventure, SpotTypeGroup.TOUR),
 
-    ENTERTAINMENT(SpotTypeGroup.TOUR),
-    FESTIVAL(SpotTypeGroup.TOUR),
-    ART(SpotTypeGroup.TOUR),
-    MUSIC(SpotTypeGroup.TOUR),
-    MOVIE(SpotTypeGroup.TOUR),
+    ENTERTAINMENT(R.string.entertainment, SpotTypeGroup.TOUR),
+    FESTIVAL(R.string.festival, SpotTypeGroup.TOUR),
+    ART(R.string.art, SpotTypeGroup.TOUR),
+    MUSIC(R.string.music, SpotTypeGroup.TOUR),
+    MOVIE(R.string.movie, SpotTypeGroup.TOUR),
 
-    MUSEUM(SpotTypeGroup.TOUR),
-    EXHIBITION(SpotTypeGroup.TOUR),
+    MUSEUM(R.string.museum, SpotTypeGroup.TOUR),
+    EXHIBITION(R.string.exhibition, SpotTypeGroup.TOUR),
 
-    PARK(SpotTypeGroup.TOUR),
-    GARDEN(SpotTypeGroup.TOUR),
-    BEACH(SpotTypeGroup.TOUR),
+    PARK(R.string.park, SpotTypeGroup.TOUR),
+    GARDEN(R.string.garden, SpotTypeGroup.TOUR),
+    BEACH(R.string.beach, SpotTypeGroup.TOUR),
 
-    SHOPPING(SpotTypeGroup.TOUR),
-    STREET_MARKET(SpotTypeGroup.TOUR),
-    GIFT_SHOP(SpotTypeGroup.TOUR),
+    SHOPPING(R.string.shopping, SpotTypeGroup.TOUR),
+    STREET_MARKET(R.string.street_market, SpotTypeGroup.TOUR),
+    GIFT_SHOP(R.string.gift_shop, SpotTypeGroup.TOUR),
 
 
 
     //FOOD
-    COFFEE_TEA(SpotTypeGroup.FOOD),
-    RESTAURANT(SpotTypeGroup.FOOD),
-    FAST_FOOD(SpotTypeGroup.FOOD),
-    DESSERT(SpotTypeGroup.FOOD),
-    SNACK(SpotTypeGroup.FOOD),
-    BAR_PUB(SpotTypeGroup.FOOD),
+    COFFEE_TEA(R.string.coffee_tea, SpotTypeGroup.FOOD),
+    RESTAURANT(R.string.restaurant, SpotTypeGroup.FOOD),
+    FAST_FOOD(R.string.fast_food, SpotTypeGroup.FOOD),
+    DESSERT(R.string.dessert, SpotTypeGroup.FOOD),
+    SNACK(R.string.snack, SpotTypeGroup.FOOD),
+    BAR_PUB(R.string.bar_pub, SpotTypeGroup.FOOD),
 
 
     //LODGING
-    HOTEL(SpotTypeGroup.LODGING),
-    MOTEL(SpotTypeGroup.LODGING),
-    GUEST_HOUSE(SpotTypeGroup.LODGING),
-    RESORT(SpotTypeGroup.LODGING),
-    HOSTEL(SpotTypeGroup.LODGING),
-    AIR_BNB(SpotTypeGroup.LODGING),
-    PENSION(SpotTypeGroup.LODGING),
-    CAMPING(SpotTypeGroup.LODGING),
+    HOTEL(R.string.hotel, SpotTypeGroup.LODGING),
+    MOTEL(R.string.motel, SpotTypeGroup.LODGING),
+    GUEST_HOUSE(R.string.guest_house, SpotTypeGroup.LODGING),
+    RESORT(R.string.resort, SpotTypeGroup.LODGING),
+    HOSTEL(R.string.hostel, SpotTypeGroup.LODGING),
+    AIR_BNB(R.string.air_bnb, SpotTypeGroup.LODGING),
+    PENSION(R.string.pension, SpotTypeGroup.LODGING),
+    CAMPING(R.string.camping, SpotTypeGroup.LODGING),
 
 
     //ETC
-    HOME(SpotTypeGroup.ETC),
+    HOME(R.string.home, SpotTypeGroup.ETC),
 
     ;
 
@@ -188,13 +191,5 @@ enum class SpotType(
 
     fun isNotMove():Boolean{
         return this.group != SpotTypeGroup.MOVE
-    }
-}
-
-fun getSpotTypeFromString(value: String): SpotType{
-    return try {
-        SpotType.valueOf(value)
-    } catch(e: IllegalArgumentException) {
-        SpotType.TOUR
     }
 }
