@@ -1,7 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!--SomewhereIcons.kt ==============================================================================-->
+    <!--component/button/ =======================================================================-->
+    <!-- AuthButtons.kt -->
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="sign_in_with_apple">Sign in with Apple</string>
+    <string name="authentication_with_google">Authenticate with Google</string>
+    <string name="authentication_with_apple">Authenticate with Apple</string>
+    <string name="authentication_complete">Authentication complete</string>
+    <string name="authenticating">Authenticating…</string>
+
+    <!-- BottomSaveCancelBar.kt -->
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- buttons.kt -->
+    <string name="privacy_policy">Privacy policy</string>
+    <string name="update">Update</string>
+    <string name="new_trip">New trip</string>
+    <string name="invite">Invite</string>
+    <string name="copy_somewhere_link">Copy Somewhere Play Store link</string>
+    <string name="delete_account">Delete account</string>
+
+    <!-- FABs.kt -->
+    <string name="see_on_map">See on Map</string>
+
+    <!-- MapButtons.kt -->
+    <string name="zoom_card_zoom_level">Zoom Level</string>
+
+
+    <!--component/topAppBars/ ===================================================================-->
+    <!-- SomewhereTopAppBar.kt -->
+    <string name="internet_unavailable">Internet unavailable</string>
+
+
+    <!--component/ ==============================================================================-->
+    <!-- Image.kt -->
+    <string name="image_loading_error">Image loading error</string>
+
+
+    <!--component/icon/SomewhereIcons.kt/ =======================================================-->
     <!--NavigationBarIcon-->
     <string name="trips">Trips</string>
     <string name="profile">Profile</string>
@@ -44,11 +82,9 @@
 
     <!--MyIcons-->
     <string name="sign_in">Sign in</string>
-    <string name="internet_unavailable">Internet unavailable</string>
     <string name="edit_profile_image">Edit profile image</string>
     <string name="delete_profile_image">Delete profile image</string>
     <string name="delete_image">Delete image</string>
-    <string name="image_loading_error">Image loading error</string>
     <string name="search_location">Search location</string>
     <string name="clear_text">Clear text</string>
     <string name="expand">Expand</string>
@@ -71,34 +107,5 @@
     <string name="number_of_trip_mates">Number of trip mates</string>
     <string name="manager">Manager</string>
     <string name="get_out">Get out</string>
-
-
-    <!--snackbar toast ==========================================================================-->
-    <string name="snackbar_location_permission_denied">User location permission denied</string>
-    <string name="snackbar_no_location_to_show">No location to show</string>
-    <string name="snackbar_no_user_location">Can\'t find your location</string>
-    <string name="snackbar_settings">Settings</string>
-    <string name="snackbar_invite_friend_success">Invite friend success!</string>
-    <string name="snackbar_no_user">Can\'t find user</string>
-    <string name="snackbar_same_email">Do not enter your email</string>
-    <string name="snackbar_invalid_email">Invalid email format</string>
-    <string name="snackbar_share_trip_error">Share trip error</string>
-    <string name="snackbar_delete_friend_error">Delete friend error</string>
-    <string name="snackbar_set_editable_error">Set permission error</string>
-    <string name="snackbar_success_update_profile">Update profile success</string>
-    <string name="snackbar_fail_update_profile">Update profile error. Do it later.</string>
-    <string name="snackbar_no_changed">No changed</string>
-
-    <string name="toast_download_complete">Download complete</string>
-    <string name="toast_download_error">Download error</string>
-
-    <!--button ==============================================================================-->
-    <string name="sign_in_with_google">Sign in with Google</string>
-    <string name="sign_in_with_apple">Sign in with Apple</string>
-    <string name="authentication_with_google">Authenticate with Google</string>
-    <string name="authentication_with_apple">Authenticate with Apple</string>
-    <string name="authentication_done">Authentication complete</string>
-    <string name="authenticating">Authenticating…</string>
-
 
 </resources>

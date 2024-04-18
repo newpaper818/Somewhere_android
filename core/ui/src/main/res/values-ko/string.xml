@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--card/ ===================================================================================-->
+    <!-- AppIconWithAppNameCard.kt -->
+
+    <string name="somewhere_app_icon">Somewhere 앱 아이콘</string>
+    <string name="trip_planner_app">여행 계획 앱</string>
+
+    <!-- DeveloperCard.kt -->
+    <string name="developer">개발자</string>
+    <string name="developer_info">이세종, 세종대학교 19 컴퓨터공학과</string>
+
+    <!-- ShareAppCard.kt -->
+    <string name="or">또는</string>
+
+    <!-- UserProfileCard.kt -->
+    <string name="no_name">이름 없음</string>
+    <string name="connected_with">연결된 계정</string>
+    <string name="my_profile_image">프로필 사진</string>
+    <string name="default_profile_image">기본 프로필 사진</string>
+
+    <!-- VersionCard.kt -->
+    <string name="version">버전</string>
+    <string name="latest">(최신)</string>
+    <string name="old_version">(구 버전)</string>
+
+    <!--card/trip/ ==============================================================================-->
+
+
+    <!--dialog/ =================================================================================-->
+    <!--DateRangeDialog.kt-->
+    <string name="dialog_title_date_range">여행 기간 설정</string>
+    <string name="dialog_starts">시작일</string>
+    <string name="dialog_ends">종료일</string>
+    <string name="dialog_date_range_headline">%s - %s</string>
+
+    <!--DeleteOrNotDialog.kt-->
+    <string name="dialog_title_delete_friend">친구를 여행에서 삭제할까요?</string>
+    <string name="dialog_title_get_out_shared_trip">공유받은 여행에서 나갈까요?</string>
+    <string name="get_out">나가기</string>
+
+    <!--DeletingAccountDialog.kt-->
+    <string name="deleting_account">계정 삭제하는 중…</string>
+
+    <!--MemoDialog.kt-->
+    <string name="dialog_title_memo">메모</string>
+
+    <!--SelectDateDialog.kt-->
+    <string name="dialog_title_select_date">날짜 이동</string>
+
+    <!--SetBudgetOrDistanceDialog.kt-->
+    <string name="dialog_title_set_budget">예산 설정</string>
+    <string name="dialog_title_set_travel_distance">이동 거리 설정</string>
+    <string name="dialog_set_distance_km">km</string>
+
+    <!--SetColorDialog.kt-->
+    <string name="dialog_title_set_color">색상 설정</string>
+
+    <!--SetCurrencyDialog.kt-->
+    <string name="dialog_title_set_currency_type">통화 유형 선택</string>
+
+    <!--SetEditableDialog.kt-->
+    <string name="dialog_title_set_editable">권한 설정</string>
+
+    <!--SetSpotTypeDialog.kt-->
+    <string name="dialog_title_set_spot_type">장소 유형 선택</string>
+
+    <!--SetTimeDialog.kt-->
+    <string name="dialog_title_set_start_time_">시작 시간 설정</string>
+    <string name="dialog_title_set_end_time">종료 시간 설정</string>
+
+    <!--SetCurrencyTypeDialog.kt-->
+    <string name="aud_name">호주 달러</string>
+    <string name="cad_name">캐나다 달러</string>
+    <string name="cny_name">중국 위안</string>
+    <string name="egp_name">이집트 파운드</string>
+    <string name="eur_name">유럽 연합 유로</string>
+    <string name="gbp_name">파운드 스털링</string>
+    <string name="inr_name">인도 루피</string>
+    <string name="jpy_name">일본 엔</string>
+    <string name="krw_name">대한민국 원</string>
+    <string name="rub_name">러시아 루블</string>
+    <string name="thb_name">태국 바트</string>
+    <string name="twd_name">신 대만 달러</string>
+    <string name="usd_name">미국 달러</string>
+    <string name="vnd_name">베트남 동</string>
+
+    <!---->
+    <string name="dialog_body_are_you_sure_to_exit">정말로 나가시겠습니까?\n저장하지 않은 데이터는 삭제됩니다</string>
+    <string name="dialog_body_delete_trip">이 여행을 삭제하시겠습니까?\n공유받은 친구도 이 여행을 볼 수 없게 됩니다</string>
+    <string name="dialog_body_delete_spot">이 장소를 삭제하시겠습니까?</string>
+    <string name="dialog_body_sign_out">로그아웃 하시겠습니까?</string>
+
+    <string name="dialog_button_close">닫기</string>
+    <string name="dialog_button_cancel">취소</string>
+    <string name="dialog_button_delete">삭제</string>
+    <string name="dialog_button_exit">나가기</string>
+    <string name="dialog_button_save">저장</string>
+    <string name="dialog_button_ok">확인</string>
+
+
+    <!--item/ ===================================================================================-->
+
+
+
+    <!--selectSwitch/ ===========================================================================-->
+    <string name="view_only">보기 전용</string>
+    <string name="allow_edit">편집 허용</string>
+    <string name="_24h">24시간</string>
+    <string name="_12h">12시간</string>
+
+
+    <!--tripScreenUtils/ ========================================================================-->
+    <!--GraphListItem.kt-->
+    <string name="no_title">제목 없음</string>
+    <string name="add_a_title">제목 추가</string>
+    <string name="delete_spot">장소 삭제</string>
+
+
+
+
+
+    <!--FriendInfo.kt-->
+    <string name="unknown">알 수 없음</string>
+
+</resources>

@@ -1,6 +1,5 @@
 package com.newpaper.somewhere.core.designsystem.theme
 
-import androidx.annotation.ColorInt
 import androidx.compose.ui.graphics.Color
 
 //primary Hue Chroma Tone 280 47 40
@@ -130,6 +129,10 @@ val nv99 = Color(0xFFfdfdfc)
 val nv100 = Color(0xFFffffff)
 
 
+
+
+
+
 object CustomColor {
     //val gray = Color(0xFF878690)
     val black = Color(0xff000000)
@@ -159,97 +162,6 @@ object ProgressBarColor {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 const val blackInt = 0xff000000.toInt()
 const val whiteInt = 0xffffffff.toInt()
 
-//spot type group color
-const val tourColor =       0xff493cfa.toInt()
-const val moveColor =       0xff47de9f.toInt()
-const val movePointColor =  0xff26b502.toInt()
-const val foodColor =       0xFFedb25f.toInt()
-const val lodgingColor =    0xff901aeb.toInt()
-const val etcColor =        0xff8c8c8c.toInt()
-
-const val onTourColor =     whiteInt
-const val onMoveColor =     blackInt
-const val onMovePointColor = blackInt
-const val onFoodColor =     blackInt
-const val onLodgingColor =  whiteInt
-const val onEtcColor =      blackInt
-
-
-data class MyColor(
-    @ColorInt val color: Int = 0xFF493cfa.toInt(),
-    @ColorInt val onColor: Int = whiteInt
-){
-    override fun toString(): String{
-        return "$color/$onColor"
-    }
-
-//    fun parse(value: String): MyColor?{
-//        val parts = value.split("/")
-//        return if (parts.size == 2) {
-//            val color = parts[0].toInt()
-//            val onColor = parts[1].toInt()
-//
-//            MyColor(color, onColor)
-//        } else
-//            null
-//    }
-}
-
-
-val dateColorList = listOf(
-    MyColor(0xFF493cfa.toInt()),
-    MyColor(0xFF7168e8.toInt()),
-    MyColor(0xFF000000.toInt()),
-    MyColor(0xFFffffff.toInt(), blackInt),
-
-    MyColor(0xFF7f7f7f.toInt(), blackInt),
-    MyColor(0xFFc3c3c3.toInt(), blackInt),
-    MyColor(0xFF880015.toInt()),
-    MyColor(0xFFb97a57.toInt()),
-
-    MyColor(0xFFed1c24.toInt()),
-    MyColor(0xFFffaec9.toInt(), blackInt),
-    MyColor(0xFFff7f27.toInt(), blackInt),
-    MyColor(0xFFffc90e.toInt(), blackInt),
-
-    MyColor(0xFFfff200.toInt(), blackInt),
-    MyColor(0xFFefe4b0.toInt(), blackInt),
-    MyColor(0xFF22b14c.toInt(), blackInt),
-    MyColor(0xFFb5e61d.toInt(), blackInt),
-
-    MyColor(0xFF00a2e8.toInt(), blackInt),
-    MyColor(0xFF99d9ea.toInt(), blackInt),
-    MyColor(0xFF3f48cc.toInt()),
-    MyColor(0xFF7092be.toInt(), blackInt),
-
-    MyColor(0xFFa349a4.toInt()),
-    MyColor(0xFFc8bfe7.toInt(), blackInt),
-    MyColor(0xFF732bf5.toInt()),
-    MyColor(0xFF3a083e.toInt()),
-
-    MyColor(0xFF75fa8d.toInt(), blackInt),
-    MyColor(0xFF73fbfd.toInt(), blackInt),
-    MyColor(0xFF3a0603.toInt()),
-    MyColor(0xFF183e0c.toInt()),
-
-    MyColor(0xFF817f26.toInt()),
-    MyColor(0xFF0023f5.toInt()),
-    MyColor(0xFF75163f.toInt()),
-    MyColor(0xFF7f82bb.toInt(), blackInt),
-)

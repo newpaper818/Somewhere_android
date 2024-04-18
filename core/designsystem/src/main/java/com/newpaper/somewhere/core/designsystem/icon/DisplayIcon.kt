@@ -1,6 +1,5 @@
 package com.newpaper.somewhere.core.designsystem.icon
 
-import android.graphics.drawable.Icon
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon

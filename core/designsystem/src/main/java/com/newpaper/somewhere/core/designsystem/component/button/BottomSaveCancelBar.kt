@@ -1,4 +1,4 @@
-package com.newpaper.somewhere.ui.components.buttons
+package com.newpaper.somewhere.core.designsystem.component.button
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -22,10 +22,10 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import com.newpaper.somewhere.R
-import com.newpaper.somewhere.ui.components.MySpacerColumn
-import com.newpaper.somewhere.ui.components.MySpacerRow
-import com.newpaper.somewhere.ui.theme.SomewhereTheme
+import com.newpaper.somewhere.core.designsystem.R
+import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
+import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
+import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 
 @Composable
 fun AnimatedBottomSaveCancelButtons(
@@ -110,12 +110,13 @@ private fun BigCancelButton(
             .width(150.dp)
             .shadow(
                 elevation = 4.dp,
-                shape = MaterialTheme.shapes.extraLarge
+                shape = MaterialTheme.shapes.large
             ),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
             contentColor = MaterialTheme.colorScheme.onSurface
         ),
+        shape = MaterialTheme.shapes.large,
         enabled = enabled,
         onClick = onClick
     ) {
@@ -134,15 +135,15 @@ private fun BigSaveButton(
     val shadowElevation = if (enabled) 4.dp
                             else 0.dp
 
-
     Button(
         modifier = Modifier
             .height(45.dp)
             .width(150.dp)
             .shadow(
                 elevation = shadowElevation,
-                shape = MaterialTheme.shapes.extraLarge
+                shape = MaterialTheme.shapes.large
             ),
+        shape = MaterialTheme.shapes.large,
         enabled = enabled,
         onClick = onClick
     ) {

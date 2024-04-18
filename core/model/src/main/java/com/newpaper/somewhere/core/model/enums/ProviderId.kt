@@ -11,7 +11,11 @@ enum class ProviderId(
 fun getProviderIdFromString(value: String): ProviderId?{
     return when(value){
         ProviderId.GOOGLE.id -> ProviderId.GOOGLE
+        ProviderId.GOOGLE.providerName -> ProviderId.GOOGLE
+
         ProviderId.APPLE.id -> ProviderId.APPLE
+        ProviderId.APPLE.providerName -> ProviderId.APPLE
+
         else -> null
     }
 }
