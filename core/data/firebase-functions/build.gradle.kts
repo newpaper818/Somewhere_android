@@ -5,13 +5,13 @@ plugins {
 }
 
 android {
-    namespace = "com.newpaper.somewhere.core.firebase_functions"
+    namespace = "com.newpaper.somewhere.core.data.firebase_functions"
 }
 
 dependencies {
 
     //module
-    implementation(project(":core:firebase-common"))
+    implementation(project(":core:data:firebase-common"))
 
     //
     implementation(libs.androidx.core.ktx)

@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.newpaper.somewhere.core.firebase_firestore"
+    namespace = "com.newpaper.somewhere.core.data.firebase_firestore"
 
     defaultConfig {
         minSdk = 26
@@ -16,8 +16,8 @@ dependencies {
 
     //module
     implementation(project(":core:model"))
-    implementation(project(":core:firebase-common"))
-    implementation(project(":core:firebase-functions"))
+    implementation(project(":core:data:firebase-common"))
+    implementation(project(":core:data:firebase-functions"))
 
     //
     implementation(libs.androidx.core.ktx)

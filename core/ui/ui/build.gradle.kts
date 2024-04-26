@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.newpaper.somewhere.core.ui"
+    namespace = "com.newpaper.somewhere.core.ui.ui"
     compileSdk = 34
 
     defaultConfig {
@@ -42,7 +42,7 @@ dependencies {
 
     //module
     implementation(project(":core:model"))
-    implementation(project(":core:designsystem"))
+    implementation(project(":core:ui:designsystem"))
 
     //compose bom
     implementation(platform(libs.compose.bom))

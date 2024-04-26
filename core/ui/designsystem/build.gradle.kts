@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.newpaper.somewhere.core.designsystem"
+    namespace = "com.newpaper.somewhere.core.ui.designsystem"
 
 //    compileOptions {
 //        sourceCompatibility = JavaVersion.VERSION_1_8
