@@ -25,3 +25,11 @@ enum class CurrencyType(
     USD("$",840, 2, R.string.usd_name),
     VND("₫",704, 0, R.string.vnd_name)
 }
+
+fun getCurrencyTypeFromString(value: String): CurrencyType{
+    return try{
+        CurrencyType.valueOf(value)
+    }catch (e: IllegalArgumentException){
+        CurrencyType.USD
+    }
+}

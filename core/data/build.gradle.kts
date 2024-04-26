@@ -13,6 +13,7 @@ dependencies {
     //module
     implementation(project(":core:model"))
     implementation(project(":core:datastore"))
+    implementation(project(":core:firebase-firestore"))
 
     //
     implementation(libs.androidx.core.ktx)

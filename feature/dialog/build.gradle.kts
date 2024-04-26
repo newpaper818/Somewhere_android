@@ -32,7 +32,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.lifecycle.runtime.compose)
 
 
