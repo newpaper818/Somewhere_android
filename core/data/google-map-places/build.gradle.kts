@@ -5,22 +5,25 @@ plugins {
 }
 
 android {
-    namespace = "com.newpaper.somewhere.core.data"
+    namespace = "com.newpaper.somewhere.core.data.google_map_places"
 }
 
 dependencies {
 
     //module
     implementation(project(":core:model"))
-    implementation(project(":core:datastore"))
-    implementation(project(":core:firebase-firestore"))
 
     //
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
+//    implementation(libs.androidx.core.ktx)
+//    implementation(libs.androidx.appcompat)
+//    implementation(libs.material)
+
+    //hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    //google places
+    implementation(libs.places)
 
     //test
     testImplementation(libs.junit)

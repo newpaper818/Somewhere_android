@@ -5,10 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.newpaper.somewhere.core.local_image_file"
-    defaultConfig {
-        minSdk = 26
-    }
+    namespace = "com.newpaper.somewhere.core.data.firebase_storage"
 }
 
 dependencies {
@@ -16,6 +13,7 @@ dependencies {
     //module
     implementation(project(":core:model"))
     implementation(project(":core:utils"))
+    implementation(project(":core:data:firebase-common"))
 
     //
     implementation(libs.androidx.core.ktx)
@@ -25,6 +23,10 @@ dependencies {
     //hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    //firebase storage
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.storage)
 
     //test
     testImplementation(libs.junit)

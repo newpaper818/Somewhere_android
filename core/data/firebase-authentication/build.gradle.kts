@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.newpaper.somewhere.core.firebase_authentication"
+    namespace = "com.newpaper.somewhere.core.data.firebase_authentication"
 
     defaultConfig {
         minSdk = 26

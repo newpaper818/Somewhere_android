@@ -84,8 +84,8 @@ dependencies {
 
     //module
     implementation(project(":core:model"))
-    implementation(project(":core:designsystem"))
-    implementation(project(":core:ui"))
+    implementation(project(":core:ui:designsystem"))
+    implementation(project(":core:ui:ui"))
 
     //compose bom
     implementation(platform(libs.compose.bom))
