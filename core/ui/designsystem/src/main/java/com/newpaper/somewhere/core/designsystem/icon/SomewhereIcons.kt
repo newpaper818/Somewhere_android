@@ -53,8 +53,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.newpaper.somewhere.core.designsystem.R
 import com.newpaper.somewhere.core.designsystem.theme.CustomColor
+import com.newpaper.somewhere.core.ui.designsystem.R
 
 data class MyIcon(
     val imageVector: ImageVector,

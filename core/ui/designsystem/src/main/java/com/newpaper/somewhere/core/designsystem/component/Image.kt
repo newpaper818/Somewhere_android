@@ -37,13 +37,12 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.newpaper.somewhere.core.designsystem.R
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.theme.CustomColor
-import kotlinx.coroutines.launch
+import com.newpaper.somewhere.core.ui.designsystem.R
 import java.io.File
 
 @Composable
@@ -105,22 +104,18 @@ fun ImageFromUrl(
 
 @Composable
 fun ImageFromFile(
-    userId: String,
     internetEnabled: Boolean,
     imagePath: String,
     contentDescription: String,
-    downloadImage: () -> Unit,
-    downloadImageResult: Boolean?,
+    downloadImage: (imagePath: String) -> Boolean,
 
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
-    isProfileImage: Boolean = false,
     isImageScreen: Boolean = false,
     onClick: () -> Unit = { }
 ){
     val context = LocalContext.current
     val imageFile = File(context.filesDir, imagePath)
-    val coroutineScope = rememberCoroutineScope()
 
     var imageFileExit by rememberSaveable { mutableStateOf(imageFile.exists()) }
     var isLoading by rememberSaveable { mutableStateOf(false) }
@@ -169,12 +164,13 @@ fun ImageFromFile(
                 isLoading = true
                 isError = false
 
-                downloadImage()
+                val downloadImageResult = downloadImage(imagePath)
 
-                if (downloadImageResult == true) {
+
+                if (downloadImageResult) {
                     imageFileExit = true
                 }
-                else if (downloadImageResult == false) {
+                else {
                     isError = true
                     isLoading = false
                 }
@@ -186,6 +182,29 @@ fun ImageFromFile(
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @Composable
 private fun OnLoadingImage(
@@ -246,6 +265,8 @@ private fun OnErrorImage(
         }
     }
 }
+
+
 
 fun Modifier.shimmerEffect(
     isImageScreen: Boolean = false

@@ -23,7 +23,6 @@ rootProject.name = "Somewhere"
 include(":app")
 
 include(":core:model")
-include(":core:utils")
 
 include(":core:ui:ui")
 include(":core:ui:designsystem")
@@ -44,3 +43,4 @@ include(":feature:trip")
 include(":feature:profile")
 include(":feature:more")
 include(":feature:dialog")
+include(":core:utils")

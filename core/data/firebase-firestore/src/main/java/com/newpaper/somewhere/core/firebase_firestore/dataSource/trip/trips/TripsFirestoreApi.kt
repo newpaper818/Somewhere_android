@@ -33,12 +33,12 @@ class TripsFirestoreApi @Inject constructor(
     private val commonApi: CommonRemoteDataSource,
     private val recursiveDeleteApi: RecursiveDeleteRemoteDataSource
 ): TripsRemoteDataSource {
-    override suspend fun getMyTripsOrderByOrderId(
+    override suspend fun getMyTrips(
         internetEnabled: Boolean,
         userId: String
-    ): List<Trip>? {
+    ): List<Trip> {
         val source = if (internetEnabled) Source.DEFAULT else Source.CACHE
-        val tripList = CompletableDeferred<List<Trip>?>()
+        val tripList = CompletableDeferred<List<Trip>>()
 
         firestoreDb.collection(USERS).document(userId)
             .collection(TRIPS)
@@ -55,13 +55,13 @@ class TripsFirestoreApi @Inject constructor(
             }
             .addOnFailureListener { e ->
                 Log.e(FIREBASE_FIRESTORE_TRIPS_TAG, "get my trips order by id fail - ", e)
-                tripList.complete(null)
+                tripList.complete(emptyList())
             }
 
         return tripList.await()
     }
 
-    override suspend fun getSharedTripList(
+    override suspend fun getSharedTrips(
         internetEnabled: Boolean,
         appUserId: String,
     ): List<Trip> {

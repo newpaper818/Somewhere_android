@@ -2,7 +2,7 @@ package com.newpaper.somewhere.feature.dialog.setSpotType
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.newpaper.somewhere.core.data.repository.TripRepository
+import com.newpaper.somewhere.core.data.repository.trip.TripRepository
 import com.newpaper.somewhere.core.model.enums.SpotType
 import com.newpaper.somewhere.core.model.enums.SpotTypeGroup
 import dagger.hilt.android.lifecycle.HiltViewModel

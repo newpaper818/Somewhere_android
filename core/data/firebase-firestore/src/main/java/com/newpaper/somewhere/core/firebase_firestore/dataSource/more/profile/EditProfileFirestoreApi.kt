@@ -10,9 +10,9 @@ import javax.inject.Inject
 
 private const val FIREBASE_FIRESTORE_PROFILE_TAG = "Firebase-Firestore-Profile"
 
-class ProfileFirestoreApi @Inject constructor(
+class EditProfileFirestoreApi @Inject constructor(
     private val firestoreDb: FirebaseFirestore
-): ProfileRemoteDataSource {
+): EditProfileRemoteDataSource {
 
     override fun updateUserProfile(
         appUserId: String?,

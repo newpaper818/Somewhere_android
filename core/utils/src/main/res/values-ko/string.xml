@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--convert/convertTrip.kt===================================================================-->
+    <string name="year">%d년</string>
+    <string name="years">%d년</string>
+    <string name="month">%d달</string>
+    <string name="months">%d달</string>
+    <string name="day">%d일</string>
+    <string name="days">%d일</string>
+
+    <!--convert/convertDate.kt===================================================================-->
+    <string name="spots">장소</string>
+    <string name="dates_no_plan">계획 없음</string>
+
+</resources>

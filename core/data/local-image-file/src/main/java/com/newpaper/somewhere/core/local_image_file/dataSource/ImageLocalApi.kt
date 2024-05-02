@@ -12,6 +12,7 @@ import android.provider.OpenableColumns
 import android.util.Log
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.utils.extractTripIdFromImagePath
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.io.FileInputStream
@@ -50,7 +51,6 @@ class ImageLocalApi @Inject constructor(
 
         //save
         return try{
-
             context.openFileOutput(fileName, Context.MODE_PRIVATE).use { stream ->
                 if (!newBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream)){
                     throw IOException("Couldn't save bitmap")

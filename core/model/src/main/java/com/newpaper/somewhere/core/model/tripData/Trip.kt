@@ -11,7 +11,7 @@ data class Trip(
     val managerId: String? = null,
     val editable: Boolean = false,
 
-    val unitOfCurrencyType: CurrencyType? = null,
+    val unitOfCurrencyType: CurrencyType = CurrencyType.USD,
 
     val titleText: String? = null,
     var dateList: List<Date> = listOf(),

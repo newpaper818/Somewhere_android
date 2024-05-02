@@ -60,11 +60,11 @@ class ImageStorageApi @Inject constructor(
     }
 
     override suspend fun downloadProfileImage(
-        userId: String,
+        profileUserId: String,
         imagePath: String
     ): Boolean{
         val storageRef = storageDb.reference
-        val imageRef = storageRef.child("$USERS/$userId/$imagePath")
+        val imageRef = storageRef.child("$USERS/$profileUserId/$imagePath")
 
         val imageUri = Uri.fromFile(File(context.filesDir, imagePath))
 

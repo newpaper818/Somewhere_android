@@ -7,15 +7,15 @@ interface TripsRemoteDataSource {
     /**
      * get trips(without date list) from remote db
      */
-    suspend fun getMyTripsOrderByOrderId(
+    suspend fun getMyTrips(
         internetEnabled: Boolean,
         userId: String,
-    ): List<Trip>?
+    ): List<Trip>
 
     /**
      * get shared trips(without date list) from remote db
      */
-    suspend fun getSharedTripList(
+    suspend fun getSharedTrips(
         internetEnabled: Boolean,
         appUserId: String,
     ): List<Trip>

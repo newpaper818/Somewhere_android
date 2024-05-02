@@ -5,6 +5,11 @@ plugins {
 
 android {
     namespace = "com.newpaper.somewhere.core.model"
+
+    defaultConfig {
+        minSdk = 26
+    }
+
 }
 
 dependencies {

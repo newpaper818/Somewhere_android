@@ -5,9 +5,9 @@ import com.newpaper.somewhere.core.firebase_firestore.dataSource.common.CommonFi
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.more.appVersion.AppVersionRemoteDataSource
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.more.appVersion.AppVersionFirestoreApi
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.more.deleteAccount.DeleteAccountRemoteDataSource
-import com.newpaper.somewhere.core.firebase_firestore.dataSource.more.deleteAccount.FirestoreDeleteAccountApi
-import com.newpaper.somewhere.core.firebase_firestore.dataSource.more.profile.ProfileFirestoreApi
-import com.newpaper.somewhere.core.firebase_firestore.dataSource.more.profile.ProfileRemoteDataSource
+import com.newpaper.somewhere.core.firebase_firestore.dataSource.more.deleteAccount.DeleteAccountFirestoreApi
+import com.newpaper.somewhere.core.firebase_firestore.dataSource.more.profile.EditProfileFirestoreApi
+import com.newpaper.somewhere.core.firebase_firestore.dataSource.more.profile.EditProfileRemoteDataSource
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.signIn.SignInFirestoreApi
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.signIn.SignInRemoteDataSource
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.trip.inviteFriend.InviteFriendFirestoreApi
@@ -39,13 +39,13 @@ abstract class DataRemoteModule {
 
     @Binds
     internal abstract fun bindDeleteAccountDataSource(
-        firestoreDeleteAccountApi: FirestoreDeleteAccountApi
+        deleteAccountFirestoreApi: DeleteAccountFirestoreApi
     ): DeleteAccountRemoteDataSource
 
     @Binds
     internal abstract fun bindProfileDataSource(
-        profileFirestoreApi: ProfileFirestoreApi
-    ): ProfileRemoteDataSource
+        editProfileFirestoreApi: EditProfileFirestoreApi
+    ): EditProfileRemoteDataSource
 
 
     //signIn

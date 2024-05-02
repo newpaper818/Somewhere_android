@@ -19,7 +19,7 @@ interface ImageRemoteDataSource {
      * @return true when download success
      */
     suspend fun downloadProfileImage(
-        userId: String,
+        profileUserId: String,
         imagePath: String
     ): Boolean
 
