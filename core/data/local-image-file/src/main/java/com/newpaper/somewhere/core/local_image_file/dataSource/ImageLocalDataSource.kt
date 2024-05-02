@@ -5,6 +5,11 @@ import android.net.Uri
 import com.newpaper.somewhere.core.model.tripData.Trip
 
 interface ImageLocalDataSource {
+    /**
+     * when user choose image from gallery
+     *
+     * before upload image to remote
+     */
     fun saveImageToInternalStorage(
         tripId: Int,
         index: Int,

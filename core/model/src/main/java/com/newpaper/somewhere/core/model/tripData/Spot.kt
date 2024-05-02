@@ -12,7 +12,7 @@ data class Spot(
     var index: Int = 0,
     var iconText: Int = 0,
 
-    val spotType: SpotType? = null,
+    val spotType: SpotType = SpotType.TOUR,
     @DrawableRes
     val iconId: Int? = null,
     @ColorInt

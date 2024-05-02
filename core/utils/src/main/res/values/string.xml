@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--convert/convertTrip.kt===================================================================-->
+    <string name="year">%dyear</string>
+    <string name="years">%dyears</string>
+    <string name="month">%dmonth</string>
+    <string name="months">%dmonths</string>
+    <string name="day">%dday</string>
+    <string name="days">%ddays</string>
+
+    <!--convert/convertDate.kt===================================================================-->
+    <string name="spots">Spots</string>
+    <string name="dates_no_plan">No Plan</string>
+
+</resources>

@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 private const val FIREBASE_FIRESTORE_DELETE_ACCOUNT_TAG = "Firebase-Firestore-DeleteAccount"
 
-class FirestoreDeleteAccountApi @Inject constructor(
+class DeleteAccountFirestoreApi @Inject constructor(
     private val firestoreDb: FirebaseFirestore,
     private val commonApi: CommonRemoteDataSource,
     private val recursiveDeleteApi: RecursiveDeleteRemoteDataSource

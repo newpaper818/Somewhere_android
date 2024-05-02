@@ -1,6 +1,6 @@
 package com.newpaper.somewhere.core.firebase_firestore.dataSource.more.profile
 
-interface ProfileRemoteDataSource {
+interface EditProfileRemoteDataSource {
 
     /**
      * update user name and user profile image

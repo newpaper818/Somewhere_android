@@ -53,7 +53,7 @@ import com.newpaper.somewhere.core.designsystem.theme.CustomColor
 import com.newpaper.somewhere.core.designsystem.theme.GraphColor
 import com.newpaper.somewhere.core.designsystem.theme.whiteInt
 import com.newpaper.somewhere.core.ui.MyTextField
-import com.newpaper.somewhere.core.ui.R
+import com.newpaper.somewhere.core.ui.ui.R
 
 private val DUMMY_SPACE_HEIGHT: Dp = 10.dp
 private val MIN_CARD_HEIGHT: Dp = 40.dp
