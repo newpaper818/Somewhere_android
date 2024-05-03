@@ -7,7 +7,7 @@ import com.newpaper.somewhere.core.designsystem.component.utils.SelectSwitch
 import com.newpaper.somewhere.core.designsystem.component.utils.SelectSwitchItem
 import com.newpaper.somewhere.core.designsystem.icon.SelectSwitchIcon
 import com.newpaper.somewhere.core.model.enums.TimeFormat
-import com.newpaper.somewhere.core.ui.R
+import com.newpaper.somewhere.core.ui.ui.R
 
 @Composable
 fun AllowEditViewSelectSwitch(

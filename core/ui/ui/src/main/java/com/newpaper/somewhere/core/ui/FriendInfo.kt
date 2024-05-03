@@ -16,12 +16,14 @@ import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.ui.card.ProfileImage
+import com.newpaper.somewhere.core.ui.ui.R
 
 @Composable
 fun FriendInfo(
     internetEnabled: Boolean,
     friendData: UserData,
     isManager: Boolean,
+    downloadImage: (imagePath: String) -> Boolean,
     modifier: Modifier = Modifier
 ){
     Row(
@@ -34,6 +36,7 @@ fun FriendInfo(
             userId = friendData.userId,
             internetEnabled = internetEnabled,
             profileImage = friendData.profileImage,
+            downloadImage = downloadImage,
             size = 40.dp
         )
 

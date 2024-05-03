@@ -50,6 +50,7 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
+import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.utils.SlideState
@@ -337,5 +338,18 @@ private fun TripItemUi(
 private fun TripItemPreview(
 
 ){
-
+    SomewhereTheme {
+        TripItemUi(
+            isEditMode = false,
+            alpha = 1f,
+            internetEnabled = true,
+            imagePath = null,
+            downloadImage = {true},
+            title = "title",
+            titleIsNull = false,
+            dateText = "3.14 - 3.16",
+            onClick = { },
+            onLongClick = { }
+        )
+    }
 }

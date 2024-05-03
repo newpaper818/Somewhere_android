@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import java.util.Properties
 
 plugins {
@@ -21,11 +22,7 @@ android {
             useSupportLibrary = true
         }
 
-        //build config - maps api key
-//        Properties properties = new Properties()
-//        properties.load(project.rootProject.file("local.properties").newDataInputStream())
-//
-//        buildConfigField "String", "MAPS_API_KEY", "\"${properties.getProperty("MAPS_API_KEY")}\""
+//        buildConfigField("String", "MAPS_API_KEY", getApiKey("MAPS_API_KEY"))
     }
 
     signingConfigs {
@@ -69,6 +66,7 @@ android {
     }
     buildFeatures {
         compose = true
+//        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -79,6 +77,10 @@ android {
         }
     }
 }
+
+//fun getApiKey(propertyKey: String): String {
+//    return gradleLocalProperties(rootDir).getProperty(propertyKey)
+//}
 
 dependencies {
 

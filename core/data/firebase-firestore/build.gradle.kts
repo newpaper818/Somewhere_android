@@ -6,6 +6,7 @@ plugins {
 
 android {
     namespace = "com.newpaper.somewhere.core.data.firebase_firestore"
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 26

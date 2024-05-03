@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.newpaper.somewhere.core.data.google_map_places.BuildConfig
 import com.newpaper.somewhere.core.model.data.LocationInfo
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
@@ -82,7 +83,7 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
 
     private fun checkPlacesClientAndInit(context: Context){
         if (!Places.isInitialized() || !::placesClient.isInitialized) {
-            Places.initialize(context, MAPS_API_KEY)
+            Places.initialize(context, BuildConfig.MAPS_API_KEY)
             placesClient = Places.createClient(context)
         }
     }

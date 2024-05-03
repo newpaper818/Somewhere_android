@@ -6,7 +6,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.newpaper.somewhere.core.designsystem.R
+import com.newpaper.somewhere.core.ui.designsystem.R
 
 val suite = FontFamily(
     Font(R.font.suite_extrabold, FontWeight.ExtraBold),

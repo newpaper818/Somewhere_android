@@ -6,6 +6,11 @@ plugins {
 
 android {
     namespace = "com.newpaper.somewhere.feature.dialog"
+    compileSdk = 34
+
+    defaultConfig {
+        minSdk = 26
+    }
 
     buildFeatures {
         compose = true
@@ -30,8 +35,13 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+
+    //hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    //
+    implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.runtime.compose)
 
 

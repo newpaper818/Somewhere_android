@@ -6,6 +6,11 @@ plugins {
 
 android {
     namespace = "com.newpaper.somewhere.core.data.firebase_storage"
+    compileSdk = 34
+
+    defaultConfig {
+        minSdk = 26
+    }
 }
 
 dependencies {

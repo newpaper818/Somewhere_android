@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -6,6 +8,28 @@ plugins {
 
 android {
     namespace = "com.newpaper.somewhere.core.data.google_map_places"
+    compileSdk = 34
+
+    defaultConfig {
+        minSdk = 26
+
+        buildConfigField("String", "MAPS_API_KEY", getApiKey("MAPS_API_KEY"))
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+    buildFeatures {
+        buildConfig = true
+    }
+}
+
+fun getApiKey(propertyKey: String): String {
+    return gradleLocalProperties(rootDir).getProperty(propertyKey)
 }
 
 dependencies {

@@ -6,6 +6,7 @@ plugins {
 
 android {
     namespace = "com.newpaper.somewhere.feature.trip"
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 26
