@@ -22,7 +22,7 @@ import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
-import com.newpaper.somewhere.ui.theme.SomewhereTheme
+import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 
 @Composable
 fun ItemWithText(

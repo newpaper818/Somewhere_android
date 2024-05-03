@@ -108,8 +108,12 @@ fun TripsRoute(
 
     val adView = AdView(context).apply {
         setAdSize(AdSize.BANNER)
-        adUnitId = if (BuildConfig.DEBUG) "ca-app-pub-3940256099942544/6300978111"
-                    else "ca-app-pub-9435484963354123/6706048530"
+        //FIXME when debug mode
+//        adUnitId = if (BuildConfig.DEBUG) "ca-app-pub-3940256099942544/6300978111"
+//                    else "ca-app-pub-9435484963354123/6706048530"
+        adUnitId = "ca-app-pub-3940256099942544/6300978111"
+
+
         loadAd(AdRequest.Builder().build())
     }
 
@@ -150,24 +154,6 @@ fun TripsRoute(
         }
 
 
-    TripsScreen(
-        appUserId = appUserId,
-        firstLaunch = firstLaunch,
-        firstLaunchToFalse = firstLaunchToFalse,
-        spacerValue = spacerValue,
-        isEditMode = isEditMode,
-        lazyListState = lazyListState,
-        dateTimeFormat = dateTimeFormat,
-        internetEnabled = internetEnabled,
-        loadingTrips = loadingTrips,
-        onBackButtonClick = onBackButtonClick,
-        changeEditMode = changeEditMode,
-        addDeletedImages = addDeletedImages,
-        organizeAddedDeletedImages = organizeAddedDeletedImages,
-        navigateToTrip = navigateToTrip,
-        onClickGlanceSpot = { /*TODO*/ },
-        saveTrips = { /*TODO*/ })
-
 
 
 }
@@ -207,7 +193,6 @@ internal fun TripsScreen(
     unSaveTempTrips: () -> Unit,
 
     navigateToTrip: (isNewTrip: Boolean, trip: Trip?) -> Unit,
-    onLongClickTrip: (trip: Trip) -> Unit,
 
     updateItemPosition: (currentIndex: Int, destinationIndex: Int) -> Unit,
 

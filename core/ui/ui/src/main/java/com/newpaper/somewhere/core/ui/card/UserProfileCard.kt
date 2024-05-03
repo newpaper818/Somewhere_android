@@ -31,12 +31,13 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ProviderId
-import com.newpaper.somewhere.core.ui.R
+import com.newpaper.somewhere.core.ui.ui.R
 
 @Composable
 fun UserProfileCard(
     userData: UserData,
     internetEnabled: Boolean,
+    downloadImage: (imagePath: String) -> Boolean,
 
     modifier: Modifier = Modifier,
     showSignInWithInfo: Boolean = false,
@@ -64,6 +65,7 @@ fun UserProfileCard(
                 userId = userData.userId,
                 internetEnabled = internetEnabled,
                 profileImage = userData.profileImage,
+                downloadImage = downloadImage,
                 size = profileImageSize
             )
 
@@ -121,6 +123,8 @@ fun ProfileImage(
     userId: String,
     internetEnabled: Boolean,
     profileImage: String?,
+    downloadImage: (imagePath: String) -> Boolean,
+
     modifier: Modifier = Modifier,
     size: Dp = 80.dp
 ){
@@ -132,13 +136,10 @@ fun ProfileImage(
         if (profileImage != null) {
             if ("profile_" in profileImage)
                 ImageFromFile(
-                    isProfileImage = true,
-                    userId = userId,
                     internetEnabled = internetEnabled,
                     imagePath = profileImage,
                     contentDescription = stringResource(id = R.string.my_profile_image),
-                    downloadImage = { },
-                    downloadImageResult = null
+                    downloadImage = downloadImage,
                 )
             else
                 ImageFromUrl(
@@ -194,7 +195,8 @@ private fun UserProfileCardPreview(){
                     profileImage = null,
                     providerIdList = listOf()
                 ),
-                internetEnabled = true
+                internetEnabled = true,
+                downloadImage = {true}
             )
         }
     }
@@ -219,6 +221,7 @@ private fun UserProfileCardWithProviderIdPreview(){
                     providerIdList = listOf(ProviderId.GOOGLE),
                 ),
                 internetEnabled = true,
+                downloadImage = {true},
                 showSignInWithInfo = true,
                 enabled = false
             )

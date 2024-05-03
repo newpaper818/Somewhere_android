@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.theme.ProgressBarColor
 import com.newpaper.somewhere.core.designsystem.theme.whiteInt
-import com.newpaper.somewhere.core.ui.R
+import com.newpaper.somewhere.core.ui.ui.R
 
 private val PROGRESS_BAR_HEIGHT = 85.dp
 

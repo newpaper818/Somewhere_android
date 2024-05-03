@@ -6,6 +6,8 @@ plugins {
 
 android {
     namespace = "com.newpaper.somewhere.core.data.local_image_file"
+    compileSdk = 34
+
     defaultConfig {
         minSdk = 26
     }

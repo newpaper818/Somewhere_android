@@ -22,7 +22,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
-import com.newpaper.somewhere.ui.theme.SomewhereTheme
+import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 
 @Composable
 fun ItemWithSwitch(

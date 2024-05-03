@@ -24,6 +24,7 @@ import com.newpaper.somewhere.feature.dialog.myDialog.MyDialog
 fun SetEditableDialog(
     internetEnabled: Boolean,
     friendData: UserData,
+    downloadImage: (imagePath: String) -> Boolean,
 
     onDismissRequest: () -> Unit,
     onOkClick: (editable: Boolean) -> Unit
@@ -39,7 +40,8 @@ fun SetEditableDialog(
             FriendInfo(
                 internetEnabled = internetEnabled,
                 friendData = friendData,
-                isManager = false
+                isManager = false,
+                downloadImage = downloadImage
             )
 
             MySpacerColumn(height = 16.dp)
@@ -114,6 +116,7 @@ private fun SetEditableDialogPreview(){
                     profileImage = null,
                     providerIdList = listOf()
                 ),
+                downloadImage = {true},
                 onDismissRequest = {},
                 onOkClick = {_ ->}
             )

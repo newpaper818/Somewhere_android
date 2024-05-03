@@ -1,6 +1,7 @@
 package com.newpaper.somewhere.core.firebase_authentication.dataSource
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.util.Log
@@ -10,9 +11,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.OAuthProvider
+import com.newpaper.somewhere.core.data.firebase_authentication.R
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ProviderId
 import com.newpaper.somewhere.core.model.enums.getProviderIdFromString
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.tasks.await
 import java.util.Locale
@@ -22,6 +25,7 @@ import javax.inject.Inject
 private const val FIREBASE_AUTHENTICATION_TAG = "Firebase-Authentication"
 
 class UserAuthenticationApi @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val auth: FirebaseAuth,
     private val googleOneTapClient: SignInClient
 ): UserRemoteDataSource {
@@ -174,7 +178,7 @@ class UserAuthenticationApi @Inject constructor(
 
         if (user != null) {
             user.startActivityForReauthenticateWithProvider(activity, provider.build())
-                .addOnSuccessListener { authResult ->
+                .addOnSuccessListener {
                     onSuccess()
                     // User is re-authenticated with fresh tokens and
                     // should be able to perform sensitive operations

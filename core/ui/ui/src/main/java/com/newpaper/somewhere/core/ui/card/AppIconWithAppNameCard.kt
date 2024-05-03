@@ -22,7 +22,7 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.designsystem.theme.suite
-import com.newpaper.somewhere.core.ui.R
+import com.newpaper.somewhere.core.ui.ui.R
 
 @Composable
 fun AppIconWithAppNameCard(
