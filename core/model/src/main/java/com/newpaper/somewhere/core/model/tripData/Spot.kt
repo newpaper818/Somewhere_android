@@ -8,7 +8,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 data class Spot(
-    val id: Int = 0,
+    val id: Int,
     var index: Int = 0,
     var iconText: Int = 0,
 

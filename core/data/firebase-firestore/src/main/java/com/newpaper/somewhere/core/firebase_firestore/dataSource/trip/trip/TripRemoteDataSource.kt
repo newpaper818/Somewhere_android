@@ -7,7 +7,7 @@ interface TripRemoteDataSource {
     /**
      * get trip's all data
      */
-    suspend fun getTripData(
+    suspend fun getTrip(
         internetEnabled: Boolean,
         tripManagerId: String,
         appUserId: String,

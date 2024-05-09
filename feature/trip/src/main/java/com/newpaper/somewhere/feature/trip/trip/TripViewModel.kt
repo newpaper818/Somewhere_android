@@ -12,8 +12,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class TripUiState(
-    val trip: Trip = Trip(),
-    val tempTrip: Trip = Trip()
+    val trip: Trip = Trip(
+        id = 0,
+        managerId = ""
+    ),
+    val tempTrip: Trip = Trip(
+        id = 0,
+        managerId = ""
+    )
 )
 
 @HiltViewModel
@@ -30,14 +36,14 @@ class TripViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            tripRepository.tripData.collect { tripData ->
-                _tripUiState.update {
-                    it.copy(
-                        trip = tripData,
-                        tempTrip = tripData
-                    )
-                }
-            }
+//            tripRepository.tripData.collect { tripData ->
+//                _tripUiState.update {
+//                    it.copy(
+//                        trip = tripData,
+//                        tempTrip = tripData
+//                    )
+//                }
+//            }
         }
     }
 
@@ -46,6 +52,6 @@ class TripViewModel @Inject constructor(
     fun saveTrip(
 
     ){
-        tripRepository.saveToOriginalTrip()
+//        tripRepository.saveToOriginalTrip()
     }
 }

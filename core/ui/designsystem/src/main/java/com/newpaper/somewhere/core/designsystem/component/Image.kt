@@ -104,9 +104,10 @@ fun ImageFromUrl(
 @Composable
 fun ImageFromFile(
     internetEnabled: Boolean,
+    imageUserId: String,
     imagePath: String,
     contentDescription: String,
-    downloadImage: (imagePath: String) -> Boolean,
+    downloadImage: (imagePath: String, imageUserId: String, result: (Boolean) -> Unit) -> Unit,
 
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
@@ -163,15 +164,15 @@ fun ImageFromFile(
                 isLoading = true
                 isError = false
 
-                val downloadImageResult = downloadImage(imagePath)
-
-
-                if (downloadImageResult) {
-                    imageFileExit = true
-                }
-                else {
-                    isError = true
-                    isLoading = false
+                downloadImage(imagePath, imageUserId
+                ) {result ->
+                    if (result) {
+                        imageFileExit = true
+                    }
+                    else {
+                        isError = true
+                        isLoading = false
+                    }
                 }
             }
             else{

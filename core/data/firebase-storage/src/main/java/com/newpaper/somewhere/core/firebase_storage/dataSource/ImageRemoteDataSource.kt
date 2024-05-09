@@ -6,10 +6,11 @@ interface ImageRemoteDataSource {
      * download trip image to local
      * @return true when download success
      */
-    suspend fun downloadTripImage(
+    fun downloadTripImage(
         tripManagerId: String,
-        imagePath: String
-    ): Boolean
+        imagePath: String,
+        result: (Boolean) -> Unit
+    )
 
 
 
@@ -18,10 +19,11 @@ interface ImageRemoteDataSource {
      * download profile image to local
      * @return true when download success
      */
-    suspend fun downloadProfileImage(
+    fun downloadProfileImage(
         profileUserId: String,
-        imagePath: String
-    ): Boolean
+        imagePath: String,
+        result: (Boolean) -> Unit
+    )
 
 
 

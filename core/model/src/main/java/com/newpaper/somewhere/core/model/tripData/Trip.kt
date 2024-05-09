@@ -5,15 +5,16 @@ import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 data class Trip(
-    val id: Int = 0,
+    val id: Int,
     var orderId: Int = 0,
 
-    val managerId: String? = null,
+    val managerId: String,
     val editable: Boolean = false,
 
     val unitOfCurrencyType: CurrencyType = CurrencyType.USD,
 
     val titleText: String? = null,
+
     var dateList: List<Date> = listOf(),
     var startDate: String? = null,
     var endDate: String? = null,

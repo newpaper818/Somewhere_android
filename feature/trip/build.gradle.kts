@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    alias(libs.plugins.googleDevToolsKsp)
+//    alias(libs.plugins.googleDevToolsKsp)
 }
 
 android {
@@ -14,6 +14,13 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.2"
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
 
@@ -42,6 +49,9 @@ dependencies {
 
     //google ad
     implementation(libs.play.services.ads)
+
+    //LatLng
+    implementation(libs.places)
 
     //
     implementation(libs.androidx.core.ktx)

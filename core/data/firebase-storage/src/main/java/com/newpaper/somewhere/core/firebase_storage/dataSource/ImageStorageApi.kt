@@ -20,10 +20,11 @@ class ImageStorageApi @Inject constructor(
     private val storageDb: FirebaseStorage
 ): ImageRemoteDataSource {
 
-    override suspend fun downloadTripImage(
+    override fun downloadTripImage(
         tripManagerId: String,
-        imagePath: String
-    ): Boolean{
+        imagePath: String,
+        result: (Boolean) -> Unit
+    ){
         val tripId = extractTripIdFromImagePath(imagePath)
 
         if (tripId != null) {
@@ -32,12 +33,10 @@ class ImageStorageApi @Inject constructor(
 
             val imageUri = Uri.fromFile(File(context.filesDir, imagePath))
 
-            val downloadImageResult = CompletableDeferred<Boolean>()
-
             imageRef.getFile(imageUri)
                 .addOnSuccessListener {
                     Log.d(FIREBASE_STORAGE_TAG, "download trip image success - imageRef: $imageRef")
-                    downloadImageResult.complete(true)
+                    result(true)
                 }
                 .addOnFailureListener{
                     Log.e(
@@ -45,42 +44,37 @@ class ImageStorageApi @Inject constructor(
                         "download trip image fail - imageRef: $imageRef",
                         it
                     )
-                    downloadImageResult.complete(false)
+                    result(false)
                 }
-
-           return downloadImageResult.await()
         }
         else {
             Log.e(
                 FIREBASE_STORAGE_TAG,
                 "download trip image fail - trip id is null - imagePath: $imagePath"
             )
-            return false
+            result(false)
         }
     }
 
-    override suspend fun downloadProfileImage(
+    override fun downloadProfileImage(
         profileUserId: String,
-        imagePath: String
-    ): Boolean{
+        imagePath: String,
+        result: (Boolean) -> Unit
+    ){
         val storageRef = storageDb.reference
         val imageRef = storageRef.child("$USERS/$profileUserId/$imagePath")
 
         val imageUri = Uri.fromFile(File(context.filesDir, imagePath))
 
-        val downloadImageResult = CompletableDeferred<Boolean>()
-
         imageRef.getFile(imageUri)
             .addOnSuccessListener {
                 Log.d(FIREBASE_STORAGE_TAG, "download profile image - imageRef: $imageRef")
-                downloadImageResult.complete(true)
+                result(true)
             }
             .addOnFailureListener{
                 Log.e(FIREBASE_STORAGE_TAG, "download profile image fail - imageRef: $imageRef", it)
-                downloadImageResult.complete(false)
+                result(false)
             }
-
-        return downloadImageResult.await()
     }
 
     override fun uploadTripImages(

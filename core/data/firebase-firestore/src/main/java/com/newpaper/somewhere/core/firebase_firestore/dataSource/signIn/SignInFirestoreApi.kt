@@ -39,7 +39,7 @@ class SignInFirestoreApi @Inject constructor(
                             //FIXME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                             USER_NAME to userData.userName,
                             EMAIL to userData.email,
-                            PROFILE_IMAGE_URL to userData.profileImage,
+                            PROFILE_IMAGE_URL to userData.profileImagePath,
 //                            SHARED_TRIPS to arrayListOf<DocumentReference>()
                         )
                         batch.set(userRef, userDataRegi, SetOptions.merge())

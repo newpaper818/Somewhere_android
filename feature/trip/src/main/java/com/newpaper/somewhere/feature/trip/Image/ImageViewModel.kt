@@ -9,15 +9,16 @@ import javax.inject.Inject
 class ImageViewModel @Inject constructor(
     private val imageRepository: ImageRepository
 ): ViewModel() {
-    suspend fun getImage(
+
+    fun getImage(
         imagePath: String,
-        profileUserId: String? = null,
-        tripManagerId: String? = null
-    ): Boolean {
+        imageUserId: String,
+        result: (Boolean) -> Unit
+    ) {
         return imageRepository.downloadImage(
             imagePath = imagePath,
-            profileUserId = profileUserId,
-            tripManagerId = tripManagerId
+            imageUserId = imageUserId,
+            result = result
         )
     }
 }

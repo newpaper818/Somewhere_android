@@ -66,11 +66,14 @@ android {
     }
     buildFeatures {
         compose = true
-//        buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.2"
     }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"

@@ -167,7 +167,7 @@ class CommonFirestoreApi @Inject constructor(
                         userId = userId,
                         userName = document.getString(USER_NAME),
                         email = document.getString(EMAIL),
-                        profileImage = document.getString(PROFILE_IMAGE_URL),
+                        profileImagePath = document.getString(PROFILE_IMAGE_URL),
                         providerIdList = providerIdList,
                     )
                 )
