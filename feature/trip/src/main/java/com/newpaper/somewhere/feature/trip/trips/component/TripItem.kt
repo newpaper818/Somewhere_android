@@ -74,7 +74,7 @@ internal fun TripItem(
     onClick: (Trip) -> Unit,
     onLongClick: (Trip) -> Unit,
 
-    downloadImage: (imagePath: String) -> Boolean,
+    downloadImage: (imagePath: String, tripManagerId: String, (Boolean) -> Unit) -> Unit,
 
     slideState: SlideState,
     updateSlideState: (tripIdx: Int, slideState: SlideState) -> Unit,
@@ -162,7 +162,7 @@ internal fun TripItem(
         alpha = alpha,
         internetEnabled = internetEnabled,
         imagePath = trip.imagePathList.firstOrNull(),
-        downloadImage = downloadImage,
+        tripManagerId = trip.managerId,
         title = titleText,
         titleIsNull = titleIsNull,
         dateText = dateText,
@@ -173,6 +173,7 @@ internal fun TripItem(
                 onLongClick(trip)
             }
         },
+        downloadImage = downloadImage,
         modifier = dragModifier,
         dragHandleModifier = Modifier
             .dragAndDropVertical(
@@ -212,7 +213,7 @@ private fun TripItemUi(
     internetEnabled: Boolean,
 
     imagePath: String?,
-    downloadImage: (imagePath: String) -> Boolean,
+    tripManagerId: String,
 
     title: String,
     titleIsNull: Boolean,
@@ -220,6 +221,8 @@ private fun TripItemUi(
 
     onClick: () -> Unit,
     onLongClick: () -> Unit,
+    downloadImage: (imagePath: String, tripManagerId: String, (Boolean) -> Unit) -> Unit,
+
 
     modifier: Modifier = Modifier,
     dragHandleModifier: Modifier = Modifier
@@ -253,10 +256,11 @@ private fun TripItemUi(
                     ) {
                         ImageFromFile(
                             internetEnabled = internetEnabled,
+                            imageUserId = tripManagerId,
                             imagePath = imagePath,
                             contentDescription = stringResource(id = R.string.image),
                             downloadImage = downloadImage,
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize(),
                         )
                     }
 
@@ -333,23 +337,72 @@ private fun TripItemUi(
 
 
 
+
+
+
+
+
+
+
+
+
+
 @PreviewLightDark
 @Composable
-private fun TripItemPreview(
-
-){
+private fun TripItemPreview(){
     SomewhereTheme {
         TripItemUi(
             isEditMode = false,
             alpha = 1f,
             internetEnabled = true,
             imagePath = null,
-            downloadImage = {true},
+            tripManagerId = "",
             title = "title",
             titleIsNull = false,
             dateText = "3.14 - 3.16",
             onClick = { },
-            onLongClick = { }
+            onLongClick = { },
+            downloadImage = {_,_,_ ->}
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun TripItemPreview2(){
+    SomewhereTheme {
+        TripItemUi(
+            isEditMode = true,
+            alpha = 1f,
+            internetEnabled = true,
+            imagePath = null,
+            tripManagerId = "",
+            title = "title",
+            titleIsNull = false,
+            dateText = "3.14 - 3.16",
+            onClick = { },
+            onLongClick = { },
+            downloadImage = {_,_,_ ->}
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun TripItemPreview3(){
+    SomewhereTheme {
+        TripItemUi(
+            isEditMode = false,
+            alpha = 1f,
+            internetEnabled = true,
+            imagePath = null,
+            tripManagerId = "",
+            title = "No title",
+            titleIsNull = true,
+            dateText = "No date",
+            onClick = { },
+            onLongClick = { },
+            downloadImage = {_,_,_ ->}
         )
     }
 }

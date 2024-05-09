@@ -23,7 +23,7 @@ fun FriendInfo(
     internetEnabled: Boolean,
     friendData: UserData,
     isManager: Boolean,
-    downloadImage: (imagePath: String) -> Boolean,
+    downloadImage: (imagePath: String, profileUserId: String, (Boolean) -> Unit) -> Unit,
     modifier: Modifier = Modifier
 ){
     Row(
@@ -33,9 +33,9 @@ fun FriendInfo(
         MySpacerRow(width = 8.dp)
 
         ProfileImage(
-            userId = friendData.userId,
+            profileUserId = friendData.userId,
             internetEnabled = internetEnabled,
-            profileImage = friendData.profileImage,
+            profileImagePath = friendData.profileImagePath,
             downloadImage = downloadImage,
             size = 40.dp
         )

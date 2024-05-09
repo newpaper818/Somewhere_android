@@ -53,7 +53,7 @@ class UserAuthenticationApi @Inject constructor(
                     userId = user.uid,
                     userName = user.displayName,
                     email = user.email,
-                    profileImage = user.photoUrl.toString(),
+                    profileImagePath = user.photoUrl.toString(),
                     providerIdList = user.providerData.mapNotNull { getProviderIdFromString(it.providerId) }
                 )
 

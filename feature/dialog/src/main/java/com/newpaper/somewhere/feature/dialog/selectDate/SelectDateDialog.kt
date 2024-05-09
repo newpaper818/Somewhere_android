@@ -25,6 +25,7 @@ import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.ui.tripScreenUtils.GraphListItem
+import com.newpaper.somewhere.core.utils.convert.getDateText
 import com.newpaper.somewhere.feature.dialog.R
 import com.newpaper.somewhere.feature.dialog.myDialog.DIALOG_DEFAULT_MAX_HEIGHT
 import com.newpaper.somewhere.feature.dialog.myDialog.DialogButton

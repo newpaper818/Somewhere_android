@@ -37,7 +37,7 @@ import com.newpaper.somewhere.core.ui.ui.R
 fun UserProfileCard(
     userData: UserData,
     internetEnabled: Boolean,
-    downloadImage: (imagePath: String) -> Boolean,
+    downloadImage: (imagePath: String, profileUserId: String, (Boolean) -> Unit) -> Unit,
 
     modifier: Modifier = Modifier,
     showSignInWithInfo: Boolean = false,
@@ -62,9 +62,9 @@ fun UserProfileCard(
         ) {
             //profile image
             ProfileImage(
-                userId = userData.userId,
+                profileUserId = userData.userId,
                 internetEnabled = internetEnabled,
-                profileImage = userData.profileImage,
+                profileImagePath = userData.profileImagePath,
                 downloadImage = downloadImage,
                 size = profileImageSize
             )
@@ -118,12 +118,23 @@ fun UserProfileCard(
     }
 }
 
+
+/**
+ *
+ *
+ * @param profileUserId
+ * @param internetEnabled
+ * @param profileImagePath it can be url or image file name
+ * @param downloadImage
+ * @param modifier
+ * @param size
+ */
 @Composable
 fun ProfileImage(
-    userId: String,
+    profileUserId: String,
     internetEnabled: Boolean,
-    profileImage: String?,
-    downloadImage: (imagePath: String) -> Boolean,
+    profileImagePath: String?,
+    downloadImage: (imagePath: String, profileUserId: String, (Boolean) -> Unit) -> Unit,
 
     modifier: Modifier = Modifier,
     size: Dp = 80.dp
@@ -133,17 +144,18 @@ fun ProfileImage(
             .size(size)
             .clip(CircleShape)
     ) {
-        if (profileImage != null) {
-            if ("profile_" in profileImage)
+        if (profileImagePath != null) {
+            if ("profile_" in profileImagePath)
                 ImageFromFile(
                     internetEnabled = internetEnabled,
-                    imagePath = profileImage,
+                    imageUserId = profileUserId,
+                    imagePath = profileImagePath,
                     contentDescription = stringResource(id = R.string.my_profile_image),
-                    downloadImage = downloadImage,
+                    downloadImage = downloadImage
                 )
             else
                 ImageFromUrl(
-                    imageUrl = profileImage,
+                    imageUrl = profileImagePath,
                     contentDescription = stringResource(id = R.string.my_profile_image),
                     modifier = Modifier.fillMaxSize()
                 )
@@ -192,11 +204,11 @@ private fun UserProfileCardPreview(){
                     userId = "",
                     userName = "user name",
                     email = "somewhere@gmail.com",
-                    profileImage = null,
+                    profileImagePath = "https://lh3.googleusercontent.com/a/ACg8ocIr4TMfwXVpUC1Bk-VuEgNqPo9A7D0ljwsahznS82iJ-40=s96-c",
                     providerIdList = listOf()
                 ),
                 internetEnabled = true,
-                downloadImage = {true}
+                downloadImage = {_,_,_-> }
             )
         }
     }
@@ -217,13 +229,13 @@ private fun UserProfileCardWithProviderIdPreview(){
                     userId = "",
                     userName = "user name",
                     email = "somewhere@gmail.com",
-                    profileImage = null,
+                    profileImagePath = null,
                     providerIdList = listOf(ProviderId.GOOGLE),
                 ),
                 internetEnabled = true,
-                downloadImage = {true},
                 showSignInWithInfo = true,
-                enabled = false
+                enabled = false,
+                downloadImage = {_,_,_-> }
             )
         }
     }

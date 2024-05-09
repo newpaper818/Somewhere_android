@@ -28,7 +28,7 @@ class TripFirestoreApi @Inject constructor(
     private val commonApi: CommonRemoteDataSource
 ): TripRemoteDataSource {
 
-    override suspend fun getTripData(
+    override suspend fun getTrip(
         internetEnabled: Boolean,
         tripManagerId: String,
         appUserId: String,

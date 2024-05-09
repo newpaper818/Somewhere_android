@@ -141,7 +141,7 @@ class TripsFirestoreApi @Inject constructor(
             Log.d(FIREBASE_FIRESTORE_TRIPS_TAG, "save trips - deleted shared trip friend")
             commonApi.deleteFriendFromTrip(
                 tripId = sharedTrip.id,
-                tripManagerId = sharedTrip.managerId ?: "",
+                tripManagerId = sharedTrip.managerId,
                 friendUserId = appUserId,
                 onSuccess = {
 
@@ -211,6 +211,11 @@ class TripsFirestoreApi @Inject constructor(
 
         return result.await()
     }
+
+
+
+
+
 
 
 

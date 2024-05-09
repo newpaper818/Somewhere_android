@@ -234,7 +234,7 @@ internal fun GlanceSpot(
                         MySpacerColumn(height = 4.dp)
 
                         Text(
-                            text = dateTitleText ?: "a",
+                            text = dateTitleText,
                             style = dateTimeStyle,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis

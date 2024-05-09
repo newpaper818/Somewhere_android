@@ -34,17 +34,17 @@ class SetSpotTypeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            tripRepository.tempTripData.collect { tempTripData ->
-                //FIXME get? date index, spot index
-                val spotType = tempTripData.dateList[0].spotList[0].spotType ?: SpotType.TOUR
-
-                _setSpotTypeUiState.update {
-                    it.copy(
-                        currentSpotTypeGroup = spotType.group,
-                        currentSpotType = spotType
-                    )
-                }
-            }
+//            tripRepository.tempTripData.collect { tempTripData ->
+//                //FIXME get? date index, spot index
+//                val spotType = tempTripData.dateList[0].spotList[0].spotType ?: SpotType.TOUR
+//
+//                _setSpotTypeUiState.update {
+//                    it.copy(
+//                        currentSpotTypeGroup = spotType.group,
+//                        currentSpotType = spotType
+//                    )
+//                }
+//            }
         }
     }
 

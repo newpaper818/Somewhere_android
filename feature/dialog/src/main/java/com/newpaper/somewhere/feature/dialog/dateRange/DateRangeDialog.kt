@@ -28,7 +28,10 @@ import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
+import com.newpaper.somewhere.core.model.data.DateTimeFormat
+import com.newpaper.somewhere.core.utils.getDateText
 import com.newpaper.somewhere.feature.dialog.R
+import com.newpaper.somewhere.feature.dialog.myDialog.DIALOG_DEFAULT_MAX_HEIGHT
 import com.newpaper.somewhere.feature.dialog.myDialog.DialogButton
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -38,8 +41,7 @@ import java.time.ZoneOffset
 @Composable
 fun DateRangeDialog(
     defaultDateRange: ClosedRange<LocalDate>,
-    startDateText: String,
-    endDateText: String,
+    dateTimeFormat: DateTimeFormat,
     onDismissRequest: () -> Unit,
     onConfirm: (startDateMillis: Long?, endDateMillis: Long?) -> Unit
 ) {
@@ -211,12 +213,12 @@ private fun MyDialogForDatePicker(
 private fun Preview_DateRangeDialog(){
     SomewhereTheme {
         MyScaffold {
-            DateRangeDialog(
-                defaultDateRange = LocalDate.now().plusDays(2) .. LocalDate.now().plusDays(5),
-                dateTimeFormat = DateTimeFormat(),
-                onDismissRequest = {},
-                onConfirm = {_, _->}
-            )
+//            DateRangeDialog(
+//                defaultDateRange = LocalDate.now().plusDays(2) .. LocalDate.now().plusDays(5),
+//                dateTimeFormat = DateTimeFormat(),
+//                onDismissRequest = {},
+//                onConfirm = {_, _->}
+//            )
         }
     }
 }

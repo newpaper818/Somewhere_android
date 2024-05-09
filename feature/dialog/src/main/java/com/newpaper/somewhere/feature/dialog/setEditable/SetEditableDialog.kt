@@ -24,7 +24,7 @@ import com.newpaper.somewhere.feature.dialog.myDialog.MyDialog
 fun SetEditableDialog(
     internetEnabled: Boolean,
     friendData: UserData,
-    downloadImage: (imagePath: String) -> Boolean,
+    downloadImage: (imagePath: String, profileUserId: String, (Boolean) -> Unit) -> Unit,
 
     onDismissRequest: () -> Unit,
     onOkClick: (editable: Boolean) -> Unit
@@ -113,10 +113,10 @@ private fun SetEditableDialogPreview(){
                     userId = "",
                     userName = "nameee",
                     email = "email@gmail.com",
-                    profileImage = null,
+                    profileImagePath = null,
                     providerIdList = listOf()
                 ),
-                downloadImage = {true},
+                downloadImage = {_,_,_->},
                 onDismissRequest = {},
                 onOkClick = {_ ->}
             )

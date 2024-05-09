@@ -1,10 +1,8 @@
 package com.newpaper.somewhere.core.data.repository.trip
 
-import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.trip.trips.TripsRemoteDataSource
+import com.newpaper.somewhere.core.model.tripData.Trip
 import javax.inject.Inject
-
-
 
 
 class TripsRepository @Inject constructor(
@@ -32,15 +30,15 @@ class TripsRepository @Inject constructor(
 
     suspend fun saveTrips(
         appUserId: String?,
-        myTripList: List<Trip>,
-        deletedTripsIdList: List<Int>,
-        deletedSharedTripList: List<Trip>
+        myTrips: List<Trip>,
+        deletedTripsIds: List<Int>,
+        deletedSharedTrips: List<Trip>
     ): Boolean {
         return tripsRemoteDataSource.saveTrips(
             appUserId = appUserId,
-            myTripList = myTripList,
-            deletedTripsIdList = deletedTripsIdList,
-            deletedSharedTripList = deletedSharedTripList
+            myTripList = myTrips,
+            deletedTripsIdList = deletedTripsIds,
+            deletedSharedTripList = deletedSharedTrips
         )
     }
 

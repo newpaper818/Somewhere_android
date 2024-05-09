@@ -39,7 +39,7 @@ class DeleteAccountFirestoreApi @Inject constructor(
                 sharedTripList.forEach { sharedTrip ->
                     commonApi.deleteFriendFromTrip(
                         tripId = sharedTrip.id,
-                        tripManagerId = sharedTrip.managerId ?: "",
+                        tripManagerId = sharedTrip.managerId,
                         friendUserId = appUserId,
                         onSuccess = {
 

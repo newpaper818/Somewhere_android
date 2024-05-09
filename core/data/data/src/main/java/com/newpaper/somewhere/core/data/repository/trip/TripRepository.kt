@@ -1,21 +1,25 @@
 package com.newpaper.somewhere.core.data.repository.trip
 
+import com.newpaper.somewhere.core.firebase_firestore.dataSource.trip.trip.TripRemoteDataSource
 import com.newpaper.somewhere.core.model.tripData.Trip
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-interface TripRepository {
+class TripRepository @Inject constructor(
+    private val tripRemoteDataSource: TripRemoteDataSource
+) {
 
-    val tripData: Flow<Trip>
-    val tempTripData: Flow<Trip>
-
-    fun saveToOriginalTrip()
-
-
-    fun setTripTitle(title: String)
-
-    fun setMemo(memo: String)
-
-
+    suspend fun getTrip(
+        internetEnabled: Boolean,
+        appUserId: String,
+        tripWithEmptyDateList: Trip,
+    ): Trip? {
+        return tripRemoteDataSource.getTrip(
+                internetEnabled = internetEnabled,
+                tripManagerId = tripWithEmptyDateList.managerId,
+                appUserId = appUserId,
+                tripId = tripWithEmptyDateList.id,
+                editable = tripWithEmptyDateList.editable
+            )
+    }
 
 }
