@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sign_in_error">로그인 에러. 나중에 다시 시도하세요.</string>
+    <string name="welcome_message">SOMEWHERE와 함께\n여행을 시작하세요!</string>
+    <string name="signing_in">로그인하는 중…</string>
+
+</resources>

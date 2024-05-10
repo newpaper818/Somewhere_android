@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sign_in_error">Sign in error. Do it later.</string>
+    <string name="welcome_message">Get started your trip\nwith SOMEWHERE!</string>
+    <string name="signing_in">Signing in…</string>
+
+</resources>

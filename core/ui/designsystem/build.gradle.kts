@@ -29,6 +29,9 @@ android {
 
 dependencies {
 
+    //module
+    implementation(project(":core:model"))
+
     //compose bom
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material3)

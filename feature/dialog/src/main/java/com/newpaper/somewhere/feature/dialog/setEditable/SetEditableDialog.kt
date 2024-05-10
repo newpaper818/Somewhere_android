@@ -114,7 +114,7 @@ private fun SetEditableDialogPreview(){
                     userName = "nameee",
                     email = "email@gmail.com",
                     profileImagePath = null,
-                    providerIdList = listOf()
+                    providerIds = listOf()
                 ),
                 downloadImage = {_,_,_->},
                 onDismissRequest = {},

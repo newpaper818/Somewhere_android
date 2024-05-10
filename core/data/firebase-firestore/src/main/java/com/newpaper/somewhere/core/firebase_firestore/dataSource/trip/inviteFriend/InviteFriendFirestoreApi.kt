@@ -211,7 +211,7 @@ class InviteFriendFirestoreApi @Inject constructor(
                         userName = document.getString(USER_NAME),
                         email = document.getString(EMAIL),
                         profileImagePath = document.getString(PROFILE_IMAGE_URL),
-                        providerIdList = listOf(),
+                        providerIds = listOf(),
                         allowEdit = editable
                     ))
                 }
@@ -222,7 +222,7 @@ class InviteFriendFirestoreApi @Inject constructor(
                             userName = null,
                             email = null,
                             profileImagePath = null,
-                            providerIdList = listOf(),
+                            providerIds = listOf(),
                             allowEdit = editable
                         )
                     )

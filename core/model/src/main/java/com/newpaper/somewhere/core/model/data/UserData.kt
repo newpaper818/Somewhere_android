@@ -8,7 +8,7 @@ data class UserData(
     val email: String?,
     val profileImagePath: String?,
 
-    val providerIdList: List<ProviderId>,
+    val providerIds: List<ProviderId>,
 
     val allowEdit: Boolean = false
 )

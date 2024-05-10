@@ -99,7 +99,7 @@ fun UserProfileCard(
 
                     var connectedWithInfoText = stringResource(id = R.string.connected_with) + " "
 
-                    userData.providerIdList.forEachIndexed { index, providerId ->
+                    userData.providerIds.forEachIndexed { index, providerId ->
                         if (index != 0) {
                             connectedWithInfoText += ", "
                         }
@@ -205,7 +205,7 @@ private fun UserProfileCardPreview(){
                     userName = "user name",
                     email = "somewhere@gmail.com",
                     profileImagePath = "https://lh3.googleusercontent.com/a/ACg8ocIr4TMfwXVpUC1Bk-VuEgNqPo9A7D0ljwsahznS82iJ-40=s96-c",
-                    providerIdList = listOf()
+                    providerIds = listOf()
                 ),
                 internetEnabled = true,
                 downloadImage = {_,_,_-> }
@@ -230,7 +230,7 @@ private fun UserProfileCardWithProviderIdPreview(){
                     userName = "user name",
                     email = "somewhere@gmail.com",
                     profileImagePath = null,
-                    providerIdList = listOf(ProviderId.GOOGLE),
+                    providerIds = listOf(ProviderId.GOOGLE),
                 ),
                 internetEnabled = true,
                 showSignInWithInfo = true,
