@@ -49,6 +49,8 @@ import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
+import com.newpaper.somewhere.core.utils.AD_UNIT_ID
+import com.newpaper.somewhere.core.utils.AD_UNIT_ID_TEST
 import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.convert.getAllImagesPath
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
@@ -111,9 +113,8 @@ internal fun TripsRoute(
 
     val adView = AdView(context).apply {
         setAdSize(AdSize.BANNER)
-        adUnitId = if (BuildConfig.DEBUG) "ca-app-pub-3940256099942544/6300978111"
-                    else "ca-app-pub-9435484963354123/6706048530"
-        adUnitId = "ca-app-pub-3940256099942544/6300978111"
+        adUnitId = if (BuildConfig.DEBUG) AD_UNIT_ID_TEST
+                    else AD_UNIT_ID
 
         loadAd(AdRequest.Builder().build())
     }
@@ -537,7 +538,7 @@ private fun TripsScreen(
 
 @PreviewLightDark
 @Composable
-private fun TripsScreenPreview(){
+private fun TripsScreenPreview_Default(){
     SomewhereTheme {
         val context = LocalContext.current
 
@@ -590,7 +591,7 @@ private fun TripsScreenPreview(){
 
 @PreviewLightDark
 @Composable
-private fun TripsScreenPreview2(){
+private fun TripsScreenPreview_Edit(){
     SomewhereTheme {
         val context = LocalContext.current
 
@@ -644,7 +645,7 @@ private fun TripsScreenPreview2(){
 
 @PreviewLightDark
 @Composable
-private fun TripsScreenPreview3(){
+private fun TripsScreenPreview_OnClickCancel(){
     SomewhereTheme {
         val context = LocalContext.current
 

@@ -123,4 +123,7 @@
     <!--FriendInfo.kt-->
     <string name="unknown">알 수 없음</string>
 
+    <!--InternetUnavailableIconWithText.kt-->
+    <string name="internet_unavailable_check_connection">인터넷 연결 없음\n인터넷 연결을 확인하세요</string>
+
 </resources>

@@ -28,20 +28,18 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.designsystem.theme.n60
+import com.newpaper.somewhere.core.model.enums.ProviderId
 import com.newpaper.somewhere.core.ui.designsystem.R
-
-private const val googleProviderName = "Google"
-private const val appleProviderName = "Apple"
 
 @Composable
 fun SignInWithButton(
-    providerName: String,
+    providerId: ProviderId,
     onClick: () -> Unit,
     buttonEnabled: Boolean,
     isDarkAppTheme: Boolean,
 ){
-    when (providerName){
-        googleProviderName -> {
+    when (providerId){
+        ProviderId.GOOGLE -> {
             SignInAuthButton(
                 iconDrawable = R.drawable.google_logo,
                 text = stringResource(id = R.string.sign_in_with_google),
@@ -56,7 +54,7 @@ fun SignInWithButton(
                 isSignIn = true
             )
         }
-        appleProviderName ->{
+        ProviderId.APPLE ->{
             SignInAuthButton(
                 iconDrawable = R.drawable.apple_logo,
                 text = stringResource(id = R.string.sign_in_with_apple),
@@ -71,23 +69,20 @@ fun SignInWithButton(
                 isSignIn = true
             )
         }
-        else -> {
-
-        }
     }
 }
 
 @Composable
 fun AuthWithButton(
-    providerName: String,
+    providerId: ProviderId,
     authingWithThis: Boolean,
     onClick: () -> Unit,
     enabled: Boolean,
     isDarkAppTheme: Boolean,
     isAuthDone: Boolean
 ){
-    when (providerName){
-        googleProviderName -> {
+    when (providerId){
+        ProviderId.GOOGLE -> {
             SignInAuthButton(
                 iconDrawable = R.drawable.google_logo,
                 text = if (authingWithThis && isAuthDone) stringResource(id = R.string.authentication_complete)
@@ -103,7 +98,7 @@ fun AuthWithButton(
                 isSignIn = false
             )
         }
-        appleProviderName ->{
+        ProviderId.APPLE ->{
             SignInAuthButton(
                 iconDrawable = R.drawable.apple_logo,
                 text = if (authingWithThis && isAuthDone) stringResource(id = R.string.authentication_complete)
@@ -118,9 +113,6 @@ fun AuthWithButton(
 
                 isSignIn = false
             )
-        }
-        else -> {
-
         }
     }
 }
@@ -224,7 +216,7 @@ private fun SignInButtonsPreview(){
                 .width(300.dp)
         ) {
             SignInWithButton(
-                providerName = googleProviderName,
+                providerId = ProviderId.GOOGLE,
                 onClick = {  },
                 buttonEnabled = true,
                 isDarkAppTheme = isSystemInDarkTheme()
@@ -233,7 +225,7 @@ private fun SignInButtonsPreview(){
             MySpacerColumn(height = 16.dp)
 
             SignInWithButton(
-                providerName = appleProviderName,
+                providerId = ProviderId.APPLE,
                 onClick = {  },
                 buttonEnabled = true,
                 isDarkAppTheme = isSystemInDarkTheme()
@@ -253,7 +245,7 @@ private fun SignInDisabledPreview(){
                 .width(300.dp)
         ) {
             SignInWithButton(
-                providerName = googleProviderName,
+                providerId = ProviderId.GOOGLE,
                 onClick = {  },
                 buttonEnabled = false,
                 isDarkAppTheme = isSystemInDarkTheme()
@@ -262,7 +254,7 @@ private fun SignInDisabledPreview(){
             MySpacerColumn(height = 16.dp)
 
             SignInWithButton(
-                providerName = appleProviderName,
+                providerId = ProviderId.APPLE,
                 onClick = {  },
                 buttonEnabled = false,
                 isDarkAppTheme = isSystemInDarkTheme()
@@ -282,7 +274,7 @@ private fun AuthButtonsPreview(){
                 .width(300.dp)
         ) {
             AuthWithButton(
-                providerName = googleProviderName,
+                providerId = ProviderId.GOOGLE,
                 authingWithThis = false,
                 onClick = { },
                 enabled = true,
@@ -293,7 +285,7 @@ private fun AuthButtonsPreview(){
             MySpacerColumn(height = 16.dp)
             
             AuthWithButton(
-                providerName = appleProviderName,
+                providerId = ProviderId.APPLE,
                 authingWithThis = false,
                 onClick = { },
                 enabled = true,
@@ -318,7 +310,7 @@ private fun AuthDisabledPreview(){
                 .width(300.dp)
         ) {
             AuthWithButton(
-                providerName = googleProviderName,
+                providerId = ProviderId.GOOGLE,
                 authingWithThis = false,
                 onClick = { },
                 enabled = false,
@@ -329,7 +321,7 @@ private fun AuthDisabledPreview(){
             MySpacerColumn(height = 16.dp)
 
             AuthWithButton(
-                providerName = appleProviderName,
+                providerId = ProviderId.APPLE,
                 authingWithThis = false,
                 onClick = { },
                 enabled = false,
@@ -351,7 +343,7 @@ private fun AuthingPreview(){
                 .width(300.dp)
         ) {
             AuthWithButton(
-                providerName = googleProviderName,
+                providerId = ProviderId.GOOGLE,
                 authingWithThis = true,
                 onClick = { },
                 enabled = false,
@@ -362,7 +354,7 @@ private fun AuthingPreview(){
             MySpacerColumn(height = 16.dp)
 
             AuthWithButton(
-                providerName = appleProviderName,
+                providerId = ProviderId.APPLE,
                 authingWithThis = false,
                 onClick = { },
                 enabled = false,
@@ -384,7 +376,7 @@ private fun AuthCompletePreview(){
                 .width(300.dp)
         ) {
             AuthWithButton(
-                providerName = googleProviderName,
+                providerId = ProviderId.GOOGLE,
                 authingWithThis = true,
                 onClick = { },
                 enabled = false,
@@ -395,7 +387,7 @@ private fun AuthCompletePreview(){
             MySpacerColumn(height = 16.dp)
 
             AuthWithButton(
-                providerName = appleProviderName,
+                providerId = ProviderId.APPLE,
                 authingWithThis = false,
                 onClick = { },
                 enabled = false,

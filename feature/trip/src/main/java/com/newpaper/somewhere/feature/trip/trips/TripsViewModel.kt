@@ -35,7 +35,6 @@ data class TripsUiState(
 
     val deletedTripIds: List<Int> = listOf(),
     val deletedSharedTrips: List<Trip> = listOf(),
-
 )
 
 
@@ -55,6 +54,66 @@ class TripsViewModel @Inject constructor(
         )
 
     val tripsUiState = _tripsUiState.asStateFlow()
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private fun initGlance() {
+        _tripsUiState.update {
+            it.copy(
+                glance = Glance()
+            )
+        }
+    }
+
+    fun updateTripsAndShardTrips(){
+        _tripsUiState.update {
+            it.copy(
+                trips = it.trips.copy(
+                    trips = _tripsUiState.value.trips.tempTrips,
+                    sharedTrips = _tripsUiState.value.trips.tempSharedTrips
+                )
+            )
+        }
+    }
+
+    fun initDeletedTripsIdsAndDeletedSharedTrips(){
+        _tripsUiState.update {
+            it.copy(
+                deletedTripIds = listOf(),
+                deletedSharedTrips = listOf()
+            )
+        }
+    }
+
+    fun unSaveTempTrips(){
+        _tripsUiState.update {
+            it.copy(
+                trips = it.trips.copy(
+                    tempTrips = _tripsUiState.value.trips.trips,
+                    tempSharedTrips = _tripsUiState.value.trips.sharedTrips
+                )
+            )
+        }
+    }
+
+
+
+
+
+
+
+
+
 
     suspend fun updateTrips(
         internetEnabled: Boolean,
@@ -103,16 +162,6 @@ class TripsViewModel @Inject constructor(
                     sharedTrips = newSharedTrips,
                     tempSharedTrips = newSharedTrips
                 )
-            )
-        }
-    }
-
-
-
-    private fun initGlance() {
-        _tripsUiState.update {
-            it.copy(
-                glance = Glance()
             )
         }
     }
@@ -343,25 +392,7 @@ class TripsViewModel @Inject constructor(
     }
 
 
-    fun updateTripsAndShardTrips(){
-        _tripsUiState.update {
-            it.copy(
-                trips = it.trips.copy(
-                    trips = _tripsUiState.value.trips.tempTrips,
-                    sharedTrips = _tripsUiState.value.trips.tempSharedTrips
-                )
-            )
-        }
-    }
 
-    fun initDeletedTripsIdsAndDeletedSharedTrips(){
-        _tripsUiState.update {
-            it.copy(
-                deletedTripIds = listOf(),
-                deletedSharedTrips = listOf()
-            )
-        }
-    }
 
     suspend fun saveTrips(
         appUserId: String,
@@ -393,16 +424,7 @@ class TripsViewModel @Inject constructor(
 
 
 
-    fun unSaveTempTrips(){
-        _tripsUiState.update {
-            it.copy(
-                trips = it.trips.copy(
-                    tempTrips = _tripsUiState.value.trips.trips,
-                    tempSharedTrips = _tripsUiState.value.trips.sharedTrips
-                )
-            )
-        }
-    }
+
 
     fun reorderTempTrips(
         isSharedTripList: Boolean,
@@ -513,7 +535,6 @@ class TripsViewModel @Inject constructor(
                     )
             }
         }
-
 
         return trip
     }

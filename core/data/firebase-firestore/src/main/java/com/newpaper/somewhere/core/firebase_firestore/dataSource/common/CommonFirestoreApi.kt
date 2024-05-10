@@ -155,7 +155,7 @@ class CommonFirestoreApi @Inject constructor(
 
     override suspend fun getUserInfo(
         userId: String,
-        providerIdList: List<ProviderId>
+        providerIds: List<ProviderId>
     ): UserData?{
         val userData = CompletableDeferred<UserData?>()
 
@@ -168,7 +168,7 @@ class CommonFirestoreApi @Inject constructor(
                         userName = document.getString(USER_NAME),
                         email = document.getString(EMAIL),
                         profileImagePath = document.getString(PROFILE_IMAGE_URL),
-                        providerIdList = providerIdList,
+                        providerIds = providerIds,
                     )
                 )
             }

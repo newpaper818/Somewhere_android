@@ -26,6 +26,7 @@ dependencies {
     //module
     implementation(project(":core:model"))
     implementation(project(":core:data:datastore"))
+    implementation(project(":core:data:firebase-authentication"))
     implementation(project(":core:data:firebase-firestore"))
     implementation(project(":core:data:firebase-storage"))
     implementation(project(":core:data:local-image-file"))
@@ -33,6 +34,7 @@ dependencies {
     //
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
+    implementation(libs.activity.compose)
     implementation(libs.material)
 
     //hilt
