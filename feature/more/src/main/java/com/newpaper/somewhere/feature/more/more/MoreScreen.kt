@@ -1,2 +1,235 @@
 package com.newpaper.somewhere.feature.more.more
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
+import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
+import com.newpaper.somewhere.core.model.data.UserData
+import com.newpaper.somewhere.core.model.enums.NavDestination
+import com.newpaper.somewhere.core.ui.item.ItemDivider
+import com.newpaper.somewhere.core.ui.item.ItemWithText
+import com.newpaper.somewhere.core.ui.item.ListGroupCard
+import com.newpaper.somewhere.core.utils.BUG_REPORT_URL
+import com.newpaper.somewhere.core.utils.FEEDBACK_URL
+import com.newpaper.somewhere.feature.more.R
+
+@Composable
+internal fun MoreRoute(
+    isDebugMode: Boolean,
+    userDataIsNull: Boolean,
+
+    startSpacerValue: Dp,
+    endSpacerValue: Dp,
+    lazyListState: LazyListState,
+    navigateTo: (NavDestination) -> Unit,
+
+    modifier: Modifier = Modifier,
+    currentScreen: NavDestination? = null
+) {
+    MoreScreen(
+        isDebugMode = isDebugMode,
+        userDataIsNull = userDataIsNull,
+        startSpacerValue = startSpacerValue,
+        endSpacerValue = endSpacerValue,
+        lazyListState = lazyListState,
+        navigateTo = navigateTo,
+        modifier = modifier,
+        currentScreen = currentScreen
+    )
+}
+
+@Composable
+private fun MoreScreen(
+    isDebugMode: Boolean,
+    userDataIsNull: Boolean,
+
+    startSpacerValue: Dp,
+    endSpacerValue: Dp,
+    lazyListState: LazyListState,
+    navigateTo: (NavDestination) -> Unit,
+
+    modifier: Modifier = Modifier,
+    currentScreen: NavDestination? = null
+) {
+    Scaffold(
+        modifier = modifier,
+        contentWindowInsets = WindowInsets(bottom = 0),
+
+        topBar = {
+            SomewhereTopAppBar(
+                startPadding = startSpacerValue,
+                title = stringResource(id = R.string.more)
+            )
+        },
+    ){ paddingValues ->
+
+        LazyColumn(
+            state = lazyListState,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(startSpacerValue, 16.dp, endSpacerValue, 200.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            //setting
+            item {
+                ListGroupCard(
+                    title = stringResource(id = R.string.settings)
+                ) {
+                    //date time format
+                    ItemWithText(
+                        isSelected = currentScreen == NavDestination.SET_DATE_TIME_FORMAT_ROUTE,
+                        text = stringResource(id = R.string.date_time_format),
+                        onItemClick = { navigateTo(NavDestination.SET_DATE_TIME_FORMAT_ROUTE) }
+                    )
+
+                    ItemDivider()
+
+                    //app theme
+                    ItemWithText(
+                        isSelected = currentScreen == NavDestination.SET_THEME_ROUTE,
+                        text = stringResource(id = R.string.theme),
+                        onItemClick = { navigateTo(NavDestination.SET_THEME_ROUTE) }
+                    )
+
+                    ItemDivider()
+
+                    //account
+                    ItemWithText(
+                        isSelected = currentScreen == NavDestination.ACCOUNT_ROUTE
+                                || currentScreen == NavDestination.SIGN_IN_ROUTE,
+                        text = stringResource(id = R.string.account),
+                        onItemClick = {
+                            if (!userDataIsNull)
+                                navigateTo(NavDestination.ACCOUNT_ROUTE)
+                            else
+                                navigateTo(NavDestination.SIGN_IN_ROUTE)
+                        }
+                    )
+                }
+            }
+
+            //feedback and bug report
+            item {
+                val uriHandler = LocalUriHandler.current
+
+                ListGroupCard(
+                    title = stringResource(id = R.string.feedback)
+                ) {
+                    //send feedback - open web browser to google form
+                    ItemWithText(
+                        text = stringResource(id = R.string.send_feedback),
+                        onItemClick = { uriHandler.openUri(FEEDBACK_URL) },
+                        isOpenInNew = true
+                    )
+
+                    ItemDivider()
+
+                    //bug report - open web browser to google form
+                    ItemWithText(
+                        text = stringResource(id = R.string.bug_report),
+                        onItemClick = { uriHandler.openUri(BUG_REPORT_URL) },
+                        isOpenInNew = true
+                    )
+                }
+            }
+
+            //about
+            item {
+                ListGroupCard {
+                    ItemWithText(
+                        isSelected = currentScreen == NavDestination.ABOUT_ROUTE,
+                        text = stringResource(id = R.string.about),
+                        onItemClick = { navigateTo(NavDestination.ABOUT_ROUTE) }
+                    )
+                }
+            }
+
+            if (isDebugMode)
+                item{
+                    Text(
+                        text = "Debug Mode",
+                        style = MaterialTheme.typography.headlineSmall.copy(color = MaterialTheme.colorScheme.primary)
+                    )
+                }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@PreviewLightDark
+@Composable
+private fun MoreScreenPreview(){
+    SomewhereTheme {
+        MoreScreen(
+            isDebugMode = false,
+            userDataIsNull = false,
+            startSpacerValue = 16.dp,
+            endSpacerValue = 16.dp,
+            lazyListState = LazyListState(),
+            navigateTo = {}
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun MoreScreenPreview_Debug(){
+    SomewhereTheme {
+        MoreScreen(
+            isDebugMode = true,
+            userDataIsNull = false,
+            startSpacerValue = 16.dp,
+            endSpacerValue = 16.dp,
+            lazyListState = LazyListState(),
+            navigateTo = {}
+        )
+    }
+}

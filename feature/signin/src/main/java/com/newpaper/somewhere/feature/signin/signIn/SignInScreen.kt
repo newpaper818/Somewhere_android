@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.signin.signIn
 
+import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -26,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,7 +44,9 @@ import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.designsystem.theme.suite
+import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ProviderId
+import com.newpaper.somewhere.core.model.enums.getProviderIdFromString
 import com.newpaper.somewhere.core.ui.InternetUnavailableIconWithText
 import com.newpaper.somewhere.core.ui.card.AppIconWithAppNameCard
 import com.newpaper.somewhere.core.utils.PRIVACY_POLICY_URL
@@ -92,17 +96,14 @@ internal fun SignInRoute(
 
 
 
-
     //Google sign in launcher
     val googleLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
         onResult = { result ->
             coroutineScope.launch {
-                userViewModel.signInWithGoogleResult(
+                signInViewModel.signInWithGoogleResult(
                     result = result,
-                    firestoreDb = firestoreDb,
-                    appViewModel = appViewModel,
-                    navController = navController,
+                    onDone = {}, //FIXME===========================================
                     showErrorSnackbar = { signInErrorSnackbar() }
                 )
             }
@@ -115,17 +116,7 @@ internal fun SignInRoute(
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+    val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
 
     SignInScreen(
@@ -143,12 +134,36 @@ internal fun SignInRoute(
                         //launch google one tap sign in launcher
                         signInViewModel.signInLaunchGoogleLauncher(
                             launcher = googleLauncher,
-                            signInError = { signInErrorSnackbar() }
+                            showErrorSnackbar = { signInErrorSnackbar() }
                         )
                     }
                 }
                 ProviderId.APPLE -> {
+                    coroutineScope.launch {
+                        val firebaseUserData = signInViewModel.signInWithApple(
+                            activity = context as Activity,
+                            showErrorSnackbar = { signInErrorSnackbar() }
+                        )
 
+                        val userData = if (firebaseUserData == null) null
+                                        else {
+                                            UserData(
+                                                userId = firebaseUserData.uid,
+                                                userName = firebaseUserData.displayName,
+                                                email = firebaseUserData.email,
+                                                profileImagePath = firebaseUserData.photoUrl?.toString(),
+                                                providerIds = firebaseUserData.providerData.mapNotNull {
+                                                                    getProviderIdFromString(it.providerId)
+                                                                }
+                                            )
+                                        }
+
+                        signInViewModel.updateUserDataFromRemote(
+                            userData = userData,
+                            onDone = {}, //FIXME===========================================
+                            showErrorSnackbar = { signInErrorSnackbar() }
+                        )
+                    }
                 }
             }
         },
@@ -159,6 +174,7 @@ internal fun SignInRoute(
         snackBarHostState = snackBarHostState
     )
 }
+
 
 @Composable
 private fun SignInScreen(

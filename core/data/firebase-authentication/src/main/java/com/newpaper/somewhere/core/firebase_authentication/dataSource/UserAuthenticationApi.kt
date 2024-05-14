@@ -15,6 +15,7 @@ import com.newpaper.somewhere.core.data.firebase_authentication.R
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ProviderId
 import com.newpaper.somewhere.core.model.enums.getProviderIdFromString
+import com.newpaper.somewhere.core.utils.OAUTH_WEB_CLIENT_ID
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.tasks.await
@@ -56,7 +57,6 @@ class UserAuthenticationApi @Inject constructor(
                     profileImagePath = user.photoUrl.toString(),
                     providerIds = user.providerData.mapNotNull { getProviderIdFromString(it.providerId) }
                 )
-
             }
 
         } catch(e: Exception){
@@ -249,7 +249,7 @@ class UserAuthenticationApi @Inject constructor(
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
                     .setFilterByAuthorizedAccounts(false)
-                    .setServerClientId(context.getString(R.string.web_client_id))
+                    .setServerClientId(OAUTH_WEB_CLIENT_ID)
                     .build()
             )
             .setAutoSelectEnabled(true)

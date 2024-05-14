@@ -25,6 +25,7 @@ dependencies {
 
     //module
     implementation(project(":core:model"))
+    implementation(project(":core:utils"))
 
 //    implementation(libs.androidx.core.ktx)
 //    implementation(libs.androidx.appcompat)
