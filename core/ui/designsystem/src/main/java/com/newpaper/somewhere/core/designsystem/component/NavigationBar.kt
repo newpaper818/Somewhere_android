@@ -211,12 +211,12 @@ fun SomewhereNavigationDrawerItem(
 private fun NavigationBottomBarPreview(){
     val labelTexts = listOf("Trips", "Profile", "More")
     val selectedIcons = listOf(
-        NavigationBarIcon.myTripsFilled,
+        NavigationBarIcon.tripsFilled,
         NavigationBarIcon.profileFilled,
         NavigationBarIcon.moreFilled
     )
     val unSelectedIcons = listOf(
-        NavigationBarIcon.myTripsOutlined,
+        NavigationBarIcon.tripsOutlined,
         NavigationBarIcon.profileOutlined,
         NavigationBarIcon.moreOutlined
     )
@@ -241,12 +241,12 @@ private fun NavigationBottomBarPreview(){
 private fun NavigationRailBarPreview(){
     val labelTexts = listOf("Trips", "Profile", "More")
     val selectedIcons = listOf(
-        NavigationBarIcon.myTripsFilled,
+        NavigationBarIcon.tripsFilled,
         NavigationBarIcon.profileFilled,
         NavigationBarIcon.moreFilled
     )
     val unSelectedIcons = listOf(
-        NavigationBarIcon.myTripsOutlined,
+        NavigationBarIcon.tripsOutlined,
         NavigationBarIcon.profileOutlined,
         NavigationBarIcon.moreOutlined
     )
@@ -271,12 +271,12 @@ private fun NavigationRailBarPreview(){
 private fun NavigationDrawerPreview(){
     val labelTexts = listOf("Trips", "Profile", "More")
     val selectedIcons = listOf(
-        NavigationBarIcon.myTripsFilled,
+        NavigationBarIcon.tripsFilled,
         NavigationBarIcon.profileFilled,
         NavigationBarIcon.moreFilled
     )
     val unSelectedIcons = listOf(
-        NavigationBarIcon.myTripsOutlined,
+        NavigationBarIcon.tripsOutlined,
         NavigationBarIcon.profileOutlined,
         NavigationBarIcon.moreOutlined
     )

@@ -44,6 +44,10 @@ dependencies {
     //hilt
     implementation(libs.androidx.hilt.navigation.compose)
 
+    //firebaseUser
+    implementation(libs.firebase.auth.ktx)
+
+
     //
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

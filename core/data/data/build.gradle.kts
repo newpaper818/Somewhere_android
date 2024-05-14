@@ -37,6 +37,9 @@ dependencies {
     implementation(libs.activity.compose)
     implementation(libs.material)
 
+    //firebaseUser
+    implementation(libs.firebase.auth.ktx)
+
     //hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

@@ -43,7 +43,7 @@ fun UserProfileCard(
     showSignInWithInfo: Boolean = false,
     profileImageSize: Dp = 80.dp,
     enabled: Boolean = true,
-    onProfileClick: () -> Unit = { }
+    onProfileClick: () -> Unit = { },
 ) {
     MyCard (
         colors = CardDefaults.cardColors(

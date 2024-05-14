@@ -6,7 +6,9 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.FirebaseUser
 import com.newpaper.somewhere.core.data.repository.signIn.SignInRepository
+import com.newpaper.somewhere.core.model.data.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -55,20 +57,21 @@ class SignInViewModel @Inject constructor(
 
     suspend fun signInLaunchGoogleLauncher(
         launcher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
-        signInError: () -> Unit
+        showErrorSnackbar: () -> Unit
     ) {
         setIsSigningIn(true)
         signInRepository.signInLaunchGoogleLauncher(
             launcher = launcher,
             signInError = {
                 setIsSigningIn(false)
-                signInError()
+                showErrorSnackbar()
             }
         )
     }
 
     suspend fun signInWithGoogleResult(
         result: ActivityResult,
+        onDone: (userData: UserData) -> Unit,
         showErrorSnackbar: () -> Unit
     ){
         if (result.resultCode == Activity.RESULT_OK){
@@ -84,18 +87,11 @@ class SignInViewModel @Inject constructor(
 
             Log.d(SIGN_IN_VIEWMODEL_TAG, "signInWithGoogleResult - userData : $userData")
 
-            if (userData == null){
-                setIsSigningIn(false)
-                showErrorSnackbar()
-            }
-            else {
-                //check user exit and
-                //  if exit, get user data from firestore
-                //  else, register user data to firestore
-                signInRepository.updateUserDataFromRemote(
-
-                )
-            }
+            updateUserDataFromRemote(
+                userData = userData,
+                onDone = onDone,
+                showErrorSnackbar = showErrorSnackbar
+            )
         }
         else {
             setIsSigningIn(false)
@@ -104,6 +100,41 @@ class SignInViewModel @Inject constructor(
 
 
 
+    suspend fun signInWithApple(
+        activity: Activity,
+        showErrorSnackbar: () -> Unit
+    ): FirebaseUser? {
+        setIsSigningIn(true)
+        return signInRepository.signInWithApple(
+            activity = activity,
+            updateIsSigningInToFalse = {
+                setIsSigningIn(false)
+            },
+            showErrorSnackbar = { showErrorSnackbar() }
+        )
+    }
 
+
+    suspend fun updateUserDataFromRemote(
+        userData: UserData?,
+        onDone: (userData: UserData) -> Unit,
+        showErrorSnackbar: () -> Unit
+    ) {
+        if (userData == null){
+            setIsSigningIn(false)
+            showErrorSnackbar()
+        }
+        else {
+            //check user exit and
+            //  if exit, get user data from firestore
+            //  else, register user data to firestore
+            signInRepository.updateUserDataFromRemote(
+                userData = userData,
+                setIsSigningIn = { setIsSigningIn(it) },
+                onDone = onDone,
+                showErrorSnackbar = showErrorSnackbar
+            )
+        }
+    }
 
 }

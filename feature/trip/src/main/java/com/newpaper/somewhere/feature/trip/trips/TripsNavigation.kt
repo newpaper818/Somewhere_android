@@ -6,16 +6,15 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
+import com.newpaper.somewhere.core.model.enums.NavDestination
 import com.newpaper.somewhere.core.model.tripData.Trip
 
-const val TRIPS_ROUTE = "trips"
 private const val DEEP_LINK_URI_PATTERN =
     "https://www.somewhere.newpaper.com/trips"
 
-fun NavController.navigationToTrips(navOptions: NavOptions) = navigate(TRIPS_ROUTE, navOptions)
+fun NavController.navigationToTrips(navOptions: NavOptions) = navigate(NavDestination.TRIPS_ROUTE.route, navOptions)
 
 fun NavGraphBuilder.trips(
     appUserId: String,
@@ -37,7 +36,7 @@ fun NavGraphBuilder.trips(
     navigateToGlanceSpot: (glance: Glance) -> Unit,
 ) {
     composable(
-        route = TRIPS_ROUTE,
+        route = NavDestination.TRIPS_ROUTE.route,
         deepLinks = listOf(
             navDeepLink { uriPattern = DEEP_LINK_URI_PATTERN }
         ),

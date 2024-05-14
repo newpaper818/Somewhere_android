@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="more">더 보기</string>
+
+    <string name="settings">설정</string>
+    <string name="feedback">피드백</string>
+    <string name="date_time_format">날짜 및 시간</string>
+    <string name="theme">테마</string>
+    <string name="account">계정</string>
+    <string name="send_feedback">피드백 보내기</string>
+    <string name="bug_report">버그 신고</string>
+    <string name="about">앱 정보</string>
+</resources>

@@ -1,9 +1,8 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.googleDevToolsKsp)
+
 }
 
 android {
@@ -14,7 +13,7 @@ android {
         applicationId = "com.newpaper.somewhere"
         minSdk = 26
         targetSdk = 34
-        versionCode = 28
+        versionCode = 30
         versionName = "1.6.3a"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -66,6 +65,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.2"
@@ -89,8 +89,15 @@ dependencies {
 
     //module
     implementation(project(":core:model"))
+    implementation(project(":core:data:data"))
     implementation(project(":core:ui:designsystem"))
     implementation(project(":core:ui:ui"))
+
+    implementation(project(":feature:signin"))
+    implementation(project(":feature:trip"))
+    implementation(project(":feature:profile"))
+    implementation(project(":feature:more"))
+//    implementation(project(":core:data:google-map-places"))
 
     //compose bom
     implementation(platform(libs.compose.bom))
@@ -98,6 +105,10 @@ dependencies {
     implementation(libs.compose.ui.graphics)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
+
+    //hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
     //
     implementation(libs.androidx.core.ktx)

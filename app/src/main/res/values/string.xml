@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Somewhere</string>
+
+    <string name="trips">Trips</string>
+    <string name="more">More</string>
+    <string name="profile">Profile</string>
+</resources>

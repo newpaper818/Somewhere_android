@@ -1,15 +1,21 @@
 package com.newpaper.somewhere.core.data.repository.signIn
 
+import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.OAuthProvider
 import com.newpaper.somewhere.core.firebase_authentication.dataSource.UserRemoteDataSource
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.common.CommonRemoteDataSource
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.signIn.SignInRemoteDataSource
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ProviderId
+import kotlinx.coroutines.CompletableDeferred
+import java.util.Locale
 import javax.inject.Inject
 
 private const val SIGN_IN_REPOSITORY_TAG = "SignIn-Repository"
@@ -19,13 +25,6 @@ class SignInRepository @Inject constructor(
     private val signInRemoteDataSource: SignInRemoteDataSource, //firebase-firestore
     private val userRemoteDatasource: UserRemoteDataSource      //firebase-authentication
 ) {
-    suspend fun registerUser(
-        userData: UserData
-    ){
-        signInRemoteDataSource.registerUser(
-            userData = userData
-        )
-    }
 
     suspend fun signInLaunchGoogleLauncher(
         launcher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
@@ -51,9 +50,50 @@ class SignInRepository @Inject constructor(
     }
 
 
+    suspend fun signInWithApple(
+        activity: Activity,
+        updateIsSigningInToFalse: () -> Unit,
+        showErrorSnackbar: () -> Unit
+    ): FirebaseUser? {
+        val user = CompletableDeferred<FirebaseUser?>()
+
+        val provider = OAuthProvider.newBuilder(ProviderId.APPLE.id)
+        val language = Locale.getDefault().language
+        provider.addCustomParameter("locale", language)
+
+        val auth = FirebaseAuth.getInstance()
+        val pending = auth.pendingAuthResult
+
+        if (pending != null) {
+            updateIsSigningInToFalse()
+            user.complete(null)
+        }
+        else {
+            auth.startActivityForSignInWithProvider(activity, provider.build())
+                .addOnSuccessListener { authResult ->
+                    // Sign-in successful!
+                    user.complete(authResult.user)
+                }
+                .addOnFailureListener { e ->
+                    if ("canceled by the user" !in e.toString()){
+                        Log.d(SIGN_IN_REPOSITORY_TAG, "not cancel by user")
+                        showErrorSnackbar()
+                    }
+
+                    updateIsSigningInToFalse()
+                    Log.w(SIGN_IN_REPOSITORY_TAG, "activitySignIn:onFailure", e)
+                    user.complete(null)
+                }
+        }
+
+        return user.await()
+    }
+
+
     suspend fun updateUserDataFromRemote(
         userData: UserData,
         setIsSigningIn: (Boolean) -> Unit,
+        onDone: (userData: UserData) -> Unit,
         showErrorSnackbar: () -> Unit
     ) {
         Log.d(SIGN_IN_REPOSITORY_TAG, "updateUserDataFromSignInResult - ${userData.userId} ${userData.userName} ${userData.email}")
@@ -83,10 +123,14 @@ class SignInRepository @Inject constructor(
 
             //update userViewModel
             if (newUserData != null){
-                //FIXME set start destination
+                //FIXME set start destination ============!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 //FIXME set user
                 //FIXME navigate screen
 
+                //update current main nav screen to myTripsScreen
+                //update user data
+                //navigate to main screen
+                onDone(newUserData)
 
 //                appViewModel.updateCurrentMainNavDestination(MyTripsMainDestination)
 //                updateUserData(newUserData)
