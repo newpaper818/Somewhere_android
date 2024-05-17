@@ -14,6 +14,7 @@ import com.newpaper.somewhere.core.firebase_firestore.dataSource.common.CommonRe
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.signIn.SignInRemoteDataSource
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ProviderId
+import com.newpaper.somewhere.core.model.enums.getProviderIdFromString
 import kotlinx.coroutines.CompletableDeferred
 import java.util.Locale
 import javax.inject.Inject
@@ -151,7 +152,23 @@ class SignInRepository @Inject constructor(
 
 
 
+    suspend fun getSignedInUser(
 
+    ): UserData? {
+        val firebaseUser = userRemoteDatasource.getCurrentUser()
+
+        //if null user return null
+        if (firebaseUser == null){
+            Log.d(SIGN_IN_REPOSITORY_TAG, "getSignedInUser - user null")
+            return null
+        }
+        else {
+            return commonRemoteDataSource.getUserInfo(
+                userId = firebaseUser.uid,
+                providerIds = firebaseUser.providerData.mapNotNull { getProviderIdFromString(it.providerId) }
+            )
+        }
+    }
 
 
     suspend fun checkUserExist(

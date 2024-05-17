@@ -8,7 +8,6 @@ import com.newpaper.somewhere.core.firebase_common.TRIP
 import com.newpaper.somewhere.core.firebase_common.USERS
 import com.newpaper.somewhere.core.utils.extractTripIdFromImagePath
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.tasks.await
 import java.io.File
 import javax.inject.Inject
@@ -78,15 +77,15 @@ class ImageStorageApi @Inject constructor(
     }
 
     override fun uploadTripImages(
-        managerId: String,
-        imagePathList: List<String>
+        tripManagerId: String,
+        imagePaths: List<String>
     ){
-        for (imagePath in imagePathList){
+        for (imagePath in imagePaths){
             val tripId = extractTripIdFromImagePath(imagePath)
 
             if (tripId != null) {
                 uploadTripImage(
-                    tripManagerId = managerId,
+                    tripManagerId = tripManagerId,
                     tripId = tripId,
                     imagePath = imagePath
                 )
@@ -118,9 +117,9 @@ class ImageStorageApi @Inject constructor(
 
     override fun deleteTripImages(
         tripManagerId: String,
-        imagePathList: List<String>
+        imagePaths: List<String>
     ){
-        for (imagePath in imagePathList){
+        for (imagePath in imagePaths){
             val tripId = extractTripIdFromImagePath(imagePath)
 
             if (tripId != null) {

@@ -12,7 +12,6 @@ import android.provider.OpenableColumns
 import android.util.Log
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.utils.extractTripIdFromImagePath
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.io.FileInputStream
@@ -107,9 +106,9 @@ class ImageLocalApi @Inject constructor(
 
     override fun deleteFilesFromInternalStorage(
         context: Context,
-        fileList: List<String>
+        files: List<String>
     ){
-        fileList.forEach {
+        files.forEach {
             deleteFileFromInternalStorage(context, it)
         }
     }
@@ -135,13 +134,13 @@ class ImageLocalApi @Inject constructor(
 
     override fun deleteUnusedImageFilesForAllTrips(
         context: Context,
-        allTripList: List<Trip>
+        allTrips: List<Trip>
     ){
         //all trip id : 1 4 5 8
         //internal image path names(trip id) : 1 4 4 5 8 9
         // -> delete 9
 
-        val allTripIdList = allTripList.map { it.id }
+        val allTripIdList = allTrips.map { it.id }
 
         //get all .jpg files in internal storage
         val internalStorageDir = context.filesDir
@@ -157,7 +156,7 @@ class ImageLocalApi @Inject constructor(
         //delete unused image files
         deleteFilesFromInternalStorage(
             context = context,
-            fileList = unusedImageFiles.map { it.name }
+            files = unusedImageFiles.map { it.name }
         )
     }
 
@@ -179,7 +178,7 @@ class ImageLocalApi @Inject constructor(
         //delete unused image files
         deleteFilesFromInternalStorage(
             context = context,
-            fileList = unusedImageFiles.map { it.name }
+            files = unusedImageFiles.map { it.name }
         )
 
     }

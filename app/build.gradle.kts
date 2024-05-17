@@ -43,7 +43,7 @@ android {
         getByName("debug") {
             applicationIdSuffix = ".debug"
             isMinifyEnabled = false
-            proguardFiles (getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+//            proguardFiles (getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("debug")
             manifestPlaceholders["appName"] = "Somewhere debug"
         }
@@ -106,9 +106,31 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
 
+    //splash screen
+    implementation(libs.core.splashscreen)
+
+    //admob
+    implementation(libs.play.services.ads)
+
+    //firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.appcheck.playintegrity)
+    implementation(libs.firebase.appcheck.debug)
+
+
+    //review
+    implementation(libs.android.play.review)
+    implementation(libs.android.play.review.ktx)
+
     //hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    //navigation
+    implementation(libs.navigation.compose)
+
+    //lifecycle
+    implementation(libs.lifecycle.common)
 
     //
     implementation(libs.androidx.core.ktx)

@@ -3,7 +3,7 @@ package com.newpaper.somewhere.core.data.repository
 import android.content.Context
 import com.newpaper.somewhere.core.firebase_storage.dataSource.ImageRemoteDataSource
 import com.newpaper.somewhere.core.local_image_file.dataSource.ImageLocalDataSource
-import java.io.File
+import com.newpaper.somewhere.core.model.tripData.Trip
 import javax.inject.Inject
 
 class ImageRepository @Inject constructor(
@@ -85,4 +85,55 @@ class ImageRepository @Inject constructor(
         }
     }
 
+
+    fun uploadImagesToRemote(
+        tripManagerId: String,
+        imagePaths: List<String>
+    ){
+        imageRemoteDataSource.uploadTripImages(
+            tripManagerId = tripManagerId,
+            imagePaths = imagePaths
+        )
+    }
+
+    fun deleteImagesFromRemote(
+        tripManagerId: String,
+        imagePaths: List<String>
+    ){
+        imageRemoteDataSource.deleteTripImages(
+            tripManagerId = tripManagerId,
+            imagePaths = imagePaths
+        )
+    }
+
+
+
+
+
+
+    fun deleteImagesFromInternalStorage(
+        context: Context,
+        images: List<String>
+    ){
+        imageLocalDataSource.deleteFilesFromInternalStorage(
+            context = context,
+            files = images
+        )
+    }
+
+    fun deleteAllImagesFromInternalStorage(
+        context: Context
+    ){
+        imageLocalDataSource.deleteAllImagesFromInternalStorage(context)
+    }
+
+    fun deleteUnusedImageFilesForAllTrips(
+        context: Context,
+        allTrips: List<Trip>
+    ){
+        imageLocalDataSource.deleteUnusedImageFilesForAllTrips(
+            context = context,
+            allTrips = allTrips
+        )
+    }
 }

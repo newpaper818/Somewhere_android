@@ -131,8 +131,8 @@ class SettingDataStoreApi @Inject constructor(
 
 
 
-    override suspend fun updateAppSettingValue(
-        onSet: (Theme, DateTimeFormat) -> Unit
+    override suspend fun getAppPreferencesValue(
+        onGet: (Theme, DateTimeFormat) -> Unit
     ){
 
         //get data from dataStore
@@ -146,11 +146,12 @@ class SettingDataStoreApi @Inject constructor(
         val includeDayOfWeek = dateIncludeDayOfWeek.firstOrNull() ?: false
         val timeFormat = TimeFormat.get(timeFormat.firstOrNull() ?: TimeFormat.T24H.ordinal)
 
-        onSet(
+        onGet(
             Theme(appTheme, mapTheme),
             DateTimeFormat(dateFormat, useMonthName, includeDayOfWeek, timeFormat)
         )
     }
+
 
     override suspend fun saveAppThemePreference(appTheme: AppTheme) {
         dataStore.edit { preferences ->
@@ -163,6 +164,7 @@ class SettingDataStoreApi @Inject constructor(
             preferences[MAP_THEME] = mapTheme.ordinal
         }
     }
+
 
     override suspend fun saveDateFormatPreference(dateFormat: DateFormat) {
         dataStore.edit { preferences ->

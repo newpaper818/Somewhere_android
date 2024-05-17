@@ -25,10 +25,10 @@ import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.ui.card.UserProfileCard
 import com.newpaper.somewhere.feature.profile.R
-import com.newpaper.somewhere.feature.trip.Image.ImageViewModel
+import com.newpaper.somewhere.feature.trip.image.ImageViewModel
 
 @Composable
-internal fun ProfileRoute(
+fun ProfileRoute(
     internetEnabled: Boolean,
     spacerValue: Dp,
     lazyListState: LazyListState,

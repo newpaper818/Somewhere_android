@@ -55,7 +55,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun SignInRoute(
+fun SignInRoute(
     isDarkAppTheme: Boolean,
     internetEnabled: Boolean,
     appVersionName: String,
