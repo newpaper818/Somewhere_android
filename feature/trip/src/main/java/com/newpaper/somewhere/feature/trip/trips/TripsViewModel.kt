@@ -1,6 +1,9 @@
 package com.newpaper.somewhere.feature.trip.trips
 
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.newpaper.somewhere.core.data.repository.ImageRepository
 import com.newpaper.somewhere.core.data.repository.trip.TripRepository
 import com.newpaper.somewhere.core.data.repository.trip.TripsRepository
 import com.newpaper.somewhere.core.model.tripData.Date
@@ -14,6 +17,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.inject.Inject
 
+private const val TRIP_VIEWMODEL_TAG = "Trip-ViewModel"
 
 data class Trips(
     val trips: List<Trip>? = null,
@@ -33,6 +37,9 @@ data class TripsUiState(
     val trips: Trips = Trips(),
     val glance: Glance = Glance(),
 
+    val addedImages: List<String> = listOf(),
+    val deletedImages: List<String> = listOf(),
+
     val deletedTripIds: List<Int> = listOf(),
     val deletedSharedTrips: List<Trip> = listOf(),
 )
@@ -41,7 +48,8 @@ data class TripsUiState(
 @HiltViewModel
 class TripsViewModel @Inject constructor(
     private val tripsRepository: TripsRepository,
-    private val tripRepository: TripRepository
+    private val tripRepository: TripRepository,
+    private val imageRepository: ImageRepository
 ): ViewModel()  {
     private val _tripsUiState: MutableStateFlow<TripsUiState> =
         MutableStateFlow(
@@ -111,6 +119,72 @@ class TripsViewModel @Inject constructor(
 
 
 
+    //image
+
+    private fun initAddedDeletedImages() {
+        _tripsUiState.update {
+            it.copy(addedImages = listOf(), deletedImages = listOf())
+        }
+    }
+
+    fun addAddedImages(
+        newAddedImages: List<String>
+    ){
+        _tripsUiState.update {
+            it.copy(addedImages = it.addedImages + newAddedImages)
+        }
+    }
+
+    fun addDeletedImages(
+        newDeletedImages: List<String>
+    ){
+        _tripsUiState.update {
+            it.copy(deletedImages = it.deletedImages + newDeletedImages)
+        }
+    }
+
+    fun organizeAddedDeletedImages(
+        tripManagerId: String,
+        context: Context,
+        isClickSave: Boolean, //save: true / cancel: false
+        isInTripsScreen: Boolean = false
+    ) {
+        Log.d(TRIP_VIEWMODEL_TAG, "added images: ${_tripsUiState.value.addedImages}")
+        Log.d(TRIP_VIEWMODEL_TAG, "deleted images: ${_tripsUiState.value.deletedImages}")
+
+        //when edit mode, user add images and cancel edit
+        // -> delete here (delete internal storage)
+
+        //save: delete(delete internal storage) deletedImages
+        if (isClickSave) {
+            //delete deletedImages
+            imageRepository.deleteImagesFromInternalStorage(context, _tripsUiState.value.deletedImages)
+
+            //upload addedImages to firebase storage
+            imageRepository.uploadImagesToRemote(
+                tripManagerId = tripManagerId,
+                imagePaths = _tripsUiState.value.addedImages
+
+            )
+
+            //if in tripsScreen, don't do it.  because...
+            //  myTrips: already delete image form firebase-functions
+            //  sharedTrips: exit from trip, not delete trip - do not have to delete
+            if (!isInTripsScreen) {
+                imageRepository.deleteImagesFromRemote(
+                    tripManagerId = tripManagerId,
+                    imagePaths = _tripsUiState.value.deletedImages
+                )
+            }
+        }
+        //cancel: delete(delete internal storage) addedImages
+        else{
+            imageRepository.deleteImagesFromInternalStorage(context, _tripsUiState.value.addedImages)
+        }
+
+        //init
+        initAddedDeletedImages()
+    }
 
 
 

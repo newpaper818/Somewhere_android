@@ -31,18 +31,18 @@ interface ImageLocalDataSource {
 
     fun deleteFilesFromInternalStorage(
         context: Context,
-        fileList: List<String>
+        files: List<String>
     )
 
 
     fun deleteAllImagesFromInternalStorage(
-        context: Context,
+        context: Context
     )
 
 
     fun deleteUnusedImageFilesForAllTrips(
         context: Context,
-        allTripList: List<Trip>
+        allTrips: List<Trip>
     )
 
 

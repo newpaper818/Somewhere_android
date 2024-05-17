@@ -32,8 +32,8 @@ interface ImageRemoteDataSource {
      * upload trip images to remote
      */
     fun uploadTripImages(
-        managerId: String,
-        imagePathList: List<String>
+        tripManagerId: String,
+        imagePaths: List<String>
     )
 
 
@@ -52,6 +52,6 @@ interface ImageRemoteDataSource {
      */
     fun deleteTripImages(
         tripManagerId: String,
-        imagePathList: List<String>
+        imagePaths: List<String>
     )
 }

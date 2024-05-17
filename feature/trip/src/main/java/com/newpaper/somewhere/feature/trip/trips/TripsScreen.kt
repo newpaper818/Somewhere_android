@@ -55,7 +55,7 @@ import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.convert.getAllImagesPath
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
 import com.newpaper.somewhere.feature.trip.BuildConfig
-import com.newpaper.somewhere.feature.trip.Image.ImageViewModel
+import com.newpaper.somewhere.feature.trip.image.ImageViewModel
 import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.trips.component.GlanceSpot
 import com.newpaper.somewhere.feature.trip.trips.component.GoogleBannerAd
@@ -69,7 +69,7 @@ internal val tripCardHeightDp = 120.dp
 
 
 @Composable
-internal fun TripsRoute(
+fun TripsRoute(
     appUserId: String,
     internetEnabled: Boolean,
     firstLaunch: Boolean,
@@ -83,8 +83,6 @@ internal fun TripsRoute(
 
     dateTimeFormat: DateTimeFormat,
 
-    addDeletedImages: (imageFiles: List<String>) -> Unit,
-    organizeAddedDeletedImages: (isClickSave: Boolean) -> Unit,
     navigateToTrip: (isNewTrip: Boolean, trip: Trip?) -> Unit,
     navigateToGlanceSpot: (glance: Glance) -> Unit,
 
@@ -177,8 +175,13 @@ internal fun TripsRoute(
                 appUserId = appUserId
             )
        },
-        addDeletedImages = addDeletedImages,
-        organizeAddedDeletedImages = organizeAddedDeletedImages,
+        addDeletedImages = { tripsViewModel.addDeletedImages(it) },
+        organizeAddedDeletedImages = { tripsViewModel.organizeAddedDeletedImages(
+            tripManagerId = appUserId,
+            context = context,
+            isClickSave = it,
+            isInTripsScreen = true
+        ) },
         saveTrips = {
             coroutineScope.launch {
                 tripsViewModel.saveTrips(
@@ -370,6 +373,7 @@ private fun TripsScreen(
                             onDeleteClick = {
                                 onDeleteTrip(trip)
                                 showDeleteDialog = false
+                                addDeletedImages(trip.getAllImagesPath())
                             }
                         )
                     }
@@ -388,7 +392,6 @@ private fun TripsScreen(
                             },
                             onLongClick = {
                                 showDeleteDialog = true
-                                addDeletedImages(it.getAllImagesPath())
                             },
                             downloadImage = downloadImage,
                             slideState = slideStates[trip.id] ?: SlideState.NONE,
@@ -434,6 +437,7 @@ private fun TripsScreen(
                             onDeleteClick = {
                                 onDeleteTrip(sharedTrip)
                                 showDeleteDialog = false
+                                addDeletedImages(sharedTrip.getAllImagesPath())
                             }
                         )
                     }
@@ -452,7 +456,6 @@ private fun TripsScreen(
                             },
                             onLongClick = {
                                 showDeleteDialog = true
-                                addDeletedImages(it.getAllImagesPath())
                             },
                             downloadImage = downloadImage,
                             slideState = sharedTripsSlideStates[sharedTrip.id] ?: SlideState.NONE,

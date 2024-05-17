@@ -1,6 +1,5 @@
 package com.newpaper.somewhere.core.datastore.dataSource
 
-import androidx.datastore.preferences.core.edit
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.data.Theme
 import com.newpaper.somewhere.core.model.enums.AppTheme
@@ -13,8 +12,8 @@ interface SettingLocalDataSource {
     /**
      * update app setting values - at app start
      */
-    suspend fun updateAppSettingValue(
-        onSet: (Theme, DateTimeFormat) -> Unit
+    suspend fun getAppPreferencesValue(
+        onGet: (Theme, DateTimeFormat) -> Unit
     )
 
 
@@ -23,6 +22,7 @@ interface SettingLocalDataSource {
     suspend fun saveAppThemePreference(appTheme: AppTheme)
 
     suspend fun saveMapThemePreference(mapTheme: MapTheme)
+
 
     suspend fun saveDateFormatPreference(dateFormat: DateFormat)
 

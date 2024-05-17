@@ -20,8 +20,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
-import com.newpaper.somewhere.core.model.data.UserData
-import com.newpaper.somewhere.core.model.enums.NavDestination
+import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.core.ui.item.ItemDivider
 import com.newpaper.somewhere.core.ui.item.ItemWithText
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
@@ -30,17 +29,17 @@ import com.newpaper.somewhere.core.utils.FEEDBACK_URL
 import com.newpaper.somewhere.feature.more.R
 
 @Composable
-internal fun MoreRoute(
+fun MoreRoute(
     isDebugMode: Boolean,
     userDataIsNull: Boolean,
 
     startSpacerValue: Dp,
     endSpacerValue: Dp,
     lazyListState: LazyListState,
-    navigateTo: (NavDestination) -> Unit,
+    navigateTo: (ScreenDestination) -> Unit,
 
     modifier: Modifier = Modifier,
-    currentScreen: NavDestination? = null
+    currentScreen: ScreenDestination? = null
 ) {
     MoreScreen(
         isDebugMode = isDebugMode,
@@ -62,10 +61,10 @@ private fun MoreScreen(
     startSpacerValue: Dp,
     endSpacerValue: Dp,
     lazyListState: LazyListState,
-    navigateTo: (NavDestination) -> Unit,
+    navigateTo: (ScreenDestination) -> Unit,
 
     modifier: Modifier = Modifier,
-    currentScreen: NavDestination? = null
+    currentScreen: ScreenDestination? = null
 ) {
     Scaffold(
         modifier = modifier,
@@ -95,32 +94,32 @@ private fun MoreScreen(
                 ) {
                     //date time format
                     ItemWithText(
-                        isSelected = currentScreen == NavDestination.SET_DATE_TIME_FORMAT_ROUTE,
+                        isSelected = currentScreen == ScreenDestination.SET_DATE_TIME_FORMAT_ROUTE,
                         text = stringResource(id = R.string.date_time_format),
-                        onItemClick = { navigateTo(NavDestination.SET_DATE_TIME_FORMAT_ROUTE) }
+                        onItemClick = { navigateTo(ScreenDestination.SET_DATE_TIME_FORMAT_ROUTE) }
                     )
 
                     ItemDivider()
 
                     //app theme
                     ItemWithText(
-                        isSelected = currentScreen == NavDestination.SET_THEME_ROUTE,
+                        isSelected = currentScreen == ScreenDestination.SET_THEME_ROUTE,
                         text = stringResource(id = R.string.theme),
-                        onItemClick = { navigateTo(NavDestination.SET_THEME_ROUTE) }
+                        onItemClick = { navigateTo(ScreenDestination.SET_THEME_ROUTE) }
                     )
 
                     ItemDivider()
 
                     //account
                     ItemWithText(
-                        isSelected = currentScreen == NavDestination.ACCOUNT_ROUTE
-                                || currentScreen == NavDestination.SIGN_IN_ROUTE,
+                        isSelected = currentScreen == ScreenDestination.ACCOUNT_ROUTE
+                                || currentScreen == ScreenDestination.SIGN_IN_ROUTE,
                         text = stringResource(id = R.string.account),
                         onItemClick = {
                             if (!userDataIsNull)
-                                navigateTo(NavDestination.ACCOUNT_ROUTE)
+                                navigateTo(ScreenDestination.ACCOUNT_ROUTE)
                             else
-                                navigateTo(NavDestination.SIGN_IN_ROUTE)
+                                navigateTo(ScreenDestination.SIGN_IN_ROUTE)
                         }
                     )
                 }
@@ -155,9 +154,9 @@ private fun MoreScreen(
             item {
                 ListGroupCard {
                     ItemWithText(
-                        isSelected = currentScreen == NavDestination.ABOUT_ROUTE,
+                        isSelected = currentScreen == ScreenDestination.ABOUT_ROUTE,
                         text = stringResource(id = R.string.about),
-                        onItemClick = { navigateTo(NavDestination.ABOUT_ROUTE) }
+                        onItemClick = { navigateTo(ScreenDestination.ABOUT_ROUTE) }
                     )
                 }
             }
