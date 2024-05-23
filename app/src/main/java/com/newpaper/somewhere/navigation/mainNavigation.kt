@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.navigation
 
+import android.util.Log
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.LaunchedEffect
@@ -30,8 +31,8 @@ import kotlinx.coroutines.launch
 private const val DEEP_LINK_URI_PATTERN =
     "https://www.somewhere.newpaper.com/main"
 
-fun NavController.navigationToMain(navOptions: NavOptions) =
-    navigate(ScreenDestination.TRIPS_ROUTE.route, navOptions)
+fun NavController.navigationToMain(navOptions: NavOptions? = null) =
+    navigate(ScreenDestination.MAIN_ROUTE.route, navOptions)
 
 fun NavGraphBuilder.mainScreen(
     appViewModel: AppViewModel,
@@ -50,11 +51,13 @@ fun NavGraphBuilder.mainScreen(
 //        arguments = listOf(
 //            navArgument()
 //        ),
-//        enterTransition = { enterTransition },
-//        exitTransition = { exitTransition },
-//        popEnterTransition = { popEnterTransition },
-//        popExitTransition = { popExitTransition }
+        enterTransition = { enterTransition },
+        exitTransition = { exitTransition },
+        popEnterTransition = { popEnterTransition },
+        popExitTransition = { popExitTransition }
     ) {
+
+
         val appUiState by appViewModel.appUiState.collectAsState()
         val destinationState = appUiState.screenDestination
 

@@ -1,5 +1,7 @@
 package com.newpaper.somewhere.core.firebase_firestore.di
 
+import android.content.Context
+import com.google.firebase.firestore.FirebaseFirestore
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.common.CommonRemoteDataSource
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.common.CommonFirestoreApi
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.more.appVersion.AppVersionRemoteDataSource
@@ -18,8 +20,13 @@ import com.newpaper.somewhere.core.firebase_firestore.dataSource.trip.trips.Trip
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.trip.trips.TripsRemoteDataSource
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -69,4 +76,17 @@ abstract class DataRemoteModule {
     internal abstract fun bindTripsDataSource(
         tripsFirestoreApi: TripsFirestoreApi
     ): TripsRemoteDataSource
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object FirebaseFirestoreModule {
+
+    @Provides
+    @Singleton
+    fun provideFirebaseFirestore(
+
+    ): FirebaseFirestore {
+        return FirebaseFirestore.getInstance()
+    }
 }

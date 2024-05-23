@@ -24,7 +24,6 @@ private const val DATA_STORE_TAG = "DataStore"
 
 class SettingDataStoreApi @Inject constructor(
     private val dataStore: DataStore<Preferences>
-
 ): SettingLocalDataSource {
     private companion object {
         val APP_THEME = intPreferencesKey("app_theme")
@@ -148,7 +147,7 @@ class SettingDataStoreApi @Inject constructor(
 
         onGet(
             Theme(appTheme, mapTheme),
-            DateTimeFormat(dateFormat, useMonthName, includeDayOfWeek, timeFormat)
+            DateTimeFormat(timeFormat, useMonthName, includeDayOfWeek, dateFormat)
         )
     }
 

@@ -1,7 +1,8 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-//    alias(libs.plugins.googleDevToolsKsp)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.googleDevToolsKsp)
 }
 
 android {
@@ -40,12 +41,12 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
 
     //hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
-//    implementation(libs.hilt.android)
-//    ksp(libs.hilt.compiler)
 
     //lifecycle viewmodel
-    implementation(libs.lifecycle.viewmodel.compose)
+//    implementation(libs.lifecycle.viewmodel.compose)
 
     //google ad
     implementation(libs.play.services.ads)

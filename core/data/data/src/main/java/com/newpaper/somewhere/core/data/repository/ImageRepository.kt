@@ -4,6 +4,7 @@ import android.content.Context
 import com.newpaper.somewhere.core.firebase_storage.dataSource.ImageRemoteDataSource
 import com.newpaper.somewhere.core.local_image_file.dataSource.ImageLocalDataSource
 import com.newpaper.somewhere.core.model.tripData.Trip
+import java.io.File
 import javax.inject.Inject
 
 class ImageRepository @Inject constructor(

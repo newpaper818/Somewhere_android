@@ -123,22 +123,8 @@ class SignInRepository @Inject constructor(
             }
 
             //update userViewModel
-            if (newUserData != null){
-                //FIXME set start destination ============!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                //FIXME set user
-                //FIXME navigate screen
-
-                //update current main nav screen to myTripsScreen
-                //update user data
-                //navigate to main screen
+            if (newUserData != null) {
                 onDone(newUserData)
-
-//                appViewModel.updateCurrentMainNavDestination(MyTripsMainDestination)
-//                updateUserData(newUserData)
-//
-//                navController.navigate(MainScreenDestination.route) {
-//                    popUpTo(SignInScreenDestination.route) { inclusive = true }
-//                }
             }
             else{
                 showErrorSnackbar()

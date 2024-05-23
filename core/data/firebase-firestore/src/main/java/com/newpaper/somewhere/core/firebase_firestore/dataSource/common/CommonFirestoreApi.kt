@@ -161,13 +161,18 @@ class CommonFirestoreApi @Inject constructor(
 
         firestoreDb.collection(USERS).document(userId).get()
             .addOnSuccessListener { document ->
-                Log.d(FIREBASE_FIRESTORE_COMMON_TAG, "get user info")
+                val userName = document.getString(USER_NAME)
+                val email = document.getString(EMAIL)
+                val profileImagePath = document.getString(PROFILE_IMAGE_URL)
+
+                Log.d(FIREBASE_FIRESTORE_COMMON_TAG, "getUserInfo - user info: $userId $userName $email")
+
                 userData.complete(
                     UserData(
                         userId = userId,
-                        userName = document.getString(USER_NAME),
-                        email = document.getString(EMAIL),
-                        profileImagePath = document.getString(PROFILE_IMAGE_URL),
+                        userName = userName,
+                        email = email,
+                        profileImagePath = profileImagePath,
                         providerIds = providerIds,
                     )
                 )
