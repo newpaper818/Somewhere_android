@@ -15,11 +15,16 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemColors
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemColors
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailDefaults
 import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.NavigationRailItemColors
+import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -71,7 +76,16 @@ fun RowScope.SomewhereNavigationBottomBarItem(
                 style = if (selected)   MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
                         else            MaterialTheme.typography.labelMedium
             )
-        }
+        },
+        colors = NavigationBarItemColors(
+            selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            selectedIndicatorColor = MaterialTheme.colorScheme.primaryContainer,
+            unselectedIconColor = MaterialTheme.colorScheme.inverseSurface,
+            unselectedTextColor = MaterialTheme.colorScheme.inverseSurface,
+            disabledIconColor = Color.Unspecified,
+            disabledTextColor = Color.Unspecified
+        )
     )
 }
 
@@ -119,7 +133,16 @@ fun SomewhereNavigationRailBarItem(
                 style = if (selected)   MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
                         else            MaterialTheme.typography.labelMedium
             )
-        }
+        },
+        colors = NavigationRailItemColors(
+            selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            selectedIndicatorColor = MaterialTheme.colorScheme.primaryContainer,
+            unselectedIconColor = MaterialTheme.colorScheme.inverseSurface,
+            unselectedTextColor = MaterialTheme.colorScheme.inverseSurface,
+            disabledIconColor = Color.Unspecified,
+            disabledTextColor = Color.Unspecified
+        )
     )
 }
 
@@ -163,7 +186,6 @@ fun SomewhereNavigationDrawerItem(
 ){
     NavigationDrawerItem(
         selected = selected,
-        colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
         onClick = onClick,
         icon = {
             if (selected)   DisplayIcon(icon = selectedIcon)
@@ -175,7 +197,12 @@ fun SomewhereNavigationDrawerItem(
                 style = if (selected)   MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
                         else            MaterialTheme.typography.labelMedium
             )
-        }
+        },
+        colors = NavigationDrawerItemDefaults.colors(
+            unselectedContainerColor = Color.Transparent,
+            unselectedIconColor = MaterialTheme.colorScheme.inverseSurface,
+            unselectedTextColor = MaterialTheme.colorScheme.inverseSurface,
+        ),
     )
 }
 

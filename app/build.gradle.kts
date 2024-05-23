@@ -2,7 +2,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.googleDevToolsKsp)
-
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.gmsGoogleServices)
 }
 
 android {
@@ -24,8 +25,14 @@ android {
 //        buildConfigField("String", "MAPS_API_KEY", getApiKey("MAPS_API_KEY"))
     }
 
+    sourceSets {
+        getByName("debug") {
+            res.srcDirs("src/debug/res")
+        }
+    }
+
     signingConfigs {
-        getByName("debug"){
+        getByName("debug") {
             storeFile = file("keystore/debug.jks")
             storePassword = "Somewhere1670!"
             keyAlias = "somewhere_debug"
@@ -59,9 +66,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
     buildFeatures {
         compose = true
@@ -125,12 +129,17 @@ dependencies {
     //hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+
 
     //navigation
     implementation(libs.navigation.compose)
 
     //lifecycle
     implementation(libs.lifecycle.common)
+
+    //system ui controller
+    implementation(libs.accompanist.systemuicontroller)
 
     //
     implementation(libs.androidx.core.ktx)

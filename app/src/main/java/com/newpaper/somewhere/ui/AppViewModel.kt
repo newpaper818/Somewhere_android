@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.newpaper.somewhere.BuildConfig
@@ -39,8 +40,7 @@ data class AppUiState(
     val screenDestination: DestinationState = DestinationState(),
 
     val firstLaunch: Boolean = true,
-    val isEditMode: Boolean = false,
-    val debugMode: Boolean = BuildConfig.DEBUG
+    val isEditMode: Boolean = false
 )
 
 
@@ -61,7 +61,7 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getAppPreferencesValue(){
+    suspend fun getAppPreferencesValue(){
         settingRepository.getAppPreferencesValue { theme, dateTimeFormat ->
             _appUiState.update {
                 it.copy(
@@ -160,7 +160,7 @@ class AppViewModel @Inject constructor(
     ){
         val startScreenDestination =
             if (userDataIsNull) ScreenDestination.SIGN_IN_ROUTE
-            else ScreenDestination.TRIPS_ROUTE
+            else ScreenDestination.MAIN_ROUTE
 
         _appUiState.update {
             it.copy(
@@ -194,112 +194,15 @@ class AppViewModel @Inject constructor(
 
 
 
-
-
-
-
-
-
-
-
     //==============================================================================================
-    //update and save setting values ===============================================================
-    fun saveThemeUserPreferences(
-        appTheme: AppTheme? = null,
-        mapTheme: MapTheme? = null
-    ){
-        if (appTheme != null && appTheme != appUiState.value.appPreferences.theme.appTheme){
-            _appUiState.update {
-                it.copy(
-                    appPreferences = it.appPreferences.copy(
-                        theme = it.appPreferences.theme.copy(
-                            appTheme = appTheme
-                        )
-                    )
-                )
-            }
-
-            viewModelScope.launch {
-                settingRepository.saveAppThemePreference(appTheme = appTheme)
-            }
-        }
-        else if (mapTheme != null && mapTheme != appUiState.value.appPreferences.theme.mapTheme){
-            _appUiState.update {
-                it.copy(
-                    appPreferences = it.appPreferences.copy(
-                        theme = it.appPreferences.theme.copy(
-                            mapTheme = mapTheme
-                        )
-                    )
-                )
-            }
-            viewModelScope.launch {
-                settingRepository.saveMapThemePreference(mapTheme = mapTheme)
-            }
-        }
-    }
-
-    fun saveDateTimeFormatUserPreferences(
-        dateFormat: DateFormat? = null,
-        useMonthName: Boolean? = null,
-        includeDayOfWeek: Boolean? = null,
-        timeFormat: TimeFormat? = null
-    ){
-        if (dateFormat != null && dateFormat != appUiState.value.appPreferences.dateTimeFormat.dateFormat) {
-            _appUiState.update {
-                it.copy(
-                    appPreferences = it.appPreferences.copy(
-                        dateTimeFormat = it.appPreferences.dateTimeFormat.copy(
-                            dateFormat = dateFormat
-                        )
-                    )
-                )
-            }
-            viewModelScope.launch {
-                settingRepository.saveDateFormatPreference(dateFormat = dateFormat)
-            }
-        }
-        else if (useMonthName != null && useMonthName != appUiState.value.appPreferences.dateTimeFormat.useMonthName) {
-            _appUiState.update {
-                it.copy(
-                    appPreferences = it.appPreferences.copy(
-                        dateTimeFormat = it.appPreferences.dateTimeFormat.copy(
-                            useMonthName = useMonthName
-                        )
-                    )
-                )
-            }
-            viewModelScope.launch {
-                settingRepository.saveDateUseMonthNamePreference(useMonthName = useMonthName)
-            }
-        }
-        else if (includeDayOfWeek != null && includeDayOfWeek != appUiState.value.appPreferences.dateTimeFormat.includeDayOfWeek) {
-            _appUiState.update {
-                it.copy(
-                    appPreferences = it.appPreferences.copy(
-                        dateTimeFormat = it.appPreferences.dateTimeFormat.copy(
-                            includeDayOfWeek = includeDayOfWeek
-                        )
-                    )
-                )
-            }
-            viewModelScope.launch {
-                settingRepository.saveDateIncludeDayOfWeekPreference(includeDayOfWeek = includeDayOfWeek)
-            }
-        }
-        else if (timeFormat != null && timeFormat != appUiState.value.appPreferences.dateTimeFormat.timeFormat) {
-            _appUiState.update {
-                it.copy(
-                    appPreferences = it.appPreferences.copy(
-                        dateTimeFormat = it.appPreferences.dateTimeFormat.copy(
-                            timeFormat = timeFormat
-                        )
-                    )
-                )
-            }
-            viewModelScope.launch {
-                settingRepository.saveTimeFormatPreference(timeFormat = timeFormat)
-            }
+    //update user data =============================================================================
+    fun updateUserData(
+        userData: UserData?
+    ) {
+        _appUiState.update {
+            it.copy(
+                appUserData = userData
+            )
         }
     }
 }

@@ -69,12 +69,12 @@ data class MyIcon(
 
 
 object NavigationBarIcon {
-    val tripsFilled = MyIcon(Icons.Rounded.Luggage,     24.dp, false, null, R.string.trips)
-    val tripsOutlined = MyIcon(Icons.Outlined.Luggage,  24.dp, true,  null, R.string.trips)
+    val tripsFilled = MyIcon(Icons.Rounded.Luggage,       24.dp, false, null, R.string.trips)
+    val tripsOutlined = MyIcon(Icons.Outlined.Luggage,    24.dp, false, null, R.string.trips)
     val profileFilled = MyIcon(Icons.Rounded.Person,      24.dp, false, null, R.string.profile)
-    val profileOutlined = MyIcon(Icons.Outlined.Person,   24.dp, true,  null, R.string.profile)
+    val profileOutlined = MyIcon(Icons.Outlined.Person,   24.dp, false, null, R.string.profile)
     val moreFilled = MyIcon(Icons.Rounded.MoreHoriz,      24.dp, false, null, R.string.more)
-    val moreOutlined = MyIcon(Icons.Outlined.MoreHoriz,   24.dp, true,  null, R.string.more)
+    val moreOutlined = MyIcon(Icons.Outlined.MoreHoriz,   24.dp, false, null, R.string.more)
 }
 
 object TopAppBarIcon {

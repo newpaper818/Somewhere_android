@@ -1,12 +1,14 @@
 package com.newpaper.somewhere.feature.signin.signIn
 
 import android.app.Activity
+import android.content.Context
 import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseUser
+import com.newpaper.somewhere.core.data.repository.ImageRepository
 import com.newpaper.somewhere.core.data.repository.signIn.SignInRepository
 import com.newpaper.somewhere.core.model.data.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +27,8 @@ data class SignInUiState(
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
-    private val signInRepository: SignInRepository
+    private val signInRepository: SignInRepository,
+    private val imageRepository: ImageRepository
 ): ViewModel() {
     private val _signInUiState: MutableStateFlow<SignInUiState> =
         MutableStateFlow(
@@ -34,6 +37,11 @@ class SignInViewModel @Inject constructor(
 
     val signInUiState = _signInUiState.asStateFlow()
 
+    fun deleteAllLocalImages(
+        context: Context
+    ){
+        imageRepository.deleteAllImagesFromInternalStorage(context)
+    }
 
     fun setIsSigningIn(
         isSigningIn: Boolean

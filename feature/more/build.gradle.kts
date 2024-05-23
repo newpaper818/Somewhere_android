@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.googleDevToolsKsp)
 }
 
 android {
@@ -27,6 +29,7 @@ dependencies {
 
     //module
     implementation(project(":core:model"))
+    implementation(project(":core:data:data"))
     implementation(project(":core:ui:designsystem"))
     implementation(project(":core:ui:ui"))
     implementation(project(":core:utils"))
@@ -38,6 +41,8 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
 
     //hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
     //

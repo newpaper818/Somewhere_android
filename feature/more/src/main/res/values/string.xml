@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!--about====================================================================================-->
+    <string name="somewhere_app_icon">Somewhere app icon</string>
+    <string name="privacy_policy">Privacy policy</string>
+    <string name="open_source_license">Open source license</string>
+
+    <!--account==================================================================================-->
+    <string name="no_name">No name</string>
+    <string name="deleting_account">Deleting account…</string>
+    <string name="connected_with">Connected with</string>
+
+    <!--deleteAccount============================================================================-->
+    <string name="delete_account_explain">All data on that account will be deleted.\n\nSharing trip also deleted, so friend you invited won\'t be able to see your trip.\n\nDeleted account and data can not be recovered.</string>
+    <string name="re_auth_error">Authentication error. Do it later.</string>
+    <string name="re_auth_match_user">Authenticate with the currently signed in account.</string>
+    <string name="delete_account_error">Delete account error. Do it later.</string>
+    <string name="authentication_done">Authentication complete</string>
+
+    <string name="authenticating">Authenticating…</string>
+    <string name="authentication_with_google">Authenticate with Google</string>
+    <string name="authentication_with_apple">Authenticate with Apple</string>
+
+    <!--editProfile==============================================================================-->
+    <string name="name">Name</string>
+
+    <!--more=====================================================================================-->
     <string name="more">More</string>
 
     <string name="settings">Settings</string>
@@ -10,4 +36,15 @@
     <string name="send_feedback">Send feedback</string>
     <string name="bug_report">Bug report</string>
     <string name="about">About</string>
+
+    <!--setDateTimeFormat========================================================================-->
+    <string name="time_format">Time format</string>
+    <string name="date_format">Date format</string>
+    <string name="use_month_name">Use month name</string>
+    <string name="include_day_of_week">Include day of week</string>
+
+    <!--setTheme=================================================================================-->
+    <string name="app_theme">App theme</string>
+    <string name="map_theme">Map theme</string>
+
 </resources>

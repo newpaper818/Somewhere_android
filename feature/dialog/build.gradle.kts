@@ -49,7 +49,7 @@ dependencies {
 //    ksp(libs.hilt.compiler)
 
     //
-    implementation(libs.lifecycle.viewmodel.compose)
+//    implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.runtime.compose)
 
 

@@ -26,7 +26,7 @@ import javax.inject.Inject
 private const val FIREBASE_AUTHENTICATION_TAG = "Firebase-Authentication"
 
 class UserAuthenticationApi @Inject constructor(
-    @ApplicationContext private val context: Context,
+//    @ApplicationContext private val context: Context,
     private val auth: FirebaseAuth,
     private val googleOneTapClient: SignInClient
 ): UserRemoteDataSource {

@@ -60,9 +60,13 @@ fun SignInRoute(
     internetEnabled: Boolean,
     appVersionName: String,
 
-    signInViewModel: SignInViewModel = hiltViewModel()
+    updateUserData: (userData: UserData) -> Unit,
+    navigateToMain: () -> Unit,
+
+    signInViewModel: SignInViewModel = hiltViewModel(),
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     val signInUiState by signInViewModel.signInUiState.collectAsState()
     val isSigningIn = signInUiState.isSigningIn
@@ -78,6 +82,11 @@ fun SignInRoute(
                 message = signInErrorText
             )
         }
+    }
+
+    LaunchedEffect(Unit) {
+        signInViewModel.setIsSigningIn(false)
+        signInViewModel.deleteAllLocalImages(context)
     }
 
     //set signInButtonEnabled
@@ -103,7 +112,11 @@ fun SignInRoute(
             coroutineScope.launch {
                 signInViewModel.signInWithGoogleResult(
                     result = result,
-                    onDone = {}, //FIXME===========================================
+                    onDone = { userData ->
+                        //update userData
+                        updateUserData(userData)
+                        navigateToMain()
+                     },
                     showErrorSnackbar = { signInErrorSnackbar() }
                 )
             }
@@ -114,9 +127,6 @@ fun SignInRoute(
 
 
 
-
-
-    val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
 
     SignInScreen(
@@ -160,7 +170,7 @@ fun SignInRoute(
 
                         signInViewModel.updateUserDataFromRemote(
                             userData = userData,
-                            onDone = {}, //FIXME===========================================
+                            onDone = { navigateToMain() },
                             showErrorSnackbar = { signInErrorSnackbar() }
                         )
                     }

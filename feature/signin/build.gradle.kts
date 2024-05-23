@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.googleDevToolsKsp)
 }
 
 android {
@@ -42,6 +44,8 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
 
     //hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
     //firebaseUser
