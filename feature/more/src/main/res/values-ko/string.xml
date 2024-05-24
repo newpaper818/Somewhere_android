@@ -2,14 +2,16 @@
 <resources>
 
     <!--about====================================================================================-->
-    <string name="somewhere_app_icon">Somewhere 앱 아이콘</string>
     <string name="privacy_policy">개인정보 처리방침</string>
     <string name="open_source_license">오픈소스 라이선스</string>
+    <string name="play_link_copied">Play store 링크 복사됨!</string>
 
     <!--account==================================================================================-->
-    <string name="no_name">이름 없음</string>
-    <string name="deleting_account">계정 삭제하는 중…</string>
-    <string name="connected_with">연결된 계정</string>
+    <string name="edit_profile">프로필 수정</string>
+    <string name="sign_out">로그아웃</string>
+    <string name="delete_account">계정 삭제</string>
+    <string name="dialog_body_sign_out">로그아웃 하시겠습니까?</string>
+    <string name="sign_out_error">로그아웃 에러. 나중에 다시 시도하세요.</string>
 
     <!--deleteAccount============================================================================-->
     <string name="delete_account_explain">해당 계정의 모든 데이터가 삭제됩니다.\n\n공유한 여행 또한 삭제되므로 여행을 공유받은 친구가 당신에게 공유받은 여행을 볼 수 없습니다.\n\n한번 삭제된 계정과 데이터는 복구가 불가능합니다.</string>
@@ -24,15 +26,17 @@
 
     <!--editProfile==============================================================================-->
     <string name="name">이름</string>
+    <string name="no_name">이름 없음</string>
+    <string name="internet_unavailable_check_connection">인터넷 연결 없음\n인터넷 연결을 확인하세요</string>
 
     <!--more=====================================================================================-->
     <string name="more">더 보기</string>
 
     <string name="settings">설정</string>
-    <string name="feedback">피드백</string>
     <string name="date_time_format">날짜 및 시간</string>
     <string name="theme">테마</string>
     <string name="account">계정</string>
+    <string name="feedback">피드백</string>
     <string name="send_feedback">피드백 보내기</string>
     <string name="bug_report">버그 신고</string>
     <string name="about">앱 정보</string>

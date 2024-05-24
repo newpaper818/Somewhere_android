@@ -8,8 +8,8 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseUser
-import com.newpaper.somewhere.core.data.repository.ImageRepository
-import com.newpaper.somewhere.core.data.repository.signIn.SignInRepository
+import com.newpaper.somewhere.core.data.repository.image.ImageRepository
+import com.newpaper.somewhere.core.data.repository.signIn.UserRepository
 import com.newpaper.somewhere.core.model.data.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +27,7 @@ data class SignInUiState(
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
-    private val signInRepository: SignInRepository,
+    private val userRepository: UserRepository,
     private val imageRepository: ImageRepository
 ): ViewModel() {
     private val _signInUiState: MutableStateFlow<SignInUiState> =
@@ -68,7 +68,7 @@ class SignInViewModel @Inject constructor(
         showErrorSnackbar: () -> Unit
     ) {
         setIsSigningIn(true)
-        signInRepository.signInLaunchGoogleLauncher(
+        userRepository.signInLaunchGoogleLauncher(
             launcher = launcher,
             signInError = {
                 setIsSigningIn(false)
@@ -89,7 +89,7 @@ class SignInViewModel @Inject constructor(
             }
 
             //get signInResult from remote(firebase)
-            val userData = signInRepository.signInWithGoogleIntent(
+            val userData = userRepository.signInWithGoogleIntent(
                 intent = result.data!!
             )
 
@@ -113,7 +113,7 @@ class SignInViewModel @Inject constructor(
         showErrorSnackbar: () -> Unit
     ): FirebaseUser? {
         setIsSigningIn(true)
-        return signInRepository.signInWithApple(
+        return userRepository.signInWithApple(
             activity = activity,
             updateIsSigningInToFalse = {
                 setIsSigningIn(false)
@@ -136,7 +136,7 @@ class SignInViewModel @Inject constructor(
             //check user exit and
             //  if exit, get user data from firestore
             //  else, register user data to firestore
-            signInRepository.updateUserDataFromRemote(
+            userRepository.updateUserDataFromRemote(
                 userData = userData,
                 setIsSigningIn = { setIsSigningIn(it) },
                 onDone = onDone,

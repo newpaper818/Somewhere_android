@@ -16,9 +16,10 @@ import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
 
 private const val DEEP_LINK_URI_PATTERN =
-    "https://www.somewhere.newpaper.com/trips"
+    "https://www.somewhere.newpaper.com/main/trips"
 
-fun NavController.navigationToTrips(navOptions: NavOptions) = navigate(ScreenDestination.TRIPS_ROUTE.route, navOptions)
+fun NavController.navigateToTrips(navOptions: NavOptions? = null) =
+    navigate(ScreenDestination.TRIPS.route, navOptions)
 
 fun NavGraphBuilder.tripsScreen(
     appViewModel: AppViewModel,
@@ -30,13 +31,10 @@ fun NavGraphBuilder.tripsScreen(
     navigateToGlanceSpot: (glance: Glance) -> Unit,
 ) {
     composable(
-        route = ScreenDestination.TRIPS_ROUTE.route,
+        route = ScreenDestination.TRIPS.route,
         deepLinks = listOf(
             navDeepLink { uriPattern = DEEP_LINK_URI_PATTERN }
-        ),
-//        arguments = listOf(
-//            navArgument()
-//        )
+        )
     ) {
 
         val appUiState by appViewModel.appUiState.collectAsState()

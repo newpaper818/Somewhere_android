@@ -24,16 +24,16 @@ import com.newpaper.somewhere.core.ui.ui.R
 
 @Composable
 fun VersionCard(
-    currentVersionName: String,
-    isLatestVersion: Boolean?,
+    currentAppVersionName: String,
+    isLatestAppVersion: Boolean?,
     onClickUpdate: () -> Unit
 ){
 
     val text =
-        when (isLatestVersion){
-            true -> currentVersionName + " " + stringResource(id = R.string.latest)
-            false -> currentVersionName + " " + stringResource(id = R.string.old_version)
-            else -> currentVersionName
+        when (isLatestAppVersion){
+            true -> currentAppVersionName + " " + stringResource(id = R.string.latest)
+            false -> currentAppVersionName + " " + stringResource(id = R.string.old_version)
+            else -> currentAppVersionName
         }
 
 
@@ -58,7 +58,7 @@ fun VersionCard(
                 )
             }
 
-            if (isLatestVersion == false) {
+            if (isLatestAppVersion == false) {
                 Spacer(modifier = Modifier.weight(1f))
                 
                 MySpacerRow(width = 6.dp)
@@ -111,8 +111,8 @@ private fun VersionCardPreview(){
                 .padding(16.dp)
         ) {
             VersionCard(
-                currentVersionName = "1.6.0",
-                isLatestVersion = true,
+                currentAppVersionName = "1.6.0",
+                isLatestAppVersion = true,
                 onClickUpdate = { }
             )
         }
@@ -130,8 +130,8 @@ private fun VersionCardOldPreview(){
                 .padding(16.dp)
         ) {
             VersionCard(
-                currentVersionName = "1.6.0",
-                isLatestVersion = false,
+                currentAppVersionName = "1.6.0",
+                isLatestAppVersion = false,
                 onClickUpdate = { }
             )
         }

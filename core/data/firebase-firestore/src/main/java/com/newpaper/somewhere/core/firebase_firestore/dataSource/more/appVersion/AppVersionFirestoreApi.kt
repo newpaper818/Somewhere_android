@@ -21,8 +21,9 @@ class AppVersionFirestoreApi @Inject constructor(
 
         firestoreDb.collection(APP).document(APP_INFO).get()
             .addOnSuccessListener { document ->
-                Log.d(FIREBASE_FIRESTORE_APP_VERSION_TAG, "get latest app version code")
-                versionCode.complete(document.getLong(VERSION_CODE)?.toInt())
+                val latestVersionCode = document.getLong(VERSION_CODE)?.toInt()
+                Log.d(FIREBASE_FIRESTORE_APP_VERSION_TAG, "get latest app version code: $latestVersionCode")
+                versionCode.complete(latestVersionCode)
             }
             .addOnFailureListener { e ->
                 Log.e(FIREBASE_FIRESTORE_APP_VERSION_TAG, "get latest app version code fail - ", e)

@@ -19,9 +19,9 @@ import kotlinx.coroutines.CompletableDeferred
 import java.util.Locale
 import javax.inject.Inject
 
-private const val SIGN_IN_REPOSITORY_TAG = "SignIn-Repository"
+private const val USER_REPOSITORY_TAG = "User-Repository"
 
-class SignInRepository @Inject constructor(
+class UserRepository @Inject constructor(
     private val commonRemoteDataSource: CommonRemoteDataSource, //firebase-firestore
     private val signInRemoteDataSource: SignInRemoteDataSource, //firebase-firestore
     private val userRemoteDatasource: UserRemoteDataSource      //firebase-authentication
@@ -77,12 +77,12 @@ class SignInRepository @Inject constructor(
                 }
                 .addOnFailureListener { e ->
                     if ("canceled by the user" !in e.toString()){
-                        Log.d(SIGN_IN_REPOSITORY_TAG, "not cancel by user")
+                        Log.d(USER_REPOSITORY_TAG, "not cancel by user")
                         showErrorSnackbar()
                     }
 
                     updateIsSigningInToFalse()
-                    Log.w(SIGN_IN_REPOSITORY_TAG, "activitySignIn:onFailure", e)
+                    Log.w(USER_REPOSITORY_TAG, "activitySignIn:onFailure", e)
                     user.complete(null)
                 }
         }
@@ -97,7 +97,7 @@ class SignInRepository @Inject constructor(
         onDone: (userData: UserData) -> Unit,
         showErrorSnackbar: () -> Unit
     ) {
-        Log.d(SIGN_IN_REPOSITORY_TAG, "updateUserDataFromSignInResult - ${userData.userId} ${userData.userName} ${userData.email}")
+        Log.d(USER_REPOSITORY_TAG, "updateUserDataFromSignInResult - ${userData.userId} ${userData.userName} ${userData.email}")
 
         //is userData exit in remote(firestore)?
         val userExitInRemote = commonRemoteDataSource.checkUserExist(userData.userId)
@@ -145,7 +145,7 @@ class SignInRepository @Inject constructor(
 
         //if null user return null
         if (firebaseUser == null){
-            Log.d(SIGN_IN_REPOSITORY_TAG, "getSignedInUser - user null")
+            Log.d(USER_REPOSITORY_TAG, "getSignedInUser - user null")
             return null
         }
         else {
@@ -179,5 +179,31 @@ class SignInRepository @Inject constructor(
         userData: UserData
     ): Boolean {
         return signInRemoteDataSource.registerUser(userData)
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    suspend fun signOut(
+        providerIdList: List<ProviderId>,
+        signOutResult: (isSignOutSuccess: Boolean) -> Unit
+    ){
+        userRemoteDatasource.signOut(
+            providerIdList = providerIdList,
+            signOutResult = signOutResult
+
+        )
     }
 }

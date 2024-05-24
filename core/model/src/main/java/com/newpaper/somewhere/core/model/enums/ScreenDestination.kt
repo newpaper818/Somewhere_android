@@ -3,29 +3,29 @@ package com.newpaper.somewhere.core.model.enums
 enum class ScreenDestination(
     val route: String
 ){
-    SIGN_IN_ROUTE("signIn"),
+    SIGN_IN("signIn"),
 
-    MAIN_ROUTE("main"),
-    TRIPS_ROUTE("trips"),
-    PROFILE_ROUTE("profile"),
-    MORE_ROUTE("more"),
+    MAIN("main"),
+    TRIPS("trips"),
+    PROFILE("profile"),
+    MORE("more"),
 
-    SET_DATE_TIME_FORMAT_ROUTE("setDateTimeFormat"),
-    SET_THEME_ROUTE("setTheme"),
-    ACCOUNT_ROUTE("account"),
-    EDIT_ACCOUNT("editAccount"),
-    DELETE_ACCOUNT_ROUTE("deleteAccount"),
-    ABOUT_ROUTE("about"),
-    OPEN_SOURCE_LICENSE_ROUTE("openSourceLicense"),
+    SET_DATE_TIME_FORMAT("setDateTimeFormat"),
+    SET_THEME("setTheme"),
+    ACCOUNT("account"),
+    EDIT_PROFILE("editProfile"),
+    DELETE_ACCOUNT("deleteAccount"),
+    ABOUT("about"),
+    OPEN_SOURCE_LICENSE("openSourceLicense"),
 
-    TRIP_ROUTE("trip"),
-    DATE_ROUTE("date"),
-    SPOT_ROUTE("spot"),
+    TRIP("trip"),
+    DATE("date"),
+    SPOT("spot"),
 
-    INVITE_FRIEND_ROUTE("inviteFriend"),
-    INVITED_FRIENDS_ROUTE("invitedFriends"),
+    INVITE_FRIEND("inviteFriend"),
+    INVITED_FRIENDS("invitedFriends"),
 
-    IMAGE_ROUTE("image"),
-    SET_LOCATION_ROUTE("setLocation"),
-    TRIP_MAP_ROUTE("tripMap")
+    IMAGE("image"),
+    SET_LOCATION("setLocation"),
+    TRIP_MAP("tripMap")
 }

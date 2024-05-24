@@ -9,7 +9,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
-import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.feature.more.setDateTimeFormat.SetDateTimeFormatRoute
 import com.newpaper.somewhere.navigation.enterTransition
@@ -21,9 +20,10 @@ import com.newpaper.somewhere.ui.ExternalState
 import kotlinx.coroutines.launch
 
 private const val DEEP_LINK_URI_PATTERN =
-    "https://www.somewhere.newpaper.com/setDateTimeFormat"
+    "https://www.somewhere.newpaper.com/more/setDateTimeFormat"
 
-fun NavController.navigationToSetDateTimeFormat(navOptions: NavOptions) = navigate(ScreenDestination.SIGN_IN_ROUTE.route, navOptions)
+fun NavController.navigateToSetDateTimeFormat(navOptions: NavOptions? = null) =
+    navigate(ScreenDestination.SET_DATE_TIME_FORMAT.route, navOptions)
 
 fun NavGraphBuilder.setDateTimeFormatScreen(
     appViewModel: AppViewModel,
@@ -32,7 +32,7 @@ fun NavGraphBuilder.setDateTimeFormatScreen(
     navigateUp: () -> Unit
 ){
     composable(
-        route = ScreenDestination.SET_DATE_TIME_FORMAT_ROUTE.route,
+        route = ScreenDestination.SET_DATE_TIME_FORMAT.route,
         deepLinks = listOf(
             navDeepLink { uriPattern = DEEP_LINK_URI_PATTERN }
         ),
@@ -42,7 +42,7 @@ fun NavGraphBuilder.setDateTimeFormatScreen(
         popExitTransition = { popExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.updateCurrentScreenDestination(ScreenDestination.SET_DATE_TIME_FORMAT_ROUTE)
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.SET_DATE_TIME_FORMAT)
         }
 
         val coroutineScope = rememberCoroutineScope()
@@ -50,8 +50,7 @@ fun NavGraphBuilder.setDateTimeFormatScreen(
         val appUiState by appViewModel.appUiState.collectAsState()
 
         SetDateTimeFormatRoute(
-            startSpacerValue = externalState.windowSizeClass.spacerValue,
-            endSpacerValue = externalState.windowSizeClass.spacerValue,
+            spacerValue = externalState.windowSizeClass.spacerValue,
             dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
             updatePreferencesValue = {
                 coroutineScope.launch{

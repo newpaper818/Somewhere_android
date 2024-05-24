@@ -22,8 +22,7 @@ import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcon
 import com.newpaper.somewhere.core.designsystem.icon.SelectSwitchIcon
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
-
-val itemMaxWidth = 700.dp
+import com.newpaper.somewhere.core.utils.itemMaxWidth
 
 @Composable
 fun SelectSwitch(
