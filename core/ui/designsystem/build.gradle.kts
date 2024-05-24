@@ -31,6 +31,7 @@ dependencies {
 
     //module
     implementation(project(":core:model"))
+    implementation(project(":core:utils"))
 
     //compose bom
     implementation(platform(libs.compose.bom))

@@ -1,2 +1,207 @@
 package com.newpaper.somewhere.feature.more.about
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.displayCutoutPadding
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
+import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
+import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
+import com.newpaper.somewhere.core.ui.card.AppIconWithAppNameCard
+import com.newpaper.somewhere.core.ui.card.DeveloperCard
+import com.newpaper.somewhere.core.ui.card.ShareAppCard
+import com.newpaper.somewhere.core.ui.card.VersionCard
+import com.newpaper.somewhere.core.ui.item.ItemDivider
+import com.newpaper.somewhere.core.ui.item.ItemWithText
+import com.newpaper.somewhere.core.ui.item.ListGroupCard
+import com.newpaper.somewhere.core.utils.PLAY_STORE_URL
+import com.newpaper.somewhere.core.utils.PRIVACY_POLICY_URL
+import com.newpaper.somewhere.feature.more.R
+import kotlinx.coroutines.launch
+
+@Composable
+fun AboutRoute(
+    spacerValue: Dp,
+
+    currentAppVersionCode: Int,
+    currentAppVersionName: String,
+    isDebugMode: Boolean,
+
+    navigateToOpenSourceLicense: () -> Unit,
+    navigateUp: () -> Unit,
+
+    modifier: Modifier = Modifier,
+    use2Panes: Boolean = false,
+
+    aboutViewModel: AboutViewModel = hiltViewModel(),
+){
+    LaunchedEffect(Unit) {
+        aboutViewModel.updateIsLatestAppVersion(currentAppVersionCode)
+    }
+
+    val aboutUiState by aboutViewModel.aboutUiState.collectAsState()
+
+    val coroutineScope = rememberCoroutineScope()
+    val snackBarHostState = remember { SnackbarHostState() }
+    val copiedLinkText = stringResource(id = R.string.play_link_copied)
+
+    AboutScreen(
+        startSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
+        endSpacerValue = spacerValue,
+        currentAppVersionName = currentAppVersionName,
+        isLatestAppVersion = aboutUiState.isLatestAppVersion,
+        isDebugMode = isDebugMode,
+        navigateToOpenSourceLicense = navigateToOpenSourceLicense,
+        navigateUp = navigateUp,
+        onClickCopyPlayStoreLink = {
+            coroutineScope.launch {
+                snackBarHostState.showSnackbar(
+                    message = copiedLinkText
+                )
+            }
+        },
+        snackBarHostState = snackBarHostState,
+        modifier = modifier,
+        use2Panes = use2Panes
+    )
+}
+
+@Composable
+private fun AboutScreen(
+    startSpacerValue: Dp,
+    endSpacerValue: Dp,
+
+    currentAppVersionName: String,
+    isLatestAppVersion: Boolean?,
+    isDebugMode: Boolean,
+
+    navigateToOpenSourceLicense: () -> Unit,
+    navigateUp: () -> Unit,
+
+    onClickCopyPlayStoreLink: () -> Unit,
+
+    snackBarHostState: SnackbarHostState,
+
+    modifier: Modifier = Modifier,
+    use2Panes: Boolean = false
+){
+    val uriHandler = LocalUriHandler.current
+
+    Scaffold(
+        modifier = modifier
+            .imePadding()
+            .navigationBarsPadding()
+            .displayCutoutPadding(),
+        contentWindowInsets = WindowInsets(bottom = 0),
+
+        topBar = {
+            SomewhereTopAppBar(
+                startPadding = startSpacerValue,
+                title = stringResource(id = R.string.about),
+                navigationIcon = if (!use2Panes) TopAppBarIcon.back else null,
+                navigationIconOnClick = { navigateUp() }
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackBarHostState,
+                modifier = Modifier.width(500.dp)
+            )
+        }
+    ){ paddingValues ->
+
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(startSpacerValue, 16.dp, endSpacerValue, 200.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            item{
+                //app icon image
+                MySpacerColumn(height = 16.dp)
+                AppIconWithAppNameCard()
+                MySpacerColumn(height = 24.dp)
+            }
+
+            item{
+                //app version
+                VersionCard(
+                    currentAppVersionName = currentAppVersionName,
+                    isLatestAppVersion = isLatestAppVersion,
+                    onClickUpdate = { uriHandler.openUri(PLAY_STORE_URL) }
+                )
+            }
+
+            item{
+                //developer info
+                DeveloperCard()
+            }
+
+            item{
+                ListGroupCard {
+                    //privacy policy
+                    ItemWithText(
+                        text = stringResource(id = R.string.privacy_policy),
+                        isOpenInNew = true,
+                        onItemClick = { uriHandler.openUri(PRIVACY_POLICY_URL) }
+                    )
+
+                    ItemDivider()
+
+                    //open source license
+                    ItemWithText(
+                        text = stringResource(id = R.string.open_source_license),
+                        onItemClick = {
+                            navigateToOpenSourceLicense()
+                        }
+                    )
+                }
+            }
+
+            item {
+                MySpacerColumn(height = 64.dp)
+
+                //copy link / qr code
+                ShareAppCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClickCopyPlayStoreLink = onClickCopyPlayStoreLink
+                )
+            }
+
+            if (isDebugMode)
+                item{
+                    Text(
+                        text = "Debug Mode",
+                        style = MaterialTheme.typography.headlineSmall.copy(color = MaterialTheme.colorScheme.primary)
+                    )
+                }
+        }
+    }
+}

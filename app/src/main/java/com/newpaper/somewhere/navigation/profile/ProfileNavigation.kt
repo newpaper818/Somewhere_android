@@ -2,6 +2,8 @@ package com.newpaper.somewhere.navigation.profile
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -11,36 +13,37 @@ import androidx.navigation.navDeepLink
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.feature.profile.profile.ProfileRoute
+import com.newpaper.somewhere.ui.AppViewModel
+import com.newpaper.somewhere.ui.ExternalState
 
 private const val DEEP_LINK_URI_PATTERN =
     "https://www.somewhere.newpaper.com/profile"
 
-fun NavController.navigationToProfile(navOptions: NavOptions) = navigate(ScreenDestination.PROFILE_ROUTE.route, navOptions)
+fun NavController.navigateToProfile(navOptions: NavOptions? = null) =
+    navigate(ScreenDestination.PROFILE.route, navOptions)
 
 fun NavGraphBuilder.profileScreen(
-    internetEnabled: Boolean,
-    spacerValue: Dp,
+    appViewModel: AppViewModel,
+    externalState: ExternalState,
+
     lazyListState: LazyListState,
-    use2Panes: Boolean,
-    userData: UserData?,
     navigateToAccount: () -> Unit,
     snackBarHostState: SnackbarHostState,
 ) {
     composable(
-        route = ScreenDestination.PROFILE_ROUTE.route,
+        route = ScreenDestination.PROFILE.route,
         deepLinks = listOf(
             navDeepLink { uriPattern = DEEP_LINK_URI_PATTERN }
-        ),
-//        arguments = listOf(
-//            navArgument()
-//        )
+        )
     ) {
+        val appUiState by appViewModel.appUiState.collectAsState()
+
         ProfileRoute(
-            internetEnabled = internetEnabled,
-            spacerValue = spacerValue,
+            internetEnabled = externalState.internetEnabled,
+            spacerValue = externalState.windowSizeClass.spacerValue,
             lazyListState = lazyListState,
-            use2Panes = use2Panes,
-            userData = userData,
+            use2Panes = externalState.windowSizeClass.use2Panes,
+            userData = appUiState.appUserData,
             navigateToAccount = navigateToAccount,
             snackBarHostState = snackBarHostState
         )

@@ -15,12 +15,12 @@ import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
 
 private const val DEEP_LINK_URI_PATTERN =
-    "https://www.somewhere.newpaper.com/main/trip/inviteFriend"
+    "https://www.somewhere.newpaper.com/main/trip/invitedFriend"
 
-fun NavController.navigateToInviteFriend(navOptions: NavOptions? = null) =
-    navigate(ScreenDestination.INVITE_FRIEND.route, navOptions)
+fun NavController.navigateToInvitedFriends(navOptions: NavOptions? = null) =
+    navigate(ScreenDestination.INVITED_FRIENDS.route, navOptions)
 
-fun NavGraphBuilder.inviteFriendScreen(
+fun NavGraphBuilder.invitedFriendsScreen(
     appViewModel: AppViewModel,
     externalState: ExternalState,
 
@@ -30,7 +30,7 @@ fun NavGraphBuilder.inviteFriendScreen(
     modifier: Modifier = Modifier,
 ) {
     composable(
-        route = ScreenDestination.INVITE_FRIEND.route,
+        route = ScreenDestination.INVITED_FRIENDS.route,
         deepLinks = listOf(
             navDeepLink { uriPattern = DEEP_LINK_URI_PATTERN }
         ),

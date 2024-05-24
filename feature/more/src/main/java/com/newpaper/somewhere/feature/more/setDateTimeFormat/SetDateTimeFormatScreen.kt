@@ -23,10 +23,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -42,19 +40,12 @@ import com.newpaper.somewhere.core.ui.item.ItemWithRadioButton
 import com.newpaper.somewhere.core.ui.item.ItemWithSwitch
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
 import com.newpaper.somewhere.core.ui.selectSwitch.TimeFormatSelectSwitch
-import com.newpaper.somewhere.core.utils.getDateText
-import com.newpaper.somewhere.core.utils.getTimeText
 import com.newpaper.somewhere.feature.more.R
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalTime
-import java.util.Locale
 
 @Composable
 fun SetDateTimeFormatRoute(
-    startSpacerValue: Dp,
-    endSpacerValue: Dp,
+    spacerValue: Dp,
     dateTimeFormat: DateTimeFormat,
     updatePreferencesValue: () -> Unit,
 
@@ -73,8 +64,8 @@ fun SetDateTimeFormatRoute(
     }
 
     SetDateTimeFormatScreen(
-        startSpacerValue = startSpacerValue,
-        endSpacerValue = endSpacerValue,
+        startSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
+        endSpacerValue = spacerValue,
         dateTimeFormat = dateTimeFormat,
         dateExampleText = setDateTimeFormatUiState.dateExample,
         timeExampleText = setDateTimeFormatUiState.timeExample,
@@ -222,23 +213,6 @@ private fun SetDateTimeFormatScreen(
 }
 
 
-//private fun getFixedDateText(
-//    locale: Locale,
-//    dateTimeFormat: DateTimeFormat
-//): String{
-//    //app release date
-//    val localDate = LocalDate.of(2023,10,22)
-//    return getDateText(localDate, dateTimeFormat, true)
-//}
-//
-//private fun getFixedTimeText(
-//    dateTimeFormat: DateTimeFormat
-//): String{
-//    val localTime = LocalTime.of(21,24)
-//    return getTimeText(localTime, dateTimeFormat.timeFormat)
-//}
-
-
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -282,8 +256,6 @@ private fun UpperDateTimeExampleBox(
                     textAlign = TextAlign.Start
                 )
             }
-
         }
-
     }
 }

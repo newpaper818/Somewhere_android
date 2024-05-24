@@ -15,7 +15,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 import javax.inject.Inject
 
-private const val SET_DATE_TIME_FORMAT_VIEWMODEL_TAG = "SetDateTimeViewModel-ViewModel"
+private const val SET_DATE_TIME_FORMAT_VIEWMODEL_TAG = "SetDateTimeFormat-ViewModel"
 
 data class SetDateTimeFormatUiState(
     val dateExample: String = "",

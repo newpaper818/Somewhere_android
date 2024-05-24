@@ -20,9 +20,10 @@ import com.newpaper.somewhere.ui.ExternalState
 import kotlinx.coroutines.launch
 
 private const val DEEP_LINK_URI_PATTERN =
-    "https://www.somewhere.newpaper.com/setTheme"
+    "https://www.somewhere.newpaper.com/more/setTheme"
 
-fun NavController.navigationToSetTheme(navOptions: NavOptions) = navigate(ScreenDestination.SET_THEME_ROUTE.route, navOptions)
+fun NavController.navigateToSetTheme(navOptions: NavOptions? = null) =
+    navigate(ScreenDestination.SET_THEME.route, navOptions)
 
 fun NavGraphBuilder.setThemeScreen(
     appViewModel: AppViewModel,
@@ -31,7 +32,7 @@ fun NavGraphBuilder.setThemeScreen(
     navigateUp: () -> Unit
 ){
     composable(
-        route = ScreenDestination.SET_THEME_ROUTE.route,
+        route = ScreenDestination.SET_THEME.route,
         deepLinks = listOf(
             navDeepLink { uriPattern = DEEP_LINK_URI_PATTERN }
         ),
@@ -41,7 +42,7 @@ fun NavGraphBuilder.setThemeScreen(
         popExitTransition = { popExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.updateCurrentScreenDestination(ScreenDestination.SET_THEME_ROUTE)
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.SET_THEME)
         }
 
         val coroutineScope = rememberCoroutineScope()

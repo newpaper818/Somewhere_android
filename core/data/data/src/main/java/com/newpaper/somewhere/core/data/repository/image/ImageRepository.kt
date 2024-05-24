@@ -1,10 +1,10 @@
-package com.newpaper.somewhere.core.data.repository
+package com.newpaper.somewhere.core.data.repository.image
 
 import android.content.Context
+import android.net.Uri
 import com.newpaper.somewhere.core.firebase_storage.dataSource.ImageRemoteDataSource
 import com.newpaper.somewhere.core.local_image_file.dataSource.ImageLocalDataSource
 import com.newpaper.somewhere.core.model.tripData.Trip
-import java.io.File
 import javax.inject.Inject
 
 class ImageRepository @Inject constructor(
@@ -97,6 +97,12 @@ class ImageRepository @Inject constructor(
         )
     }
 
+
+
+
+
+
+
     fun deleteImagesFromRemote(
         tripManagerId: String,
         imagePaths: List<String>
@@ -106,11 +112,6 @@ class ImageRepository @Inject constructor(
             imagePaths = imagePaths
         )
     }
-
-
-
-
-
 
     fun deleteImagesFromInternalStorage(
         context: Context,
@@ -135,6 +136,35 @@ class ImageRepository @Inject constructor(
         imageLocalDataSource.deleteUnusedImageFilesForAllTrips(
             context = context,
             allTrips = allTrips
+        )
+    }
+
+    fun deleteUnusedProfileImageFiles(
+        context: Context,
+        usingProfileImage: String?
+    ){
+        imageLocalDataSource.deleteUnusedProfileImageFiles(
+            context = context,
+            usingProfileImage = usingProfileImage
+        )
+    }
+
+
+
+
+    fun saveImageToInternalStorage(
+        tripId: Int,
+        index: Int,
+        context: Context,
+        uri: Uri,
+        isProfileImage: Boolean = false
+    ): String? {
+        imageLocalDataSource.saveImageToInternalStorage(
+            tripId = tripId,
+            index = index,
+            context = context,
+            uri = uri,
+            isProfileImage = isProfileImage
         )
     }
 }

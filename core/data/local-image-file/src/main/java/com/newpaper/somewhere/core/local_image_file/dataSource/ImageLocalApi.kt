@@ -24,7 +24,7 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import kotlin.math.sqrt
 
-private const val LOCAL_IMAGE_TAG = "Local-Storage"
+private const val LOCAL_IMAGE_TAG = "Local-Storage-Image"
 
 private const val IMAGE_MAX_SIZE_MB = 2.3    //Mebibyte
 private const val PROFILE_IMAGE_MAX_SIZE_MB = 0.15    //Mebibyte

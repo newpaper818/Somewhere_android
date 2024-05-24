@@ -33,19 +33,19 @@ fun MoreRoute(
     isDebugMode: Boolean,
     userDataIsNull: Boolean,
 
-    startSpacerValue: Dp,
-    endSpacerValue: Dp,
+    spacerValue: Dp,
     lazyListState: LazyListState,
     navigateTo: (ScreenDestination) -> Unit,
 
     modifier: Modifier = Modifier,
+    use2Panes: Boolean = false,
     currentScreen: ScreenDestination? = null
 ) {
     MoreScreen(
         isDebugMode = isDebugMode,
         userDataIsNull = userDataIsNull,
-        startSpacerValue = startSpacerValue,
-        endSpacerValue = endSpacerValue,
+        startSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
+        endSpacerValue = spacerValue,
         lazyListState = lazyListState,
         navigateTo = navigateTo,
         modifier = modifier,
@@ -94,32 +94,32 @@ private fun MoreScreen(
                 ) {
                     //date time format
                     ItemWithText(
-                        isSelected = currentScreen == ScreenDestination.SET_DATE_TIME_FORMAT_ROUTE,
+                        isSelected = currentScreen == ScreenDestination.SET_DATE_TIME_FORMAT,
                         text = stringResource(id = R.string.date_time_format),
-                        onItemClick = { navigateTo(ScreenDestination.SET_DATE_TIME_FORMAT_ROUTE) }
+                        onItemClick = { navigateTo(ScreenDestination.SET_DATE_TIME_FORMAT) }
                     )
 
                     ItemDivider()
 
                     //app theme
                     ItemWithText(
-                        isSelected = currentScreen == ScreenDestination.SET_THEME_ROUTE,
+                        isSelected = currentScreen == ScreenDestination.SET_THEME,
                         text = stringResource(id = R.string.theme),
-                        onItemClick = { navigateTo(ScreenDestination.SET_THEME_ROUTE) }
+                        onItemClick = { navigateTo(ScreenDestination.SET_THEME) }
                     )
 
                     ItemDivider()
 
                     //account
                     ItemWithText(
-                        isSelected = currentScreen == ScreenDestination.ACCOUNT_ROUTE
-                                || currentScreen == ScreenDestination.SIGN_IN_ROUTE,
+                        isSelected = currentScreen == ScreenDestination.ACCOUNT
+                                || currentScreen == ScreenDestination.SIGN_IN,
                         text = stringResource(id = R.string.account),
                         onItemClick = {
                             if (!userDataIsNull)
-                                navigateTo(ScreenDestination.ACCOUNT_ROUTE)
+                                navigateTo(ScreenDestination.ACCOUNT)
                             else
-                                navigateTo(ScreenDestination.SIGN_IN_ROUTE)
+                                navigateTo(ScreenDestination.SIGN_IN)
                         }
                     )
                 }
@@ -154,9 +154,9 @@ private fun MoreScreen(
             item {
                 ListGroupCard {
                     ItemWithText(
-                        isSelected = currentScreen == ScreenDestination.ABOUT_ROUTE,
+                        isSelected = currentScreen == ScreenDestination.ABOUT,
                         text = stringResource(id = R.string.about),
-                        onItemClick = { navigateTo(ScreenDestination.ABOUT_ROUTE) }
+                        onItemClick = { navigateTo(ScreenDestination.ABOUT) }
                     )
                 }
             }

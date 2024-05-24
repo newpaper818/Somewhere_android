@@ -1,19 +1,13 @@
 package com.newpaper.somewhere.ui
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.newpaper.somewhere.BuildConfig
 import com.newpaper.somewhere.core.data.repository.SettingRepository
-import com.newpaper.somewhere.core.data.repository.signIn.SignInRepository
+import com.newpaper.somewhere.core.data.repository.signIn.UserRepository
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.data.Theme
 import com.newpaper.somewhere.core.model.data.UserData
-import com.newpaper.somewhere.core.model.enums.AppTheme
-import com.newpaper.somewhere.core.model.enums.DateFormat
-import com.newpaper.somewhere.core.model.enums.MapTheme
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
-import com.newpaper.somewhere.core.model.enums.TimeFormat
 import com.newpaper.somewhere.navigationUi.TopLevelDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +25,7 @@ data class AppPreferencesState(
 data class DestinationState(
     val startScreenDestination: ScreenDestination? = null, //if not null, splash screen will be finish
     val currentTopLevelDestination: TopLevelDestination = TopLevelDestination.TRIPS,
-    val currentScreenDestination: ScreenDestination = ScreenDestination.TRIPS_ROUTE
+    val currentScreenDestination: ScreenDestination = ScreenDestination.TRIPS
 )
 
 data class AppUiState(
@@ -48,7 +42,7 @@ data class AppUiState(
 @HiltViewModel
 class AppViewModel @Inject constructor(
     private val settingRepository: SettingRepository,
-    private val signInRepository: SignInRepository,
+    private val userRepository: UserRepository,
 ): ViewModel() {
     private val _appUiState = MutableStateFlow(AppUiState())
     val appUiState = _appUiState.asStateFlow()
@@ -136,7 +130,7 @@ class AppViewModel @Inject constructor(
         onDone: (userDataIsNull: Boolean) -> Unit
     ){
         viewModelScope.launch {
-            val userData = signInRepository.getSignedInUser()
+            val userData = userRepository.getSignedInUser()
             _appUiState.update {
                 it.copy(appUserData = userData)
             }
@@ -159,8 +153,8 @@ class AppViewModel @Inject constructor(
         userDataIsNull: Boolean
     ){
         val startScreenDestination =
-            if (userDataIsNull) ScreenDestination.SIGN_IN_ROUTE
-            else ScreenDestination.MAIN_ROUTE
+            if (userDataIsNull) ScreenDestination.SIGN_IN
+            else ScreenDestination.MAIN
 
         _appUiState.update {
             it.copy(

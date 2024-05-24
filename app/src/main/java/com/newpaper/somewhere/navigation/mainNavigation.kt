@@ -1,6 +1,5 @@
 package com.newpaper.somewhere.navigation
 
-import android.util.Log
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.LaunchedEffect
@@ -31,8 +30,8 @@ import kotlinx.coroutines.launch
 private const val DEEP_LINK_URI_PATTERN =
     "https://www.somewhere.newpaper.com/main"
 
-fun NavController.navigationToMain(navOptions: NavOptions? = null) =
-    navigate(ScreenDestination.MAIN_ROUTE.route, navOptions)
+fun NavController.navigateToMain(navOptions: NavOptions? = null) =
+    navigate(ScreenDestination.MAIN.route, navOptions)
 
 fun NavGraphBuilder.mainScreen(
     appViewModel: AppViewModel,
@@ -44,19 +43,15 @@ fun NavGraphBuilder.mainScreen(
     navigateTo: (screenDestination: ScreenDestination) -> Unit
 ) {
     composable(
-        route = ScreenDestination.MAIN_ROUTE.route,
+        route = ScreenDestination.MAIN.route,
         deepLinks = listOf(
             navDeepLink { uriPattern = DEEP_LINK_URI_PATTERN }
         ),
-//        arguments = listOf(
-//            navArgument()
-//        ),
         enterTransition = { enterTransition },
         exitTransition = { exitTransition },
         popEnterTransition = { popEnterTransition },
         popExitTransition = { popExitTransition }
     ) {
-
 
         val appUiState by appViewModel.appUiState.collectAsState()
         val destinationState = appUiState.screenDestination
@@ -66,15 +61,15 @@ fun NavGraphBuilder.mainScreen(
 
             when (destinationState.currentTopLevelDestination) {
                 TopLevelDestination.TRIPS -> appViewModel.updateCurrentScreenDestination(
-                    ScreenDestination.TRIPS_ROUTE
+                    ScreenDestination.TRIPS
                 )
 
                 TopLevelDestination.PROFILE -> appViewModel.updateCurrentScreenDestination(
-                    ScreenDestination.PROFILE_ROUTE
+                    ScreenDestination.PROFILE
                 )
 
                 TopLevelDestination.MORE -> appViewModel.updateCurrentScreenDestination(
-                    ScreenDestination.MORE_ROUTE
+                    ScreenDestination.MORE
                 )
             }
         }
@@ -96,21 +91,21 @@ fun NavGraphBuilder.mainScreen(
 
                 when (it) {
                     TopLevelDestination.TRIPS -> appViewModel.updateCurrentScreenDestination(
-                        ScreenDestination.TRIPS_ROUTE
+                        ScreenDestination.TRIPS
                     )
 
                     TopLevelDestination.PROFILE -> appViewModel.updateCurrentScreenDestination(
-                        ScreenDestination.PROFILE_ROUTE
+                        ScreenDestination.PROFILE
                     )
 
                     TopLevelDestination.MORE -> {
                         if (!externalState.windowSizeClass.use2Panes) {
                             appViewModel.updateCurrentScreenDestination(
-                                ScreenDestination.MORE_ROUTE
+                                ScreenDestination.MORE
                             )
                         } else {
                             appViewModel.updateCurrentScreenDestination(
-                                ScreenDestination.SET_DATE_TIME_FORMAT_ROUTE
+                                ScreenDestination.SET_DATE_TIME_FORMAT
                             )
                         }
                     }
@@ -131,21 +126,21 @@ fun NavGraphBuilder.mainScreen(
             //content
             LaunchedEffect(destinationState.currentScreenDestination) {
                 val tempDestination = destinationState.currentScreenDestination
-                if (tempDestination == ScreenDestination.TRIPS_ROUTE
-                    || tempDestination == ScreenDestination.PROFILE_ROUTE
-                    || tempDestination == ScreenDestination.MORE_ROUTE
+                if (tempDestination == ScreenDestination.TRIPS
+                    || tempDestination == ScreenDestination.PROFILE
+                    || tempDestination == ScreenDestination.MORE
 
                     || externalState.windowSizeClass.use2Panes && (
-                        tempDestination == ScreenDestination.SET_DATE_TIME_FORMAT_ROUTE
-                        || tempDestination == ScreenDestination.SET_THEME_ROUTE
-                        || tempDestination == ScreenDestination.ABOUT_ROUTE)
+                        tempDestination == ScreenDestination.SET_DATE_TIME_FORMAT
+                        || tempDestination == ScreenDestination.SET_THEME
+                        || tempDestination == ScreenDestination.ABOUT)
                 ) {
                     currentScreenDestination = tempDestination
                 }
             }
 
             //myTrips screen -------------------------------------------------------------------
-            if (currentScreenDestination == ScreenDestination.TRIPS_ROUTE){
+            if (currentScreenDestination == ScreenDestination.TRIPS){
                 TripsRoute(
                     appUserId = appUiState.appUserData?.userId ?: "",
                     internetEnabled = externalState.internetEnabled,
@@ -161,7 +156,7 @@ fun NavGraphBuilder.mainScreen(
                 )
             }
             //profile screen -------------------------------------------------------------------
-            else if (currentScreenDestination == ScreenDestination.PROFILE_ROUTE){
+            else if (currentScreenDestination == ScreenDestination.PROFILE){
                 val snackBarHostState = remember { SnackbarHostState() }
 
                 ProfileRoute(
@@ -175,19 +170,18 @@ fun NavGraphBuilder.mainScreen(
                 )
             }
             //more screen ----------------------------------------------------------------------
-            else if (currentScreenDestination == ScreenDestination.MORE_ROUTE
-                || currentScreenDestination == ScreenDestination.SET_DATE_TIME_FORMAT_ROUTE
-                || currentScreenDestination == ScreenDestination.SET_THEME_ROUTE
-                || currentScreenDestination == ScreenDestination.ACCOUNT_ROUTE
-                || currentScreenDestination == ScreenDestination.ABOUT_ROUTE
+            else if (currentScreenDestination == ScreenDestination.MORE
+                || currentScreenDestination == ScreenDestination.SET_DATE_TIME_FORMAT
+                || currentScreenDestination == ScreenDestination.SET_THEME
+                || currentScreenDestination == ScreenDestination.ACCOUNT
+                || currentScreenDestination == ScreenDestination.ABOUT
             ){
                 //single pane
                 if (!externalState.windowSizeClass.use2Panes) {
                     MoreRoute(
                         isDebugMode = BuildConfig.DEBUG,
                         userDataIsNull = appUiState.appUserData == null,
-                        startSpacerValue = externalState.windowSizeClass.spacerValue,
-                        endSpacerValue = externalState.windowSizeClass.spacerValue,
+                        spacerValue = externalState.windowSizeClass.spacerValue,
                         lazyListState = moreLazyListState,
                         navigateTo = navigateTo
                     )

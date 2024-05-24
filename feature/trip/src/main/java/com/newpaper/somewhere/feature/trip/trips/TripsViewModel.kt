@@ -3,7 +3,7 @@ package com.newpaper.somewhere.feature.trip.trips
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.newpaper.somewhere.core.data.repository.ImageRepository
+import com.newpaper.somewhere.core.data.repository.image.ImageRepository
 import com.newpaper.somewhere.core.data.repository.trip.TripRepository
 import com.newpaper.somewhere.core.data.repository.trip.TripsRepository
 import com.newpaper.somewhere.core.model.tripData.Date
