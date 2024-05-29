@@ -40,6 +40,8 @@ class TripsFirestoreApi @Inject constructor(
         val source = if (internetEnabled) Source.DEFAULT else Source.CACHE
         val tripList = CompletableDeferred<List<Trip>>()
 
+        Log.d(FIREBASE_FIRESTORE_TRIPS_TAG, "get my trips order by id - userId: $userId ")
+
         firestoreDb.collection(USERS).document(userId)
             .collection(TRIPS)
             .orderBy("orderId")
@@ -50,7 +52,7 @@ class TripsFirestoreApi @Inject constructor(
                     editable = true,
                     dateList = listOf()
                 ) }
-                Log.d(FIREBASE_FIRESTORE_TRIPS_TAG, "get my trips order by id")
+                Log.d(FIREBASE_FIRESTORE_TRIPS_TAG, "get my trips order by id success")
                 tripList.complete(newTripList)
             }
             .addOnFailureListener { e ->

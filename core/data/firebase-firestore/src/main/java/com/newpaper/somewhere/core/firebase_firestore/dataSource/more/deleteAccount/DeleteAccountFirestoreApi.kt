@@ -2,7 +2,10 @@ package com.newpaper.somewhere.core.firebase_firestore.dataSource.more.deleteAcc
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import com.newpaper.somewhere.core.firebase_common.MANAGER_ID
+import com.newpaper.somewhere.core.firebase_common.SHARED_TRIPS
 import com.newpaper.somewhere.core.firebase_common.TRIPS
+import com.newpaper.somewhere.core.firebase_common.TRIP_ID
 import com.newpaper.somewhere.core.firebase_common.USERS
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.common.CommonRemoteDataSource
 import com.newpaper.somewhere.core.firebase_functions.dataSource.RecursiveDeleteRemoteDataSource
@@ -20,6 +23,41 @@ class DeleteAccountFirestoreApi @Inject constructor(
     private val commonApi: CommonRemoteDataSource,
     private val recursiveDeleteApi: RecursiveDeleteRemoteDataSource
 ): DeleteAccountRemoteDataSource {
+
+    override suspend fun getSharedTrips(
+        appUserId: String,
+    ): List<Trip> {
+        val sharedTripList = getSharedTripsMap(appUserId)
+
+        return sharedTripList.map {
+            val tripId = it[TRIP_ID] as Long
+            val managerId = it[MANAGER_ID] as String
+
+            Trip(id = tripId.toInt(), managerId = managerId)
+        }
+    }
+
+    private suspend fun getSharedTripsMap (
+        appUserId: String,
+    ): List<Map<String, Any>>{
+        val sharedTripList = CompletableDeferred<List<Map<String, Any>>>()
+
+        firestoreDb.collection(USERS).document(appUserId)
+            .get()
+            .addOnSuccessListener { document ->
+                //[<tripId, userId>, <tripId, userId>]
+                Log.d(FIREBASE_FIRESTORE_DELETE_ACCOUNT_TAG, "get shared trips")
+                val sharedTrips = document.get(SHARED_TRIPS) as? List<Map<String, Any>> ?: listOf()
+                sharedTripList.complete(sharedTrips)
+            }
+            .addOnFailureListener{exception ->
+                Log.e(FIREBASE_FIRESTORE_DELETE_ACCOUNT_TAG, "get shared trips fail - ", exception)
+            }
+
+        return sharedTripList.await()
+    }
+
+
     override suspend fun deleteUserData(
         appUserId: String?,
         sharedTripList: List<Trip>,

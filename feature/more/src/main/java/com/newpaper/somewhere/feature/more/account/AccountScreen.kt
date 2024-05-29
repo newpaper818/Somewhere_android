@@ -16,7 +16,6 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,7 +24,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -40,7 +38,6 @@ import com.newpaper.somewhere.core.ui.item.ListGroupCard
 import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
 import com.newpaper.somewhere.feature.more.R
-import com.newpaper.somewhere.feature.trip.image.ImageViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -56,19 +53,9 @@ fun AccountRoute(
 
     modifier: Modifier = Modifier,
     use2Panes: Boolean = false,
-    imageViewModel: ImageViewModel = hiltViewModel(),
     accountViewModel: AccountViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-
-    LaunchedEffect(Unit) {
-        //delete unused profile images
-        imageViewModel.deleteUnusedProfileImageFiles(
-            context = context,
-            usingProfileImage = userData.profileImagePath
-        )
-    }
 
     val snackBarHostState = remember { SnackbarHostState() }
     val signOutErrorText = stringResource(id = R.string.sign_out_error)
@@ -105,7 +92,7 @@ fun AccountRoute(
         endSpacerValue = spacerValue,
         navigateUp = navigateUp,
         snackBarHostState = snackBarHostState,
-        downloadImage = imageViewModel::getImage,
+        downloadImage = accountViewModel::getImage,
         modifier = modifier,
         use2Panes = use2Panes
     )

@@ -86,7 +86,7 @@ fun SignInRoute(
 
     LaunchedEffect(Unit) {
         signInViewModel.setIsSigningIn(false)
-        signInViewModel.deleteAllLocalImages(context)
+        signInViewModel.deleteAllLocalImages()
     }
 
     //set signInButtonEnabled
@@ -170,7 +170,10 @@ fun SignInRoute(
 
                         signInViewModel.updateUserDataFromRemote(
                             userData = userData,
-                            onDone = { navigateToMain() },
+                            onDone = { userData1 ->
+                                updateUserData(userData1)
+                                navigateToMain()
+                            },
                             showErrorSnackbar = { signInErrorSnackbar() }
                         )
                     }

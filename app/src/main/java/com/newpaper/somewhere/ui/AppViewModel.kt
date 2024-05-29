@@ -2,7 +2,8 @@ package com.newpaper.somewhere.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.newpaper.somewhere.core.data.repository.SettingRepository
+import androidx.navigation.NavController
+import com.newpaper.somewhere.core.data.repository.PreferencesRepository
 import com.newpaper.somewhere.core.data.repository.signIn.UserRepository
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.data.Theme
@@ -16,6 +17,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+private const val APP_VIEWMODEL_TAG = "App-ViewModel"
 
 data class AppPreferencesState(
     val theme: Theme = Theme(),
@@ -41,7 +44,7 @@ data class AppUiState(
 
 @HiltViewModel
 class AppViewModel @Inject constructor(
-    private val settingRepository: SettingRepository,
+    private val preferencesRepository: PreferencesRepository,
     private val userRepository: UserRepository,
 ): ViewModel() {
     private val _appUiState = MutableStateFlow(AppUiState())
@@ -56,7 +59,7 @@ class AppViewModel @Inject constructor(
     }
 
     suspend fun getAppPreferencesValue(){
-        settingRepository.getAppPreferencesValue { theme, dateTimeFormat ->
+        preferencesRepository.getAppPreferencesValue { theme, dateTimeFormat ->
             _appUiState.update {
                 it.copy(
                     appPreferences = it.appPreferences.copy(
@@ -108,6 +111,22 @@ class AppViewModel @Inject constructor(
 
 
 
+    //==============================================================================================
+    //at sign in screen ============================================================================
+    fun initAppUiState(
+
+    ){
+        _appUiState.update {
+            it.copy(
+                appUserData = null,
+                firstLaunch = true,
+                isEditMode = false
+            )
+        }
+    }
+
+
+
 
 
 
@@ -154,7 +173,7 @@ class AppViewModel @Inject constructor(
     ){
         val startScreenDestination =
             if (userDataIsNull) ScreenDestination.SIGN_IN
-            else ScreenDestination.MAIN
+            else ScreenDestination.TRIPS
 
         _appUiState.update {
             it.copy(

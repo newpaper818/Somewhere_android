@@ -1,5 +1,9 @@
 package com.newpaper.somewhere.navigation.more
 
+import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -7,6 +11,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
+import com.newpaper.somewhere.feature.more.editProfile.EditProfileRoute
 import com.newpaper.somewhere.navigation.enterTransition
 import com.newpaper.somewhere.navigation.exitTransition
 import com.newpaper.somewhere.navigation.popEnterTransition
@@ -24,7 +29,6 @@ fun NavGraphBuilder.editProfileScreen(
     appViewModel: AppViewModel,
     externalState: ExternalState,
 
-    navigateTo: () -> Unit,
     navigateUp: () -> Unit,
 
     modifier: Modifier = Modifier,
@@ -39,7 +43,24 @@ fun NavGraphBuilder.editProfileScreen(
         popEnterTransition = { popEnterTransition },
         popExitTransition = { popExitTransition }
     ) {
+        LaunchedEffect(Unit) {
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.EDIT_PROFILE)
+        }
 
+        val appUiState by appViewModel.appUiState.collectAsState()
 
+        if (appUiState.appUserData != null) {
+            EditProfileRoute(
+                userData = appUiState.appUserData!!,
+                internetEnabled = externalState.internetEnabled,
+                spacerValue = externalState.windowSizeClass.spacerValue,
+                updateUserState = appViewModel::updateUserData,
+                navigateUp = navigateUp,
+                modifier = modifier
+            )
+        }
+        else {
+            Text("no user")
+        }
     }
 }

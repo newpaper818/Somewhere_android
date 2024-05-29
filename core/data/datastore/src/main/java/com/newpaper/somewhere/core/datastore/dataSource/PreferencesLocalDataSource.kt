@@ -7,7 +7,7 @@ import com.newpaper.somewhere.core.model.enums.DateFormat
 import com.newpaper.somewhere.core.model.enums.MapTheme
 import com.newpaper.somewhere.core.model.enums.TimeFormat
 
-interface SettingLocalDataSource {
+interface PreferencesLocalDataSource {
 
     /**
      * update app setting values - at app start

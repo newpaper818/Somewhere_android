@@ -22,9 +22,9 @@ import javax.inject.Inject
 
 private const val DATA_STORE_TAG = "DataStore"
 
-class SettingDataStoreApi @Inject constructor(
+class PreferencesDataStoreApi @Inject constructor(
     private val dataStore: DataStore<Preferences>
-): SettingLocalDataSource {
+): PreferencesLocalDataSource {
     private companion object {
         val APP_THEME = intPreferencesKey("app_theme")
         val MAP_THEME = intPreferencesKey("map_theme")

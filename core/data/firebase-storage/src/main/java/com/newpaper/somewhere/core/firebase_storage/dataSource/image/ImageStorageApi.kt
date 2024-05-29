@@ -1,4 +1,4 @@
-package com.newpaper.somewhere.core.firebase_storage.dataSource
+package com.newpaper.somewhere.core.firebase_storage.dataSource.image
 
 import android.content.Context
 import android.net.Uri
@@ -12,7 +12,7 @@ import kotlinx.coroutines.tasks.await
 import java.io.File
 import javax.inject.Inject
 
-private const val FIREBASE_STORAGE_TAG = "Firebase-Storage"
+private const val FIREBASE_STORAGE_IMAGE_TAG = "Firebase-Storage-Image"
 
 class ImageStorageApi @Inject constructor(
     @ApplicationContext private var context: Context,
@@ -34,12 +34,12 @@ class ImageStorageApi @Inject constructor(
 
             imageRef.getFile(imageUri)
                 .addOnSuccessListener {
-                    Log.d(FIREBASE_STORAGE_TAG, "download trip image success - imageRef: $imageRef")
+                    Log.d(FIREBASE_STORAGE_IMAGE_TAG, "download trip image success - imageRef: $imageRef")
                     result(true)
                 }
                 .addOnFailureListener{
                     Log.e(
-                        FIREBASE_STORAGE_TAG,
+                        FIREBASE_STORAGE_IMAGE_TAG,
                         "download trip image fail - imageRef: $imageRef",
                         it
                     )
@@ -48,7 +48,7 @@ class ImageStorageApi @Inject constructor(
         }
         else {
             Log.e(
-                FIREBASE_STORAGE_TAG,
+                FIREBASE_STORAGE_IMAGE_TAG,
                 "download trip image fail - trip id is null - imagePath: $imagePath"
             )
             result(false)
@@ -67,11 +67,11 @@ class ImageStorageApi @Inject constructor(
 
         imageRef.getFile(imageUri)
             .addOnSuccessListener {
-                Log.d(FIREBASE_STORAGE_TAG, "download profile image - imageRef: $imageRef")
+                Log.d(FIREBASE_STORAGE_IMAGE_TAG, "download profile image - imageRef: $imageRef")
                 result(true)
             }
             .addOnFailureListener{
-                Log.e(FIREBASE_STORAGE_TAG, "download profile image fail - imageRef: $imageRef", it)
+                Log.e(FIREBASE_STORAGE_IMAGE_TAG, "download profile image fail - imageRef: $imageRef", it)
                 result(false)
             }
     }
@@ -92,7 +92,7 @@ class ImageStorageApi @Inject constructor(
             }
             else {
                 Log.e(
-                    FIREBASE_STORAGE_TAG,
+                    FIREBASE_STORAGE_IMAGE_TAG,
                     "upload trip image fail - trip id is null - imagePath: $imagePath"
                 )
             }
@@ -131,7 +131,7 @@ class ImageStorageApi @Inject constructor(
             }
             else {
                 Log.e(
-                    FIREBASE_STORAGE_TAG,
+                    FIREBASE_STORAGE_IMAGE_TAG,
                     "delete trip image fail - trip id is null - imagePath: $imagePath"
                 )
             }
@@ -166,10 +166,10 @@ class ImageStorageApi @Inject constructor(
 
         uploadTask
             .addOnSuccessListener {
-                Log.d(FIREBASE_STORAGE_TAG, "upload trip image - imageRef: $imageRef")
+                Log.d(FIREBASE_STORAGE_IMAGE_TAG, "upload trip image - imageRef: $imageRef")
             }
             .addOnFailureListener{ e ->
-                Log.e(FIREBASE_STORAGE_TAG, "upload trip image fail - imageRef: $imageRef", e)
+                Log.e(FIREBASE_STORAGE_IMAGE_TAG, "upload trip image fail - imageRef: $imageRef", e)
             }
     }
 
@@ -187,10 +187,10 @@ class ImageStorageApi @Inject constructor(
 
         uploadTask
             .addOnSuccessListener {
-                Log.d(FIREBASE_STORAGE_TAG, "upload profile image - imagePath: $imageRef")
+                Log.d(FIREBASE_STORAGE_IMAGE_TAG, "upload profile image - imagePath: $imageRef")
             }
             .addOnFailureListener { e ->
-                Log.e(FIREBASE_STORAGE_TAG, "upload profile image fail - imagePath: $imageRef", e)
+                Log.e(FIREBASE_STORAGE_IMAGE_TAG, "upload profile image fail - imagePath: $imageRef", e)
             }
     }
 
@@ -213,11 +213,11 @@ class ImageStorageApi @Inject constructor(
 
                     deleteImageRef.delete()
                         .addOnSuccessListener { taskSnapshot ->
-                            Log.d(FIREBASE_STORAGE_TAG, "delete profile image $taskSnapshot")
+                            Log.d(FIREBASE_STORAGE_IMAGE_TAG, "delete profile image $taskSnapshot")
                         }
                         .addOnFailureListener { e ->
                             Log.e(
-                                FIREBASE_STORAGE_TAG,
+                                FIREBASE_STORAGE_IMAGE_TAG,
                                 "delete profile image fail - imageRef: $imageRef",
                                 e
                             )
@@ -225,7 +225,7 @@ class ImageStorageApi @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-            Log.e(FIREBASE_STORAGE_TAG, "delete profile images fail", e)
+            Log.e(FIREBASE_STORAGE_IMAGE_TAG, "delete profile images fail", e)
         }
 
     }
@@ -241,10 +241,10 @@ class ImageStorageApi @Inject constructor(
 
         imageRef.delete()
             .addOnSuccessListener { taskSnapshot ->
-                Log.d(FIREBASE_STORAGE_TAG, "delete trip image $taskSnapshot")
+                Log.d(FIREBASE_STORAGE_IMAGE_TAG, "delete trip image $taskSnapshot")
             }
             .addOnFailureListener{e ->
-                Log.e(FIREBASE_STORAGE_TAG, "delete trip image fail", e)
+                Log.e(FIREBASE_STORAGE_IMAGE_TAG, "delete trip image fail", e)
             }
     }
 }

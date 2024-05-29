@@ -12,6 +12,7 @@ import android.provider.OpenableColumns
 import android.util.Log
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.utils.extractTripIdFromImagePath
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.io.FileInputStream
@@ -27,23 +28,22 @@ import kotlin.math.sqrt
 private const val LOCAL_IMAGE_TAG = "Local-Storage-Image"
 
 private const val IMAGE_MAX_SIZE_MB = 2.3    //Mebibyte
-private const val PROFILE_IMAGE_MAX_SIZE_MB = 0.15    //Mebibyte
+private const val PROFILE_IMAGE_MAX_SIZE_MB = 0.05    //Mebibyte
 
 class ImageLocalApi @Inject constructor(
-
+    @ApplicationContext private val context: Context
 ):ImageLocalDataSource {
     override fun saveImageToInternalStorage(
         tripId: Int,
         index: Int,
-        context: Context,
         uri: Uri,
         isProfileImage: Boolean
     ): String? {
         //convert uri to bitmap
-        val bitmap = getBitMapFromUri(uri, context)
+        val bitmap = getBitMapFromUri(uri)
 
         //compress bitmap
-        val newBitmap = compressBitmap(isProfileImage, context, bitmap, uri)
+        val newBitmap = compressBitmap(isProfileImage, bitmap, uri)
 
         //make file name : tripId date time index
         val fileName = getImageFileName(isProfileImage, tripId, index)
@@ -51,7 +51,9 @@ class ImageLocalApi @Inject constructor(
         //save
         return try{
             context.openFileOutput(fileName, Context.MODE_PRIVATE).use { stream ->
-                if (!newBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream)){
+                val quality = if (isProfileImage) 80 else 90
+
+                if (!newBitmap.compress(Bitmap.CompressFormat.JPEG, quality, stream)){
                     throw IOException("Couldn't save bitmap")
                 }
             }
@@ -64,7 +66,6 @@ class ImageLocalApi @Inject constructor(
     }
 
     override fun saveImageToExternalStorage(
-        context: Context,
         imageFileName: String
     ): Boolean {
         val internalImageFile = File(context.filesDir, imageFileName)
@@ -105,16 +106,15 @@ class ImageLocalApi @Inject constructor(
     }
 
     override fun deleteFilesFromInternalStorage(
-        context: Context,
         files: List<String>
     ){
         files.forEach {
-            deleteFileFromInternalStorage(context, it)
+            deleteFileFromInternalStorage(it)
         }
     }
 
     override fun deleteAllImagesFromInternalStorage(
-        context: Context,
+
     ){
         Log.d(LOCAL_IMAGE_TAG, "delete all images from local storage")
 
@@ -133,7 +133,6 @@ class ImageLocalApi @Inject constructor(
     }
 
     override fun deleteUnusedImageFilesForAllTrips(
-        context: Context,
         allTrips: List<Trip>
     ){
         //all trip id : 1 4 5 8
@@ -155,13 +154,11 @@ class ImageLocalApi @Inject constructor(
 
         //delete unused image files
         deleteFilesFromInternalStorage(
-            context = context,
             files = unusedImageFiles.map { it.name }
         )
     }
 
     override fun deleteUnusedProfileImageFiles(
-        context: Context,
         usingProfileImage: String?
     ){
         //get all .jpg files in internal storage
@@ -177,10 +174,8 @@ class ImageLocalApi @Inject constructor(
 
         //delete unused image files
         deleteFilesFromInternalStorage(
-            context = context,
             files = unusedImageFiles.map { it.name }
         )
-
     }
 
 
@@ -208,7 +203,6 @@ class ImageLocalApi @Inject constructor(
 
     private fun getBitMapFromUri(
         uri: Uri,
-        context: Context
     ): Bitmap {
         return if (Build.VERSION.SDK_INT >= 28) {
             val source = ImageDecoder.createSource(context.contentResolver, uri)
@@ -221,13 +215,12 @@ class ImageLocalApi @Inject constructor(
 
     private fun compressBitmap(
         isProfileImage: Boolean,
-        context: Context,
         bitmap: Bitmap,
         uri: Uri
     ): Bitmap {
         var imageFileSize: Float = 0f
         runBlocking {
-            imageFileSize = getFileSizeFromUri(context, uri)
+            imageFileSize = getFileSizeFromUri(uri)
         }
 
         val width = bitmap.width
@@ -264,7 +257,6 @@ class ImageLocalApi @Inject constructor(
     }
 
     private fun getFileSizeFromUri(
-        context: Context,
         uri: Uri
     ): Float {
 
@@ -298,7 +290,6 @@ class ImageLocalApi @Inject constructor(
     }
 
     private fun deleteFileFromInternalStorage(
-        context: Context,
         filePath: String
     ): Boolean{
         return try {

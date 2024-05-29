@@ -4,6 +4,10 @@ import com.newpaper.somewhere.core.model.tripData.Trip
 
 interface DeleteAccountRemoteDataSource {
 
+    suspend fun getSharedTrips(
+        appUserId: String,
+    ): List<Trip>
+
     /**
      * Delete user data(account).
      * Include all Trips, Places, Images

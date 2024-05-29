@@ -1,6 +1,6 @@
 package com.newpaper.somewhere.core.utils
 
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 /**

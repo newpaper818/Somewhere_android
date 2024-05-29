@@ -1,7 +1,7 @@
 package com.newpaper.somewhere.feature.more.setDateTimeFormat
 
 import androidx.lifecycle.ViewModel
-import com.newpaper.somewhere.core.data.repository.SettingRepository
+import com.newpaper.somewhere.core.data.repository.PreferencesRepository
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.enums.DateFormat
 import com.newpaper.somewhere.core.model.enums.TimeFormat
@@ -24,7 +24,7 @@ data class SetDateTimeFormatUiState(
 
 @HiltViewModel
 class SetDateTimeFormatViewModel @Inject constructor(
-    private val settingRepository: SettingRepository,
+    private val preferencesRepository: PreferencesRepository,
 ): ViewModel() {
     private val _setDateTimeFormatViewModel = MutableStateFlow(SetDateTimeFormatUiState())
     val setDateTimeFormatUiState = _setDateTimeFormatViewModel.asStateFlow()
@@ -47,9 +47,6 @@ class SetDateTimeFormatViewModel @Inject constructor(
         }
     }
 
-
-    //==============================================================================================
-    //update and save setting values ===============================================================
     suspend fun saveDateTimeFormatUserPreferences(
         dateFormat: DateFormat? = null,
         useMonthName: Boolean? = null,
@@ -57,16 +54,16 @@ class SetDateTimeFormatViewModel @Inject constructor(
         timeFormat: TimeFormat? = null
     ){
         if (dateFormat != null) {
-            settingRepository.saveDateFormatPreference(dateFormat = dateFormat)
+            preferencesRepository.saveDateFormatPreference(dateFormat = dateFormat)
         }
         else if (useMonthName != null) {
-            settingRepository.saveDateUseMonthNamePreference(useMonthName = useMonthName)
+            preferencesRepository.saveDateUseMonthNamePreference(useMonthName = useMonthName)
         }
         else if (includeDayOfWeek != null) {
-            settingRepository.saveDateIncludeDayOfWeekPreference(includeDayOfWeek = includeDayOfWeek)
+            preferencesRepository.saveDateIncludeDayOfWeekPreference(includeDayOfWeek = includeDayOfWeek)
         }
         else if (timeFormat != null) {
-            settingRepository.saveTimeFormatPreference(timeFormat = timeFormat)
+            preferencesRepository.saveTimeFormatPreference(timeFormat = timeFormat)
         }
     }
 }

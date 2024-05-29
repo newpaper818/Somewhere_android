@@ -41,7 +41,7 @@ interface UserRemoteDataSource {
         onFail: (exception: Exception) -> Unit
     )
 
-    fun deleteUser(
+    fun deleteAuthUser(
         deleteSuccess: (Boolean) -> Unit
     )
 }

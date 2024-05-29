@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.googleDevToolsKsp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.gmsGoogleServices)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -134,6 +135,7 @@ dependencies {
 
     //navigation
     implementation(libs.navigation.compose)
+//    implementation(libs.kotlinx.serialization.json)
 
     //lifecycle
     implementation(libs.lifecycle.common)

@@ -1,6 +1,5 @@
 package com.newpaper.somewhere.util
 
-import android.app.Activity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.platform.LocalConfiguration

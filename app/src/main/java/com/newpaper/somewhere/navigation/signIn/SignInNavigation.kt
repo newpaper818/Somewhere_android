@@ -7,7 +7,6 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import com.newpaper.somewhere.BuildConfig
-import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.feature.signin.signIn.SignInRoute
 import com.newpaper.somewhere.navigation.enterTransition
@@ -42,6 +41,7 @@ fun NavGraphBuilder.signInScreen(
     ) {
         LaunchedEffect(Unit) {
             appViewModel.updateCurrentScreenDestination(ScreenDestination.SIGN_IN)
+            appViewModel.initAppUiState()
         }
 
         SignInRoute(

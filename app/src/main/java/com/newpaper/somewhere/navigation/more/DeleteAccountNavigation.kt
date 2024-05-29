@@ -1,5 +1,9 @@
 package com.newpaper.somewhere.navigation.more
 
+import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -7,6 +11,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
+import com.newpaper.somewhere.feature.more.deleteAccount.DeleteAccountRoute
 import com.newpaper.somewhere.navigation.enterTransition
 import com.newpaper.somewhere.navigation.exitTransition
 import com.newpaper.somewhere.navigation.popEnterTransition
@@ -23,8 +28,9 @@ fun NavController.navigateToDeleteAccount(navOptions: NavOptions? = null) =
 fun NavGraphBuilder.deleteAccountScreen(
     appViewModel: AppViewModel,
     externalState: ExternalState,
+    isDarkAppTheme: Boolean,
 
-    navigateToOpenSourceLicense: () -> Unit,
+    navigateToSignIn: () -> Unit,
     navigateUp: () -> Unit,
 
     modifier: Modifier = Modifier,
@@ -39,7 +45,25 @@ fun NavGraphBuilder.deleteAccountScreen(
         popEnterTransition = { popEnterTransition },
         popExitTransition = { popExitTransition }
     ) {
+        LaunchedEffect(Unit) {
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.DELETE_ACCOUNT)
+        }
 
+        val appUiState by appViewModel.appUiState.collectAsState()
 
+        if (appUiState.appUserData != null) {
+            DeleteAccountRoute(
+                isDarkAppTheme = isDarkAppTheme,
+                userData = appUiState.appUserData!!,
+                internetEnabled = externalState.internetEnabled,
+                spacerValue = externalState.windowSizeClass.spacerValue,
+                navigateUp = navigateUp,
+                onDeleteAccountDone = navigateToSignIn,
+                modifier = modifier,
+            )
+        }
+        else {
+            Text("no user")
+        }
     }
 }

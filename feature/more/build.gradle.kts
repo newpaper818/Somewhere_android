@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.hilt)
     alias(libs.plugins.googleDevToolsKsp)
+    alias(libs.plugins.aboutlibraries)
 }
 
 android {
@@ -51,6 +52,9 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+
+    //open source license
+    implementation(libs.aboutlibraries)
 
     //test
     testImplementation(libs.junit)

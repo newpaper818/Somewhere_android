@@ -50,7 +50,7 @@ fun SetThemeRoute(
         saveUserPreferences = { appTheme, mapTheme ->
             coroutineScope.launch {
                 //save to dataStore
-                setThemeViewModel.saveThemeUserPreferences(
+                setThemeViewModel.saveThemePreferences(
                     appTheme, mapTheme
                 )
 

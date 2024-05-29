@@ -31,8 +31,11 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,54 +61,87 @@ import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.ui.MyTextField
 import com.newpaper.somewhere.core.ui.card.ProfileImage
 import com.newpaper.somewhere.feature.more.R
-import com.newpaper.somewhere.feature.more.account.AccountViewModel
-import com.newpaper.somewhere.feature.trip.image.ImageViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun EditProfileRoute(
     userData: UserData,
     internetEnabled: Boolean,
     spacerValue: Dp,
-    snackBarHostState: SnackbarHostState,
 
+    updateUserState: (userData: UserData) -> Unit,
     navigateUp: () -> Unit,
 
     modifier: Modifier = Modifier,
     editProfileViewModel: EditProfileViewModel = hiltViewModel(),
 ){
+    LaunchedEffect(Unit) {
+        editProfileViewModel.initEditAccountViewModel(userData)
+    }
+
     val editProfileUiState by editProfileViewModel.editProfileUiState.collectAsState()
 
     val galleryLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
     ){ uri ->
         if (uri != null) {
-            val fileName = imageViewModel.(
-                tripId = 0, index = 0,
-                context = context,
+            val fileName = editProfileViewModel.saveImageToInternalStorage(
+                tripId = 0,
+                index = 0,
                 uri = uri,
                 isProfileImage = true
             )
 
             if (fileName != null) {
-                onProfileImageChanged(fileName)
+                editProfileViewModel.onUserProfileImageChanged(fileName)
             }
         }
     }
 
+    val coroutineScope = rememberCoroutineScope()
+    val snackBarHostState = remember { SnackbarHostState() }
+    val successText = stringResource(id = R.string.snackbar_success_update_profile)
+    val failText = stringResource(id = R.string.snackbar_fail_update_profile)
+    val noChangedText = stringResource(id = R.string.snackbar_no_changed)
+
     EditProfileScreen(
         editProfileUiState = editProfileUiState,
+        userData = userData,
         spacerValue = spacerValue,
         internetEnabled = internetEnabled,
         snackBarHostState = snackBarHostState,
-        downloadImage = imageViewModel::getImage,
+        downloadImage = editProfileViewModel::getImage,
         onClickEditImage = {
             galleryLauncher.launch("image/*")
-        }
-        onClickDeleteImage = ,
-        onUserNameChanged = ,
-        onSaveClick = ,
+        },
+        onClickDeleteImage = {
+            editProfileViewModel.onUserProfileImageChanged(null)
+        },
+        onUserNameChanged = editProfileViewModel::onUserNameChanged,
+        onSaveClick = {
+            editProfileViewModel.saveProfile(
+                userData = userData,
+                showSuccessSnackbar = {
+                    coroutineScope.launch {
+                        snackBarHostState.showSnackbar(message = successText)
+                    }
+                },
+                showFailSnackbar = {
+                    coroutineScope.launch {
+                        snackBarHostState.showSnackbar(message = failText)
+                    }
+                },
+                showNoChangedSnackbar = {
+                    coroutineScope.launch {
+                        snackBarHostState.showSnackbar(message = noChangedText)
+                    }
+                },
+                updateUserState = updateUserState
+            )
+        },
         navigateUp = navigateUp,
         modifier = modifier
+    )
 }
 
 @Composable
@@ -168,7 +204,7 @@ private fun EditProfileScreen(
                 EditableProfileImage(
                     internetEnabled = internetEnabled,
                     userId = userData.userId,
-                    profileImage = editProfileUiState.userProfileImage,
+                    profileImage = editProfileUiState.userProfileImagePath,
                     downloadImage = downloadImage,
                     onClickEditImage = onClickEditImage,
                     onClickDeleteImage = onClickDeleteImage

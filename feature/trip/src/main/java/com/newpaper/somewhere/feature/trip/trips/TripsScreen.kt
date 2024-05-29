@@ -55,7 +55,6 @@ import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.convert.getAllImagesPath
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
 import com.newpaper.somewhere.feature.trip.BuildConfig
-import com.newpaper.somewhere.feature.trip.image.ImageViewModel
 import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.trips.component.GlanceSpot
 import com.newpaper.somewhere.feature.trip.trips.component.GoogleBannerAd
@@ -87,26 +86,26 @@ fun TripsRoute(
     navigateToGlanceSpot: (glance: Glance) -> Unit,
 
     modifier: Modifier = Modifier,
-    tripsViewModel: TripsViewModel = hiltViewModel(),
-    imageViewModel: ImageViewModel = hiltViewModel()
+    tripsViewModel: TripsViewModel = hiltViewModel()
 ){
     val context = LocalContext.current
-    var loadingTrips by rememberSaveable { mutableStateOf(true) }
 
     //get trips
     LaunchedEffect(Unit) {
 
-        loadingTrips = true
+        tripsViewModel.setLoadingTrips(true)
         tripsViewModel.updateTrips(
             internetEnabled = internetEnabled,
             appUserId = appUserId
         )
-        loadingTrips = false
+        tripsViewModel.setLoadingTrips(false)
 
         tripsViewModel.updateGlance(
             internetEnabled = internetEnabled,
             appUserId = appUserId
         )
+
+        firstLaunchToFalse()
     }
 
     val adView = AdView(context).apply {
@@ -153,14 +152,13 @@ fun TripsRoute(
 
     TripsScreen(
         firstLaunch = firstLaunch,
-        firstLaunchToFalse = firstLaunchToFalse,
         spacerValue = spacerValue,
         isEditMode = isEditMode,
         lazyListState = lazyListState,
         dateTimeFormat = dateTimeFormat,
         adView = adView,
         internetEnabled = internetEnabled,
-        loadingTrips = loadingTrips,
+        loadingTrips = tripsUiState.loadingTrips,
         showExitDialog = showExitDialog,
         showExitDialogToFalse = { showExitDialog = false },
 
@@ -178,7 +176,6 @@ fun TripsRoute(
         addDeletedImages = { tripsViewModel.addDeletedImages(it) },
         organizeAddedDeletedImages = { tripsViewModel.organizeAddedDeletedImages(
             tripManagerId = appUserId,
-            context = context,
             isClickSave = it,
             isInTripsScreen = true
         ) },
@@ -194,9 +191,9 @@ fun TripsRoute(
         navigateToTrip = navigateToTrip,
         navigateToGlanceSpot = { navigateToGlanceSpot(tripsUiState.glance) },
         updateItemOrder = tripsViewModel::reorderTempTrips,
-        downloadImage = imageViewModel::getImage,
+        downloadImage = tripsViewModel::getImage,
         setIsLoadingTrips = {
-            loadingTrips = it
+            tripsViewModel.setLoadingTrips(it)
         },
         modifier = modifier
     )
@@ -208,7 +205,6 @@ fun TripsRoute(
 @Composable
 private fun TripsScreen(
     firstLaunch: Boolean,
-    firstLaunchToFalse: () -> Unit,
 
     spacerValue: Dp,
     isEditMode: Boolean,
@@ -343,8 +339,6 @@ private fun TripsScreen(
 
             if (showingTrips.isNotEmpty() || showingSharedTrips.isNotEmpty()) {
 
-                firstLaunchToFalse()
-
                 //each my trip item ================================================================
                 if (showingTrips.isNotEmpty()){
                     item {
@@ -474,7 +468,7 @@ private fun TripsScreen(
                 }
             }
             else {
-                if (!loadingTrips) {
+                if (!loadingTrips || !firstLaunch) {
                     item {
                         NoTripCard()
                     }
@@ -547,7 +541,6 @@ private fun TripsScreenPreview_Default(){
 
         TripsScreen(
             firstLaunch = false,
-            firstLaunchToFalse = { },
             spacerValue = 16.dp,
             isEditMode = false,
             lazyListState = LazyListState(),
@@ -600,7 +593,6 @@ private fun TripsScreenPreview_Edit(){
 
         TripsScreen(
             firstLaunch = false,
-            firstLaunchToFalse = { },
             spacerValue = 16.dp,
             isEditMode = true,
             lazyListState = LazyListState(),
@@ -654,7 +646,6 @@ private fun TripsScreenPreview_OnClickCancel(){
 
         TripsScreen(
             firstLaunch = false,
-            firstLaunchToFalse = { },
             spacerValue = 16.dp,
             isEditMode = true,
             lazyListState = LazyListState(),

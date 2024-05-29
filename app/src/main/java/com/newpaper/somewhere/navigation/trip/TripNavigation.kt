@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.navigation.trip
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -39,7 +40,9 @@ fun NavGraphBuilder.tripScreen(
         popEnterTransition = { popEnterTransition },
         popExitTransition = { popExitTransition }
     ) {
-
+        LaunchedEffect(Unit) {
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.TRIP)
+        }
 
     }
 }

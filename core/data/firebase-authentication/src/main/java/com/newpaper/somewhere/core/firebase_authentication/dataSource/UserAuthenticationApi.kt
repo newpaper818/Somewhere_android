@@ -1,7 +1,6 @@
 package com.newpaper.somewhere.core.firebase_authentication.dataSource
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.util.Log
@@ -11,12 +10,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.OAuthProvider
-import com.newpaper.somewhere.core.data.firebase_authentication.R
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ProviderId
 import com.newpaper.somewhere.core.model.enums.getProviderIdFromString
 import com.newpaper.somewhere.core.utils.OAUTH_WEB_CLIENT_ID
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.tasks.await
 import java.util.Locale
@@ -186,7 +183,7 @@ class UserAuthenticationApi @Inject constructor(
                     // update.
                 }
                 .addOnFailureListener { e ->
-                    Log.e("auth", "re authenticate Apple user fail - ", e)
+                    Log.e(FIREBASE_AUTHENTICATION_TAG, "re authenticate Apple user fail - ", e)
                     onFail(e)
                     // Handle failure.
                 }
@@ -195,7 +192,7 @@ class UserAuthenticationApi @Inject constructor(
     }
 
     //DELETE USER ==================================================================================
-    override fun deleteUser(
+    override fun deleteAuthUser(
         deleteSuccess: (Boolean) -> Unit
     ){
         val user = auth.currentUser
