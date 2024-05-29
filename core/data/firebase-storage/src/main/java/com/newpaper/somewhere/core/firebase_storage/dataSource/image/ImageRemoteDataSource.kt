@@ -1,4 +1,4 @@
-package com.newpaper.somewhere.core.firebase_storage.dataSource
+package com.newpaper.somewhere.core.firebase_storage.dataSource.image
 
 interface ImageRemoteDataSource {
 

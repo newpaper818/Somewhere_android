@@ -116,10 +116,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                    Column(modifier = Modifier.fillMaxSize()) {
-//                        Text(text = "width: ${externalState.windowSizeClass.widthSizeClass}")
-//                        Text(text = "internet: ${externalState.internetEnabled}")
-//                    }
                     Log.d(MAIN_ACTIVITY_TAG, "launch somewhere app")
                     SomewhereApp(
                         externalState = externalState,

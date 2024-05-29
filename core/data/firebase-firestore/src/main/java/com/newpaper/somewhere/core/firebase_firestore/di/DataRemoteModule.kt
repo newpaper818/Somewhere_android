@@ -1,15 +1,14 @@
 package com.newpaper.somewhere.core.firebase_firestore.di
 
-import android.content.Context
 import com.google.firebase.firestore.FirebaseFirestore
-import com.newpaper.somewhere.core.firebase_firestore.dataSource.common.CommonRemoteDataSource
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.common.CommonFirestoreApi
-import com.newpaper.somewhere.core.firebase_firestore.dataSource.more.appVersion.AppVersionRemoteDataSource
+import com.newpaper.somewhere.core.firebase_firestore.dataSource.common.CommonRemoteDataSource
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.more.appVersion.AppVersionFirestoreApi
-import com.newpaper.somewhere.core.firebase_firestore.dataSource.more.deleteAccount.DeleteAccountRemoteDataSource
+import com.newpaper.somewhere.core.firebase_firestore.dataSource.more.appVersion.AppVersionRemoteDataSource
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.more.deleteAccount.DeleteAccountFirestoreApi
-import com.newpaper.somewhere.core.firebase_firestore.dataSource.more.profile.EditProfileFirestoreApi
-import com.newpaper.somewhere.core.firebase_firestore.dataSource.more.profile.EditProfileRemoteDataSource
+import com.newpaper.somewhere.core.firebase_firestore.dataSource.more.deleteAccount.DeleteAccountRemoteDataSource
+import com.newpaper.somewhere.core.firebase_firestore.dataSource.more.editProfile.EditProfileFirestoreApi
+import com.newpaper.somewhere.core.firebase_firestore.dataSource.more.editProfile.EditProfileRemoteDataSource
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.signIn.SignInFirestoreApi
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.signIn.SignInRemoteDataSource
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.trip.inviteFriend.InviteFriendFirestoreApi
@@ -22,9 +21,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 

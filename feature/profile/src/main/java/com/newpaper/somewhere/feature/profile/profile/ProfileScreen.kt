@@ -35,7 +35,6 @@ fun ProfileRoute(
     use2Panes: Boolean,
     userData: UserData?,
     navigateToAccount: () -> Unit,
-    snackBarHostState: SnackbarHostState,
 
     modifier: Modifier = Modifier,
     imageViewModel: ImageViewModel = hiltViewModel()
@@ -48,7 +47,6 @@ fun ProfileRoute(
         use2Panes = use2Panes,
         userData = userData,
         onProfileClick = navigateToAccount,
-        snackBarHostState = snackBarHostState,
         downloadImage = imageViewModel::getImage,
         modifier = modifier
     )
@@ -62,7 +60,6 @@ fun ProfileScreen(
     use2Panes: Boolean,
     userData: UserData?,
     onProfileClick: () -> Unit,
-    snackBarHostState: SnackbarHostState,
     downloadImage: (imagePath: String, tripManagerId: String, (Boolean) -> Unit) -> Unit,
 
     modifier: Modifier = Modifier
@@ -73,13 +70,6 @@ fun ProfileScreen(
             SomewhereTopAppBar(
                 startPadding = spacerValue,
                 title = stringResource(id = R.string.profile)
-            )
-        },
-        //FIXME can I remove this? if don't use snackbar
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackBarHostState,
-                modifier = Modifier.width(500.dp)
             )
         }
     ) {paddingValues ->
@@ -163,7 +153,6 @@ private fun ProfileScreenPreview(){
                     providerIds = listOf()
                 ),
                 onProfileClick = { },
-                snackBarHostState = SnackbarHostState(),
                 downloadImage = { _,_,_ ->}
             )
         }

@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.navigation.more
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -13,6 +14,7 @@ import com.newpaper.somewhere.navigation.enterTransition
 import com.newpaper.somewhere.navigation.exitTransition
 import com.newpaper.somewhere.navigation.popEnterTransition
 import com.newpaper.somewhere.navigation.popExitTransition
+import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
 
 private const val DEEP_LINK_URI_PATTERN =
@@ -23,6 +25,7 @@ fun NavController.navigateToAbout(navOptions: NavOptions? = null) =
 
 fun NavGraphBuilder.aboutScreen(
     externalState: ExternalState,
+    appViewModel: AppViewModel,
 
     navigateToOpenSourceLicense: () -> Unit,
     navigateUp: () -> Unit,
@@ -39,6 +42,9 @@ fun NavGraphBuilder.aboutScreen(
         popEnterTransition = { popEnterTransition },
         popExitTransition = { popExitTransition }
     ) {
+        LaunchedEffect(Unit) {
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.ABOUT)
+        }
 
         AboutRoute(
             spacerValue = externalState.windowSizeClass.spacerValue,

@@ -1,7 +1,7 @@
 package com.newpaper.somewhere.core.google_map_places.dataSource.di
 
-import com.newpaper.somewhere.core.google_map_places.dataSource.PlacesRemoteDataSource
 import com.newpaper.somewhere.core.google_map_places.dataSource.PlacesGoogleMapPlacesApi
+import com.newpaper.somewhere.core.google_map_places.dataSource.PlacesRemoteDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

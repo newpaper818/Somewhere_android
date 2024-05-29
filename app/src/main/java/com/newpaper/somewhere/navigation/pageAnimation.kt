@@ -19,6 +19,12 @@ internal val popEnterTransition =
     fadeIn(tween(300)) + scaleIn(animationSpec = tween(300), initialScale = 0.7f)
 internal val popExitTransition = slideOutHorizontally(animationSpec = tween(300), targetOffsetX = { it })
 
+//
+internal val TopEnterTransition = fadeIn(animationSpec = tween(2000))
+internal val TopExitTransition = fadeOut(animationSpec = tween(2000))
+internal val TopPopEnterTransition = fadeIn(animationSpec = tween(2000))
+internal val TopPopExitTransition = fadeOut(animationSpec = tween(2000))
+
 
 
 

@@ -1,6 +1,7 @@
 package com.newpaper.somewhere.navigation.more
 
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -45,6 +46,10 @@ fun NavGraphBuilder.accountScreen(
         popEnterTransition = { popEnterTransition },
         popExitTransition = { popExitTransition }
     ) {
+        LaunchedEffect(Unit) {
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.ACCOUNT)
+        }
+
         val appUiState by appViewModel.appUiState.collectAsState()
 
         if (appUiState.appUserData != null) {

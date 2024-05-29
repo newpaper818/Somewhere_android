@@ -24,6 +24,7 @@ import com.newpaper.somewhere.util.WindowWidthSizeClass
 fun ScreenWithNavigationBar(
     windowSizeClass: WindowSizeClass,
     currentTopLevelDestination: TopLevelDestination,
+    showNavigationBar: Boolean,
 
     onClickNavBarItem: (TopLevelDestination) -> Unit,
     onClickNavBarItemAgain: (TopLevelDestination) -> Unit,
@@ -33,96 +34,101 @@ fun ScreenWithNavigationBar(
     content: @Composable () -> Unit = {}
 ) {
 
-    Box(
-        modifier = modifier
-            .imePadding()
-            .navigationBarsPadding()
-            .displayCutoutPadding()
-            .fillMaxSize()
-    ) {
+    if (!showNavigationBar){
+        content()
+    }
+    else {
+        Box(
+            modifier = modifier
+                .imePadding()
+                .navigationBarsPadding()
+                .displayCutoutPadding()
+                .fillMaxSize()
+        ) {
 
-        //phone vertical ===========================================================================
-        if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
-            Column {
-                //content
-                Box(modifier = Modifier.weight(1f)) {
+            //phone vertical ===========================================================================
+            if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
+                Column {
+                    //content
+                    Box(modifier = Modifier.weight(1f)) {
+                        content()
+                    }
+
+                    //bottom navigation bar
+                    SomewhereNavigationBottomBar {
+                        topLevelDestinations.forEach {
+                            SomewhereNavigationBottomBarItem(
+                                selected = it == currentTopLevelDestination,
+                                onClick = {
+                                    if (it != currentTopLevelDestination)
+                                        onClickNavBarItem(it)
+                                    else
+                                        onClickNavBarItemAgain(it)
+                                },
+                                selectedIcon = it.selectedIcon,
+                                unSelectedIcon = it.unselectedIcon,
+                                labelText = stringResource(id = it.labelTextId)
+                            )
+                        }
+                    }
+                }
+            }
+
+            //phone horizontal (height compact) ========================================================
+            //or foldable vertical or tablet vertical (width medium)
+            else if (
+                windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact
+                || windowSizeClass.widthSizeClass == WindowWidthSizeClass.Medium
+            ) {
+                Row {
+                    //navigation rail bar
+                    SomewhereNavigationRailBar {
+                        topLevelDestinations.forEach {
+                            SomewhereNavigationRailBarItem(
+                                selected = it == currentTopLevelDestination,
+                                onClick = {
+                                    if (it != currentTopLevelDestination)
+                                        onClickNavBarItem(it)
+                                    else
+                                        onClickNavBarItemAgain(it)
+                                },
+                                selectedIcon = it.selectedIcon,
+                                unSelectedIcon = it.unselectedIcon,
+                                labelText = stringResource(id = it.labelTextId)
+                            )
+                        }
+                    }
+
+                    //content
                     content()
                 }
-
-                //bottom navigation bar
-                SomewhereNavigationBottomBar{
-                    topLevelDestinations.forEach {
-                        SomewhereNavigationBottomBarItem(
-                            selected = it == currentTopLevelDestination,
-                            onClick = {
-                                if (it != currentTopLevelDestination)
-                                    onClickNavBarItem(it)
-                                else
-                                    onClickNavBarItemAgain(it)
-                            },
-                            selectedIcon = it.selectedIcon,
-                            unSelectedIcon = it.unselectedIcon,
-                            labelText = stringResource(id = it.labelTextId)
-                        )
-                    }
-                }
             }
-        }
 
-        //phone horizontal (height compact) ========================================================
-        //or foldable vertical or tablet vertical (width medium)
-        else if (
-            windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact
-            || windowSizeClass.widthSizeClass == WindowWidthSizeClass.Medium
-        ) {
-            Row {
-                //navigation rail bar
-                SomewhereNavigationRailBar {
-                    topLevelDestinations.forEach {
-                        SomewhereNavigationRailBarItem(
-                            selected = it == currentTopLevelDestination,
-                            onClick = {
-                                if (it != currentTopLevelDestination)
-                                    onClickNavBarItem(it)
-                                else
-                                    onClickNavBarItemAgain(it)
-                            },
-                            selectedIcon = it.selectedIcon,
-                            unSelectedIcon = it.unselectedIcon,
-                            labelText = stringResource(id = it.labelTextId)
-                        )
+            //foldable horizontal or tablet horizontal =================================================
+            else if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded) {
+
+                Row {
+                    //navigation drawer bar
+                    SomewhereNavigationDrawer {
+                        topLevelDestinations.forEach {
+                            SomewhereNavigationDrawerItem(
+                                selected = it == currentTopLevelDestination,
+                                onClick = {
+                                    if (it != currentTopLevelDestination)
+                                        onClickNavBarItem(it)
+                                    else
+                                        onClickNavBarItemAgain(it)
+                                },
+                                selectedIcon = it.selectedIcon,
+                                unSelectedIcon = it.unselectedIcon,
+                                labelText = stringResource(id = it.labelTextId)
+                            )
+                        }
                     }
+
+                    //content
+                    content()
                 }
-
-                //content
-                content()
-            }
-        }
-
-        //foldable horizontal or tablet horizontal =================================================
-        else if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded) {
-
-            Row {
-                //navigation drawer bar
-                SomewhereNavigationDrawer{
-                    topLevelDestinations.forEach {
-                        SomewhereNavigationDrawerItem(
-                            selected = it == currentTopLevelDestination,
-                            onClick = {
-                                if (it != currentTopLevelDestination)
-                                    onClickNavBarItem(it)
-                                else
-                                    onClickNavBarItemAgain(it)
-                            },
-                            selectedIcon = it.selectedIcon,
-                            unSelectedIcon = it.unselectedIcon,
-                            labelText = stringResource(id = it.labelTextId)
-                        )
-                    }
-                }
-
-                //content
-                content()
             }
         }
     }

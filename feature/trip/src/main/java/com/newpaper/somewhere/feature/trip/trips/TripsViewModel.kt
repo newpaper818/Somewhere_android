@@ -1,9 +1,9 @@
 package com.newpaper.somewhere.feature.trip.trips
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.newpaper.somewhere.core.data.repository.image.ImageRepository
+import com.newpaper.somewhere.core.data.repository.image.CommonImageRepository
+import com.newpaper.somewhere.core.data.repository.image.GetImageRepository
 import com.newpaper.somewhere.core.data.repository.trip.TripRepository
 import com.newpaper.somewhere.core.data.repository.trip.TripsRepository
 import com.newpaper.somewhere.core.model.tripData.Date
@@ -37,6 +37,8 @@ data class TripsUiState(
     val trips: Trips = Trips(),
     val glance: Glance = Glance(),
 
+    val loadingTrips: Boolean = true,
+
     val addedImages: List<String> = listOf(),
     val deletedImages: List<String> = listOf(),
 
@@ -49,7 +51,8 @@ data class TripsUiState(
 class TripsViewModel @Inject constructor(
     private val tripsRepository: TripsRepository,
     private val tripRepository: TripRepository,
-    private val imageRepository: ImageRepository
+    private val commonImageRepository: CommonImageRepository,
+    private val getImageRepository: GetImageRepository
 ): ViewModel()  {
     private val _tripsUiState: MutableStateFlow<TripsUiState> =
         MutableStateFlow(
@@ -64,15 +67,31 @@ class TripsViewModel @Inject constructor(
     val tripsUiState = _tripsUiState.asStateFlow()
 
 
+    //==============================================================================================
+    //get image ====================================================================================
+    fun getImage(
+        imagePath: String,
+        imageUserId: String,
+        result: (Boolean) -> Unit
+    ) {
+        getImageRepository.getImage(
+            imagePath = imagePath,
+            imageUserId = imageUserId,
+            result = result
+        )
+    }
 
 
 
-
-
-
-
-
-
+    //==============================================================================================
+    //set UiState ==================================================================================
+    fun setLoadingTrips(
+        loadingTrips: Boolean
+    ){
+        _tripsUiState.update {
+            it.copy(loadingTrips = loadingTrips)
+        }
+    }
 
 
     private fun initGlance() {
@@ -83,7 +102,7 @@ class TripsViewModel @Inject constructor(
         }
     }
 
-    fun updateTripsAndShardTrips(){
+    private fun updateTripsAndShardTrips(){
         _tripsUiState.update {
             it.copy(
                 trips = it.trips.copy(
@@ -94,7 +113,7 @@ class TripsViewModel @Inject constructor(
         }
     }
 
-    fun initDeletedTripsIdsAndDeletedSharedTrips(){
+    private fun initDeletedTripsIdsAndDeletedSharedTrips(){
         _tripsUiState.update {
             it.copy(
                 deletedTripIds = listOf(),
@@ -119,8 +138,8 @@ class TripsViewModel @Inject constructor(
 
 
 
-    //image
-
+    //==============================================================================================
+    //image ========================================================================================
     private fun initAddedDeletedImages() {
         _tripsUiState.update {
             it.copy(addedImages = listOf(), deletedImages = listOf())
@@ -145,7 +164,6 @@ class TripsViewModel @Inject constructor(
 
     fun organizeAddedDeletedImages(
         tripManagerId: String,
-        context: Context,
         isClickSave: Boolean, //save: true / cancel: false
         isInTripsScreen: Boolean = false
     ) {
@@ -158,10 +176,10 @@ class TripsViewModel @Inject constructor(
         //save: delete(delete internal storage) deletedImages
         if (isClickSave) {
             //delete deletedImages
-            imageRepository.deleteImagesFromInternalStorage(context, _tripsUiState.value.deletedImages)
+            commonImageRepository.deleteImagesFromInternalStorage(_tripsUiState.value.deletedImages)
 
             //upload addedImages to firebase storage
-            imageRepository.uploadImagesToRemote(
+            commonImageRepository.uploadImagesToRemote(
                 tripManagerId = tripManagerId,
                 imagePaths = _tripsUiState.value.addedImages
 
@@ -171,7 +189,7 @@ class TripsViewModel @Inject constructor(
             //  myTrips: already delete image form firebase-functions
             //  sharedTrips: exit from trip, not delete trip - do not have to delete
             if (!isInTripsScreen) {
-                imageRepository.deleteImagesFromRemote(
+                commonImageRepository.deleteImagesFromRemote(
                     tripManagerId = tripManagerId,
                     imagePaths = _tripsUiState.value.deletedImages
                 )
@@ -179,7 +197,7 @@ class TripsViewModel @Inject constructor(
         }
         //cancel: delete(delete internal storage) addedImages
         else{
-            imageRepository.deleteImagesFromInternalStorage(context, _tripsUiState.value.addedImages)
+            commonImageRepository.deleteImagesFromInternalStorage(_tripsUiState.value.addedImages)
         }
 
         //init
@@ -189,6 +207,11 @@ class TripsViewModel @Inject constructor(
 
 
 
+
+
+
+    //==============================================================================================
+    //update trip, glance ==========================================================================
     suspend fun updateTrips(
         internetEnabled: Boolean,
         appUserId: String
@@ -425,6 +448,70 @@ class TripsViewModel @Inject constructor(
         }
     }
 
+
+
+    /**
+     * get trip from remote
+     * for glance
+     */
+    private suspend fun updateTrip(
+        internetEnabled: Boolean,
+        appUserId: String,
+        tripWithEmptyDateList: Trip,
+    ): Trip? {
+        val trip = tripRepository.getTrip(
+            internetEnabled = internetEnabled,
+            appUserId = appUserId,
+            tripWithEmptyDateList = tripWithEmptyDateList
+        )
+
+        if (trip != null) {
+
+            //update tripList / sharedTripList
+            val isInSharedTrips = trip.managerId != appUserId
+
+            //FIXME: is it fine to use tempSharedTrips? (not original shared trips?)
+            val indexOfTrip = if (!isInSharedTrips)
+                _tripsUiState.value.trips.trips?.indexOfFirst { it.id == trip.id }
+            else
+                _tripsUiState.value.trips.tempSharedTrips?.indexOfFirst { it.id == trip.id }
+
+            val newTrips = if (!isInSharedTrips)
+                _tripsUiState.value.trips.trips?.toMutableList()
+            else
+                _tripsUiState.value.trips.tempSharedTrips?.toMutableList()
+
+            if (indexOfTrip != null && indexOfTrip != -1) {
+                newTrips?.set(indexOfTrip, trip)
+            }
+
+            _tripsUiState.update {
+                if (!isInSharedTrips)
+                    it.copy(
+                        trips = it.trips.copy(
+                            trips = newTrips, tempTrips = newTrips
+                        )
+                    )
+                else
+                    it.copy(
+                        trips = it.trips.copy(
+                            sharedTrips = newTrips, tempSharedTrips = newTrips
+                        )
+                    )
+            }
+        }
+
+        return trip
+    }
+
+
+
+
+
+
+
+    //==============================================================================================
+    //edit trip ====================================================================================
     fun deleteTrip(
       trip: Trip,
       appUserId: String
@@ -466,8 +553,6 @@ class TripsViewModel @Inject constructor(
     }
 
 
-
-
     suspend fun saveTrips(
         appUserId: String,
         editModeToFalse: () -> Unit
@@ -494,10 +579,6 @@ class TripsViewModel @Inject constructor(
         //init deletedTripsIdList
         initDeletedTripsIdsAndDeletedSharedTrips()
     }
-
-
-
-
 
 
     fun reorderTempTrips(
@@ -541,75 +622,4 @@ class TripsViewModel @Inject constructor(
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * get trip from remote
-     * for glance
-     */
-    private suspend fun updateTrip(
-        internetEnabled: Boolean,
-        appUserId: String,
-        tripWithEmptyDateList: Trip,
-    ): Trip? {
-        val trip = tripRepository.getTrip(
-            internetEnabled = internetEnabled,
-            appUserId = appUserId,
-            tripWithEmptyDateList = tripWithEmptyDateList
-        )
-
-        if (trip != null) {
-
-            //update tripList / sharedTripList
-            val isInSharedTrips = trip.managerId != appUserId
-
-            //FIXME: is it fine to use tempSharedTrips? (not original shared trips?)
-            val indexOfTrip = if (!isInSharedTrips)
-                    _tripsUiState.value.trips.trips?.indexOfFirst { it.id == trip.id }
-                else
-                    _tripsUiState.value.trips.tempSharedTrips?.indexOfFirst { it.id == trip.id }
-
-            val newTrips = if (!isInSharedTrips)
-                    _tripsUiState.value.trips.trips?.toMutableList()
-                else
-                    _tripsUiState.value.trips.tempSharedTrips?.toMutableList()
-
-            if (indexOfTrip != null && indexOfTrip != -1) {
-                newTrips?.set(indexOfTrip, trip)
-            }
-
-            _tripsUiState.update {
-                if (!isInSharedTrips)
-                    it.copy(
-                        trips = it.trips.copy(
-                            trips = newTrips, tempTrips = newTrips
-                        )
-                    )
-                else
-                    it.copy(
-                        trips = it.trips.copy(
-                            sharedTrips = newTrips, tempSharedTrips = newTrips
-                        )
-                    )
-            }
-        }
-
-        return trip
-    }
 }

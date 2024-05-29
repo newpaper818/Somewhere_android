@@ -1,4 +1,4 @@
-package com.newpaper.somewhere.core.firebase_firestore.dataSource.more.profile
+package com.newpaper.somewhere.core.firebase_firestore.dataSource.more.editProfile
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
@@ -17,7 +17,7 @@ class EditProfileFirestoreApi @Inject constructor(
     override fun updateUserProfile(
         appUserId: String?,
         newUserName: String?,
-        newProfileImage: String?,
+        newProfileImagePath: String?,
         onSuccess: () -> Unit,
         onFailure: () -> Unit
     ){
@@ -26,7 +26,7 @@ class EditProfileFirestoreApi @Inject constructor(
 
             val userData = hashMapOf(
                 USER_NAME to newUserName,
-                PROFILE_IMAGE_URL to newProfileImage
+                PROFILE_IMAGE_URL to newProfileImagePath
             )
 
             firestoreDb.runBatch { batch ->

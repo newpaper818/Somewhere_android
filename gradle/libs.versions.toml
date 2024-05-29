@@ -17,7 +17,8 @@ activity = "1.8.0"
 fragment = "1.6.1"
 moshi = "1.15.0"
 accompanist = "0.30.1"
-navigation = "2.7.5"
+composeNavigation = "2.8.0-beta01"
+serialization = "1.6.3"
 pager = "0.32.0"
 permissions = "0.32.0"
 mapsAndroid = "2.11.0"
@@ -132,8 +133,8 @@ accompanist-systemuicontroller = { group = "com.google.accompanist", name = "acc
 
 
 # navigation
-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
-
+navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
 
 # pager
 accompanist-pager =             { group = "com.google.accompanist", name = "accompanist-pager", version.ref = "pager" }
@@ -198,6 +199,7 @@ jetbrainsKotlinAndroid =    { id = "org.jetbrains.kotlin.android", version.ref =
 googleDevToolsKsp =         { id = "com.google.devtools.ksp", version.ref = "devTools" }
 googleMapsPlatformGraglePlugin = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "mapsPlatform"}
 gmsGoogleServices =         { id = "com.google.gms.google-services", version.ref = "gmsGoogleServices" }
-aboutlibrariesPlugin =      { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries"}
+aboutlibraries =      { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries"}
 jetbrainsKotlinJvm =        { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 hilt =                      { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

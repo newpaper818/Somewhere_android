@@ -1,14 +1,13 @@
 package com.newpaper.somewhere.feature.signin.signIn
 
 import android.app.Activity
-import android.content.Context
 import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseUser
-import com.newpaper.somewhere.core.data.repository.image.ImageRepository
+import com.newpaper.somewhere.core.data.repository.image.CommonImageRepository
 import com.newpaper.somewhere.core.data.repository.signIn.UserRepository
 import com.newpaper.somewhere.core.model.data.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +19,6 @@ import javax.inject.Inject
 private const val SIGN_IN_VIEWMODEL_TAG = "SignIn-ViewModel"
 
 data class SignInUiState(
-    val isDarkAppTheme: Boolean,
     val isSigningIn: Boolean = false,
     val signInButtonEnabled: Boolean = true
 )
@@ -28,21 +26,17 @@ data class SignInUiState(
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val imageRepository: ImageRepository
+    private val commonImageRepository: CommonImageRepository
 ): ViewModel() {
     private val _signInUiState: MutableStateFlow<SignInUiState> =
-        MutableStateFlow(
-            SignInUiState(false)
-        )
+        MutableStateFlow(SignInUiState())
 
     val signInUiState = _signInUiState.asStateFlow()
 
-    fun deleteAllLocalImages(
-        context: Context
-    ){
-        imageRepository.deleteAllImagesFromInternalStorage(context)
-    }
 
+
+    //==============================================================================================
+    //set UiState ==================================================================================
     fun setIsSigningIn(
         isSigningIn: Boolean
     ) {
@@ -63,6 +57,10 @@ class SignInViewModel @Inject constructor(
         }
     }
 
+
+
+    //==============================================================================================
+    //sign in ======================================================================================
     suspend fun signInLaunchGoogleLauncher(
         launcher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
         showErrorSnackbar: () -> Unit
@@ -123,6 +121,10 @@ class SignInViewModel @Inject constructor(
     }
 
 
+
+
+
+    //==============================================================================================
     suspend fun updateUserDataFromRemote(
         userData: UserData?,
         onDone: (userData: UserData) -> Unit,
@@ -145,4 +147,7 @@ class SignInViewModel @Inject constructor(
         }
     }
 
+    fun deleteAllLocalImages(){
+        commonImageRepository.deleteAllImagesFromInternalStorage()
+    }
 }

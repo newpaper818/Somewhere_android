@@ -1,4 +1,4 @@
-package com.newpaper.somewhere.core.firebase_firestore.dataSource.more.profile
+package com.newpaper.somewhere.core.firebase_firestore.dataSource.more.editProfile
 
 interface EditProfileRemoteDataSource {
 
@@ -8,7 +8,7 @@ interface EditProfileRemoteDataSource {
     fun updateUserProfile(
         appUserId: String?,
         newUserName: String?,
-        newProfileImage: String?,
+        newProfileImagePath: String?,
         onSuccess: () -> Unit,
         onFailure: () -> Unit
     )

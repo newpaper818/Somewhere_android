@@ -1,14 +1,12 @@
 package com.newpaper.somewhere.core.data.repository.image
 
-import com.newpaper.somewhere.core.firebase_storage.dataSource.ImageRemoteDataSource
-import com.newpaper.somewhere.core.local_image_file.dataSource.ImageLocalDataSource
+import com.newpaper.somewhere.core.firebase_storage.dataSource.image.ImageRemoteDataSource
 import javax.inject.Inject
 
 class GetImageRepository @Inject constructor(
-    private val imageRemoteDataSource: ImageRemoteDataSource,
-    private val imageLocalDataSource: ImageLocalDataSource
+    private val imageRemoteDataSource: ImageRemoteDataSource
 ) {
-    fun downloadImage(
+    fun getImage(
         imagePath: String,
         imageUserId: String,
         result: (Boolean) -> Unit

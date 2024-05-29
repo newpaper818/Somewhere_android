@@ -5,7 +5,6 @@ enum class ScreenDestination(
 ){
     SIGN_IN("signIn"),
 
-    MAIN("main"),
     TRIPS("trips"),
     PROFILE("profile"),
     MORE("more"),

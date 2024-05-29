@@ -7,6 +7,7 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.OAuthProvider
 import com.newpaper.somewhere.core.firebase_authentication.dataSource.UserRemoteDataSource
@@ -27,6 +28,7 @@ class UserRepository @Inject constructor(
     private val userRemoteDatasource: UserRemoteDataSource      //firebase-authentication
 ) {
 
+    //sign in ======================================================================================
     suspend fun signInLaunchGoogleLauncher(
         launcher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
         signInError : () -> Unit
@@ -91,6 +93,98 @@ class UserRepository @Inject constructor(
     }
 
 
+
+    //re authenticate ==============================================================================
+    suspend fun reAuthLaunchGoogleLauncher(
+        launcher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
+        setIsAuthing: (Boolean) -> Unit,
+        showErrorSnackbar: () -> Unit
+    ){
+        setIsAuthing(true)
+
+        val signInIntentSender = userRemoteDatasource.getGoogleSignInIntentSender()
+
+        if (signInIntentSender == null) {
+            showErrorSnackbar()
+            setIsAuthing(false)
+        }
+
+        launcher.launch(
+            IntentSenderRequest.Builder(
+                signInIntentSender ?: return
+            ).build()
+        )
+    }
+
+    fun reAuthGoogleResult(
+        result: ActivityResult,
+        setIsAuthing: (Boolean) -> Unit,
+        setIsAuthDone: (Boolean) -> Unit,
+        showReAuthErrorSnackbar: () -> Unit,
+        showReAuthErrorUserNotMatchSnackbar: () -> Unit
+    ){
+        if (result.resultCode == Activity.RESULT_OK) {
+            if (result.data == null){
+                setIsAuthing(false)
+                showReAuthErrorSnackbar()
+                return
+            }
+
+            userRemoteDatasource.reAuthenticateGoogleUser(
+                intent = result.data!!,
+                reAuthResult = { reAuthResult, exception ->
+                    setIsAuthing(false)
+
+                    if (reAuthResult){
+                        setIsAuthDone(true)
+                    }
+                    else if (exception is FirebaseAuthInvalidCredentialsException){
+                        showReAuthErrorUserNotMatchSnackbar()
+                    }
+                    else {
+                        showReAuthErrorSnackbar()
+                    }
+                }
+            )
+
+        }
+        else {
+            setIsAuthing(false)
+        }
+    }
+
+    fun reAuthenticateAppleUser(
+        activity: Activity,
+        setIsAuthing: (Boolean) -> Unit,
+        setIsAuthDone: (Boolean) -> Unit,
+        showReAuthErrorSnackbar: () -> Unit,
+        showReAuthErrorUserNotMatchSnackbar: () -> Unit
+    ){
+        setIsAuthing(true)
+
+        userRemoteDatasource.reAuthenticateAppleUser(
+            activity = activity,
+            onSuccess = {
+                setIsAuthing(false)
+                setIsAuthDone(true)
+            },
+            onFail = { exception ->
+                setIsAuthing(false)
+                if (exception is FirebaseAuthInvalidCredentialsException){
+                    showReAuthErrorUserNotMatchSnackbar()
+                }
+                else {
+                    showReAuthErrorSnackbar()
+                }
+            }
+        )
+    }
+
+
+
+
+
+    //
     suspend fun updateUserDataFromRemote(
         userData: UserData,
         setIsSigningIn: (Boolean) -> Unit,
@@ -187,7 +281,13 @@ class UserRepository @Inject constructor(
 
 
 
-
+    fun deleteAuthUser(
+        deleteSuccess: (Boolean) -> Unit
+    ){
+        userRemoteDatasource.deleteAuthUser(
+            deleteSuccess = deleteSuccess
+        )
+    }
 
 
 

@@ -16,15 +16,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.NavigationDrawerItemColors
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailDefaults
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.NavigationRailItemColors
-import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -73,8 +70,7 @@ fun RowScope.SomewhereNavigationBottomBarItem(
         label = {
             Text(
                 text = labelText,
-                style = if (selected)   MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
-                        else            MaterialTheme.typography.labelMedium
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
             )
         },
         colors = NavigationBarItemColors(
@@ -130,8 +126,7 @@ fun SomewhereNavigationRailBarItem(
         label = {
             Text(
                 text = labelText,
-                style = if (selected)   MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
-                        else            MaterialTheme.typography.labelMedium
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
             )
         },
         colors = NavigationRailItemColors(
@@ -194,8 +189,7 @@ fun SomewhereNavigationDrawerItem(
         label = {
             Text(
                 text = labelText,
-                style = if (selected)   MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
-                        else            MaterialTheme.typography.labelMedium
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
             )
         },
         colors = NavigationDrawerItemDefaults.colors(

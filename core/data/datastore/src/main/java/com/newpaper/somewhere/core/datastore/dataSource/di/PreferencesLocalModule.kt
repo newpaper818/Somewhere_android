@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import com.newpaper.somewhere.core.datastore.dataSource.SettingDataStoreApi
-import com.newpaper.somewhere.core.datastore.dataSource.SettingLocalDataSource
+import com.newpaper.somewhere.core.datastore.dataSource.PreferencesDataStoreApi
+import com.newpaper.somewhere.core.datastore.dataSource.PreferencesLocalDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -20,8 +20,8 @@ import javax.inject.Singleton
 abstract class PreferencesLocalModule {
     @Binds
     internal abstract fun bindSettingDataSource(
-        settingDataStoreApi: SettingDataStoreApi
-    ): SettingLocalDataSource
+        settingDataStoreApi: PreferencesDataStoreApi
+    ): PreferencesLocalDataSource
 }
 
 @Module

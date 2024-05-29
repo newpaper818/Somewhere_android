@@ -4,25 +4,30 @@ import androidx.annotation.StringRes
 import com.newpaper.somewhere.R
 import com.newpaper.somewhere.core.designsystem.icon.MyIcon
 import com.newpaper.somewhere.core.designsystem.icon.NavigationBarIcon
+import com.newpaper.somewhere.core.model.enums.ScreenDestination
 
 enum class TopLevelDestination(
     val selectedIcon: MyIcon,
     val unselectedIcon: MyIcon,
-    @StringRes val labelTextId: Int
+    @StringRes val labelTextId: Int,
+    val route: String
 ) {
     TRIPS(
         selectedIcon = NavigationBarIcon.tripsFilled,
         unselectedIcon = NavigationBarIcon.tripsOutlined,
-        labelTextId = R.string.trips
+        labelTextId = R.string.trips,
+        route = ScreenDestination.TRIPS.route
     ),
     PROFILE(
         selectedIcon = NavigationBarIcon.profileFilled,
         unselectedIcon = NavigationBarIcon.profileOutlined,
-        labelTextId = R.string.profile
+        labelTextId = R.string.profile,
+        route = ScreenDestination.PROFILE.route
     ),
     MORE(
         selectedIcon = NavigationBarIcon.moreFilled,
         unselectedIcon = NavigationBarIcon.moreOutlined,
-        labelTextId = R.string.more
+        labelTextId = R.string.more,
+        route = ScreenDestination.MORE.route
     )
 }
