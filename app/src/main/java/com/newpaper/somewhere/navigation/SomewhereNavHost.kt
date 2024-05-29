@@ -6,7 +6,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHost
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.navigation.more.aboutScreen
@@ -80,40 +83,24 @@ fun SomewhereNavHost(
         )
 
 
+
+
+
         //top level screen =========================================================================
-        tripsScreen(
-            appViewModel = appViewModel,
-            externalState = externalState,
-            lazyListState = tripsLazyListState,
-            navigateToTrip = { isNewTrip, trip ->
-//                navController.navigateToTrip()
-                //FIXME
-            },
-            navigateToGlanceSpot = {
+        composable(
+            route = ScreenDestination.TOP_LEVEL.route,
+            enterTransition = { enterTransition },
+            exitTransition = { exitTransition },
+            popEnterTransition = { popEnterTransition },
+            popExitTransition = { popExitTransition }
+        ) {
+            TopLevelNavHost(
+                externalState = externalState,
+                appViewModel = appViewModel
+            )
+        }
 
-            }
-        )
 
-        profileScreen(
-            appViewModel = appViewModel,
-            externalState = externalState,
-            lazyListState = profileLazyListState,
-            navigateToAccount = {
-                navController.navigateToAccount()
-            }
-        )
-
-        moreScreen(
-            externalState = externalState,
-            appViewModel = appViewModel,
-            userDataIsNull = appUiState.appUserData == null,
-            lazyListState = moreLazyListState,
-            navigateTo = {
-                navController.navigate(it.route)
-            },
-            modifier = modifier,
-            currentScreen = appUiState.screenDestination.currentScreenDestination
-        )
 
 
 
