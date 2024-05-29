@@ -61,6 +61,7 @@ import com.newpaper.somewhere.feature.trip.trips.component.GoogleBannerAd
 import com.newpaper.somewhere.feature.trip.trips.component.LoadingTripsItem
 import com.newpaper.somewhere.feature.trip.trips.component.NoTripCard
 import com.newpaper.somewhere.feature.trip.trips.component.TripItem
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -92,8 +93,8 @@ fun TripsRoute(
 
     //get trips
     LaunchedEffect(Unit) {
-
         tripsViewModel.setLoadingTrips(true)
+
         tripsViewModel.updateTrips(
             internetEnabled = internetEnabled,
             appUserId = appUserId

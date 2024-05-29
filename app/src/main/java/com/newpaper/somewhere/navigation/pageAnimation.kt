@@ -20,10 +20,10 @@ internal val popEnterTransition =
 internal val popExitTransition = slideOutHorizontally(animationSpec = tween(300), targetOffsetX = { it })
 
 //
-internal val TopEnterTransition = fadeIn(animationSpec = tween(2000))
-internal val TopExitTransition = fadeOut(animationSpec = tween(2000))
-internal val TopPopEnterTransition = fadeIn(animationSpec = tween(2000))
-internal val TopPopExitTransition = fadeOut(animationSpec = tween(2000))
+internal val TopEnterTransition = fadeIn(animationSpec = tween(300))
+internal val TopExitTransition = fadeOut(animationSpec = tween(300))
+internal val TopPopEnterTransition = fadeIn(animationSpec = tween(300))
+internal val TopPopExitTransition = fadeOut(animationSpec = tween(300))
 
 
 

@@ -16,6 +16,7 @@ import com.newpaper.somewhere.navigation.TopEnterTransition
 import com.newpaper.somewhere.navigation.TopExitTransition
 import com.newpaper.somewhere.navigation.TopPopEnterTransition
 import com.newpaper.somewhere.navigation.TopPopExitTransition
+import com.newpaper.somewhere.navigationUi.TopLevelDestination
 import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
 
@@ -23,7 +24,7 @@ private const val DEEP_LINK_URI_PATTERN =
     "https://www.somewhere.newpaper.com/profile"
 
 fun NavController.navigateToProfile(navOptions: NavOptions? = null) =
-    navigate(ScreenDestination.PROFILE.route, navOptions)
+    navigate(TopLevelDestination.PROFILE.route, navOptions)
 
 fun NavGraphBuilder.profileScreen(
     appViewModel: AppViewModel,
@@ -33,7 +34,7 @@ fun NavGraphBuilder.profileScreen(
     navigateToAccount: () -> Unit,
 ) {
     composable(
-        route = ScreenDestination.PROFILE.route,
+        route = TopLevelDestination.PROFILE.route,
         deepLinks = listOf(
             navDeepLink { uriPattern = DEEP_LINK_URI_PATTERN }
         ),
@@ -43,7 +44,7 @@ fun NavGraphBuilder.profileScreen(
         popExitTransition = { TopPopExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.updateCurrentScreenDestination(ScreenDestination.PROFILE)
+            appViewModel.updateCurrentTopLevelDestination(TopLevelDestination.PROFILE)
         }
 
         val appUiState by appViewModel.appUiState.collectAsState()

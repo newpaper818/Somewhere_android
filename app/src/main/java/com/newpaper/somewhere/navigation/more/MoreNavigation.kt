@@ -15,6 +15,7 @@ import com.newpaper.somewhere.navigation.TopEnterTransition
 import com.newpaper.somewhere.navigation.TopExitTransition
 import com.newpaper.somewhere.navigation.TopPopEnterTransition
 import com.newpaper.somewhere.navigation.TopPopExitTransition
+import com.newpaper.somewhere.navigationUi.TopLevelDestination
 import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
 
@@ -22,7 +23,7 @@ private const val DEEP_LINK_URI_PATTERN =
     "https://www.somewhere.newpaper.com/more"
 
 fun NavController.navigateToMore(navOptions: NavOptions? = null) =
-    navigate(ScreenDestination.MORE.route, navOptions)
+    navigate(TopLevelDestination.MORE.route, navOptions)
 
 fun NavGraphBuilder.moreScreen(
     externalState: ExternalState,
@@ -36,7 +37,7 @@ fun NavGraphBuilder.moreScreen(
     currentScreen: ScreenDestination? = null
 ) {
     composable(
-        route = ScreenDestination.MORE.route,
+        route = TopLevelDestination.MORE.route,
         deepLinks = listOf(
             navDeepLink { uriPattern = DEEP_LINK_URI_PATTERN }
         ),
@@ -46,7 +47,7 @@ fun NavGraphBuilder.moreScreen(
         popExitTransition = { TopPopExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.updateCurrentScreenDestination(ScreenDestination.MORE)
+            appViewModel.updateCurrentTopLevelDestination(TopLevelDestination.MORE)
         }
 
         MoreRoute(

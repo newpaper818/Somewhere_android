@@ -62,8 +62,7 @@ fun SomewhereApp(
     when (appUiState.screenDestination.currentScreenDestination) {
         ScreenDestination.IMAGE -> systemUiController.setNavigationBarColor(color = Color.Transparent)
 
-        ScreenDestination.TRIPS, ScreenDestination.PROFILE,
-        ScreenDestination.MORE, ScreenDestination.TRIP,
+        ScreenDestination.TOP_LEVEL, ScreenDestination.TRIP,
         ScreenDestination.DATE, ScreenDestination.SPOT,
         ScreenDestination.TRIP_MAP -> systemUiController.setNavigationBarColor(color = MaterialTheme.colorScheme.surfaceDim)
 
@@ -95,33 +94,33 @@ fun SomewhereApp(
     if (startDestination != null){
 
         //navigation bar with content
-        ScreenWithNavigationBar(
-            windowSizeClass = externalState.windowSizeClass,
-            currentTopLevelDestination = appUiState.screenDestination.currentTopLevelDestination,
-            showNavigationBar = appUiState.screenDestination.currentScreenDestination == ScreenDestination.TRIPS ||
-                    appUiState.screenDestination.currentScreenDestination == ScreenDestination.PROFILE ||
-                    appUiState.screenDestination.currentScreenDestination == ScreenDestination.MORE,
-            onClickNavBarItem = {
-                val prevScreenRoute = appUiState.screenDestination.currentTopLevelDestination.route
-                appViewModel.updateCurrentTopLevelDestination(it)
-
-                navController.navigate(
-                    route = it.route,
-                    navOptions = navOptions{
-                        popUpTo(prevScreenRoute) { inclusive = true }
-                    }
-                )
-            },
-            onClickNavBarItemAgain = {
-                coroutineScope.launch {
-                    when (it) {
-                        TopLevelDestination.TRIPS -> tripsLazyListState.animateScrollToItem(0)
-                        TopLevelDestination.PROFILE -> profileLazyListState.animateScrollToItem(0)
-                        TopLevelDestination.MORE -> moreLazyListState.animateScrollToItem(0)
-                    }
-                }
-            }
-        ){
+//        ScreenWithNavigationBar(
+//            windowSizeClass = externalState.windowSizeClass,
+//            currentTopLevelDestination = appUiState.screenDestination.currentTopLevelDestination,
+//            showNavigationBar = appUiState.screenDestination.currentScreenDestination == ScreenDestination.TRIPS ||
+//                    appUiState.screenDestination.currentScreenDestination == ScreenDestination.PROFILE ||
+//                    appUiState.screenDestination.currentScreenDestination == ScreenDestination.MORE,
+//            onClickNavBarItem = {
+//                val prevScreenRoute = appUiState.screenDestination.currentTopLevelDestination.route
+//                appViewModel.updateCurrentTopLevelDestination(it)
+//
+//                navController.navigate(
+//                    route = it.route,
+//                    navOptions = navOptions{
+//                        popUpTo(prevScreenRoute) { inclusive = true }
+//                    }
+//                )
+//            },
+//            onClickNavBarItemAgain = {
+//                coroutineScope.launch {
+//                    when (it) {
+//                        TopLevelDestination.TRIPS -> tripsLazyListState.animateScrollToItem(0)
+//                        TopLevelDestination.PROFILE -> profileLazyListState.animateScrollToItem(0)
+//                        TopLevelDestination.MORE -> moreLazyListState.animateScrollToItem(0)
+//                    }
+//                }
+//            }
+//        ){
             SomewhereNavHost(
                 externalState = externalState,
                 appViewModel = appViewModel,
@@ -134,6 +133,6 @@ fun SomewhereApp(
 
                 modifier = modifier
             )
-        }
+//        }
     }
 }

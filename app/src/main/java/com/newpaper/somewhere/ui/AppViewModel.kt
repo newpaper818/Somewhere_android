@@ -28,7 +28,7 @@ data class AppPreferencesState(
 data class DestinationState(
     val startScreenDestination: ScreenDestination? = null, //if not null, splash screen will be finish
     val currentTopLevelDestination: TopLevelDestination = TopLevelDestination.TRIPS,
-    val currentScreenDestination: ScreenDestination = ScreenDestination.TRIPS
+    val currentScreenDestination: ScreenDestination = ScreenDestination.TOP_LEVEL
 )
 
 data class AppUiState(
@@ -173,7 +173,7 @@ class AppViewModel @Inject constructor(
     ){
         val startScreenDestination =
             if (userDataIsNull) ScreenDestination.SIGN_IN
-            else ScreenDestination.TRIPS
+            else ScreenDestination.TOP_LEVEL
 
         _appUiState.update {
             it.copy(
