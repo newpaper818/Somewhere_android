@@ -2,7 +2,6 @@ package com.newpaper.somewhere.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import com.newpaper.somewhere.core.data.repository.PreferencesRepository
 import com.newpaper.somewhere.core.data.repository.signIn.UserRepository
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
@@ -26,9 +25,9 @@ data class AppPreferencesState(
 )
 
 data class DestinationState(
-    val startScreenDestination: ScreenDestination? = null, //if not null, splash screen will be finish
+//    val startScreenDestination: ScreenDestination? = null, //if not null, splash screen will be finish
     val currentTopLevelDestination: TopLevelDestination = TopLevelDestination.TRIPS,
-    val currentScreenDestination: ScreenDestination = ScreenDestination.TOP_LEVEL
+    val currentScreenDestination: ScreenDestination? = null
 )
 
 data class AppUiState(
@@ -140,7 +139,7 @@ class AppViewModel @Inject constructor(
     ){
         initSignedInUser(
             onDone = { userDataIsNull ->
-                updateStartScreenDestination(userDataIsNull)
+                initCurrentScreenDestination(userDataIsNull)
             }
         )
     }
@@ -168,17 +167,17 @@ class AppViewModel @Inject constructor(
 
     //==============================================================================================
     //update screen destination ====================================================================
-    private fun updateStartScreenDestination(
+    private fun initCurrentScreenDestination(
         userDataIsNull: Boolean
     ){
         val startScreenDestination =
             if (userDataIsNull) ScreenDestination.SIGN_IN
-            else ScreenDestination.TOP_LEVEL
+            else ScreenDestination.TRIPS
 
         _appUiState.update {
             it.copy(
                 screenDestination = it.screenDestination.copy(
-                    startScreenDestination = startScreenDestination
+                    currentScreenDestination = startScreenDestination
                 )
             )
         }
@@ -194,7 +193,7 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    fun updateCurrentScreenDestination(screenDestination: ScreenDestination) {
+    fun initCurrentScreenDestination(screenDestination: ScreenDestination) {
         _appUiState.update {
             it.copy(
                 screenDestination = it.screenDestination.copy(

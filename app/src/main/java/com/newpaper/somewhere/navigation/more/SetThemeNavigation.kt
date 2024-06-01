@@ -42,7 +42,7 @@ fun NavGraphBuilder.setThemeScreen(
         popExitTransition = { popExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.updateCurrentScreenDestination(ScreenDestination.SET_THEME)
+            appViewModel.initCurrentScreenDestination(ScreenDestination.SET_THEME)
         }
 
         val coroutineScope = rememberCoroutineScope()

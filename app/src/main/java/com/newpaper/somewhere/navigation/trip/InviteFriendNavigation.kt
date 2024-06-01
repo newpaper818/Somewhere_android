@@ -41,7 +41,7 @@ fun NavGraphBuilder.inviteFriendScreen(
         popExitTransition = { popExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.updateCurrentScreenDestination(ScreenDestination.INVITE_FRIEND)
+            appViewModel.initCurrentScreenDestination(ScreenDestination.INVITE_FRIEND)
         }
 
     }

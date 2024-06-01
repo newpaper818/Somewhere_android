@@ -41,7 +41,7 @@ fun NavGraphBuilder.setLocationScreen(
         popExitTransition = { popExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.updateCurrentScreenDestination(ScreenDestination.SET_LOCATION)
+            appViewModel.initCurrentScreenDestination(ScreenDestination.SET_LOCATION)
         }
 
     }

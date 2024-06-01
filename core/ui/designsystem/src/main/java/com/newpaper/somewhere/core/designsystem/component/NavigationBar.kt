@@ -5,15 +5,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.NavigationDrawerItem
@@ -94,17 +98,21 @@ fun SomewhereNavigationRailBar(
     content: @Composable ColumnScope.() -> Unit,
 ){
     NavigationRail(
-        modifier = modifier.width(NAVIGATION_RAIL_BAR_WIDTH),
+//        modifier = modifier.width(NAVIGATION_RAIL_BAR_WIDTH),
         header = {
             //FAB
         },
         containerColor = MaterialTheme.colorScheme.surfaceDim
     ) {
-        Spacer(modifier = Modifier.weight(1f))
+        Column(
+            modifier = modifier.width(NAVIGATION_RAIL_BAR_WIDTH)
+        ) {
+            Spacer(modifier = Modifier.weight(1f))
 
-        content()
+            content()
 
-        Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f))
+        }
     }
 }
 

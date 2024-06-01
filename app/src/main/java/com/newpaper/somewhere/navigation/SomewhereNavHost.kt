@@ -1,17 +1,25 @@
 package com.newpaper.somewhere.navigation
 
+import android.util.Log
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHost
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import androidx.navigation.navigation
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
+import com.newpaper.somewhere.feature.trip.trips.TripsViewModel
 import com.newpaper.somewhere.navigation.more.aboutScreen
 import com.newpaper.somewhere.navigation.more.accountScreen
 import com.newpaper.somewhere.navigation.more.deleteAccountScreen
@@ -34,21 +42,20 @@ import com.newpaper.somewhere.navigationUi.ScreenWithNavigationBar
 import com.newpaper.somewhere.navigationUi.TopLevelDestination
 import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
+import kotlinx.coroutines.launch
 
 @Composable
 fun SomewhereNavHost(
     externalState: ExternalState,
     appViewModel: AppViewModel,
+    tripsViewModel: TripsViewModel,
     isDarkAppTheme: Boolean,
     startDestination: String,
-
-    tripsLazyListState: LazyListState,
-    profileLazyListState: LazyListState,
-    moreLazyListState: LazyListState,
 
     modifier: Modifier = Modifier
 ) {
     val navController = externalState.navController
+
     val appUiState by appViewModel.appUiState.collectAsState()
 
     val navigateUp = {
@@ -57,129 +64,196 @@ fun SomewhereNavHost(
         }
     }
 
+    val showNavigationBar =
+        appUiState.screenDestination.currentScreenDestination == ScreenDestination.TRIPS
+        || appUiState.screenDestination.currentScreenDestination == ScreenDestination.PROFILE
+        || appUiState.screenDestination.currentScreenDestination == ScreenDestination.MORE
 
 
+    val tripsLazyListState = rememberLazyListState()
+    val profileLazyListState = rememberLazyListState()
+    val moreLazyListState = rememberLazyListState()
 
-    NavHost(
-        navController = navController,
-        startDestination = startDestination,
-        modifier = modifier
+    val coroutineScope = rememberCoroutineScope()
+
+    ScreenWithNavigationBar(
+        windowSizeClass = externalState.windowSizeClass,
+        currentTopLevelDestination = appUiState.screenDestination.currentTopLevelDestination,
+        showNavigationBar = showNavigationBar,
+        onClickNavBarItem = {
+            navController.navigate(
+                route = it.route,
+                navOptions = navOptions{
+                    popUpTo(appUiState.screenDestination.currentTopLevelDestination.route) { inclusive = true }
+                }
+            )
+
+            if (it != TopLevelDestination.TRIPS)
+                tripsViewModel.setLoadingTrips(true)
+        },
+        onClickNavBarItemAgain = {
+            coroutineScope.launch {
+                when (it) {
+                    TopLevelDestination.TRIPS -> tripsLazyListState.animateScrollToItem(0)
+                    TopLevelDestination.PROFILE -> profileLazyListState.animateScrollToItem(0)
+                    TopLevelDestination.MORE -> moreLazyListState.animateScrollToItem(0)
+                }
+            }
+        }
     ) {
 
-
-
-        //signIn ===================================================================================
-        signInScreen(
-            appViewModel = appViewModel,
-            externalState = externalState,
-            isDarkAppTheme = isDarkAppTheme,
-            navigateToMain = {
-                navController.navigateToTrips(
-                    navOptions = navOptions{
-                        popUpTo(ScreenDestination.SIGN_IN.route) { inclusive = true }
-                    }
-                )
-            }
-        )
-
-
-
-
-
-        //top level screen =========================================================================
-        composable(
-            route = ScreenDestination.TOP_LEVEL.route,
-            enterTransition = { enterTransition },
-            exitTransition = { exitTransition },
-            popEnterTransition = { popEnterTransition },
-            popExitTransition = { popExitTransition }
+        NavHost(
+            navController = navController,
+            startDestination = startDestination,
+            modifier = modifier
         ) {
-            TopLevelNavHost(
+
+            //signIn ===================================================================================
+            signInScreen(
+                appViewModel = appViewModel,
                 externalState = externalState,
-                appViewModel = appViewModel
+                isDarkAppTheme = isDarkAppTheme,
+                navigateToMain = {
+                    navController.navigate(
+                        route = ScreenDestination.TRIPS.route,
+                        navOptions = navOptions {
+                            popUpTo(ScreenDestination.SIGN_IN.route) { inclusive = true }
+                        }
+                    )
+                }
             )
+
+
+            //top level screen =========================================================================
+            tripsScreen(
+                appViewModel = appViewModel,
+                tripsViewModel = tripsViewModel,
+                externalState = externalState,
+                lazyListState = tripsLazyListState,
+                navigateToTrip = { isNewTrip, trip ->
+//                navController.navigateToTrip()
+                    //FIXME
+                },
+                navigateToGlanceSpot = {
+
+                }
+            )
+
+            profileScreen(
+                appViewModel = appViewModel,
+                externalState = externalState,
+                lazyListState = profileLazyListState,
+                navigateToAccount = {
+                    navController.navigateToAccount()
+                }
+            )
+
+            moreScreen(
+                externalState = externalState,
+                appViewModel = appViewModel,
+                userDataIsNull = appUiState.appUserData == null,
+                lazyListState = moreLazyListState,
+                navigateTo = {
+                    navController.navigate(it.route)
+                },
+                modifier = modifier,
+                currentScreen = appUiState.screenDestination.currentScreenDestination
+            )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //more =====================================================================================
+//            setDateTimeFormatScreen(
+//                appViewModel = appViewModel,
+//                externalState = externalState,
+//                navigateUp = navigateUp
+//            )
+//
+//            setThemeScreen(
+//                appViewModel = appViewModel,
+//                externalState = externalState,
+//                navigateUp = navigateUp
+//            )
+//
+//            accountScreen(
+//                appViewModel = appViewModel,
+//                externalState = externalState,
+//                navigateToDeleteAccount = {
+//                    navController.navigateToDeleteAccount()
+//                },
+//                navigateToEditAccount = {
+//                    navController.navigateToEditProfile()
+//                },
+//                navigateUp = navigateUp,
+//                onSignOutDone = {
+//                    navController.navigateToSignIn(
+//                        navOptions = navOptions {
+//                            popUpTo(navController.graph.findStartDestination().id) {
+//                                inclusive = true
+//                            }
+//                        }
+//                    )
+//                    appViewModel.updateCurrentTopLevelDestination(TopLevelDestination.TRIPS)
+//                },
+//                modifier = modifier
+//
+//            )
+//
+//            editProfileScreen(
+//                appViewModel = appViewModel,
+//                externalState = externalState,
+//                navigateUp = navigateUp,
+//                modifier = modifier
+//            )
+//
+//            deleteAccountScreen(
+//                appViewModel = appViewModel,
+//                externalState = externalState,
+//                isDarkAppTheme = isDarkAppTheme,
+//                navigateToSignIn = {
+//                    navController.navigateToSignIn(
+//                        navOptions = navOptions {
+//                            popUpTo(navController.graph.findStartDestination().id) {
+//                                inclusive = true
+//                            }
+//                        }
+//                    )
+//                },
+//                navigateUp = navigateUp,
+//                modifier = modifier
+//            )
+//
+//            aboutScreen(
+//                externalState = externalState,
+//                appViewModel = appViewModel,
+//                navigateToOpenSourceLicense = {
+//                    navController.navigateToOpenSourceLicense()
+//                },
+//                navigateUp = navigateUp,
+//                modifier = modifier
+//
+//            )
+//
+//            openSourceLicenseScreen(
+//                externalState = externalState,
+//                appViewModel = appViewModel,
+//                navigateUp = navigateUp
+//            )
+
+
+            //trip =====================================================================================
+
         }
-
-
-
-
-
-        //more =====================================================================================
-        setDateTimeFormatScreen(
-            appViewModel = appViewModel,
-            externalState = externalState,
-            navigateUp = navigateUp
-        )
-
-        setThemeScreen(
-            appViewModel = appViewModel,
-            externalState = externalState,
-            navigateUp = navigateUp
-        )
-
-        accountScreen(
-            appViewModel = appViewModel,
-            externalState = externalState,
-            navigateToDeleteAccount = {
-                navController.navigateToDeleteAccount()
-            },
-            navigateToEditAccount = {
-                navController.navigateToEditProfile()
-            },
-            navigateUp = navigateUp,
-            onSignOutDone = {
-                navController.navigateToSignIn(
-                    navOptions = navOptions{
-                        popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
-                    }
-                )
-                appViewModel.updateCurrentTopLevelDestination(TopLevelDestination.TRIPS)
-            },
-            modifier = modifier
-
-        )
-
-        editProfileScreen(
-            appViewModel = appViewModel,
-            externalState = externalState,
-            navigateUp = navigateUp,
-            modifier = modifier
-        )
-
-        deleteAccountScreen(
-            appViewModel = appViewModel,
-            externalState = externalState,
-            isDarkAppTheme = isDarkAppTheme,
-            navigateToSignIn = {
-                navController.navigateToSignIn(
-                    navOptions = navOptions{
-                        popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
-                    }
-                )
-            },
-            navigateUp = navigateUp,
-            modifier = modifier
-        )
-
-        aboutScreen(
-            externalState = externalState,
-            appViewModel = appViewModel,
-            navigateToOpenSourceLicense = {
-                navController.navigateToOpenSourceLicense()
-            },
-            navigateUp = navigateUp,
-            modifier = modifier
-
-        )
-
-        openSourceLicenseScreen(
-            externalState = externalState,
-            appViewModel = appViewModel,
-            navigateUp = navigateUp
-        )
-
-
-        //trip =====================================================================================
-
     }
 }

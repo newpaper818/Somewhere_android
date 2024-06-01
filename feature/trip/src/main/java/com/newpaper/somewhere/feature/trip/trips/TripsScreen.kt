@@ -1,11 +1,13 @@
 package com.newpaper.somewhere.feature.trip.trips
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,7 +38,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
@@ -61,7 +62,6 @@ import com.newpaper.somewhere.feature.trip.trips.component.GoogleBannerAd
 import com.newpaper.somewhere.feature.trip.trips.component.LoadingTripsItem
 import com.newpaper.somewhere.feature.trip.trips.component.NoTripCard
 import com.newpaper.somewhere.feature.trip.trips.component.TripItem
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -70,6 +70,7 @@ internal val tripCardHeightDp = 120.dp
 
 @Composable
 fun TripsRoute(
+    tripsViewModel: TripsViewModel,
     appUserId: String,
     internetEnabled: Boolean,
     firstLaunch: Boolean,
@@ -86,14 +87,13 @@ fun TripsRoute(
     navigateToTrip: (isNewTrip: Boolean, trip: Trip?) -> Unit,
     navigateToGlanceSpot: (glance: Glance) -> Unit,
 
-    modifier: Modifier = Modifier,
-    tripsViewModel: TripsViewModel = hiltViewModel()
+    modifier: Modifier = Modifier
 ){
     val context = LocalContext.current
 
     //get trips
     LaunchedEffect(Unit) {
-        tripsViewModel.setLoadingTrips(true)
+//        tripsViewModel.setLoadingTrips(true)
 
         tripsViewModel.updateTrips(
             internetEnabled = internetEnabled,
@@ -259,7 +259,7 @@ private fun TripsScreen(
 
 
     MyScaffold(
-        modifier = Modifier,
+        modifier = modifier,
 
         //top app bar
         topBar = {
@@ -324,7 +324,9 @@ private fun TripsScreen(
             contentPadding = PaddingValues(spacerValue, 16.dp, spacerValue, 200.dp),
             modifier = modifier
                 .fillMaxSize()
-                .padding(top = paddingValues.calculateTopPadding())
+//                .padding(top = paddingValues.calculateTopPadding())
+                .padding(paddingValues)
+                .navigationBarsPadding()
                 .onSizeChanged {
                     with(density) {
                         lazyColumnHeightDp = it.height.toDp().value.toInt()
