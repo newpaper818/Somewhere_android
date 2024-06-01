@@ -16,18 +16,18 @@ enum class TopLevelDestination(
         selectedIcon = NavigationBarIcon.tripsFilled,
         unselectedIcon = NavigationBarIcon.tripsOutlined,
         labelTextId = R.string.trips,
-        route = "trips"
+        route = ScreenDestination.TRIPS.route
     ),
     PROFILE(
         selectedIcon = NavigationBarIcon.profileFilled,
         unselectedIcon = NavigationBarIcon.profileOutlined,
         labelTextId = R.string.profile,
-        route = "profile"
+        route = ScreenDestination.PROFILE.route
     ),
     MORE(
         selectedIcon = NavigationBarIcon.moreFilled,
         unselectedIcon = NavigationBarIcon.moreOutlined,
         labelTextId = R.string.more,
-        route = "more"
+        route = ScreenDestination.MORE.route
     )
 }

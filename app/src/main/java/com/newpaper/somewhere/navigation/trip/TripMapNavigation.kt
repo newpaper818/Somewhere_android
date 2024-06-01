@@ -41,7 +41,7 @@ fun NavGraphBuilder.tripMapScreen(
         popExitTransition = { popExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.updateCurrentScreenDestination(ScreenDestination.TRIP_MAP)
+            appViewModel.initCurrentScreenDestination(ScreenDestination.TRIP_MAP)
         }
 
     }

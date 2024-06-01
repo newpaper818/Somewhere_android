@@ -5,11 +5,11 @@ enum class ScreenDestination(
 ){
     SIGN_IN("signIn"),
 
-    TOP_LEVEL("topLevel"),
+//    TOP_LEVEL("topLevel"),
 
-//    TRIPS("trips"),
-//    PROFILE("profile"),
-//    MORE("more"),
+    TRIPS("trips"),
+    PROFILE("profile"),
+    MORE("more"),
 
     SET_DATE_TIME_FORMAT("setDateTimeFormat"),
     SET_THEME("setTheme"),

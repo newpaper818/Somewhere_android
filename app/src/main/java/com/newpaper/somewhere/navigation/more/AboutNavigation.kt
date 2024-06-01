@@ -43,7 +43,7 @@ fun NavGraphBuilder.aboutScreen(
         popExitTransition = { popExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.updateCurrentScreenDestination(ScreenDestination.ABOUT)
+            appViewModel.initCurrentScreenDestination(ScreenDestination.ABOUT)
         }
 
         AboutRoute(

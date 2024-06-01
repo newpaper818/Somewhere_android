@@ -1,9 +1,13 @@
 package com.newpaper.somewhere
 
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +32,7 @@ import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderF
 import com.google.firebase.initialize
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.enums.AppTheme
+import com.newpaper.somewhere.feature.trip.trips.TripsViewModel
 import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.SomewhereApp
 import com.newpaper.somewhere.ui.rememberExternalState
@@ -43,6 +48,7 @@ private const val MAIN_ACTIVITY_TAG = "MainActivity1"
 class MainActivity : ComponentActivity() {
 
     private val appViewModel: AppViewModel by viewModels()
+    private val tripsViewModel: TripsViewModel by viewModels()
 
     private lateinit var connectivityObserver: ConnectivityObserver
 
@@ -64,16 +70,23 @@ class MainActivity : ComponentActivity() {
         }
 
         splashScreen.setKeepOnScreenCondition {
-            appViewModel.appUiState.value.screenDestination.startScreenDestination == null
+            appViewModel.appUiState.value.screenDestination.currentScreenDestination == null
         }
 
-
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.light(
+                Color.TRANSPARENT, Color.TRANSPARENT
+            ),
+            navigationBarStyle = SystemBarStyle.light(
+                Color.TRANSPARENT, Color.TRANSPARENT
+            )
+        )
 
 
 
         //expand screen to status bar
-        Log.d(MAIN_ACTIVITY_TAG, "expand screen to status bar")
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+//        Log.d(MAIN_ACTIVITY_TAG, "expand screen to status bar")
+//        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         //firebase init app check
         initFirebase()
@@ -120,6 +133,7 @@ class MainActivity : ComponentActivity() {
                     SomewhereApp(
                         externalState = externalState,
                         appViewModel = appViewModel,
+                        tripsViewModel = tripsViewModel,
                         isDarkAppTheme = isDarkAppTheme
                     )
                 }

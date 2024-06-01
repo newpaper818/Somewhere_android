@@ -1,14 +1,21 @@
 package com.newpaper.somewhere.navigationUi
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.newpaper.somewhere.core.designsystem.component.SomewhereNavigationBottomBar
 import com.newpaper.somewhere.core.designsystem.component.SomewhereNavigationBottomBarItem
@@ -34,28 +41,26 @@ fun ScreenWithNavigationBar(
     content: @Composable () -> Unit = {}
 ) {
 
-    if (!showNavigationBar){
-        content()
-    }
-    else {
-        Box(
-            modifier = modifier
-                .imePadding()
-                .navigationBarsPadding()
-                .displayCutoutPadding()
-                .fillMaxSize()
-        ) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
 
-            //phone vertical ===========================================================================
-            if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
-                Column {
-                    //content
-                    Box(modifier = Modifier.weight(1f)) {
-                        content()
-                    }
+        //phone vertical ===========================================================================
+        if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
+            Box(
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                //content
+                content()
 
-                    //bottom navigation bar
-                    SomewhereNavigationBottomBar {
+                //bottom navigation bar
+                AnimatedVisibility(
+                    visible = showNavigationBar,
+                    enter = slideInVertically(tween(300), initialOffsetY = { it }),
+                    exit = slideOutVertically(tween(300), targetOffsetY = { it })
+                ) {
+                    SomewhereNavigationBottomBar{
                         topLevelDestinations.forEach {
                             SomewhereNavigationBottomBarItem(
                                 selected = it == currentTopLevelDestination,
@@ -73,15 +78,26 @@ fun ScreenWithNavigationBar(
                     }
                 }
             }
+        }
 
-            //phone horizontal (height compact) ========================================================
-            //or foldable vertical or tablet vertical (width medium)
-            else if (
-                windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact
-                || windowSizeClass.widthSizeClass == WindowWidthSizeClass.Medium
+        //phone horizontal (height compact) ========================================================
+        //or foldable vertical or tablet vertical (width medium)
+        else if (
+            windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact
+            || windowSizeClass.widthSizeClass == WindowWidthSizeClass.Medium
+        ) {
+            Box(
+                modifier = Modifier.displayCutoutPadding()
             ) {
-                Row {
-                    //navigation rail bar
+                //content
+                content()
+
+                //navigation rail bar
+                AnimatedVisibility(
+                    visible = showNavigationBar,
+                    enter = slideInHorizontally(tween(300), initialOffsetX = { -it }),
+                    exit = slideOutHorizontally(tween(300), targetOffsetX = { -it })
+                ) {
                     SomewhereNavigationRailBar {
                         topLevelDestinations.forEach {
                             SomewhereNavigationRailBarItem(
@@ -98,17 +114,23 @@ fun ScreenWithNavigationBar(
                             )
                         }
                     }
-
-                    //content
-                    content()
                 }
             }
+        }
 
-            //foldable horizontal or tablet horizontal =================================================
-            else if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded) {
+        //foldable horizontal or tablet horizontal =================================================
+        else if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded) {
 
-                Row {
-                    //navigation drawer bar
+            Box {
+                //content
+                content()
+
+                //navigation drawer bar
+                AnimatedVisibility(
+                    visible = showNavigationBar,
+                    enter = slideInHorizontally(tween(300), initialOffsetX = { -it }),
+                    exit = slideOutHorizontally(tween(300), targetOffsetX = { -it })
+                ) {
                     SomewhereNavigationDrawer {
                         topLevelDestinations.forEach {
                             SomewhereNavigationDrawerItem(
@@ -125,9 +147,6 @@ fun ScreenWithNavigationBar(
                             )
                         }
                     }
-
-                    //content
-                    content()
                 }
             }
         }

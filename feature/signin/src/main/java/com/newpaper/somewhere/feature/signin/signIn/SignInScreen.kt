@@ -3,6 +3,7 @@ package com.newpaper.somewhere.feature.signin.signIn
 import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
@@ -206,23 +209,21 @@ private fun SignInScreen(
     modifier: Modifier = Modifier
 ) {
     MyScaffold(
-        modifier = modifier
-            .imePadding()
-            .navigationBarsPadding()
-            .displayCutoutPadding(),
-
+        modifier = modifier,
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarHostState,
                 modifier = Modifier.width(500.dp)
             )
         }
-    ) { paddingValues ->
+    ) { _ ->
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .displayCutoutPadding(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 

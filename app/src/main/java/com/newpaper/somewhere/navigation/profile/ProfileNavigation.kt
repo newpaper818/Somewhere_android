@@ -1,7 +1,7 @@
 package com.newpaper.somewhere.navigation.profile
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -10,6 +10,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
+import com.newpaper.somewhere.core.designsystem.component.NAVIGATION_DRAWER_BAR_WIDTH
+import com.newpaper.somewhere.core.designsystem.component.NAVIGATION_RAIL_BAR_WIDTH
+import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.feature.profile.profile.ProfileRoute
 import com.newpaper.somewhere.navigation.TopEnterTransition
@@ -19,6 +22,8 @@ import com.newpaper.somewhere.navigation.TopPopExitTransition
 import com.newpaper.somewhere.navigationUi.TopLevelDestination
 import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
+import com.newpaper.somewhere.util.WindowHeightSizeClass
+import com.newpaper.somewhere.util.WindowWidthSizeClass
 
 private const val DEEP_LINK_URI_PATTERN =
     "https://www.somewhere.newpaper.com/profile"
@@ -44,18 +49,32 @@ fun NavGraphBuilder.profileScreen(
         popExitTransition = { TopPopExitTransition }
     ) {
         LaunchedEffect(Unit) {
+            appViewModel.initCurrentScreenDestination(ScreenDestination.PROFILE)
             appViewModel.updateCurrentTopLevelDestination(TopLevelDestination.PROFILE)
         }
 
         val appUiState by appViewModel.appUiState.collectAsState()
+        val widthSizeClass = externalState.windowSizeClass.widthSizeClass
+        val heightSizeClass = externalState.windowSizeClass.heightSizeClass
 
-        ProfileRoute(
-            internetEnabled = externalState.internetEnabled,
-            spacerValue = externalState.windowSizeClass.spacerValue,
-            lazyListState = lazyListState,
-            use2Panes = externalState.windowSizeClass.use2Panes,
-            userData = appUiState.appUserData,
-            navigateToAccount = navigateToAccount,
-        )
+        Row {
+            if (
+                heightSizeClass == WindowHeightSizeClass.Compact
+                || widthSizeClass == WindowWidthSizeClass.Medium
+            ) {
+                MySpacerRow(width = NAVIGATION_RAIL_BAR_WIDTH)
+            } else if (widthSizeClass == WindowWidthSizeClass.Expanded) {
+                MySpacerRow(width = NAVIGATION_DRAWER_BAR_WIDTH)
+            }
+
+            ProfileRoute(
+                internetEnabled = externalState.internetEnabled,
+                spacerValue = externalState.windowSizeClass.spacerValue,
+                lazyListState = lazyListState,
+                use2Panes = externalState.windowSizeClass.use2Panes,
+                userData = appUiState.appUserData,
+                navigateToAccount = navigateToAccount,
+            )
+        }
     }
 }

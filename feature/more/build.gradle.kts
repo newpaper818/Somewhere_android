@@ -19,7 +19,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.2"
+        kotlinCompilerExtensionVersion = "1.5.13"
     }
     kotlinOptions {
         jvmTarget = "1.8"
@@ -42,6 +42,8 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons.extended)
     implementation(libs.compose.ui.tooling.preview)
+
+    implementation(libs.androidx.compose.material3.adaptive.navigation)
 
     //hilt
     implementation(libs.hilt.android)
