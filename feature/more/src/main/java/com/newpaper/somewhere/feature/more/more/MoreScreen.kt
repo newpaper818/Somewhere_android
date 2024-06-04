@@ -48,8 +48,8 @@ fun MoreRoute(
     MoreScreen(
         isDebugMode = isDebugMode,
         userDataIsNull = userDataIsNull,
-        startSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
-        endSpacerValue = spacerValue,
+        startSpacerValue = spacerValue,
+        endSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
         lazyListState = lazyListState,
         navigateTo = navigateTo,
         modifier = modifier,

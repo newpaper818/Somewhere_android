@@ -40,7 +40,7 @@ fun NavGraphBuilder.signInScreen(
         popExitTransition = { popExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.initCurrentScreenDestination(ScreenDestination.SIGN_IN)
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.SIGN_IN)
             appViewModel.initAppUiState()
         }
 

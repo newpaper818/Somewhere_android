@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.newpaper.somewhere.core.data.repository.PreferencesRepository
@@ -25,9 +26,9 @@ data class AppPreferencesState(
 )
 
 data class DestinationState(
-//    val startScreenDestination: ScreenDestination? = null, //if not null, splash screen will be finish
+    val startScreenDestination: ScreenDestination? = null, //if not null, splash screen will be finish
     val currentTopLevelDestination: TopLevelDestination = TopLevelDestination.TRIPS,
-    val currentScreenDestination: ScreenDestination? = null
+    val currentScreenDestination: ScreenDestination = ScreenDestination.SIGN_IN
 )
 
 data class AppUiState(
@@ -35,6 +36,7 @@ data class AppUiState(
     val appPreferences: AppPreferencesState = AppPreferencesState(),
     val screenDestination: DestinationState = DestinationState(),
 
+//    val showSplashScreen: Boolean = true,
     val firstLaunch: Boolean = true,
     val isEditMode: Boolean = false
 )
@@ -139,7 +141,7 @@ class AppViewModel @Inject constructor(
     ){
         initSignedInUser(
             onDone = { userDataIsNull ->
-                initCurrentScreenDestination(userDataIsNull)
+                updateCurrentScreenDestination(userDataIsNull)
             }
         )
     }
@@ -149,10 +151,14 @@ class AppViewModel @Inject constructor(
     ){
         viewModelScope.launch {
             val userData = userRepository.getSignedInUser()
+
+            Log.d(APP_VIEWMODEL_TAG, "userData: $userData, userId: ${userData?.userId}")
+
             _appUiState.update {
                 it.copy(appUserData = userData)
             }
-            onDone(userData?.email == null)
+
+            onDone(userData == null || userData.userId == "")
         }
     }
 
@@ -167,7 +173,7 @@ class AppViewModel @Inject constructor(
 
     //==============================================================================================
     //update screen destination ====================================================================
-    private fun initCurrentScreenDestination(
+    private fun updateCurrentScreenDestination(
         userDataIsNull: Boolean
     ){
         val startScreenDestination =
@@ -177,7 +183,7 @@ class AppViewModel @Inject constructor(
         _appUiState.update {
             it.copy(
                 screenDestination = it.screenDestination.copy(
-                    currentScreenDestination = startScreenDestination
+                    startScreenDestination = startScreenDestination
                 )
             )
         }
@@ -193,13 +199,50 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    fun initCurrentScreenDestination(screenDestination: ScreenDestination) {
-        _appUiState.update {
-            it.copy(
-                screenDestination = it.screenDestination.copy(
-                    currentScreenDestination = screenDestination
-                )
-            )
+    fun updateCurrentScreenDestination(
+        screenDestination: ScreenDestination
+    ) {
+
+        when (screenDestination) {
+            ScreenDestination.TRIPS -> {
+                _appUiState.update {
+                    it.copy(
+                        screenDestination = it.screenDestination.copy(
+                            currentTopLevelDestination = TopLevelDestination.TRIPS,
+                            currentScreenDestination = screenDestination
+                        )
+                    )
+                }
+            }
+            ScreenDestination.PROFILE -> {
+                _appUiState.update {
+                    it.copy(
+                        screenDestination = it.screenDestination.copy(
+                            currentTopLevelDestination = TopLevelDestination.PROFILE,
+                            currentScreenDestination = screenDestination
+                        )
+                    )
+                }
+            }
+            ScreenDestination.MORE -> {
+                _appUiState.update {
+                    it.copy(
+                        screenDestination = it.screenDestination.copy(
+                            currentTopLevelDestination = TopLevelDestination.MORE,
+                            currentScreenDestination = screenDestination
+                        )
+                    )
+                }
+            }
+            else -> {
+                _appUiState.update {
+                    it.copy(
+                        screenDestination = it.screenDestination.copy(
+                            currentScreenDestination = screenDestination
+                        )
+                    )
+                }
+            }
         }
     }
 

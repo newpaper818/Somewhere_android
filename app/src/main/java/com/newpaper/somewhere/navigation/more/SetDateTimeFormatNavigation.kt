@@ -42,7 +42,7 @@ fun NavGraphBuilder.setDateTimeFormatScreen(
         popExitTransition = { popExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.initCurrentScreenDestination(ScreenDestination.SET_DATE_TIME_FORMAT)
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.SET_DATE_TIME_FORMAT)
         }
 
         val coroutineScope = rememberCoroutineScope()

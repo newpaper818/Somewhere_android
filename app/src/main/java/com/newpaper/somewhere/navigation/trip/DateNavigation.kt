@@ -41,7 +41,7 @@ fun NavGraphBuilder.dateScreen(
         popExitTransition = { popExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.initCurrentScreenDestination(ScreenDestination.DATE)
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.DATE)
         }
 
     }

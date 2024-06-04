@@ -70,7 +70,7 @@ class MainActivity : ComponentActivity() {
         }
 
         splashScreen.setKeepOnScreenCondition {
-            appViewModel.appUiState.value.screenDestination.currentScreenDestination == null
+            appViewModel.appUiState.value.screenDestination.startScreenDestination == null
         }
 
         enableEdgeToEdge(

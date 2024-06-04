@@ -1,5 +1,9 @@
 package com.newpaper.somewhere.feature.trip.trips.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,22 +19,30 @@ import com.newpaper.somewhere.feature.trip.trips.tripCardHeightDp
 
 @Composable
 internal fun LoadingTripsItem(
-
+    shown: Boolean,
+    modifier: Modifier = Modifier
 ){
-    Column {
+    AnimatedVisibility(
+        visible = shown,
+        enter = fadeIn(animationSpec = tween(300)),
+        exit = fadeOut(animationSpec = tween(300))
+    ) {
 
-        MySpacerColumn(height = 50.dp)
+        Column(modifier = modifier) {
 
-        repeat(3) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(tripCardHeightDp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .shimmerEffect()
-            )
-            MySpacerColumn(height = 16.dp)
+            MySpacerColumn(height = 124.dp) //
+
+            repeat(3) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(tripCardHeightDp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .shimmerEffect()
+                )
+                MySpacerColumn(height = 16.dp)
+            }
+
         }
-
     }
 }

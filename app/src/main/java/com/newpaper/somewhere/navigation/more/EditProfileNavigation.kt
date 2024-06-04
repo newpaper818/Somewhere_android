@@ -44,7 +44,7 @@ fun NavGraphBuilder.editProfileScreen(
         popExitTransition = { popExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.initCurrentScreenDestination(ScreenDestination.EDIT_PROFILE)
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.EDIT_PROFILE)
         }
 
         val appUiState by appViewModel.appUiState.collectAsState()

@@ -1,21 +1,24 @@
 package com.newpaper.somewhere.navigation.more
 
-import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.layout.AnimatedPane
-import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
-import androidx.compose.material3.adaptive.navigation.NavigableListDetailPaneScaffold
-import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.newpaper.somewhere.BuildConfig
 import com.newpaper.somewhere.core.designsystem.component.NAVIGATION_DRAWER_BAR_WIDTH
@@ -23,7 +26,10 @@ import com.newpaper.somewhere.core.designsystem.component.NAVIGATION_RAIL_BAR_WI
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.feature.more.about.AboutRoute
+import com.newpaper.somewhere.feature.more.account.AccountRoute
 import com.newpaper.somewhere.feature.more.more.MoreRoute
+import com.newpaper.somewhere.feature.more.setDateTimeFormat.SetDateTimeFormatRoute
+import com.newpaper.somewhere.feature.more.setTheme.SetThemeRoute
 import com.newpaper.somewhere.navigation.TopEnterTransition
 import com.newpaper.somewhere.navigation.TopExitTransition
 import com.newpaper.somewhere.navigation.TopPopEnterTransition
@@ -33,6 +39,7 @@ import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
 import com.newpaper.somewhere.util.WindowHeightSizeClass
 import com.newpaper.somewhere.util.WindowWidthSizeClass
+import kotlinx.coroutines.launch
 
 private const val DEEP_LINK_URI_PATTERN =
     "https://www.somewhere.newpaper.com/more"
@@ -48,8 +55,12 @@ fun NavGraphBuilder.moreScreen(
     lazyListState: LazyListState,
     navigateTo: (ScreenDestination) -> Unit,
 
+    navigateToDeleteAccount: () -> Unit,
+    navigateToEditAccount: () -> Unit,
+    navigateToOpenSourceLicense: () -> Unit,
+    onSignOutDone: () -> Unit,
+
     modifier: Modifier = Modifier,
-    currentScreen: ScreenDestination? = null
 ) {
     composable(
         route = TopLevelDestination.MORE.route,
@@ -62,252 +73,116 @@ fun NavGraphBuilder.moreScreen(
         popExitTransition = { TopPopExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.initCurrentScreenDestination(ScreenDestination.MORE)
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.MORE)
             appViewModel.updateCurrentTopLevelDestination(TopLevelDestination.MORE)
         }
 
-        MoreListDetailScreen(
-            externalState = externalState,
-            appViewModel = appViewModel,
-            userDataIsNull = userDataIsNull,
-            lazyListState = lazyListState,
-            navigateTo = navigateTo,
-            modifier = modifier,
-            currentScreen = currentScreen
-        )
 
-//        val widthSizeClass = externalState.windowSizeClass.widthSizeClass
-//        val heightSizeClass = externalState.windowSizeClass.heightSizeClass
-//
-//        Row {
-//            if (
-//                heightSizeClass == WindowHeightSizeClass.Compact
-//                || widthSizeClass == WindowWidthSizeClass.Medium
-//            ) {
-//                MySpacerRow(width = NAVIGATION_RAIL_BAR_WIDTH)
-//            } else if (widthSizeClass == WindowWidthSizeClass.Expanded) {
-//                MySpacerRow(width = NAVIGATION_DRAWER_BAR_WIDTH)
-//            }
-//
-//            MoreRoute(
-//                isDebugMode = BuildConfig.DEBUG,
-//                userDataIsNull = userDataIsNull,
-//                spacerValue = externalState.windowSizeClass.spacerValue,
-//                lazyListState = lazyListState,
-//                navigateTo = navigateTo,
-//                modifier = modifier,
+        val widthSizeClass = externalState.windowSizeClass.widthSizeClass
+        val heightSizeClass = externalState.windowSizeClass.heightSizeClass
+
+
+
+//        var currentScreen by rememberSaveable { mutableStateOf(ScreenDestination.SET_DATE_TIME_FORMAT) }
+
+
+
+        Row {
+            if (
+                heightSizeClass == WindowHeightSizeClass.Compact
+                || widthSizeClass == WindowWidthSizeClass.Medium
+            ) {
+                MySpacerRow(width = NAVIGATION_RAIL_BAR_WIDTH)
+            } else if (widthSizeClass == WindowWidthSizeClass.Expanded) {
+                MySpacerRow(width = NAVIGATION_DRAWER_BAR_WIDTH)
+            }
+
+            MoreRoute(
+                isDebugMode = BuildConfig.DEBUG,
+                userDataIsNull = userDataIsNull,
+                spacerValue = externalState.windowSizeClass.spacerValue,
+                lazyListState = lazyListState,
+                navigateTo =
+                    navigateTo,
+//                {
+//                    if (!externalState.windowSizeClass.use2Panes)
+//                        navigateTo(it)
+//                    else
+//                        currentScreen = it
+//                },
+                modifier = modifier.weight(1f),
+                use2Panes = externalState.windowSizeClass.use2Panes,
 //                currentScreen = currentScreen
-//            )
-//        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
-@Composable
-fun MoreListDetailScreen(
-    externalState: ExternalState,
-    appViewModel: AppViewModel,
-
-    userDataIsNull: Boolean,
-    lazyListState: LazyListState,
-    navigateTo: (ScreenDestination) -> Unit,
-
-    modifier: Modifier = Modifier,
-    currentScreen: ScreenDestination? = null,
-){
-    val navigator = rememberListDetailPaneScaffoldNavigator<Any>()
-    val moreNavController = rememberNavController()
-
-    BackHandler(navigator.canNavigateBack()) {
-        navigator.navigateBack()
-    }
-
-    val onMoreMenuItemClick: (ScreenDestination) -> Unit = {screenDestination ->
-        navigator.navigateTo(
-            pane = ListDetailPaneScaffoldRole.Detail,
-        )
-//        moreNavController.navigate(screenDestination.route)
-    }
+            )
 
 
 
 
 
 
-
-    NavigableListDetailPaneScaffold(
-        navigator = navigator,
-        listPane = {
-            val widthSizeClass = externalState.windowSizeClass.widthSizeClass
-            val heightSizeClass = externalState.windowSizeClass.heightSizeClass
-
-            AnimatedPane {
-                Row {
-                    if (
-                        heightSizeClass == WindowHeightSizeClass.Compact
-                        || widthSizeClass == WindowWidthSizeClass.Medium
-                    ) {
-                        MySpacerRow(width = NAVIGATION_RAIL_BAR_WIDTH)
-                    } else if (widthSizeClass == WindowWidthSizeClass.Expanded) {
-                        MySpacerRow(width = NAVIGATION_DRAWER_BAR_WIDTH)
-                    }
-                    MoreRoute(
-                        isDebugMode = BuildConfig.DEBUG,
-                        userDataIsNull = userDataIsNull,
-                        spacerValue = externalState.windowSizeClass.spacerValue,
-                        lazyListState = lazyListState,
-                        navigateTo = { onMoreMenuItemClick(it) },
-                        modifier = modifier,
-                        currentScreen = currentScreen
-                    )
-                }
-            }
-        },
-        detailPane = {
-//            val screenDestinationRoute = navigator.currentDestination?.content?.toString()
-//                ?: ScreenDestination.SET_DATE_TIME_FORMAT.route
-
-            AnimatedPane{
-
-                AboutRoute(
-                    spacerValue = externalState.windowSizeClass.spacerValue,
-                    currentAppVersionCode = 29,
-                    currentAppVersionName = "1.6.3a",
-                    isDebugMode = true,
-                    navigateToOpenSourceLicense = { /*TODO*/ },
-                    navigateUp = { /*TODO*/ })
-
-
-
-
-//                NavHost(
-//                    navController = moreNavController,
-//                    startDestination = currentScreen?.route ?: ScreenDestination.SET_DATE_TIME_FORMAT,
-////                    route = "more"
-//                ){
-//                    setDateTimeFormatScreen(
-//                        appViewModel = appViewModel,
-//                        externalState = externalState,
-//                        navigateUp = { }
-//                    )
+//            if (externalState.windowSizeClass.use2Panes){
 //
-//                    setThemeScreen(
-//                        appViewModel = appViewModel,
-//                        externalState = externalState,
-//                        navigateUp = { }
-//                    )
+//                val coroutineScope = rememberCoroutineScope()
+//                val appUiState by appViewModel.appUiState.collectAsState()
 //
-//                    accountScreen(
-//                        appViewModel = appViewModel,
-//                        externalState = externalState,
-//                        navigateToDeleteAccount = {
-//
-//                        },
-//                        navigateToEditAccount = {
-//
-//                        },
-//                        navigateUp = { },
-//                        onSignOutDone = {
-////                            navController.navigateToSignIn(
-////                                navOptions = navOptions{
-////                                    popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
-////                                }
-////                            )
-//                            appViewModel.updateCurrentTopLevelDestination(TopLevelDestination.TRIPS)
-//                        },
-//                        modifier = modifier
-//
-//                    )
-//
-//                    aboutScreen(
-//                        externalState = externalState,
-//                        appViewModel = appViewModel,
-//                        navigateToOpenSourceLicense = { },
-//                        navigateUp = { },
-//                        modifier = modifier
-//                    )
+//                when (currentScreen) {
+//                    ScreenDestination.SET_DATE_TIME_FORMAT -> {
+//                        SetDateTimeFormatRoute(
+//                            spacerValue = externalState.windowSizeClass.spacerValue,
+//                            dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
+//                            updatePreferencesValue = {
+//                                coroutineScope.launch{
+//                                    appViewModel.getAppPreferencesValue()
+//                                }
+//                            },
+//                            navigateUp = { },
+//                            use2Panes = externalState.windowSizeClass.use2Panes,
+//                            modifier = modifier.weight(1f),
+//                        )
+//                    }
+//                    ScreenDestination.SET_THEME -> {
+//                        SetThemeRoute(
+//                            spacerValue = externalState.windowSizeClass.spacerValue,
+//                            theme = appUiState.appPreferences.theme,
+//                            updatePreferencesValue = {
+//                                coroutineScope.launch{
+//                                    appViewModel.getAppPreferencesValue()
+//                                }
+//                            },
+//                            navigateUp = { },
+//                            use2Panes = externalState.windowSizeClass.use2Panes,
+//                            modifier = modifier.weight(1f),
+//                        )
+//                    }
+//                    ScreenDestination.ACCOUNT -> {
+//                        AccountRoute(
+//                            userData = appUiState.appUserData!!,
+//                            internetEnabled = externalState.internetEnabled,
+//                            spacerValue = externalState.windowSizeClass.spacerValue,
+//                            navigateToDeleteAccount = navigateToDeleteAccount,
+//                            navigateToEditAccount = navigateToEditAccount,
+//                            navigateUp = { },
+//                            onSignOutDone = onSignOutDone,
+//                            use2Panes = externalState.windowSizeClass.use2Panes,
+//                            modifier = modifier.weight(1f),
+//                        )
+//                    }
+//                    ScreenDestination.ABOUT -> {
+//                        AboutRoute(
+//                            spacerValue = externalState.windowSizeClass.spacerValue,
+//                            currentAppVersionCode = BuildConfig.VERSION_CODE,
+//                            currentAppVersionName = BuildConfig.VERSION_NAME,
+//                            isDebugMode = BuildConfig.DEBUG,
+//                            navigateToOpenSourceLicense = navigateToOpenSourceLicense,
+//                            navigateUp = { },
+//                            use2Panes = externalState.windowSizeClass.use2Panes,
+//                            modifier = modifier.weight(1f),
+//                        )
+//                    }
+//                    else -> { }
 //                }
-            }
+//
+//            }
         }
-    )
-
-
-
-
-
-
-
-
-
-
-
-//    ListDetailPaneScaffold(
-//        directive = navigator.scaffoldDirective,
-//        value = navigator.scaffoldValue,
-//        listPane = {
-//            AnimatedPane{
-//                MoreRoute(
-//                    isDebugMode = BuildConfig.DEBUG,
-//                    userDataIsNull = userDataIsNull,
-//                    spacerValue = externalState.windowSizeClass.spacerValue,
-//                    lazyListState = lazyListState,
-//                    navigateTo = { onMoreMenuItemClick(it) },
-//                    modifier = modifier,
-//                    currentScreen = currentScreen
-//                )
-//            }
-//        },
-//        detailPane = {
-//            AnimatedPane{
-//                NavHost(
-//                    navController = rememberNavController(),
-//                    startDestination = currentScreen?.route ?: ScreenDestination.SET_DATE_TIME_FORMAT,
-////                    route = "more"
-//                ){
-//                    setDateTimeFormatScreen(
-//                        appViewModel = appViewModel,
-//                        externalState = externalState,
-//                        navigateUp = { }
-//                    )
-//
-//                    setThemeScreen(
-//                        appViewModel = appViewModel,
-//                        externalState = externalState,
-//                        navigateUp = { }
-//                    )
-//
-//                    accountScreen(
-//                        appViewModel = appViewModel,
-//                        externalState = externalState,
-//                        navigateToDeleteAccount = {
-//
-//                        },
-//                        navigateToEditAccount = {
-//
-//                        },
-//                        navigateUp = { },
-//                        onSignOutDone = {
-////                            navController.navigateToSignIn(
-////                                navOptions = navOptions{
-////                                    popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
-////                                }
-////                            )
-//                            appViewModel.updateCurrentTopLevelDestination(TopLevelDestination.TRIPS)
-//                        },
-//                        modifier = modifier
-//
-//                    )
-//
-//                    aboutScreen(
-//                        externalState = externalState,
-//                        appViewModel = appViewModel,
-//                        navigateToOpenSourceLicense = { },
-//                        navigateUp = { },
-//                        modifier = modifier
-//                    )
-//                }
-//            }
-//        }
-//    )
-
+    }
 }

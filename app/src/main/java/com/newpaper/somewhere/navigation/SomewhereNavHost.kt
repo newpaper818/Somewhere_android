@@ -1,23 +1,23 @@
 package com.newpaper.somewhere.navigation
 
+import android.annotation.SuppressLint
 import android.util.Log
-import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.navigation.NavController
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHost
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import androidx.navigation.navigation
+import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.feature.trip.trips.TripsViewModel
 import com.newpaper.somewhere.navigation.more.aboutScreen
@@ -35,15 +35,13 @@ import com.newpaper.somewhere.navigation.more.setThemeScreen
 import com.newpaper.somewhere.navigation.profile.profileScreen
 import com.newpaper.somewhere.navigation.signIn.navigateToSignIn
 import com.newpaper.somewhere.navigation.signIn.signInScreen
-import com.newpaper.somewhere.navigation.trip.navigateToTrip
-import com.newpaper.somewhere.navigation.trip.navigateToTrips
 import com.newpaper.somewhere.navigation.trip.tripsScreen
 import com.newpaper.somewhere.navigationUi.ScreenWithNavigationBar
 import com.newpaper.somewhere.navigationUi.TopLevelDestination
 import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
 import kotlinx.coroutines.launch
-
+@SuppressLint("RestrictedApi")
 @Composable
 fun SomewhereNavHost(
     externalState: ExternalState,
@@ -76,6 +74,28 @@ fun SomewhereNavHost(
 
     val coroutineScope = rememberCoroutineScope()
 
+
+    val onSignOutDone = {
+        navController.navigateToSignIn(
+            navOptions = navOptions {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    inclusive = true
+                }
+            }
+        )
+        appViewModel.updateCurrentTopLevelDestination(TopLevelDestination.TRIPS)
+    }
+
+    navController.addOnDestinationChangedListener { controller, _, _ ->
+        val routes = controller
+            .currentBackStack.value
+            .map { it.destination.route }
+            .joinToString(", ")
+
+        Log.d("BackStackLog", "BackStack: $routes")
+    }
+
+
     ScreenWithNavigationBar(
         windowSizeClass = externalState.windowSizeClass,
         currentTopLevelDestination = appUiState.screenDestination.currentTopLevelDestination,
@@ -107,6 +127,8 @@ fun SomewhereNavHost(
             startDestination = startDestination,
             modifier = modifier
         ) {
+
+
 
             //signIn ===================================================================================
             signInScreen(
@@ -156,8 +178,11 @@ fun SomewhereNavHost(
                 navigateTo = {
                     navController.navigate(it.route)
                 },
-                modifier = modifier,
-                currentScreen = appUiState.screenDestination.currentScreenDestination
+                navigateToDeleteAccount = { navController.navigateToDeleteAccount() },
+                navigateToEditAccount = { navController.navigateToEditProfile() },
+                navigateToOpenSourceLicense = { navController.navigateToOpenSourceLicense() },
+                onSignOutDone = onSignOutDone,
+                modifier = modifier
             )
 
 
@@ -174,82 +199,73 @@ fun SomewhereNavHost(
 
 
             //more =====================================================================================
-//            setDateTimeFormatScreen(
-//                appViewModel = appViewModel,
-//                externalState = externalState,
-//                navigateUp = navigateUp
-//            )
-//
-//            setThemeScreen(
-//                appViewModel = appViewModel,
-//                externalState = externalState,
-//                navigateUp = navigateUp
-//            )
-//
-//            accountScreen(
-//                appViewModel = appViewModel,
-//                externalState = externalState,
-//                navigateToDeleteAccount = {
-//                    navController.navigateToDeleteAccount()
-//                },
-//                navigateToEditAccount = {
-//                    navController.navigateToEditProfile()
-//                },
-//                navigateUp = navigateUp,
-//                onSignOutDone = {
-//                    navController.navigateToSignIn(
-//                        navOptions = navOptions {
-//                            popUpTo(navController.graph.findStartDestination().id) {
-//                                inclusive = true
-//                            }
-//                        }
-//                    )
-//                    appViewModel.updateCurrentTopLevelDestination(TopLevelDestination.TRIPS)
-//                },
-//                modifier = modifier
-//
-//            )
-//
-//            editProfileScreen(
-//                appViewModel = appViewModel,
-//                externalState = externalState,
-//                navigateUp = navigateUp,
-//                modifier = modifier
-//            )
-//
-//            deleteAccountScreen(
-//                appViewModel = appViewModel,
-//                externalState = externalState,
-//                isDarkAppTheme = isDarkAppTheme,
-//                navigateToSignIn = {
-//                    navController.navigateToSignIn(
-//                        navOptions = navOptions {
-//                            popUpTo(navController.graph.findStartDestination().id) {
-//                                inclusive = true
-//                            }
-//                        }
-//                    )
-//                },
-//                navigateUp = navigateUp,
-//                modifier = modifier
-//            )
-//
-//            aboutScreen(
-//                externalState = externalState,
-//                appViewModel = appViewModel,
-//                navigateToOpenSourceLicense = {
-//                    navController.navigateToOpenSourceLicense()
-//                },
-//                navigateUp = navigateUp,
-//                modifier = modifier
-//
-//            )
-//
-//            openSourceLicenseScreen(
-//                externalState = externalState,
-//                appViewModel = appViewModel,
-//                navigateUp = navigateUp
-//            )
+            setDateTimeFormatScreen(
+                appViewModel = appViewModel,
+                externalState = externalState,
+                navigateUp = navigateUp
+            )
+
+            setThemeScreen(
+                appViewModel = appViewModel,
+                externalState = externalState,
+                navigateUp = navigateUp
+            )
+
+            accountScreen(
+                appViewModel = appViewModel,
+                externalState = externalState,
+                navigateToDeleteAccount = {
+                    navController.navigateToDeleteAccount()
+                },
+                navigateToEditAccount = {
+                    navController.navigateToEditProfile()
+                },
+                navigateUp = navigateUp,
+                onSignOutDone = onSignOutDone,
+                modifier = modifier
+
+            )
+
+            editProfileScreen(
+                appViewModel = appViewModel,
+                externalState = externalState,
+                navigateUp = navigateUp,
+                modifier = modifier
+            )
+
+            deleteAccountScreen(
+                appViewModel = appViewModel,
+                externalState = externalState,
+                isDarkAppTheme = isDarkAppTheme,
+                navigateToSignIn = {
+                    navController.navigateToSignIn(
+                        navOptions = navOptions {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                inclusive = true
+                            }
+                        }
+                    )
+                },
+                navigateUp = navigateUp,
+                modifier = modifier
+            )
+
+            aboutScreen(
+                externalState = externalState,
+                appViewModel = appViewModel,
+                navigateToOpenSourceLicense = {
+                    navController.navigateToOpenSourceLicense()
+                },
+                navigateUp = navigateUp,
+                modifier = modifier
+
+            )
+
+            openSourceLicenseScreen(
+                externalState = externalState,
+                appViewModel = appViewModel,
+                navigateUp = navigateUp
+            )
 
 
             //trip =====================================================================================

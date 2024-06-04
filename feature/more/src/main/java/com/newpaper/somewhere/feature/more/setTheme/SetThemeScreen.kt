@@ -30,8 +30,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SetThemeRoute(
-    startSpacerValue: Dp,
-    endSpacerValue: Dp,
+    spacerValue: Dp,
     theme: Theme,
     updatePreferencesValue: () -> Unit,
 
@@ -44,8 +43,8 @@ fun SetThemeRoute(
     val coroutineScope = rememberCoroutineScope()
 
     SetThemeScreen(
-        startSpacerValue = startSpacerValue,
-        endSpacerValue = endSpacerValue,
+        startSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
+        endSpacerValue = spacerValue,
         theme = theme,
         saveUserPreferences = { appTheme, mapTheme ->
             coroutineScope.launch {

@@ -21,11 +21,11 @@ fun SomewhereApp(
 
     val appUiState by appViewModel.appUiState.collectAsState()
 
-    val isDarkMapTheme = appUiState.appPreferences.theme.mapTheme == MapTheme.DARK
-            || appUiState.appPreferences.theme.mapTheme == MapTheme.AUTO && isDarkAppTheme
+//    val isDarkMapTheme = appUiState.appPreferences.theme.mapTheme == MapTheme.DARK
+//            || appUiState.appPreferences.theme.mapTheme == MapTheme.AUTO && isDarkAppTheme
 
     //system ui controller for status bar icon color
-    val systemUiController = rememberSystemUiController()
+//    val systemUiController = rememberSystemUiController()
 
     //set status bar color FIXME: use when dark map theme?
 //    when (appUiState.screenDestination.currentScreenDestination) {
@@ -65,11 +65,7 @@ fun SomewhereApp(
 
 
 
-    val startDestination = appUiState.screenDestination.currentScreenDestination?.route
-
-
-
-
+    val startDestination = appUiState.screenDestination.startScreenDestination?.route
 
     if (startDestination != null){
         SomewhereNavHost(

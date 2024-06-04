@@ -49,7 +49,8 @@ fun ScreenWithNavigationBar(
         //phone vertical ===========================================================================
         if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
             Box(
-                contentAlignment = Alignment.BottomCenter
+                contentAlignment = Alignment.BottomCenter,
+                modifier = Modifier.fillMaxSize()
             ) {
                 //content
                 content()
@@ -87,7 +88,7 @@ fun ScreenWithNavigationBar(
             || windowSizeClass.widthSizeClass == WindowWidthSizeClass.Medium
         ) {
             Box(
-                modifier = Modifier.displayCutoutPadding()
+                modifier = Modifier.displayCutoutPadding().fillMaxSize()
             ) {
                 //content
                 content()
@@ -121,7 +122,9 @@ fun ScreenWithNavigationBar(
         //foldable horizontal or tablet horizontal =================================================
         else if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded) {
 
-            Box {
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
                 //content
                 content()
 
