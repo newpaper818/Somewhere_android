@@ -41,7 +41,7 @@ fun NavGraphBuilder.invitedFriendsScreen(
         popExitTransition = { popExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.initCurrentScreenDestination(ScreenDestination.INVITED_FRIENDS)
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.INVITED_FRIENDS)
         }
 
     }

@@ -41,7 +41,7 @@ fun NavGraphBuilder.spotScreen(
         popExitTransition = { popExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.initCurrentScreenDestination(ScreenDestination.SPOT)
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.SPOT)
         }
 
     }

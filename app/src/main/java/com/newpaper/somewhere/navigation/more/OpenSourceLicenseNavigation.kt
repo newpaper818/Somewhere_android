@@ -37,7 +37,7 @@ fun NavGraphBuilder.openSourceLicenseScreen(
         popExitTransition = { popExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.initCurrentScreenDestination(ScreenDestination.OPEN_SOURCE_LICENSE)
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.OPEN_SOURCE_LICENSE)
         }
 
         OpenSourceLicenseRoute(

@@ -41,7 +41,7 @@ fun NavGraphBuilder.imageScreen(
         popExitTransition = { popExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.initCurrentScreenDestination(ScreenDestination.IMAGE)
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.IMAGE)
         }
 
     }

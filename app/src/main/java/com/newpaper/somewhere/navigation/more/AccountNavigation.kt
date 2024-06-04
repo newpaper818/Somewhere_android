@@ -47,7 +47,7 @@ fun NavGraphBuilder.accountScreen(
         popExitTransition = { popExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.initCurrentScreenDestination(ScreenDestination.ACCOUNT)
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.ACCOUNT)
         }
 
         val appUiState by appViewModel.appUiState.collectAsState()

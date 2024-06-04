@@ -1,10 +1,16 @@
 package com.newpaper.somewhere.navigation.profile
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -49,9 +55,10 @@ fun NavGraphBuilder.profileScreen(
         popExitTransition = { TopPopExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.initCurrentScreenDestination(ScreenDestination.PROFILE)
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.PROFILE)
             appViewModel.updateCurrentTopLevelDestination(TopLevelDestination.PROFILE)
         }
+
 
         val appUiState by appViewModel.appUiState.collectAsState()
         val widthSizeClass = externalState.windowSizeClass.widthSizeClass

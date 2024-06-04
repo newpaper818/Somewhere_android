@@ -3,11 +3,14 @@ package com.newpaper.somewhere.core.designsystem.component
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.button.AnimatedBottomSaveCancelButtons
 
 @Composable
@@ -19,6 +22,7 @@ fun MyScaffold(
     onSaveClick: () -> Unit = {},
     saveEnabled: Boolean = true,
     use2PanesAndSpotScreen: Boolean = false,
+    useBottomNavBar: Boolean = false,
 
     topBar: @Composable () -> Unit = {},
     bottomBar: @Composable () -> Unit = {},
@@ -30,6 +34,10 @@ fun MyScaffold(
     contentWindowInsets: WindowInsets = WindowInsets(bottom = 0),
     content: @Composable (PaddingValues) -> Unit
 ) {
+
+    val buttonsModifier = if (useBottomNavBar) Modifier.navigationBarsPadding().padding(bottom = 80.dp)
+                            else Modifier.navigationBarsPadding()
+
     Scaffold(
         modifier, topBar, bottomBar, snackbarHost, floatingActionButton,
         floatingActionButtonPosition, containerColor, contentColor, contentWindowInsets,
@@ -45,7 +53,8 @@ fun MyScaffold(
                 onCancelClick = onCancelClick,
                 onSaveClick = onSaveClick,
                 saveEnabled = saveEnabled,
-                use2PanesAndSpotScreen = use2PanesAndSpotScreen
+                use2PanesAndSpotScreen = use2PanesAndSpotScreen,
+                modifier = buttonsModifier
             )
         }
     }

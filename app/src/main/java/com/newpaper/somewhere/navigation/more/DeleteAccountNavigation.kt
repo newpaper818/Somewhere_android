@@ -46,7 +46,7 @@ fun NavGraphBuilder.deleteAccountScreen(
         popExitTransition = { popExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.initCurrentScreenDestination(ScreenDestination.DELETE_ACCOUNT)
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.DELETE_ACCOUNT)
         }
 
         val appUiState by appViewModel.appUiState.collectAsState()

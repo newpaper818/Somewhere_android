@@ -1,13 +1,15 @@
 package com.newpaper.somewhere.navigation.trip
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.displayCutoutPadding
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -59,8 +61,15 @@ fun NavGraphBuilder.tripsScreen(
         popExitTransition = { TopPopExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.initCurrentScreenDestination(ScreenDestination.TRIPS)
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.TRIPS)
             appViewModel.updateCurrentTopLevelDestination(TopLevelDestination.TRIPS)
+        }
+
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ){
+            Text(text = "Trips", style = MaterialTheme.typography.headlineLarge)
         }
 
         val appUiState by appViewModel.appUiState.collectAsState()
@@ -82,6 +91,7 @@ fun NavGraphBuilder.tripsScreen(
                 tripsViewModel = tripsViewModel,
                 appUserId = appUiState.appUserData?.userId ?: "",
                 internetEnabled = externalState.internetEnabled,
+                useBottomNavBar = externalState.windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact,
                 firstLaunch = appUiState.firstLaunch,
                 firstLaunchToFalse = appViewModel::firstLaunchToFalse,
                 isEditMode = appUiState.isEditMode,

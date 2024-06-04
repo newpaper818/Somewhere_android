@@ -243,6 +243,7 @@ class UserRepository @Inject constructor(
             return null
         }
         else {
+            Log.d(USER_REPOSITORY_TAG, "getSignedInUser - userId: ${firebaseUser.uid}")
             return commonRemoteDataSource.getUserInfo(
                 userId = firebaseUser.uid,
                 providerIds = firebaseUser.providerData.mapNotNull { getProviderIdFromString(it.providerId) }

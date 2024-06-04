@@ -237,13 +237,13 @@ private fun TripItemUi(
                     onClick = onClick,
                     onLongClick = onLongClick
                 )
+                .alpha(alpha)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(tripCardHeightDp)
-                    .padding(12.dp)
-                    .alpha(alpha),
+                    .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
 

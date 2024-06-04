@@ -1,8 +1,8 @@
 package com.newpaper.somewhere.feature.trip.trips
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -73,6 +73,7 @@ fun TripsRoute(
     tripsViewModel: TripsViewModel,
     appUserId: String,
     internetEnabled: Boolean,
+    useBottomNavBar: Boolean,
     firstLaunch: Boolean,
     firstLaunchToFalse: () -> Unit,
     isEditMode: Boolean,
@@ -106,7 +107,7 @@ fun TripsRoute(
             appUserId = appUserId
         )
 
-        firstLaunchToFalse()
+//        firstLaunchToFalse()
     }
 
     val adView = AdView(context).apply {
@@ -158,6 +159,7 @@ fun TripsRoute(
         lazyListState = lazyListState,
         dateTimeFormat = dateTimeFormat,
         adView = adView,
+        useBottomNavBar = useBottomNavBar,
         internetEnabled = internetEnabled,
         loadingTrips = tripsUiState.loadingTrips,
         showExitDialog = showExitDialog,
@@ -166,6 +168,7 @@ fun TripsRoute(
         showingTrips = showingTrips,
         showingSharedTrips = showingSharedTrips,
         glance = tripsUiState.glance,
+        firstLaunchToFalse = firstLaunchToFalse,
         onBackButtonClick = onBackButtonClick,
         setEditMode = setEditMode,
         onDeleteTrip = {
@@ -214,6 +217,7 @@ private fun TripsScreen(
 
     adView: AdView,
 
+    useBottomNavBar: Boolean,
     internetEnabled: Boolean,
     loadingTrips: Boolean,
     showExitDialog: Boolean,
@@ -222,6 +226,8 @@ private fun TripsScreen(
     showingTrips: List<Trip>,
     showingSharedTrips: List<Trip>,
     glance: Glance,
+
+    firstLaunchToFalse: () -> Unit,
 
     onBackButtonClick: () -> Unit,
     setEditMode: (editMode: Boolean?) -> Unit,
@@ -256,6 +262,8 @@ private fun TripsScreen(
     val sharedTripsSlideStates = remember { mutableStateMapOf(
         *showingSharedTrips.map { it.id to SlideState.NONE }.toTypedArray()
     ) }
+
+    val tripsIsEmpty = showingTrips.isEmpty() && showingSharedTrips.isEmpty()
 
 
     MyScaffold(
@@ -294,6 +302,7 @@ private fun TripsScreen(
 
         //bottom save cancel button
         bottomSaveCancelBarVisible = isEditMode,
+        useBottomNavBar = useBottomNavBar,
         onCancelClick = { onBackButtonClick() },
         onSaveClick = {
             saveTrips()
@@ -316,182 +325,206 @@ private fun TripsScreen(
             )
         }
 
-        //display trips list (my trips + shared trips)
-        LazyColumn(
-            state = lazyListState,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(spacerValue, 16.dp, spacerValue, 200.dp),
-            modifier = modifier
-                .fillMaxSize()
-//                .padding(top = paddingValues.calculateTopPadding())
-                .padding(paddingValues)
-                .navigationBarsPadding()
-                .onSizeChanged {
-                    with(density) {
-                        lazyColumnHeightDp = it.height.toDp().value.toInt()
-                    }
-                }
+
+
+
+
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
-            item {
-                GoogleBannerAd(
-                    internetEnabled = internetEnabled,
-                    adView = adView
-                )
+
+            //display trips list (my trips + shared trips)
+            LazyColumn(
+                state = lazyListState,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(spacerValue, 16.dp, spacerValue, 200.dp),
+                modifier = modifier
+                    .fillMaxSize()
+//                .padding(top = paddingValues.calculateTopPadding())
+                    .padding(paddingValues)
+                    .navigationBarsPadding()
+                    .onSizeChanged {
+                        with(density) {
+                            lazyColumnHeightDp = it.height.toDp().value.toInt()
+                        }
+                    }
+            ) {
+                item {
+                    GoogleBannerAd(
+                        internetEnabled = internetEnabled,
+                        adView = adView
+                    )
+                }
+
+
+                if (!tripsIsEmpty) {
+
+                    //each my trip item ================================================================
+                    if (showingTrips.isNotEmpty()) {
+                        item {
+                            LaunchedEffect(Unit) {
+                                firstLaunchToFalse()
+                            }
+
+                            Text(
+                                text = stringResource(id = R.string.my_trips),
+                                style = MaterialTheme.typography.labelMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                ),
+                                modifier = Modifier
+                                    .height(34.dp)
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp)
+                                    .wrapContentHeight(Alignment.Bottom)
+                            )
+                        }
+                    }
+
+                    items(showingTrips) { trip ->
+
+                        //delete trip dialog
+                        var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
+
+                        if (showDeleteDialog) {
+                            DeleteOrNotDialog(
+                                bodyText = stringResource(id = R.string.dialog_body_delete_trip),
+                                deleteText = stringResource(id = R.string.dialog_button_delete),
+                                onDismissRequest = { showDeleteDialog = false },
+                                onDeleteClick = {
+                                    onDeleteTrip(trip)
+                                    showDeleteDialog = false
+                                    addDeletedImages(trip.getAllImagesPath())
+                                }
+                            )
+                        }
+
+                        key(showingTrips) {
+                            TripItem(
+                                isEditMode = isEditMode,
+                                internetEnabled = internetEnabled,
+                                dateTimeFormat = dateTimeFormat,
+                                firstLaunch = firstLaunch,
+                                trip = trip,
+                                trips = showingTrips,
+                                onClick = {
+                                    setIsLoadingTrips(true)
+                                    navigateToTrip(false, it)
+                                },
+                                onLongClick = {
+                                    showDeleteDialog = true
+                                },
+                                downloadImage = downloadImage,
+                                slideState = slideStates[trip.id] ?: SlideState.NONE,
+                                updateSlideState = { tripId, newSlideState ->
+                                    slideStates[showingTrips[tripId].id] = newSlideState
+                                },
+                                updateItemPosition = { currentIndex, destinationIndex ->
+                                    updateItemOrder(false, currentIndex, destinationIndex)
+
+                                    //all slideState to NONE
+                                    slideStates.putAll(showingTrips.map { it.id }
+                                        .associateWith { SlideState.NONE })
+                                }
+                            )
+                        }
+                    }
+
+                    //each shared trip item ================================================================
+                    if (showingSharedTrips.isNotEmpty()) {
+                        item {
+                            Text(
+                                text = stringResource(id = R.string.shared_trips),
+                                style = MaterialTheme.typography.labelMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                ),
+                                modifier = Modifier
+                                    .height(34.dp)
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp)
+                                    .wrapContentHeight(Alignment.Bottom)
+                            )
+                        }
+                    }
+
+                    items(showingSharedTrips) { sharedTrip ->
+
+                        //get out trip dialog
+                        var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
+
+                        if (showDeleteDialog) {
+                            DeleteOrNotDialog(
+                                bodyText = stringResource(id = R.string.dialog_title_get_out_shared_trip),
+                                deleteText = stringResource(id = R.string.dialog_button_exit),
+                                onDismissRequest = { showDeleteDialog = false },
+                                onDeleteClick = {
+                                    onDeleteTrip(sharedTrip)
+                                    showDeleteDialog = false
+                                    addDeletedImages(sharedTrip.getAllImagesPath())
+                                }
+                            )
+                        }
+
+                        key(showingSharedTrips) {
+                            TripItem(
+                                isEditMode = isEditMode,
+                                internetEnabled = internetEnabled,
+                                dateTimeFormat = dateTimeFormat,
+                                firstLaunch = firstLaunch,
+                                trip = sharedTrip,
+                                trips = showingSharedTrips,
+                                onClick = {
+                                    setIsLoadingTrips(true)
+                                    navigateToTrip(false, it)
+                                },
+                                onLongClick = {
+                                    showDeleteDialog = true
+                                },
+                                downloadImage = downloadImage,
+                                slideState = sharedTripsSlideStates[sharedTrip.id]
+                                    ?: SlideState.NONE,
+                                updateSlideState = { tripId, newSlideState ->
+                                    sharedTripsSlideStates[showingTrips[tripId].id] = newSlideState
+                                },
+                                updateItemPosition = { currentIndex, destinationIndex ->
+                                    updateItemOrder(true, currentIndex, destinationIndex)
+
+                                    //all slideState to NONE
+                                    sharedTripsSlideStates.putAll(showingTrips.map { it.id }
+                                        .associateWith { SlideState.NONE })
+                                }
+                            )
+                        }
+                    }
+                } else {
+                    item {
+                        Box(
+                            contentAlignment = Alignment.Center
+                        ) {
+                            NoTripCard(!loadingTrips || !firstLaunch)
+                        }
+                    }
+                }
+
+                item {
+                    NewTripButton(
+                        visible = !loadingTrips && !isEditMode && showingTrips.size < 50,
+                        onClick = {
+                            setIsLoadingTrips(true)
+                            navigateToTrip(true, null)
+                        }
+                    )
+                }
             }
 
-            if (showingTrips.isNotEmpty() || showingSharedTrips.isNotEmpty()) {
-
-                //each my trip item ================================================================
-                if (showingTrips.isNotEmpty()){
-                    item {
-                        Text(
-                            text = stringResource(id = R.string.my_trips),
-                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant),
-                            modifier = Modifier
-                                .height(34.dp)
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
-                                .wrapContentHeight(Alignment.Bottom)
-                        )
-                    }
-                }
-
-                items(showingTrips) { trip ->
-
-                    //delete trip dialog
-                    var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
-
-                    if (showDeleteDialog) {
-                        DeleteOrNotDialog(
-                            bodyText = stringResource(id = R.string.dialog_body_delete_trip),
-                            deleteText = stringResource(id = R.string.dialog_button_delete),
-                            onDismissRequest = { showDeleteDialog = false },
-                            onDeleteClick = {
-                                onDeleteTrip(trip)
-                                showDeleteDialog = false
-                                addDeletedImages(trip.getAllImagesPath())
-                            }
-                        )
-                    }
-
-                    key(showingTrips) {
-                        TripItem(
-                            isEditMode = isEditMode,
-                            internetEnabled = internetEnabled,
-                            dateTimeFormat = dateTimeFormat,
-                            firstLaunch = firstLaunch,
-                            trip = trip,
-                            trips = showingTrips,
-                            onClick = {
-                                setIsLoadingTrips(true)
-                                navigateToTrip(false, it)
-                            },
-                            onLongClick = {
-                                showDeleteDialog = true
-                            },
-                            downloadImage = downloadImage,
-                            slideState = slideStates[trip.id] ?: SlideState.NONE,
-                            updateSlideState = { tripId, newSlideState ->
-                                slideStates[showingTrips[tripId].id] = newSlideState
-                            },
-                            updateItemPosition = { currentIndex, destinationIndex ->
-                                updateItemOrder(false, currentIndex, destinationIndex)
-
-                                //all slideState to NONE
-                                slideStates.putAll(showingTrips.map { it.id }
-                                    .associateWith { SlideState.NONE })
-                            }
-                        )
-                    }
-                }
-
-                //each shared trip item ================================================================
-                if (showingSharedTrips.isNotEmpty()){
-                    item {
-                        Text(
-                            text = stringResource(id = R.string.shared_trips),
-                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant),
-                            modifier = Modifier
-                                .height(34.dp)
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
-                                .wrapContentHeight(Alignment.Bottom)
-                        )
-                    }
-                }
-
-                items(showingSharedTrips) { sharedTrip ->
-
-                    //get out trip dialog
-                    var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
-
-                    if (showDeleteDialog) {
-                        DeleteOrNotDialog(
-                            bodyText = stringResource(id = R.string.dialog_title_get_out_shared_trip),
-                            deleteText = stringResource(id = R.string.dialog_button_exit),
-                            onDismissRequest = { showDeleteDialog = false },
-                            onDeleteClick = {
-                                onDeleteTrip(sharedTrip)
-                                showDeleteDialog = false
-                                addDeletedImages(sharedTrip.getAllImagesPath())
-                            }
-                        )
-                    }
-
-                    key(showingSharedTrips) {
-                        TripItem(
-                            isEditMode = isEditMode,
-                            internetEnabled = internetEnabled,
-                            dateTimeFormat = dateTimeFormat,
-                            firstLaunch = firstLaunch,
-                            trip = sharedTrip,
-                            trips = showingSharedTrips,
-                            onClick = {
-                                setIsLoadingTrips(true)
-                                navigateToTrip(false, it)
-                            },
-                            onLongClick = {
-                                showDeleteDialog = true
-                            },
-                            downloadImage = downloadImage,
-                            slideState = sharedTripsSlideStates[sharedTrip.id] ?: SlideState.NONE,
-                            updateSlideState = { tripId, newSlideState ->
-                                sharedTripsSlideStates[showingTrips[tripId].id] = newSlideState
-                            },
-                            updateItemPosition = { currentIndex, destinationIndex ->
-                                updateItemOrder(true, currentIndex, destinationIndex)
-
-                                //all slideState to NONE
-                                sharedTripsSlideStates.putAll(showingTrips.map { it.id }
-                                    .associateWith { SlideState.NONE })
-                            }
-                        )
-                    }
-                }
-            }
-            else {
-                if (!loadingTrips || !firstLaunch) {
-                    item {
-                        NoTripCard()
-                    }
-                }
-                else {
-                    item {
-                        LoadingTripsItem()
-                    }
-                }
-            }
-
-            item {
-                NewTripButton(
-                    visible = !loadingTrips && !isEditMode && showingTrips.size < 50,
-                    onClick = {
-                        setIsLoadingTrips(true)
-                        navigateToTrip(true, null)
-                    }
-                )
-            }
+            LoadingTripsItem(
+                    shown = loadingTrips && tripsIsEmpty,
+            modifier = Modifier
+                .padding(spacerValue, 16.dp, spacerValue, 0.dp)
+                .padding(paddingValues)
+            )
         }
     }
 }
@@ -549,6 +582,7 @@ private fun TripsScreenPreview_Default(){
             lazyListState = LazyListState(),
             dateTimeFormat = DateTimeFormat(),
             adView =  AdView(context).apply {},
+            useBottomNavBar = true,
             internetEnabled = true,
             loadingTrips = false,
             showExitDialog = false,
@@ -572,6 +606,7 @@ private fun TripsScreenPreview_Default(){
                 )
             ),
             glance = Glance(visible = true),
+            firstLaunchToFalse = { },
             onBackButtonClick = { },
             setEditMode = { },
             onDeleteTrip = { },
@@ -601,6 +636,7 @@ private fun TripsScreenPreview_Edit(){
             lazyListState = LazyListState(),
             dateTimeFormat = DateTimeFormat(),
             adView =  AdView(context).apply {},
+            useBottomNavBar = true,
             internetEnabled = true,
             loadingTrips = false,
             showExitDialog = false,
@@ -625,6 +661,7 @@ private fun TripsScreenPreview_Edit(){
                 )
             ),
             glance = Glance(),
+            firstLaunchToFalse = { },
             onBackButtonClick = { },
             setEditMode = { },
             onDeleteTrip = { },
@@ -654,6 +691,7 @@ private fun TripsScreenPreview_OnClickCancel(){
             lazyListState = LazyListState(),
             dateTimeFormat = DateTimeFormat(),
             adView =  AdView(context).apply {},
+            useBottomNavBar = true,
             internetEnabled = true,
             loadingTrips = false,
             showExitDialog = true,
@@ -678,6 +716,7 @@ private fun TripsScreenPreview_OnClickCancel(){
                 )
             ),
             glance = Glance(),
+            firstLaunchToFalse = { },
             onBackButtonClick = { },
             setEditMode = { },
             onDeleteTrip = { },
