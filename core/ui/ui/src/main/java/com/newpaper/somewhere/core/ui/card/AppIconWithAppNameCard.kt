@@ -26,11 +26,11 @@ import com.newpaper.somewhere.core.ui.ui.R
 
 @Composable
 fun AppIconWithAppNameCard(
-
+    modifier: Modifier = Modifier
 ){
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(8.dp)
+        modifier = modifier
     ) {
         ImageFromDrawable(
             imageDrawable = R.drawable.app_icon_fit,

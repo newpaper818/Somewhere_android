@@ -37,6 +37,7 @@ fun SignInWithButton(
     onClick: () -> Unit,
     buttonEnabled: Boolean,
     isDarkAppTheme: Boolean,
+    modifier: Modifier = Modifier
 ){
     when (providerId){
         ProviderId.GOOGLE -> {
@@ -51,7 +52,8 @@ fun SignInWithButton(
                 buttonEnabled = buttonEnabled,
                 onClick = onClick,
 
-                isSignIn = true
+                isSignIn = true,
+                modifier = modifier
             )
         }
         ProviderId.APPLE ->{
@@ -66,7 +68,8 @@ fun SignInWithButton(
                 buttonEnabled = buttonEnabled,
                 onClick = onClick,
 
-                isSignIn = true
+                isSignIn = true,
+                modifier = modifier
             )
         }
     }
@@ -130,14 +133,15 @@ private fun SignInAuthButton(
     onClick: () -> Unit,
 
     isSignIn: Boolean, // or auth
+    modifier: Modifier = Modifier
 ){
-    val modifier = if (useBorder) Modifier.border(1.dp, MaterialTheme.colorScheme.outline,
+    val buttonModifier = if (useBorder) modifier.border(1.dp, MaterialTheme.colorScheme.outline,
         CircleShape
     )
-                    else Modifier
+                    else modifier
 
     ClickableBox(
-        modifier = modifier,
+        modifier = buttonModifier,
         containerColor = containerColor,
         shape = CircleShape,
 
