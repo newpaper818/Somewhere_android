@@ -72,7 +72,7 @@ fun SomewhereNavHost(
     val onSignOutDone = {
         navController.navigateToSignIn(
             navOptions = navOptions {
-                popUpTo(navController.graph.findStartDestination().id) {
+                popUpTo(0) {
                     inclusive = true
                 }
             }
