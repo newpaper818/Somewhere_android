@@ -47,6 +47,7 @@ fun NavGraphBuilder.signInScreen(
         SignInRoute(
             isDarkAppTheme = isDarkAppTheme,
             internetEnabled = externalState.internetEnabled,
+            isVertical = externalState.windowSizeClass.isVertical,
             appVersionName = BuildConfig.VERSION_NAME,
             updateUserData = {usrData ->
                 appViewModel.updateUserData(userData = usrData)
