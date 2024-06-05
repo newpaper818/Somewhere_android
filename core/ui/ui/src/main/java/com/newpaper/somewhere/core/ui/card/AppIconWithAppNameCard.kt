@@ -29,7 +29,8 @@ fun AppIconWithAppNameCard(
 
 ){
     Row(
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(8.dp)
     ) {
         ImageFromDrawable(
             imageDrawable = R.drawable.app_icon_fit,
@@ -37,7 +38,7 @@ fun AppIconWithAppNameCard(
             modifier = Modifier.size(80.dp)
         )
 
-        MySpacerRow(width = 24.dp)
+        MySpacerRow(width = 20.dp)
 
         Column {
             Text(
@@ -52,13 +53,11 @@ fun AppIconWithAppNameCard(
                 text = stringResource(id = R.string.trip_planner_app),
                 fontSize = 18.sp,
                 fontFamily = suite,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                maxLines = 1
             )
         }
-        
-        MySpacerRow(width = 16.dp)
     }
-
 }
 
 
