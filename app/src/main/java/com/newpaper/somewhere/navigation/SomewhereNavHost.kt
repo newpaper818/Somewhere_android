@@ -98,7 +98,7 @@ fun SomewhereNavHost(
             navController.navigate(
                 route = it.route,
                 navOptions = navOptions{
-                    popUpTo(appUiState.screenDestination.currentTopLevelDestination.route) { inclusive = true }
+                    popUpTo(TopLevelDestination.TRIPS.route) { inclusive = it == TopLevelDestination.TRIPS }
                 }
             )
 
