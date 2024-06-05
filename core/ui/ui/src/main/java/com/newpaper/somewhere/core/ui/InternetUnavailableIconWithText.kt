@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.core.ui
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
@@ -16,6 +17,7 @@ fun InternetUnavailableIconWithText(){
     MySpacerColumn(height = 6.dp)
     Text(
         text = stringResource(id = R.string.internet_unavailable_check_connection),
-        textAlign = TextAlign.Center
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
     )
 }
