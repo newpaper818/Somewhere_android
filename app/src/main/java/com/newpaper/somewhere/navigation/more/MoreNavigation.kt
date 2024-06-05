@@ -1,19 +1,8 @@
 package com.newpaper.somewhere.navigation.more
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -25,11 +14,7 @@ import com.newpaper.somewhere.core.designsystem.component.NAVIGATION_DRAWER_BAR_
 import com.newpaper.somewhere.core.designsystem.component.NAVIGATION_RAIL_BAR_WIDTH
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
-import com.newpaper.somewhere.feature.more.about.AboutRoute
-import com.newpaper.somewhere.feature.more.account.AccountRoute
 import com.newpaper.somewhere.feature.more.more.MoreRoute
-import com.newpaper.somewhere.feature.more.setDateTimeFormat.SetDateTimeFormatRoute
-import com.newpaper.somewhere.feature.more.setTheme.SetThemeRoute
 import com.newpaper.somewhere.navigation.TopEnterTransition
 import com.newpaper.somewhere.navigation.TopExitTransition
 import com.newpaper.somewhere.navigation.TopPopEnterTransition
@@ -39,7 +24,6 @@ import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
 import com.newpaper.somewhere.util.WindowHeightSizeClass
 import com.newpaper.somewhere.util.WindowWidthSizeClass
-import kotlinx.coroutines.launch
 
 private const val DEEP_LINK_URI_PATTERN =
     "https://www.somewhere.newpaper.com/more"
