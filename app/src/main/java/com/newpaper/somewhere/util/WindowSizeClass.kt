@@ -35,6 +35,7 @@ fun calculateWindowSizeClass(): WindowSizeClass {
 class WindowSizeClass private constructor(
     val widthSizeClass: WindowWidthSizeClass,
     val heightSizeClass: WindowHeightSizeClass,
+    val isVertical: Boolean,
     val spacerValue: Dp,
     val use2Panes: Boolean
 ) {
@@ -50,9 +51,10 @@ class WindowSizeClass private constructor(
         fun calculateFromSize(size: DpSize): WindowSizeClass {
             val windowWidthSizeClass = WindowWidthSizeClass.fromWidth(size.width)
             val windowHeightSizeClass = WindowHeightSizeClass.fromHeight(size.height)
+            val isVertical = size.height > size.width
             val spacerValue = if (windowWidthSizeClass == WindowWidthSizeClass.Compact) 16.dp else 24.dp
             val windowUse2Panes = WindowSizeClass.getUse2Panes(size.width, windowWidthSizeClass)
-            return WindowSizeClass(windowWidthSizeClass, windowHeightSizeClass, spacerValue, windowUse2Panes)
+            return WindowSizeClass(windowWidthSizeClass, windowHeightSizeClass, isVertical, spacerValue, windowUse2Panes)
         }
 
         private fun getUse2Panes(

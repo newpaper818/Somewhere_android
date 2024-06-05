@@ -3,15 +3,14 @@ package com.newpaper.somewhere.feature.signin.signIn
 import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.displayCutoutPadding
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -29,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
@@ -61,6 +59,7 @@ import kotlinx.coroutines.launch
 fun SignInRoute(
     isDarkAppTheme: Boolean,
     internetEnabled: Boolean,
+    isVertical: Boolean,
     appVersionName: String,
 
     updateUserData: (userData: UserData) -> Unit,
@@ -135,6 +134,7 @@ fun SignInRoute(
     SignInScreen(
         isDarkAppTheme = isDarkAppTheme,
         internetEnabled = internetEnabled,
+        isVertical = isVertical,
         appVersionName = appVersionName,
 
         isSigningIn = isSigningIn,
@@ -196,6 +196,7 @@ fun SignInRoute(
 private fun SignInScreen(
     isDarkAppTheme: Boolean,
     internetEnabled: Boolean,
+    isVertical: Boolean,
     appVersionName: String,
 
     isSigningIn: Boolean,
@@ -213,99 +214,233 @@ private fun SignInScreen(
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarHostState,
-                modifier = Modifier.width(500.dp)
+                modifier = Modifier
+                    .width(500.dp)
+                    .navigationBarsPadding()
             )
         }
     ) { _ ->
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-                .navigationBarsPadding()
-                .displayCutoutPadding(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        //vertical
+        if (isVertical) {
+            SignInVertical(
+                isDarkAppTheme = isDarkAppTheme,
+                internetEnabled = internetEnabled,
+                appVersionName = appVersionName,
+                isSigningIn = isSigningIn,
+                signInButtonEnabled = signInButtonEnabled,
+                onSignInClick = onSignInClick,
+                onClickPrivacyPolicy = onClickPrivacyPolicy,
+                setSignInButtonEnabled = setSignInButtonEnabled
+            )
+        }
 
-            MySpacerColumn(height = 50.dp)
-
-            //app icon with text
-            AppIconWithAppNameCard()
-            MySpacerColumn(height = 16.dp)
-
-
-            //login
-            LazyColumn(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Bottom,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-            ) {
-
-
-                item {
-                    Column(
-                        modifier = Modifier.height(300.dp),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        //signing in...
-                        if (isSigningIn){
-                            SigningIn()
-                        }
-                        //internet unavailable
-                        else if (!internetEnabled) {
-                            InternetUnavailableIconWithText()
-                        }
-                        //welcome message
-                        else{
-                            WelcomeText()
-                        }
-                    }
-
-                    MySpacerColumn(height = 32.dp)
-                }
-
-                //sign in buttons
-                item {
-                    val providerIds = ProviderId.entries.toTypedArray()
-
-                    providerIds.forEach { providerId ->
-                        SignInWithButton(
-                            providerId = providerId,
-                            onClick = {
-                                if (signInButtonEnabled) {
-                                    setSignInButtonEnabled(false)
-                                    onSignInClick(providerId)
-                                }
-                            },
-                            buttonEnabled = signInButtonEnabled,
-                            isDarkAppTheme = isDarkAppTheme
-                        )
-
-                        MySpacerColumn(height = 16.dp)
-                    }
-
-                    MySpacerColumn(height = 48.dp)
-                }
-
-                item{
-                    AppVersionTextWithPrivacyPolicy(
-                        appVersionName = appVersionName,
-                        onClickPrivacyPolicy = onClickPrivacyPolicy
-                    )
-
-                    MySpacerColumn(height = 16.dp)
-                }
-            }
+        //horizontal
+        else {
+            SignInHorizontal(
+                isDarkAppTheme = isDarkAppTheme,
+                internetEnabled = internetEnabled,
+                appVersionName = appVersionName,
+                isSigningIn = isSigningIn,
+                signInButtonEnabled = signInButtonEnabled,
+                onSignInClick = onSignInClick,
+                onClickPrivacyPolicy = onClickPrivacyPolicy,
+                setSignInButtonEnabled = setSignInButtonEnabled
+            )
         }
     }
 }
 
+@Composable
+private fun SignInVertical(
+    isDarkAppTheme: Boolean,
+    internetEnabled: Boolean,
+    appVersionName: String,
 
+    isSigningIn: Boolean,
+    signInButtonEnabled: Boolean,
 
+    onSignInClick: (providerId: ProviderId) -> Unit,
+    onClickPrivacyPolicy: () -> Unit,
+    setSignInButtonEnabled: (signInButtonEnabled: Boolean) -> Unit,
+){
+    LazyColumn(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .displayCutoutPadding(),
+    ) {
+        item{
+            MySpacerColumn(height = 32.dp)
 
+            //app icon with text
+            AppIconWithAppNameCard(
+                modifier = Modifier.padding(16.dp, 0.dp)
+            )
+            MySpacerColumn(height = 32.dp)
+        }
+
+        item {
+            Column(
+                modifier = Modifier.height(150.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                //signing in...
+                if (isSigningIn) {
+                    SigningIn()
+                }
+                //internet unavailable
+                else if (!internetEnabled) {
+                    InternetUnavailableIconWithText()
+                }
+                //welcome message
+                else {
+                    WelcomeText()
+                }
+            }
+
+            MySpacerColumn(height = 32.dp)
+        }
+
+        item {
+            //sign in buttons
+            val providerIds = ProviderId.entries.toTypedArray()
+            val providerIdCnt = providerIds.size
+
+            providerIds.forEachIndexed { index, providerId ->
+                SignInWithButton(
+                    providerId = providerId,
+                    onClick = {
+                        if (signInButtonEnabled) {
+                            setSignInButtonEnabled(false)
+                            onSignInClick(providerId)
+                        }
+                    },
+                    buttonEnabled = signInButtonEnabled,
+                    isDarkAppTheme = isDarkAppTheme,
+                    modifier = Modifier.padding(16.dp, 0.dp)
+                )
+
+                if (index + 1 != providerIdCnt)
+                    MySpacerColumn(height = 16.dp)
+            }
+
+            MySpacerColumn(height = 32.dp)
+        }
+
+        item {
+            //App version with privacy policy button
+            AppVersionTextWithPrivacyPolicy(
+                appVersionName = appVersionName,
+                onClickPrivacyPolicy = onClickPrivacyPolicy
+            )
+
+            MySpacerColumn(height = 16.dp)
+        }
+    }
+}
+
+@Composable
+private fun SignInHorizontal(
+    isDarkAppTheme: Boolean,
+    internetEnabled: Boolean,
+    appVersionName: String,
+
+    isSigningIn: Boolean,
+    signInButtonEnabled: Boolean,
+
+    onSignInClick: (providerId: ProviderId) -> Unit,
+    onClickPrivacyPolicy: () -> Unit,
+    setSignInButtonEnabled: (signInButtonEnabled: Boolean) -> Unit,
+){
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .displayCutoutPadding()
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AppIconWithAppNameCard(
+                modifier = Modifier.padding(16.dp, 0.dp)
+            )
+        }
+
+        LazyColumn(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+        ) {
+            item {
+                MySpacerColumn(height = 16.dp)
+
+                Column(
+                    modifier = Modifier.height(100.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    //signing in...
+                    if (isSigningIn) {
+                        SigningIn()
+                    }
+                    //internet unavailable
+                    else if (!internetEnabled) {
+                        InternetUnavailableIconWithText()
+                    }
+                    //welcome message
+                    else {
+                        WelcomeText()
+                    }
+                }
+                MySpacerColumn(height = 16.dp)
+            }
+            item {
+                val providerIds = ProviderId.entries.toTypedArray()
+                val providerIdCnt = providerIds.size
+
+                //sign in buttons
+                providerIds.forEachIndexed { index, providerId ->
+                    SignInWithButton(
+                        providerId = providerId,
+                        onClick = {
+                            if (signInButtonEnabled) {
+                                setSignInButtonEnabled(false)
+                                onSignInClick(providerId)
+                            }
+                        },
+                        buttonEnabled = signInButtonEnabled,
+                        isDarkAppTheme = isDarkAppTheme,
+                        modifier = Modifier.padding(16.dp, 0.dp)
+                    )
+
+                    if (index + 1 != providerIdCnt)
+                        MySpacerColumn(height = 16.dp)
+                }
+
+                MySpacerColumn(height = 16.dp)
+            }
+            item {
+                AppVersionTextWithPrivacyPolicy(
+                    appVersionName = appVersionName,
+                    onClickPrivacyPolicy = onClickPrivacyPolicy
+                )
+                MySpacerColumn(height = 16.dp)
+            }
+        }
+    }
+}
 
 
 
@@ -344,12 +479,17 @@ private fun AppVersionTextWithPrivacyPolicy(
     appVersionName: String,
     onClickPrivacyPolicy: () -> Unit
 ){
-    PrivacyPolicyButton(onClick = onClickPrivacyPolicy)
+    Column(
+        modifier  = Modifier.height(70.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        PrivacyPolicyButton(onClick = onClickPrivacyPolicy)
 
-    Text(
-        text = "v $appVersionName",
-        style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
-    )
+        Text(
+            text = "v $appVersionName",
+            style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+        )
+    }
 }
 
 
@@ -391,6 +531,7 @@ private fun SignInScreenPreview_Default(){
         SignInScreen(
             isDarkAppTheme = isSystemInDarkTheme(),
             internetEnabled = true,
+            isVertical = true,
             appVersionName = "1.6.2",
             isSigningIn = false,
             signInButtonEnabled = true,
@@ -409,6 +550,7 @@ private fun SignInScreenPreview_NoInternet(){
         SignInScreen(
             isDarkAppTheme = isSystemInDarkTheme(),
             internetEnabled = false,
+            isVertical = true,
             appVersionName = "1.6.2",
             isSigningIn = false,
             signInButtonEnabled = true,
@@ -428,6 +570,7 @@ private fun SignInScreenPreview_SigningIn(){
             isDarkAppTheme = isSystemInDarkTheme(),
             internetEnabled = true,
             appVersionName = "1.6.2",
+            isVertical = true,
             isSigningIn = true,
             signInButtonEnabled = false,
             onSignInClick = {},
