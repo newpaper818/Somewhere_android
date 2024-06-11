@@ -124,10 +124,7 @@ private fun SetDateTimeFormatScreen(
     val dateFormatList = enumValues<DateFormat>()
 
     Scaffold(
-        modifier = modifier
-            .imePadding()
-            .navigationBarsPadding()
-            .displayCutoutPadding(),
+        modifier = modifier,
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {

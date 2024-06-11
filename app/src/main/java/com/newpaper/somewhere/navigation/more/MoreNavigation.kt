@@ -3,6 +3,8 @@ package com.newpaper.somewhere.navigation.more
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.displayCutoutPadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -98,7 +100,11 @@ fun NavGraphBuilder.moreScreen(
         }
 
 
-        Row {
+        Row(
+            modifier = Modifier
+                .navigationBarsPadding()
+                .displayCutoutPadding()
+        ) {
             Row(
                 modifier = Modifier.weight(1f)
             ) {

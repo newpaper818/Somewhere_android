@@ -92,8 +92,8 @@ fun ScreenWithNavigationBar(
                 //navigation rail bar
                 AnimatedVisibility(
                     visible = showNavigationBar,
-                    enter = slideInHorizontally(tween(300), initialOffsetX = { -it }),
-                    exit = slideOutHorizontally(tween(300), targetOffsetX = { -it })
+                    enter = slideInHorizontally(tween(300), initialOffsetX = { -it*2 }),
+                    exit = slideOutHorizontally(tween(300), targetOffsetX = { -it*2 })
                 ) {
                     SomewhereNavigationRailBar {
                         topLevelDestinations.forEach {

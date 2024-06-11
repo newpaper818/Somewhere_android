@@ -115,10 +115,7 @@ private fun AboutScreen(
     val uriHandler = LocalUriHandler.current
 
     Scaffold(
-        modifier = modifier
-            .imePadding()
-            .navigationBarsPadding()
-            .displayCutoutPadding(),
+        modifier = modifier,
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {
