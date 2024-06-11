@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -25,18 +26,19 @@ import com.newpaper.somewhere.core.model.enums.AppTheme
 import com.newpaper.somewhere.core.model.enums.MapTheme
 import com.newpaper.somewhere.core.ui.item.ItemWithRadioButton
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
+import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.more.R
 import kotlinx.coroutines.launch
 
 @Composable
 fun SetThemeRoute(
+    use2Panes: Boolean,
     spacerValue: Dp,
     theme: Theme,
     updatePreferencesValue: () -> Unit,
 
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier,
-    use2Panes: Boolean = false,
 
     setThemeViewModel: SetThemeViewModel = hiltViewModel()
 ){
@@ -99,6 +101,7 @@ private fun SetThemeScreen(
             )
         }
     ){ paddingValues ->
+        val itemModifier = Modifier.widthIn(max = itemMaxWidth)
 
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -111,7 +114,10 @@ private fun SetThemeScreen(
 
             //setting app theme
             item {
-                ListGroupCard(title = stringResource(id = R.string.app_theme)) {
+                ListGroupCard(
+                    title = stringResource(id = R.string.app_theme),
+                    modifier = itemModifier
+                ) {
                     for (oneAppTheme in appThemeList){
                         ItemWithRadioButton(
                             isSelected = appTheme == oneAppTheme,
@@ -128,7 +134,10 @@ private fun SetThemeScreen(
 
             //setting map theme
             item {
-                ListGroupCard(title = stringResource(id = R.string.map_theme)) {
+                ListGroupCard(
+                    title = stringResource(id = R.string.map_theme),
+                    modifier = itemModifier
+                ) {
                     for (oneMapTheme in mapThemeList){
                         ItemWithRadioButton(
                             isSelected = mapTheme == oneMapTheme,

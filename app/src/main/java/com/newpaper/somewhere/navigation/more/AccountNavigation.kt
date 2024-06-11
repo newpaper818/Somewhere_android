@@ -48,12 +48,15 @@ fun NavGraphBuilder.accountScreen(
     ) {
         LaunchedEffect(Unit) {
             appViewModel.updateCurrentScreenDestination(ScreenDestination.ACCOUNT)
+            if (!externalState.windowSizeClass.use2Panes)
+                appViewModel.updateMoreDetailCurrentScreenDestination(ScreenDestination.ACCOUNT)
         }
 
         val appUiState by appViewModel.appUiState.collectAsState()
 
         if (appUiState.appUserData != null) {
             AccountRoute(
+                use2Panes = externalState.windowSizeClass.use2Panes,
                 userData = appUiState.appUserData!!,
                 internetEnabled = externalState.internetEnabled,
                 spacerValue = externalState.windowSizeClass.spacerValue,

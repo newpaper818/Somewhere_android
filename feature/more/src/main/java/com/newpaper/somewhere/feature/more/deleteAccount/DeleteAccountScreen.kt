@@ -283,6 +283,8 @@ private fun DeleteAccountScreen(
         }
     ){ paddingValues ->
 
+        val itemModifier = Modifier.widthIn(max = itemMaxWidth)
+
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(24.dp),
@@ -298,16 +300,14 @@ private fun DeleteAccountScreen(
                     internetEnabled = internetEnabled,
                     downloadImage = downloadImage,
                     enabled = false,
-                    modifier = Modifier.widthIn(max = itemMaxWidth)
+                    modifier = itemModifier
                 )
             }
 
             //text - delete account is ...
             item {
                 Row(
-                    modifier = Modifier
-                        .widthIn(max = itemMaxWidth)
-                        .padding(16.dp, 0.dp)
+                    modifier = itemModifier.padding(16.dp, 0.dp)
                 ) {
                     Text(
                         text = stringResource(id = R.string.delete_account_explain),
@@ -321,7 +321,7 @@ private fun DeleteAccountScreen(
                 //authentication
                 item {
                     MyCard(
-                        modifier = Modifier.widthIn(max = itemMaxWidth)
+                        modifier = itemModifier
                     ) {
                         Column(
                             modifier.padding(16.dp),
@@ -361,7 +361,7 @@ private fun DeleteAccountScreen(
             else {
                 item {
                     MyCard(
-                        modifier = Modifier.widthIn(max = itemMaxWidth)
+                        modifier = itemModifier
                     ) {
                         Column(
                             modifier.padding(16.dp),

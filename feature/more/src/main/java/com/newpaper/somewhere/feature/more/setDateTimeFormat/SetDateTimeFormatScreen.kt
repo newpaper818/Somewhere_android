@@ -40,18 +40,19 @@ import com.newpaper.somewhere.core.ui.item.ItemWithRadioButton
 import com.newpaper.somewhere.core.ui.item.ItemWithSwitch
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
 import com.newpaper.somewhere.core.ui.selectSwitch.TimeFormatSelectSwitch
+import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.more.R
 import kotlinx.coroutines.launch
 
 @Composable
 fun SetDateTimeFormatRoute(
+    use2Panes: Boolean,
     spacerValue: Dp,
     dateTimeFormat: DateTimeFormat,
     updatePreferencesValue: () -> Unit,
 
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier,
-    use2Panes: Boolean = false,
 
     setDateTimeFormatViewModel: SetDateTimeFormatViewModel = hiltViewModel()
 ){
@@ -138,6 +139,9 @@ private fun SetDateTimeFormatScreen(
             )
         }
     ){ paddingValues ->
+
+        val itemModifier = Modifier.widthIn(max = itemMaxWidth)
+
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -148,12 +152,19 @@ private fun SetDateTimeFormatScreen(
         ) {
             //current date
             item {
-                UpperDateTimeExampleBox(dateExampleText, timeExampleText)
+                UpperDateTimeExampleBox(
+                    dateText = dateExampleText,
+                    timeText = timeExampleText,
+                    modifier = itemModifier
+                )
             }
 
             //select time format 12h/24h
             item {
-                ListGroupCard(title = stringResource(id = R.string.time_format)) {
+                ListGroupCard(
+                    title = stringResource(id = R.string.time_format),
+                    modifier = itemModifier
+                ) {
                     TimeFormatSelectSwitch(
                         is24h = timeFormat == TimeFormat.T24H,
                         setTimeFormat = { newTimeFormat ->
@@ -168,7 +179,10 @@ private fun SetDateTimeFormatScreen(
 
             item {
 
-                ListGroupCard(title = stringResource(id = R.string.date_format)) {
+                ListGroupCard(
+                    title = stringResource(id = R.string.date_format),
+                    modifier = itemModifier
+                ) {
                     //use month name
                     ItemWithSwitch(
                         text = stringResource(id = R.string.use_month_name),
@@ -218,12 +232,12 @@ private fun SetDateTimeFormatScreen(
 @Composable
 private fun UpperDateTimeExampleBox(
     dateText: String,
-    timeText: String
+    timeText: String,
+    modifier: Modifier = Modifier
 ){
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .height(120.dp)
             .padding(16.dp, 0.dp)
     ) {

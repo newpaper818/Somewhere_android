@@ -21,19 +21,16 @@ fun rememberExternalState(
     windowSizeClass: WindowSizeClass,
     connectivityObserver: ConnectivityObserver,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    navController: NavHostController = rememberNavController(),
 ): ExternalState {
     return remember(
         context,
         coroutineScope,
-        navController,
         windowSizeClass,
         connectivityObserver
     ){
         ExternalState(
             context = context,
             coroutineScope = coroutineScope,
-            navController = navController,
             windowSizeClass = windowSizeClass,
             connectivityObserver = connectivityObserver
         )
@@ -45,7 +42,6 @@ class ExternalState(
     private val context: Context,
     private val coroutineScope: CoroutineScope,
 
-    val navController: NavHostController,
     val windowSizeClass: WindowSizeClass,
 
     connectivityObserver: ConnectivityObserver

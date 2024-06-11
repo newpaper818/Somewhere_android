@@ -1,14 +1,26 @@
 package com.newpaper.somewhere.navigation.more
 
+import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
+import androidx.navigation.navOptions
 import com.newpaper.somewhere.BuildConfig
 import com.newpaper.somewhere.core.designsystem.component.NAVIGATION_DRAWER_BAR_WIDTH
 import com.newpaper.somewhere.core.designsystem.component.NAVIGATION_RAIL_BAR_WIDTH
@@ -24,6 +36,7 @@ import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
 import com.newpaper.somewhere.util.WindowHeightSizeClass
 import com.newpaper.somewhere.util.WindowWidthSizeClass
+import java.util.UUID
 
 private const val DEEP_LINK_URI_PATTERN =
     "https://www.somewhere.newpaper.com/more"
@@ -34,6 +47,8 @@ fun NavController.navigateToMore(navOptions: NavOptions? = null) =
 fun NavGraphBuilder.moreScreen(
     externalState: ExternalState,
     appViewModel: AppViewModel,
+    moreNavController: NavHostController,
+    moreNavKey: UUID,
 
     userDataIsNull: Boolean,
     lazyListState: LazyListState,
@@ -61,112 +76,150 @@ fun NavGraphBuilder.moreScreen(
             appViewModel.updateCurrentTopLevelDestination(TopLevelDestination.MORE)
         }
 
+        val appUiState by appViewModel.appUiState.collectAsState()
 
         val widthSizeClass = externalState.windowSizeClass.widthSizeClass
         val heightSizeClass = externalState.windowSizeClass.heightSizeClass
 
+        var currentScreen by rememberSaveable { mutableStateOf(
+            appUiState.screenDestination.moreDetailStartScreenDestination
+        ) }
+
+//        val moreNavController = rememberNavController()
 
 
-//        var currentScreen by rememberSaveable { mutableStateOf(ScreenDestination.SET_DATE_TIME_FORMAT) }
+        moreNavController.addOnDestinationChangedListener { controller, _, _ ->
+            val routes = controller
+                .currentBackStack.value
+                .map { it.destination.route }
+                .joinToString(", ")
 
+            Log.d("moreBackStackLog", "more BackStack: $routes")
+        }
 
 
         Row {
-            if (
-                heightSizeClass == WindowHeightSizeClass.Compact
-                || widthSizeClass == WindowWidthSizeClass.Medium
+            Row(
+                modifier = Modifier.weight(1f)
             ) {
-                MySpacerRow(width = NAVIGATION_RAIL_BAR_WIDTH)
-            } else if (widthSizeClass == WindowWidthSizeClass.Expanded) {
-                MySpacerRow(width = NAVIGATION_DRAWER_BAR_WIDTH)
+
+                if (
+                    heightSizeClass == WindowHeightSizeClass.Compact
+                    || widthSizeClass == WindowWidthSizeClass.Medium
+                ) {
+                    MySpacerRow(width = NAVIGATION_RAIL_BAR_WIDTH)
+                } else if (widthSizeClass == WindowWidthSizeClass.Expanded) {
+                    MySpacerRow(width = NAVIGATION_DRAWER_BAR_WIDTH)
+                }
+
+                MoreRoute(
+                    isDebugMode = BuildConfig.DEBUG,
+                    userDataIsNull = userDataIsNull,
+                    spacerValue = externalState.windowSizeClass.spacerValue,
+                    lazyListState = lazyListState,
+                    navigateTo = {
+                        if (it != appUiState.screenDestination.currentScreenDestination) {
+                            if (!externalState.windowSizeClass.use2Panes)
+                                navigateTo(it)
+                            else {
+                                moreNavController.navigate(
+                                    route = it.route,
+                                    navOptions = navOptions {
+                                        popUpTo(0) { inclusive = true }
+                                    }
+                                )
+                                currentScreen = it
+                            }
+                        }
+                    },
+                    use2Panes = externalState.windowSizeClass.use2Panes,
+                    currentScreenRoute =
+                        if (externalState.windowSizeClass.use2Panes) moreNavController.currentDestination?.route
+                        else null
+                )
             }
 
-            MoreRoute(
-                isDebugMode = BuildConfig.DEBUG,
-                userDataIsNull = userDataIsNull,
-                spacerValue = externalState.windowSizeClass.spacerValue,
-                lazyListState = lazyListState,
-                navigateTo =
-                    navigateTo,
-//                {
-//                    if (!externalState.windowSizeClass.use2Panes)
-//                        navigateTo(it)
-//                    else
-//                        currentScreen = it
-//                },
-                modifier = modifier.weight(1f),
-                use2Panes = externalState.windowSizeClass.use2Panes,
-//                currentScreen = currentScreen
-            )
 
 
 
 
+            if (externalState.windowSizeClass.use2Panes){
 
-
-//            if (externalState.windowSizeClass.use2Panes){
-//
-//                val coroutineScope = rememberCoroutineScope()
-//                val appUiState by appViewModel.appUiState.collectAsState()
-//
-//                when (currentScreen) {
-//                    ScreenDestination.SET_DATE_TIME_FORMAT -> {
-//                        SetDateTimeFormatRoute(
-//                            spacerValue = externalState.windowSizeClass.spacerValue,
-//                            dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
-//                            updatePreferencesValue = {
-//                                coroutineScope.launch{
-//                                    appViewModel.getAppPreferencesValue()
-//                                }
-//                            },
-//                            navigateUp = { },
-//                            use2Panes = externalState.windowSizeClass.use2Panes,
-//                            modifier = modifier.weight(1f),
-//                        )
-//                    }
-//                    ScreenDestination.SET_THEME -> {
-//                        SetThemeRoute(
-//                            spacerValue = externalState.windowSizeClass.spacerValue,
-//                            theme = appUiState.appPreferences.theme,
-//                            updatePreferencesValue = {
-//                                coroutineScope.launch{
-//                                    appViewModel.getAppPreferencesValue()
-//                                }
-//                            },
-//                            navigateUp = { },
-//                            use2Panes = externalState.windowSizeClass.use2Panes,
-//                            modifier = modifier.weight(1f),
-//                        )
-//                    }
-//                    ScreenDestination.ACCOUNT -> {
-//                        AccountRoute(
-//                            userData = appUiState.appUserData!!,
-//                            internetEnabled = externalState.internetEnabled,
-//                            spacerValue = externalState.windowSizeClass.spacerValue,
-//                            navigateToDeleteAccount = navigateToDeleteAccount,
-//                            navigateToEditAccount = navigateToEditAccount,
-//                            navigateUp = { },
-//                            onSignOutDone = onSignOutDone,
-//                            use2Panes = externalState.windowSizeClass.use2Panes,
-//                            modifier = modifier.weight(1f),
-//                        )
-//                    }
-//                    ScreenDestination.ABOUT -> {
-//                        AboutRoute(
-//                            spacerValue = externalState.windowSizeClass.spacerValue,
-//                            currentAppVersionCode = BuildConfig.VERSION_CODE,
-//                            currentAppVersionName = BuildConfig.VERSION_NAME,
-//                            isDebugMode = BuildConfig.DEBUG,
-//                            navigateToOpenSourceLicense = navigateToOpenSourceLicense,
-//                            navigateUp = { },
-//                            use2Panes = externalState.windowSizeClass.use2Panes,
-//                            modifier = modifier.weight(1f),
-//                        )
-//                    }
-//                    else -> { }
-//                }
-//
-//            }
+                Box(modifier = Modifier.weight(1f)) {
+                    key(moreNavKey) {
+                        MoreDetailPane(
+                            externalState = externalState,
+                            appViewModel = appViewModel,
+                            moreNavController = moreNavController,
+                            startDestination = appUiState.screenDestination.moreDetailStartScreenDestination,
+                            navigateToDeleteAccount = navigateToDeleteAccount,
+                            navigateToEditAccount = navigateToEditAccount,
+                            navigateToOpenSourceLicense = navigateToOpenSourceLicense,
+                            onSignOutDone = onSignOutDone
+                        )
+                    }
+                }
+            }
         }
     }
 }
+
+
+@Composable
+private fun MoreDetailPane(
+    externalState: ExternalState,
+    appViewModel: AppViewModel,
+    moreNavController: NavHostController,
+    startDestination: ScreenDestination,
+
+    navigateToDeleteAccount: () -> Unit,
+    navigateToEditAccount: () -> Unit,
+    navigateToOpenSourceLicense: () -> Unit,
+    onSignOutDone: () -> Unit,
+
+    modifier: Modifier = Modifier,
+){
+    NavHost(
+        navController = moreNavController,
+        startDestination = startDestination.route
+    ){
+        setDateTimeFormatScreen(
+            appViewModel = appViewModel,
+            externalState = externalState,
+            navigateUp = { }
+        )
+
+        setThemeScreen(
+            appViewModel = appViewModel,
+            externalState = externalState,
+            navigateUp = { }
+        )
+
+        accountScreen(
+            appViewModel = appViewModel,
+            externalState = externalState,
+            navigateToDeleteAccount = navigateToDeleteAccount,
+            navigateToEditAccount = navigateToEditAccount,
+            navigateUp = { },
+            onSignOutDone = onSignOutDone,
+            modifier = modifier
+
+        )
+
+        aboutScreen(
+            externalState = externalState,
+            appViewModel = appViewModel,
+            navigateToOpenSourceLicense = navigateToOpenSourceLicense,
+            navigateUp = { },
+            modifier = modifier
+
+        )
+    }
+
+}
+
+
+
+
+
+

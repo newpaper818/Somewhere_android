@@ -44,9 +44,12 @@ fun NavGraphBuilder.aboutScreen(
     ) {
         LaunchedEffect(Unit) {
             appViewModel.updateCurrentScreenDestination(ScreenDestination.ABOUT)
+            if (!externalState.windowSizeClass.use2Panes)
+                appViewModel.updateMoreDetailCurrentScreenDestination(ScreenDestination.ABOUT)
         }
 
         AboutRoute(
+            use2Panes = externalState.windowSizeClass.use2Panes,
             spacerValue = externalState.windowSizeClass.spacerValue,
             currentAppVersionCode = BuildConfig.VERSION_CODE,
             currentAppVersionName = BuildConfig.VERSION_NAME,

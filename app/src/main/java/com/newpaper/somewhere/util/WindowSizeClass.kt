@@ -68,7 +68,7 @@ class WindowSizeClass private constructor(
                 else -> NAVIGATION_BOTTOM_BAR_WIDTH
             }
 
-            return windowWidth - navigationBarWidth > 760.dp
+            return windowWidth - navigationBarWidth > 700.dp
         }
     }
 

@@ -20,13 +20,13 @@ import com.newpaper.somewhere.core.ui.ui.R
 
 @Composable
 fun DeveloperCard(
-
+    modifier: Modifier = Modifier
 ){
     MyCard(
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier
     ) {
         Column(
-            Modifier.padding(16.dp, 14.dp)
+            Modifier.fillMaxWidth().padding(16.dp, 14.dp)
         ) {
             Text(
                 text = stringResource(id = R.string.developer),

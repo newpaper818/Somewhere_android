@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -26,7 +27,8 @@ import com.newpaper.somewhere.core.ui.ui.R
 fun VersionCard(
     currentAppVersionName: String,
     isLatestAppVersion: Boolean?,
-    onClickUpdate: () -> Unit
+    onClickUpdate: () -> Unit,
+    modifier: Modifier = Modifier
 ){
 
     val text =
@@ -38,10 +40,10 @@ fun VersionCard(
 
 
     MyCard(
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier
     ) {
         Row(
-            Modifier.padding(16.dp, 14.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp, 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {

@@ -27,6 +27,7 @@ data class AppPreferencesState(
 
 data class DestinationState(
     val startScreenDestination: ScreenDestination? = null, //if not null, splash screen will be finish
+    val moreDetailStartScreenDestination: ScreenDestination = ScreenDestination.SET_DATE_TIME_FORMAT,
     val currentTopLevelDestination: TopLevelDestination = TopLevelDestination.TRIPS,
     val currentScreenDestination: ScreenDestination = ScreenDestination.SIGN_IN
 )
@@ -184,6 +185,18 @@ class AppViewModel @Inject constructor(
             it.copy(
                 screenDestination = it.screenDestination.copy(
                     startScreenDestination = startScreenDestination
+                )
+            )
+        }
+    }
+
+    fun updateMoreDetailCurrentScreenDestination(
+        screenDestination: ScreenDestination
+    ){
+        _appUiState.update {
+            it.copy(
+                screenDestination = it.screenDestination.copy(
+                    moreDetailStartScreenDestination = screenDestination
                 )
             )
         }
