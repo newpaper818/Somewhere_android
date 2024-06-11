@@ -164,7 +164,8 @@ fun SomewhereNavHost(
                 tripsViewModel.setLoadingTrips(true)
 
             if (
-                prevTopLevelDestination == TopLevelDestination.MORE
+                externalState.windowSizeClass.use2Panes
+                && prevTopLevelDestination == TopLevelDestination.MORE
                 && it != TopLevelDestination.MORE
             ){
                 appViewModel.updateMoreDetailCurrentScreenDestination(currentMoreDetailScreenDestination)
@@ -384,8 +385,6 @@ private suspend fun organizeNavStack(
             )
         }
         else if (isOnMoreDetail) {
-            Log.d("bbb", "1 > 2 : onMoreDetail")
-
             mainNavController.popBackStack()
         }
     }
