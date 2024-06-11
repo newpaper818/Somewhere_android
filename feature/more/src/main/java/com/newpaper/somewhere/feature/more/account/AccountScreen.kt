@@ -42,6 +42,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun AccountRoute(
+    use2Panes: Boolean,
     userData: UserData,
     internetEnabled: Boolean,
     spacerValue: Dp,
@@ -52,7 +53,6 @@ fun AccountRoute(
     onSignOutDone: () -> Unit,
 
     modifier: Modifier = Modifier,
-    use2Panes: Boolean = false,
     accountViewModel: AccountViewModel = hiltViewModel()
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -100,6 +100,7 @@ fun AccountRoute(
 
 @Composable
 private fun AccountScreen(
+    use2Panes: Boolean,
     userData: UserData,
 
     onSignOut: () -> Unit,
@@ -113,8 +114,7 @@ private fun AccountScreen(
     snackBarHostState: SnackbarHostState,
     downloadImage: (imagePath: String, tripManagerId: String, (Boolean) -> Unit) -> Unit,
 
-    modifier: Modifier = Modifier,
-    use2Panes: Boolean = false
+    modifier: Modifier = Modifier
 ) {
     var showSignOutDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -155,6 +155,8 @@ private fun AccountScreen(
         }
     ) { paddingValues ->
 
+        val itemModifier = Modifier.widthIn(max = itemMaxWidth)
+
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -171,14 +173,14 @@ private fun AccountScreen(
                     downloadImage = downloadImage,
                     showSignInWithInfo = true,
                     enabled = false,
-                    modifier = Modifier.widthIn(max = itemMaxWidth)
+                    modifier = itemModifier
                 )
             }
 
             //edit profile
             item {
                 ListGroupCard(
-                    modifier = Modifier.widthIn(max = itemMaxWidth)
+                    modifier = itemModifier
                 ) {
                     ItemWithText(
                         text = stringResource(id = R.string.edit_profile),
@@ -190,7 +192,7 @@ private fun AccountScreen(
             //sign out / delete account
             item {
                 ListGroupCard(
-                    modifier = Modifier.widthIn(max = itemMaxWidth)
+                    modifier = itemModifier
                 ) {
                     ItemWithText(
                         text = stringResource(id = R.string.sign_out),

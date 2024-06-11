@@ -1,15 +1,22 @@
 package com.newpaper.somewhere.navigation
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.feature.trip.trips.TripsViewModel
@@ -31,11 +38,13 @@ import com.newpaper.somewhere.navigation.signIn.signInScreen
 import com.newpaper.somewhere.navigation.trip.tripsScreen
 import com.newpaper.somewhere.navigationUi.ScreenWithNavigationBar
 import com.newpaper.somewhere.navigationUi.TopLevelDestination
+import com.newpaper.somewhere.ui.AppUiState
 import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.UUID
 
-@SuppressLint("RestrictedApi")
 @Composable
 fun SomewhereNavHost(
     externalState: ExternalState,
@@ -46,20 +55,66 @@ fun SomewhereNavHost(
 
     modifier: Modifier = Modifier
 ) {
-    val navController = externalState.navController
+    val mainNavController = rememberNavController()
+//    val moreNavController = rememberNavController()
+
+    var moreNavKey by rememberSaveable(
+        stateSaver = Saver({ it.toString() }, UUID::fromString),
+    ) {
+        mutableStateOf(UUID.randomUUID())
+    }
+    val moreNavController = key(moreNavKey) {
+        rememberNavController()
+    }
 
     val appUiState by appViewModel.appUiState.collectAsState()
 
     val navigateUp = {
-        if (navController.previousBackStackEntry != null) {
-            navController.navigateUp()
+        if (mainNavController.previousBackStackEntry != null) {
+            mainNavController.navigateUp()
         }
     }
 
+    val isOnTopLevel = appUiState.screenDestination.currentScreenDestination == ScreenDestination.TRIPS
+            || appUiState.screenDestination.currentScreenDestination == ScreenDestination.PROFILE
+            || appUiState.screenDestination.currentScreenDestination == ScreenDestination.MORE
+
+    val isOnMoreList = appUiState.screenDestination.currentScreenDestination == ScreenDestination.MORE
+
+    val isOnMoreDetail = appUiState.screenDestination.currentScreenDestination == ScreenDestination.SET_DATE_TIME_FORMAT
+            || appUiState.screenDestination.currentScreenDestination == ScreenDestination.SET_THEME
+            || appUiState.screenDestination.currentScreenDestination == ScreenDestination.ACCOUNT
+            || appUiState.screenDestination.currentScreenDestination == ScreenDestination.ABOUT
+
+    val isOnMore3rd = appUiState.screenDestination.currentScreenDestination == ScreenDestination.EDIT_PROFILE
+            || appUiState.screenDestination.currentScreenDestination == ScreenDestination.DELETE_ACCOUNT
+            || appUiState.screenDestination.currentScreenDestination == ScreenDestination.OPEN_SOURCE_LICENSE
+
+
     val showNavigationBar =
-        appUiState.screenDestination.currentScreenDestination == ScreenDestination.TRIPS
-        || appUiState.screenDestination.currentScreenDestination == ScreenDestination.PROFILE
-        || appUiState.screenDestination.currentScreenDestination == ScreenDestination.MORE
+        if (!externalState.windowSizeClass.use2Panes) isOnTopLevel
+        else isOnTopLevel || isOnMoreDetail
+
+    LaunchedEffect(appUiState.screenDestination.currentTopLevelDestination) {
+//        if (appUiState.screenDestination.currentTopLevelDestination != TopLevelDestination.MORE){
+//            //remove all more nav stack
+//            moreNavController.popBackStack(
+//                route = moreNavController.,
+//                inclusive = false
+//            )
+//        }
+    }
+
+    //nav stack
+    LaunchedEffect(externalState.windowSizeClass.use2Panes) {
+        organizeNavStack(
+            use2Panes = externalState.windowSizeClass.use2Panes,
+            appUiState = appUiState,
+            mainNavController = mainNavController,
+            moreNavController = moreNavController,
+            setMoreNavKey = { moreNavKey = UUID.randomUUID() }
+        )
+    }
 
 
     val tripsLazyListState = rememberLazyListState()
@@ -70,23 +125,21 @@ fun SomewhereNavHost(
 
 
     val onSignOutDone = {
-        navController.navigateToSignIn(
+        mainNavController.navigateToSignIn(
             navOptions = navOptions {
-                popUpTo(0) {
-                    inclusive = true
-                }
+                popUpTo(0) { inclusive = true }
             }
         )
         appViewModel.updateCurrentTopLevelDestination(TopLevelDestination.TRIPS)
     }
 
-    navController.addOnDestinationChangedListener { controller, _, _ ->
+    mainNavController.addOnDestinationChangedListener { controller, _, _ ->
         val routes = controller
             .currentBackStack.value
             .map { it.destination.route }
             .joinToString(", ")
 
-        Log.d("BackStackLog", "BackStack: $routes")
+        Log.d("mainBackStackLog", "main BackStack: $routes")
     }
 
 
@@ -95,7 +148,11 @@ fun SomewhereNavHost(
         currentTopLevelDestination = appUiState.screenDestination.currentTopLevelDestination,
         showNavigationBar = showNavigationBar,
         onClickNavBarItem = {
-            navController.navigate(
+            val prevTopLevelDestination = appUiState.screenDestination.currentTopLevelDestination
+            val currentMoreDetailScreenDestination = appUiState.screenDestination.currentScreenDestination
+
+            moreNavKey = UUID.randomUUID()
+            mainNavController.navigate(
                 route = it.route,
                 navOptions = navOptions{
                     popUpTo(TopLevelDestination.TRIPS.route) { inclusive = it == TopLevelDestination.TRIPS }
@@ -104,6 +161,13 @@ fun SomewhereNavHost(
 
             if (it != TopLevelDestination.TRIPS)
                 tripsViewModel.setLoadingTrips(true)
+
+            if (
+                prevTopLevelDestination == TopLevelDestination.MORE
+                && it != TopLevelDestination.MORE
+            ){
+                appViewModel.updateMoreDetailCurrentScreenDestination(currentMoreDetailScreenDestination)
+            }
         },
         onClickNavBarItemAgain = {
             coroutineScope.launch {
@@ -117,7 +181,7 @@ fun SomewhereNavHost(
     ) {
 
         NavHost(
-            navController = navController,
+            navController = mainNavController,
             startDestination = startDestination,
             modifier = modifier
         ) {
@@ -130,7 +194,7 @@ fun SomewhereNavHost(
                 externalState = externalState,
                 isDarkAppTheme = isDarkAppTheme,
                 navigateToMain = {
-                    navController.navigate(
+                    mainNavController.navigate(
                         route = ScreenDestination.TRIPS.route,
                         navOptions = navOptions {
                             popUpTo(ScreenDestination.SIGN_IN.route) { inclusive = true }
@@ -160,21 +224,23 @@ fun SomewhereNavHost(
                 externalState = externalState,
                 lazyListState = profileLazyListState,
                 navigateToAccount = {
-                    navController.navigateToAccount()
+                    mainNavController.navigateToAccount()
                 }
             )
 
             moreScreen(
                 externalState = externalState,
                 appViewModel = appViewModel,
+                moreNavController = moreNavController,
+                moreNavKey = moreNavKey,
                 userDataIsNull = appUiState.appUserData == null,
                 lazyListState = moreLazyListState,
                 navigateTo = {
-                    navController.navigate(it.route)
+                    mainNavController.navigate(it.route)
                 },
-                navigateToDeleteAccount = { navController.navigateToDeleteAccount() },
-                navigateToEditAccount = { navController.navigateToEditProfile() },
-                navigateToOpenSourceLicense = { navController.navigateToOpenSourceLicense() },
+                navigateToDeleteAccount = { mainNavController.navigateToDeleteAccount() },
+                navigateToEditAccount = { mainNavController.navigateToEditProfile() },
+                navigateToOpenSourceLicense = { mainNavController.navigateToOpenSourceLicense() },
                 onSignOutDone = onSignOutDone,
                 modifier = modifier
             )
@@ -209,10 +275,10 @@ fun SomewhereNavHost(
                 appViewModel = appViewModel,
                 externalState = externalState,
                 navigateToDeleteAccount = {
-                    navController.navigateToDeleteAccount()
+                    mainNavController.navigateToDeleteAccount()
                 },
                 navigateToEditAccount = {
-                    navController.navigateToEditProfile()
+                    mainNavController.navigateToEditProfile()
                 },
                 navigateUp = navigateUp,
                 onSignOutDone = onSignOutDone,
@@ -232,9 +298,9 @@ fun SomewhereNavHost(
                 externalState = externalState,
                 isDarkAppTheme = isDarkAppTheme,
                 navigateToSignIn = {
-                    navController.navigateToSignIn(
+                    mainNavController.navigateToSignIn(
                         navOptions = navOptions {
-                            popUpTo(navController.graph.findStartDestination().id) {
+                            popUpTo(mainNavController.graph.findStartDestination().id) {
                                 inclusive = true
                             }
                         }
@@ -248,7 +314,7 @@ fun SomewhereNavHost(
                 externalState = externalState,
                 appViewModel = appViewModel,
                 navigateToOpenSourceLicense = {
-                    navController.navigateToOpenSourceLicense()
+                    mainNavController.navigateToOpenSourceLicense()
                 },
                 navigateUp = navigateUp,
                 modifier = modifier
@@ -267,3 +333,79 @@ fun SomewhereNavHost(
         }
     }
 }
+
+
+
+private suspend fun organizeNavStack(
+    use2Panes: Boolean,
+    appUiState: AppUiState,
+    mainNavController: NavHostController,
+    moreNavController: NavHostController,
+    setMoreNavKey: () -> Unit
+){
+    val currentScreenDestination = appUiState.screenDestination.currentScreenDestination
+
+    val isOnMoreDetail = currentScreenDestination == ScreenDestination.SET_DATE_TIME_FORMAT
+            || currentScreenDestination == ScreenDestination.SET_THEME
+            || currentScreenDestination == ScreenDestination.ACCOUNT
+            || currentScreenDestination == ScreenDestination.ABOUT
+
+    val isOnMore3rd = currentScreenDestination == ScreenDestination.EDIT_PROFILE
+            || currentScreenDestination == ScreenDestination.DELETE_ACCOUNT
+            || currentScreenDestination == ScreenDestination.OPEN_SOURCE_LICENSE
+
+    Log.d("bbb", "isOnMoreDetail: $isOnMoreDetail - isOnMore3rd:$isOnMore3rd - use2Panes: $use2Panes")
+    Log.d("bbb", "current: $currentScreenDestination")
+
+    //set nav stack
+
+    // 1pane -> 2panes
+    if (use2Panes){
+        if (isOnMore3rd) {
+            mainNavController.popBackStack()
+            val route = mainNavController.currentDestination?.route
+            mainNavController.popBackStack()
+            mainNavController.navigate(
+                route = appUiState.screenDestination.currentScreenDestination.route,
+            )
+        }
+        else if (isOnMoreDetail) {
+            Log.d("bbb", "1 > 2 : onMoreDetail")
+
+            mainNavController.popBackStack()
+        }
+    }
+    // 2panes -> 1pane
+    else {
+        setMoreNavKey()
+
+        if (isOnMore3rd) {
+            val moreDetailRoute = when (currentScreenDestination){
+                ScreenDestination.EDIT_PROFILE -> ScreenDestination.ACCOUNT
+                ScreenDestination.DELETE_ACCOUNT -> ScreenDestination.ACCOUNT
+                ScreenDestination.OPEN_SOURCE_LICENSE -> ScreenDestination.ABOUT
+                else -> null
+            }
+
+            mainNavController.popBackStack()
+
+            if (moreDetailRoute != null) {
+                mainNavController.navigate(
+                    route = moreDetailRoute.route,
+                )
+            }
+
+            mainNavController.navigate(
+                route = currentScreenDestination.route,
+            )
+            moreNavController.popBackStack()
+        }
+        else if (isOnMoreDetail) {
+            mainNavController.navigate(
+                route = currentScreenDestination.route,
+            )
+            moreNavController.popBackStack()
+        }
+    }
+}
+

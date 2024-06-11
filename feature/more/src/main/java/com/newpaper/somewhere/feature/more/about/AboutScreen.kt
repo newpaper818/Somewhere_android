@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -41,11 +42,13 @@ import com.newpaper.somewhere.core.ui.item.ItemWithText
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
 import com.newpaper.somewhere.core.utils.PLAY_STORE_URL
 import com.newpaper.somewhere.core.utils.PRIVACY_POLICY_URL
+import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.more.R
 import kotlinx.coroutines.launch
 
 @Composable
 fun AboutRoute(
+    use2Panes: Boolean,
     spacerValue: Dp,
 
     currentAppVersionCode: Int,
@@ -56,7 +59,6 @@ fun AboutRoute(
     navigateUp: () -> Unit,
 
     modifier: Modifier = Modifier,
-    use2Panes: Boolean = false,
 
     aboutViewModel: AboutViewModel = hiltViewModel(),
 ){
@@ -71,6 +73,7 @@ fun AboutRoute(
     val copiedLinkText = stringResource(id = R.string.play_link_copied)
 
     AboutScreen(
+        use2Panes = use2Panes,
         startSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
         endSpacerValue = spacerValue,
         currentAppVersionName = currentAppVersionName,
@@ -86,13 +89,13 @@ fun AboutRoute(
             }
         },
         snackBarHostState = snackBarHostState,
-        modifier = modifier,
-        use2Panes = use2Panes
+        modifier = modifier
     )
 }
 
 @Composable
 private fun AboutScreen(
+    use2Panes: Boolean,
     startSpacerValue: Dp,
     endSpacerValue: Dp,
 
@@ -107,8 +110,7 @@ private fun AboutScreen(
 
     snackBarHostState: SnackbarHostState,
 
-    modifier: Modifier = Modifier,
-    use2Panes: Boolean = false
+    modifier: Modifier = Modifier
 ){
     val uriHandler = LocalUriHandler.current
 
@@ -135,6 +137,8 @@ private fun AboutScreen(
         }
     ){ paddingValues ->
 
+        val itemModifier = Modifier.widthIn(max = itemMaxWidth)
+
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -146,7 +150,9 @@ private fun AboutScreen(
             item{
                 //app icon image
                 MySpacerColumn(height = 16.dp)
-                AppIconWithAppNameCard()
+                AppIconWithAppNameCard(
+                    modifier = itemModifier
+                )
                 MySpacerColumn(height = 24.dp)
             }
 
@@ -155,17 +161,22 @@ private fun AboutScreen(
                 VersionCard(
                     currentAppVersionName = currentAppVersionName,
                     isLatestAppVersion = isLatestAppVersion,
-                    onClickUpdate = { uriHandler.openUri(PLAY_STORE_URL) }
+                    onClickUpdate = { uriHandler.openUri(PLAY_STORE_URL) },
+                    modifier = itemModifier
                 )
             }
 
             item{
                 //developer info
-                DeveloperCard()
+                DeveloperCard(
+                    modifier = itemModifier
+                )
             }
 
             item{
-                ListGroupCard {
+                ListGroupCard(
+                    modifier = itemModifier
+                ) {
                     //privacy policy
                     ItemWithText(
                         text = stringResource(id = R.string.privacy_policy),
@@ -190,8 +201,8 @@ private fun AboutScreen(
 
                 //copy link / qr code
                 ShareAppCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClickCopyPlayStoreLink = onClickCopyPlayStoreLink
+                    modifier = itemModifier.fillMaxWidth(),
+                    onClickCopyPlayStoreLink = onClickCopyPlayStoreLink,
                 )
             }
 

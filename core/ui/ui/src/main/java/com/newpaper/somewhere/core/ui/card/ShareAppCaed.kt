@@ -28,7 +28,7 @@ fun ShareAppCard(
     modifier: Modifier = Modifier
 ){
     MyCard(
-//        modifier = Modifier.clip(RoundedCornerShape(16.dp))
+        modifier = Modifier
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

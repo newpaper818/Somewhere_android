@@ -43,6 +43,8 @@ fun NavGraphBuilder.setDateTimeFormatScreen(
     ) {
         LaunchedEffect(Unit) {
             appViewModel.updateCurrentScreenDestination(ScreenDestination.SET_DATE_TIME_FORMAT)
+            if (!externalState.windowSizeClass.use2Panes)
+                appViewModel.updateMoreDetailCurrentScreenDestination(ScreenDestination.SET_DATE_TIME_FORMAT)
         }
 
         val coroutineScope = rememberCoroutineScope()
@@ -50,6 +52,7 @@ fun NavGraphBuilder.setDateTimeFormatScreen(
         val appUiState by appViewModel.appUiState.collectAsState()
 
         SetDateTimeFormatRoute(
+            use2Panes = externalState.windowSizeClass.use2Panes,
             spacerValue = externalState.windowSizeClass.spacerValue,
             dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
             updatePreferencesValue = {
