@@ -33,6 +33,7 @@ import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
 import com.newpaper.somewhere.util.WindowHeightSizeClass
 import com.newpaper.somewhere.util.WindowWidthSizeClass
+import kotlinx.coroutines.delay
 
 private const val DEEP_LINK_URI_PATTERN =
     "https://www.somewhere.newpaper.com/main/trips"
@@ -61,8 +62,9 @@ fun NavGraphBuilder.tripsScreen(
         popExitTransition = { TopPopExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.updateCurrentScreenDestination(ScreenDestination.TRIPS)
             appViewModel.updateCurrentTopLevelDestination(TopLevelDestination.TRIPS)
+            delay(100)
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.TRIPS)
         }
 
         Box(
