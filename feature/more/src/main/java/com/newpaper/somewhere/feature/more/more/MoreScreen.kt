@@ -68,7 +68,9 @@ private fun MoreScreen(
     currentScreenRoute: String? = null
 ) {
     Scaffold(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxSize()
+            .navigationBarsPadding(),
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {
@@ -87,7 +89,6 @@ private fun MoreScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .navigationBarsPadding()
         ) {
             //setting
             item {
