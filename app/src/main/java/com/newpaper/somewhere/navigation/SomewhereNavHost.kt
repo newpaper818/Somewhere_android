@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
@@ -224,7 +225,20 @@ fun SomewhereNavHost(
                 externalState = externalState,
                 lazyListState = profileLazyListState,
                 navigateToAccount = {
-                    mainNavController.navigateToAccount()
+                    if (externalState.windowSizeClass.use2Panes)
+                        appViewModel.updateMoreDetailCurrentScreenDestination(ScreenDestination.ACCOUNT)
+
+                    mainNavController.navigate(
+                        route = ScreenDestination.MORE.route,
+                        navOptions = navOptions {
+                            popUpTo(ScreenDestination.PROFILE.route) {
+                                inclusive = true
+                            }
+                        }
+                    )
+
+                    if (!externalState.windowSizeClass.use2Panes)
+                        mainNavController.navigate(ScreenDestination.ACCOUNT.route)
                 }
             )
 
