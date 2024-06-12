@@ -114,8 +114,11 @@ private fun AboutScreen(
 ){
     val uriHandler = LocalUriHandler.current
 
+    val scaffoldModifier = if (use2Panes) modifier
+                    else modifier.navigationBarsPadding()
+
     Scaffold(
-        modifier = modifier,
+        modifier = scaffoldModifier,
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {
