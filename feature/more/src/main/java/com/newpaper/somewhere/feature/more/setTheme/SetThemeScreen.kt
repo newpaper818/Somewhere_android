@@ -3,9 +3,7 @@ package com.newpaper.somewhere.feature.more.setTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -84,9 +82,11 @@ private fun SetThemeScreen(
     val appThemeList = enumValues<AppTheme>()
     val mapThemeList = enumValues<MapTheme>()
 
+    val scaffoldModifier = if (use2Panes) modifier
+        else modifier.navigationBarsPadding()
 
     Scaffold(
-        modifier = modifier,
+        modifier = scaffoldModifier,
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {
