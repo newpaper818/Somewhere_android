@@ -13,6 +13,7 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
@@ -20,6 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
+import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.trips.TripsViewModel
 import com.newpaper.somewhere.navigation.more.aboutScreen
 import com.newpaper.somewhere.navigation.more.accountScreen
@@ -36,6 +38,8 @@ import com.newpaper.somewhere.navigation.more.setThemeScreen
 import com.newpaper.somewhere.navigation.profile.profileScreen
 import com.newpaper.somewhere.navigation.signIn.navigateToSignIn
 import com.newpaper.somewhere.navigation.signIn.signInScreen
+import com.newpaper.somewhere.navigation.trip.navigateToTrip
+import com.newpaper.somewhere.navigation.trip.tripScreen
 import com.newpaper.somewhere.navigation.trip.tripsScreen
 import com.newpaper.somewhere.navigationUi.ScreenWithNavigationBar
 import com.newpaper.somewhere.navigationUi.TopLevelDestination
@@ -54,7 +58,8 @@ fun SomewhereNavHost(
     isDarkAppTheme: Boolean,
     startDestination: String,
 
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    commonTripViewModel: CommonTripViewModel = hiltViewModel()
 ) {
     val mainNavController = rememberNavController()
 //    val moreNavController = rememberNavController()
@@ -209,12 +214,15 @@ fun SomewhereNavHost(
             //top level screen =========================================================================
             tripsScreen(
                 appViewModel = appViewModel,
+                commonTripViewModel = commonTripViewModel,
                 tripsViewModel = tripsViewModel,
                 externalState = externalState,
                 lazyListState = tripsLazyListState,
                 navigateToTrip = { isNewTrip, trip ->
-//                navController.navigateToTrip()
-                    //FIXME
+                    //???????????????????
+                    commonTripViewModel.setTrip(trip)
+                    commonTripViewModel.setIsEditMode(isNewTrip)
+                    mainNavController.navigateToTrip()
                 },
                 navigateToGlanceSpot = {
 
@@ -344,6 +352,10 @@ fun SomewhereNavHost(
 
 
             //trip =====================================================================================
+            tripScreen(
+
+            )
+
 
         }
     }
@@ -368,9 +380,6 @@ private suspend fun organizeNavStack(
     val isOnMore3rd = currentScreenDestination == ScreenDestination.EDIT_PROFILE
             || currentScreenDestination == ScreenDestination.DELETE_ACCOUNT
             || currentScreenDestination == ScreenDestination.OPEN_SOURCE_LICENSE
-
-    Log.d("bbb", "isOnMoreDetail: $isOnMoreDetail - isOnMore3rd:$isOnMore3rd - use2Panes: $use2Panes")
-    Log.d("bbb", "current: $currentScreenDestination")
 
     //set nav stack
 

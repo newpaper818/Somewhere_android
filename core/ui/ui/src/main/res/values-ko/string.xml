@@ -25,6 +25,22 @@
     <string name="old_version">(구 버전)</string>
 
     <!--card/trip/ ==============================================================================-->
+    <!--ImageCard.kt-->
+    <string name="image_card_title">사진 %d/%d</string>
+    <string name="image_card_subtitle_add_images">+ 사진 추가</string>
+    <string name="image_card_body_no_image">사진 없음</string>
+    <string name="image">사진</string>
+    <string name="image_loading_error">이미지 로딩 에러</string>
+
+    <!--MemoCard.kt-->
+    <string name="memo_card_title">메모</string>
+    <string name="memo_card_body_no_memo">메모 없음</string>
+    <string name="memo_card_body_add_a_memo">메모 추가</string>
+
+    <!--TitleCard.kt-->
+    <string name="title_card_title">제목</string>
+    <string name="title_card_body_add_a_title">제목 추가</string>
+    <string name="long_text">최대 %d자</string>
 
 
     <!--dialog/ =================================================================================-->

@@ -39,7 +39,7 @@ data class AppUiState(
 
 //    val showSplashScreen: Boolean = true,
     val firstLaunch: Boolean = true,
-    val isEditMode: Boolean = false
+//    val isEditMode: Boolean = false
 )
 
 
@@ -89,25 +89,6 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    /**
-     *
-     * @param editMode if null, toggle isEditMode value
-     */
-    fun setIsEditMode(
-        editMode: Boolean?
-    ){
-        if (editMode != null){
-            _appUiState.update {
-                it.copy(isEditMode = editMode)
-            }
-        }
-        else {
-            _appUiState.update {
-                it.copy(isEditMode = !it.isEditMode)
-            }
-        }
-    }
-
 
 
 
@@ -121,8 +102,7 @@ class AppViewModel @Inject constructor(
         _appUiState.update {
             it.copy(
                 appUserData = null,
-                firstLaunch = true,
-                isEditMode = false
+                firstLaunch = true
             )
         }
     }

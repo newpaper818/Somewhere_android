@@ -25,6 +25,22 @@
     <string name="old_version">(old ver)</string>
 
     <!--card/trip/ ==============================================================================-->
+    <!--ImageCard.kt-->
+    <string name="image_card_title">Images %d/%d</string>
+    <string name="image_card_subtitle_add_images">+ Add images</string>
+    <string name="image_card_body_no_image">No Image</string>
+    <string name="image">Image</string>
+    <string name="image_loading_error">Image loading error</string>
+
+    <!--MemoCard.kt-->
+    <string name="memo_card_title">Memo</string>
+    <string name="memo_card_body_no_memo">No Memo</string>
+    <string name="memo_card_body_add_a_memo">Add a Memo</string>
+
+    <!--TitleCard.kt-->
+    <string name="title_card_title">Title</string>
+    <string name="title_card_body_add_a_title">Add a Title</string>
+    <string name="long_text">Long Text(Up to %d characters)</string>
 
 
     <!--dialog/ =================================================================================-->

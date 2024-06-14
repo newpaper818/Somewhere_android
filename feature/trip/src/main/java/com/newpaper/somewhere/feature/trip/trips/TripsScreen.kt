@@ -56,6 +56,7 @@ import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.convert.getAllImagesPath
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
 import com.newpaper.somewhere.feature.trip.BuildConfig
+import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.trips.component.GlanceSpot
 import com.newpaper.somewhere.feature.trip.trips.component.GoogleBannerAd
@@ -70,6 +71,7 @@ internal val tripCardHeightDp = 120.dp
 
 @Composable
 fun TripsRoute(
+    commonTripViewModel: CommonTripViewModel,
     tripsViewModel: TripsViewModel,
     appUserId: String,
     internetEnabled: Boolean,
@@ -92,11 +94,20 @@ fun TripsRoute(
 ){
     val context = LocalContext.current
 
+    val tripsUiState by tripsViewModel.tripsUiState.collectAsState()
+    val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsState()
+
+    val originalTrips = commonTripUiState.tripInfo.trips ?: listOf()
+    val tempTrips = commonTripUiState.tripInfo.tempTrips ?: listOf()
+
+    val originalSharedTrips = commonTripUiState.tripInfo.sharedTrips ?: listOf()
+    val tempSharedTrips = commonTripUiState.tripInfo.tempSharedTrips ?: listOf()
+
     //get trips
     LaunchedEffect(Unit) {
 //        tripsViewModel.setLoadingTrips(true)
 
-        tripsViewModel.updateTrips(
+        commonTripViewModel.updateTrips(
             internetEnabled = internetEnabled,
             appUserId = appUserId
         )
@@ -104,7 +115,12 @@ fun TripsRoute(
 
         tripsViewModel.updateGlance(
             internetEnabled = internetEnabled,
-            appUserId = appUserId
+            appUserId = appUserId,
+            trips = originalTrips,
+            sharedTrips = originalSharedTrips,
+            updateTripForGlance = { _,_,_ -> Trip(id = 0, managerId = "")
+//                commonTripViewModel.updateTripForGlance()
+            }
         )
 
 //        firstLaunchToFalse()
@@ -117,13 +133,6 @@ fun TripsRoute(
 
         loadAd(AdRequest.Builder().build())
     }
-
-    val tripsUiState by tripsViewModel.tripsUiState.collectAsState()
-    val originalTrips = tripsUiState.trips.trips ?: listOf()
-    val tempTrips = tripsUiState.trips.tempTrips ?: listOf()
-
-    val originalSharedTrips = tripsUiState.trips.sharedTrips ?: listOf()
-    val tempSharedTrips = tripsUiState.trips.tempSharedTrips ?: listOf()
 
     val showingTrips =
         if (isEditMode) tempTrips
@@ -177,8 +186,8 @@ fun TripsRoute(
                 appUserId = appUserId
             )
        },
-        addDeletedImages = { tripsViewModel.addDeletedImages(it) },
-        organizeAddedDeletedImages = { tripsViewModel.organizeAddedDeletedImages(
+        addDeletedImages = { commonTripViewModel.addDeletedImages(it) },
+        organizeAddedDeletedImages = { commonTripViewModel.organizeAddedDeletedImages(
             tripManagerId = appUserId,
             isClickSave = it,
             isInTripsScreen = true
@@ -191,7 +200,7 @@ fun TripsRoute(
                 )
             }
         },
-        unSaveTempTrips = { tripsViewModel.unSaveTempTrips() },
+        unSaveTempTrips = { commonTripViewModel.unSaveTempTrips() },
         navigateToTrip = navigateToTrip,
         navigateToGlanceSpot = { navigateToGlanceSpot(tripsUiState.glance) },
         updateItemOrder = tripsViewModel::reorderTempTrips,

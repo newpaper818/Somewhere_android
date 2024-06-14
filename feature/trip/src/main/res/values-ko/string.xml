@@ -19,7 +19,22 @@
 
 
     <!--trip/ ===================================================================================-->
+    <!--SharingWithFriendsCard.kt-->
+    <string name="trip_mates">여행 친구</string>
 
+    <!--TripDurationCard.kt-->
+    <string name="trip_duration_card_title">여행 기간</string>
+    <string name="trip_duration_card_body_start_date">시작일</string>
+    <string name="trip_duration_card_body_end_date">종료일</string>
+    <string name="trip_duration_card_body_no_start_date">시작일 없음</string>
+    <string name="trip_duration_card_body_no_end_date">종료일 없음</string>
+
+    <!--TripScreen.kt-->
+    <string name="edit_trip">여행 편집</string>
+    <string name="long_text">최대 %d자</string>
+    <string name="dates">일정</string>
+    <string name="set_trip_duration">여행 기간 설정</string>
+    <string name="dates_no_plan">계획 없음</string>
 
     <!--tripMap/ ================================================================================-->
 
