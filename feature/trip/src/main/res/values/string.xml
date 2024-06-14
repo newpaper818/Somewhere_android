@@ -19,7 +19,22 @@
 
 
     <!--trip/ ===================================================================================-->
+    <!--SharingWithFriendsCard.kt-->
+    <string name="trip_mates">Trip mates</string>
 
+    <!--TripDurationCard.kt-->
+    <string name="trip_duration_card_title">Trip Duration</string>
+    <string name="trip_duration_card_body_start_date">Start Date</string>
+    <string name="trip_duration_card_body_end_date">End Date</string>
+    <string name="trip_duration_card_body_no_start_date">No Start Date</string>
+    <string name="trip_duration_card_body_no_end_date">No End Date</string>
+
+    <!--TripScreen.kt-->
+    <string name="edit_trip">Edit Trip</string>
+    <string name="long_text">Long Text(Up to %d characters)</string>
+    <string name="dates">Dates</string>
+    <string name="set_trip_duration">Set Trip Duration</string>
+    <string name="dates_no_plan">No Plan</string>
 
     <!--tripMap/ ================================================================================-->
 

@@ -1,6 +1,13 @@
 package com.newpaper.somewhere.navigation.trip
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.displayCutoutPadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -8,6 +15,8 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
+import com.newpaper.somewhere.feature.trip.CommonTripViewModel
+import com.newpaper.somewhere.feature.trip.trip.TripRoute
 import com.newpaper.somewhere.navigation.enterTransition
 import com.newpaper.somewhere.navigation.exitTransition
 import com.newpaper.somewhere.navigation.popEnterTransition
@@ -24,6 +33,7 @@ fun NavController.navigateToTrip(navOptions: NavOptions? = null) =
 fun NavGraphBuilder.tripScreen(
     appViewModel: AppViewModel,
     externalState: ExternalState,
+    commonTripViewModel: CommonTripViewModel,
 
     navigateTo: () -> Unit,
     navigateUp: () -> Unit,
@@ -44,5 +54,52 @@ fun NavGraphBuilder.tripScreen(
             appViewModel.updateCurrentScreenDestination(ScreenDestination.TRIP)
         }
 
+        val appUiState by appViewModel.appUiState.collectAsState()
+
+        Row(
+            modifier = Modifier
+                .navigationBarsPadding()
+                .displayCutoutPadding()
+        ) {
+            Row(
+                modifier = Modifier.weight(1f)
+            ) {
+                if (appUiState.appUserData != null) {
+                    TripRoute(
+                        use2Panes = externalState.windowSizeClass.use2Panes,
+                        spacerValue = externalState.windowSizeClass.spacerValue,
+                        appUserId = appUiState.appUserData!!.userId,
+                        dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
+                        internetEnabled = externalState.internetEnabled,
+                        commonTripViewModel = commonTripViewModel,
+                        isNewTrip = ,
+                        navigateUp = ,
+                        navigateToInviteFriend = { /*TODO*/ },
+                        navigateToInvitedFriends = { /*TODO*/ },
+                        navigateToImage =,
+                        navigateToDate =,
+                        navigateToTripMap = { /*TODO*/ },
+                        navigateUpAndDeleteNewTrip =,
+                        updateTripState =,
+                        updateTripDurationAndTripState =,
+                        downloadImage =,
+                        addAddedImages =,
+                        addDeletedImages =,
+                        organizeAddedDeletedImages =,
+                        reorderTripImageList =,
+                        reorderDateList =,
+                        saveTrip = { /*TODO*/ })
+                }
+                else{
+                    Text(text = "no user")
+                }
+            }
+
+            if (externalState.windowSizeClass.use2Panes){
+                Box(modifier = Modifier.weight(1f)) {
+                    //date screen
+                }
+            }
+        }
     }
 }

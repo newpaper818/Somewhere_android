@@ -21,6 +21,7 @@ import com.newpaper.somewhere.core.designsystem.component.NAVIGATION_RAIL_BAR_WI
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.core.model.tripData.Trip
+import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.trips.Glance
 import com.newpaper.somewhere.feature.trip.trips.TripsRoute
 import com.newpaper.somewhere.feature.trip.trips.TripsViewModel
@@ -43,6 +44,7 @@ fun NavController.navigateToTrips(navOptions: NavOptions? = null) =
 
 fun NavGraphBuilder.tripsScreen(
     appViewModel: AppViewModel,
+    commonTripViewModel: CommonTripViewModel,
     tripsViewModel: TripsViewModel,
     externalState: ExternalState,
 
@@ -67,14 +69,8 @@ fun NavGraphBuilder.tripsScreen(
             appViewModel.updateCurrentScreenDestination(ScreenDestination.TRIPS)
         }
 
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ){
-            Text(text = "Trips", style = MaterialTheme.typography.headlineLarge)
-        }
-
         val appUiState by appViewModel.appUiState.collectAsState()
+        val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsState()
 
         val widthSizeClass = externalState.windowSizeClass.widthSizeClass
         val heightSizeClass = externalState.windowSizeClass.heightSizeClass
@@ -90,14 +86,15 @@ fun NavGraphBuilder.tripsScreen(
             }
 
             TripsRoute(
+                commonTripViewModel = commonTripViewModel,
                 tripsViewModel = tripsViewModel,
                 appUserId = appUiState.appUserData?.userId ?: "",
                 internetEnabled = externalState.internetEnabled,
                 useBottomNavBar = externalState.windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact,
                 firstLaunch = appUiState.firstLaunch,
                 firstLaunchToFalse = appViewModel::firstLaunchToFalse,
-                isEditMode = appUiState.isEditMode,
-                setEditMode = { appViewModel.setIsEditMode(it) },
+                isEditMode = commonTripUiState.isEditMode,
+                setEditMode = { commonTripViewModel.setIsEditMode(it) },
                 spacerValue = externalState.windowSizeClass.spacerValue,
                 lazyListState = lazyListState,
                 dateTimeFormat = appUiState.appPreferences.dateTimeFormat,

@@ -30,6 +30,7 @@ dependencies {
     //module
     implementation(project(":core:model"))
     implementation(project(":core:utils"))
+    implementation(project(":core:ui:ui"))
     implementation(project(":core:data:data"))
     implementation(project(":core:ui:designsystem"))
     implementation(project(":feature:dialog"))

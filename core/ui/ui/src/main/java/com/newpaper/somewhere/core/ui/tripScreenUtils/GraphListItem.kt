@@ -55,11 +55,11 @@ import com.newpaper.somewhere.core.designsystem.theme.whiteInt
 import com.newpaper.somewhere.core.ui.MyTextField
 import com.newpaper.somewhere.core.ui.ui.R
 
-private val DUMMY_SPACE_HEIGHT: Dp = 10.dp
-private val MIN_CARD_HEIGHT: Dp = 40.dp
-private val ADDITIONAL_HEIGHT: Dp = 22.dp
-private val POINT_CIRCLE_SIZE: Dp = 24.dp
-private val LINE_WIDTH: Dp = 7.dp
+val DUMMY_SPACE_HEIGHT: Dp = 10.dp
+val MIN_CARD_HEIGHT: Dp = 40.dp
+val ADDITIONAL_HEIGHT: Dp = 22.dp
+val POINT_CIRCLE_SIZE: Dp = 24.dp
+val LINE_WIDTH: Dp = 7.dp
 
 @Composable
 fun GraphListItem(
