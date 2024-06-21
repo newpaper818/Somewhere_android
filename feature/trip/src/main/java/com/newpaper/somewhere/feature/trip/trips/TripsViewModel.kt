@@ -1,18 +1,23 @@
 package com.newpaper.somewhere.feature.trip.trips
 
 import androidx.lifecycle.ViewModel
+import com.newpaper.somewhere.core.data.repository.image.CommonImageRepository
 import com.newpaper.somewhere.core.data.repository.image.GetImageRepository
 import com.newpaper.somewhere.core.data.repository.trip.TripRepository
 import com.newpaper.somewhere.core.data.repository.trip.TripsRepository
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
+import com.newpaper.somewhere.feature.trip.CommonTripUiStateRepository
+import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import javax.inject.Inject
 
 private const val TRIPS_VIEWMODEL_TAG = "Trips-ViewModel"
@@ -36,9 +41,12 @@ data class TripsUiState(
 
 @HiltViewModel
 class TripsViewModel @Inject constructor(
+    private val commonTripUiStateRepository: CommonTripUiStateRepository,
+//    private val commonTripViewModel: CommonTripViewModel,
     private val tripsRepository: TripsRepository,
     private val tripRepository: TripRepository,
-    private val getImageRepository: GetImageRepository
+    private val getImageRepository: GetImageRepository,
+    private val commonImageRepository: CommonImageRepository,
 ): ViewModel()  {
     private val _tripsUiState: MutableStateFlow<TripsUiState> =
         MutableStateFlow(
@@ -47,151 +55,120 @@ class TripsViewModel @Inject constructor(
 
     val tripsUiState = _tripsUiState.asStateFlow()
 
+    private val commonTripUiState = commonTripUiStateRepository.commonTripUiState
 
-    //==============================================================================================
-    //get image ====================================================================================
-    fun getImage(
-        imagePath: String,
-        imageUserId: String,
-        result: (Boolean) -> Unit
-    ) {
-        getImageRepository.getImage(
-            imagePath = imagePath,
-            imageUserId = imageUserId,
-            result = result
-        )
+    init {
+        commonTripUiStateRepository._commonTripUiState.update {
+            it.copy(
+                tripInfo = it.tripInfo.copy(trip = null, tempTrip = null)
+            )
+        }
     }
 
 
-
     //==============================================================================================
-    //set UiState ==================================================================================
+    //set uiState value ============================================================================
     fun setLoadingTrips(
-        loadingTrips: Boolean
+        isLoadingTrips: Boolean
     ){
         _tripsUiState.update {
-            it.copy(loadingTrips = loadingTrips)
+            it.copy(loadingTrips = isLoadingTrips)
         }
     }
 
+    private fun initGlanceInfo(
 
-    private fun initGlance() {
+    ){
         _tripsUiState.update {
             it.copy(
-                glance = Glance()
+                glance = Glance(
+                    visible = false,
+                    trip = null,
+                    date = null,
+                    spot = null
+                )
             )
         }
     }
-
-//    private fun updateTripsAndShardTrips(){
-//        _tripsUiState.update {
-//            it.copy(
-//                trips = it.trips.copy(
-//                    trips = _tripsUiState.value.trips.tempTrips,
-//                    sharedTrips = _tripsUiState.value.trips.tempSharedTrips
-//                )
-//            )
-//        }
-//    }
-
-    private fun initDeletedTripsIdsAndDeletedSharedTrips(){
-        _tripsUiState.update {
-            it.copy(
-                deletedTripIds = listOf(),
-                deletedSharedTrips = listOf()
-            )
-        }
-    }
-
-//    fun unSaveTempTrips(){
-//        _tripsUiState.update {
-//            it.copy(
-//                trips = it.trips.copy(
-//                    tempTrips = _tripsUiState.value.trips.trips,
-//                    tempSharedTrips = _tripsUiState.value.trips.sharedTrips
-//                )
-//            )
-//        }
-//    }
 
 
 
 
     //==============================================================================================
-    //update trip, glance ==========================================================================
-//    suspend fun updateTrips(
-//        internetEnabled: Boolean,
-//        appUserId: String
-//    ){
-//        val newTrips = tripsRepository.getMyTrips(internetEnabled, appUserId)
-//        val newSharedTrips = tripsRepository.getSharedTrips(internetEnabled, appUserId)
-//
-//        //set orderId of shared trip
-//        newSharedTrips.forEachIndexed { index, sharedTrip ->
-//            sharedTrip.orderId = index
-//        }
-//
-//        //update newTripList's dateList from tripUiState.value.tripList's dateList
-//        //because newTripList's dateList is empty list (get trip data except dateList)
-//
-//        // -> at app open and user enter TripScreen, user see empty dateList,
-//        //    after load dateList, dateList will be show to user and dateList will save in viewModel (even user go back to MyTripsScreen)
-//        //    when user enter TripScreen(again), old dateList will show (not empty list)
-//        //    after load dateList, user can see new dateList
-//
-//        // all trip data(not really all, user have to go to TripScreen) will be saved before execute app
-//        for (trip in newTrips) {
-//            val matchingOldTrip = tripsUiState.value.trips.trips?.find { it.id == trip.id }
-//
-//            if (matchingOldTrip != null){
-//                trip.dateList = matchingOldTrip.dateList
-//            }
-//        }
-//
-//        //sharedTrip
-//        for (trip in newSharedTrips) {
-//            val matchingOldTrip = tripsUiState.value.trips.sharedTrips?.find { it.id == trip.id }
-//
-//            if (matchingOldTrip != null){
-//                trip.dateList = matchingOldTrip.dateList
-//            }
-//        }
-//
-//
-//        _tripsUiState.update {
-//            it.copy(
-//                trips = it.trips.copy(
-//                    trips = newTrips,
-//                    tempTrips = newTrips,
-//                    sharedTrips = newSharedTrips,
-//                    tempSharedTrips = newSharedTrips
-//                )
-//            )
-//        }
-//    }
+    // ============================================================================
+
+    /** update trips from remote db*/
+    suspend fun updateTrips(
+        internetEnabled: Boolean,
+        appUserId: String
+    ){
+        val newTripList = tripsRepository.getMyTrips(internetEnabled, appUserId)
+        val newSharedTripList = tripsRepository.getSharedTrips(internetEnabled, appUserId)
+
+        //set orderId of shared trip
+        newSharedTripList.forEachIndexed { index, sharedTrip ->
+            sharedTrip.orderId = index
+        }
+
+        //update newTripList's dateList from tripUiState.value.tripList's dateList
+        //because newTripList's dateList is empty list (get trip data except dateList)
+
+        // -> at app open and user enter TripScreen, user see empty dateList,
+        //    after load dateList, dateList will be show to user and dateList will save in viewModel (even user go back to MyTripsScreen)
+        //    when user enter TripScreen(again), old dateList will show (not empty list)
+        //    after load dateList, user can see new dateList
+
+        // all trip data(not really all, user have to go to TripScreen) will be saved before execute app
+        for (trip in newTripList) {
+            val matchingOldTrip = commonTripUiState.value.tripInfo.trips?.find { it.id == trip.id }
+
+            if (matchingOldTrip != null){
+                trip.dateList = matchingOldTrip.dateList
+            }
+        }
+
+        //sharedTrip
+        for (trip in newSharedTripList) {
+            val matchingOldTrip = commonTripUiState.value.tripInfo.sharedTrips?.find { it.id == trip.id }
+
+            if (matchingOldTrip != null){
+                trip.dateList = matchingOldTrip.dateList
+            }
+        }
 
 
-    //FIXME updateTripForGlance ???
-    suspend fun updateGlance(
+        //delete unused image files
+        commonImageRepository.deleteUnusedImageFilesForAllTrips(
+            allTrips = newTripList + newSharedTripList
+        )
+
+        commonTripUiStateRepository._commonTripUiState.update {
+            it.copy(
+                tripInfo = it.tripInfo.copy(
+                    trips = newTripList, tempTrips = newTripList,
+                    sharedTrips = newSharedTripList, tempSharedTrips = newSharedTripList
+
+                )
+            )
+        }
+    }
+
+    /** update glance spot info */
+    fun updateGlanceSpotInfo(
         internetEnabled: Boolean,
         appUserId: String,
-        trips: List<Trip>?,
-        sharedTrips: List<Trip>?,
-        updateTripForGlance: (
-            internetEnabled: Boolean, appUserId: String, tripWithEmptyDateList: Trip
-                ) -> Trip
+        updateTrip: () -> Trip?
     ){
-        //get current date and time
+        //get current date time
         val currentDateTime = LocalDateTime.now()
         val currentDate = currentDateTime.toLocalDate()
         val currentTime = currentDateTime.toLocalTime()
 
-        val tripList: List<Trip> = (trips ?: listOf()) +
-                (sharedTrips ?: listOf())
-
+        val tripList: List<Trip> = (commonTripUiState.value.tripInfo.trips ?: listOf()) +
+                (commonTripUiState.value.tripInfo.sharedTrips ?: listOf())
 
         if (tripList.isEmpty()){
-            initGlance()
+            initGlanceInfo()
         }
 
         //find trip that include current date
@@ -215,21 +192,28 @@ class TripsViewModel @Inject constructor(
             }
         }
 
+
         if (_tripsUiState.value.glance.trip != null) {
 
             var trip = _tripsUiState.value.glance.trip
 
             //update trip info (only at empty date list - load once)
             if (_tripsUiState.value.glance.trip!!.dateList.isEmpty()) {
-                trip = updateTripForGlance(
-                    internetEnabled, appUserId, _tripsUiState.value.glance.trip!!
-                )
+                //at common trip viewModel
+//                trip = commonTripViewModel.updateTrip(
+//                    internetEnabled = internetEnabled,
+//                    appUserId = appUserId,
+//                    tripWithEmptyDateList = _tripsUiState.value.glance.trip!!
+//                )
+                trip = updateTrip()
             }
 
             if (trip != null) {
                 _tripsUiState.update {
                     it.copy(
-                        glance = it.glance.copy(trip = trip)
+                        glance = it.glance.copy(
+                            trip = trip
+                        )
                     )
                 }
 
@@ -238,7 +222,9 @@ class TripsViewModel @Inject constructor(
                     if (date.date == currentDate){
                         _tripsUiState.update {
                             it.copy(
-                                glance = it.glance.copy(date = date)
+                                glance = it.glance.copy(
+                                    date = date
+                                )
                             )
                         }
                         break
@@ -254,7 +240,8 @@ class TripsViewModel @Inject constructor(
                 _tripsUiState.update {
                     it.copy(
                         glance = it.glance.copy(
-                            visible = false, spot = null
+                            visible = false,
+                            spot = null
                         )
                     )
                 }
@@ -339,7 +326,8 @@ class TripsViewModel @Inject constructor(
                     _tripsUiState.update {
                         it.copy(
                             glance = it.glance.copy(
-                                visible = true, spot = glanceSpot
+                                visible = true,
+                                spot = glanceSpot
                             )
                         )
                     }
@@ -360,137 +348,155 @@ class TripsViewModel @Inject constructor(
         }
     }
 
+    fun addAndGetNewTrip(
+        appUserId: String
+    ): Trip{
+        val nowTime = ZonedDateTime.now(ZoneOffset.UTC)
+        val newTrip = getNewTrip(
+            appUserId = appUserId,
+            nowTime = nowTime
+        )
 
+        //update tripUiState tempTripList
+        val tempTripList = (commonTripUiState.value.tripInfo.tempTrips ?: listOf<Trip>()) .toMutableList()
+        tempTripList.add(newTrip)
 
-    /**
-     * get trip from remote
-     * for glance
-     */
-//    private suspend fun updateTripForGlance(
-//        internetEnabled: Boolean,
-//        appUserId: String,
-//        tripWithEmptyDateList: Trip,
-//    ): Trip? {
-//        val trip = tripRepository.getTrip(
-//            internetEnabled = internetEnabled,
-//            appUserId = appUserId,
-//            tripWithEmptyDateList = tripWithEmptyDateList
-//        )
-//
-//        if (trip != null) {
-//
-//            //update tripList / sharedTripList
-//            val isInSharedTrips = trip.managerId != appUserId
-//
-//            //FIXME: is it fine to use tempSharedTrips? (not original shared trips?)
-//            val indexOfTrip = if (!isInSharedTrips)
-//                _tripsUiState.value.trips.trips?.indexOfFirst { it.id == trip.id }
-//            else
-//                _tripsUiState.value.trips.tempSharedTrips?.indexOfFirst { it.id == trip.id }
-//
-//            val newTrips = if (!isInSharedTrips)
-//                _tripsUiState.value.trips.trips?.toMutableList()
-//            else
-//                _tripsUiState.value.trips.tempSharedTrips?.toMutableList()
-//
-//            if (indexOfTrip != null && indexOfTrip != -1) {
-//                newTrips?.set(indexOfTrip, trip)
-//            }
-//
-//            _tripsUiState.update {
-//                if (!isInSharedTrips)
-//                    it.copy(
-//                        trips = it.trips.copy(
-//                            trips = newTrips, tempTrips = newTrips
-//                        )
-//                    )
-//                else
-//                    it.copy(
-//                        trips = it.trips.copy(
-//                            sharedTrips = newTrips, tempSharedTrips = newTrips
-//                        )
-//                    )
-//            }
-//        }
-//
-//        return trip
-//    }
+        commonTripUiStateRepository._commonTripUiState.update {
+            it.copy(
+                tripInfo = it.tripInfo.copy(
+                    tempTrips = tempTripList
+                )
+            )
+        }
 
+        return newTrip
+    }
 
+    private fun getNewTrip(
+        appUserId: String,
+        nowTime: ZonedDateTime
+    ): Trip{
+        //get last orderId
+        var newOrderId = 0
+        val lastTrip = commonTripUiState.value.tripInfo.trips?.lastOrNull()
+        if (lastTrip != null) { newOrderId = lastTrip.orderId + 1 }
 
+        val newId = getHashCodeFromUidTime(
+            managerId = appUserId,
+            firstCreatedTripTime = nowTime
+        )
 
+        //new trip
+        return Trip(
+            id = newId,
+            orderId = newOrderId,
+            managerId = appUserId,
+            editable = true,
+            firstCreatedTime = nowTime,
+            lastModifiedTime = nowTime
+        )
+    }
 
-
-
-    //==============================================================================================
-    //edit trip ====================================================================================
+    /** delete given [trip]*/
     fun deleteTrip(
-      trip: Trip,
-      appUserId: String
-    ) {
-//        if (trip.managerId == appUserId){
-//            //FIXME howwwwwww to do it
-//            if (_tripsUiState.value.trips.tempTrips != null) {
-//                val newTempTripList = _tripsUiState.value.trips.tempTrips!!.toMutableList()
-//                newTempTripList.remove(trip)
-//
-//                _tripsUiState.update {
-//                    it.copy(trips = it.trips.copy(tempTrips = newTempTripList.toList()))
-//                }
-//
-//                val newDeletedTripIdList = tripsUiState.value.deletedTripIds + listOf(trip.id)
-//
-//                _tripsUiState.update {
-//                    it.copy(deletedTripIds = newDeletedTripIdList)
-//                }
-//            }
-//        }
-//        else{
-//            if (_tripsUiState.value.trips.tempSharedTrips != null) {
-//                val newTempSharedTripList = _tripsUiState.value.trips.tempSharedTrips!!.toMutableList()
-//                newTempSharedTripList.removeIf {
-//                    it.id == trip.id && it.managerId == trip.managerId
-//                }
-//
-//                _tripsUiState.update {
-//                    it.copy(trips = it.trips.copy(tempSharedTrips = newTempSharedTripList.toList()))
-//                }
-//
-//                val newDeletedSharedTripList = _tripsUiState.value.deletedSharedTrips + listOf(trip)
-//
-//                _tripsUiState.update {
-//                    it.copy(deletedSharedTrips = newDeletedSharedTripList)
-//                }
-//            }
-//        }
+        trip: Trip,
+        appUserId: String
+    ){
+        if (trip.managerId == appUserId)
+            deleteTripFromTempTrip(trip)
+        else
+            deleteTripFromTempSharedTrip(trip)
+    }
+
+    /** delete given [trip] from tempTripList */
+    private fun deleteTripFromTempTrip(trip: Trip){
+        commonTripUiState.value.tripInfo.tempTrips
+        if (commonTripUiState.value.tripInfo.tempTrips != null) {
+            val newTempTripList = commonTripUiState.value.tripInfo.tempTrips!!.toMutableList()
+            newTempTripList.remove(trip)
+
+            commonTripUiStateRepository._commonTripUiState.update {
+                it.copy(
+                    tripInfo = it.tripInfo.copy(
+                        tempTrips = newTempTripList.toList()
+                    )
+                )
+            }
+
+            val newDeletedTripIdList = tripsUiState.value.deletedTripIds + listOf(trip.id)
+
+            _tripsUiState.update {
+                it.copy(
+                    deletedTripIds = newDeletedTripIdList
+                )
+            }
+        }
+    }
+
+    /** delete given [trip] from tempSharedTripList */
+    private fun deleteTripFromTempSharedTrip(trip: Trip){
+        if (commonTripUiState.value.tripInfo.tempSharedTrips != null) {
+            val newTempSharedTripList = commonTripUiState.value.tripInfo.tempSharedTrips!!.toMutableList()
+            newTempSharedTripList.removeIf {
+                it.id == trip.id && it.managerId == trip.managerId
+            }
+
+            commonTripUiStateRepository._commonTripUiState.update {
+                it.copy(
+                    tripInfo = it.tripInfo.copy(
+                        tempSharedTrips = newTempSharedTripList.toList()
+                    )
+                )
+            }
+
+            val newDeletedSharedTripList = tripsUiState.value.deletedSharedTrips + listOf(trip)
+
+            _tripsUiState.update {
+                it.copy(
+                    deletedSharedTrips = newDeletedSharedTripList
+                )
+            }
+        }
     }
 
 
+    /** when click save button,
+     * save my trips and shared trips to remote db and uiState */
     suspend fun saveTrips(
-        appUserId: String,
-        editModeToFalse: () -> Unit
-    ) {
-//        updateTripsAndShardTrips()
+        appUserId: String
+    ){
+        //update commonTripUiState tripList & sharedTripList
+        commonTripUiStateRepository._commonTripUiState.update {
+            it.copy(
+                isEditMode = false,
+                tripInfo = it.tripInfo.copy(
+                    trips = it.tripInfo.tempTrips,
+                    sharedTrips = it.tripInfo.tempSharedTrips
+                )
+            )
+        }
 
-//        //edit mode to false
-//        editModeToFalse()
-//
-//        //save myTrips to remote
-//        tripsRepository.saveTrips(
-//            appUserId = appUserId,
-//            myTrips = tripsUiState.value.trips.tempTrips ?: listOf(),
-//            deletedTripsIds = tripsUiState.value.deletedTripIds,
-//            deletedSharedTrips = tripsUiState.value.deletedSharedTrips
-//        )
-//
-//        //update sharedTrips order to firestore
-//        tripsRepository.updateSharedTripsOrder(
-//            appUserId = appUserId,
-//            sharedTripList = tripsUiState.value.trips.tempSharedTrips ?: listOf()
-//        )
-//
-//        //init deletedTripsIdList
-//        initDeletedTripsIdsAndDeletedSharedTrips()
+        //save myTrips to firestore
+        tripsRepository.saveTrips(
+            appUserId = appUserId,
+            myTrips = commonTripUiState.value.tripInfo.tempTrips ?: listOf(),
+            deletedTripsIds = tripsUiState.value.deletedTripIds,
+            deletedSharedTrips = tripsUiState.value.deletedSharedTrips
+        )
+
+        //update sharedTrips order to firestore
+        tripsRepository.updateSharedTripsOrder(
+            appUserId = appUserId,
+            sharedTripList = commonTripUiState.value.tripInfo.tempSharedTrips ?: listOf()
+        )
+
+        //init deletedTripsIdList
+        _tripsUiState.update {
+            it.copy(
+                deletedTripIds = listOf(),
+                deletedSharedTrips = listOf()
+            )
+        }
     }
 
 
@@ -499,40 +505,50 @@ class TripsViewModel @Inject constructor(
         currentIndex: Int,
         destinationIndex: Int
     ){
-//        //only at edit mode
-//        if (!isSharedTripList && _tripsUiState.value.trips.tempTrips != null) {
-//            val newTrips = _tripsUiState.value.trips.tempTrips!!.toMutableList()
-//            val trip = newTrips[currentIndex]
-//            newTrips.removeAt(currentIndex)
-//            newTrips.add(destinationIndex, trip)
-//
-//            newTrips.forEach {
-//                it.orderId = newTrips.indexOf(it)
-//            }
-//
-//            _tripsUiState.update {
-//                it.copy(
-//                    trips = it.trips.copy(tempTrips = newTrips.toList())
-//                )
-//            }
-//        }
-//        else if (isSharedTripList && _tripsUiState.value.trips.tempSharedTrips != null){
-//            val newTrips = _tripsUiState.value.trips.tempSharedTrips!!.toMutableList()
-//            val trip = newTrips[currentIndex]
-//            newTrips.removeAt(currentIndex)
-//            newTrips.add(destinationIndex, trip)
-//
-//            newTrips.forEach {
-//                it.orderId = newTrips.indexOf(it)
-//            }
-//
-//            _tripsUiState.update {
-//                it.copy(
-//                    trips = it.trips.copy(tempSharedTrips = newTrips.toList())
-//                )
-//            }
-//        }
+        commonTripUiState.value.tripInfo.tempTrips
+        //only at edit mode
+        if (!isSharedTripList && commonTripUiState.value.tripInfo.tempTrips != null) {
+            val newTrips = commonTripUiState.value.tripInfo.tempTrips!!.toMutableList()
+            val trip = newTrips[currentIndex]
+            newTrips.removeAt(currentIndex)
+            newTrips.add(destinationIndex, trip)
+
+            newTrips.forEach {
+                it.orderId = newTrips.indexOf(it)
+            }
+
+            commonTripUiStateRepository._commonTripUiState.update {
+                it.copy(
+                    tripInfo = it.tripInfo.copy(
+                        tempTrips = newTrips.toList()
+                    )
+                )
+            }
+        }
+        else if (isSharedTripList && commonTripUiState.value.tripInfo.tempSharedTrips != null){
+            val newTrips = commonTripUiState.value.tripInfo.tempSharedTrips!!.toMutableList()
+            val trip = newTrips[currentIndex]
+            newTrips.removeAt(currentIndex)
+            newTrips.add(destinationIndex, trip)
+
+            newTrips.forEach {
+                it.orderId = newTrips.indexOf(it)
+            }
+
+            commonTripUiStateRepository._commonTripUiState.update {
+                it.copy(
+                    tripInfo = it.tripInfo.copy(
+                        tempSharedTrips = newTrips.toList()
+                    )
+                )
+            }
+        }
     }
+}
 
-
+fun getHashCodeFromUidTime(
+    managerId: String,
+    firstCreatedTripTime: ZonedDateTime
+): Int {
+    return managerId.hashCode() * 31 + firstCreatedTripTime.toInstant().toEpochMilli().hashCode()
 }

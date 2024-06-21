@@ -50,7 +50,7 @@ fun NavGraphBuilder.tripsScreen(
 
     lazyListState: LazyListState,
 
-    navigateToTrip: (isNewTrip: Boolean, trip: Trip?) -> Unit,
+    navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
     navigateToGlanceSpot: (glance: Glance) -> Unit,
 ) {
     composable(
@@ -94,7 +94,6 @@ fun NavGraphBuilder.tripsScreen(
                 firstLaunch = appUiState.firstLaunch,
                 firstLaunchToFalse = appViewModel::firstLaunchToFalse,
                 isEditMode = commonTripUiState.isEditMode,
-                setEditMode = { commonTripViewModel.setIsEditMode(it) },
                 spacerValue = externalState.windowSizeClass.spacerValue,
                 lazyListState = lazyListState,
                 dateTimeFormat = appUiState.appPreferences.dateTimeFormat,

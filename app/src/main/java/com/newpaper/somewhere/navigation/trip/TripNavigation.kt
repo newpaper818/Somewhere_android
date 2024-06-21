@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -23,6 +24,7 @@ import com.newpaper.somewhere.navigation.popEnterTransition
 import com.newpaper.somewhere.navigation.popExitTransition
 import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
+import kotlinx.coroutines.launch
 
 private const val DEEP_LINK_URI_PATTERN =
     "https://www.somewhere.newpaper.com/main/trip"
@@ -37,8 +39,6 @@ fun NavGraphBuilder.tripScreen(
 
     navigateTo: () -> Unit,
     navigateUp: () -> Unit,
-
-    modifier: Modifier = Modifier,
 ) {
     composable(
         route = ScreenDestination.TRIP.route,
@@ -55,6 +55,7 @@ fun NavGraphBuilder.tripScreen(
         }
 
         val appUiState by appViewModel.appUiState.collectAsState()
+        val coroutineScope = rememberCoroutineScope()
 
         Row(
             modifier = Modifier
@@ -72,23 +73,54 @@ fun NavGraphBuilder.tripScreen(
                         dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
                         internetEnabled = externalState.internetEnabled,
                         commonTripViewModel = commonTripViewModel,
-                        isNewTrip = ,
-                        navigateUp = ,
+                        isNewTrip = commonTripViewModel.commonTripUiState.value.isNewTrip,
+                        navigateUp = navigateUp,
                         navigateToInviteFriend = { /*TODO*/ },
                         navigateToInvitedFriends = { /*TODO*/ },
-                        navigateToImage =,
-                        navigateToDate =,
+                        navigateToImage = { _,_, -> /*TODO*/ },
+                        navigateToDate = { _, -> /*TODO*/ },
                         navigateToTripMap = { /*TODO*/ },
-                        navigateUpAndDeleteNewTrip =,
-                        updateTripState =,
-                        updateTripDurationAndTripState =,
-                        downloadImage =,
-                        addAddedImages =,
-                        addDeletedImages =,
-                        organizeAddedDeletedImages =,
-                        reorderTripImageList =,
-                        reorderDateList =,
-                        saveTrip = { /*TODO*/ })
+                        navigateUpAndDeleteNewTrip = { deleteTrip ->
+                            navigateUp()
+                            commonTripViewModel.deleteTempTrip(deleteTrip)
+                        },
+                        updateTripState = { toTempTrip, trip ->
+                            commonTripViewModel.updateTripState(toTempTrip, trip)
+                        },
+                        addAddedImages = { newImages ->
+                            commonTripViewModel.addAddedImages(newImages)
+                        },
+                        addDeletedImages = {newImages ->
+                            commonTripViewModel.addDeletedImages(newImages)
+                        },
+                        organizeAddedDeletedImages = { isClickSave ->
+                            commonTripViewModel.organizeAddedDeletedImages(
+                                tripManagerId = commonTripViewModel.commonTripUiState.value.tripInfo.tempTrip?.managerId ?: "",
+                                isClickSave = isClickSave,
+                                isInTripsScreen = true
+                            )
+                        },
+                        saveTrip = {
+                            coroutineScope.launch {
+                                //save tripUiState tripList
+                                val beforeTempTripDateListLastIndex =
+                                    commonTripViewModel.saveTrip(
+                                        appUserId = appUiState.appUserData!!.userId,
+                                        deleteNotEnabledDate = true
+                                    )
+
+                                commonTripViewModel.setIsEditMode(false)
+                                commonTripViewModel.setIsNewTrip(false)
+
+                                //save to firestore
+
+                                commonTripViewModel.saveTripAndAllDates(
+                                    trip = commonTripViewModel.commonTripUiState.value.tripInfo.tempTrip!!,
+                                    tempTripDateListLastIndex = beforeTempTripDateListLastIndex
+                                )
+                            }
+                        }
+                    )
                 }
                 else{
                     Text(text = "no user")
@@ -98,6 +130,7 @@ fun NavGraphBuilder.tripScreen(
             if (externalState.windowSizeClass.use2Panes){
                 Box(modifier = Modifier.weight(1f)) {
                     //date screen
+                    //TODO
                 }
             }
         }

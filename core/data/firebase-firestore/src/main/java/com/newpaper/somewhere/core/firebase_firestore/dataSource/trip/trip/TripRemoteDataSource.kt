@@ -5,7 +5,7 @@ import com.newpaper.somewhere.core.model.tripData.Trip
 interface TripRemoteDataSource {
 
     /**
-     * get trip's all data
+     * get trip's all data (include date list and spot list)
      */
     suspend fun getTrip(
         internetEnabled: Boolean,
@@ -25,7 +25,6 @@ interface TripRemoteDataSource {
      * @param tempTripDateListLastIndex temp [Trip] dateList's last index. use to delete un enabled [Date]s
      */
     suspend fun saveTripAndAllDates(
-        userId: String?,
         trip: Trip,
         tempTripDateListLastIndex: Int? = null
     ):Boolean

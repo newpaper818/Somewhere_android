@@ -10,6 +10,8 @@ import com.google.firebase.auth.FirebaseUser
 import com.newpaper.somewhere.core.data.repository.image.CommonImageRepository
 import com.newpaper.somewhere.core.data.repository.signIn.UserRepository
 import com.newpaper.somewhere.core.model.data.UserData
+import com.newpaper.somewhere.feature.trip.CommonTripUiState
+import com.newpaper.somewhere.feature.trip.CommonTripUiStateRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,6 +27,7 @@ data class SignInUiState(
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
+    private val commonTripUiStateRepository: CommonTripUiStateRepository,
     private val userRepository: UserRepository,
     private val commonImageRepository: CommonImageRepository
 ): ViewModel() {
@@ -33,6 +36,12 @@ class SignInViewModel @Inject constructor(
 
     val signInUiState = _signInUiState.asStateFlow()
 
+    init {
+        //init commonTripUiState
+        commonTripUiStateRepository._commonTripUiState.update {
+            CommonTripUiState()
+        }
+    }
 
 
     //==============================================================================================

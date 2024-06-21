@@ -22,4 +22,14 @@ class TripRepository @Inject constructor(
             )
     }
 
+    suspend fun saveTripAndAllDates(
+        trip: Trip,
+        tempTripDateListLastIndex: Int? = null
+    ):Boolean {
+        return tripRemoteDataSource.saveTripAndAllDates(
+            trip = trip,
+            tempTripDateListLastIndex = tempTripDateListLastIndex
+        )
+    }
+
 }
