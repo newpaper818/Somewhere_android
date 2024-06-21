@@ -28,6 +28,7 @@ class TripFirestoreApi @Inject constructor(
     private val commonApi: CommonRemoteDataSource
 ): TripRemoteDataSource {
 
+    /** get trip's all data (include date list and spot list) */
     override suspend fun getTrip(
         internetEnabled: Boolean,
         tripManagerId: String,
@@ -77,39 +78,33 @@ class TripFirestoreApi @Inject constructor(
     }
 
     override suspend fun saveTripAndAllDates(
-        userId: String?,
         trip: Trip,
         tempTripDateListLastIndex: Int?
     ):Boolean{
 
-        if (userId == null)
+        if (commonApi.checkUserExist(trip.managerId) != true)
             return false
-
-        if (commonApi.checkUserExist(userId) != true)
-            return false
-
 
         val saveSuccess = CompletableDeferred<Boolean>()
 
         firestoreDb.runBatch { batch ->
 
             //save trip
-            saveTripData(firestoreDb, batch, userId, trip)
+            saveTripData(firestoreDb, batch, trip)
 
             //save dateList and spotList
             val enabledDateList = trip.dateList.filter { it.enabled }
 
             enabledDateList.forEach { date ->
-                saveDateData(firestoreDb, batch, userId, trip.id, date)
+                saveDateData(firestoreDb, batch, trip.managerId, trip.id, date)
             }
 
             if (tempTripDateListLastIndex != null) {
                 //delete un enabled Date
                 for (dateIndex in enabledDateList.size..tempTripDateListLastIndex) {
-                    deleteDateData(firestoreDb, batch, userId, trip.id, dateIndex)
+                    deleteDateData(firestoreDb, batch, trip.managerId, trip.id, dateIndex)
                 }
             }
-
         }
         .addOnCompleteListener {
             Log.d(FIREBASE_FIRESTORE_TRIP_TAG, "save trip and all dates")
@@ -150,11 +145,10 @@ class TripFirestoreApi @Inject constructor(
     private fun saveTripData(
         db: FirebaseFirestore,
         batch: WriteBatch,
-        userId: String,
         trip: Trip
     ){
         //(default)/users/{userId}/trips/trip{trip.id}
-        val tripRef = db.collection(USERS).document(userId)
+        val tripRef = db.collection(USERS).document(trip.managerId)
             .collection(TRIPS).document("$TRIP${trip.id}")
 
         val tripData = trip.toTripFirestore()
@@ -166,12 +160,12 @@ class TripFirestoreApi @Inject constructor(
     private fun saveDateData(
         db: FirebaseFirestore,
         batch: WriteBatch,
-        userId: String,
+        tripManagerId: String,
         tripId: Int,
         date: Date
     ){
         //(default)/users/{userId}/trips/trip{trip.id}/dateList/date{date.id}
-        val dateRef = db.collection(USERS).document(userId)
+        val dateRef = db.collection(USERS).document(tripManagerId)
             .collection(TRIPS).document("$TRIP$tripId")
             .collection(DATE_LIST).document("$DATE${date.index}")
 
@@ -185,12 +179,12 @@ class TripFirestoreApi @Inject constructor(
     private fun deleteDateData(
         db: FirebaseFirestore,
         batch: WriteBatch,
-        userId: String,
+        tripManagerId: String,
         tripId: Int,
         dateIndex: Int
     ){
         //(default)/users/{userId}/trips/trip{trip.id}/dateList/date{date.id}
-        val dateRef = db.collection(USERS).document(userId)
+        val dateRef = db.collection(USERS).document(tripManagerId)
             .collection(TRIPS).document("$TRIP$tripId")
             .collection(DATE_LIST).document("$DATE$dateIndex")
 

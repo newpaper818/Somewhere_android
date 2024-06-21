@@ -36,6 +36,7 @@ dependencies {
     implementation(project(":core:data:data"))
     implementation(project(":core:ui:designsystem"))
     implementation(project(":core:ui:ui"))
+    implementation(project(":feature:trip"))
 
     //compose bom
     implementation(platform(libs.compose.bom))

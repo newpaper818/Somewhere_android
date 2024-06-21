@@ -219,13 +219,12 @@ fun SomewhereNavHost(
                 externalState = externalState,
                 lazyListState = tripsLazyListState,
                 navigateToTrip = { isNewTrip, trip ->
-                    //???????????????????
                     commonTripViewModel.setTrip(trip)
                     commonTripViewModel.setIsEditMode(isNewTrip)
                     mainNavController.navigateToTrip()
                 },
                 navigateToGlanceSpot = {
-
+                    //TODO
                 }
             )
 
@@ -353,7 +352,13 @@ fun SomewhereNavHost(
 
             //trip =====================================================================================
             tripScreen(
-
+                appViewModel = appViewModel,
+                externalState = externalState,
+                commonTripViewModel = commonTripViewModel,
+                navigateTo = {
+                    //TODO
+                },
+                navigateUp = navigateUp
             )
 
 

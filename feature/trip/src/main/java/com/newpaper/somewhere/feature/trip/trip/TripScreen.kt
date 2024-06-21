@@ -102,7 +102,7 @@ fun TripRoute(
 
     isNewTrip: Boolean,
 
-    navigateUp: (isEditMode: Boolean) -> Unit,
+    navigateUp: () -> Unit,
     navigateToInviteFriend: () -> Unit,
     navigateToInvitedFriends: () -> Unit,
     navigateToImage: (imageList: List<String>, initialImageIndex: Int) -> Unit,
@@ -111,15 +111,10 @@ fun TripRoute(
     navigateUpAndDeleteNewTrip: (deleteTrip: Trip) -> Unit,
 
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
-    updateTripDurationAndTripState: (toTempTrip: Boolean, startDate: LocalDate, endDate: LocalDate) -> Unit,
 
-    downloadImage: (imagePath: String, imageUserId: String, result: (Boolean) -> Unit) -> Unit,
     addAddedImages: (imageFiles: List<String>) -> Unit,
     addDeletedImages: (imageFiles: List<String>) -> Unit,
     organizeAddedDeletedImages: (isClickSave: Boolean) -> Unit,
-    reorderTripImageList: (currentIndex: Int, destinationIndex: Int) -> Unit,
-
-    reorderDateList: (currentIndex: Int, destinationIndex: Int) -> Unit,
 
     saveTrip: () -> Unit,
 
@@ -145,7 +140,11 @@ fun TripRoute(
     LaunchedEffect(Unit){
         if (!isNewTrip) {
             coroutineScope.launch(Dispatchers.IO) {
-                tripViewModel.updateTrip()
+                commonTripViewModel.updateTrip(
+                    internetEnabled = internetEnabled,
+                    appUserId = appUserId,
+                    tripWithEmptyDateList = originalTrip
+                )
                 delay(150)
                 tripViewModel.setLoadingTrip(false)
             }
@@ -188,7 +187,10 @@ fun TripRoute(
         setEditMode = commonTripViewModel::setIsEditMode,
         setShowExitDialog = { showExitDialog = it },
         setShowSetCurrencyDialog = { showSetCurrencyDialog = it },
-        navigateUp = navigateUp,
+        navigateUp = {
+            if (!isEditMode) navigateUp()
+            else onBackButtonClick()
+        },
         navigateToInviteFriend = navigateToInviteFriend,
         navigateToInvitedFriends = navigateToInvitedFriends,
         navigateToImage = navigateToImage,
@@ -196,13 +198,23 @@ fun TripRoute(
         navigateToTripMap = navigateToTripMap,
         navigateUpAndDeleteNewTrip = navigateUpAndDeleteNewTrip,
         updateTripState = updateTripState,
-        updateTripDurationAndTripState = updateTripDurationAndTripState,
-        downloadImage = downloadImage,
+        updateTripDurationAndTripState = {toTempTrip, startDate, endDate ->
+            tripViewModel.updateTripDurationAndTripState(
+                toTempTrip,
+                startDate,
+                endDate
+            )
+        },
+        downloadImage = commonTripViewModel::getImage,
         addAddedImages = addAddedImages,
         addDeletedImages = addDeletedImages,
         organizeAddedDeletedImages = organizeAddedDeletedImages,
-        reorderTripImageList = reorderTripImageList,
-        reorderDateList = reorderDateList,
+        reorderTripImageList = { currentIndex, destinationIndex ->
+            tripViewModel.reorderTripImageList(currentIndex, destinationIndex)
+        },
+        reorderDateList = { currentIndex, destinationIndex ->
+            tripViewModel.reorderDateList(currentIndex, destinationIndex)
+        },
         saveTrip = saveTrip,
         modifier = modifier,
         currentDateIndex = currentDateIndex
@@ -234,7 +246,7 @@ private fun TripScreen(
     setShowExitDialog: (Boolean) -> Unit,
     setShowSetCurrencyDialog: (Boolean) -> Unit,
 
-    navigateUp: (isEditMode: Boolean) -> Unit,
+    navigateUp: () -> Unit,
     navigateToInviteFriend: () -> Unit,
     navigateToInvitedFriends: () -> Unit,
     navigateToImage: (imageList: List<String>, initialImageIndex: Int) -> Unit,
@@ -338,7 +350,7 @@ private fun TripScreen(
 
                 navigationIcon = TopAppBarIcon.back,
                 navigationIconOnClick = {
-                    navigateUp(isEditMode)
+                    navigateUp()
                 },
 
                 actionIcon2 = if (!tripUiState.loadingTrip && !isEditMode && !use2Panes && showingTrip.editable) TopAppBarIcon.edit else null,
@@ -362,7 +374,7 @@ private fun TripScreen(
         bottomSaveCancelBarVisible = isEditMode && showBottomSaveCancelBar && !use2Panes,
         onCancelClick = {
             focusManager.clearFocus()
-            navigateUp(isEditMode)
+            navigateUp()
         },
         onSaveClick = {
             coroutineScope.launch {
@@ -419,7 +431,7 @@ private fun TripScreen(
         }
 
         Box(
-            modifier = androidx.compose.ui.Modifier
+            modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize(),
             contentAlignment = Alignment.BottomCenter

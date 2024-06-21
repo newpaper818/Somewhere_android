@@ -79,7 +79,6 @@ fun TripsRoute(
     firstLaunch: Boolean,
     firstLaunchToFalse: () -> Unit,
     isEditMode: Boolean,
-    setEditMode: (editMode: Boolean?) -> Unit,
 
     spacerValue: Dp,
 
@@ -87,7 +86,7 @@ fun TripsRoute(
 
     dateTimeFormat: DateTimeFormat,
 
-    navigateToTrip: (isNewTrip: Boolean, trip: Trip?) -> Unit,
+    navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
     navigateToGlanceSpot: (glance: Glance) -> Unit,
 
     modifier: Modifier = Modifier
@@ -103,27 +102,35 @@ fun TripsRoute(
     val originalSharedTrips = commonTripUiState.tripInfo.sharedTrips ?: listOf()
     val tempSharedTrips = commonTripUiState.tripInfo.tempSharedTrips ?: listOf()
 
+    val coroutineScope = rememberCoroutineScope()
+
     //get trips
     LaunchedEffect(Unit) {
-//        tripsViewModel.setLoadingTrips(true)
+        tripsViewModel.setLoadingTrips(true)
 
-        commonTripViewModel.updateTrips(
+        tripsViewModel.updateTrips(
             internetEnabled = internetEnabled,
             appUserId = appUserId
         )
         tripsViewModel.setLoadingTrips(false)
 
-        tripsViewModel.updateGlance(
+        tripsViewModel.updateGlanceSpotInfo(
             internetEnabled = internetEnabled,
             appUserId = appUserId,
-            trips = originalTrips,
-            sharedTrips = originalSharedTrips,
-            updateTripForGlance = { _,_,_ -> Trip(id = 0, managerId = "")
-//                commonTripViewModel.updateTripForGlance()
+            updateTrip = {
+                commonTripViewModel.updateTrip(
+                    internetEnabled = internetEnabled,
+                    appUserId = appUserId,
+                    tripWithEmptyDateList = tripsUiState.glance.trip!!
+                )
             }
         )
 
-//        firstLaunchToFalse()
+        commonTripViewModel.updateTrip(
+            internetEnabled = internetEnabled,
+            appUserId = appUserId,
+            tripWithEmptyDateList = tripsUiState.glance.trip!!
+        )
     }
 
     val adView = AdView(context).apply {
@@ -142,15 +149,13 @@ fun TripsRoute(
         if (isEditMode) tempSharedTrips
         else            originalSharedTrips
 
-    val coroutineScope = rememberCoroutineScope()
-
     var showExitDialog by rememberSaveable { mutableStateOf(false) }
 
     val onBackButtonClick = {
         if (originalTrips != tempTrips || originalSharedTrips != tempSharedTrips)
             showExitDialog = true
         else
-            setEditMode(false)
+            commonTripViewModel.setIsEditMode(false)
     }
 
     //when back button click
@@ -179,7 +184,7 @@ fun TripsRoute(
         glance = tripsUiState.glance,
         firstLaunchToFalse = firstLaunchToFalse,
         onBackButtonClick = onBackButtonClick,
-        setEditMode = setEditMode,
+        setEditMode = commonTripViewModel::setIsEditMode,
         onDeleteTrip = {
             tripsViewModel.deleteTrip(
                 trip = it,
@@ -195,16 +200,22 @@ fun TripsRoute(
         saveTrips = {
             coroutineScope.launch {
                 tripsViewModel.saveTrips(
-                    appUserId = appUserId,
-                    editModeToFalse = { setEditMode(false) }
+                    appUserId = appUserId
                 )
             }
         },
         unSaveTempTrips = { commonTripViewModel.unSaveTempTrips() },
-        navigateToTrip = navigateToTrip,
+        navigateToTrip = { isNewTrip, trip ->
+            if (isNewTrip && trip == null) {
+                val newTrip = tripsViewModel.addAndGetNewTrip(appUserId)
+                navigateToTrip(isNewTrip, newTrip)
+            }
+            else
+                navigateToTrip(isNewTrip, trip!!)
+        },
         navigateToGlanceSpot = { navigateToGlanceSpot(tripsUiState.glance) },
         updateItemOrder = tripsViewModel::reorderTempTrips,
-        downloadImage = tripsViewModel::getImage,
+        downloadImage = commonTripViewModel::getImage,
         setIsLoadingTrips = {
             tripsViewModel.setLoadingTrips(it)
         },
