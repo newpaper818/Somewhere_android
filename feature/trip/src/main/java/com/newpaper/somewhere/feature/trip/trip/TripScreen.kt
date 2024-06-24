@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.trip.trip
 
+import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -208,6 +209,9 @@ fun TripRoute(
                 }
             )
         },
+        saveImageToInternalStorage = { index, uri ->
+            commonTripViewModel.saveImageToInternalStorage(originalTrip.id, index, uri)
+        },
         downloadImage = commonTripViewModel::getImage,
         addAddedImages = addAddedImages,
         addDeletedImages = addDeletedImages,
@@ -260,6 +264,7 @@ private fun TripScreen(
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     updateTripDurationAndTripState: (toTempTrip: Boolean, startDate: LocalDate, endDate: LocalDate) -> Unit,
 
+    saveImageToInternalStorage: (index: Int, uri: Uri) -> String?,
     downloadImage: (imagePath: String, imageUserId: String, result: (Boolean) -> Unit) -> Unit,
     addAddedImages: (imageFiles: List<String>) -> Unit,
     addDeletedImages: (imageFiles: List<String>) -> Unit,
@@ -485,12 +490,12 @@ private fun TripScreen(
                         onClickImage = { initialImageIndex ->
                             navigateToImage(showingTrip.imagePathList, initialImageIndex)
                         },
-                        onClickAddImage = {
-//                            addAddedImages(imageFiles)
-//                            showingTrip.setImage(
-//                                updateTripState,
-//                                showingTrip.imagePathList + imageFiles
-//                            )
+                        onAddImages = { imageFiles ->
+                            addAddedImages(imageFiles)
+                            showingTrip.setImage(
+                                updateTripState,
+                                showingTrip.imagePathList + imageFiles
+                            )
                         },
                         deleteImage = { imageFile ->
                             addDeletedImages(listOf(imageFile))
@@ -506,7 +511,8 @@ private fun TripScreen(
                             else errorCount--
                         },
                         reorderImageList = reorderTripImageList,
-                        downloadImage = downloadImage
+                        downloadImage = downloadImage,
+                        saveImageToInternalStorage = saveImageToInternalStorage
                     )
                 }
 
