@@ -81,6 +81,7 @@ import com.newpaper.somewhere.core.utils.convert.setImage
 import com.newpaper.somewhere.core.utils.convert.setMemoText
 import com.newpaper.somewhere.core.utils.convert.setTitleText
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
+import com.newpaper.somewhere.feature.dialog.memo.MemoDialog
 import com.newpaper.somewhere.feature.dialog.setColor.SetColorDialog
 import com.newpaper.somewhere.feature.dialog.setCurrencyType.SetCurrencyTypeDialog
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
@@ -132,6 +133,7 @@ fun TripRoute(
 
     var showExitDialog by rememberSaveable { mutableStateOf(false) }
     var showSetCurrencyDialog by rememberSaveable { mutableStateOf(false) }
+    var showMemoDialog by rememberSaveable { mutableStateOf(false) }
 
     val originalTrip = commonTripUiState.tripInfo.trip!!
     val tempTrip = commonTripUiState.tripInfo.tempTrip!!
@@ -184,10 +186,14 @@ fun TripRoute(
         originalTrip = originalTrip,
         tempTrip = tempTrip,
         isNewTrip = isNewTrip,
-        showExitDialog = showExitDialog,
-        showSetCurrencyDialog = showSetCurrencyDialog,
         setEditMode = commonTripViewModel::setIsEditMode,
+
+        showExitDialog = showExitDialog,
+        showMemoDialog = showMemoDialog,
+        showSetCurrencyDialog = showSetCurrencyDialog,
+
         setShowExitDialog = { showExitDialog = it },
+        setShowMemoDialog = { showMemoDialog = it },
         setShowSetCurrencyDialog = { showSetCurrencyDialog = it },
         navigateUp = {
             if (!isEditMode) navigateUp()
@@ -246,12 +252,14 @@ private fun TripScreen(
     tempTrip: Trip,
     isNewTrip: Boolean,
 
-    showExitDialog: Boolean,
-    showSetCurrencyDialog: Boolean,
-
     setEditMode: (editMode: Boolean?) -> Unit,
 
+    showExitDialog: Boolean,
+    showMemoDialog: Boolean,
+    showSetCurrencyDialog: Boolean,
+
     setShowExitDialog: (Boolean) -> Unit,
+    setShowMemoDialog: (Boolean) -> Unit,
     setShowSetCurrencyDialog: (Boolean) -> Unit,
 
     navigateUp: () -> Unit,
@@ -425,6 +433,13 @@ private fun TripScreen(
             )
         }
 
+        if (showMemoDialog){
+            MemoDialog(
+                memoText = showingTrip.memoText ?: "",
+                onDismissRequest = { setShowMemoDialog(false) }
+            )
+        }
+
         if (showSetCurrencyDialog) {
             SetCurrencyTypeDialog(
                 initialCurrencyType = showingTrip.unitOfCurrencyType,
@@ -432,12 +447,10 @@ private fun TripScreen(
                     showingTrip.setCurrencyType(updateTripState, newCurrencyType)
                     setShowSetCurrencyDialog(false)
                     showBottomSaveCancelBar = true
-//                    setShowTripBottomSaveCancelBar(true)
                 },
                 onDismissRequest = {
                     setShowSetCurrencyDialog(false)
                     showBottomSaveCancelBar = true
-//                    setShowTripBottomSaveCancelBar(true)
                 }
             )
         }
@@ -468,8 +481,6 @@ private fun TripScreen(
 
                 //title card
                 item {
-//                    val snackBarLongText = stringResource(id = R.string.long_text, 100)
-
                     TitleCard(
                         isEditMode = isEditMode,
                         titleText = showingTrip.titleText,
@@ -547,7 +558,6 @@ private fun TripScreen(
                         isEditMode = isEditMode,
                         setShowBottomSaveCancelBar = {
                             showBottomSaveCancelBar = it
-//                            setShowTripBottomSaveCancelBar(it)
                         },
                         setTripDuration = { startDate1, endDate1 ->
                             updateTripDurationAndTripState(true, startDate1, endDate1)
@@ -565,7 +575,6 @@ private fun TripScreen(
                                 onClick = {
                                     setShowSetCurrencyDialog(true)
                                     showBottomSaveCancelBar = false
-//                                    setShowTripBottomSaveCancelBar(false)
                                 }),
                             travelDistanceItem.copy(text =  showingTrip.getTotalTravelDistanceText())
                         )
@@ -576,8 +585,6 @@ private fun TripScreen(
 
                 //memo card
                 item {
-//                    val snackBarLongText = stringResource(id = R.string.long_text, 100)
-
                     MemoCard(
                         isEditMode = isEditMode,
                         memoText = showingTrip.memoText,
@@ -589,7 +596,7 @@ private fun TripScreen(
                             else errorCount--
                         },
                         showMemoDialog = {
-                            //TODO
+                            setShowMemoDialog(true)
                         }
                     )
 
@@ -653,12 +660,10 @@ private fun TripScreen(
                                 onDismissRequest = {
                                     showColorPickerDialog = false
                                     showBottomSaveCancelBar = true
-//                                    setShowTripBottomSaveCancelBar(true)
                                 },
                                 onOkClick = {
                                     showColorPickerDialog = false
                                     showBottomSaveCancelBar = true
-//                                    setShowTripBottomSaveCancelBar(true)
                                     date.setColor(showingTrip, updateTripState, it)
                                 }
                             )
@@ -712,7 +717,6 @@ private fun TripScreen(
                                     if (isEditMode) {
                                         {
                                             showBottomSaveCancelBar = false
-//                                            setShowTripBottomSaveCancelBar(false)
                                             showColorPickerDialog = true
                                         }
                                     } else null
