@@ -52,11 +52,14 @@ class TripViewModel @Inject constructor(
         }
     }
 
-
+    /**
+     * @param updateTripState { newTrip -> commonTripViewModel.updateTripState(toTempTrip, newTrip)}
+     */
     fun updateTripDurationAndTripState(
         toTempTrip: Boolean,
         startDate: LocalDate,
-        endDate: LocalDate
+        endDate: LocalDate,
+        updateTripState: (Trip) -> Unit
     ){
         if (commonTripUiState.value.tripInfo.trip != null
             && commonTripUiState.value.tripInfo.tempTrip != null) {
@@ -135,7 +138,7 @@ class TripViewModel @Inject constructor(
                 date.setAllSpotDate()
             }
 
-            commonTripViewModel.updateTripState(toTempTrip, newTrip)
+            updateTripState(newTrip)
         }
     }
 

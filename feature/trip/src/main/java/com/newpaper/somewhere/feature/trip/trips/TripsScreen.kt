@@ -108,29 +108,30 @@ fun TripsRoute(
     LaunchedEffect(Unit) {
         tripsViewModel.setLoadingTrips(true)
 
+        //update trips
         tripsViewModel.updateTrips(
             internetEnabled = internetEnabled,
             appUserId = appUserId
         )
         tripsViewModel.setLoadingTrips(false)
 
-        tripsViewModel.updateGlanceSpotInfo(
-            internetEnabled = internetEnabled,
-            appUserId = appUserId,
-            updateTrip = {
-                commonTripViewModel.updateTrip(
-                    internetEnabled = internetEnabled,
-                    appUserId = appUserId,
-                    tripWithEmptyDateList = tripsUiState.glance.trip!!
-                )
-            }
-        )
+        //update glance
+        val glanceTripWithEmptyDateList = tripsViewModel.findCurrentDateTripAndUpdateGlanceTrip()
 
-        commonTripViewModel.updateTrip(
-            internetEnabled = internetEnabled,
-            appUserId = appUserId,
-            tripWithEmptyDateList = tripsUiState.glance.trip!!
-        )
+        if (glanceTripWithEmptyDateList != null &&
+            glanceTripWithEmptyDateList.dateList.isEmpty()){
+
+            val glanceTrip = commonTripViewModel.updateTrip(
+                internetEnabled = internetEnabled,
+                appUserId = appUserId,
+                tripWithEmptyDateList = glanceTripWithEmptyDateList
+            )
+
+            tripsViewModel.updateGlanceSpotInfo(
+                //update trip info (only at empty date list - load once)
+                glanceTrip = glanceTrip
+            )
+        }
     }
 
     val adView = AdView(context).apply {
@@ -306,7 +307,7 @@ private fun TripsScreen(
 
         //fab
         floatingActionButtonPosition = FabPosition.Center,
-        floatingActionButton = {
+        glanceSpot = {
             GlanceSpot(
                 visible = glance.visible && !isEditMode,
                 dateTimeFormat = dateTimeFormat,
