@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.trip
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.newpaper.somewhere.core.data.repository.image.CommonImageRepository
@@ -257,6 +258,17 @@ class CommonTripViewModel @Inject constructor(
                 deletedImages = it.deletedImages + newDeletedImages
             )
         }
+    }
+
+    fun saveImageToInternalStorage(
+        tripId: Int,
+        index: Int,
+        uri: Uri,
+        isProfileImage: Boolean = false
+    ): String? {
+        return commonImageRepository.saveImageToInternalStorage(
+            tripId = tripId, index = index, uri = uri, isProfileImage = isProfileImage
+        )
     }
 
     fun organizeAddedDeletedImages(

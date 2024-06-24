@@ -1,5 +1,8 @@
 package com.newpaper.somewhere.core.ui.card.trip
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
@@ -36,6 +39,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateMapOf
@@ -49,8 +53,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntOffset
@@ -83,12 +88,13 @@ fun ImageCard(
     imagePathList: List<String>,
 
     onClickImage: (imageIndex: Int) -> Unit,
-    onClickAddImage: () -> Unit,
+    onAddImages: (List<String>) -> Unit,
     deleteImage: (String) -> Unit,
     isOverImage: (Boolean) -> Unit,
 
     reorderImageList: (currentIndex: Int, destinationIndex: Int) -> Unit,
     downloadImage: (imagePath: String, imageUserId: String, result: (Boolean) -> Unit) -> Unit,
+    saveImageToInternalStorage: (index: Int, uri: Uri) -> String?,
 
     modifier: Modifier = Modifier
 ){
@@ -108,6 +114,35 @@ fun ImageCard(
 
     val modifier1 = if (isEditMode) modifier.sizeIn(maxHeight = 390.dp)
                     else modifier.sizeIn(maxWidth = 650.dp, maxHeight = 390.dp)
+
+    val haptic = LocalHapticFeedback.current
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetMultipleContents()
+    ){ uriList ->
+        var addUriList = uriList
+
+        if (imagePathList.size + uriList.size > IMAGE_MAX_COUNT && !isImageCountLimit){
+            isImageCountLimit = true
+            isOverImage(true)
+        }
+
+        if (uriList.size > 20){
+            addUriList = addUriList.subList(0, 20)
+        }
+
+        val fileList: MutableList<String> = mutableListOf()
+
+        coroutineScope.launch {
+            //save to internal storage
+            addUriList.forEachIndexed { index, uri ->
+                val file = saveImageToInternalStorage(index, uri)
+                if (file != null)
+                    fileList.add(file)
+            }
+            onAddImages(fileList)
+        }
+    }
 
     AnimatedVisibility(
         visible = isEditMode || imagePathList.isNotEmpty(),
@@ -162,7 +197,9 @@ fun ImageCard(
                                         modifier = Modifier
                                             .clickable(
                                                 enabled = !isImageCountLimit && imagePathList.size < IMAGE_MAX_COUNT,
-                                                onClick = onClickAddImage
+                                                onClick = {
+                                                    galleryLauncher.launch("image/*")
+                                                }
                                             )
                                             .padding(16.dp, 14.dp, 16.dp, 8.dp)
                                     )
@@ -488,11 +525,12 @@ private fun ImageCardPreview(){
                 isEditMode = false,
                 imagePathList = listOf("", "", ""),
                 onClickImage = {},
-                onClickAddImage = {},
+                onAddImages = {},
                 deleteImage = {},
                 isOverImage = {},
                 reorderImageList = {_,_ ->},
-                downloadImage = {_,_,_ ->}
+                downloadImage = {_,_,_ ->},
+                saveImageToInternalStorage = {_,_ -> ""}
             )
         }
     }
@@ -514,11 +552,12 @@ private fun ImageCardPreviewEdit(){
                 isEditMode = true,
                 imagePathList = listOf("", "", ""),
                 onClickImage = {},
-                onClickAddImage = {},
+                onAddImages = {},
                 deleteImage = {},
                 isOverImage = {},
                 reorderImageList = {_,_ ->},
-                downloadImage = {_,_,_ ->}
+                downloadImage = {_,_,_ ->},
+                saveImageToInternalStorage = {_,_ -> ""}
             )
         }
     }
@@ -540,12 +579,12 @@ private fun ImageCardPreviewEdit1(){
                 isEditMode = true,
                 imagePathList = listOf(),
                 onClickImage = {},
-                onClickAddImage = {},
+                onAddImages = {},
                 deleteImage = {},
                 isOverImage = {},
                 reorderImageList = {_,_ ->},
-                downloadImage = {_,_,_ ->}
-
+                downloadImage = {_,_,_ ->},
+                saveImageToInternalStorage = {_,_ -> ""}
             )
         }
     }
