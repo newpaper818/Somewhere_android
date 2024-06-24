@@ -1,6 +1,7 @@
 package com.newpaper.somewhere.feature.trip.trip
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -326,7 +327,10 @@ private fun TripScreen(
 
 
 
-
+    if (!isEditMode){
+        errorCount = 0
+        dateTitleErrorCount = 0
+    }
 
 
 
@@ -692,17 +696,15 @@ private fun TripScreen(
                                         }
                                     },
                                     updateTripState = updateTripState,
-
-                                    isTextSizeLimit = false,
-//                                    isLongText = {
-//                                        if (it) {
-//                                            errorCount++
-//                                            dateTitleErrorCount++
-//                                        } else {
-//                                            errorCount--
-//                                            dateTitleErrorCount--
-//                                        }
-//                                    },
+                                    isLongText = {
+                                        if (it) {
+                                            errorCount++
+                                            dateTitleErrorCount++
+                                        } else {
+                                            errorCount--
+                                            dateTitleErrorCount--
+                                        }
+                                    },
                                     onItemClick = {
                                         navigateToDate(date.index)
                                     },
