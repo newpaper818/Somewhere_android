@@ -43,7 +43,7 @@ internal fun DateListItem(
     updateItemPosition: (currentIndex: Int, destinationIndex: Int) -> Unit,
 
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
-    isTextSizeLimit: Boolean,
+    isLongText: (Boolean) -> Unit,
 
     onItemClick: () -> Unit,
     onSideTextClick: (() -> Unit)? = null,
@@ -119,7 +119,6 @@ internal fun DateListItem(
         sideText = date.getDateText(dateTimeFormat.copy(includeDayOfWeek = false), false),
         mainText = date.titleText,
         expandedText = date.getExpandedText(trip, isEditMode),
-        isTextSizeLimit = isTextSizeLimit,
 
         onMainTextChange = { mainText ->
             trip.dateList[date.index].setTitleText(trip, updateTripState, mainText)
@@ -135,6 +134,7 @@ internal fun DateListItem(
             isExpanded = !isExpanded
         },
         onSideTextClick = onSideTextClick,
-        onPointClick = onPointClick
+        onPointClick = onPointClick,
+        isLongText = isLongText
     )
 }

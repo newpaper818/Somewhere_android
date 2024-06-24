@@ -31,6 +31,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,6 +57,7 @@ import com.newpaper.somewhere.core.designsystem.theme.CustomColor
 import com.newpaper.somewhere.core.designsystem.theme.GraphColor
 import com.newpaper.somewhere.core.designsystem.theme.whiteInt
 import com.newpaper.somewhere.core.ui.MyTextField
+import com.newpaper.somewhere.core.ui.card.trip.MAX_TITLE_LENGTH
 import com.newpaper.somewhere.core.ui.ui.R
 
 val DUMMY_SPACE_HEIGHT: Dp = 10.dp
@@ -69,17 +74,17 @@ fun GraphListItem(
     sideText: String,
     mainText: String?,
     expandedText: String?,
-    isTextSizeLimit: Boolean,
-
     onMainTextChange: (mainText: String) -> Unit,
 
     isFirstItem: Boolean,
+
     isLastItem: Boolean,
     deleteEnabled: Boolean,
     dragEnabled: Boolean,
-
     onItemClick: () -> Unit,
+
     onExpandedButtonClicked: () -> Unit,
+    isLongText: (Boolean) -> Unit,
 
     modifier: Modifier = Modifier,  //item modifier
     dateDragModifier: Modifier = Modifier,
@@ -105,6 +110,8 @@ fun GraphListItem(
     if (!isShown)
         return
 
+    var isTextSizeLimit by rememberSaveable { mutableStateOf(false) }
+
 
     val upperLineColor = if (isFirstItem) Color.Transparent
                             else lineColor
@@ -118,6 +125,9 @@ fun GraphListItem(
     val clickableBoxColor = if (isHighlighted) pointColor.copy(alpha = 0.2f)
                         else Color.Transparent
 
+
+    if (!isEditMode)
+        isTextSizeLimit = false
 
     Box(modifier.background(itemColor)) {
         ClickableBox(
@@ -183,7 +193,10 @@ fun GraphListItem(
                         MainText(
                             isEditMode = isEditMode,
                             mainText = mainText,
-                            onValueChange = onMainTextChange
+                            isTextSizeLimit = isTextSizeLimit,
+                            setIsTextSizeLimit = {isTextSizeLimit = it},
+                            isLongText = isLongText,
+                            onTextChange = onMainTextChange
                         )
                     }
 
@@ -327,9 +340,11 @@ private fun PointWithLine(
 private fun MainText(
     isEditMode: Boolean,
     mainText: String?,
-    onValueChange: (String) -> Unit
+    isTextSizeLimit: Boolean,
+    setIsTextSizeLimit: (Boolean) -> Unit,
+    isLongText: (Boolean) -> Unit,
+    onTextChange: (String) -> Unit
 ){
-
     val mainText1 = if(mainText == null || mainText == "") stringResource(id = R.string.no_title)
                     else mainText
 
@@ -351,7 +366,17 @@ private fun MainText(
             inputTextStyle = MaterialTheme.typography.bodyLarge,
             placeholderText = stringResource(id = R.string.add_a_title),
             placeholderTextStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-            onValueChange = onValueChange,
+            onValueChange = {
+                if (it.length > MAX_TITLE_LENGTH && !isTextSizeLimit) {
+                    setIsTextSizeLimit(true)
+                    isLongText(true)
+                } else if (it.length <= MAX_TITLE_LENGTH && isTextSizeLimit) {
+                    setIsTextSizeLimit(false)
+                    isLongText(false)
+                }
+
+                onTextChange(it)
+            },
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = {

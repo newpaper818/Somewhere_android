@@ -68,7 +68,6 @@ fun SelectDateDialog(
                         ),
                         mainText = date.titleText,
                         expandedText = null,
-                        isTextSizeLimit = false,
                         onMainTextChange = { },
                         isFirstItem = date == dateList.first(),
                         isLastItem = date == dateList.last(),
@@ -78,6 +77,7 @@ fun SelectDateDialog(
                             currentDateIndex = date.index
                         },
                         onExpandedButtonClicked = { },
+                        isLongText = { },
                         pointColor = Color(date.color.color),
                         isHighlighted = date.index == currentDateIndex
                     )
