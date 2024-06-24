@@ -172,8 +172,8 @@ fun TripRoute(
 
     TripScreen(
         use2Panes = use2Panes,
-        startSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
-        endSpacerValue = spacerValue,
+        startSpacerValue = spacerValue,
+        endSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
         appUserId = appUserId,
         isEditMode = isEditMode,
         dateTimeFormat = dateTimeFormat,
@@ -200,9 +200,12 @@ fun TripRoute(
         updateTripState = updateTripState,
         updateTripDurationAndTripState = {toTempTrip, startDate, endDate ->
             tripViewModel.updateTripDurationAndTripState(
-                toTempTrip,
-                startDate,
-                endDate
+                toTempTrip = toTempTrip,
+                startDate = startDate,
+                endDate = endDate,
+                updateTripState = { newTrip ->
+                    commonTripViewModel.updateTripState(toTempTrip, newTrip)
+                }
             )
         },
         downloadImage = commonTripViewModel::getImage,

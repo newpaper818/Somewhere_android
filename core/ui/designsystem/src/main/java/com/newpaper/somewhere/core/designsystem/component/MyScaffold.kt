@@ -18,6 +18,7 @@ fun MyScaffold(
     modifier: Modifier = Modifier,
 
     bottomSaveCancelBarVisible: Boolean = false,
+    glanceSpot: @Composable () -> Unit = {},
     onCancelClick: () -> Unit = {},
     onSaveClick: () -> Unit = {},
     saveEnabled: Boolean = true,
@@ -35,7 +36,9 @@ fun MyScaffold(
     content: @Composable (PaddingValues) -> Unit
 ) {
 
-    val buttonsModifier = if (useBottomNavBar) Modifier.navigationBarsPadding().padding(bottom = 80.dp)
+    val buttonsModifier = if (useBottomNavBar) Modifier
+        .navigationBarsPadding()
+        .padding(bottom = 80.dp)
                             else Modifier.navigationBarsPadding()
 
     Scaffold(
@@ -56,6 +59,13 @@ fun MyScaffold(
                 use2PanesAndSpotScreen = use2PanesAndSpotScreen,
                 modifier = buttonsModifier
             )
+
+            //floating action button
+            Box (
+                modifier = buttonsModifier.padding(bottom = 16.dp)
+            ){
+                glanceSpot()
+            }
         }
     }
 }

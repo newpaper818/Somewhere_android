@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.trip.trips
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.newpaper.somewhere.core.data.repository.image.CommonImageRepository
 import com.newpaper.somewhere.core.data.repository.image.GetImageRepository
@@ -9,7 +10,6 @@ import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.feature.trip.CommonTripUiStateRepository
-import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -154,20 +154,17 @@ class TripsViewModel @Inject constructor(
     }
 
     /** update glance spot info */
-    fun updateGlanceSpotInfo(
-        internetEnabled: Boolean,
-        appUserId: String,
-        updateTrip: () -> Trip?
-    ){
+    fun findCurrentDateTripAndUpdateGlanceTrip(
+
+    ): Trip? {
         //get current date time
         val currentDateTime = LocalDateTime.now()
         val currentDate = currentDateTime.toLocalDate()
-        val currentTime = currentDateTime.toLocalTime()
 
         val tripList: List<Trip> = (commonTripUiState.value.tripInfo.trips ?: listOf()) +
                 (commonTripUiState.value.tripInfo.sharedTrips ?: listOf())
 
-        if (tripList.isEmpty()){
+        if (tripList.isEmpty()) {
             initGlanceInfo()
         }
 
@@ -188,37 +185,32 @@ class TripsViewModel @Inject constructor(
                         )
                     )
                 }
-                break
+                return trip
             }
         }
+        return null
+    }
 
+    fun updateGlanceSpotInfo(
+        glanceTrip: Trip?
+    ){
+        //get current date time
+        val currentDateTime = LocalDateTime.now()
+        val currentDate = currentDateTime.toLocalDate()
+        val currentTime = currentDateTime.toLocalTime()
 
         if (_tripsUiState.value.glance.trip != null) {
-
-            var trip = _tripsUiState.value.glance.trip
-
-            //update trip info (only at empty date list - load once)
-            if (_tripsUiState.value.glance.trip!!.dateList.isEmpty()) {
-                //at common trip viewModel
-//                trip = commonTripViewModel.updateTrip(
-//                    internetEnabled = internetEnabled,
-//                    appUserId = appUserId,
-//                    tripWithEmptyDateList = _tripsUiState.value.glance.trip!!
-//                )
-                trip = updateTrip()
-            }
-
-            if (trip != null) {
+            if (glanceTrip != null) {
                 _tripsUiState.update {
                     it.copy(
                         glance = it.glance.copy(
-                            trip = trip
+                            trip = glanceTrip
                         )
                     )
                 }
 
                 //find date
-                for (date in trip.dateList){
+                for (date in glanceTrip.dateList){
                     if (date.date == currentDate){
                         _tripsUiState.update {
                             it.copy(
