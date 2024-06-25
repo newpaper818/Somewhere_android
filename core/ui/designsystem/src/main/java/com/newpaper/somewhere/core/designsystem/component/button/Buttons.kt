@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -70,17 +71,19 @@ fun NewTripButton(
     visible: Boolean,
     onClick: () -> Unit
 ){
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn(tween(300)) + scaleIn(tween(300)) + expandVertically(tween(300)),
-        exit = fadeOut(tween(300)) + scaleOut(tween(300)) + shrinkVertically(tween(300))
-    ) {
-        IconTextButton(
-            icon = IconTextButtonIcon.add,
-            text = stringResource(id = R.string.new_trip),
-            onClick = onClick,
-            textStyle = MaterialTheme.typography.labelLarge
-        )
+    Box(modifier = Modifier.height(40.dp)){
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(tween(300)) + scaleIn(tween(300)) + expandVertically(tween(300)),
+            exit = fadeOut(tween(300)) + scaleOut(tween(300)) + shrinkVertically(tween(300))
+        ) {
+            IconTextButton(
+                icon = IconTextButtonIcon.add,
+                text = stringResource(id = R.string.new_trip),
+                onClick = onClick,
+                textStyle = MaterialTheme.typography.labelLarge
+            )
+        }
     }
 }
 
