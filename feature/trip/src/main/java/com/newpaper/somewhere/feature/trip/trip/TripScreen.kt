@@ -1,7 +1,6 @@
 package com.newpaper.somewhere.feature.trip.trip
 
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -62,7 +61,6 @@ import com.newpaper.somewhere.core.ui.card.trip.ImageCard
 import com.newpaper.somewhere.core.ui.card.trip.InformationCard
 import com.newpaper.somewhere.core.ui.card.trip.MAX_TITLE_LENGTH
 import com.newpaper.somewhere.core.ui.card.trip.MemoCard
-import com.newpaper.somewhere.feature.trip.trip.component.SharingWithFriendsCard
 import com.newpaper.somewhere.core.ui.card.trip.TitleCard
 import com.newpaper.somewhere.core.ui.card.trip.currencyItem
 import com.newpaper.somewhere.core.ui.card.trip.travelDistanceItem
@@ -87,6 +85,7 @@ import com.newpaper.somewhere.feature.dialog.setCurrencyType.SetCurrencyTypeDial
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.trip.component.DateListItem
+import com.newpaper.somewhere.feature.trip.trip.component.SharingWithFriendsCard
 import com.newpaper.somewhere.feature.trip.trip.component.TripDurationCard
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
