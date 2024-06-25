@@ -168,110 +168,136 @@ fun TripsRoute(
 
 
     TripsScreen(
-        firstLaunch = firstLaunch,
         spacerValue = spacerValue,
-        isEditMode = isEditMode,
-        lazyListState = lazyListState,
         dateTimeFormat = dateTimeFormat,
-        adView = adView,
-        useBottomNavBar = useBottomNavBar,
         internetEnabled = internetEnabled,
+        useBottomNavBar = useBottomNavBar,
+
+        firstLaunch = firstLaunch,
+        firstLaunchToFalse = firstLaunchToFalse,
+
         loadingTrips = tripsUiState.loadingTrips,
+        setIsLoadingTrips = { tripsViewModel.setLoadingTrips(it) },
+
+        isEditMode = isEditMode,
+        setEditMode = commonTripViewModel::setIsEditMode,
+
         showExitDialog = showExitDialog,
         showExitDialogToFalse = { showExitDialog = false },
 
-        showingTrips = showingTrips,
-        showingSharedTrips = showingSharedTrips,
-        glance = tripsUiState.glance,
-        firstLaunchToFalse = firstLaunchToFalse,
-        onBackButtonClick = onBackButtonClick,
-        setEditMode = commonTripViewModel::setIsEditMode,
-        onDeleteTrip = {
-            tripsViewModel.deleteTrip(
-                trip = it,
-                appUserId = appUserId
-            )
-       },
-        addDeletedImages = { commonTripViewModel.addDeletedImages(it) },
-        organizeAddedDeletedImages = { commonTripViewModel.organizeAddedDeletedImages(
-            tripManagerId = appUserId,
-            isClickSave = it,
-            isInTripsScreen = true
-        ) },
-        saveTrips = {
-            coroutineScope.launch {
-                tripsViewModel.saveTrips(
+        lazyListState = lazyListState,
+        adView = adView,
+
+        tripsInfo = TripsInfo(
+            showingTrips = showingTrips,
+            showingSharedTrips = showingSharedTrips,
+            glance = tripsUiState.glance,
+        ),
+        image = TripsImage(
+            downloadImage = commonTripViewModel::getImage,
+            addDeletedImages = { commonTripViewModel.addDeletedImages(it) },
+            organizeAddedDeletedImages = { commonTripViewModel.organizeAddedDeletedImages(
+                tripManagerId = appUserId,
+                isClickSave = it,
+                isInTripsScreen = true
+            ) }
+        ),
+        tripsEdit = TripsEdit(
+            saveTrips = {
+                coroutineScope.launch {
+                    tripsViewModel.saveTrips(
+                        appUserId = appUserId
+                    )
+                }
+            },
+            unSaveTempTrips = { commonTripViewModel.unSaveTempTrips() },
+            onDeleteTrip = {
+                tripsViewModel.deleteTrip(
+                    trip = it,
                     appUserId = appUserId
                 )
             }
-        },
-        unSaveTempTrips = { commonTripViewModel.unSaveTempTrips() },
-        navigateToTrip = { isNewTrip, trip ->
-            if (isNewTrip && trip == null) {
-                val newTrip = tripsViewModel.addAndGetNewTrip(appUserId)
-                navigateToTrip(isNewTrip, newTrip)
-            }
-            else
-                navigateToTrip(isNewTrip, trip!!)
-        },
-        navigateToGlanceSpot = { navigateToGlanceSpot(tripsUiState.glance) },
-        updateItemOrder = tripsViewModel::reorderTempTrips,
-        downloadImage = commonTripViewModel::getImage,
-        setIsLoadingTrips = {
-            tripsViewModel.setLoadingTrips(it)
-        },
+        ),
+        navigate = TripsNavigate(
+            onBackButtonClick = onBackButtonClick,
+            navigateToTrip = { isNewTrip, trip ->
+                if (isNewTrip && trip == null) {
+                    val newTrip = tripsViewModel.addAndGetNewTrip(appUserId)
+                    navigateToTrip(isNewTrip, newTrip)
+                }
+                else
+                    navigateToTrip(isNewTrip, trip!!)
+            },
+            navigateToGlanceSpot = { navigateToGlanceSpot(tripsUiState.glance) },
+        ),
+
+
+        updateTripItemOrder = tripsViewModel::reorderTempTrips,
         modifier = modifier
     )
 }
 
 
 
+data class TripsInfo(
+    val showingTrips: List<Trip> = listOf(),
+    val showingSharedTrips: List<Trip> = listOf(),
+    val glance: Glance = Glance(),
+)
+
+data class TripsImage(
+    val downloadImage: (imagePath: String, imageUserId: String, result:(Boolean) -> Unit) -> Unit = {_,_,_ ->},
+    val addDeletedImages: (imageFiles: List<String>) -> Unit = {},
+    val organizeAddedDeletedImages: (isClickSave: Boolean) -> Unit = {},
+)
+
+data class TripsEdit(
+    val saveTrips: () -> Unit = {},
+    val unSaveTempTrips: () -> Unit = {},
+    val onDeleteTrip: (trip: Trip) -> Unit = {},
+)
+
+data class TripsNavigate(
+    val onBackButtonClick: () -> Unit = {},
+    val navigateToTrip: (isNewTrip: Boolean, trip: Trip?) -> Unit = {_,_ ->},
+    val navigateToGlanceSpot: () -> Unit = {},
+)
 
 @Composable
 private fun TripsScreen(
-    firstLaunch: Boolean,
-
     spacerValue: Dp,
-    isEditMode: Boolean,
-    lazyListState: LazyListState,
     dateTimeFormat: DateTimeFormat,
-
-    adView: AdView,
-
-    useBottomNavBar: Boolean,
     internetEnabled: Boolean,
+    useBottomNavBar: Boolean,
+
+    firstLaunch: Boolean,
+    firstLaunchToFalse: () -> Unit,
+
     loadingTrips: Boolean,
+    setIsLoadingTrips: (loadingTrips: Boolean) -> Unit,
+
+    isEditMode: Boolean,
+    setEditMode: (editMode: Boolean?) -> Unit,
+
     showExitDialog: Boolean,
     showExitDialogToFalse: () -> Unit,
 
-    showingTrips: List<Trip>,
-    showingSharedTrips: List<Trip>,
-    glance: Glance,
+    lazyListState: LazyListState,
+    adView: AdView,
 
-    firstLaunchToFalse: () -> Unit,
+    tripsInfo: TripsInfo,
+    image: TripsImage,
+    tripsEdit: TripsEdit,
+    navigate: TripsNavigate,
 
-    onBackButtonClick: () -> Unit,
-    setEditMode: (editMode: Boolean?) -> Unit,
-
-    onDeleteTrip: (trip: Trip) -> Unit,
-
-    addDeletedImages: (imageFiles: List<String>) -> Unit,
-    organizeAddedDeletedImages: (isClickSave: Boolean) -> Unit,
-
-    saveTrips: () -> Unit,
-    unSaveTempTrips: () -> Unit,
-
-    navigateToTrip: (isNewTrip: Boolean, trip: Trip?) -> Unit,
-    navigateToGlanceSpot: () -> Unit,
-
-    updateItemOrder: (isSharedTrips: Boolean, currentIndex: Int, destinationIndex: Int) -> Unit,
-
-    downloadImage: (imagePath: String, tripManagerId: String, (Boolean) -> Unit) -> Unit,
-
-    setIsLoadingTrips: (loadingTrips: Boolean) -> Unit,
+    updateTripItemOrder: (isSharedTrips: Boolean, currentIndex: Int, destinationIndex: Int) -> Unit,
 
     modifier: Modifier = Modifier
 ){
+
+    val showingTrips = tripsInfo.showingTrips
+    val showingSharedTrips = tripsInfo.showingSharedTrips
+    val glance = tripsInfo.glance
 
     val density = LocalDensity.current
     var lazyColumnHeightDp by rememberSaveable { mutableIntStateOf(0) }
@@ -316,7 +342,7 @@ private fun TripsScreen(
                 spot = glance.spot ?: Spot(id= 0, date = LocalDate.now()),
                 onClick = {
                     //go to spot screen
-                    navigateToGlanceSpot()
+                    navigate.navigateToGlanceSpot()
                 },
             )
         },
@@ -324,11 +350,11 @@ private fun TripsScreen(
         //bottom save cancel button
         bottomSaveCancelBarVisible = isEditMode,
         useBottomNavBar = useBottomNavBar,
-        onCancelClick = { onBackButtonClick() },
+        onCancelClick = { navigate.onBackButtonClick() },
         onSaveClick = {
-            saveTrips()
+            tripsEdit.saveTrips()
 
-            organizeAddedDeletedImages(true)
+            image.organizeAddedDeletedImages(true)
         }
     ) { paddingValues ->
 
@@ -340,8 +366,8 @@ private fun TripsScreen(
                 onDeleteClick = {
                     showExitDialogToFalse()
                     setEditMode(false)
-                    unSaveTempTrips()
-                    organizeAddedDeletedImages(false)
+                    tripsEdit.unSaveTempTrips()
+                    image.organizeAddedDeletedImages(false)
                 }
             )
         }
@@ -414,9 +440,9 @@ private fun TripsScreen(
                                 deleteText = stringResource(id = R.string.dialog_button_delete),
                                 onDismissRequest = { showDeleteDialog = false },
                                 onDeleteClick = {
-                                    onDeleteTrip(trip)
+                                    tripsEdit.onDeleteTrip(trip)
                                     showDeleteDialog = false
-                                    addDeletedImages(trip.getAllImagesPath())
+                                    image.addDeletedImages(trip.getAllImagesPath())
                                 }
                             )
                         }
@@ -431,18 +457,18 @@ private fun TripsScreen(
                                 trips = showingTrips,
                                 onClick = {
                                     setIsLoadingTrips(true)
-                                    navigateToTrip(false, it)
+                                    navigate.navigateToTrip(false, it)
                                 },
                                 onLongClick = {
                                     showDeleteDialog = true
                                 },
-                                downloadImage = downloadImage,
+                                downloadImage = image.downloadImage,
                                 slideState = slideStates[trip.id] ?: SlideState.NONE,
                                 updateSlideState = { tripId, newSlideState ->
                                     slideStates[showingTrips[tripId].id] = newSlideState
                                 },
                                 updateItemPosition = { currentIndex, destinationIndex ->
-                                    updateItemOrder(false, currentIndex, destinationIndex)
+                                    updateTripItemOrder(false, currentIndex, destinationIndex)
 
                                     //all slideState to NONE
                                     slideStates.putAll(showingTrips.map { it.id }
@@ -481,9 +507,9 @@ private fun TripsScreen(
                                 deleteText = stringResource(id = R.string.dialog_button_exit),
                                 onDismissRequest = { showDeleteDialog = false },
                                 onDeleteClick = {
-                                    onDeleteTrip(sharedTrip)
+                                    tripsEdit.onDeleteTrip(sharedTrip)
                                     showDeleteDialog = false
-                                    addDeletedImages(sharedTrip.getAllImagesPath())
+                                    image.addDeletedImages(sharedTrip.getAllImagesPath())
                                 }
                             )
                         }
@@ -498,19 +524,19 @@ private fun TripsScreen(
                                 trips = showingSharedTrips,
                                 onClick = {
                                     setIsLoadingTrips(true)
-                                    navigateToTrip(false, it)
+                                    navigate.navigateToTrip(false, it)
                                 },
                                 onLongClick = {
                                     showDeleteDialog = true
                                 },
-                                downloadImage = downloadImage,
+                                downloadImage = image.downloadImage,
                                 slideState = sharedTripsSlideStates[sharedTrip.id]
                                     ?: SlideState.NONE,
                                 updateSlideState = { tripId, newSlideState ->
                                     sharedTripsSlideStates[showingTrips[tripId].id] = newSlideState
                                 },
                                 updateItemPosition = { currentIndex, destinationIndex ->
-                                    updateItemOrder(true, currentIndex, destinationIndex)
+                                    updateTripItemOrder(true, currentIndex, destinationIndex)
 
                                     //all slideState to NONE
                                     sharedTripsSlideStates.putAll(showingTrips.map { it.id }
@@ -534,7 +560,7 @@ private fun TripsScreen(
                         visible = !loadingTrips && !isEditMode && showingTrips.size < 50,
                         onClick = {
                             setIsLoadingTrips(true)
-                            navigateToTrip(true, null)
+                            navigate.navigateToTrip(true, null)
                         }
                     )
                 }
@@ -597,49 +623,45 @@ private fun TripsScreenPreview_Default(){
         val context = LocalContext.current
 
         TripsScreen(
-            firstLaunch = false,
             spacerValue = 16.dp,
-            isEditMode = false,
-            lazyListState = LazyListState(),
             dateTimeFormat = DateTimeFormat(),
-            adView =  AdView(context).apply {},
-            useBottomNavBar = true,
             internetEnabled = true,
+            useBottomNavBar = true,
+            firstLaunch = false,
+            firstLaunchToFalse = { },
             loadingTrips = false,
+            setIsLoadingTrips = {},
+            isEditMode = false,
+            setEditMode = { },
             showExitDialog = false,
             showExitDialogToFalse = {},
-            showingTrips = listOf(
-                Trip(
-                    id = 0,
-                    managerId = "",
-                    titleText = "trip 1"
+            lazyListState = LazyListState(),
+            adView =  AdView(context).apply {},
+            tripsInfo = TripsInfo(
+                showingTrips = listOf(
+                    Trip(
+                        id = 0,
+                        managerId = "",
+                        titleText = "trip 1"
+                    ),
+                    Trip(
+                        id = 0,
+                        managerId = ""
+                    )
                 ),
-                Trip(
-                    id = 0,
-                    managerId = ""
-                )
+                showingSharedTrips = listOf(
+                    Trip(
+                        id = 0,
+                        managerId = "",
+                        titleText = "shared trip"
+                    )
+                ),
+                glance = Glance(visible = true),
             ),
-            showingSharedTrips = listOf(
-                Trip(
-                    id = 0,
-                    managerId = "",
-                    titleText = "shared trip"
-                )
-            ),
-            glance = Glance(visible = true),
-            firstLaunchToFalse = { },
-            onBackButtonClick = { },
-            setEditMode = { },
-            onDeleteTrip = { },
-            addDeletedImages = { },
-            organizeAddedDeletedImages = { },
-            navigateToGlanceSpot = { },
-            saveTrips = { },
-            unSaveTempTrips = { },
-            navigateToTrip = {_,_->},
-            updateItemOrder = { _, _,_->},
-            downloadImage = {_,_,_ ->},
-            setIsLoadingTrips = {}
+            image = TripsImage(),
+            tripsEdit = TripsEdit(),
+            navigate = TripsNavigate(),
+            updateTripItemOrder = { _, _, _->},
         )
     }
 }
@@ -649,52 +671,46 @@ private fun TripsScreenPreview_Default(){
 private fun TripsScreenPreview_Edit(){
     SomewhereTheme {
         val context = LocalContext.current
-
         TripsScreen(
-            firstLaunch = false,
             spacerValue = 16.dp,
-            isEditMode = true,
-            lazyListState = LazyListState(),
             dateTimeFormat = DateTimeFormat(),
-            adView =  AdView(context).apply {},
-            useBottomNavBar = true,
             internetEnabled = true,
+            useBottomNavBar = true,
+            firstLaunch = false,
+            firstLaunchToFalse = { },
             loadingTrips = false,
+            setIsLoadingTrips = {},
+            isEditMode = true,
+            setEditMode = { },
             showExitDialog = false,
             showExitDialogToFalse = {},
-            showingTrips = listOf(
-                Trip(
-                    id = 0,
-                    managerId = "",
-                    titleText = "trip 1"
+            lazyListState = LazyListState(),
+            adView =  AdView(context).apply {},
+            tripsInfo = TripsInfo(
+                showingTrips = listOf(
+                    Trip(
+                        id = 0,
+                        managerId = "",
+                        titleText = "trip 1"
+                    ),
+                    Trip(
+                        id = 0,
+                        managerId = ""
+                    )
                 ),
-                Trip(
-                    id = 0,
-                    managerId = ""
+                showingSharedTrips = listOf(
+                    Trip(
+                        id = 0,
+                        managerId = "",
+                        titleText = "shared trip",
+                        imagePathList = listOf("")
+                    )
                 )
             ),
-            showingSharedTrips = listOf(
-                Trip(
-                    id = 0,
-                    managerId = "",
-                    titleText = "shared trip",
-                    imagePathList = listOf("")
-                )
-            ),
-            glance = Glance(),
-            firstLaunchToFalse = { },
-            onBackButtonClick = { },
-            setEditMode = { },
-            onDeleteTrip = { },
-            addDeletedImages = { },
-            organizeAddedDeletedImages = { },
-            navigateToGlanceSpot = { },
-            saveTrips = { },
-            unSaveTempTrips = { },
-            navigateToTrip = {_,_->},
-            updateItemOrder = { _, _,_->},
-            downloadImage = {_,_,_ ->},
-            setIsLoadingTrips = {}
+            image = TripsImage(),
+            tripsEdit = TripsEdit(),
+            navigate = TripsNavigate(),
+            updateTripItemOrder = { _, _, _->},
         )
     }
 }
@@ -704,52 +720,46 @@ private fun TripsScreenPreview_Edit(){
 private fun TripsScreenPreview_OnClickCancel(){
     SomewhereTheme {
         val context = LocalContext.current
-
         TripsScreen(
-            firstLaunch = false,
             spacerValue = 16.dp,
-            isEditMode = true,
-            lazyListState = LazyListState(),
             dateTimeFormat = DateTimeFormat(),
-            adView =  AdView(context).apply {},
-            useBottomNavBar = true,
             internetEnabled = true,
+            useBottomNavBar = true,
+            firstLaunch = false,
+            firstLaunchToFalse = { },
             loadingTrips = false,
+            setIsLoadingTrips = {},
+            isEditMode = true,
+            setEditMode = { },
             showExitDialog = true,
             showExitDialogToFalse = {},
-            showingTrips = listOf(
-                Trip(
-                    id = 0,
-                    managerId = "",
-                    titleText = "trip 1"
+            lazyListState = LazyListState(),
+            adView =  AdView(context).apply {},
+            tripsInfo = TripsInfo(
+                showingTrips = listOf(
+                    Trip(
+                        id = 0,
+                        managerId = "",
+                        titleText = "trip 1"
+                    ),
+                    Trip(
+                        id = 0,
+                        managerId = ""
+                    )
                 ),
-                Trip(
-                    id = 0,
-                    managerId = ""
+                showingSharedTrips = listOf(
+                    Trip(
+                        id = 0,
+                        managerId = "",
+                        titleText = "shared trip",
+                        imagePathList = listOf("")
+                    )
                 )
             ),
-            showingSharedTrips = listOf(
-                Trip(
-                    id = 0,
-                    managerId = "",
-                    titleText = "shared trip",
-                    imagePathList = listOf("")
-                )
-            ),
-            glance = Glance(),
-            firstLaunchToFalse = { },
-            onBackButtonClick = { },
-            setEditMode = { },
-            onDeleteTrip = { },
-            addDeletedImages = { },
-            organizeAddedDeletedImages = { },
-            navigateToGlanceSpot = { },
-            saveTrips = { },
-            unSaveTempTrips = { },
-            navigateToTrip = {_,_->},
-            updateItemOrder = { _, _,_->},
-            downloadImage = {_,_,_ ->},
-            setIsLoadingTrips = {}
+            image = TripsImage(),
+            tripsEdit = TripsEdit(),
+            navigate = TripsNavigate(),
+            updateTripItemOrder = { _, _, _->},
         )
     }
 }
