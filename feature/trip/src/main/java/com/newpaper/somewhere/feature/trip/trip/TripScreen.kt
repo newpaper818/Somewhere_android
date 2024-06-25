@@ -6,6 +6,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -648,90 +650,17 @@ private fun TripScreen(
                     }
                 }
 
-                if (enabledDateList.isNotEmpty()) {
-                    items(enabledDateList) { date ->
+                item {
+                    //empty dates
+                    val text =
+                        if (isEditMode) stringResource(id = R.string.set_trip_duration)
+                        else stringResource(id = R.string.dates_no_plan)
 
-                        var showColorPickerDialog by rememberSaveable { mutableStateOf(false) }
-
-                        if (showColorPickerDialog) {
-                            SetColorDialog(
-                                initialColor = date.color,
-                                onDismissRequest = {
-                                    showColorPickerDialog = false
-                                    showBottomSaveCancelBar = true
-                                },
-                                onOkClick = {
-                                    showColorPickerDialog = false
-                                    showBottomSaveCancelBar = true
-                                    date.setColor(showingTrip, updateTripState, it)
-                                }
-                            )
-                        }
-
-
-                        key(enabledDateList.map { it.id }) {
-                            val slideState = slideStates[date.id] ?: SlideState.NONE
-
-                            AnimatedVisibility(
-                                visible = !tripUiState.loadingTrip || !isFirstLoading,
-                                enter = expandVertically(tween(500)),
-                                exit = shrinkVertically(tween(500))
-                            ) {
-                                DateListItem(
-                                    trip = showingTrip,
-                                    date = date,
-                                    isEditMode = isEditMode,
-                                    isHighlighted = date.index == currentDateIndex && use2Panes,
-                                    dateTimeFormat = dateTimeFormat,
-
-                                    slideState = slideState,
-                                    updateSlideState = { dateId, newSlideState ->
-                                        slideStates[enabledDateList[dateId].id] = newSlideState
-                                    },
-                                    updateItemPosition = { currentIndex, destinationIndex ->
-                                        //on drag end
-                                        coroutineScope.launch {
-                                            //reorder list
-                                            reorderDateList(currentIndex, destinationIndex)
-
-                                            //all slideState to NONE
-                                            slideStates.putAll(enabledDateList.map { it.id }
-                                                .associateWith { SlideState.NONE })
-                                        }
-                                    },
-                                    updateTripState = updateTripState,
-                                    isLongText = {
-                                        if (it) {
-                                            errorCount++
-                                            dateTitleErrorCount++
-                                        } else {
-                                            errorCount--
-                                            dateTitleErrorCount--
-                                        }
-                                    },
-                                    onItemClick = {
-                                        navigateToDate(date.index)
-                                    },
-                                    onPointClick =
-                                    if (isEditMode) {
-                                        {
-                                            showBottomSaveCancelBar = false
-                                            showColorPickerDialog = true
-                                        }
-                                    } else null
-                                )
-                            }
-                        }
-                    }
-                }
-                //no dates
-                else {
-                    item {
-                        //empty dates
-                        val text =
-                            if (isEditMode) stringResource(id = R.string.set_trip_duration)
-                            else stringResource(id = R.string.dates_no_plan)
-
+                    AnimatedVisibility(
+                        visible = enabledDateList.isEmpty(),
+                        enter = expandVertically(tween(500)),
+                        exit = shrinkVertically(tween(500))
+                    ) {
                         MyCard(
                             shape = RectangleShape,
                             modifier = Modifier.fillMaxWidth(),
@@ -744,6 +673,81 @@ private fun TripScreen(
                                     style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 )
                             }
+                        }
+                    }
+                }
+
+                items(enabledDateList) { date ->
+
+                    var showColorPickerDialog by rememberSaveable { mutableStateOf(false) }
+
+                    if (showColorPickerDialog) {
+                        SetColorDialog(
+                            initialColor = date.color,
+                            onDismissRequest = {
+                                showColorPickerDialog = false
+                                showBottomSaveCancelBar = true
+                            },
+                            onOkClick = {
+                                showColorPickerDialog = false
+                                showBottomSaveCancelBar = true
+                                date.setColor(showingTrip, updateTripState, it)
+                            }
+                        )
+                    }
+
+
+                    key(enabledDateList.map { it.id }) {
+                        val slideState = slideStates[date.id] ?: SlideState.NONE
+
+                        AnimatedVisibility(
+                            visible = !tripUiState.loadingTrip || !isFirstLoading,
+                            enter =  expandVertically(tween(500)),
+                            exit = shrinkVertically(tween(500))
+                        ) {
+                            DateListItem(
+                                trip = showingTrip,
+                                date = date,
+                                isEditMode = isEditMode,
+                                isHighlighted = date.index == currentDateIndex && use2Panes,
+                                dateTimeFormat = dateTimeFormat,
+
+                                slideState = slideState,
+                                updateSlideState = { dateId, newSlideState ->
+                                    slideStates[enabledDateList[dateId].id] = newSlideState
+                                },
+                                updateItemPosition = { currentIndex, destinationIndex ->
+                                    //on drag end
+                                    coroutineScope.launch {
+                                        //reorder list
+                                        reorderDateList(currentIndex, destinationIndex)
+
+                                        //all slideState to NONE
+                                        slideStates.putAll(enabledDateList.map { it.id }
+                                            .associateWith { SlideState.NONE })
+                                    }
+                                },
+                                updateTripState = updateTripState,
+                                isLongText = {
+                                    if (it) {
+                                        errorCount++
+                                        dateTitleErrorCount++
+                                    } else {
+                                        errorCount--
+                                        dateTitleErrorCount--
+                                    }
+                                },
+                                onItemClick = {
+                                    navigateToDate(date.index)
+                                },
+                                onPointClick =
+                                if (isEditMode) {
+                                    {
+                                        showBottomSaveCancelBar = false
+                                        showColorPickerDialog = true
+                                    }
+                                } else null
+                            )
                         }
                     }
                 }
