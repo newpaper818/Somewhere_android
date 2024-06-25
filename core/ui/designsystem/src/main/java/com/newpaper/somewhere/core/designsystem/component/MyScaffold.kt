@@ -37,9 +37,9 @@ fun MyScaffold(
 ) {
 
     val buttonsModifier = if (useBottomNavBar) Modifier
-        .navigationBarsPadding()
-        .padding(bottom = 80.dp)
-                            else Modifier.navigationBarsPadding()
+                            .navigationBarsPadding()
+                            .padding(bottom = 80.dp)
+                        else Modifier.navigationBarsPadding()
 
     Scaffold(
         modifier, topBar, bottomBar, snackbarHost, floatingActionButton,
