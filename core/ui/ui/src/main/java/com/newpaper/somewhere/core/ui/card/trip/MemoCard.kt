@@ -72,15 +72,6 @@ fun MemoCard(
         viewMemoText += "..."
     }
 
-//    if (showMemoDialog){
-//        MemoDialog(
-//            memoText = memoText ?: "",
-//            onDismissRequest = {
-//                showMemoDialog = false
-//            }
-//        )
-//    }
-
     //memo card
     MyCard(
         elevation = CardDefaults.cardElevation(
