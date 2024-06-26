@@ -1,22 +1,16 @@
 package com.newpaper.somewhere.feature.trip.trip
 
-import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -25,43 +19,34 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.button.SeeOnMapExtendedFAB
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
-import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
-import com.newpaper.somewhere.core.designsystem.theme.CustomColor
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.ui.card.trip.ImageCard
 import com.newpaper.somewhere.core.ui.card.trip.InformationCard
-import com.newpaper.somewhere.core.ui.card.trip.MAX_TITLE_LENGTH
 import com.newpaper.somewhere.core.ui.card.trip.MemoCard
 import com.newpaper.somewhere.core.ui.card.trip.TitleCard
 import com.newpaper.somewhere.core.ui.card.trip.currencyItem
@@ -86,7 +71,9 @@ import com.newpaper.somewhere.feature.dialog.setColor.SetColorDialog
 import com.newpaper.somewhere.feature.dialog.setCurrencyType.SetCurrencyTypeDialog
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.R
+import com.newpaper.somewhere.feature.trip.trip.component.DateListEmptyTextCard
 import com.newpaper.somewhere.feature.trip.trip.component.DateListItem
+import com.newpaper.somewhere.feature.trip.trip.component.DateListTopTitleCard
 import com.newpaper.somewhere.feature.trip.trip.component.SharingWithFriendsCard
 import com.newpaper.somewhere.feature.trip.trip.component.TripDurationCard
 import kotlinx.coroutines.Dispatchers
@@ -96,9 +83,10 @@ import java.time.LocalDate
 
 @Composable
 fun TripRoute(
+    appUserId: String,
+
     use2Panes: Boolean,
     spacerValue: Dp,
-    appUserId: String,
     dateTimeFormat: DateTimeFormat,
     internetEnabled: Boolean,
 
@@ -132,10 +120,6 @@ fun TripRoute(
     val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsState()
     val tripUiState by tripViewModel.tripUiState.collectAsState()
 
-    var showExitDialog by rememberSaveable { mutableStateOf(false) }
-    var showSetCurrencyDialog by rememberSaveable { mutableStateOf(false) }
-    var showMemoDialog by rememberSaveable { mutableStateOf(false) }
-
     val originalTrip = commonTripUiState.tripInfo.trip!!
     val tempTrip = commonTripUiState.tripInfo.tempTrip!!
     val isEditMode = commonTripUiState.isEditMode
@@ -156,10 +140,14 @@ fun TripRoute(
         }
     }
 
+    LaunchedEffect(!isEditMode) {
+        tripViewModel.initAllErrorCount()
+    }
+
 
     val onBackButtonClick = {
         if (originalTrip != tempTrip)
-            showExitDialog = true
+            tripViewModel.setShowExitDialog(true)
         else {
             commonTripViewModel.setIsEditMode(false)
 
@@ -176,36 +164,57 @@ fun TripRoute(
         }
 
     TripScreen(
-        use2Panes = use2Panes,
-        startSpacerValue = spacerValue,
-        endSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
         appUserId = appUserId,
-        isEditMode = isEditMode,
-        dateTimeFormat = dateTimeFormat,
-        internetEnabled = internetEnabled,
-        tripUiState = tripUiState,
-        originalTrip = originalTrip,
-        tempTrip = tempTrip,
-        isNewTrip = isNewTrip,
-        setEditMode = commonTripViewModel::setIsEditMode,
+        tripUiInfo = TripUiInfo(
+            use2Panes = use2Panes,
+            spacerValue = spacerValue,
+            loadingTrip = tripUiState.loadingTrip,
+            dateTimeFormat = dateTimeFormat,
+            internetEnabled = internetEnabled,
+            isEditMode = isEditMode,
+            setIsEditMode = commonTripViewModel::setIsEditMode,
+            showBottomSaveCancelBar = tripUiState.showBottomSaveCancelBar,
+            setShowBottomSaveCancelBar = tripViewModel::setShowBottomSaveCancelBar
+        ),
+        tripInfo = TripInfo(
+            originalTrip = originalTrip,
+            tempTrip = tempTrip,
+            isNewTrip = isNewTrip
+        ),
+        errorCount = TripErrorCount(
+            totalErrorCount = tripUiState.totalErrorCount,
+            dateTitleErrorCount = tripUiState.dateTitleErrorCount,
+            increaseTotalErrorCount = tripViewModel::increaseTotalErrorCount,
+            decreaseTotalErrorCount = tripViewModel::decreaseTotalErrorCount,
+            increaseDateTitleErrorCount = tripViewModel::increaseDateTitleErrorCount,
+            decreaseDateTitleErrorCount = tripViewModel::decreaseDateTitleErrorCount
+        ),
+        dialog = TripDialog(
+            showExitDialog = tripUiState.showExitDialog,
+            showMemoDialog = tripUiState.showMemoDialog,
+            showSetCurrencyDialog = tripUiState.showSetCurrencyDialog,
+            showSetColorDialog = tripUiState.showSetColorDialog,
 
-        showExitDialog = showExitDialog,
-        showMemoDialog = showMemoDialog,
-        showSetCurrencyDialog = showSetCurrencyDialog,
+            setShowExitDialog = tripViewModel::setShowExitDialog,
+            setShowMemoDialog = tripViewModel::setShowMemoDialog,
+            setShowSetCurrencyDialog = tripViewModel::setShowSetCurrencyDialog,
+            setShowSetColorDialog = tripViewModel::setShowSetColorDialog,
 
-        setShowExitDialog = { showExitDialog = it },
-        setShowMemoDialog = { showMemoDialog = it },
-        setShowSetCurrencyDialog = { showSetCurrencyDialog = it },
-        navigateUp = {
-            if (!isEditMode) navigateUp()
-            else onBackButtonClick()
-        },
-        navigateToInviteFriend = navigateToInviteFriend,
-        navigateToInvitedFriends = navigateToInvitedFriends,
-        navigateToImage = navigateToImage,
-        navigateToDate = navigateToDate,
-        navigateToTripMap = navigateToTripMap,
-        navigateUpAndDeleteNewTrip = navigateUpAndDeleteNewTrip,
+            selectedDate = tripUiState.selectedDate,
+            setSelectedDate = tripViewModel::setSelectedDate
+        ),
+        navigate = TripNavigate(
+            navigateUp = {
+                if (!isEditMode) navigateUp()
+                else onBackButtonClick()
+            },
+            navigateToInviteFriend = navigateToInviteFriend,
+            navigateToInvitedFriends = navigateToInvitedFriends,
+            navigateToImage = navigateToImage,
+            navigateToDate = navigateToDate,
+            navigateToTripMap = navigateToTripMap,
+            navigateUpAndDeleteNewTrip = navigateUpAndDeleteNewTrip
+        ),
         updateTripState = updateTripState,
         updateTripDurationAndTripState = {toTempTrip, startDate, endDate ->
             tripViewModel.updateTripDurationAndTripState(
@@ -217,16 +226,19 @@ fun TripRoute(
                 }
             )
         },
-        saveImageToInternalStorage = { index, uri ->
-            commonTripViewModel.saveImageToInternalStorage(originalTrip.id, index, uri)
-        },
-        downloadImage = commonTripViewModel::getImage,
-        addAddedImages = addAddedImages,
-        addDeletedImages = addDeletedImages,
-        organizeAddedDeletedImages = organizeAddedDeletedImages,
-        reorderTripImageList = { currentIndex, destinationIndex ->
-            tripViewModel.reorderTripImageList(currentIndex, destinationIndex)
-        },
+        image = TripImage(
+            saveImageToInternalStorage = { index, uri ->
+                commonTripViewModel.saveImageToInternalStorage(originalTrip.id, index, uri)
+            },
+            downloadImage = commonTripViewModel::getImage,
+            addAddedImages = addAddedImages,
+            addDeletedImages = addDeletedImages,
+            organizeAddedDeletedImages = organizeAddedDeletedImages,
+            reorderTripImageList = { currentIndex, destinationIndex ->
+                tripViewModel.reorderTripImageList(currentIndex, destinationIndex)
+            }
+        ),
+
         reorderDateList = { currentIndex, destinationIndex ->
             tripViewModel.reorderDateList(currentIndex, destinationIndex)
         },
@@ -237,85 +249,75 @@ fun TripRoute(
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @Composable
 private fun TripScreen(
-    use2Panes: Boolean,
-    startSpacerValue: Dp,
-    endSpacerValue: Dp,
     appUserId: String,
-    isEditMode: Boolean,
-    dateTimeFormat: DateTimeFormat,
-    internetEnabled: Boolean,
+    tripUiInfo: TripUiInfo,
+    tripInfo: TripInfo,
+    errorCount: TripErrorCount,
+    dialog: TripDialog,
+    navigate: TripNavigate,
+    image: TripImage,
 
-    tripUiState: TripUiState,
-
-    originalTrip: Trip,
-    tempTrip: Trip,
-    isNewTrip: Boolean,
-
-    setEditMode: (editMode: Boolean?) -> Unit,
-
-    showExitDialog: Boolean,
-    showMemoDialog: Boolean,
-    showSetCurrencyDialog: Boolean,
-
-    setShowExitDialog: (Boolean) -> Unit,
-    setShowMemoDialog: (Boolean) -> Unit,
-    setShowSetCurrencyDialog: (Boolean) -> Unit,
-
-    navigateUp: () -> Unit,
-    navigateToInviteFriend: () -> Unit,
-    navigateToInvitedFriends: () -> Unit,
-    navigateToImage: (imageList: List<String>, initialImageIndex: Int) -> Unit,
-    navigateToDate: (dateIndex: Int) -> Unit,
-    navigateToTripMap: () -> Unit,
-    navigateUpAndDeleteNewTrip: (deleteTrip: Trip) -> Unit,
-
+    //update
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     updateTripDurationAndTripState: (toTempTrip: Boolean, startDate: LocalDate, endDate: LocalDate) -> Unit,
 
-    saveImageToInternalStorage: (index: Int, uri: Uri) -> String?,
-    downloadImage: (imagePath: String, imageUserId: String, result: (Boolean) -> Unit) -> Unit,
-    addAddedImages: (imageFiles: List<String>) -> Unit,
-    addDeletedImages: (imageFiles: List<String>) -> Unit,
-    organizeAddedDeletedImages: (isClickSave: Boolean) -> Unit,
-    reorderTripImageList: (currentIndex: Int, destinationIndex: Int) -> Unit,
-
+    //reorder date list
     reorderDateList: (currentIndex: Int, destinationIndex: Int) -> Unit,
 
     saveTrip: () -> Unit,
 
     modifier: Modifier = Modifier,
     currentDateIndex: Int? = null,
-//    setShowTripBottomSaveCancelBar: (Boolean) -> Unit = {}
 ){
     val coroutineScope = rememberCoroutineScope()
 
+    val use2Panes = tripUiInfo.use2Panes
+    val spacerValue = tripUiInfo.spacerValue
+
+    val loadingTrip = tripUiInfo.loadingTrip
+    val dateTimeFormat = tripUiInfo.dateTimeFormat
+    val internetEnabled = tripUiInfo.internetEnabled
+
+    val isEditMode = tripUiInfo.isEditMode
+    val showBottomSaveCancelBar = tripUiInfo.showBottomSaveCancelBar
+
     val showingTrip =
-        if (isEditMode) tempTrip
-        else originalTrip
+        if (isEditMode) tripInfo.tempTrip
+        else tripInfo.originalTrip
 
     val enabledDateList = showingTrip.dateList.filter { it.enabled }
     val isFirstLoading by rememberSaveable { mutableStateOf(enabledDateList.isEmpty()) }
     val focusManager = LocalFocusManager.current
     val scrollState = rememberLazyListState()
     val snackBarHostState = remember { SnackbarHostState() }
-    var showBottomSaveCancelBar by rememberSaveable { mutableStateOf(true) }
-
-    var errorCount by rememberSaveable { mutableIntStateOf(0) }
-    var dateTitleErrorCount by rememberSaveable { mutableIntStateOf(0) }
 
     //slideStates
-    val slideStates = remember { mutableStateMapOf<Int, SlideState>(
+    val slideStates = remember { mutableStateMapOf(
         *showingTrip.dateList.map { it.id to SlideState.NONE }.toTypedArray()
     ) }
 
 
-
     //set top bar title
-    var topBarTitle by rememberSaveable { mutableStateOf("") }
-
-    topBarTitle =
+    val topBarTitle =
         if (isEditMode) stringResource(id = R.string.edit_trip)
         else {
             if (showingTrip.titleText == null || showingTrip.titleText == "")
@@ -332,14 +334,6 @@ private fun TripScreen(
 
     //for expanded fab animation
     val isFABExpanded by remember { derivedStateOf { scrollState.firstVisibleItemIndex == 0 } }
-
-
-
-
-    if (!isEditMode){
-        errorCount = 0
-        dateTitleErrorCount = 0
-    }
 
 
 
@@ -368,25 +362,22 @@ private fun TripScreen(
             SomewhereTopAppBar(
                 title = topBarTitle,
                 internetEnabled = internetEnabled,
-
                 navigationIcon = TopAppBarIcon.back,
-                navigationIconOnClick = {
-                    navigateUp()
-                },
-
-                actionIcon2 = if (!tripUiState.loadingTrip && !isEditMode && !use2Panes && showingTrip.editable) TopAppBarIcon.edit else null,
+                navigationIconOnClick = { navigate.navigateUp() },
+                actionIcon2 = if (!loadingTrip && !isEditMode && !use2Panes && showingTrip.editable) TopAppBarIcon.edit else null,
                 actionIcon2Onclick = {
-                    setEditMode(null)
+                    tripUiInfo.setIsEditMode(null)
+                    tripUiInfo.setShowBottomSaveCancelBar(true)
                 }
             )
         },
 
-        //bottom floating button
+        //bottom floating action button
         floatingActionButton = {
             if (!use2Panes)
                 SeeOnMapExtendedFAB(
                     visible = !isEditMode && showingTrip.getFirstLocation() != null,
-                    onClick = navigateToTripMap,
+                    onClick = navigate.navigateToTripMap,
                     expanded = isFABExpanded
                 )
         },
@@ -395,66 +386,83 @@ private fun TripScreen(
         bottomSaveCancelBarVisible = isEditMode && showBottomSaveCancelBar && !use2Panes,
         onCancelClick = {
             focusManager.clearFocus()
-            navigateUp()
+            navigate.navigateUp()
         },
         onSaveClick = {
             coroutineScope.launch {
-                if (isNewTrip || originalTrip != tempTrip)
-                //save to firestore
-                    saveTrip()
-                else {
-                    setEditMode(false)
-                }
+                if (tripInfo.isNewTrip || tripInfo.originalTrip != tripInfo.tempTrip)
+                    saveTrip() //save to firestore
+                else
+                    tripUiInfo.setIsEditMode(false)
 
-                organizeAddedDeletedImages(true)
+                image.organizeAddedDeletedImages(true)
             }
         },
-        saveEnabled = errorCount <= 0
+        saveEnabled = errorCount.totalErrorCount <= 0
 
     ) { paddingValues ->
 
         //dialogs
-        if (showExitDialog) {
+        if (dialog.showExitDialog) {
             DeleteOrNotDialog(
                 bodyText = stringResource(id = R.string.dialog_body_are_you_sure_to_exit),
                 deleteText = stringResource(id = R.string.dialog_button_exit),
-                onDismissRequest = { setShowExitDialog(false) },
+                onDismissRequest = { dialog.setShowExitDialog(false) },
                 onDeleteClick = {
-                    errorCount = 0
-                    setShowExitDialog(false)
-                    setEditMode(false)
-                    updateTripState(true, originalTrip)
+                    dialog.setShowExitDialog(false)
+                    tripUiInfo.setIsEditMode(false)
+                    updateTripState(true, tripInfo.originalTrip)
 
-                    if (isNewTrip) {
-                        navigateUpAndDeleteNewTrip(originalTrip)
-                    }
+                    if (tripInfo.isNewTrip)
+                        navigate.navigateUpAndDeleteNewTrip(tripInfo.originalTrip)
 
-                    organizeAddedDeletedImages(false)
+                    image.organizeAddedDeletedImages(false)
                 }
             )
         }
 
-        if (showMemoDialog){
+        if (dialog.showMemoDialog){
             MemoDialog(
                 memoText = showingTrip.memoText ?: "",
-                onDismissRequest = { setShowMemoDialog(false) }
+                onDismissRequest = { dialog.setShowMemoDialog(false) }
             )
         }
 
-        if (showSetCurrencyDialog) {
+        if (dialog.showSetCurrencyDialog) {
             SetCurrencyTypeDialog(
                 initialCurrencyType = showingTrip.unitOfCurrencyType,
                 onOkClick = { newCurrencyType ->
                     showingTrip.setCurrencyType(updateTripState, newCurrencyType)
-                    setShowSetCurrencyDialog(false)
-                    showBottomSaveCancelBar = true
+                    dialog.setShowSetCurrencyDialog(false)
+                    tripUiInfo.setShowBottomSaveCancelBar(true)
                 },
                 onDismissRequest = {
-                    setShowSetCurrencyDialog(false)
-                    showBottomSaveCancelBar = true
+                    dialog.setShowSetCurrencyDialog(false)
+                    tripUiInfo.setShowBottomSaveCancelBar(true)
                 }
             )
         }
+
+        if (dialog.showSetColorDialog && dialog.selectedDate != null) {
+            SetColorDialog(
+                initialColor = dialog.selectedDate.color,
+                onDismissRequest = {
+                    dialog.setShowSetColorDialog(false)
+                    tripUiInfo.setShowBottomSaveCancelBar(true)
+                    dialog.setSelectedDate(null)
+                },
+                onOkClick = {
+                    dialog.setShowSetColorDialog(false)
+                    tripUiInfo.setShowBottomSaveCancelBar(true)
+                    dialog.selectedDate.setColor(showingTrip, updateTripState, it)
+                    dialog.setSelectedDate(null)
+                }
+            )
+        }
+
+
+
+
 
         Box(
             modifier = Modifier
@@ -465,7 +473,9 @@ private fun TripScreen(
             LazyColumn(
                 state = scrollState,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                contentPadding = PaddingValues(startSpacerValue, 16.dp, endSpacerValue, 200.dp),
+                contentPadding = PaddingValues(
+                    spacerValue, 16.dp, if (use2Panes) spacerValue / 2 else spacerValue, 200.dp
+                ),
                 modifier = Modifier.fillMaxSize()
             ) {
 
@@ -475,8 +485,8 @@ private fun TripScreen(
                         userIsManager = appUserId == showingTrip.managerId,
                         internetEnabled = internetEnabled,
                         isEditMode = isEditMode,
-                        onClickInvitedFriends = navigateToInvitedFriends,
-                        onClickShareTrip = navigateToInviteFriend
+                        onClickInvitedFriends = navigate.navigateToInvitedFriends,
+                        onClickShareTrip = navigate.navigateToInviteFriend
                     )
                 }
 
@@ -490,8 +500,8 @@ private fun TripScreen(
                         },
                         focusManager = focusManager,
                         isLongText = {
-                            if (it) errorCount++
-                            else errorCount--
+                            if (it) errorCount.increaseTotalErrorCount()
+                            else errorCount.decreaseTotalErrorCount()
                         }
                     )
                 }
@@ -504,17 +514,17 @@ private fun TripScreen(
                         isEditMode = isEditMode,
                         imagePathList = showingTrip.imagePathList,
                         onClickImage = { initialImageIndex ->
-                            navigateToImage(showingTrip.imagePathList, initialImageIndex)
+                            navigate.navigateToImage(showingTrip.imagePathList, initialImageIndex)
                         },
                         onAddImages = { imageFiles ->
-                            addAddedImages(imageFiles)
+                            image.addAddedImages(imageFiles)
                             showingTrip.setImage(
                                 updateTripState,
                                 showingTrip.imagePathList + imageFiles
                             )
                         },
                         deleteImage = { imageFile ->
-                            addDeletedImages(listOf(imageFile))
+                            image.addDeletedImages(listOf(imageFile))
 
                             val newList: MutableList<String> =
                                 showingTrip.imagePathList.toMutableList()
@@ -523,12 +533,12 @@ private fun TripScreen(
                             showingTrip.setImage(updateTripState, newList.toList())
                         },
                         isOverImage = {
-                            if (it) errorCount++
-                            else errorCount--
+                            if (it) errorCount.increaseTotalErrorCount()
+                            else errorCount.decreaseTotalErrorCount()
                         },
-                        reorderImageList = reorderTripImageList,
-                        downloadImage = downloadImage,
-                        saveImageToInternalStorage = saveImageToInternalStorage
+                        reorderImageList = image.reorderTripImageList,
+                        downloadImage = image.downloadImage,
+                        saveImageToInternalStorage = image.saveImageToInternalStorage
                     )
                 }
 
@@ -558,7 +568,7 @@ private fun TripScreen(
 
                         isEditMode = isEditMode,
                         setShowBottomSaveCancelBar = {
-                            showBottomSaveCancelBar = it
+                            tripUiInfo.setShowBottomSaveCancelBar(it)
                         },
                         setTripDuration = { startDate1, endDate1 ->
                             updateTripDurationAndTripState(true, startDate1, endDate1)
@@ -574,8 +584,8 @@ private fun TripScreen(
                             currencyItem.copy(
                                 text = showingTrip.getTotalBudgetText(),
                                 onClick = {
-                                    setShowSetCurrencyDialog(true)
-                                    showBottomSaveCancelBar = false
+                                    dialog.setShowSetCurrencyDialog(true)
+                                    tripUiInfo.setShowBottomSaveCancelBar(false)
                                 }),
                             travelDistanceItem.copy(text =  showingTrip.getTotalTravelDistanceText())
                         )
@@ -593,115 +603,52 @@ private fun TripScreen(
                             showingTrip.setMemoText(updateTripState, newMemoText)
                         },
                         isLongText = {
-                            if (it) errorCount++
-                            else errorCount--
+                            if (it) errorCount.increaseTotalErrorCount()
+                            else errorCount.decreaseTotalErrorCount()
                         },
                         showMemoDialog = {
-                            setShowMemoDialog(true)
+                            dialog.setShowMemoDialog(true)
                         }
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
+
+
+
+
                 //dates card
+
                 item {
                     StartEndDummySpaceWithRoundedCorner(isFirst = true, isLast = false)
                 }
 
                 //dates text
                 item {
-                    AnimatedVisibility(
-                        visible = isEditMode,
-                        enter = expandVertically(tween(400)),
-                        exit = shrinkVertically(tween(400))
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.surfaceBright)
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(16.dp, 0.dp)
-                            ) {
-                                Text(
-                                    text = stringResource(id = R.string.dates),
-                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant),
-                                    modifier = if (showingTrip.dateList.isNotEmpty()) Modifier.padding(
-                                        0.dp, 0.dp, 0.dp, 0.dp
-                                    )
-                                    else Modifier.padding(0.dp, 0.dp, 0.dp, 8.dp)
-                                )
-
-                                //up to 100 characters
-                                if (dateTitleErrorCount > 0) {
-                                    Spacer(modifier = Modifier.weight(1f))
-
-                                    Text(
-                                        text = stringResource(
-                                            id = R.string.long_text,
-                                            MAX_TITLE_LENGTH
-                                        ),
-                                        style = MaterialTheme.typography.bodySmall.copy(color = CustomColor.outlineError)
-                                    )
-                                }
-                            }
-                        }
-                    }
+                    DateListTopTitleCard(
+                        isEditMode = isEditMode,
+                        dateListIsEmpty = showingTrip.dateList.isEmpty(),
+                        dateTitleErrorCount = errorCount.dateTitleErrorCount
+                    )
                 }
 
+                //empty date
                 item {
-                    //empty dates
-                    val text =
-                        if (isEditMode) stringResource(id = R.string.set_trip_duration)
-                        else stringResource(id = R.string.dates_no_plan)
-
-                    AnimatedVisibility(
-                        visible = enabledDateList.isEmpty(),
-                        enter = expandVertically(tween(500)),
-                        exit = shrinkVertically(tween(500))
-                    ) {
-                        MyCard(
-                            shape = RectangleShape,
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(16.dp, 0.dp)
-                            ) {
-                                Text(
-                                    text = text,
-                                    style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                )
-                            }
-                        }
-                    }
+                    DateListEmptyTextCard(
+                        isEditMode = isEditMode,
+                        enabledDateListIsEmpty = enabledDateList.isEmpty()
+                    )
                 }
 
+                //date list
                 items(enabledDateList) { date ->
-
-                    var showColorPickerDialog by rememberSaveable { mutableStateOf(false) }
-
-                    if (showColorPickerDialog) {
-                        SetColorDialog(
-                            initialColor = date.color,
-                            onDismissRequest = {
-                                showColorPickerDialog = false
-                                showBottomSaveCancelBar = true
-                            },
-                            onOkClick = {
-                                showColorPickerDialog = false
-                                showBottomSaveCancelBar = true
-                                date.setColor(showingTrip, updateTripState, it)
-                            }
-                        )
-                    }
-
 
                     key(enabledDateList.map { it.id }) {
                         val slideState = slideStates[date.id] ?: SlideState.NONE
 
                         AnimatedVisibility(
-                            visible = !tripUiState.loadingTrip || !isFirstLoading,
+                            visible = !loadingTrip || !isFirstLoading,
                             enter =  expandVertically(tween(500)),
                             exit = shrinkVertically(tween(500))
                         ) {
@@ -730,21 +677,22 @@ private fun TripScreen(
                                 updateTripState = updateTripState,
                                 isLongText = {
                                     if (it) {
-                                        errorCount++
-                                        dateTitleErrorCount++
+                                        errorCount.increaseTotalErrorCount()
+                                        errorCount.increaseDateTitleErrorCount()
                                     } else {
-                                        errorCount--
-                                        dateTitleErrorCount--
+                                        errorCount.decreaseTotalErrorCount()
+                                        errorCount.decreaseDateTitleErrorCount()
                                     }
                                 },
                                 onItemClick = {
-                                    navigateToDate(date.index)
+                                    navigate.navigateToDate(date.index)
                                 },
                                 onPointClick =
                                 if (isEditMode) {
                                     {
-                                        showBottomSaveCancelBar = false
-                                        showColorPickerDialog = true
+                                        dialog.setSelectedDate(date)
+                                        tripUiInfo.setShowBottomSaveCancelBar(false)
+                                        dialog.setShowSetColorDialog(true)
                                     }
                                 } else null
                             )
