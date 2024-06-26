@@ -1,23 +1,32 @@
 package com.newpaper.somewhere.feature.trip.trip
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.newpaper.somewhere.core.data.repository.trip.TripRepository
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.utils.convert.setAllSpotDate
 import com.newpaper.somewhere.feature.trip.CommonTripUiStateRepository
-import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
 data class TripUiState(
     val loadingTrip: Boolean = true,
+
+    val showBottomSaveCancelBar: Boolean = false,
+
+    val showExitDialog: Boolean = false,
+    val showSetCurrencyDialog: Boolean = false,
+    val showMemoDialog: Boolean = false,
+    val showSetColorDialog: Boolean = false,
+
+    val selectedDate: Date? = null, //for set color dialog
+
+    val totalErrorCount: Int = 0,
+    val dateTitleErrorCount: Int = 0,
 )
 
 @HiltViewModel
@@ -28,29 +37,99 @@ class TripViewModel @Inject constructor(
 ): ViewModel() {
 
     private val _tripUiState: MutableStateFlow<TripUiState> =
-        MutableStateFlow(
-            TripUiState()
-        )
+        MutableStateFlow(TripUiState())
 
     val tripUiState = _tripUiState.asStateFlow()
 
     private val commonTripUiState = commonTripUiStateRepository.commonTripUiState
 
-    init {
-        viewModelScope.launch {
-
-        }
-    }
 
 
 
     fun setLoadingTrip(loadingTrip: Boolean) {
         _tripUiState.update {
-            it.copy(
-                loadingTrip = loadingTrip
-            )
+            it.copy(loadingTrip = loadingTrip)
         }
     }
+
+    fun setShowBottomSaveCancelBar(showBottomSaveCancelBar: Boolean) {
+        _tripUiState.update {
+            it.copy(showBottomSaveCancelBar = showBottomSaveCancelBar)
+        }
+    }
+
+    //dialog
+    fun setShowExitDialog(showExitDialog: Boolean) {
+        _tripUiState.update {
+            it.copy(showExitDialog = showExitDialog)
+        }
+    }
+
+    fun setShowSetCurrencyDialog(showSetCurrencyDialog: Boolean) {
+        _tripUiState.update {
+            it.copy(showSetCurrencyDialog = showSetCurrencyDialog)
+        }
+    }
+
+    fun setShowMemoDialog(showMemoDialog: Boolean) {
+        _tripUiState.update {
+            it.copy(showMemoDialog = showMemoDialog)
+        }
+    }
+
+    fun setShowSetColorDialog(showSetColorDialog: Boolean) {
+        _tripUiState.update {
+            it.copy(showSetColorDialog = showSetColorDialog)
+        }
+    }
+
+    fun setSelectedDate(date: Date?){
+        _tripUiState.update {
+            it.copy(selectedDate = date)
+        }
+    }
+
+    //error count
+    fun initAllErrorCount(){
+        _tripUiState.update {
+            it.copy(totalErrorCount = 0, dateTitleErrorCount = 0)
+        }
+    }
+
+    fun increaseTotalErrorCount(){
+        _tripUiState.update {
+            it.copy(totalErrorCount = it.totalErrorCount + 1)
+        }
+    }
+
+    fun decreaseTotalErrorCount(){
+        _tripUiState.update {
+            it.copy(totalErrorCount = it.totalErrorCount - 1)
+        }
+    }
+
+    fun increaseDateTitleErrorCount(){
+        _tripUiState.update {
+            it.copy(dateTitleErrorCount = it.dateTitleErrorCount + 1)
+        }
+    }
+
+    fun decreaseDateTitleErrorCount(){
+        _tripUiState.update {
+            it.copy(dateTitleErrorCount = it.dateTitleErrorCount - 1)
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * @param updateTripState { newTrip -> commonTripViewModel.updateTripState(toTempTrip, newTrip)}
