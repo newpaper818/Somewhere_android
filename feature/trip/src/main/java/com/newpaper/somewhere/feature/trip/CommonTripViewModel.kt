@@ -30,10 +30,8 @@ class CommonTripViewModel @Inject constructor(
         isEditMode: Boolean?
     ){
         commonTripUiStateRepository._commonTripUiState.update {
-            if (isEditMode == null)
-                it.copy(isEditMode = !it.isEditMode)
-            else
-                it.copy(isEditMode = isEditMode)
+            if (isEditMode == null) it.copy(isEditMode = !it.isEditMode)
+            else                    it.copy(isEditMode = isEditMode)
         }
     }
 
@@ -41,10 +39,8 @@ class CommonTripViewModel @Inject constructor(
         isNewTrip: Boolean?
     ){
         commonTripUiStateRepository._commonTripUiState.update {
-            if (isNewTrip == null)
-                it.copy(isNewTrip = !it.isEditMode)
-            else
-                it.copy(isNewTrip = isNewTrip)
+            if (isNewTrip == null)  it.copy(isNewTrip = !it.isEditMode)
+            else                    it.copy(isNewTrip = isNewTrip)
         }
     }
 
