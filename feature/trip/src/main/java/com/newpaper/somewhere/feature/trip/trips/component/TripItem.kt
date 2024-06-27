@@ -62,25 +62,23 @@ import kotlin.math.roundToInt
 
 @Composable
 internal fun TripItem(
-    isEditMode: Boolean,
+    trip: Trip,
     internetEnabled: Boolean,
     dateTimeFormat: DateTimeFormat,
-
-    firstLaunch: Boolean,
-
-    trip: Trip,
-    trips: List<Trip>,
-
-    onClick: (Trip) -> Unit,
-    onLongClick: (Trip) -> Unit,
-
     downloadImage: (imagePath: String, tripManagerId: String, (Boolean) -> Unit) -> Unit,
 
-    slideState: SlideState,
-    updateSlideState: (tripIdx: Int, slideState: SlideState) -> Unit,
-    updateItemPosition: (currentIndex: Int, destinationIndex: Int) -> Unit,
+    modifier: Modifier = Modifier,
 
-    modifier: Modifier = Modifier
+    showDragIcon: Boolean = false,
+    firstLaunch: Boolean = false,
+    trips: List<Trip> = listOf(),
+
+    onClick: (() -> Unit)? = null,
+    onLongClick: (() -> Unit)? = null,
+
+    slideState: SlideState = SlideState.NONE,
+    updateSlideState: (tripIdx: Int, slideState: SlideState) -> Unit = {_,_ ->},
+    updateItemPosition: (currentIndex: Int, destinationIndex: Int) -> Unit = {_,_ ->},
 ){
     val titleIsNull = trip.titleText == null || trip.titleText == ""
     val titleText: String = if (titleIsNull) stringResource(id = R.string.no_title)
@@ -129,7 +127,7 @@ internal fun TripItem(
         else IntOffset(0, verticalOffset)
 
     val dragModifier =
-        if (isEditMode) modifier
+        if (showDragIcon) modifier
             .offset { offset }
             .scale(scale)
             .zIndex(zIndex)
@@ -155,24 +153,23 @@ internal fun TripItem(
 
 
 
-
     //==============================================================================================
     TripItemUi(
-        isEditMode = isEditMode,
         alpha = alpha,
         internetEnabled = internetEnabled,
         imagePath = trip.imagePathList.firstOrNull(),
         tripManagerId = trip.managerId,
+        showDragIcon = showDragIcon,
         title = titleText,
         titleIsNull = titleIsNull,
         dateText = dateText,
-        onClick = { if (!isEditMode) onClick(trip) },
-        onLongClick = {
-            if (isEditMode) {
+        onClick = onClick,
+        onLongClick = if (onLongClick != null) {
+            {
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                onLongClick(trip)
+                onLongClick()
             }
-        },
+        } else null,
         downloadImage = downloadImage,
         modifier = dragModifier,
         dragHandleModifier = Modifier
@@ -208,36 +205,50 @@ internal fun TripItem(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun TripItemUi(
-    isEditMode: Boolean,
     alpha: Float,
     internetEnabled: Boolean,
 
     imagePath: String?,
     tripManagerId: String,
+    showDragIcon: Boolean,
 
     title: String,
     titleIsNull: Boolean,
     dateText: String,
 
-    onClick: () -> Unit,
-    onLongClick: () -> Unit,
+    onClick: (() -> Unit)?,
+    onLongClick: (() -> Unit)?,
     downloadImage: (imagePath: String, tripManagerId: String, (Boolean) -> Unit) -> Unit,
 
 
     modifier: Modifier = Modifier,
     dragHandleModifier: Modifier = Modifier
 ){
+    var cardModifier = Modifier
+        .clip(RoundedCornerShape(16.dp))
+        .alpha(alpha)
+
+    if (onClick != null && onLongClick != null)
+        cardModifier = cardModifier.combinedClickable(
+            onClick = onClick,
+            onLongClick = onLongClick
+        )
+    else if (onClick == null && onLongClick != null)
+        cardModifier = cardModifier.combinedClickable(
+            onClick = {},
+            onLongClick = onLongClick
+        )
+    else if (onClick != null)
+        cardModifier = cardModifier.combinedClickable(
+            onClick = onClick,
+            onLongClick = {}
+        )
+
     Box(
         modifier = modifier
     ) {
         MyCard(
-            modifier = Modifier
-                .clip(RoundedCornerShape(16.dp))
-                .combinedClickable(
-                    onClick = onClick,
-                    onLongClick = onLongClick
-                )
-                .alpha(alpha)
+            modifier = cardModifier
         ) {
             Row(
                 modifier = Modifier
@@ -296,7 +307,7 @@ private fun TripItemUi(
 
                 //drag handel icon when edit mode
                 AnimatedVisibility(
-                    visible = isEditMode,
+                    visible = showDragIcon,
                     enter = scaleIn(tween(300)),
                     exit = scaleOut(tween(400)) + fadeOut(tween(300))
                 ) {
@@ -352,7 +363,7 @@ private fun TripItemUi(
 private fun TripItemPreview(){
     SomewhereTheme {
         TripItemUi(
-            isEditMode = false,
+            showDragIcon = false,
             alpha = 1f,
             internetEnabled = true,
             imagePath = null,
@@ -372,7 +383,7 @@ private fun TripItemPreview(){
 private fun TripItemPreview2(){
     SomewhereTheme {
         TripItemUi(
-            isEditMode = true,
+            showDragIcon = true,
             alpha = 1f,
             internetEnabled = true,
             imagePath = null,
@@ -392,7 +403,7 @@ private fun TripItemPreview2(){
 private fun TripItemPreview3(){
     SomewhereTheme {
         TripItemUi(
-            isEditMode = false,
+            showDragIcon = false,
             alpha = 1f,
             internetEnabled = true,
             imagePath = null,
