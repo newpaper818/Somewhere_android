@@ -176,7 +176,7 @@ fun TripRoute(
             showBottomSaveCancelBar = tripUiState.showBottomSaveCancelBar,
             _setShowBottomSaveCancelBar = tripViewModel::setShowBottomSaveCancelBar
         ),
-        tripInfo = TripInfo(
+        tripData = TripData(
             originalTrip = originalTrip,
             tempTrip = tempTrip,
             isNewTrip = isNewTrip
@@ -270,7 +270,7 @@ fun TripRoute(
 private fun TripScreen(
     appUserId: String,
     tripUiInfo: TripUiInfo,
-    tripInfo: TripInfo,
+    tripData: TripData,
     errorCount: TripErrorCount,
     dialog: TripDialog,
     navigate: TripNavigate,
@@ -301,8 +301,8 @@ private fun TripScreen(
     val showBottomSaveCancelBar = tripUiInfo.showBottomSaveCancelBar
 
     val showingTrip =
-        if (isEditMode) tripInfo.tempTrip
-        else tripInfo.originalTrip
+        if (isEditMode) tripData.tempTrip
+        else tripData.originalTrip
 
     val enabledDateList = showingTrip.dateList.filter { it.enabled }
     val isFirstLoading by rememberSaveable { mutableStateOf(enabledDateList.isEmpty()) }
@@ -390,7 +390,7 @@ private fun TripScreen(
         },
         onSaveClick = {
             coroutineScope.launch {
-                if (tripInfo.isNewTrip || tripInfo.originalTrip != tripInfo.tempTrip)
+                if (tripData.isNewTrip || tripData.originalTrip != tripData.tempTrip)
                     saveTrip() //save to firestore
                 else
                     tripUiInfo.setIsEditMode(false)
@@ -406,15 +406,15 @@ private fun TripScreen(
         if (dialog.showExitDialog) {
             DeleteOrNotDialog(
                 bodyText = stringResource(id = R.string.dialog_body_are_you_sure_to_exit),
-                deleteText = stringResource(id = R.string.dialog_button_exit),
+                deleteButtonText = stringResource(id = R.string.dialog_button_exit),
                 onDismissRequest = { dialog.setShowExitDialog(false) },
                 onDeleteClick = {
                     dialog.setShowExitDialog(false)
                     tripUiInfo.setIsEditMode(false)
-                    updateTripState(true, tripInfo.originalTrip)
+                    updateTripState(true, tripData.originalTrip)
 
-                    if (tripInfo.isNewTrip)
-                        navigate.navigateUpAndDeleteNewTrip(tripInfo.originalTrip)
+                    if (tripData.isNewTrip)
+                        navigate.navigateUpAndDeleteNewTrip(tripData.originalTrip)
 
                     image.organizeAddedDeletedImages(false)
                 }
@@ -644,7 +644,6 @@ private fun TripScreen(
 
 
                 //dates card
-
                 item {
                     StartEndDummySpaceWithRoundedCorner(isFirst = true, isLast = false)
                 }
