@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -53,6 +54,7 @@ fun MyDialog(
     maxHeight: Dp = DIALOG_DEFAULT_MAX_HEIGHT,
     titleText: String? = null,
     bodyText: String? = null,
+    subBodyText: String? = null,
     bodyContent: @Composable() (() -> Unit)? = null,
     buttonContent: @Composable() (() -> Unit)? = null,
     setBodySpacer: Boolean = true,
@@ -85,17 +87,16 @@ fun MyDialog(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
 
-
-
                 //title text / align center
                 if (titleText != null) {
                     Box(
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = titleText,
-                            style = MaterialTheme.typography.titleSmall
+                            style = MaterialTheme.typography.titleSmall,
+                            modifier = Modifier.padding(horizontal = 8.dp)
                         )
 
                         if (closeIcon) {
@@ -109,22 +110,42 @@ fun MyDialog(
                             }
                         }
                     }
+
+                    MySpacerColumn(height = 16.dp)
                 }
 
 
 
                 //body text / align left(fillMaxWidth)
                 if (bodyText != null) {
-                    if (titleText == null)
-                        MySpacerColumn(height = 8.dp)
-
                     Text(
                         text = bodyText,
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier
-                            .padding(8.dp, 0.dp, 8.dp, 16.dp)
+                            .padding(horizontal = 8.dp)
                             .fillMaxWidth()
                     )
+                    MySpacerColumn(height = 16.dp)
+                }
+
+
+
+                //sub body text / align center
+                if (subBodyText != null){
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = subBodyText,
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = MaterialTheme.colorScheme.outline
+                            ),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
+                    }
+                    MySpacerColumn(height = 16.dp)
                 }
 
 
@@ -132,7 +153,8 @@ fun MyDialog(
                 //body content
                 if (bodyContent != null) {
                     Column(
-                        modifier = if (setMaxHeight) Modifier.weight(1f) else Modifier
+                        modifier = if (setMaxHeight) Modifier.weight(1f)
+                                    else Modifier
                     ) {
                         bodyContent()
                     }

@@ -122,7 +122,7 @@ private fun AccountScreen(
     if (showSignOutDialog) {
         DeleteOrNotDialog(
             bodyText = stringResource(id = R.string.dialog_body_sign_out),
-            deleteText = stringResource(id = R.string.sign_out),
+            deleteButtonText = stringResource(id = R.string.sign_out),
             onDismissRequest = {
                 showSignOutDialog = false
             },

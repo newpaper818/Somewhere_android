@@ -5,24 +5,36 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.feature.dialog.R
+import com.newpaper.somewhere.feature.dialog.myDialog.DIALOG_DEFAULT_WIDTH
 import com.newpaper.somewhere.feature.dialog.myDialog.DialogButton
 import com.newpaper.somewhere.feature.dialog.myDialog.MyDialog
 
 @Composable
 fun DeleteOrNotDialog(
-    bodyText: String,
-    deleteText: String,
+    deleteButtonText: String,
     onDismissRequest: () -> Unit,
-    onDeleteClick: () -> Unit
+    onDeleteClick: () -> Unit,
+
+    titleText: String? = null,
+    bodyText: String? = null,
+    subBodyText: String? = null,
+
+    width: Dp? = DIALOG_DEFAULT_WIDTH,
+    bodyContent: @Composable() (() -> Unit)? = null,
 ){
     MyDialog(
         onDismissRequest = onDismissRequest,
+        width = width,
+        titleText = titleText,
         bodyText = bodyText,
+        subBodyText = subBodyText,
+        bodyContent = bodyContent,
         buttonContent = {
             Row{
                 //cancel button
@@ -35,7 +47,7 @@ fun DeleteOrNotDialog(
 
                 //delete button
                 DialogButton(
-                    text = deleteText,
+                    text = deleteButtonText,
                     textColor = MaterialTheme.colorScheme.error,
                     errorRipple = true,
                     onClick = onDeleteClick
@@ -52,7 +64,7 @@ fun DeleteFriendDialog(
 ){
     DeleteOrNotDialog(
         bodyText = stringResource(id = R.string.delete_friend),
-        deleteText = stringResource(id = R.string.button_delete),
+        deleteButtonText = stringResource(id = R.string.button_delete),
         onDismissRequest = onDismissRequest,
         onDeleteClick = onDeleteClick
     )
@@ -65,7 +77,7 @@ fun GetOutSharedTripDialog(
 ){
     DeleteOrNotDialog(
         bodyText = stringResource(id = R.string.get_out_shared_trip),
-        deleteText = stringResource(id = R.string.button_get_out),
+        deleteButtonText = stringResource(id = R.string.button_get_out),
         onDismissRequest = onDismissRequest,
         onDeleteClick = onGetOutClick
     )
@@ -103,7 +115,7 @@ private fun DeleteOrNotDialogPreview(){
         MyScaffold {
             DeleteOrNotDialog(
                 bodyText = "Delete item??????????????? ????????????\n?????????????????????????",
-                deleteText = "Delete",
+                deleteButtonText = "Delete",
                 onDismissRequest = {},
                 onDeleteClick = {}
             )
