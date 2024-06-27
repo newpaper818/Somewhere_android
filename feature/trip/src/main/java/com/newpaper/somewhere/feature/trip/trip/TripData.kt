@@ -9,7 +9,7 @@ import com.newpaper.somewhere.core.model.tripData.Trip
 
 internal data class TripUiInfo(
     val use2Panes: Boolean = false,
-    val spacerValue: Dp = 0.dp,
+    val spacerValue: Dp = 16.dp,
     val loadingTrip: Boolean = false,
     val dateTimeFormat: DateTimeFormat = DateTimeFormat(),
     val internetEnabled: Boolean = true,
@@ -21,15 +21,12 @@ internal data class TripUiInfo(
     private val _setShowBottomSaveCancelBar: (showBottomSaveCancelBar: Boolean) -> Unit = {}
 ){
     fun setIsEditMode(isEditMode: Boolean?){
-        _setIsEditMode(isEditMode)
-    }
-
+        _setIsEditMode(isEditMode) }
     fun setShowBottomSaveCancelBar(showBottomSaveCancelBar: Boolean){
-        _setShowBottomSaveCancelBar(showBottomSaveCancelBar)
-    }
+        _setShowBottomSaveCancelBar(showBottomSaveCancelBar) }
 }
 
-internal data class TripInfo(
+internal data class TripData(
     val originalTrip: Trip = Trip(id = 0, managerId = ""),
     val tempTrip: Trip = Trip(id = 0, managerId = ""),
     val isNewTrip: Boolean = false
@@ -45,20 +42,13 @@ internal data class TripErrorCount(
     private val _decreaseDateTitleErrorCount: () -> Unit = {}
 ){
     fun increaseTotalErrorCount(){
-        _increaseTotalErrorCount()
-    }
-
+        _increaseTotalErrorCount() }
     fun decreaseTotalErrorCount(){
-        _decreaseTotalErrorCount()
-    }
-
+        _decreaseTotalErrorCount() }
     fun increaseDateTitleErrorCount(){
-        _increaseDateTitleErrorCount()
-    }
-
+        _increaseDateTitleErrorCount() }
     fun decreaseDateTitleErrorCount(){
-        _decreaseDateTitleErrorCount()
-    }
+        _decreaseDateTitleErrorCount() }
 }
 
 internal data class TripDialog(
@@ -76,24 +66,15 @@ internal data class TripDialog(
     private val _setSelectedDate: (Date?) -> Unit = {}
 ){
     fun setShowExitDialog(showExitDialog: Boolean){
-        _setShowExitDialog(showExitDialog)
-    }
-
+        _setShowExitDialog(showExitDialog) }
     fun setShowMemoDialog(showMemoDialog: Boolean){
-        _setShowMemoDialog(showMemoDialog)
-    }
-
+        _setShowMemoDialog(showMemoDialog) }
     fun setShowSetCurrencyDialog(showSetCurrencyDialog: Boolean){
-        _setShowSetCurrencyDialog(showSetCurrencyDialog)
-    }
-
+        _setShowSetCurrencyDialog(showSetCurrencyDialog) }
     fun setShowSetColorDialog(showSetColorDialog: Boolean){
-        _setShowSetColorDialog(showSetColorDialog)
-    }
-
+        _setShowSetColorDialog(showSetColorDialog) }
     fun setSelectedDate(selectedDate: Date?){
-        _setSelectedDate(selectedDate)
-    }
+        _setSelectedDate(selectedDate) }
 }
 
 internal data class TripNavigate(
@@ -106,32 +87,19 @@ internal data class TripNavigate(
     private val _navigateUpAndDeleteNewTrip: (deleteTrip: Trip) -> Unit = {}
 ){
     fun navigateUp(){
-        _navigateUp()
-    }
-
+        _navigateUp() }
     fun navigateToInviteFriend(){
-        _navigateToInviteFriend()
-    }
-
+        _navigateToInviteFriend() }
     fun navigateToInvitedFriends(){
-        _navigateToInvitedFriends()
-    }
-
+        _navigateToInvitedFriends() }
     fun navigateToImage(imageList: List<String>, initialImageIndex: Int){
-        _navigateToImage(imageList, initialImageIndex)
-    }
-
+        _navigateToImage(imageList, initialImageIndex) }
     fun navigateToDate(dateIndex: Int){
-        _navigateToDate(dateIndex)
-    }
-
+        _navigateToDate(dateIndex) }
     fun navigateToTripMap(){
-        _navigateToTripMap()
-    }
-
+        _navigateToTripMap() }
     fun navigateUpAndDeleteNewTrip(deleteTrip: Trip){
-        _navigateUpAndDeleteNewTrip(deleteTrip)
-    }
+        _navigateUpAndDeleteNewTrip(deleteTrip) }
 }
 
 internal data class TripImage(
@@ -143,26 +111,15 @@ internal data class TripImage(
     private val _reorderTripImageList: (currentIndex: Int, destinationIndex: Int) -> Unit = {_,_ ->}
 ){
     fun saveImageToInternalStorage(index: Int, uri: Uri): String?{
-        return _saveImageToInternalStorage(index, uri)
-    }
-
+        return _saveImageToInternalStorage(index, uri) }
     fun downloadImage(imagePath: String, imageUserId: String, result: (Boolean) -> Unit){
-        _downloadImage(imagePath, imageUserId, result)
-    }
-
+        _downloadImage(imagePath, imageUserId, result) }
     fun addAddedImages(imageFiles: List<String>){
-        _addAddedImages(imageFiles)
-    }
-
+        _addAddedImages(imageFiles) }
     fun addDeletedImages(imageFiles: List<String>){
-        _addDeletedImages(imageFiles)
-    }
-
+        _addDeletedImages(imageFiles) }
     fun organizeAddedDeletedImages(isClickSave: Boolean){
-        _organizeAddedDeletedImages(isClickSave)
-    }
-
+        _organizeAddedDeletedImages(isClickSave) }
     fun reorderTripImageList(currentIndex: Int, destinationIndex: Int){
-        _reorderTripImageList(currentIndex, destinationIndex)
-    }
+        _reorderTripImageList(currentIndex, destinationIndex) }
 }
