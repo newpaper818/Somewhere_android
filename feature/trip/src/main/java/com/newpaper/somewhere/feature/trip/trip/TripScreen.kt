@@ -172,9 +172,9 @@ fun TripRoute(
             dateTimeFormat = dateTimeFormat,
             internetEnabled = internetEnabled,
             isEditMode = isEditMode,
-            setIsEditMode = commonTripViewModel::setIsEditMode,
+            _setIsEditMode = commonTripViewModel::setIsEditMode,
             showBottomSaveCancelBar = tripUiState.showBottomSaveCancelBar,
-            setShowBottomSaveCancelBar = tripViewModel::setShowBottomSaveCancelBar
+            _setShowBottomSaveCancelBar = tripViewModel::setShowBottomSaveCancelBar
         ),
         tripInfo = TripInfo(
             originalTrip = originalTrip,
@@ -184,10 +184,10 @@ fun TripRoute(
         errorCount = TripErrorCount(
             totalErrorCount = tripUiState.totalErrorCount,
             dateTitleErrorCount = tripUiState.dateTitleErrorCount,
-            increaseTotalErrorCount = tripViewModel::increaseTotalErrorCount,
-            decreaseTotalErrorCount = tripViewModel::decreaseTotalErrorCount,
-            increaseDateTitleErrorCount = tripViewModel::increaseDateTitleErrorCount,
-            decreaseDateTitleErrorCount = tripViewModel::decreaseDateTitleErrorCount
+            _increaseTotalErrorCount = tripViewModel::increaseTotalErrorCount,
+            _decreaseTotalErrorCount = tripViewModel::decreaseTotalErrorCount,
+            _increaseDateTitleErrorCount = tripViewModel::increaseDateTitleErrorCount,
+            _decreaseDateTitleErrorCount = tripViewModel::decreaseDateTitleErrorCount
         ),
         dialog = TripDialog(
             showExitDialog = tripUiState.showExitDialog,
@@ -195,25 +195,25 @@ fun TripRoute(
             showSetCurrencyDialog = tripUiState.showSetCurrencyDialog,
             showSetColorDialog = tripUiState.showSetColorDialog,
 
-            setShowExitDialog = tripViewModel::setShowExitDialog,
-            setShowMemoDialog = tripViewModel::setShowMemoDialog,
-            setShowSetCurrencyDialog = tripViewModel::setShowSetCurrencyDialog,
-            setShowSetColorDialog = tripViewModel::setShowSetColorDialog,
+            _setShowExitDialog = tripViewModel::setShowExitDialog,
+            _setShowMemoDialog = tripViewModel::setShowMemoDialog,
+            _setShowSetCurrencyDialog = tripViewModel::setShowSetCurrencyDialog,
+            _setShowSetColorDialog = tripViewModel::setShowSetColorDialog,
 
             selectedDate = tripUiState.selectedDate,
-            setSelectedDate = tripViewModel::setSelectedDate
+            _setSelectedDate = tripViewModel::setSelectedDate
         ),
         navigate = TripNavigate(
-            navigateUp = {
+            _navigateUp = {
                 if (!isEditMode) navigateUp()
                 else onBackButtonClick()
             },
-            navigateToInviteFriend = navigateToInviteFriend,
-            navigateToInvitedFriends = navigateToInvitedFriends,
-            navigateToImage = navigateToImage,
-            navigateToDate = navigateToDate,
-            navigateToTripMap = navigateToTripMap,
-            navigateUpAndDeleteNewTrip = navigateUpAndDeleteNewTrip
+            _navigateToInviteFriend = navigateToInviteFriend,
+            _navigateToInvitedFriends = navigateToInvitedFriends,
+            _navigateToImage = navigateToImage,
+            _navigateToDate = navigateToDate,
+            _navigateToTripMap = navigateToTripMap,
+            _navigateUpAndDeleteNewTrip = navigateUpAndDeleteNewTrip
         ),
         updateTripState = updateTripState,
         updateTripDurationAndTripState = {toTempTrip, startDate, endDate ->
@@ -227,14 +227,14 @@ fun TripRoute(
             )
         },
         image = TripImage(
-            saveImageToInternalStorage = { index, uri ->
+            _saveImageToInternalStorage = { index, uri ->
                 commonTripViewModel.saveImageToInternalStorage(originalTrip.id, index, uri)
             },
-            downloadImage = commonTripViewModel::getImage,
-            addAddedImages = addAddedImages,
-            addDeletedImages = addDeletedImages,
-            organizeAddedDeletedImages = organizeAddedDeletedImages,
-            reorderTripImageList = { currentIndex, destinationIndex ->
+            _downloadImage = commonTripViewModel::getImage,
+            _addAddedImages = addAddedImages,
+            _addDeletedImages = addDeletedImages,
+            _organizeAddedDeletedImages = organizeAddedDeletedImages,
+            _reorderTripImageList = { currentIndex, destinationIndex ->
                 tripViewModel.reorderTripImageList(currentIndex, destinationIndex)
             }
         ),
@@ -377,7 +377,7 @@ private fun TripScreen(
             if (!use2Panes)
                 SeeOnMapExtendedFAB(
                     visible = !isEditMode && showingTrip.getFirstLocation() != null,
-                    onClick = navigate.navigateToTripMap,
+                    onClick = navigate::navigateToTripMap,
                     expanded = isFABExpanded
                 )
         },
@@ -485,10 +485,14 @@ private fun TripScreen(
                         userIsManager = appUserId == showingTrip.managerId,
                         internetEnabled = internetEnabled,
                         isEditMode = isEditMode,
-                        onClickInvitedFriends = navigate.navigateToInvitedFriends,
-                        onClickShareTrip = navigate.navigateToInviteFriend
+                        onClickInvitedFriends = navigate::navigateToInvitedFriends,
+                        onClickShareTrip = navigate::navigateToInviteFriend
                     )
                 }
+
+
+
+
 
                 //title card
                 item {
@@ -505,6 +509,11 @@ private fun TripScreen(
                         }
                     )
                 }
+
+
+
+
+
 
                 //image card
                 item {
@@ -536,11 +545,15 @@ private fun TripScreen(
                             if (it) errorCount.increaseTotalErrorCount()
                             else errorCount.decreaseTotalErrorCount()
                         },
-                        reorderImageList = image.reorderTripImageList,
-                        downloadImage = image.downloadImage,
-                        saveImageToInternalStorage = image.saveImageToInternalStorage
+                        reorderImageList = image::reorderTripImageList,
+                        downloadImage = image::downloadImage,
+                        saveImageToInternalStorage = image::saveImageToInternalStorage
                     )
                 }
+
+
+
+
 
                 //trip duration card
                 item {
@@ -576,6 +589,10 @@ private fun TripScreen(
                     )
                 }
 
+
+
+
+
                 //information card
                 item {
                     InformationCard(
@@ -593,6 +610,10 @@ private fun TripScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
                 }
+
+
+
+
 
                 //memo card
                 item {
@@ -613,6 +634,10 @@ private fun TripScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
                 }
+
+
+
+
 
 
 
