@@ -34,6 +34,10 @@ data class TripsUiState(
 
     val loadingTrips: Boolean = true,
 
+    val showExitDialog: Boolean = false,
+    val showDeleteDialog: Boolean = false,
+    val selectedTrip: Trip? = null, //for delete trip
+
     val deletedTripIds: List<Int> = listOf(),
     val deletedSharedTrips: List<Trip> = listOf(),
 )
@@ -73,6 +77,24 @@ class TripsViewModel @Inject constructor(
     ){
         _tripsUiState.update {
             it.copy(loadingTrips = isLoadingTrips)
+        }
+    }
+
+    fun setShowExitDialog(showExitDialog: Boolean){
+        _tripsUiState.update {
+            it.copy(showExitDialog = showExitDialog)
+        }
+    }
+
+    fun setShowDeleteDialog(showDeleteDialog: Boolean){
+        _tripsUiState.update {
+            it.copy(showDeleteDialog = showDeleteDialog)
+        }
+    }
+
+    fun setSelectedTrip(selectedTrip: Trip?){
+        _tripsUiState.update {
+            it.copy(selectedTrip = selectedTrip)
         }
     }
 
