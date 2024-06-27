@@ -145,7 +145,7 @@ fun DeleteAccountRoute(
     if (showDeleteAccountDialog) {
         DeleteOrNotDialog(
             bodyText = stringResource(id = R.string.dialog_delete_account),
-            deleteText = stringResource(id = R.string.delete_account),
+            deleteButtonText = stringResource(id = R.string.delete_account),
             onDismissRequest = {
                 showDeleteAccountDialog = false
             },
