@@ -142,4 +142,8 @@
     <!--InternetUnavailableIconWithText.kt-->
     <string name="internet_unavailable_check_connection">인터넷 연결 없음\n인터넷 연결을 확인하세요</string>
 
+    <!--ProgressBar.kt-->
+    <string name="new_spot">새 장소</string>
+
+
 </resources>
