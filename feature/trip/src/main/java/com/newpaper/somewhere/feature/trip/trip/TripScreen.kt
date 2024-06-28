@@ -708,9 +708,12 @@ private fun TripScreen(
                                         errorCount.decreaseDateTitleErrorCount()
                                     }
                                 },
-                                onItemClick = {
-                                    navigate.navigateToDate(date.index)
-                                },
+                                onItemClick =
+                                if (!isEditMode){
+                                    { navigate.navigateToDate(date.index) }
+                                }
+                                else null,
+                                onSideTextClick = null,
                                 onPointClick =
                                 if (isEditMode) {
                                     {

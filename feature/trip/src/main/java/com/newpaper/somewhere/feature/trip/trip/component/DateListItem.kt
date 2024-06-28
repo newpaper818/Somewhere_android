@@ -45,7 +45,7 @@ internal fun DateListItem(
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     isLongText: (Boolean) -> Unit,
 
-    onItemClick: () -> Unit,
+    onItemClick: (() -> Unit)?,
     onSideTextClick: (() -> Unit)? = null,
     onPointClick: (() -> Unit)? = null
 ){

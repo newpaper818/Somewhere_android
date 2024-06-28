@@ -23,14 +23,12 @@ fun ClickableBox(
 
     content: @Composable() () -> Unit,
 ) {
+    val boxModifier = if (!enabled) modifier.clip(shape).background(containerColor)
+                        else        modifier.clip(shape).background(containerColor)
+                                        .clickable(onClick = onClick)
+
     Box(
-        modifier = modifier
-            .clip(shape)
-            .background(containerColor)
-            .clickable(
-                enabled = enabled,
-                onClick = onClick
-            ),
+        modifier = boxModifier,
         contentAlignment = contentAlignment
     ) {
         content()

@@ -81,7 +81,7 @@ fun GraphListItem(
     isLastItem: Boolean,
     deleteEnabled: Boolean,
     dragEnabled: Boolean,
-    onItemClick: () -> Unit,
+    onItemClick: (() -> Unit)?,
 
     onExpandedButtonClicked: () -> Unit,
     isLongText: (Boolean) -> Unit,
@@ -129,15 +129,18 @@ fun GraphListItem(
     if (!isEditMode)
         isTextSizeLimit = false
 
+
+
+
+
+
     Box(modifier.background(itemColor)) {
         ClickableBox(
             containerColor = clickableBoxColor,
             shape = MaterialTheme.shapes.medium,
             modifier = Modifier.border(1.dp, borderColor, MaterialTheme.shapes.medium),
-            onClick = {
-                if (!isEditMode)
-                    onItemClick()
-            }
+            enabled = onItemClick != null,
+            onClick = onItemClick ?: {}
         ) {
             Column(
                 modifier = Modifier
@@ -162,9 +165,7 @@ fun GraphListItem(
                     SideText(
                         text = sideText,
                         isEditMode = isEditMode,
-                        onClick = if (isEditMode) onSideTextClick ?: { }
-                                    else onItemClick
-                        ,
+                        onClick = onSideTextClick,
                         spotDragModifier = spotDragModifier,
                         sideTextPlaceHolderIcon = sideTextPlaceHolderIcon
                     )
@@ -172,8 +173,7 @@ fun GraphListItem(
                     //point, line
                     PointWithLine(
                         iconText = iconText,
-                        onClick = if (isEditMode) onPointClick ?: { }
-                                    else onItemClick,
+                        onClick = onPointClick,
                         iconTextColor = iconTextColor,
                         pointColor = pointColor,
                         upperLineColor = upperLineColor,
@@ -249,14 +249,15 @@ fun GraphListItem(
 private fun SideText(
     text: String,
     isEditMode: Boolean,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)?,
     spotDragModifier: Modifier,
     sideTextPlaceHolderIcon: MyIcon?
 ){
     ClickableBox(
         modifier = spotDragModifier,
         shape = MaterialTheme.shapes.small,
-        onClick = onClick
+        enabled = onClick != null,
+        onClick = onClick ?: {}
     ) {
         Row(
             modifier = Modifier
@@ -281,7 +282,7 @@ private fun SideText(
 @Composable
 private fun PointWithLine(
     iconText: String?,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)?,
     @ColorInt iconTextColor: Int?,
     pointColor: Color,
     upperLineColor: Color,
@@ -294,7 +295,8 @@ private fun PointWithLine(
             .width(40.dp)
             .fillMaxHeight(),
         contentAlignment = Alignment.Center,
-        onClick = onClick
+        enabled = onClick != null,
+        onClick = onClick ?: {}
     ) {
 
         Column {
