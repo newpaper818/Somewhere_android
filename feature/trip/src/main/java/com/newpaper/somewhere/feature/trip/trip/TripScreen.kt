@@ -94,6 +94,7 @@ fun TripRoute(
 
     isNewTrip: Boolean,
 
+    //navigate
     navigateUp: () -> Unit,
     navigateToInviteFriend: () -> Unit,
     navigateToInvitedFriends: () -> Unit,
@@ -102,17 +103,20 @@ fun TripRoute(
     navigateToTripMap: () -> Unit,
     navigateUpAndDeleteNewTrip: (deleteTrip: Trip) -> Unit,
 
+    //update trip state
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
 
+    //image
     addAddedImages: (imageFiles: List<String>) -> Unit,
     addDeletedImages: (imageFiles: List<String>) -> Unit,
     organizeAddedDeletedImages: (isClickSave: Boolean) -> Unit,
 
+    //save trip
     saveTrip: () -> Unit,
 
+    //
     modifier: Modifier = Modifier,
     currentDateIndex: Int? = null,
-
     tripViewModel: TripViewModel = hiltViewModel(),
 ){
     val coroutineScope = rememberCoroutineScope()
