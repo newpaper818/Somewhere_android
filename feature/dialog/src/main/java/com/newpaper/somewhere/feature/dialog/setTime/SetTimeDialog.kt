@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -38,13 +39,14 @@ fun SetTimeDialog(
     initialTime: LocalTime,
     timeFormat: TimeFormat,
     isSetStartTime: Boolean,
-    screenHeightLong: Boolean,
     onDismissRequest: () -> Unit,
     onConfirm: (newTime: LocalTime) -> Unit
 ){
+    val configuration = LocalConfiguration.current
+    val screenHeightLong = configuration.screenHeightDp > 600
+
     val title = if (isSetStartTime) stringResource(id = R.string.set_start_time)
                 else    stringResource(id = R.string.set_end_time)
-
 
     var isTouchInput by rememberSaveable { mutableStateOf(screenHeightLong) }
 
@@ -150,7 +152,6 @@ private fun Preview_SetTimeDialog(){
                 initialTime = LocalTime.now(),
                 timeFormat = TimeFormat.T12H,
                 isSetStartTime = true,
-                screenHeightLong = false,
                 onDismissRequest = {},
                 onConfirm = {_->}
             )
@@ -167,7 +168,6 @@ private fun Preview_SetTimeDialog_24h(){
                 initialTime = LocalTime.now(),
                 timeFormat = TimeFormat.T24H,
                 isSetStartTime = true,
-                screenHeightLong = false,
                 onDismissRequest = {},
                 onConfirm = {_->}
             )
