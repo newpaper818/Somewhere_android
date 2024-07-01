@@ -38,6 +38,8 @@ import com.newpaper.somewhere.navigation.more.setThemeScreen
 import com.newpaper.somewhere.navigation.profile.profileScreen
 import com.newpaper.somewhere.navigation.signIn.navigateToSignIn
 import com.newpaper.somewhere.navigation.signIn.signInScreen
+import com.newpaper.somewhere.navigation.trip.dateScreen
+import com.newpaper.somewhere.navigation.trip.navigateToDate
 import com.newpaper.somewhere.navigation.trip.navigateToTrip
 import com.newpaper.somewhere.navigation.trip.tripScreen
 import com.newpaper.somewhere.navigation.trip.tripsScreen
@@ -358,10 +360,24 @@ fun SomewhereNavHost(
                 navigateTo = {
                     //TODO
                 },
+                navigateToDate = { dateIndex ->
+                    commonTripViewModel.setIsNewTrip(false)
+                    commonTripViewModel.setCurrentDateIndex(dateIndex)
+                    mainNavController.navigateToDate()
+                },
                 navigateUp = navigateUp
             )
 
-
+            dateScreen(
+                appViewModel = appViewModel,
+                externalState = externalState,
+                commonTripViewModel = commonTripViewModel,
+                navigateTo = {
+                    //TODO
+                },
+                navigateUp = navigateUp,
+                modifier = modifier
+            )
         }
     }
 }
