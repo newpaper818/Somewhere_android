@@ -697,8 +697,8 @@ private fun DatePage(
                         modifier = Modifier.padding(startSpacerValue, 0.dp, endSpacerValue, 0.dp),
                         isEditMode = false,
                         list = listOf(
-                            budgetItem.copy(text = currentDate.getTotalBudgetText(showingTrip)),
-                            travelDistanceItem.copy(text = currentDate.getTotalTravelDistanceText(showingTrip))
+                            budgetItem.copy(text = currentDate.getTotalBudgetText(showingTrip, showingTrip.unitOfCurrencyType.numberOfDecimalPlaces)),
+                            travelDistanceItem.copy(text = currentDate.getTotalTravelDistanceText(2))
                         )
                     )
 
