@@ -445,7 +445,6 @@ private fun DateScreen(
         }
 
         if (dialog.showSetTimeDialog && dialog.selectedSpot != null){
-            Log.d("aaa", "set time ")
             SetTimeDialog(
                 initialTime = dialog.selectedSpot.startTime ?: LocalTime.of(12,0),
                 timeFormat = dateUiInfo.dateTimeFormat.timeFormat,
