@@ -1,15 +1,13 @@
 package com.newpaper.somewhere.feature.dialog.setSpotType
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.newpaper.somewhere.core.data.repository.trip.TripRepository
 import com.newpaper.somewhere.core.model.enums.SpotType
 import com.newpaper.somewhere.core.model.enums.SpotTypeGroup
+import com.newpaper.somewhere.core.model.enums.getSpotTypeList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class SetSpotTypeUiState(
@@ -19,7 +17,7 @@ data class SetSpotTypeUiState(
 
 @HiltViewModel
 class SetSpotTypeViewModel @Inject constructor(
-    private val tripRepository: TripRepository
+
 ): ViewModel() {
 
     private val _setSpotTypeUiState: MutableStateFlow<SetSpotTypeUiState> =
@@ -32,37 +30,29 @@ class SetSpotTypeViewModel @Inject constructor(
 
     val setSpotTypeUiState = _setSpotTypeUiState.asStateFlow()
 
-    init {
-        viewModelScope.launch {
-//            tripRepository.tempTripData.collect { tempTripData ->
-//                //FIXME get? date index, spot index
-//                val spotType = tempTripData.dateList[0].spotList[0].spotType ?: SpotType.TOUR
-//
-//                _setSpotTypeUiState.update {
-//                    it.copy(
-//                        currentSpotTypeGroup = spotType.group,
-//                        currentSpotType = spotType
-//                    )
-//                }
-//            }
+
+
+
+
+
+
+    fun initSetSpotTypeUiState(
+        spotType: SpotType
+    ){
+        _setSpotTypeUiState.update {
+            it.copy(
+                currentSpotTypeGroup = spotType.group,
+                currentSpotType = spotType
+            )
         }
     }
-
-
-
-
-
-
-
-
-
 
 
     fun updateSpotTypeGroup(spotTypeGroup: SpotTypeGroup){
         _setSpotTypeUiState.update {
             it.copy(
                 currentSpotTypeGroup = spotTypeGroup,
-                currentSpotType = spotTypeGroup.memberList.first()
+                currentSpotType = getSpotTypeList(spotTypeGroup).first()
             )
         }
     }

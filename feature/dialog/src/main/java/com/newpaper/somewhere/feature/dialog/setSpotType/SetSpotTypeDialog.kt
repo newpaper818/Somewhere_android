@@ -14,10 +14,12 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +39,7 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.enums.SpotType
 import com.newpaper.somewhere.core.model.enums.SpotTypeGroup
+import com.newpaper.somewhere.core.model.enums.getSpotTypeList
 import com.newpaper.somewhere.feature.dialog.R
 import com.newpaper.somewhere.feature.dialog.myDialog.DialogButton
 import com.newpaper.somewhere.feature.dialog.myDialog.MyDialog
@@ -46,14 +49,18 @@ fun SetSpotTypeDialog(
     initialSpotType: SpotType,
     onDismissRequest: () -> Unit,
     onOkClick: (spotType: SpotType) -> Unit,
-    viewModel: SetSpotTypeViewModel = hiltViewModel()
+    setSpotTypeViewModel: SetSpotTypeViewModel = hiltViewModel()
 ){
-    val setSpotTypeUiState by viewModel.setSpotTypeUiState.collectAsStateWithLifecycle()
+    val setSpotTypeUiState by setSpotTypeViewModel.setSpotTypeUiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        setSpotTypeViewModel.initSetSpotTypeUiState(initialSpotType)
+    }
 
     SetSpotTypeDialog(
         setSpotTypeUiState = setSpotTypeUiState,
-        onChangeSpotTypeGroup = viewModel::updateSpotTypeGroup,
-        onChangeSpotType = viewModel::updateSpotType,
+        onChangeSpotTypeGroup = setSpotTypeViewModel::updateSpotTypeGroup,
+        onChangeSpotType = setSpotTypeViewModel::updateSpotType,
         onDismissRequest = onDismissRequest,
         onOkClick = onOkClick
     )
@@ -68,10 +75,14 @@ internal fun SetSpotTypeDialog(
     onDismissRequest: () -> Unit,
     onOkClick: (spotType: SpotType) -> Unit,
 ){
+    val lazyRowState = rememberLazyListState()
+
     val spotTypeGroupList = enumValues<SpotTypeGroup>()
 
     val currentSpotTypeGroup = setSpotTypeUiState.currentSpotTypeGroup
     val currentSpotType = setSpotTypeUiState.currentSpotType
+
+    val spotTypeList = getSpotTypeList(currentSpotTypeGroup)
 
     MyDialog(
         onDismissRequest = onDismissRequest,
@@ -82,6 +93,7 @@ internal fun SetSpotTypeDialog(
 
             //spot type group row list
             LazyRow(
+                state = lazyRowState,
                 modifier = Modifier
                     //.height(400.dp)
                     .clip(RoundedCornerShape(16.dp))
@@ -141,7 +153,7 @@ internal fun SetSpotTypeDialog(
                     contentPadding = PaddingValues(8.dp),
                     modifier = Modifier.fillMaxHeight()
                 ) {
-                    items(currentSpotTypeGroup.memberList) {
+                    items(spotTypeList) {
                         val cardColor = if (it == currentSpotType) MaterialTheme.colorScheme.primaryContainer
                                         else Color.Transparent
 

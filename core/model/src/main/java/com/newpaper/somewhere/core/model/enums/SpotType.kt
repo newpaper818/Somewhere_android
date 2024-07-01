@@ -22,13 +22,12 @@ private const val onFoodColor =     blackInt
 private const val onLodgingColor =  whiteInt
 private const val onEtcColor =      blackInt
 
-enum class SpotTypeGroup(
-    @StringRes val textId: Int,
-    val color: MyColor,
-    val memberList: List<SpotType>
-) {
-    TOUR(R.string.tour, MyColor(tourColor, onTourColor),
-        listOf(
+
+fun getSpotTypeList(
+    spotTypeGroup: SpotTypeGroup
+): List<SpotType>{
+    return when (spotTypeGroup){
+        SpotTypeGroup.TOUR -> listOf(
             SpotType.TOUR,
             SpotType.TOURIST_ATTRACTION, SpotType.HISTORIC_SITE, SpotType.ARCHITECTURAL_BUILDING, SpotType.LANDMARK, SpotType.RELIGIOUS_SITE, SpotType.MONUMENT_STATUE,
             SpotType.ACTIVITY, SpotType.LEISURE, SpotType.SPORT, SpotType.OUTDOOR, SpotType.ADVENTURE,
@@ -37,10 +36,7 @@ enum class SpotTypeGroup(
             SpotType.PARK, SpotType.GARDEN, SpotType.BEACH,
             SpotType.SHOPPING, SpotType.STREET_MARKET, SpotType.GIFT_SHOP
         )
-    ),
-
-    MOVE(R.string.move, MyColor(moveColor, onMoveColor),
-        listOf(
+        SpotTypeGroup.MOVE -> listOf(
             SpotType.MOVE,
             SpotType.AIRPLANE, SpotType.HELICOPTER, SpotType.HOT_AIR_BALLOON,
             SpotType.TRAIN, SpotType.SUBWAY, SpotType.TRAM,
@@ -49,34 +45,41 @@ enum class SpotTypeGroup(
             SpotType.BICYCLE, SpotType.ELECTRIC_KICKBOARD,
             SpotType.WALK, SpotType.RUNNING, SpotType.HIKING
         )
-    ),
-
-    MOVE_POINT(R.string.move_point, MyColor(movePointColor, onMovePointColor),
-        listOf(
+        SpotTypeGroup.MOVE_POINT -> listOf(
             SpotType.MOVE_POINT,
             SpotType.TERMINAL, SpotType.AIRPORT, SpotType.BUS_TERMINAL, SpotType.BUS_STOP, SpotType.SUBWAY_STATION, SpotType.TRAIN_STATION, SpotType.PORT
         )
-    ),
-
-    FOOD(R.string.food, MyColor(foodColor, onFoodColor),
-        listOf(
+        SpotTypeGroup.FOOD -> listOf(
             SpotType.FOOD,
             SpotType.COFFEE_TEA, SpotType.RESTAURANT, SpotType.FAST_FOOD, SpotType.DESSERT, SpotType.SNACK, SpotType.BAR_PUB
         )
-    ),
-
-    LODGING(R.string.lodging, MyColor(lodgingColor, onLodgingColor),
-        listOf(
+        SpotTypeGroup.LODGING -> listOf(
             SpotType.LODGING,
             SpotType.HOTEL, SpotType.MOTEL, SpotType.GUEST_HOUSE, SpotType.RESORT, SpotType.HOSTEL, SpotType.AIR_BNB, SpotType.PENSION, SpotType.CAMPING
         )
-    ),
-
-    ETC(R.string.etc, MyColor(etcColor, onEtcColor),
-        listOf(
+        SpotTypeGroup.ETC -> listOf(
             SpotType.ETC
         )
-    )
+    }
+}
+
+
+
+enum class SpotTypeGroup(
+    @StringRes val textId: Int,
+    val color: MyColor
+) {
+    TOUR(R.string.tour, MyColor(tourColor, onTourColor)),
+
+    MOVE(R.string.move, MyColor(moveColor, onMoveColor)),
+
+    MOVE_POINT(R.string.move_point, MyColor(movePointColor, onMovePointColor)),
+
+    FOOD(R.string.food, MyColor(foodColor, onFoodColor)),
+
+    LODGING(R.string.lodging, MyColor(lodgingColor, onLodgingColor)),
+
+    ETC(R.string.etc, MyColor(etcColor, onEtcColor))
 }
 
 enum class SpotType(
