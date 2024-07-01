@@ -15,8 +15,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +38,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
@@ -126,7 +128,9 @@ fun TitleWithColorCard(
                 //color card
                 ClickableBox(
                     containerColor = Color(color.color),
-                    modifier = Modifier.size((cardHeight / LocalDensity.current.density).toInt().dp),
+                    modifier = Modifier
+                        .width(77.dp)
+                        .height((cardHeight / LocalDensity.current.density).toInt().dp),
                     contentAlignment = Alignment.Center,
                     onClick = onClickColorCard
 
@@ -199,11 +203,15 @@ private fun TitleCardUi(
 
                         //up to 100 characters
                         if (isTextSizeLimit){
+                            MySpacerRow(width = 4.dp)
+
                             Spacer(modifier = Modifier.weight(1f))
 
                             Text(
                                 text = stringResource(id = R.string.long_text, MAX_TITLE_LENGTH),
-                                style = MaterialTheme.typography.bodySmall.copy(color = CustomColor.outlineError)
+                                style = MaterialTheme.typography.bodySmall.copy(color = CustomColor.outlineError),
+                                textAlign = TextAlign.Right,
+                                maxLines = 2
                             )
                         }
                     }
