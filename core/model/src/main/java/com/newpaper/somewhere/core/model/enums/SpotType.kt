@@ -58,7 +58,7 @@ fun getSpotTypeList(
             SpotType.HOTEL, SpotType.MOTEL, SpotType.GUEST_HOUSE, SpotType.RESORT, SpotType.HOSTEL, SpotType.AIR_BNB, SpotType.PENSION, SpotType.CAMPING
         )
         SpotTypeGroup.ETC -> listOf(
-            SpotType.ETC
+            SpotType.ETC, SpotType.HOME
         )
     }
 }
@@ -83,108 +83,109 @@ enum class SpotTypeGroup(
 }
 
 enum class SpotType(
+    val iconText: String,
     @StringRes val textId: Int,
     val group: SpotTypeGroup
 ){
-    TOUR(R.string.tour, SpotTypeGroup.TOUR),
-    MOVE(R.string.move, SpotTypeGroup.MOVE),
-    MOVE_POINT(R.string.move_point, SpotTypeGroup.MOVE_POINT),
-    FOOD(R.string.food, SpotTypeGroup.FOOD),
-    LODGING(R.string.lodging, SpotTypeGroup.LODGING),
-    ETC(R.string.etc, SpotTypeGroup.ETC),
+    TOUR("🧳", R.string.tour, SpotTypeGroup.TOUR),
+    MOVE("🚶", R.string.move, SpotTypeGroup.MOVE),
+    MOVE_POINT("🏁", R.string.move_point, SpotTypeGroup.MOVE_POINT),
+    FOOD("🥪", R.string.food, SpotTypeGroup.FOOD),
+    LODGING("🛌", R.string.lodging, SpotTypeGroup.LODGING),
+    ETC("😀", R.string.etc, SpotTypeGroup.ETC),
 
     //MOVE
-    AIRPLANE(R.string.airplane, SpotTypeGroup.MOVE),
-    HELICOPTER(R.string.helicopter, SpotTypeGroup.MOVE),
-    HOT_AIR_BALLOON(R.string.hot_air_balloon, SpotTypeGroup.MOVE),
+    AIRPLANE("✈️", R.string.airplane, SpotTypeGroup.MOVE),
+    HELICOPTER("🚁", R.string.helicopter, SpotTypeGroup.MOVE),
+    HOT_AIR_BALLOON("🎈", R.string.hot_air_balloon, SpotTypeGroup.MOVE),
 
-    TRAIN(R.string.train, SpotTypeGroup.MOVE),
-    SUBWAY(R.string.subway, SpotTypeGroup.MOVE),
-    TRAM(R.string.tram, SpotTypeGroup.MOVE),
+    TRAIN("🚅", R.string.train, SpotTypeGroup.MOVE),
+    SUBWAY("🚇", R.string.subway, SpotTypeGroup.MOVE),
+    TRAM("🚋", R.string.tram, SpotTypeGroup.MOVE),
 
-    BUS(R.string.bus, SpotTypeGroup.MOVE),
-    TAXI(R.string.taxi, SpotTypeGroup.MOVE),
-    CAR(R.string.car, SpotTypeGroup.MOVE),
+    BUS("🚌", R.string.bus, SpotTypeGroup.MOVE),
+    TAXI("🚕", R.string.taxi, SpotTypeGroup.MOVE),
+    CAR("🚗", R.string.car, SpotTypeGroup.MOVE),
 
-    SHIP(R.string.ship, SpotTypeGroup.MOVE),
-    YACHT(R.string.yacht, SpotTypeGroup.MOVE),
-    CABLE_CAR(R.string.cable_car, SpotTypeGroup.MOVE),
+    SHIP("🛳️", R.string.ship, SpotTypeGroup.MOVE),
+    YACHT("🛥️", R.string.yacht, SpotTypeGroup.MOVE),
+    CABLE_CAR("🚠", R.string.cable_car, SpotTypeGroup.MOVE),
 
-    BICYCLE(R.string.bicycle, SpotTypeGroup.MOVE),
-    ELECTRIC_KICKBOARD(R.string.electric_kickboard, SpotTypeGroup.MOVE),
+    BICYCLE("🚴", R.string.bicycle, SpotTypeGroup.MOVE),
+    ELECTRIC_KICKBOARD("🛴", R.string.electric_kickboard, SpotTypeGroup.MOVE),
 
-    WALK(R.string.walk, SpotTypeGroup.MOVE),
-    RUNNING(R.string.running, SpotTypeGroup.MOVE),
-    HIKING(R.string.hiking, SpotTypeGroup.MOVE),
+    WALK("🚶", R.string.walk, SpotTypeGroup.MOVE),
+    RUNNING("🏃", R.string.running, SpotTypeGroup.MOVE),
+    HIKING("🥾", R.string.hiking, SpotTypeGroup.MOVE),
 
 
 
     //MOVE POINT
-    TERMINAL(R.string.terminal, SpotTypeGroup.MOVE_POINT),
-    AIRPORT(R.string.airport, SpotTypeGroup.MOVE_POINT),
-    BUS_TERMINAL(R.string.bus_terminal, SpotTypeGroup.MOVE_POINT),
-    BUS_STOP(R.string.bus_stop, SpotTypeGroup.MOVE_POINT),
-    SUBWAY_STATION(R.string.subway_station, SpotTypeGroup.MOVE_POINT),
-    TRAIN_STATION(R.string.train_station, SpotTypeGroup.MOVE_POINT),
-    PORT(R.string.port, SpotTypeGroup.MOVE_POINT),
+    TERMINAL("🏢", R.string.terminal, SpotTypeGroup.MOVE_POINT),
+    AIRPORT("🛫", R.string.airport, SpotTypeGroup.MOVE_POINT),
+    BUS_TERMINAL("🚍", R.string.bus_terminal, SpotTypeGroup.MOVE_POINT),
+    BUS_STOP("🚏", R.string.bus_stop, SpotTypeGroup.MOVE_POINT),
+    SUBWAY_STATION("🚉", R.string.subway_station, SpotTypeGroup.MOVE_POINT),
+    TRAIN_STATION("🛤️", R.string.train_station, SpotTypeGroup.MOVE_POINT),
+    PORT("⚓️", R.string.port, SpotTypeGroup.MOVE_POINT),
 
 
 
     //TOUR
-    TOURIST_ATTRACTION(R.string.tourist_attraction, SpotTypeGroup.TOUR),
-    HISTORIC_SITE(R.string.historic_site, SpotTypeGroup.TOUR),
-    ARCHITECTURAL_BUILDING(R.string.architectural_building, SpotTypeGroup.TOUR),
-    LANDMARK(R.string.landmark, SpotTypeGroup.TOUR),
-    RELIGIOUS_SITE(R.string.religious_site, SpotTypeGroup.TOUR),
-    MONUMENT_STATUE(R.string.monument_statue, SpotTypeGroup.TOUR),
+    TOURIST_ATTRACTION("🗽", R.string.tourist_attraction, SpotTypeGroup.TOUR),
+    HISTORIC_SITE("🏛️", R.string.historic_site, SpotTypeGroup.TOUR),
+    ARCHITECTURAL_BUILDING("🏢", R.string.architectural_building, SpotTypeGroup.TOUR),
+    LANDMARK("🗼", R.string.landmark, SpotTypeGroup.TOUR),
+    RELIGIOUS_SITE("🙏", R.string.religious_site, SpotTypeGroup.TOUR),
+    MONUMENT_STATUE("🗿", R.string.monument_statue, SpotTypeGroup.TOUR),
 
-    ACTIVITY(R.string.activity, SpotTypeGroup.TOUR),
-    LEISURE(R.string.leisure, SpotTypeGroup.TOUR),
-    SPORT(R.string.sport, SpotTypeGroup.TOUR),
-    OUTDOOR(R.string.outdoor, SpotTypeGroup.TOUR),
-    ADVENTURE(R.string.adventure, SpotTypeGroup.TOUR),
+    ACTIVITY("🏀", R.string.activity, SpotTypeGroup.TOUR),
+    LEISURE("🎱", R.string.leisure, SpotTypeGroup.TOUR),
+    SPORT("⚽️", R.string.sport, SpotTypeGroup.TOUR),
+    OUTDOOR("⛰️", R.string.outdoor, SpotTypeGroup.TOUR),
+    ADVENTURE("🧭", R.string.adventure, SpotTypeGroup.TOUR),
 
-    ENTERTAINMENT(R.string.entertainment, SpotTypeGroup.TOUR),
-    FESTIVAL(R.string.festival, SpotTypeGroup.TOUR),
-    ART(R.string.art, SpotTypeGroup.TOUR),
-    MUSIC(R.string.music, SpotTypeGroup.TOUR),
-    MOVIE(R.string.movie, SpotTypeGroup.TOUR),
+    ENTERTAINMENT("🎮", R.string.entertainment, SpotTypeGroup.TOUR),
+    FESTIVAL("🎉", R.string.festival, SpotTypeGroup.TOUR),
+    ART("🎨", R.string.art, SpotTypeGroup.TOUR),
+    MUSIC("🎧", R.string.music, SpotTypeGroup.TOUR),
+    MOVIE("🎬", R.string.movie, SpotTypeGroup.TOUR),
 
-    MUSEUM(R.string.museum, SpotTypeGroup.TOUR),
-    EXHIBITION(R.string.exhibition, SpotTypeGroup.TOUR),
+    MUSEUM("🏺", R.string.museum, SpotTypeGroup.TOUR),
+    EXHIBITION("🖼️", R.string.exhibition, SpotTypeGroup.TOUR),
 
-    PARK(R.string.park, SpotTypeGroup.TOUR),
-    GARDEN(R.string.garden, SpotTypeGroup.TOUR),
-    BEACH(R.string.beach, SpotTypeGroup.TOUR),
+    PARK("🌳", R.string.park, SpotTypeGroup.TOUR),
+    GARDEN("🪴", R.string.garden, SpotTypeGroup.TOUR),
+    BEACH("🏖️", R.string.beach, SpotTypeGroup.TOUR),
 
-    SHOPPING(R.string.shopping, SpotTypeGroup.TOUR),
-    STREET_MARKET(R.string.street_market, SpotTypeGroup.TOUR),
-    GIFT_SHOP(R.string.gift_shop, SpotTypeGroup.TOUR),
+    SHOPPING("🛍️", R.string.shopping, SpotTypeGroup.TOUR),
+    STREET_MARKET("🏪", R.string.street_market, SpotTypeGroup.TOUR),
+    GIFT_SHOP("🎁", R.string.gift_shop, SpotTypeGroup.TOUR),
 
 
 
     //FOOD
-    COFFEE_TEA(R.string.coffee_tea, SpotTypeGroup.FOOD),
-    RESTAURANT(R.string.restaurant, SpotTypeGroup.FOOD),
-    FAST_FOOD(R.string.fast_food, SpotTypeGroup.FOOD),
-    DESSERT(R.string.dessert, SpotTypeGroup.FOOD),
-    SNACK(R.string.snack, SpotTypeGroup.FOOD),
-    BAR_PUB(R.string.bar_pub, SpotTypeGroup.FOOD),
+    COFFEE_TEA("☕️", R.string.coffee_tea, SpotTypeGroup.FOOD),
+    RESTAURANT("🥘", R.string.restaurant, SpotTypeGroup.FOOD),
+    FAST_FOOD("🍔", R.string.fast_food, SpotTypeGroup.FOOD),
+    DESSERT("🍰", R.string.dessert, SpotTypeGroup.FOOD),
+    SNACK("🍟", R.string.snack, SpotTypeGroup.FOOD),
+    BAR_PUB("🍷", R.string.bar_pub, SpotTypeGroup.FOOD),
 
 
     //LODGING
-    HOTEL(R.string.hotel, SpotTypeGroup.LODGING),
-    MOTEL(R.string.motel, SpotTypeGroup.LODGING),
-    GUEST_HOUSE(R.string.guest_house, SpotTypeGroup.LODGING),
-    RESORT(R.string.resort, SpotTypeGroup.LODGING),
-    HOSTEL(R.string.hostel, SpotTypeGroup.LODGING),
-    AIR_BNB(R.string.air_bnb, SpotTypeGroup.LODGING),
-    PENSION(R.string.pension, SpotTypeGroup.LODGING),
-    CAMPING(R.string.camping, SpotTypeGroup.LODGING),
+    HOTEL("🏨", R.string.hotel, SpotTypeGroup.LODGING),
+    MOTEL("🏩", R.string.motel, SpotTypeGroup.LODGING),
+    GUEST_HOUSE("🏠", R.string.guest_house, SpotTypeGroup.LODGING),
+    RESORT("🏘️", R.string.resort, SpotTypeGroup.LODGING),
+    HOSTEL("🏘️", R.string.hostel, SpotTypeGroup.LODGING),
+    AIR_BNB("🏠", R.string.air_bnb, SpotTypeGroup.LODGING),
+    PENSION("🛏️", R.string.pension, SpotTypeGroup.LODGING),
+    CAMPING("⛺️", R.string.camping, SpotTypeGroup.LODGING),
 
 
     //ETC
-    HOME(R.string.home, SpotTypeGroup.ETC),
+    HOME("🏠", R.string.home, SpotTypeGroup.ETC),
 
     ;
 
