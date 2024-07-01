@@ -177,8 +177,15 @@ internal fun SetSpotTypeDialog(
                                     .padding(8.dp, 0.dp)
                             ) {
                                 Text(
+                                    text = it.iconText,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                
+                                MySpacerRow(width = 8.dp)
+                                
+                                Text(
                                     text = stringResource(id = it.textId),
-                                    style = cardTextStyle,
+                                    style = cardTextStyle
                                 )
                             }
                         }
