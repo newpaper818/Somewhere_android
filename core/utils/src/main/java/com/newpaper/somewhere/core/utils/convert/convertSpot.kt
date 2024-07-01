@@ -22,8 +22,8 @@ val SEOUL_LOCATION = LatLng(37.55, 126.98)
 @Composable
 fun Spot.getExpandedText(trip: Trip, isEditMode: Boolean): String {
     val categoryText = getSpotTypeText()
-    val budgetText = getBudgetText(trip)
-    val distanceText = getDistanceText()
+    val budgetText = getBudgetText(trip, 0)
+    val distanceText = getDistanceText(0)
 
     return if (isEditMode) "$categoryText   $distanceText   $budgetText"
     else "$categoryText   $distanceText   $budgetText"
@@ -34,13 +34,13 @@ fun Spot.getSpotTypeText(): String {
     return stringResource(id = spotType.textId)
 }
 
-fun Spot.getBudgetText(trip: Trip): String {
+fun Spot.getBudgetText(trip: Trip, numberOfDecimalPlaces: Int): String {
     return "${trip.unitOfCurrencyType.symbol} " +
-            getNumToText(budget, trip.unitOfCurrencyType.numberOfDecimalPlaces)
+            getNumToText(budget, numberOfDecimalPlaces)
 }
 
-fun Spot.getDistanceText(): String {
-    return "${getNumToText(travelDistance, 2)}km"
+fun Spot.getDistanceText(numberOfDecimalPlaces: Int): String {
+    return "${getNumToText(travelDistance, numberOfDecimalPlaces)}km"
 }
 
 fun Spot.getDateText(dateTimeFormat: DateTimeFormat, includeYear: Boolean): String {

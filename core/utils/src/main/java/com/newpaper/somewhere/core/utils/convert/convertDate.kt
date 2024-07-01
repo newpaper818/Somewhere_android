@@ -15,10 +15,10 @@ import com.newpaper.somewhere.core.utils.getNumToText
 // get =========================================================================================
 @Composable
 fun Date.getExpandedText(trip: Trip, isEditMode: Boolean):String{
-    val budgetText = getTotalBudgetText(trip)
+    val budgetText = getTotalBudgetText(trip, 0)
 
     val spotCountText = "${getSpotTypeGroupCountExcludeMove(spotList)} " + stringResource(id = R.string.spots)
-    val totalDistanceText = getTotalTravelDistanceText(trip)
+    val totalDistanceText = getTotalTravelDistanceText(0)
 
     var expandedText = "$spotCountText   $totalDistanceText   $budgetText"
 
@@ -43,8 +43,8 @@ private fun getSpotTypeGroupCountExcludeMove(
     return count
 }
 
-fun Date.getTotalBudgetText(trip: Trip): String{
-    val budget = getNumToText(getTotalBudget(), trip.unitOfCurrencyType.numberOfDecimalPlaces)
+fun Date.getTotalBudgetText(trip: Trip, numberOfDecimalPlaces: Int): String{
+    val budget = getNumToText(getTotalBudget(), numberOfDecimalPlaces)
 
     return "${trip.unitOfCurrencyType.symbol} $budget"
 }
@@ -57,8 +57,8 @@ fun Date.getTotalBudget(): Float{
     return total
 }
 
-fun Date.getTotalTravelDistanceText(trip: Trip): String{
-    val distance = getNumToText(getTotalTravelDistance(), 2)
+fun Date.getTotalTravelDistanceText(numberOfDecimalPlaces: Int): String{
+    val distance = getNumToText(getTotalTravelDistance(), numberOfDecimalPlaces)
     return "${distance}km"
 }
 
