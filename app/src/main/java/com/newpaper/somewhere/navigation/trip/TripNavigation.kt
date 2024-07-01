@@ -38,6 +38,7 @@ fun NavGraphBuilder.tripScreen(
     commonTripViewModel: CommonTripViewModel,
 
     navigateTo: () -> Unit,
+    navigateToDate: (dateIndex: Int) -> Unit,
     navigateUp: () -> Unit,
 ) {
     composable(
@@ -78,7 +79,9 @@ fun NavGraphBuilder.tripScreen(
                         navigateToInviteFriend = { /*TODO*/ },
                         navigateToInvitedFriends = { /*TODO*/ },
                         navigateToImage = { _,_, -> /*TODO*/ },
-                        navigateToDate = { _, -> /*TODO*/ },
+                        navigateToDate = { dateIndex, ->
+                            navigateToDate(dateIndex)
+                        },
                         navigateToTripMap = { /*TODO*/ },
                         navigateUpAndDeleteNewTrip = { deleteTrip ->
                             navigateUp()
@@ -113,7 +116,6 @@ fun NavGraphBuilder.tripScreen(
                                 commonTripViewModel.setIsNewTrip(false)
 
                                 //save to firestore
-
                                 commonTripViewModel.saveTripAndAllDates(
                                     trip = commonTripViewModel.commonTripUiState.value.tripInfo.tempTrip!!,
                                     tempTripDateListLastIndex = beforeTempTripDateListLastIndex

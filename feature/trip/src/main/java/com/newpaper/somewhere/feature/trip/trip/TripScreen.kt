@@ -116,7 +116,6 @@ fun TripRoute(
 
     //
     modifier: Modifier = Modifier,
-    currentDateIndex: Int? = null,
     tripViewModel: TripViewModel = hiltViewModel(),
 ){
     val coroutineScope = rememberCoroutineScope()
@@ -248,7 +247,7 @@ fun TripRoute(
         },
         saveTrip = saveTrip,
         modifier = modifier,
-        currentDateIndex = currentDateIndex
+        currentDateIndex = commonTripUiState.tripInfo.dateIndex
     )
 }
 
@@ -722,8 +721,8 @@ private fun TripScreen(
                                 if (isEditMode) {
                                     {
                                         dialog.setSelectedDate(date)
-                                        tripUiInfo.setShowBottomSaveCancelBar(false)
                                         dialog.setShowSetColorDialog(true)
+                                        tripUiInfo.setShowBottomSaveCancelBar(false)
                                     }
                                 } else null
                             )

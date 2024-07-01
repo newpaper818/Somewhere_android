@@ -8,16 +8,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -27,238 +31,266 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.newpaper.somewhere.core.designsystem.component.button.NewItemButton
+import com.newpaper.somewhere.core.designsystem.component.button.ToNextDateButton
+import com.newpaper.somewhere.core.designsystem.component.button.ToPrevDateButton
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
+import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.ProgressBarColor
+import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.designsystem.theme.whiteInt
+import com.newpaper.somewhere.core.model.data.DateTimeFormat
+import com.newpaper.somewhere.core.model.tripData.Date
+import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.ui.ui.R
+import com.newpaper.somewhere.core.utils.convert.getDateText
+import com.newpaper.somewhere.core.utils.convert.getNextSpot
+import com.newpaper.somewhere.core.utils.convert.getPrevSpot
+import com.newpaper.somewhere.core.utils.convert.getStartTimeText
+import java.time.LocalDate
 
-private val PROGRESS_BAR_HEIGHT = 85.dp
+val PROGRESS_BAR_HEIGHT = 85.dp
 
-private val DEFAULT_POINT_NUM_SIZE = 22.dp
-private val HIGHLIGHT_POINT_NUM_SIZE = 25.dp
-private val DEFAULT_POINT_SIZE = 13.dp
-private val HIGHLIGHT_POINT_SIZE = 18.dp
-private val DEFAULT_LINE_SIZE = 6.dp
-private val HIGHLIGHT_LINE_SIZE = 8.dp
+private enum class Shape{
+    DEFAULT_POINT_NUM,
+    HIGHLIGHT_POINT_NUM,
+    DEFAULT_POINT,
+    HIGHLIGHT_POINT,
 
+    DEFAULT_LINE,
+    HIGHLIGHT_LINE
+}
 
-//@Composable
-//fun DateListProgressBar(
-//    startSpacerValue: Dp,
-//    endSpacerValue: Dp,
-//    progressBarState: LazyListState,
-//    dateList: List<Date>,
-//    currentDateIdx: Int,
-//    dateTimeFormat: DateTimeFormat,
-//
-//    onClickDate: (dateIndex: Int) -> Unit
-//){
-//    LazyRow(
-//        state = progressBarState,
-//        modifier = Modifier.fillMaxWidth()
-//    ){
-//        item{ MySpacerRow(width = startSpacerValue) }
-//
-//        items(dateList){
-//
-//            OneProgressBar(
-//                useLargeItemWidth = true,
-//                includeIconNum = false,
-//                upperText = it.getDateText(dateTimeFormat, includeYear = false),
-//                titleText = it.titleText,
-//                isHighlight = it == dateList[currentDateIdx],
-//                isLeftHighlight = false,
-//                isRightHighlight = false,
-//                isFirst = it == dateList.first(),
-//                isLast = it == dateList.last(),
-//                onClickItem = {
-//                    onClickDate(it.index)
-//                },
-//                pointColor = it.color.color,
-//                lineColor = ProgressBarColor.lineDefaultMove
-//            )
-//        }
-//
-//        item{ MySpacerRow(width = endSpacerValue) }
-//    }
-//}
-//
-//@Composable
-//fun SpotListProgressBar(
-//    useLargeItemWidth: Boolean,
-//    spacerValue: Dp,
-//    initialIdx: Int,
-//    progressBarState: LazyListState,
-//    isEditMode: Boolean,
-//
-//    dateTimeFormat: DateTimeFormat,
-//    dateList: List<Date>,
-//    dateId: Int,
-//    spotList: List<Spot>,
-//    currentSpotIdx: Int,
-//
-//    addNewSpot: () -> Unit,
-//    onClickSpot: (spotId: Int) -> Unit,
-//    onPrevDateClick: (dateId: Int) -> Unit,
-//    onNextDateClick: (dateId: Int) -> Unit,
-//){
-//    val spot = spotList.getOrNull(currentSpotIdx)
-//
-//    val moveIdx =
-//        if (spot?.spotType?.isMove() == true){
-//            currentSpotIdx - 1
-//        }
-//        else    null
-//
-//    LazyRow(
-//        state = progressBarState,
-//        modifier = Modifier.fillMaxWidth()
-//    ){
-//
-//        //to prev date button
-//        item {
-//            if (!isEditMode && dateList.first() != dateList[dateId]) {
-//                MySpacerRow(width = spacerValue)
-//
-//                Column(
-//                    modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
-//                    verticalArrangement = Arrangement.Center
-//                ) {
-//                    ToPrevDateButton(
-//                        text = dateList[dateId - 1].getDateText(dateTimeFormat, false),
-//                        onClick = { onPrevDateClick(dateId - 1) }
-//                    )
-//                }
+private fun getSize(shape: Shape): Dp {
+    return when(shape){
+        Shape.DEFAULT_POINT_NUM -> 22.dp
+        Shape.HIGHLIGHT_POINT_NUM -> 25.dp
+        Shape.DEFAULT_POINT -> 13.dp
+        Shape.HIGHLIGHT_POINT -> 18.dp
+
+        Shape.DEFAULT_LINE -> 6.dp
+        Shape.HIGHLIGHT_LINE -> 8.dp
+    }
+}
+
+@Composable
+fun DateListProgressBar(
+    startSpacerValue: Dp,
+    endSpacerValue: Dp,
+    progressBarState: LazyListState,
+    dateList: List<Date>,
+    currentDateIdx: Int,
+    dateTimeFormat: DateTimeFormat,
+
+    onClickDate: (dateIndex: Int) -> Unit
+){
+    LazyRow(
+        state = progressBarState,
+        modifier = Modifier.fillMaxWidth()
+    ){
+        item{ MySpacerRow(width = startSpacerValue) }
+
+        items(dateList){
+
+            OneProgressBar(
+                useLargeItemWidth = true,
+                includeIconNum = false,
+                upperText = it.getDateText(dateTimeFormat, includeYear = false),
+                titleText = it.titleText,
+                isHighlight = it == dateList[currentDateIdx],
+                isLeftHighlight = false,
+                isRightHighlight = false,
+                isFirst = it == dateList.first(),
+                isLast = it == dateList.last(),
+                onClickItem = {
+                    onClickDate(it.index)
+                },
+                pointColor = it.color.color,
+                lineColor = ProgressBarColor.lineDefaultMove
+            )
+        }
+
+        item{ MySpacerRow(width = endSpacerValue) }
+    }
+}
+
+@Composable
+fun SpotListProgressBar(
+    useLargeItemWidth: Boolean,
+    spacerValue: Dp,
+    progressBarState: LazyListState,
+    isEditMode: Boolean,
+
+    dateTimeFormat: DateTimeFormat,
+    dateList: List<Date>,
+    dateId: Int,
+    spotList: List<Spot>,
+    currentSpotIdx: Int,
+
+    addNewSpot: () -> Unit,
+    onClickSpot: (spotId: Int) -> Unit,
+    onPrevDateClick: (dateId: Int) -> Unit,
+    onNextDateClick: (dateId: Int) -> Unit,
+){
+    val spot = spotList.getOrNull(currentSpotIdx)
+
+    val moveIdx =
+        if (spot?.spotType?.isMove() == true){
+            currentSpotIdx - 1
+        }
+        else    null
+
+    LazyRow(
+        state = progressBarState,
+        modifier = Modifier.fillMaxWidth()
+    ){
+
+        //to prev date button
+        item {
+            if (!isEditMode && dateList.first() != dateList[dateId]) {
+                MySpacerRow(width = spacerValue)
+
+                Column(
+                    modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    ToPrevDateButton(
+                        text = dateList[dateId - 1].getDateText(dateTimeFormat, false),
+                        onClick = { onPrevDateClick(dateId - 1) }
+                    )
+                }
+            }
+        }
+
+        //if prev date's last spot is move or this date first spot is move : show line
+        item{
+            if (spotList.isNotEmpty()) {
+                val currentSpotSpotTypeIsMove = spotList[0].spotType.isMove()
+                val prevSpotSpotTypeIsMove =
+                    spotList[0].getPrevSpot(dateList, dateId)?.spotType?.isMove() ?: false
+
+                Column(
+                    modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .width(spacerValue)
+                            .height(25.dp)
+                    ) {
+                        Line(
+                            isShown = currentSpotSpotTypeIsMove || prevSpotSpotTypeIsMove,
+                            isHighlight = currentSpotIdx == 0 && spotList[0].spotType.isMove(),
+                            modifier = Modifier.fillMaxWidth(),
+                            useMoveColor = currentSpotSpotTypeIsMove || prevSpotSpotTypeIsMove
+                        )
+                    }
+                }
+            }
+        }
+
+        //each spot
+        items(spotList){
+
+//            if (it.spotType.isNotMove()) {
+            OneProgressBar(
+                useLargeItemWidth = useLargeItemWidth,
+                includeIconNum = it.spotType.isNotMove(),
+                pointColor = it.spotType.group.color.color,
+                showPoint = it.spotType.isNotMove(),
+                iconText = it.iconText.toString(),
+                iconTextColor = it.spotType.group.color.onColor,
+                upperText = it.getStartTimeText(dateTimeFormat.timeFormat) ?: "",
+                titleText = it.titleText,
+                isHighlight = it == spot ||
+                        moveIdx != null && (it.index == moveIdx || it.index == moveIdx + 2),
+                isLeftHighlight = moveIdx != null && it.index == moveIdx + 2
+                        || it.spotType.isMove() && it.index == currentSpotIdx,
+                isRightHighlight = moveIdx != null && it.index == moveIdx
+                        || it.spotType.isMove() && it.index == currentSpotIdx,
+                isFirst = it == spotList.first() && it.getPrevSpot(dateList, dateId)?.spotType?.isNotMove() ?: true && it.spotType.isNotMove(),
+                isLast = it == spotList.last() && it.getNextSpot(dateList, dateId)?.spotType?.isNotMove() ?: true && it.spotType.isNotMove(),
+                onClickItem = {
+                    onClickSpot(it.index)
+                },
+                useLeftLineMoveColor = it.getPrevSpot(dateList, dateId)?.spotType?.isMove() ?: false || it.spotType.isMove(),
+                useRightLineMoveColor = it.getNextSpot(dateList, dateId)?.spotType?.isMove() ?: false || it.spotType.isMove()
+            )
 //            }
-//        }
-//
-//        //if prev date's last spot is move or this date first spot is move : show line
-//        item{
-//            if (spotList.isNotEmpty()) {
-//                val currentSpotSpotTypeIsMove = spotList[0].spotType.isMove()
-//                val prevSpotSpotTypeIsMove =
-//                    spotList[0].getPrevSpot(dateList, dateId)?.spotType?.isMove() ?: false
-//
-//                Column(
-//                    modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
-//                    verticalArrangement = Arrangement.Center
-//                ) {
-//                    Box(
-//                        contentAlignment = Alignment.Center,
-//                        modifier = Modifier
-//                            .width(spacerValue)
-//                            .height(25.dp)
-//                    ) {
-//                        Line(
-//                            isShown = currentSpotSpotTypeIsMove || prevSpotSpotTypeIsMove,
-//                            isHighlight = currentSpotIdx == 0 && spotList[0].spotType.isMove(),
-//                            modifier = Modifier.fillMaxWidth(),
-//                            useMoveColor = currentSpotSpotTypeIsMove || prevSpotSpotTypeIsMove
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//
-//        //each spot
-//        items(spotList){
-//
-////            if (it.spotType.isNotMove()) {
-//                OneProgressBar(
-//                    useLargeItemWidth = useLargeItemWidth,
-//                    includeIconNum = it.spotType.isNotMove(),
-//                    pointColor = it.spotType.group.color.color,
-//                    showPoint = it.spotType.isNotMove(),
-//                    iconText = it.iconText.toString(),
-//                    iconTextColor = it.spotType.group.color.onColor,
-//                    upperText = it.getStartTimeText(dateTimeFormat.timeFormat) ?: "",
-//                    titleText = it.titleText,
-//                    isHighlight = it == spot ||
-//                            moveIdx != null && (it.index == moveIdx || it.index == moveIdx + 2),
-//                    isLeftHighlight = moveIdx != null && it.index == moveIdx + 2
-//                            || it.spotType.isMove() && it.index == currentSpotIdx,
-//                    isRightHighlight = moveIdx != null && it.index == moveIdx
-//                            || it.spotType.isMove() && it.index == currentSpotIdx,
-//                    isFirst = it == spotList.first() && it.getPrevSpot(dateList, dateId)?.spotType?.isNotMove() ?: true && it.spotType.isNotMove(),
-//                    isLast = it == spotList.last() && it.getNextSpot(dateList, dateId)?.spotType?.isNotMove() ?: true && it.spotType.isNotMove(),
-//                    onClickItem = {
-//                        onClickSpot(it.index)
-//                    },
-//                    useLeftLineMoveColor = it.getPrevSpot(dateList, dateId)?.spotType?.isMove() ?: false || it.spotType.isMove(),
-//                    useRightLineMoveColor = it.getNextSpot(dateList, dateId)?.spotType?.isMove() ?: false || it.spotType.isMove()
-//                )
-////            }
-//        }
-//
-//        //if next date's first spot is move or this date last spot is move : show line
-//        item{
-//            if (spotList.isNotEmpty()) {
-//                val lastSpotIdx = spotList.lastIndexOf(spotList.last())
-//                val currentSpotSpotTypeIsMove = spotList[lastSpotIdx].spotType.isMove()
-//                val nextSpotSpotTypeIsMove = spotList[lastSpotIdx].getNextSpot(dateList, dateId)?.spotType?.isMove() ?: false
-//
-//                Column(
-//                    modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
-//                    verticalArrangement = Arrangement.Center
-//                ) {
-//                    Box(
-//                        contentAlignment = Alignment.Center,
-//                        modifier = Modifier
-//                            .width(spacerValue)
-//                            .height(25.dp)
-//                    ) {
-//                        Line(
-//                            isShown = currentSpotSpotTypeIsMove || nextSpotSpotTypeIsMove,
-//                            isHighlight = currentSpotIdx == lastSpotIdx && spotList[lastSpotIdx].spotType.isMove(),
-//                            modifier = Modifier.fillMaxWidth(),
-//                            useMoveColor = currentSpotSpotTypeIsMove || nextSpotSpotTypeIsMove
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//
-//        item{
-//            if(isEditMode && spotList.size < 100){
-//                if (spot == null)
-//                    MySpacerRow(width = 32.dp)
-//
-//                Column(
-//                    modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
-//                    verticalArrangement = Arrangement.Center
-//                ) {
-//
-//                    NewItemButton(text = stringResource(id = R.string.new_spot), onClick = {
-//                        addNewSpot()
-//                    })
-//                }
-//
-//                MySpacerRow(width = spacerValue)
-//            }
-//        }
-//
-//        //to next date button
-//        item {
-//            if (!isEditMode && dateList.last() != dateList[dateId]) {
-//                if (spot == null)
-//                    MySpacerRow(width = 32.dp)
-//
-//                Column(
-//                    modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
-//                    verticalArrangement = Arrangement.Center
-//                ) {
-//                    ToNextDateButton(
-//                        text = dateList[dateId + 1].getDateText(dateTimeFormat, false),
-//                        onClick = { onNextDateClick(dateId + 1) }
-//                    )
-//                }
-//
-//                MySpacerRow(width = spacerValue)
-//            }
-//        }
-//    }
-//}
+        }
+
+        //if next date's first spot is move or this date last spot is move : show line
+        item{
+            if (spotList.isNotEmpty()) {
+                val lastSpotIdx = spotList.lastIndexOf(spotList.last())
+                val currentSpotSpotTypeIsMove = spotList[lastSpotIdx].spotType.isMove()
+                val nextSpotSpotTypeIsMove = spotList[lastSpotIdx].getNextSpot(dateList, dateId)?.spotType?.isMove() ?: false
+
+                Column(
+                    modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .width(spacerValue)
+                            .height(25.dp)
+                    ) {
+                        Line(
+                            isShown = currentSpotSpotTypeIsMove || nextSpotSpotTypeIsMove,
+                            isHighlight = currentSpotIdx == lastSpotIdx && spotList[lastSpotIdx].spotType.isMove(),
+                            modifier = Modifier.fillMaxWidth(),
+                            useMoveColor = currentSpotSpotTypeIsMove || nextSpotSpotTypeIsMove
+                        )
+                    }
+                }
+            }
+        }
+
+        item{
+            if(isEditMode && spotList.size < 100){
+                if (spot == null)
+                    MySpacerRow(width = 32.dp)
+
+                Column(
+                    modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
+                    verticalArrangement = Arrangement.Center
+                ) {
+
+                    NewItemButton(text = stringResource(id = R.string.new_spot), onClick = {
+                        addNewSpot()
+                    })
+                }
+
+                MySpacerRow(width = spacerValue)
+            }
+        }
+
+        //to next date button
+        item {
+            if (!isEditMode && dateList.last() != dateList[dateId]) {
+                if (spot == null)
+                    MySpacerRow(width = 32.dp)
+
+                Column(
+                    modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    ToNextDateButton(
+                        text = dateList[dateId + 1].getDateText(dateTimeFormat, false),
+                        onClick = { onNextDateClick(dateId + 1) }
+                    )
+                }
+
+                MySpacerRow(width = spacerValue)
+            }
+        }
+    }
+}
 
 @Composable
 fun OneProgressBar(
@@ -285,23 +317,23 @@ fun OneProgressBar(
     @ColorInt iconTextColor: Int? = whiteInt
 ){
     val upperTextStyle =    if (isHighlight)    MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
-                            else                MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+    else                MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
 
     val titleTextStyle =    if (isHighlight && titleText != null)   MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
-                            else if (isHighlight)                   MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            else                                    MaterialTheme.typography.bodySmall
+    else if (isHighlight)                   MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    else                                    MaterialTheme.typography.bodySmall
 
     val upperText1 =    upperText ?: ""
 
     val titleText1 =    if (isHighlight)  titleText ?: stringResource(id = R.string.no_title)
-                        else            titleText ?: ""
+    else            titleText ?: ""
 
     val boxColor = if (isHighlight) Color(pointColor ?: 0x00000000).copy(alpha = 0.2f)
-                    else Color.Transparent
+    else Color.Transparent
 
 
     var itemWidth by rememberSaveable {
-        mutableIntStateOf(
+        mutableStateOf(
             if (isHighlight && showPoint) {
                 if (useLargeItemWidth)    220
                 else                170
@@ -323,7 +355,6 @@ fun OneProgressBar(
             else                170
         }
         else             130
-
 
     ClickableBox(
         modifier = Modifier
@@ -406,21 +437,21 @@ private fun Point(
 ){
     val pointSize =
         if(includeNum){
-            if (isHighlightPoint)   HIGHLIGHT_POINT_NUM_SIZE
-            else                    DEFAULT_POINT_NUM_SIZE
+            if (isHighlightPoint)   getSize(Shape.HIGHLIGHT_POINT_NUM)
+            else                    getSize(Shape.DEFAULT_POINT_NUM)
         }
         else{
-            if (isHighlightPoint)   HIGHLIGHT_POINT_SIZE
-            else                    DEFAULT_POINT_SIZE
+            if (isHighlightPoint)   getSize(Shape.HIGHLIGHT_POINT)
+            else                    getSize(Shape.DEFAULT_POINT)
         }
 
 
     val pointColor =    if(color != null)           Color(color)
-                        else if (isHighlightPoint)  ProgressBarColor.pointHighlight
-                        else                        ProgressBarColor.pointDefault
+    else if (isHighlightPoint)  ProgressBarColor.pointHighlight
+    else                        ProgressBarColor.pointDefault
 
     val iconTextStyle = if (isHighlightPoint)   MaterialTheme.typography.labelMedium.copy(color = Color(textColor ?: whiteInt), fontWeight = FontWeight.Bold)
-                        else                    MaterialTheme.typography.labelSmall.copy(color = Color(textColor ?: whiteInt), fontWeight = FontWeight.Bold)
+    else                    MaterialTheme.typography.labelSmall.copy(color = Color(textColor ?: whiteInt), fontWeight = FontWeight.Bold)
 
     Box(
         contentAlignment = Alignment.Center,
@@ -452,21 +483,21 @@ private fun Line(
         if (isHighlight)
             Box(
                 modifier = modifier
-                    .height(HIGHLIGHT_LINE_SIZE)
+                    .height(getSize(Shape.HIGHLIGHT_LINE))
                     .background(ProgressBarColor.lineHighlight)
             )
         else{
             if (useMoveColor){
                 Box(
                     modifier = modifier
-                        .height(DEFAULT_LINE_SIZE)
+                        .height(getSize(Shape.DEFAULT_LINE))
                         .background(ProgressBarColor.lineDefaultMove)
                 )
             }
             else{
                 Box(
                     modifier = modifier
-                        .height(DEFAULT_LINE_SIZE)
+                        .height(getSize(Shape.DEFAULT_LINE))
                         .background(color ?: MaterialTheme.colorScheme.outline)
                 )
             }
@@ -476,7 +507,7 @@ private fun Line(
     else{
         Box(
             modifier = modifier
-                .height(DEFAULT_LINE_SIZE)
+                .height(getSize(Shape.DEFAULT_LINE))
                 .background(Color.Transparent)
         )
     }
@@ -505,30 +536,30 @@ private fun Line(
 
 
 
-//@Composable
-//@PreviewLightDark
-//private fun Preview(){
-//    SomewhereTheme {
-//        Box(
-//            modifier = Modifier
-//                .background(MaterialTheme.colorScheme.surface)
-//                .width(600.dp)
-//                .padding(0.dp, 16.dp)
-//        ) {
-//            DateListProgressBar(
-//                startSpacerValue = 16.dp,
-//                endSpacerValue = 16.dp,
-//                progressBarState = LazyListState(),
-//                dateList = listOf(
-//                    Date(date = LocalDate.now(), titleText = ""),
-//                    Date(date = LocalDate.now().plusDays(1), titleText = "title 2"),
-//                    Date(date = LocalDate.now().plusDays(1), titleText = "title 3")
-//                ),
-//                currentDateIdx = 0,
-//                dateTimeFormat = DateTimeFormat()
-//            ) {
-//
-//            }
-//        }
-//    }
-//}
+@Composable
+@PreviewLightDark
+private fun Preview(){
+    SomewhereTheme {
+        Box(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .width(600.dp)
+                .padding(0.dp, 16.dp)
+        ) {
+            DateListProgressBar(
+                startSpacerValue = 16.dp,
+                endSpacerValue = 16.dp,
+                progressBarState = LazyListState(),
+                dateList = listOf(
+                    Date(date = LocalDate.now(), titleText = ""),
+                    Date(date = LocalDate.now().plusDays(1), titleText = "title 2"),
+                    Date(date = LocalDate.now().plusDays(1), titleText = "title 3")
+                ),
+                currentDateIdx = 0,
+                dateTimeFormat = DateTimeFormat()
+            ) {
+
+            }
+        }
+    }
+}

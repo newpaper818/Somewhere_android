@@ -37,5 +37,4 @@ class CommonTripUiStateRepository @Inject constructor() {
             CommonTripUiState()
         )
     val commonTripUiState = _commonTripUiState.asStateFlow()
-
 }

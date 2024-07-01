@@ -7,7 +7,11 @@ import com.newpaper.somewhere.core.data.repository.image.CommonImageRepository
 import com.newpaper.somewhere.core.data.repository.image.GetImageRepository
 import com.newpaper.somewhere.core.data.repository.trip.TripRepository
 import com.newpaper.somewhere.core.data.repository.trip.TripsRepository
+import com.newpaper.somewhere.core.model.enums.SpotType
+import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
+import com.newpaper.somewhere.core.utils.convert.updateTravelDistanceCurrPrevNextSpot
+import com.newpaper.somewhere.core.utils.convert.updateTravelDistancePrevNextSpot
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.update
 import java.time.ZoneOffset
@@ -25,6 +29,8 @@ class CommonTripViewModel @Inject constructor(
     private val getImageRepository: GetImageRepository,
 ): ViewModel() {
     val commonTripUiState = commonTripUiStateRepository.commonTripUiState
+
+
 
     fun setIsEditMode(
         isEditMode: Boolean?
@@ -54,17 +60,25 @@ class CommonTripViewModel @Inject constructor(
         }
     }
 
-    fun getImage(
-        imagePath: String,
-        imageUserId: String,
-        result: (Boolean) -> Unit
-    ) {
-        getImageRepository.getImage(
-            imagePath = imagePath,
-            imageUserId = imageUserId,
-            result = result
-        )
+    fun setCurrentDateIndex(
+        dateIndex: Int
+    ){
+        commonTripUiStateRepository._commonTripUiState.update {
+            it.copy(tripInfo = it.tripInfo.copy(
+                dateIndex = dateIndex
+            ))
+        }
     }
+
+
+
+
+
+
+
+
+
+
 
     fun updateTripState(toTempTrip: Boolean, trip: Trip){
         commonTripUiStateRepository._commonTripUiState.update {
@@ -236,6 +250,42 @@ class CommonTripViewModel @Inject constructor(
         )
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //==============================================================================================
+    //image ========================================================================================
+    fun getImage(
+        imagePath: String,
+        imageUserId: String,
+        result: (Boolean) -> Unit
+    ) {
+        getImageRepository.getImage(
+            imagePath = imagePath,
+            imageUserId = imageUserId,
+            result = result
+        )
+    }
+
     fun addAddedImages(
         newAddedImages: List<String>
     ){
@@ -311,6 +361,29 @@ class CommonTripViewModel @Inject constructor(
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //==============================================================================================
+    //edit trip ====================================================================================
     fun deleteTempTrip(trip: Trip){
         val newTempTripList = commonTripUiState.value.tripInfo.tempTrips?.toMutableList()
         newTempTripList?.remove(trip)
@@ -318,6 +391,125 @@ class CommonTripViewModel @Inject constructor(
             it.copy(
                 tripInfo = it.tripInfo.copy(tempTrips = newTempTripList)
             )
+        }
+    }
+
+
+    fun addNewSpot(
+        dateIndex: Int
+    ){
+        if(commonTripUiState.value.tripInfo.tempTrip != null){
+            val newSpotList = commonTripUiState.value.tripInfo.tempTrip!!.dateList[dateIndex].spotList.toMutableList()
+
+            //set id, iconText, index
+            val date = commonTripUiState.value.tripInfo.tempTrip!!.dateList[dateIndex].date
+            val nowTime = ZonedDateTime.now()
+            val newId = nowTime.hashCode() * 31 + dateIndex
+
+            val lastIconText =
+                if (newSpotList.isNotEmpty()) newSpotList.last().iconText
+                else 0
+
+            val lastIndex =
+                if (newSpotList.isNotEmpty()) newSpotList.indexOf(newSpotList.last())
+                else -1
+
+            val newSpot = Spot(id = newId, index = lastIndex + 1, iconText = lastIconText + 1, date = date, spotType = SpotType.TOUR)
+            newSpotList.add(newSpot)
+
+            //update
+            val newDateList = commonTripUiState.value.tripInfo.tempTrip!!.dateList.toMutableList()
+
+            val newDate = newDateList[dateIndex].copy(spotList = newSpotList)
+
+            newDateList[dateIndex] = newDate
+
+            //update travel distance
+            var newTrip = commonTripUiState.value.tripInfo.tempTrip!!.copy(dateList = newDateList)
+
+            newTrip = newTrip.dateList[dateIndex].spotList.last().updateTravelDistancePrevNextSpot(newTrip, dateIndex)
+
+            updateTripState(true, newTrip)
+        }
+    }
+
+    fun deleteSpot(
+        dateIndex: Int,
+        spotIndex: Int
+    ){
+        if(commonTripUiState.value.tripInfo.tempTrip != null){
+
+            val dateList = commonTripUiState.value.tripInfo.tempTrip!!.clone().dateList
+
+            //tempTrip's spotList
+            val newSpotList = commonTripUiState.value.tripInfo.tempTrip!!.clone().dateList[dateIndex].spotList.toMutableList()
+
+            //delete spot
+            newSpotList.removeAt(spotIndex)
+
+            //set index, iconText
+            var newIconText = if (spotIndex == 0) 0
+            else newSpotList[spotIndex - 1].iconText
+
+            for (i in spotIndex until newSpotList.size){
+                newSpotList[i].index = i
+
+                if(newSpotList[i].spotType.isNotMove())
+                    newIconText++
+
+                newSpotList[i].iconText = newIconText
+            }
+
+            //tempTrip's dateList
+            val newDateList = commonTripUiState.value.tripInfo.tempTrip!!.clone().dateList.toMutableList()
+            val newDate = newDateList[dateIndex].copy(spotList = newSpotList.toList())
+            newDateList[dateIndex] = newDate
+
+            var newTrip = commonTripUiState.value.tripInfo.tempTrip!!.copy(dateList = newDateList.toList())
+
+            //check prev or next spot is MOVE and update travel distance
+            val newSpotIndex = if (newTrip.dateList[dateIndex].spotList.getOrNull(spotIndex) != null) spotIndex
+            else spotIndex - 1
+
+            if (newTrip.dateList[dateIndex].spotList.getOrNull(newSpotIndex) != null)
+                newTrip = newTrip.dateList[dateIndex].spotList[newSpotIndex].updateTravelDistanceCurrPrevNextSpot(newTrip, dateIndex)
+
+            //update tempTrip
+            updateTripState(true, newTrip)
+        }
+    }
+
+    fun reorderSpotListAndUpdateTravelDistance(dateIndex: Int, currentIndex: Int, destinationIndex: Int){
+        if (commonTripUiState.value.tripInfo.tempTrip?.dateList?.get(dateIndex)?.spotList != null){
+
+            val newSpotList = commonTripUiState.value.tripInfo.tempTrip!!.dateList[dateIndex].spotList.toMutableList()
+
+            //reorder
+            val date = newSpotList[currentIndex]
+            newSpotList.removeAt(currentIndex)
+            newSpotList.add(destinationIndex, date)
+
+            //update index and iconText
+            var newIconText = 0
+            for (index in 0 until newSpotList.size){
+                if (newSpotList[index].spotType.isNotMove())
+                    newIconText++
+                newSpotList[index].iconText = newIconText
+                newSpotList[index].index = index
+            }
+
+            //
+            val newDate = commonTripUiState.value.tripInfo.tempTrip!!.dateList[dateIndex].copy(spotList = newSpotList)
+            val newDateList = commonTripUiState.value.tripInfo.tempTrip!!.dateList.toMutableList()
+            newDateList[dateIndex] = newDate
+            var newTempTrip = commonTripUiState.value.tripInfo.tempTrip!!.copy(dateList = newDateList)
+
+            //update travel distance
+            newTempTrip = newTempTrip.dateList[dateIndex].spotList[currentIndex].updateTravelDistanceCurrPrevNextSpot(newTempTrip, dateIndex)
+            newTempTrip = newTempTrip.dateList[dateIndex].spotList[destinationIndex].updateTravelDistanceCurrPrevNextSpot(newTempTrip, dateIndex)
+
+            //update ui state
+            updateTripState(true, newTempTrip)
         }
     }
 }
