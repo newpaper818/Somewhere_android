@@ -1,10 +1,7 @@
 package com.newpaper.somewhere.feature.trip.trips
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.newpaper.somewhere.core.data.repository.image.CommonImageRepository
-import com.newpaper.somewhere.core.data.repository.image.GetImageRepository
-import com.newpaper.somewhere.core.data.repository.trip.TripRepository
 import com.newpaper.somewhere.core.data.repository.trip.TripsRepository
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
@@ -34,6 +31,7 @@ data class TripsUiState(
 
     val loadingTrips: Boolean = true,
 
+    val isShowingDialog: Boolean = false,
     val showExitDialog: Boolean = false,
     val showDeleteDialog: Boolean = false,
     val selectedTrip: Trip? = null, //for delete trip
@@ -46,10 +44,7 @@ data class TripsUiState(
 @HiltViewModel
 class TripsViewModel @Inject constructor(
     private val commonTripUiStateRepository: CommonTripUiStateRepository,
-//    private val commonTripViewModel: CommonTripViewModel,
     private val tripsRepository: TripsRepository,
-    private val tripRepository: TripRepository,
-    private val getImageRepository: GetImageRepository,
     private val commonImageRepository: CommonImageRepository,
 ): ViewModel()  {
     private val _tripsUiState: MutableStateFlow<TripsUiState> =
@@ -80,16 +75,27 @@ class TripsViewModel @Inject constructor(
         }
     }
 
+    private fun setIsShowingDialog(){
+        val isShowingDialog = _tripsUiState.value.showExitDialog ||
+                _tripsUiState.value.showDeleteDialog
+
+        _tripsUiState.update {
+            it.copy(isShowingDialog = isShowingDialog)
+        }
+    }
+
     fun setShowExitDialog(showExitDialog: Boolean){
         _tripsUiState.update {
             it.copy(showExitDialog = showExitDialog)
         }
+        setIsShowingDialog()
     }
 
     fun setShowDeleteDialog(showDeleteDialog: Boolean){
         _tripsUiState.update {
             it.copy(showDeleteDialog = showDeleteDialog)
         }
+        setIsShowingDialog()
     }
 
     fun setSelectedTrip(selectedTrip: Trip?){
