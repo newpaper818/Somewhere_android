@@ -149,7 +149,7 @@ fun DeleteAccountRoute(
             onDismissRequest = {
                 showDeleteAccountDialog = false
             },
-            onDeleteClick = {
+            onClickDelete = {
                 showDeleteAccountDialog = false
                 deleteAccountViewModel.deleteAccount(
                     appUserId = userData.userId,
@@ -272,7 +272,7 @@ private fun DeleteAccountScreen(
                 startPadding = spacerValue,
                 title = stringResource(id = R.string.delete_account),
                 navigationIcon = TopAppBarIcon.back,
-                navigationIconOnClick = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() }
             )
         },
         snackbarHost = {

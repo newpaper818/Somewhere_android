@@ -81,9 +81,9 @@ fun GraphListItem(
     isLastItem: Boolean,
     deleteEnabled: Boolean,
     dragEnabled: Boolean,
-    onItemClick: (() -> Unit)?,
+    onClickItem: (() -> Unit)?,
 
-    onExpandedButtonClicked: () -> Unit,
+    onClickExpandedButton: () -> Unit,
     isLongText: (Boolean) -> Unit,
 
     modifier: Modifier = Modifier,  //item modifier
@@ -93,9 +93,9 @@ fun GraphListItem(
 
     isHighlighted: Boolean = false,
 
-    onDeleteClick: () -> Unit = { },
-    onSideTextClick: (() -> Unit)? = null,
-    onPointClick: (() -> Unit)? = null,
+    onClickDelete: () -> Unit = { },
+    onClickSideText: (() -> Unit)? = null,
+    onClickPoint: (() -> Unit)? = null,
 
     iconText: String? = null,
     @ColorInt iconTextColor: Int? = null,
@@ -139,8 +139,8 @@ fun GraphListItem(
             containerColor = clickableBoxColor,
             shape = MaterialTheme.shapes.medium,
             modifier = Modifier.border(1.dp, borderColor, MaterialTheme.shapes.medium),
-            enabled = onItemClick != null,
-            onClick = onItemClick ?: {}
+            enabled = onClickItem != null,
+            onClick = onClickItem ?: {}
         ) {
             Column(
                 modifier = Modifier
@@ -165,7 +165,7 @@ fun GraphListItem(
                     SideText(
                         text = sideText,
                         isEditMode = isEditMode,
-                        onClick = onSideTextClick,
+                        onClick = onClickSideText,
                         spotDragModifier = spotDragModifier,
                         sideTextPlaceHolderIcon = sideTextPlaceHolderIcon
                     )
@@ -173,7 +173,7 @@ fun GraphListItem(
                     //point, line
                     PointWithLine(
                         iconText = iconText,
-                        onClick = onPointClick,
+                        onClick = onClickPoint,
                         iconTextColor = iconTextColor,
                         pointColor = pointColor,
                         upperLineColor = upperLineColor,
@@ -207,9 +207,9 @@ fun GraphListItem(
                         dragHandleModifier = dragHandleModifier,
                         expandedTextIsNull = expandedText == null,
                         isExpanded = isExpanded,
-                        onClickDelete = onDeleteClick,
+                        onClickDelete = onClickDelete,
                         onClickExpanded = {
-                            onExpandedButtonClicked()
+                            onClickExpandedButton()
                         }
                     )
                 }

@@ -390,7 +390,7 @@ private fun TripScreen(
                 title = topBarTitle,
                 internetEnabled = internetEnabled,
                 navigationIcon = TopAppBarIcon.back,
-                navigationIconOnClick = { navigate.navigateUp() },
+                onClickNavigationIcon = { navigate.navigateUp() },
                 actionIcon2 = if (!loadingTrip && !isEditMode && !use2Panes && showingTrip.editable) TopAppBarIcon.edit else null,
                 actionIcon2Onclick = {
                     tripUiInfo.setIsEditMode(true)
@@ -426,7 +426,7 @@ private fun TripScreen(
                 bodyText = stringResource(id = R.string.dialog_body_are_you_sure_to_exit),
                 deleteButtonText = stringResource(id = R.string.dialog_button_exit),
                 onDismissRequest = { dialog.setShowExitDialog(false) },
-                onDeleteClick = {
+                onClickDelete = {
                     dialog.setShowExitDialog(false)
                     tripUiInfo.setIsEditMode(false)
                     updateTripState(true, tripData.originalTrip)
@@ -726,13 +726,13 @@ private fun TripScreen(
                                         errorCount.decreaseDateTitleErrorCount()
                                     }
                                 },
-                                onItemClick =
+                                onClickItem =
                                 if (!isEditMode){
                                     { navigate.navigateToDate(date.index) }
                                 }
                                 else null,
-                                onSideTextClick = null,
-                                onPointClick =
+                                onClickSideText = null,
+                                onClickPoint =
                                     if (isEditMode) {
                                         {
                                             dialog.setSelectedDate(date)

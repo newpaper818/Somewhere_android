@@ -73,10 +73,10 @@ fun SelectDateDialog(
                         isLastItem = date == dateList.last(),
                         deleteEnabled = false,
                         dragEnabled = false,
-                        onItemClick = {
+                        onClickItem = {
                             currentDateIndex = date.index
                         },
-                        onExpandedButtonClicked = { },
+                        onClickExpandedButton = { },
                         isLongText = { },
                         pointColor = Color(date.color.color),
                         isHighlighted = date.index == currentDateIndex

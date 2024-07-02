@@ -80,12 +80,12 @@ internal data class TripsEdit(
 }
 
 internal data class TripsNavigate(
-    private val _onBackButtonClick: () -> Unit = {},
+    private val _onClickBackButton: () -> Unit = {},
     private val _navigateToTrip: (isNewTrip: Boolean, trip: Trip?) -> Unit = { _, _ ->},
     private val _navigateToGlanceSpot: () -> Unit = {},
 ){
-    fun onBackButtonClick(){
-        _onBackButtonClick() }
+    fun onClickBackButton(){
+        _onClickBackButton() }
     fun navigateToTrip(isNewTrip: Boolean, trip: Trip?){
         _navigateToTrip(isNewTrip, trip) }
     fun navigateToGlanceSpot(){

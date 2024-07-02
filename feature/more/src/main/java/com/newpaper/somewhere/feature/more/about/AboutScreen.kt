@@ -3,10 +3,8 @@ package com.newpaper.somewhere.feature.more.about
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -126,7 +124,7 @@ private fun AboutScreen(
                 startPadding = startSpacerValue,
                 title = stringResource(id = R.string.about),
                 navigationIcon = if (!use2Panes) TopAppBarIcon.back else null,
-                navigationIconOnClick = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() }
             )
         },
         snackbarHost = {

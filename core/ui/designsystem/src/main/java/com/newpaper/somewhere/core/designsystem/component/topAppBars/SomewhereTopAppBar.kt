@@ -45,7 +45,7 @@ fun SomewhereTopAppBar(
     subtitle: String? = null,
 
     navigationIcon: MyIcon? = null,
-    navigationIconOnClick: () -> Unit = {},
+    onClickNavigationIcon: () -> Unit = {},
 
     actionIcon1: MyIcon? = null,
     actionIcon1Onclick: () -> Unit = {},
@@ -133,7 +133,7 @@ fun SomewhereTopAppBar(
             navigationIcon = {
                 Row {
                     if (navigationIcon != null) {
-                        IconButton(onClick = navigationIconOnClick) {
+                        IconButton(onClick = onClickNavigationIcon) {
                             DisplayIcon(icon = navigationIcon)
                         }
                     }
@@ -228,7 +228,7 @@ private fun SomewhereTopAppBarPreview3(){
             title = "Top app bar title",
             subtitle = "this is subtitle",
             navigationIcon = TopAppBarIcon.back,
-            navigationIconOnClick = { },
+            onClickNavigationIcon = { },
             actionIcon1 = TopAppBarIcon.edit,
             actionIcon2 = IconTextButtonIcon.add
         )
@@ -243,7 +243,7 @@ private fun SomewhereTopAppBarPreview4(){
             internetEnabled = false,
             title = "Top app bar title",
             navigationIcon = TopAppBarIcon.back,
-            navigationIconOnClick = { },
+            onClickNavigationIcon = { },
             actionIcon1 = TopAppBarIcon.edit,
             actionIcon2 = IconTextButtonIcon.add
         )
@@ -260,7 +260,7 @@ private fun SomewhereTopAppBarLarge_Dark(){
             title = "This is for large width",
             subtitle = "this is subtitle",
             navigationIcon = TopAppBarIcon.back,
-            navigationIconOnClick = { },
+            onClickNavigationIcon = { },
             actionIcon1 = TopAppBarIcon.edit,
             actionIcon2 = IconTextButtonIcon.add,
             useHorizontalLayoutTitles = true
@@ -278,7 +278,7 @@ private fun SomewhereTopAppBarLarge(){
             title = "This is for large width",
             subtitle = "this is subtitle",
             navigationIcon = TopAppBarIcon.back,
-            navigationIconOnClick = { },
+            onClickNavigationIcon = { },
             actionIcon1 = TopAppBarIcon.edit,
             actionIcon2 = IconTextButtonIcon.add,
             useHorizontalLayoutTitles = true
@@ -296,7 +296,7 @@ private fun SomewhereTopAppBarLarge2_Dark(){
             internetEnabled = false,
             title = "This is for large width",
             navigationIcon = TopAppBarIcon.back,
-            navigationIconOnClick = { },
+            onClickNavigationIcon = { },
             actionIcon1 = TopAppBarIcon.edit,
             actionIcon2 = IconTextButtonIcon.add,
             useHorizontalLayoutTitles = true
@@ -314,7 +314,7 @@ private fun SomewhereTopAppBarLarge2(){
             internetEnabled = false,
             title = "This is for large width",
             navigationIcon = TopAppBarIcon.back,
-            navigationIconOnClick = { },
+            onClickNavigationIcon = { },
             actionIcon1 = TopAppBarIcon.edit,
             actionIcon2 = IconTextButtonIcon.add,
             useHorizontalLayoutTitles = true

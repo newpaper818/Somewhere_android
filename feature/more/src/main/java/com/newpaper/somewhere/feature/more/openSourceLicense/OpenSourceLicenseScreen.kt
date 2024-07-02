@@ -49,7 +49,7 @@ fun OpenSourceLicenseRoute(
                 startPadding = startSpacerValue,
                 title = stringResource(id = R.string.open_source_license),
                 navigationIcon = TopAppBarIcon.back,
-                navigationIconOnClick = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() }
             )
         },
     ) { paddingValues ->

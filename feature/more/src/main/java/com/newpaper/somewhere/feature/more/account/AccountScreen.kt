@@ -126,7 +126,7 @@ private fun AccountScreen(
             onDismissRequest = {
                 showSignOutDialog = false
             },
-            onDeleteClick = {
+            onClickDelete = {
                 showSignOutDialog = false
                 onSignOut()
             }
@@ -142,7 +142,7 @@ private fun AccountScreen(
                 startPadding = startSpacerValue,
                 title = stringResource(id = R.string.account),
                 navigationIcon = if (!use2Panes) TopAppBarIcon.back else null,
-                navigationIconOnClick = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() }
             )
         },
         snackbarHost = {

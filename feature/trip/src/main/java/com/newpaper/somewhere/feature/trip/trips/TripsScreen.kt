@@ -149,7 +149,7 @@ fun TripsRoute(
         if (isEditMode) tempSharedTrips
         else            originalSharedTrips
 
-    val onBackButtonClick = {
+    val onClickBackButton = {
         if (originalTrips != tempTrips || originalSharedTrips != tempSharedTrips)
             tripsViewModel.setShowExitDialog(true)
         else
@@ -159,7 +159,7 @@ fun TripsRoute(
     //when back button click
     if (isEditMode)
         BackHandler {
-            onBackButtonClick()
+            onClickBackButton()
         }
 
 
@@ -217,7 +217,7 @@ fun TripsRoute(
             }
         ),
         navigate = TripsNavigate(
-            _onBackButtonClick = onBackButtonClick,
+            _onClickBackButton = onClickBackButton,
             _navigateToTrip = { isNewTrip, trip ->
                 if (isNewTrip && trip == null) {
                     val newTrip = tripsViewModel.addAndGetNewTrip(appUserId)
@@ -327,7 +327,7 @@ private fun TripsScreen(
         //bottom save cancel button
         bottomSaveCancelBarVisible = isEditMode,
         useBottomNavBar = useBottomNavBar,
-        onClickCancel = { navigate.onBackButtonClick() },
+        onClickCancel = { navigate.onClickBackButton() },
         onClickSave = {
             tripsEdit.saveTrips()
 
@@ -341,7 +341,7 @@ private fun TripsScreen(
                 bodyText = stringResource(id = R.string.dialog_body_are_you_sure_to_exit),
                 deleteButtonText = stringResource(id = R.string.dialog_button_exit),
                 onDismissRequest = { dialog.showExitDialogToFalse() },
-                onDeleteClick = {
+                onClickDelete = {
                     dialog.showExitDialogToFalse()
                     tripsUiInfo.setIsEditMode(false)
                     tripsEdit.unSaveTempTrips()
@@ -377,7 +377,7 @@ private fun TripsScreen(
                     )
                 },
                 onDismissRequest = { dialog.setShowDeleteDialog(false) },
-                onDeleteClick = {
+                onClickDelete = {
                     tripsEdit.onDeleteTrip(dialog.selectedTrip)
                     dialog.setShowDeleteDialog(false)
                     image.addDeletedImages(dialog.selectedTrip.getAllImagesPath())
