@@ -42,7 +42,6 @@ import com.newpaper.somewhere.core.ui.MyTextField
 import com.newpaper.somewhere.core.ui.ui.R
 
 private const val MAX_MEMO_LENGTH = 3000
-private const val MAX_VIEW_MEMO_LENGTH = 500
 
 @Composable
 fun MemoCard(
@@ -63,14 +62,7 @@ fun MemoCard(
     val borderColor = if (isTextSizeLimit) CustomColor.outlineError
                         else Color.Transparent
 
-    var viewMemoText = memoText ?: stringResource(id = R.string.memo_card_body_no_memo)
-
-    val isMemoLong = viewMemoText.length > MAX_VIEW_MEMO_LENGTH
-
-    if (isMemoLong){
-        viewMemoText = viewMemoText.substring(0, MAX_VIEW_MEMO_LENGTH)
-        viewMemoText += "..."
-    }
+    val viewMemoText = memoText ?: stringResource(id = R.string.memo_card_body_no_memo)
 
     //memo card
     MyCard(
@@ -80,7 +72,7 @@ fun MemoCard(
         ),
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(max = 400.dp)
+            .heightIn(max = 360.dp)
             .border(1.dp, borderColor, RoundedCornerShape(16.dp)),
         enabled = !isEditMode && memoText != null,
         onClick =
