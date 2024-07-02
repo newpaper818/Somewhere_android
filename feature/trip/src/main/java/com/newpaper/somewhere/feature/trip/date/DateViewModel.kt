@@ -1,9 +1,7 @@
 package com.newpaper.somewhere.feature.trip.date
 
 import androidx.lifecycle.ViewModel
-import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
-import com.newpaper.somewhere.feature.trip.CommonTripUiStateRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,8 +9,7 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 data class DateUiState(
-    val showBottomSaveCancelBar: Boolean = false,
-
+    val isShowingDialog: Boolean = false,
     val showExitDialog: Boolean = false,
     val showMemoDialog: Boolean = false,
     val showSetColorDialog: Boolean = false,
@@ -27,7 +24,7 @@ data class DateUiState(
 
 @HiltViewModel
 class DateViewModel @Inject constructor(
-    private val commonTripUiStateRepository: CommonTripUiStateRepository,
+
 ): ViewModel() {
 
     private val _dateUiState: MutableStateFlow<DateUiState> =
@@ -38,42 +35,51 @@ class DateViewModel @Inject constructor(
 
 
 
+    private fun setIsShowingDialog(){
+        val isShowingDialog = _dateUiState.value.showMemoDialog ||
+                _dateUiState.value.showExitDialog || _dateUiState.value.showSetTimeDialog ||
+                _dateUiState.value.showSetColorDialog || _dateUiState.value.showSetSpotTypeDialog
 
-    fun setShowBottomSaveCancelBar(showBottomSaveCancelBar: Boolean) {
         _dateUiState.update {
-            it.copy(showBottomSaveCancelBar = showBottomSaveCancelBar)
+            it.copy(isShowingDialog = isShowingDialog)
         }
     }
+
 
     //dialog
     fun setShowExitDialog(showExitDialog: Boolean) {
         _dateUiState.update {
             it.copy(showExitDialog = showExitDialog)
         }
+        setIsShowingDialog()
     }
 
     fun setShowMemoDialog(showMemoDialog: Boolean) {
         _dateUiState.update {
             it.copy(showMemoDialog = showMemoDialog)
         }
+        setIsShowingDialog()
     }
 
     fun setShowSetColorDialog(showSetColorDialog: Boolean) {
         _dateUiState.update {
             it.copy(showSetColorDialog = showSetColorDialog)
         }
+        setIsShowingDialog()
     }
 
     fun setShowSetTimeDialog(showSetTimeDialog: Boolean) {
         _dateUiState.update {
             it.copy(showSetTimeDialog = showSetTimeDialog)
         }
+        setIsShowingDialog()
     }
 
     fun setShowSetSpotTypeDialog(showSetSpotTypeDialog: Boolean) {
         _dateUiState.update {
             it.copy(showSetSpotTypeDialog = showSetSpotTypeDialog)
         }
+        setIsShowingDialog()
     }
 
     fun setSelectedSpot(selectedSpot: Spot?) {

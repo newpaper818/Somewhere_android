@@ -200,10 +200,7 @@ fun DateRoute(
             internetEnabled = internetEnabled,
             isFABExpanded = isFABExpanded,
             isEditMode = isEditMode,
-            _setIsEditMode = commonTripViewModel::setIsEditMode,
-            showBottomSaveCancelBar = dateUiState.showBottomSaveCancelBar,
-            _setShowBottomSaveCancelBar = dateViewModel::setShowBottomSaveCancelBar,
-
+            _setIsEditMode = commonTripViewModel::setIsEditMode
         ),
         dateData = DateData(
             originalTrip = originalTrip,
@@ -219,6 +216,7 @@ fun DateRoute(
             _decreaseSpotTitleErrorCount = dateViewModel::decreaseSpotTitleErrorCount,
         ),
         dialog = DateDialog(
+            isShowingDialog = dateUiState.isShowingDialog,
             showExitDialog = dateUiState.showExitDialog,
             showMemoDialog = dateUiState.showMemoDialog,
             showSetColorDialog = dateUiState.showSetColorDialog,
@@ -257,14 +255,12 @@ fun DateRoute(
                     commonTripViewModel.saveTrip(appUserId = appUserId)
 
                     commonTripViewModel.setIsEditMode(false)
-                    dateViewModel.setShowBottomSaveCancelBar(false)
 
                     //save to firestore
                     commonTripViewModel.saveTripAndAllDates(trip = tempTrip)
                 }
                 else {
                     commonTripViewModel.setIsEditMode(false)
-                    dateViewModel.setShowBottomSaveCancelBar(false)
                 }
 
                 commonTripViewModel.organizeAddedDeletedImages(
@@ -390,7 +386,6 @@ private fun DateScreen(
                 actionIcon2 = if (!dateUiInfo.isEditMode && showingTrip.editable) TopAppBarIcon.edit else null,
                 actionIcon2Onclick = {
                     dateUiInfo.setIsEditMode(true)
-                    dateUiInfo.setShowBottomSaveCancelBar(true)
                 }
             )
         },
@@ -405,7 +400,7 @@ private fun DateScreen(
         },
 
         //bottom save cancel bar
-        bottomSaveCancelBarVisible = dateUiInfo.isEditMode && dateUiInfo.showBottomSaveCancelBar && showTripBottomSaveCancelBar,
+        bottomSaveCancelBarVisible = dateUiInfo.isEditMode && !dialog.isShowingDialog && showTripBottomSaveCancelBar,
         onClickCancel = {
             focusManager.clearFocus()
             navigate.navigateUp()
@@ -444,11 +439,9 @@ private fun DateScreen(
                 initialColor = currentDate.color,
                 onDismissRequest = {
                     dialog.setShowSetColorDialog(false)
-                    dateUiInfo.setShowBottomSaveCancelBar(true)
                 },
                 onOkClick = {
                     dialog.setShowSetColorDialog(false)
-                    dateUiInfo.setShowBottomSaveCancelBar(true)
                     currentDate.setColor(dateData.showingTrip, updateTripState, it)
                 }
             )
@@ -461,13 +454,11 @@ private fun DateScreen(
                 isSetStartTime = true,
                 onDismissRequest = {
                     dialog.setShowSetTimeDialog(false)
-                    dateUiInfo.setShowBottomSaveCancelBar(true)
                     dialog.setSelectedDate(null)
                 },
                 onConfirm = {newTime ->
                     dialog.selectedSpot.setStartTime(showingTrip, datePagerState.currentPage, updateTripState, newTime)
                     dialog.setShowSetTimeDialog(false)
-                    dateUiInfo.setShowBottomSaveCancelBar(true)
                     dialog.setSelectedDate(null)
                 }
             )
@@ -478,12 +469,10 @@ private fun DateScreen(
                 initialSpotType = dialog.selectedSpot.spotType,
                 onDismissRequest = {
                     dialog.setShowSetSpotTypeDialog(false)
-                    dateUiInfo.setShowBottomSaveCancelBar(true)
                     dialog.setSelectedDate(null)
                 },
                 onClickOk = { newSpotType ->
                     dialog.setShowSetSpotTypeDialog(false)
-                    dateUiInfo.setShowBottomSaveCancelBar(true)
                     dialog.selectedSpot.setSpotType(
                         showingTrip,
                         dateList,
@@ -686,7 +675,6 @@ private fun DatePage(
                 color = currentDate.color,
                 onClickColorCard = {
                     dialog.setShowSetColorDialog(true)
-                    dateUiInfo.setShowBottomSaveCancelBar(false)
                 }
             )
         }
@@ -889,7 +877,6 @@ private fun DatePage(
                                     {
                                         dialog.setSelectedDate(spot)
                                         dialog.setShowSetTimeDialog(true)
-                                        dateUiInfo.setShowBottomSaveCancelBar(false)
                                     }
                                 }
                                 else null,
@@ -898,7 +885,6 @@ private fun DatePage(
                                     {
                                         dialog.setSelectedDate(spot)
                                         dialog.setShowSetSpotTypeDialog(true)
-                                        dateUiInfo.setShowBottomSaveCancelBar(false)
                                     }
                                 }
                                 else null
