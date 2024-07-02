@@ -359,7 +359,7 @@ private fun TripsScreen(
                 stringResource(id = R.string.dialog_title_leave_shared_trip)
                 else stringResource(id = R.string.dialog_title_delete_trip)
 
-            val subBodyText = if (isSharedTrip) null
+            val subBodyText = if (isSharedTrip || dialog.selectedTrip.sharingTo.isEmpty()) null
             else stringResource(id = R.string.dialog_sub_body_delete_trip)
 
             val deleteText = if (isSharedTrip) stringResource(id = R.string.dialog_button_leave)
