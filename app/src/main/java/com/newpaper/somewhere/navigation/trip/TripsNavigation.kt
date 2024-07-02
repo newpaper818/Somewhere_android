@@ -88,15 +88,18 @@ fun NavGraphBuilder.tripsScreen(
             TripsRoute(
                 commonTripViewModel = commonTripViewModel,
                 tripsViewModel = tripsViewModel,
+
+                spacerValue = externalState.windowSizeClass.spacerValue,
                 appUserId = appUiState.appUserData?.userId ?: "",
+                dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
                 internetEnabled = externalState.internetEnabled,
+
                 useBottomNavBar = externalState.windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact,
                 firstLaunch = appUiState.firstLaunch,
                 firstLaunchToFalse = appViewModel::firstLaunchToFalse,
-                isEditMode = commonTripUiState.isEditMode,
-                spacerValue = externalState.windowSizeClass.spacerValue,
+
                 lazyListState = lazyListState,
-                dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
+
                 navigateToTrip = navigateToTrip,
                 navigateToGlanceSpot = navigateToGlanceSpot
             )

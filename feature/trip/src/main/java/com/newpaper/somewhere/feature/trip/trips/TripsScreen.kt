@@ -72,18 +72,17 @@ internal val tripCardHeightDp = 120.dp
 fun TripsRoute(
     commonTripViewModel: CommonTripViewModel,
     tripsViewModel: TripsViewModel,
+
+    spacerValue: Dp,
     appUserId: String,
+    dateTimeFormat: DateTimeFormat,
     internetEnabled: Boolean,
+
     useBottomNavBar: Boolean,
     firstLaunch: Boolean,
     firstLaunchToFalse: () -> Unit,
-    isEditMode: Boolean,
-
-    spacerValue: Dp,
 
     lazyListState: LazyListState,
-
-    dateTimeFormat: DateTimeFormat,
 
     navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
     navigateToGlanceSpot: (glance: Glance) -> Unit,
@@ -94,6 +93,8 @@ fun TripsRoute(
 
     val tripsUiState by tripsViewModel.tripsUiState.collectAsState()
     val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsState()
+
+    val isEditMode = commonTripUiState.isEditMode
 
     val originalTrips = commonTripUiState.tripInfo.trips ?: listOf()
     val tempTrips = commonTripUiState.tripInfo.tempTrips ?: listOf()
@@ -247,6 +248,7 @@ fun TripsRoute(
 @Composable
 private fun TripsScreen(
     appUserId: String,
+
     tripsUiInfo: TripsUiInfo,
     tripsData: TripsData,
     dialog: TripsDialog,
@@ -302,7 +304,7 @@ private fun TripsScreen(
 
                 actionIcon2 = if (!isEditMode && !loadingTrips) TopAppBarIcon.edit else null,
                 actionIcon2Onclick = {
-                    tripsUiInfo.setIsEditMode(null)
+                    tripsUiInfo.setIsEditMode(true)
                 },
                 startPadding = spacerValue
             )
