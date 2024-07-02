@@ -8,7 +8,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -24,7 +23,6 @@ import com.newpaper.somewhere.navigation.popEnterTransition
 import com.newpaper.somewhere.navigation.popExitTransition
 import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
-import kotlinx.coroutines.launch
 
 private const val DEEP_LINK_URI_PATTERN =
     "https://www.somewhere.newpaper.com/main/trip"
@@ -56,7 +54,6 @@ fun NavGraphBuilder.tripScreen(
         }
 
         val appUiState by appViewModel.appUiState.collectAsState()
-        val coroutineScope = rememberCoroutineScope()
 
         Row(
             modifier = Modifier
@@ -74,54 +71,19 @@ fun NavGraphBuilder.tripScreen(
                         dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
                         internetEnabled = externalState.internetEnabled,
                         commonTripViewModel = commonTripViewModel,
-                        isNewTrip = commonTripViewModel.commonTripUiState.value.isNewTrip,
+
                         navigateUp = navigateUp,
+                        navigateUpAndDeleteNewTrip = { deleteTrip ->
+                            navigateUp()
+                            commonTripViewModel.deleteTempTrip(deleteTrip)
+                        },
                         navigateToInviteFriend = { /*TODO*/ },
                         navigateToInvitedFriends = { /*TODO*/ },
                         navigateToImage = { _,_, -> /*TODO*/ },
                         navigateToDate = { dateIndex, ->
                             navigateToDate(dateIndex)
                         },
-                        navigateToTripMap = { /*TODO*/ },
-                        navigateUpAndDeleteNewTrip = { deleteTrip ->
-                            navigateUp()
-                            commonTripViewModel.deleteTempTrip(deleteTrip)
-                        },
-                        updateTripState = { toTempTrip, trip ->
-                            commonTripViewModel.updateTripState(toTempTrip, trip)
-                        },
-                        addAddedImages = { newImages ->
-                            commonTripViewModel.addAddedImages(newImages)
-                        },
-                        addDeletedImages = {newImages ->
-                            commonTripViewModel.addDeletedImages(newImages)
-                        },
-                        organizeAddedDeletedImages = { isClickSave ->
-                            commonTripViewModel.organizeAddedDeletedImages(
-                                tripManagerId = commonTripViewModel.commonTripUiState.value.tripInfo.tempTrip?.managerId ?: "",
-                                isClickSave = isClickSave,
-                                isInTripsScreen = true
-                            )
-                        },
-                        saveTrip = {
-                            coroutineScope.launch {
-                                //save tripUiState tripList
-                                val beforeTempTripDateListLastIndex =
-                                    commonTripViewModel.saveTrip(
-                                        appUserId = appUiState.appUserData!!.userId,
-                                        deleteNotEnabledDate = true
-                                    )
-
-                                commonTripViewModel.setIsEditMode(false)
-                                commonTripViewModel.setIsNewTrip(false)
-
-                                //save to firestore
-                                commonTripViewModel.saveTripAndAllDates(
-                                    trip = commonTripViewModel.commonTripUiState.value.tripInfo.tempTrip!!,
-                                    tempTripDateListLastIndex = beforeTempTripDateListLastIndex
-                                )
-                            }
-                        }
+                        navigateToTripMap = { /*TODO*/ }
                     )
                 }
                 else{

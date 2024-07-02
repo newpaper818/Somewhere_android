@@ -84,7 +84,6 @@ import java.time.LocalDate
 @Composable
 fun TripRoute(
     appUserId: String,
-
     use2Panes: Boolean,
     spacerValue: Dp,
     dateTimeFormat: DateTimeFormat,
@@ -92,27 +91,14 @@ fun TripRoute(
 
     commonTripViewModel: CommonTripViewModel,
 
-    isNewTrip: Boolean,
-
     //navigate
     navigateUp: () -> Unit,
+    navigateUpAndDeleteNewTrip: (deleteTrip: Trip) -> Unit,
     navigateToInviteFriend: () -> Unit,
     navigateToInvitedFriends: () -> Unit,
     navigateToImage: (imageList: List<String>, initialImageIndex: Int) -> Unit,
     navigateToDate: (dateIndex: Int) -> Unit,
     navigateToTripMap: () -> Unit,
-    navigateUpAndDeleteNewTrip: (deleteTrip: Trip) -> Unit,
-
-    //update trip state
-    updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
-
-    //image
-    addAddedImages: (imageFiles: List<String>) -> Unit,
-    addDeletedImages: (imageFiles: List<String>) -> Unit,
-    organizeAddedDeletedImages: (isClickSave: Boolean) -> Unit,
-
-    //save trip
-    saveTrip: () -> Unit,
 
     //
     modifier: Modifier = Modifier,
@@ -122,6 +108,8 @@ fun TripRoute(
 
     val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsState()
     val tripUiState by tripViewModel.tripUiState.collectAsState()
+
+    val isNewTrip = commonTripUiState.isNewTrip
 
     val originalTrip = commonTripUiState.tripInfo.trip!!
     val tempTrip = commonTripUiState.tripInfo.tempTrip!!
@@ -153,6 +141,7 @@ fun TripRoute(
             tripViewModel.setShowExitDialog(true)
         else {
             commonTripViewModel.setIsEditMode(false)
+            tripViewModel.setShowBottomSaveCancelBar(false)
 
             if (isNewTrip){
                 navigateUpAndDeleteNewTrip(originalTrip)
@@ -218,7 +207,7 @@ fun TripRoute(
             _navigateToTripMap = navigateToTripMap,
             _navigateUpAndDeleteNewTrip = navigateUpAndDeleteNewTrip
         ),
-        updateTripState = updateTripState,
+        updateTripState = commonTripViewModel::updateTripState,
         updateTripDurationAndTripState = {toTempTrip, startDate, endDate ->
             tripViewModel.updateTripDurationAndTripState(
                 toTempTrip = toTempTrip,
@@ -234,18 +223,53 @@ fun TripRoute(
                 commonTripViewModel.saveImageToInternalStorage(originalTrip.id, index, uri)
             },
             _downloadImage = commonTripViewModel::getImage,
-            _addAddedImages = addAddedImages,
-            _addDeletedImages = addDeletedImages,
-            _organizeAddedDeletedImages = organizeAddedDeletedImages,
-            _reorderTripImageList = { currentIndex, destinationIndex ->
-                tripViewModel.reorderTripImageList(currentIndex, destinationIndex)
-            }
+            _addAddedImages = commonTripViewModel::addAddedImages,
+            _addDeletedImages = commonTripViewModel::addDeletedImages,
+            _organizeAddedDeletedImages = { isClickSave ->
+                commonTripViewModel.organizeAddedDeletedImages(
+                    tripManagerId = tempTrip.managerId,
+                    isClickSave = isClickSave,
+                    isInTripsScreen = true
+                )
+            },
+            _reorderTripImageList = tripViewModel::reorderTripImageList
         ),
 
         reorderDateList = { currentIndex, destinationIndex ->
             tripViewModel.reorderDateList(currentIndex, destinationIndex)
         },
-        saveTrip = saveTrip,
+        onClickSave = {
+            coroutineScope.launch {
+                if (isNewTrip || originalTrip != tempTrip){
+                    //save tripUiState tripList
+                    val beforeTempTripDateListLastIndex =
+                        commonTripViewModel.saveTrip(
+                            appUserId = appUserId,
+                            deleteNotEnabledDate = true
+                        )
+
+                    commonTripViewModel.setIsEditMode(false)
+                    tripViewModel.setShowBottomSaveCancelBar(false)
+                    commonTripViewModel.setIsNewTrip(false)
+
+                    //save to firestore
+                    commonTripViewModel.saveTripAndAllDates(
+                        trip = commonTripViewModel.commonTripUiState.value.tripInfo.tempTrip!!,
+                        tempTripDateListLastIndex = beforeTempTripDateListLastIndex
+                    )
+                }
+                else {
+                    commonTripViewModel.setIsEditMode(false)
+                    tripViewModel.setShowBottomSaveCancelBar(false)
+                }
+
+                commonTripViewModel.organizeAddedDeletedImages(
+                    tripManagerId = tempTrip.managerId,
+                    isClickSave = true,
+                    isInTripsScreen = true
+                )
+            }
+        },
         modifier = modifier,
         currentDateIndex = commonTripUiState.tripInfo.dateIndex
     )
@@ -286,7 +310,7 @@ private fun TripScreen(
     //reorder date list
     reorderDateList: (currentIndex: Int, destinationIndex: Int) -> Unit,
 
-    saveTrip: () -> Unit,
+    onClickSave: () -> Unit,
 
     modifier: Modifier = Modifier,
     currentDateIndex: Int? = null,
@@ -369,7 +393,7 @@ private fun TripScreen(
                 navigationIconOnClick = { navigate.navigateUp() },
                 actionIcon2 = if (!loadingTrip && !isEditMode && !use2Panes && showingTrip.editable) TopAppBarIcon.edit else null,
                 actionIcon2Onclick = {
-                    tripUiInfo.setIsEditMode(null)
+                    tripUiInfo.setIsEditMode(true)
                     tripUiInfo.setShowBottomSaveCancelBar(true)
                 }
             )
@@ -391,16 +415,7 @@ private fun TripScreen(
             focusManager.clearFocus()
             navigate.navigateUp()
         },
-        onSaveClick = {
-            coroutineScope.launch {
-                if (tripData.isNewTrip || tripData.originalTrip != tripData.tempTrip)
-                    saveTrip() //save to firestore
-                else
-                    tripUiInfo.setIsEditMode(false)
-
-                image.organizeAddedDeletedImages(true)
-            }
-        },
+        onSaveClick = onClickSave,
         saveEnabled = errorCount.totalErrorCount <= 0
 
     ) { paddingValues ->
@@ -718,13 +733,13 @@ private fun TripScreen(
                                 else null,
                                 onSideTextClick = null,
                                 onPointClick =
-                                if (isEditMode) {
-                                    {
-                                        dialog.setSelectedDate(date)
-                                        dialog.setShowSetColorDialog(true)
-                                        tripUiInfo.setShowBottomSaveCancelBar(false)
-                                    }
-                                } else null
+                                    if (isEditMode) {
+                                        {
+                                            dialog.setSelectedDate(date)
+                                            dialog.setShowSetColorDialog(true)
+                                            tripUiInfo.setShowBottomSaveCancelBar(false)
+                                        }
+                                    } else null
                             )
                         }
                     }
