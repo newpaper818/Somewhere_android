@@ -392,12 +392,10 @@ private fun DateScreen(
         onSaveClick = {
             coroutineScope.launch {
                 if (dateData.originalTrip != dateData.tempTrip)
-                //save to firestore
-                    saveTrip()
-                else {
-                    dateUiInfo.setIsEditMode(false)
-                }
+                    saveTrip()  //save to firestore
 
+                dateUiInfo.setIsEditMode(false)
+                dateUiInfo.setShowBottomSaveCancelBar(false)
                 image.organizeAddedDeletedImages(true)
             }
         },
