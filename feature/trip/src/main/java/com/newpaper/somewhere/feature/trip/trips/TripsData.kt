@@ -36,6 +36,7 @@ internal data class TripsData(
 )
 
 internal data class TripsDialog(
+    val isShowingDialog: Boolean = false,
     val showExitDialog: Boolean = false,
     val showDeleteDialog: Boolean = false,
 

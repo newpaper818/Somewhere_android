@@ -185,6 +185,7 @@ fun TripsRoute(
             glance = tripsUiState.glance,
         ),
         dialog = TripsDialog(
+            isShowingDialog = tripsUiState.isShowingDialog,
             showExitDialog = tripsUiState.showExitDialog,
             showDeleteDialog = tripsUiState.showDeleteDialog,
             _showExitDialogToFalse = { tripsViewModel.setShowExitDialog(false) },
@@ -327,7 +328,7 @@ private fun TripsScreen(
         },
 
         //bottom save cancel button
-        bottomSaveCancelBarVisible = isEditMode,
+        bottomSaveCancelBarVisible = isEditMode && !dialog.isShowingDialog,
         useBottomNavBar = useBottomNavBar,
         onClickCancel = { navigate.onClickBackButton() },
         onClickSave = {
