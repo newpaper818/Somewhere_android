@@ -411,11 +411,11 @@ private fun TripScreen(
 
         //bottom save cancel button
         bottomSaveCancelBarVisible = isEditMode && showBottomSaveCancelBar && !use2Panes,
-        onCancelClick = {
+        onClickCancel = {
             focusManager.clearFocus()
             navigate.navigateUp()
         },
-        onSaveClick = onClickSave,
+        onClickSave = onClickSave,
         saveEnabled = errorCount.totalErrorCount <= 0
 
     ) { paddingValues ->

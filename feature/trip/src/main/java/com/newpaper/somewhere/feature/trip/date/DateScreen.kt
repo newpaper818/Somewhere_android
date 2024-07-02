@@ -406,11 +406,11 @@ private fun DateScreen(
 
         //bottom save cancel bar
         bottomSaveCancelBarVisible = dateUiInfo.isEditMode && dateUiInfo.showBottomSaveCancelBar && showTripBottomSaveCancelBar,
-        onCancelClick = {
+        onClickCancel = {
             focusManager.clearFocus()
             navigate.navigateUp()
         },
-        onSaveClick = onClickSave,
+        onClickSave = onClickSave,
         saveEnabled = errorCount.totalErrorCount <= 0
 
     ) { paddingValues ->
