@@ -82,12 +82,15 @@ fun MemoCard(
             .fillMaxWidth()
             .heightIn(max = 400.dp)
             .border(1.dp, borderColor, RoundedCornerShape(16.dp)),
-        enabled = isEditMode || memoText != null,
-        onClick = {
-            //show dialog
-            if (!isEditMode && memoText != null)
-                showMemoDialog()
-        }
+        enabled = !isEditMode && memoText != null,
+        onClick =
+            if (!isEditMode && memoText != null) {
+                //show dialog
+                { showMemoDialog() }
+            }
+            else {
+                null
+            }
     ) {
         Column(
             Modifier.padding(16.dp, 14.dp)
