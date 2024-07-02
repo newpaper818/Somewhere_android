@@ -45,9 +45,9 @@ internal fun DateListItem(
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     isLongText: (Boolean) -> Unit,
 
-    onItemClick: (() -> Unit)?,
-    onSideTextClick: (() -> Unit)? = null,
-    onPointClick: (() -> Unit)? = null
+    onClickItem: (() -> Unit)?,
+    onClickSideText: (() -> Unit)? = null,
+    onClickPoint: (() -> Unit)? = null
 ){
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
@@ -129,12 +129,12 @@ internal fun DateListItem(
         deleteEnabled = false,
         dragEnabled = true,
 
-        onItemClick = onItemClick,
-        onExpandedButtonClicked = {
+        onClickItem = onClickItem,
+        onClickExpandedButton = {
             isExpanded = !isExpanded
         },
-        onSideTextClick = onSideTextClick,
-        onPointClick = onPointClick,
+        onClickSideText = onClickSideText,
+        onClickPoint = onClickPoint,
         isLongText = isLongText
     )
 }

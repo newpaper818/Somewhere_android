@@ -385,7 +385,7 @@ private fun DateScreen(
 
                 //back button
                 navigationIcon = if (!dateUiInfo.use2Panes) TopAppBarIcon.back else null,
-                navigationIconOnClick = { navigate.navigateUp() },
+                onClickNavigationIcon = { navigate.navigateUp() },
 
                 actionIcon2 = if (!dateUiInfo.isEditMode && showingTrip.editable) TopAppBarIcon.edit else null,
                 actionIcon2Onclick = {
@@ -421,7 +421,7 @@ private fun DateScreen(
                 bodyText = stringResource(id = R.string.dialog_body_are_you_sure_to_exit),
                 deleteButtonText = stringResource(id = R.string.dialog_button_exit),
                 onDismissRequest = { dialog.setShowExitDialog(false) },
-                onDeleteClick = {
+                onClickDelete = {
                     dialog.setShowExitDialog(false)
                     dateUiInfo.setIsEditMode(false)
                     updateTripState(true, dateData.originalTrip)
@@ -481,7 +481,7 @@ private fun DateScreen(
                     dateUiInfo.setShowBottomSaveCancelBar(true)
                     dialog.setSelectedDate(null)
                 },
-                onOkClick = { newSpotType ->
+                onClickOk = { newSpotType ->
                     dialog.setShowSetSpotTypeDialog(false)
                     dateUiInfo.setShowBottomSaveCancelBar(true)
                     dialog.selectedSpot.setSpotType(
@@ -875,16 +875,16 @@ private fun DatePage(
                                         errorCount.decreaseSpotTitleErrorCount()
                                     }
                                 },
-                                onItemClick = {
+                                onClickItem = {
                                     navigate.navigateToSpot(dateIndex, spotList.indexOf(spot))
                                 },
-                                onDeleteClick = {
+                                onClickDelete = {
                                     //dialog: ask delete
                                     deleteSpot(dateIndex, spot.index)
                                     spotTypeWithShownList =
                                         updateSpotTypeGroupWithShownList(currentDate, spotTypeWithShownList)
                                 },
-                                onSideTextClick =
+                                onClickSideText =
                                 if (isEditMode){
                                     {
                                         dialog.setSelectedDate(spot)
@@ -893,7 +893,7 @@ private fun DatePage(
                                     }
                                 }
                                 else null,
-                                onPointClick =
+                                onClickPoint =
                                 if (isEditMode){
                                     {
                                         dialog.setSelectedDate(spot)

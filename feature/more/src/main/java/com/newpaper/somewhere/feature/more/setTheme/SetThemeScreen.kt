@@ -94,7 +94,7 @@ private fun SetThemeScreen(
                 startPadding = startSpacerValue,
                 title = stringResource(id = R.string.theme),
                 navigationIcon = if (!use2Panes) TopAppBarIcon.back else null,
-                navigationIconOnClick = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() }
             )
         }
     ){ paddingValues ->

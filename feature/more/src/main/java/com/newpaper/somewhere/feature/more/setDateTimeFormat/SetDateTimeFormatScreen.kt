@@ -132,7 +132,7 @@ private fun SetDateTimeFormatScreen(
                 startPadding = startSpacerValue,
                 title = stringResource(id = R.string.date_time_format),
                 navigationIcon = if (!use2Panes) TopAppBarIcon.back else null,
-                navigationIconOnClick = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() }
             )
         }
     ){ paddingValues ->

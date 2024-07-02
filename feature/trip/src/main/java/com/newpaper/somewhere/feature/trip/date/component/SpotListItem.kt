@@ -47,10 +47,10 @@ internal fun SpotListItem(
     onTitleTextChange: (title: String) -> Unit,
     isLongText: (Boolean) -> Unit,
 
-    onItemClick: () -> Unit,
-    onDeleteClick: () -> Unit,
-    onSideTextClick: (() -> Unit)?,
-    onPointClick: (() -> Unit)?,
+    onClickItem: () -> Unit,
+    onClickDelete: () -> Unit,
+    onClickSideText: (() -> Unit)?,
+    onClickPoint: (() -> Unit)?,
 
     modifier: Modifier = Modifier
 ){
@@ -156,13 +156,13 @@ internal fun SpotListItem(
         deleteEnabled = true,
         dragEnabled = true,
 
-        onItemClick = onItemClick,
-        onExpandedButtonClicked = {
+        onClickItem = onClickItem,
+        onClickExpandedButton = {
             isExpanded = !isExpanded
         },
-        onDeleteClick = onDeleteClick,
-        onSideTextClick = onSideTextClick,
-        onPointClick = onPointClick,
+        onClickDelete = onClickDelete,
+        onClickSideText = onClickSideText,
+        onClickPoint = onClickPoint,
 
         isLongText = isLongText
     )

@@ -175,7 +175,7 @@ private fun EditProfileScreen(
                 startPadding = spacerValue,
                 title = stringResource(id = R.string.edit_profile),
                 navigationIcon = TopAppBarIcon.close,
-                navigationIconOnClick = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() }
             )
         },
         snackbarHost = {

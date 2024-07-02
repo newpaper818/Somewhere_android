@@ -48,7 +48,7 @@ import com.newpaper.somewhere.feature.dialog.myDialog.MyDialog
 fun SetSpotTypeDialog(
     initialSpotType: SpotType,
     onDismissRequest: () -> Unit,
-    onOkClick: (spotType: SpotType) -> Unit,
+    onClickOk: (spotType: SpotType) -> Unit,
     setSpotTypeViewModel: SetSpotTypeViewModel = hiltViewModel()
 ){
     val setSpotTypeUiState by setSpotTypeViewModel.setSpotTypeUiState.collectAsStateWithLifecycle()
@@ -62,7 +62,7 @@ fun SetSpotTypeDialog(
         onChangeSpotTypeGroup = setSpotTypeViewModel::updateSpotTypeGroup,
         onChangeSpotType = setSpotTypeViewModel::updateSpotType,
         onDismissRequest = onDismissRequest,
-        onOkClick = onOkClick
+        onClickOk = onClickOk
     )
 }
 
@@ -73,7 +73,7 @@ internal fun SetSpotTypeDialog(
     onChangeSpotType: (spotType: SpotType) -> Unit,
 
     onDismissRequest: () -> Unit,
-    onOkClick: (spotType: SpotType) -> Unit,
+    onClickOk: (spotType: SpotType) -> Unit,
 ){
     val lazyRowState = rememberLazyListState()
 
@@ -207,7 +207,7 @@ internal fun SetSpotTypeDialog(
                 DialogButton(
                     text = stringResource(id = R.string.button_ok),
                     onClick = {
-                        onOkClick(currentSpotType)
+                        onClickOk(currentSpotType)
                     }
                 )
             }
@@ -248,7 +248,7 @@ private fun SetSpotTypeDialogPreview(){
                 onChangeSpotTypeGroup = {},
                 onChangeSpotType = {},
                 onDismissRequest = {},
-                onOkClick = {}
+                onClickOk = {}
             )
         }
     }

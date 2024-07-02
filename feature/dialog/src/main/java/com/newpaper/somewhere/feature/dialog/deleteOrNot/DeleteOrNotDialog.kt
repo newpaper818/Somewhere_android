@@ -19,7 +19,7 @@ import com.newpaper.somewhere.feature.dialog.myDialog.MyDialog
 fun DeleteOrNotDialog(
     deleteButtonText: String,
     onDismissRequest: () -> Unit,
-    onDeleteClick: () -> Unit,
+    onClickDelete: () -> Unit,
 
     titleText: String? = null,
     bodyText: String? = null,
@@ -50,7 +50,7 @@ fun DeleteOrNotDialog(
                     text = deleteButtonText,
                     textColor = MaterialTheme.colorScheme.error,
                     errorRipple = true,
-                    onClick = onDeleteClick
+                    onClick = onClickDelete
                 )
             }
         }
@@ -60,26 +60,26 @@ fun DeleteOrNotDialog(
 @Composable
 fun DeleteFriendDialog(
     onDismissRequest: () -> Unit,
-    onDeleteClick: () -> Unit
+    onClickDelete: () -> Unit
 ){
     DeleteOrNotDialog(
         bodyText = stringResource(id = R.string.delete_friend),
         deleteButtonText = stringResource(id = R.string.button_delete),
         onDismissRequest = onDismissRequest,
-        onDeleteClick = onDeleteClick
+        onClickDelete = onClickDelete
     )
 }
 
 @Composable
 fun GetOutSharedTripDialog(
     onDismissRequest: () -> Unit,
-    onGetOutClick: () -> Unit
+    onClickGetOut: () -> Unit
 ){
     DeleteOrNotDialog(
         bodyText = stringResource(id = R.string.get_out_shared_trip),
         deleteButtonText = stringResource(id = R.string.button_get_out),
         onDismissRequest = onDismissRequest,
-        onDeleteClick = onGetOutClick
+        onClickDelete = onClickGetOut
     )
 }
 
@@ -117,7 +117,7 @@ private fun DeleteOrNotDialogPreview(){
                 bodyText = "Delete item??????????????? ????????????\n?????????????????????????",
                 deleteButtonText = "Delete",
                 onDismissRequest = {},
-                onDeleteClick = {}
+                onClickDelete = {}
             )
         }
     }
@@ -130,7 +130,7 @@ private fun DeleteFriendDialogPreview(){
         MyScaffold {
             DeleteFriendDialog(
                 onDismissRequest = {},
-                onDeleteClick = {}
+                onClickDelete = {}
             )
         }
     }
@@ -143,7 +143,7 @@ private fun GetOutSharedTripDialogPreview(){
         MyScaffold {
             GetOutSharedTripDialog(
                 onDismissRequest = {},
-                onGetOutClick = {}
+                onClickGetOut = {}
             )
         }
     }
