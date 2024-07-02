@@ -65,6 +65,8 @@ import com.newpaper.somewhere.core.utils.convert.setCurrencyType
 import com.newpaper.somewhere.core.utils.convert.setImage
 import com.newpaper.somewhere.core.utils.convert.setMemoText
 import com.newpaper.somewhere.core.utils.convert.setTitleText
+import com.newpaper.somewhere.core.utils.millisToLocalDate
+import com.newpaper.somewhere.feature.dialog.dateRange.DateRangeDialog
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
 import com.newpaper.somewhere.feature.dialog.memo.MemoDialog
 import com.newpaper.somewhere.feature.dialog.setColor.SetColorDialog
@@ -141,7 +143,6 @@ fun TripRoute(
             tripViewModel.setShowExitDialog(true)
         else {
             commonTripViewModel.setIsEditMode(false)
-            tripViewModel.setShowBottomSaveCancelBar(false)
 
             if (isNewTrip){
                 navigateUpAndDeleteNewTrip(originalTrip)
@@ -164,9 +165,7 @@ fun TripRoute(
             dateTimeFormat = dateTimeFormat,
             internetEnabled = internetEnabled,
             isEditMode = isEditMode,
-            _setIsEditMode = commonTripViewModel::setIsEditMode,
-            showBottomSaveCancelBar = tripUiState.showBottomSaveCancelBar,
-            _setShowBottomSaveCancelBar = tripViewModel::setShowBottomSaveCancelBar
+            _setIsEditMode = commonTripViewModel::setIsEditMode
         ),
         tripData = TripData(
             originalTrip = originalTrip,
@@ -182,12 +181,15 @@ fun TripRoute(
             _decreaseDateTitleErrorCount = tripViewModel::decreaseDateTitleErrorCount
         ),
         dialog = TripDialog(
+            isShowingDialog = tripUiState.isShowingDialog,
             showExitDialog = tripUiState.showExitDialog,
+            showSetDateRangeDialog = tripUiState.showSetDateRangeDialog,
             showMemoDialog = tripUiState.showMemoDialog,
             showSetCurrencyDialog = tripUiState.showSetCurrencyDialog,
             showSetColorDialog = tripUiState.showSetColorDialog,
 
             _setShowExitDialog = tripViewModel::setShowExitDialog,
+            _setShowDateRangeDialog = tripViewModel::setShowDateRangeDialog,
             _setShowMemoDialog = tripViewModel::setShowMemoDialog,
             _setShowSetCurrencyDialog = tripViewModel::setShowSetCurrencyDialog,
             _setShowSetColorDialog = tripViewModel::setShowSetColorDialog,
@@ -249,7 +251,6 @@ fun TripRoute(
                         )
 
                     commonTripViewModel.setIsEditMode(false)
-                    tripViewModel.setShowBottomSaveCancelBar(false)
                     commonTripViewModel.setIsNewTrip(false)
 
                     //save to firestore
@@ -260,7 +261,6 @@ fun TripRoute(
                 }
                 else {
                     commonTripViewModel.setIsEditMode(false)
-                    tripViewModel.setShowBottomSaveCancelBar(false)
                 }
 
                 commonTripViewModel.organizeAddedDeletedImages(
@@ -325,7 +325,6 @@ private fun TripScreen(
     val internetEnabled = tripUiInfo.internetEnabled
 
     val isEditMode = tripUiInfo.isEditMode
-    val showBottomSaveCancelBar = tripUiInfo.showBottomSaveCancelBar
 
     val showingTrip =
         if (isEditMode) tripData.tempTrip
@@ -363,6 +362,16 @@ private fun TripScreen(
     val isFABExpanded by remember { derivedStateOf { scrollState.firstVisibleItemIndex == 0 } }
 
 
+    val endDate = showingTrip.getLastEnabledDate()
+    val endDateIndex = endDate?.index
+
+    val defaultDateRange =
+        if (showingTrip.dateList.isNotEmpty()) {
+            showingTrip.dateList.first().date..
+                    showingTrip.dateList[endDateIndex?: 0].date
+
+        } else
+            LocalDate.now().let { now -> now.plusDays(1)..now.plusDays(5) }
 
 
 
@@ -394,7 +403,6 @@ private fun TripScreen(
                 actionIcon2 = if (!loadingTrip && !isEditMode && !use2Panes && showingTrip.editable) TopAppBarIcon.edit else null,
                 actionIcon2Onclick = {
                     tripUiInfo.setIsEditMode(true)
-                    tripUiInfo.setShowBottomSaveCancelBar(true)
                 }
             )
         },
@@ -410,7 +418,7 @@ private fun TripScreen(
         },
 
         //bottom save cancel button
-        bottomSaveCancelBarVisible = isEditMode && showBottomSaveCancelBar && !use2Panes,
+        bottomSaveCancelBarVisible = isEditMode && !dialog.isShowingDialog && !use2Panes,
         onClickCancel = {
             focusManager.clearFocus()
             navigate.navigateUp()
@@ -439,6 +447,26 @@ private fun TripScreen(
             )
         }
 
+        if (dialog.showSetDateRangeDialog){
+            DateRangeDialog(
+                defaultDateRange = defaultDateRange,
+                dateTimeFormat = dateTimeFormat,
+                onDismissRequest = {
+                    dialog.setShowDateRangeDialog(false)
+                },
+                onConfirm = {startDateMillis, endDateMillis ->
+                    if (startDateMillis != null && endDateMillis != null){
+                        updateTripDurationAndTripState(
+                            true,
+                            millisToLocalDate(startDateMillis),
+                            millisToLocalDate(endDateMillis)
+                        )
+                    }
+                    dialog.setShowDateRangeDialog(false)
+                }
+            )
+        }
+
         if (dialog.showMemoDialog){
             MemoDialog(
                 memoText = showingTrip.memoText ?: "",
@@ -452,11 +480,9 @@ private fun TripScreen(
                 onOkClick = { newCurrencyType ->
                     showingTrip.setCurrencyType(updateTripState, newCurrencyType)
                     dialog.setShowSetCurrencyDialog(false)
-                    tripUiInfo.setShowBottomSaveCancelBar(true)
                 },
                 onDismissRequest = {
                     dialog.setShowSetCurrencyDialog(false)
-                    tripUiInfo.setShowBottomSaveCancelBar(true)
                 }
             )
         }
@@ -466,12 +492,10 @@ private fun TripScreen(
                 initialColor = dialog.selectedDate.color,
                 onDismissRequest = {
                     dialog.setShowSetColorDialog(false)
-                    tripUiInfo.setShowBottomSaveCancelBar(true)
                     dialog.setSelectedDate(null)
                 },
                 onOkClick = {
                     dialog.setShowSetColorDialog(false)
-                    tripUiInfo.setShowBottomSaveCancelBar(true)
                     dialog.selectedDate.setColor(showingTrip, updateTripState, it)
                     dialog.setSelectedDate(null)
                 }
@@ -576,17 +600,7 @@ private fun TripScreen(
                 //trip duration card
                 item {
                     val startDate = showingTrip.dateList.firstOrNull()
-                    val endDate = showingTrip.getLastEnabledDate()
-                    val endDateIndex = endDate?.index
                     val sameYear = startDate?.date?.year == endDate?.date?.year
-
-                    val defaultDateRange =
-                        if (showingTrip.dateList.isNotEmpty()) {
-                            showingTrip.dateList.first().date..
-                                    showingTrip.dateList[endDateIndex?: 0].date
-
-                        } else
-                            LocalDate.now().let { now -> now.plusDays(1)..now.plusDays(5) }
 
                     TripDurationCard(
                         defaultDateRange = defaultDateRange,
@@ -594,16 +608,8 @@ private fun TripScreen(
                         startDateText = showingTrip.getStartDateText(dateTimeFormat, true),
                         endDateText = showingTrip.getEndDateText(dateTimeFormat, !sameYear),
                         durationText = showingTrip.getDurationText(),
-
-                        dateTimeFormat = dateTimeFormat,
-
                         isEditMode = isEditMode,
-                        setShowBottomSaveCancelBar = {
-                            tripUiInfo.setShowBottomSaveCancelBar(it)
-                        },
-                        setTripDuration = { startDate1, endDate1 ->
-                            updateTripDurationAndTripState(true, startDate1, endDate1)
-                        }
+                        onClick = { dialog.setShowDateRangeDialog(true) },
                     )
                 }
 
@@ -620,7 +626,6 @@ private fun TripScreen(
                                 text = showingTrip.getTotalBudgetText(),
                                 onClick = {
                                     dialog.setShowSetCurrencyDialog(true)
-                                    tripUiInfo.setShowBottomSaveCancelBar(false)
                                 }),
                             travelDistanceItem.copy(text =  showingTrip.getTotalTravelDistanceText())
                         )
@@ -737,7 +742,6 @@ private fun TripScreen(
                                         {
                                             dialog.setSelectedDate(date)
                                             dialog.setShowSetColorDialog(true)
-                                            tripUiInfo.setShowBottomSaveCancelBar(false)
                                         }
                                     } else null
                             )
