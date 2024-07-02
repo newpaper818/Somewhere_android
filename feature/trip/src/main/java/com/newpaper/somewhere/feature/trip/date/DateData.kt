@@ -1,10 +1,8 @@
 package com.newpaper.somewhere.feature.trip.date
 
-import android.net.Uri
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
-import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
 
@@ -17,14 +15,9 @@ internal data class DateUiInfo(
 
     val isEditMode: Boolean = false,
     private val _setIsEditMode: (isEditMode: Boolean?) -> Unit = {},
-
-    val showBottomSaveCancelBar: Boolean = false,
-    private val _setShowBottomSaveCancelBar: (showBottomSaveCancelBar: Boolean) -> Unit = {}
 ){
     fun setIsEditMode(isEditMode: Boolean?){
         _setIsEditMode(isEditMode) }
-    fun setShowBottomSaveCancelBar(showBottomSaveCancelBar: Boolean){
-        _setShowBottomSaveCancelBar(showBottomSaveCancelBar) }
 }
 
 internal data class DateData(
@@ -53,6 +46,7 @@ internal data class DateErrorCount(
 }
 
 internal data class DateDialog(
+    val isShowingDialog: Boolean = false,
     val showExitDialog: Boolean = false,
     val showMemoDialog: Boolean = false,
     val showSetColorDialog: Boolean = false,
