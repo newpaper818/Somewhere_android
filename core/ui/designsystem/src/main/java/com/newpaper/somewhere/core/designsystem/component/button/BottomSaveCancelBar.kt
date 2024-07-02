@@ -30,8 +30,8 @@ import com.newpaper.somewhere.core.ui.designsystem.R
 @Composable
 fun AnimatedBottomSaveCancelButtons(
     visible: Boolean,
-    onCancelClick: () -> Unit,
-    onSaveClick: () -> Unit,
+    onClickCancel: () -> Unit,
+    onClickSave: () -> Unit,
     modifier: Modifier = Modifier,
     saveEnabled: Boolean = true,
     use2PanesAndSpotScreen: Boolean = false
@@ -47,8 +47,8 @@ fun AnimatedBottomSaveCancelButtons(
     ) {
         if (!use2PanesAndSpotScreen) {
             SaveCancelButtons(
-                onCancelClick = onCancelClick,
-                onSaveClick = onSaveClick,
+                onClickCancel = onClickCancel,
+                onClickSave = onClickSave,
                 modifier = modifier,
                 saveEnabled = saveEnabled
             )
@@ -62,8 +62,8 @@ fun AnimatedBottomSaveCancelButtons(
                 Spacer(modifier = Modifier.weight(2f))
 
                 SaveCancelButtons(
-                    onCancelClick = onCancelClick,
-                    onSaveClick = onSaveClick,
+                    onClickCancel = onClickCancel,
+                    onClickSave = onClickSave,
                     modifier = modifier,
                     saveEnabled = saveEnabled
                 )
@@ -76,8 +76,8 @@ fun AnimatedBottomSaveCancelButtons(
 
 @Composable
 fun SaveCancelButtons(
-    onCancelClick: () -> Unit,
-    onSaveClick: () -> Unit,
+    onClickCancel: () -> Unit,
+    onClickSave: () -> Unit,
     modifier: Modifier = Modifier,
     saveEnabled: Boolean = true
 ) {
@@ -85,12 +85,12 @@ fun SaveCancelButtons(
         modifier = modifier
     ) {
         Row {
-            BigCancelButton(onClick = onCancelClick)
+            BigCancelButton(onClick = onClickCancel)
 
             Spacer(modifier = Modifier.width(16.dp))
 
             BigSaveButton(
-                onClick = onSaveClick,
+                onClick = onClickSave,
                 enabled = saveEnabled
             )
         }
@@ -184,8 +184,8 @@ private fun SaveCancelButtonPreview(){
                 .padding(16.dp)
         ){
             SaveCancelButtons(
-                onCancelClick = {},
-                onSaveClick = {}
+                onClickCancel = {},
+                onClickSave = {}
             )
         }
     }
@@ -201,8 +201,8 @@ private fun SaveCancelButtonPreview1(){
                 .padding(16.dp)
         ){
             SaveCancelButtons(
-                onCancelClick = {},
-                onSaveClick = {},
+                onClickCancel = {},
+                onClickSave = {},
                 saveEnabled = false
             )
         }

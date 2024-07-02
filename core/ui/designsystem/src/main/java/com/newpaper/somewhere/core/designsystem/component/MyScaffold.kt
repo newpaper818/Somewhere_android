@@ -19,8 +19,8 @@ fun MyScaffold(
 
     bottomSaveCancelBarVisible: Boolean = false,
     glanceSpot: @Composable () -> Unit = {},
-    onCancelClick: () -> Unit = {},
-    onSaveClick: () -> Unit = {},
+    onClickCancel: () -> Unit = {},
+    onClickSave: () -> Unit = {},
     saveEnabled: Boolean = true,
     use2PanesAndSpotScreen: Boolean = false,
     useBottomNavBar: Boolean = false,
@@ -53,8 +53,8 @@ fun MyScaffold(
             //bottom save cancel bar
             AnimatedBottomSaveCancelButtons(
                 visible = bottomSaveCancelBarVisible,
-                onCancelClick = onCancelClick,
-                onSaveClick = onSaveClick,
+                onClickCancel = onClickCancel,
+                onClickSave = onClickSave,
                 saveEnabled = saveEnabled,
                 use2PanesAndSpotScreen = use2PanesAndSpotScreen,
                 modifier = buttonsModifier

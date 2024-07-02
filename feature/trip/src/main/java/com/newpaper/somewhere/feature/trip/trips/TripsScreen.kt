@@ -327,8 +327,8 @@ private fun TripsScreen(
         //bottom save cancel button
         bottomSaveCancelBarVisible = isEditMode,
         useBottomNavBar = useBottomNavBar,
-        onCancelClick = { navigate.onBackButtonClick() },
-        onSaveClick = {
+        onClickCancel = { navigate.onBackButtonClick() },
+        onClickSave = {
             tripsEdit.saveTrips()
 
             image.organizeAddedDeletedImages(true)
