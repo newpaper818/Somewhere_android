@@ -3,7 +3,6 @@ package com.newpaper.somewhere.navigation.trip
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -19,7 +18,6 @@ import com.newpaper.somewhere.navigation.popEnterTransition
 import com.newpaper.somewhere.navigation.popExitTransition
 import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
-import kotlinx.coroutines.launch
 
 private const val DEEP_LINK_URI_PATTERN =
     "https://www.somewhere.newpaper.com/main/date"
@@ -52,29 +50,19 @@ fun NavGraphBuilder.dateScreen(
         }
 
         val appUiState by appViewModel.appUiState.collectAsState()
-        val coroutineScope = rememberCoroutineScope()
 
         DateRoute(
             use2Panes = externalState.windowSizeClass.use2Panes,
             spacerValue = externalState.windowSizeClass.spacerValue,
+            appUserId = appUiState.appUserData!!.userId,
             dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
             internetEnabled = externalState.internetEnabled,
             showTripBottomSaveCancelBar = true,
             commonTripViewModel = commonTripViewModel,
+
             navigateUp = navigateUp,
             navigateToSpot = {_,_ ->},
-            navigateToDateMap = { },
-            saveTrip = {
-                coroutineScope.launch {
-                    //save tripUiState trip
-                    commonTripViewModel.saveTrip(appUserId = appUiState.appUserData!!.userId)
-
-                    //save to firestore
-                    commonTripViewModel.saveTripAndAllDates(
-                        trip = commonTripViewModel.commonTripUiState.value.tripInfo.tempTrip!!,
-                    )
-                }
-            }
+            navigateToDateMap = { /*TODO*/ },
         )
     }
 }

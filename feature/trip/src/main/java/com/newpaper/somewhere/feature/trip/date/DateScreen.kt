@@ -113,10 +113,10 @@ import java.time.LocalTime
 fun DateRoute(
     use2Panes: Boolean,
     spacerValue: Dp,
+    appUserId: String,
     dateTimeFormat: DateTimeFormat,
     internetEnabled: Boolean,
 
-//    dateIndex: Int?,
     showTripBottomSaveCancelBar: Boolean,
 
     commonTripViewModel: CommonTripViewModel,
@@ -125,9 +125,6 @@ fun DateRoute(
     navigateUp: () -> Unit,
     navigateToSpot: (dateId: Int, spotId: Int) -> Unit,
     navigateToDateMap: () -> Unit,
-
-    //save trip
-    saveTrip: () -> Unit,
 
     //
     modifier: Modifier = Modifier,
@@ -155,6 +152,8 @@ fun DateRoute(
         initialPage = dateIndex ?: 0,
         pageCount = { dateList.size }
     )
+
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(!isEditMode) {
         dateViewModel.initAllErrorCount()
@@ -251,7 +250,29 @@ fun DateRoute(
         addNewSpot = commonTripViewModel::addNewSpot,
         deleteSpot = commonTripViewModel::deleteSpot,
         reorderSpotList = commonTripViewModel::reorderSpotListAndUpdateTravelDistance,
-        saveTrip = saveTrip,
+        onClickSave = {
+            coroutineScope.launch {
+                if (originalTrip != tempTrip){
+                    //save tripUiState trip
+                    commonTripViewModel.saveTrip(appUserId = appUserId)
+
+                    commonTripViewModel.setIsEditMode(false)
+                    dateViewModel.setShowBottomSaveCancelBar(false)
+
+                    //save to firestore
+                    commonTripViewModel.saveTripAndAllDates(trip = tempTrip)
+                }
+                else {
+                    commonTripViewModel.setIsEditMode(false)
+                    dateViewModel.setShowBottomSaveCancelBar(false)
+                }
+
+                commonTripViewModel.organizeAddedDeletedImages(
+                    tripManagerId = tempTrip.managerId,
+                    isClickSave = true
+                )
+            }
+        },
         showTripBottomSaveCancelBar = showTripBottomSaveCancelBar,
         setIsFABExpanded = {
             isFABExpanded = it
@@ -284,7 +305,7 @@ private fun DateScreen(
     addNewSpot: (dateIndex: Int) -> Unit,
     deleteSpot: (dateIndex: Int, spotIndex: Int) -> Unit,
     reorderSpotList: (dateIndex: Int, currentIndex: Int, destinationIndex: Int) -> Unit,
-    saveTrip: () -> Unit,
+    onClickSave: () -> Unit,
 
     setIsFABExpanded: (Boolean) -> Unit,
 
@@ -368,7 +389,7 @@ private fun DateScreen(
 
                 actionIcon2 = if (!dateUiInfo.isEditMode && showingTrip.editable) TopAppBarIcon.edit else null,
                 actionIcon2Onclick = {
-                    dateUiInfo.setIsEditMode(null)
+                    dateUiInfo.setIsEditMode(true)
                     dateUiInfo.setShowBottomSaveCancelBar(true)
                 }
             )
@@ -389,16 +410,7 @@ private fun DateScreen(
             focusManager.clearFocus()
             navigate.navigateUp()
         },
-        onSaveClick = {
-            coroutineScope.launch {
-                if (dateData.originalTrip != dateData.tempTrip)
-                    saveTrip()  //save to firestore
-
-                dateUiInfo.setIsEditMode(false)
-                dateUiInfo.setShowBottomSaveCancelBar(false)
-                image.organizeAddedDeletedImages(true)
-            }
-        },
+        onSaveClick = onClickSave,
         saveEnabled = errorCount.totalErrorCount <= 0
 
     ) { paddingValues ->
@@ -674,6 +686,7 @@ private fun DatePage(
                 color = currentDate.color,
                 onClickColorCard = {
                     dialog.setShowSetColorDialog(true)
+                    dateUiInfo.setShowBottomSaveCancelBar(false)
                 }
             )
         }
@@ -716,7 +729,8 @@ private fun DatePage(
                 isLongText = {
                     if (it) errorCount.increaseTotalErrorCount()
                     else errorCount.decreaseTotalErrorCount()
-                },                showMemoDialog = {
+                },
+                showMemoDialog = {
                     dialog.setShowMemoDialog(true)
                 }
             )
