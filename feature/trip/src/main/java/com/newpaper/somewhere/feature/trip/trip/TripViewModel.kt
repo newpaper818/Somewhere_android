@@ -1,7 +1,6 @@
 package com.newpaper.somewhere.feature.trip.trip
 
 import androidx.lifecycle.ViewModel
-import com.newpaper.somewhere.core.data.repository.trip.TripRepository
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.utils.convert.setAllSpotDate
@@ -16,9 +15,9 @@ import javax.inject.Inject
 data class TripUiState(
     val loadingTrip: Boolean = true,
 
-    val showBottomSaveCancelBar: Boolean = false,
-
+    val isShowingDialog: Boolean = false,
     val showExitDialog: Boolean = false,
+    val showSetDateRangeDialog: Boolean = false,
     val showSetCurrencyDialog: Boolean = false,
     val showMemoDialog: Boolean = false,
     val showSetColorDialog: Boolean = false,
@@ -32,8 +31,6 @@ data class TripUiState(
 @HiltViewModel
 class TripViewModel @Inject constructor(
     private val commonTripUiStateRepository: CommonTripUiStateRepository,
-//    private val commonTripViewModel: CommonTripViewModel,
-    private val tripRepository: TripRepository
 ): ViewModel() {
 
     private val _tripUiState: MutableStateFlow<TripUiState> =
@@ -52,10 +49,21 @@ class TripViewModel @Inject constructor(
         }
     }
 
-    fun setShowBottomSaveCancelBar(showBottomSaveCancelBar: Boolean) {
+    private fun setIsShowingDialog(){
+        val isShowingDialog = _tripUiState.value.showExitDialog ||
+                _tripUiState.value.showSetDateRangeDialog || _tripUiState.value.showSetCurrencyDialog ||
+                _tripUiState.value.showMemoDialog || _tripUiState.value.showSetColorDialog
+
         _tripUiState.update {
-            it.copy(showBottomSaveCancelBar = showBottomSaveCancelBar)
+            it.copy(isShowingDialog = isShowingDialog)
         }
+    }
+
+    fun setShowDateRangeDialog(showSetDateRangeDialog: Boolean) {
+        _tripUiState.update {
+            it.copy(showSetDateRangeDialog = showSetDateRangeDialog)
+        }
+        setIsShowingDialog()
     }
 
     //dialog
@@ -63,24 +71,28 @@ class TripViewModel @Inject constructor(
         _tripUiState.update {
             it.copy(showExitDialog = showExitDialog)
         }
+        setIsShowingDialog()
     }
 
     fun setShowSetCurrencyDialog(showSetCurrencyDialog: Boolean) {
         _tripUiState.update {
             it.copy(showSetCurrencyDialog = showSetCurrencyDialog)
         }
+        setIsShowingDialog()
     }
 
     fun setShowMemoDialog(showMemoDialog: Boolean) {
         _tripUiState.update {
             it.copy(showMemoDialog = showMemoDialog)
         }
+        setIsShowingDialog()
     }
 
     fun setShowSetColorDialog(showSetColorDialog: Boolean) {
         _tripUiState.update {
             it.copy(showSetColorDialog = showSetColorDialog)
         }
+        setIsShowingDialog()
     }
 
     fun setSelectedDate(date: Date?){

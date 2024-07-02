@@ -36,9 +36,9 @@ class DateViewModel @Inject constructor(
 
 
     private fun setIsShowingDialog(){
-        val isShowingDialog = _dateUiState.value.showMemoDialog ||
-                _dateUiState.value.showExitDialog || _dateUiState.value.showSetTimeDialog ||
-                _dateUiState.value.showSetColorDialog || _dateUiState.value.showSetSpotTypeDialog
+        val isShowingDialog = _dateUiState.value.showExitDialog ||
+            _dateUiState.value.showMemoDialog || _dateUiState.value.showSetColorDialog ||
+            _dateUiState.value.showSetTimeDialog || _dateUiState.value.showSetSpotTypeDialog
 
         _dateUiState.update {
             it.copy(isShowingDialog = isShowingDialog)

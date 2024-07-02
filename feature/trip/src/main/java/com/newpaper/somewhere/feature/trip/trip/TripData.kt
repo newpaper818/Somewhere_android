@@ -15,15 +15,10 @@ internal data class TripUiInfo(
     val internetEnabled: Boolean = true,
 
     val isEditMode: Boolean = false,
-    private val _setIsEditMode: (isEditMode: Boolean?) -> Unit = {},
-
-    val showBottomSaveCancelBar: Boolean = false,
-    private val _setShowBottomSaveCancelBar: (showBottomSaveCancelBar: Boolean) -> Unit = {}
+    private val _setIsEditMode: (isEditMode: Boolean?) -> Unit = {}
 ){
     fun setIsEditMode(isEditMode: Boolean?){
         _setIsEditMode(isEditMode) }
-    fun setShowBottomSaveCancelBar(showBottomSaveCancelBar: Boolean){
-        _setShowBottomSaveCancelBar(showBottomSaveCancelBar) }
 }
 
 internal data class TripData(
@@ -52,12 +47,15 @@ internal data class TripErrorCount(
 }
 
 internal data class TripDialog(
+    val isShowingDialog: Boolean = false,
     val showExitDialog: Boolean = false,
+    val showSetDateRangeDialog: Boolean = false,
     val showMemoDialog: Boolean = false,
     val showSetCurrencyDialog: Boolean = false,
     val showSetColorDialog: Boolean = false,
 
     private val _setShowExitDialog: (Boolean) -> Unit = {},
+    private val _setShowDateRangeDialog: (Boolean) -> Unit = {},
     private val _setShowMemoDialog: (Boolean) -> Unit = {},
     private val _setShowSetCurrencyDialog: (Boolean) -> Unit = {},
     private val _setShowSetColorDialog: (Boolean) -> Unit = {},
@@ -67,6 +65,8 @@ internal data class TripDialog(
 ){
     fun setShowExitDialog(showExitDialog: Boolean){
         _setShowExitDialog(showExitDialog) }
+    fun setShowDateRangeDialog(showSetDateRangeDialog: Boolean){
+        _setShowDateRangeDialog(showSetDateRangeDialog) }
     fun setShowMemoDialog(showMemoDialog: Boolean){
         _setShowMemoDialog(showMemoDialog) }
     fun setShowSetCurrencyDialog(showSetCurrencyDialog: Boolean){

@@ -18,10 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -34,9 +30,6 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
-import com.newpaper.somewhere.core.model.data.DateTimeFormat
-import com.newpaper.somewhere.core.utils.millisToLocalDate
-import com.newpaper.somewhere.feature.dialog.dateRange.DateRangeDialog
 import com.newpaper.somewhere.feature.trip.R
 import java.time.LocalDate
 
@@ -50,16 +43,11 @@ internal fun TripDurationCard(
     endDateText: String?,
     durationText: String?,
 
-    dateTimeFormat: DateTimeFormat,
-
     isEditMode: Boolean,
-    setShowBottomSaveCancelBar: (Boolean) -> Unit,
-    setTripDuration: (startDate: LocalDate, endDate: LocalDate) -> Unit,
+    onClick: () -> Unit,
 
     modifier: Modifier = Modifier
 ){
-    var showDateRangePickerDialog by rememberSaveable { mutableStateOf(false) }
-
     //set body text and body text style
     // Start Date || No Start Date || 2023.06.23
     val startDateText1 =
@@ -72,35 +60,12 @@ internal fun TripDurationCard(
     val bodyTextStyle1 = if (!isDateListEmpty) MaterialTheme.typography.bodyLarge
                             else MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
 
-    //date duration picker dialog
-
-
-    if (showDateRangePickerDialog) {
-        DateRangeDialog(
-            defaultDateRange = defaultDateRange,
-            dateTimeFormat = dateTimeFormat,
-            onDismissRequest = {
-                showDateRangePickerDialog = false
-                setShowBottomSaveCancelBar(true)
-            },
-            onConfirm = {startDateMillis, endDateMillis ->
-                if (startDateMillis != null && endDateMillis != null){
-                    setTripDuration(millisToLocalDate(startDateMillis), millisToLocalDate(endDateMillis))
-                }
-                showDateRangePickerDialog = false
-                setShowBottomSaveCancelBar(true)
-            }
-        )
-    }
 
     //ui
     Column {
         MyCard(
             modifier = modifier.fillMaxWidth(),
-            onClick = {
-                showDateRangePickerDialog = true
-                setShowBottomSaveCancelBar(false)
-            },
+            onClick = onClick,
             enabled = isEditMode
         ) {
             Row(
@@ -251,10 +216,8 @@ private fun Preview_TripDurationCard(){
                 startDateText = "2023.03.14",
                 endDateText = "03.16",
                 durationText = "3 days",
-                dateTimeFormat = DateTimeFormat(),
                 isEditMode = false,
-                setShowBottomSaveCancelBar = {},
-                setTripDuration = {_,_ ->}
+                onClick = {}
             )
         }
     }
@@ -276,10 +239,8 @@ private fun Preview_TripDurationCard_edit(){
                 startDateText = "2023.03.14",
                 endDateText = "03.16",
                 durationText = "3 days",
-                dateTimeFormat = DateTimeFormat(),
                 isEditMode = true,
-                setShowBottomSaveCancelBar = {},
-                setTripDuration = {_,_ ->}
+                onClick = {}
             )
         }
     }
@@ -301,10 +262,8 @@ private fun Preview_TripDurationCard_noDate(){
                 startDateText = null,
                 endDateText = null,
                 durationText = null,
-                dateTimeFormat = DateTimeFormat(),
                 isEditMode = false,
-                setShowBottomSaveCancelBar = {},
-                setTripDuration = {_,_ ->}
+                onClick = {}
             )
         }
     }
@@ -326,10 +285,8 @@ private fun Preview_TripDurationCard_noDate_Edit(){
                 startDateText = null,
                 endDateText = null,
                 durationText = null,
-                dateTimeFormat = DateTimeFormat(),
                 isEditMode = true,
-                setShowBottomSaveCancelBar = {},
-                setTripDuration = {_,_ ->}
+                onClick = {}
             )
         }
     }
