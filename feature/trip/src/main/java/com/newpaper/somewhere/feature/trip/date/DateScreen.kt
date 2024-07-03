@@ -982,6 +982,9 @@ private fun updateSpotTypeGroupWithShownList(
             Log.d("qqq", "-${spot.spotType} ${spot.spotType.group}")
             Log.d("qqq", "-${SpotType.TOUR.group}")
             Log.d("qqq", "-${SpotTypeGroup.TOUR}")
+            //FIXME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!<<<<<<<<<<<<<-------------------------------
+            //date screen ㅇㅔ서 date2에서 spot 순서 변경 하고 (spot type 다른 두 spot)
+            //date1에서 cancel 누르고 exit 누르면 infinite loop
         }
     }
 
