@@ -26,6 +26,8 @@ data class CommonTripUiState(
     val tripInfo: TripInfo = TripInfo(),
     val isNewTrip: Boolean = false,
 
+    val isShowingDialog: Boolean = false, //is any dialog showing
+
     val addedImages: List<String> = listOf(),
     val deletedImages: List<String> = listOf(),
 )
