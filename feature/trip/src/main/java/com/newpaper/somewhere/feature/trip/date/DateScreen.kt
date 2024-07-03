@@ -316,7 +316,9 @@ private fun DateScreen(
 
     val showingTrip = if (dateUiInfo.isEditMode) dateData.tempTrip
                         else            dateData.originalTrip
+
     val dateList = showingTrip.dateList
+    val enabledDateList = showingTrip.dateList.filter { it.enabled }
 
 
     val progressBarState = rememberLazyListState(
@@ -325,7 +327,7 @@ private fun DateScreen(
 
 
 
-    val currentDate = dateData.showingTrip.dateList[datePagerState.currentPage]
+    val currentDate = dateData.showingTrip.dateList.getOrNull(datePagerState.currentPage)
 
     val snackBarHostState = remember { SnackbarHostState() }
 
@@ -427,14 +429,14 @@ private fun DateScreen(
         }
 
         //memo
-        if (dialog.showMemoDialog){
+        if (dialog.showMemoDialog && currentDate != null){
             MemoDialog(
                 memoText = currentDate.memo ?: "",
                 onDismissRequest = { dialog.setShowMemoDialog(false) }
             )
         }
 
-        if (dialog.showSetColorDialog){
+        if (dialog.showSetColorDialog && currentDate != null){
             SetColorDialog(
                 initialColor = currentDate.color,
                 onDismissRequest = {
@@ -492,7 +494,11 @@ private fun DateScreen(
 
 
         //show when use 2 panes and no date
-        if (dateList.isEmpty()){
+        AnimatedVisibility(
+            visible = enabledDateList.isEmpty(),
+            enter = fadeIn(tween(800)),
+            exit = fadeOut(tween(800))
+        ) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.fillMaxSize()
@@ -503,7 +509,12 @@ private fun DateScreen(
                 )
             }
         }
-        else {
+
+        AnimatedVisibility(
+            visible = enabledDateList.isNotEmpty(),
+            enter = fadeIn(tween(800)),
+            exit = fadeOut(tween(800))
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -524,7 +535,7 @@ private fun DateScreen(
                         startSpacerValue = startSpacerValue,
                         endSpacerValue = endSpacerValue,
                         progressBarState = progressBarState,
-                        dateList = dateList,
+                        dateList = enabledDateList,
                         currentDateIdx = datePagerState.currentPage,
                         dateTimeFormat = dateUiInfo.dateTimeFormat,
                         onClickDate = { toDateIndex ->
