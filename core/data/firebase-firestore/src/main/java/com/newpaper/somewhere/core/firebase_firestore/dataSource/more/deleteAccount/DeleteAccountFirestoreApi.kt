@@ -39,7 +39,7 @@ class DeleteAccountFirestoreApi @Inject constructor(
 
     private suspend fun getSharedTripsMap (
         appUserId: String,
-    ): List<Map<String, Any>>{
+    ): List<Map<String, Any>> {
         val sharedTripList = CompletableDeferred<List<Map<String, Any>>>()
 
         firestoreDb.collection(USERS).document(appUserId)
@@ -121,7 +121,7 @@ class DeleteAccountFirestoreApi @Inject constructor(
      */
     private suspend fun deleteInvitedFriendsFromAllMyTrips(
         appUserId: String
-    ): Boolean{
+    ): Boolean {
         val functionResult = CompletableDeferred<Boolean>()
 
         var tripsSize = 0
