@@ -80,7 +80,7 @@ class TripFirestoreApi @Inject constructor(
     override suspend fun saveTripAndAllDates(
         trip: Trip,
         tempTripDateListLastIndex: Int?
-    ):Boolean{
+    ):Boolean {
 
         if (commonApi.checkUserExist(trip.managerId) != true)
             return false

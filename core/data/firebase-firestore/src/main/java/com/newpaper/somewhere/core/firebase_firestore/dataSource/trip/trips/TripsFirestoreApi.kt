@@ -97,7 +97,7 @@ class TripsFirestoreApi @Inject constructor(
         myTripList: List<Trip>,
         deletedTripsIdList: List<Int>,
         deletedSharedTripList: List<Trip>
-    ): Boolean{
+    ): Boolean {
 
         if (appUserId == null)
             return false
@@ -160,7 +160,7 @@ class TripsFirestoreApi @Inject constructor(
     override suspend fun updateSharedTripsOrder(
         appUserId: String?,
         sharedTripList: List<Trip>
-    ): Boolean{
+    ): Boolean {
         val result = CompletableDeferred<Boolean>()
 
         if (appUserId == null)
@@ -246,7 +246,7 @@ class TripsFirestoreApi @Inject constructor(
 
     private suspend fun getSharedTrips (
         appUserId: String,
-    ): List<Map<String, Any>>{
+    ): List<Map<String, Any>> {
         val sharedTripList = CompletableDeferred<List<Map<String, Any>>>()
 
         firestoreDb.collection(USERS).document(appUserId)

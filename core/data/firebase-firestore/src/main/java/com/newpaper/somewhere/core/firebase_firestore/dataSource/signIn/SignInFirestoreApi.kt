@@ -21,7 +21,7 @@ class SignInFirestoreApi @Inject constructor(
 
     override suspend fun registerUser(
         userData: UserData
-    ): Boolean{
+    ): Boolean {
         val registerUserSuccess = CompletableDeferred<Boolean>()
 
         val userRef = firestoreDb.collection(USERS).document(userData.userId)

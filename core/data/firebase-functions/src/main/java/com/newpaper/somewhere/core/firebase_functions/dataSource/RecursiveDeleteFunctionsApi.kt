@@ -18,7 +18,7 @@ class RecursiveDeleteFunctionsApi @Inject constructor(
     override suspend fun deleteTrip(
         tripManagerId: String,
         tripId: Int
-    ): Boolean{
+    ): Boolean {
         val deleteSuccess = CompletableDeferred<Boolean>()
 
         val deleteTripFunction = Firebase.functions("asia-northeast3")

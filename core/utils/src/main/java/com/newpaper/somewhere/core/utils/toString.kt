@@ -34,7 +34,7 @@ fun getDateText(
     dateTimeFormat: DateTimeFormat,
     includeYear: Boolean = true,
     locale: Locale = Locale.getDefault()
-): String{
+): String {
     val df0 = DecimalFormat("0")
 
     //year
@@ -93,7 +93,7 @@ fun getDateText(
     dateTimeFormat: DateTimeFormat,
     includeYear: Boolean = true,
     locale: Locale = Locale.getDefault()
-): String{
+): String {
     return getDateText(
         date = millisToLocalDate(millis),
         dateTimeFormat = dateTimeFormat,

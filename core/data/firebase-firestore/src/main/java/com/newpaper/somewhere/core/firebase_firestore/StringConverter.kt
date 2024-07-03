@@ -36,7 +36,7 @@ internal fun stringToSpotType(value: String): SpotType {
  *
  * null -> null
  */
-internal fun stringToLocalTime(value: String?): LocalTime?{
+internal fun stringToLocalTime(value: String?): LocalTime? {
     if (value == null)
         return null
 

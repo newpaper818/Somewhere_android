@@ -82,7 +82,7 @@ fun Date.getSpotTypeGroupCount(spotTypeGroup: SpotTypeGroup): Int{
 
 
 
-fun Date.getDateText(dateTimeFormat: DateTimeFormat, includeYear: Boolean = true): String{
+fun Date.getDateText(dateTimeFormat: DateTimeFormat, includeYear: Boolean = true): String {
     return com.newpaper.somewhere.core.utils.getDateText(date, dateTimeFormat, includeYear = includeYear)
 }
 

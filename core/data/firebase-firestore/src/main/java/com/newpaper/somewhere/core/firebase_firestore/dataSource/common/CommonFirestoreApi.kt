@@ -28,7 +28,7 @@ class CommonFirestoreApi @Inject constructor(
 
     override suspend fun checkUserExist(
         userId: String
-    ): Boolean?{
+    ): Boolean? {
         val userExit = CompletableDeferred<Boolean?>()
 
         val userRef = firestoreDb.collection(USERS).document(userId)
@@ -101,7 +101,7 @@ class CommonFirestoreApi @Inject constructor(
     override suspend fun deleteInvitedFriendsFromTrip(
         tripId: Int,
         managerId: String
-    ): Boolean{
+    ): Boolean {
         val deleteResult = CompletableDeferred<Boolean>()
 
         val managerTripRef = firestoreDb.collection(USERS).document(managerId)
@@ -156,7 +156,7 @@ class CommonFirestoreApi @Inject constructor(
     override suspend fun getUserInfo(
         userId: String,
         providerIds: List<ProviderId>
-    ): UserData?{
+    ): UserData? {
         val userData = CompletableDeferred<UserData?>()
 
         firestoreDb.collection(USERS).document(userId).get()
