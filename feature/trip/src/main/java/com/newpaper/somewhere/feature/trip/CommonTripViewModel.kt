@@ -71,7 +71,13 @@ class CommonTripViewModel @Inject constructor(
     }
 
 
-
+    fun setIsShowingDialog(
+        isShowingDialog: Boolean
+    ){
+        commonTripUiStateRepository._commonTripUiState.update {
+            it.copy(isShowingDialog = isShowingDialog)
+        }
+    }
 
 
 

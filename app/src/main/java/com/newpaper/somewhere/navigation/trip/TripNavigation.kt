@@ -70,7 +70,10 @@ fun NavGraphBuilder.tripScreen(
                 navigateToDate = { dateIndex, ->
                     navigateToDate(dateIndex)
                 },
-                navigateToTripMap = { /*TODO*/ }
+                navigateToTripMap = { /*TODO*/ },
+                setIsShowingDialog = {isShowingDialog ->
+                    commonTripViewModel.setIsShowingDialog(isShowingDialog)
+                }
             )
         }
         else{

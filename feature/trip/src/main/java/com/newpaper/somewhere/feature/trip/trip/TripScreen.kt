@@ -102,9 +102,11 @@ fun TripRoute(
     navigateToDate: (dateIndex: Int) -> Unit,
     navigateToTripMap: () -> Unit,
 
+    setIsShowingDialog: (isShowingDialog: Boolean) -> Unit,
+
     //
     modifier: Modifier = Modifier,
-    tripViewModel: TripViewModel = hiltViewModel(),
+    tripViewModel: TripViewModel = hiltViewModel()
 ){
     val coroutineScope = rememberCoroutineScope()
 
@@ -135,6 +137,10 @@ fun TripRoute(
 
     LaunchedEffect(!isEditMode) {
         tripViewModel.initAllErrorCount()
+    }
+
+    LaunchedEffect(tripUiState.isShowingDialog) {
+        setIsShowingDialog(tripUiState.isShowingDialog)
     }
 
 
@@ -181,7 +187,7 @@ fun TripRoute(
             _decreaseDateTitleErrorCount = tripViewModel::decreaseDateTitleErrorCount
         ),
         dialog = TripDialog(
-            isShowingDialog = tripUiState.isShowingDialog,
+            isShowingDialog = commonTripUiState.isShowingDialog,
             showExitDialog = tripUiState.showExitDialog,
             showSetDateRangeDialog = tripUiState.showSetDateRangeDialog,
             showMemoDialog = tripUiState.showMemoDialog,

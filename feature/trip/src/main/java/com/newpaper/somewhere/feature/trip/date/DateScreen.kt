@@ -126,6 +126,8 @@ fun DateRoute(
     navigateToSpot: (dateId: Int, spotId: Int) -> Unit,
     navigateToDateMap: () -> Unit,
 
+    setIsShowingDialog: (isShowingDialog: Boolean) -> Unit,
+
     //
     modifier: Modifier = Modifier,
     dateViewModel: DateViewModel = hiltViewModel()
@@ -173,6 +175,10 @@ fun DateRoute(
         }
     }
 
+    LaunchedEffect(dateUiState.isShowingDialog) {
+        setIsShowingDialog(dateUiState.isShowingDialog)
+    }
+
     //when back button click
     val onBackButtonClick = {
         if (!isEditMode) navigateUp()
@@ -216,7 +222,7 @@ fun DateRoute(
             _decreaseSpotTitleErrorCount = dateViewModel::decreaseSpotTitleErrorCount,
         ),
         dialog = DateDialog(
-            isShowingDialog = dateUiState.isShowingDialog,
+            isShowingDialog = commonTripUiState.isShowingDialog,
             showExitDialog = dateUiState.showExitDialog,
             showMemoDialog = dateUiState.showMemoDialog,
             showSetColorDialog = dateUiState.showSetColorDialog,
