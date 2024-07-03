@@ -1,14 +1,9 @@
 package com.newpaper.somewhere.navigation.trip
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.displayCutoutPadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -55,48 +50,31 @@ fun NavGraphBuilder.tripScreen(
 
         val appUiState by appViewModel.appUiState.collectAsState()
 
-        Row(
-            modifier = Modifier
-                .navigationBarsPadding()
-                .displayCutoutPadding()
-        ) {
-            Row(
-                modifier = Modifier.weight(1f)
-            ) {
-                if (appUiState.appUserData != null) {
-                    TripRoute(
-                        use2Panes = externalState.windowSizeClass.use2Panes,
-                        spacerValue = externalState.windowSizeClass.spacerValue,
-                        appUserId = appUiState.appUserData!!.userId,
-                        dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
-                        internetEnabled = externalState.internetEnabled,
-                        commonTripViewModel = commonTripViewModel,
+        if (appUiState.appUserData != null) {
+            TripRoute(
+                use2Panes = externalState.windowSizeClass.use2Panes,
+                spacerValue = externalState.windowSizeClass.spacerValue,
+                appUserId = appUiState.appUserData!!.userId,
+                dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
+                internetEnabled = externalState.internetEnabled,
+                commonTripViewModel = commonTripViewModel,
 
-                        navigateUp = navigateUp,
-                        navigateUpAndDeleteNewTrip = { deleteTrip ->
-                            navigateUp()
-                            commonTripViewModel.deleteTempTrip(deleteTrip)
-                        },
-                        navigateToInviteFriend = { /*TODO*/ },
-                        navigateToInvitedFriends = { /*TODO*/ },
-                        navigateToImage = { _,_, -> /*TODO*/ },
-                        navigateToDate = { dateIndex, ->
-                            navigateToDate(dateIndex)
-                        },
-                        navigateToTripMap = { /*TODO*/ }
-                    )
-                }
-                else{
-                    Text(text = "no user")
-                }
-            }
-
-            if (externalState.windowSizeClass.use2Panes){
-                Box(modifier = Modifier.weight(1f)) {
-                    //date screen
-                    //TODO
-                }
-            }
+                navigateUp = navigateUp,
+                navigateUpAndDeleteNewTrip = { deleteTrip ->
+                    navigateUp()
+                    commonTripViewModel.deleteTempTrip(deleteTrip)
+                },
+                navigateToInviteFriend = { /*TODO*/ },
+                navigateToInvitedFriends = { /*TODO*/ },
+                navigateToImage = { _,_, -> /*TODO*/ },
+                navigateToDate = { dateIndex, ->
+                    navigateToDate(dateIndex)
+                },
+                navigateToTripMap = { /*TODO*/ }
+            )
+        }
+        else{
+            Text(text = "no user")
         }
     }
 }
