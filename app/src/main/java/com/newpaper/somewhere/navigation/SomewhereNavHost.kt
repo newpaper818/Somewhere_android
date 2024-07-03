@@ -197,7 +197,7 @@ fun SomewhereNavHost(
 
 
 
-            //signIn ===================================================================================
+            //signIn ===============================================================================
             signInScreen(
                 appViewModel = appViewModel,
                 externalState = externalState,
@@ -213,7 +213,7 @@ fun SomewhereNavHost(
             )
 
 
-            //top level screen =========================================================================
+            //top level screen =====================================================================
             tripsScreen(
                 appViewModel = appViewModel,
                 commonTripViewModel = commonTripViewModel,
@@ -223,7 +223,11 @@ fun SomewhereNavHost(
                 navigateToTrip = { isNewTrip, trip ->
                     commonTripViewModel.setTrip(trip)
                     commonTripViewModel.setIsEditMode(isNewTrip)
-                    mainNavController.navigateToTrip()
+
+                    if (externalState.windowSizeClass.use2Panes)
+                        mainNavController.navigateToDate()
+                    else
+                        mainNavController.navigateToTrip()
                 },
                 navigateToGlanceSpot = {
                     //TODO
@@ -282,7 +286,7 @@ fun SomewhereNavHost(
 
 
 
-            //more =====================================================================================
+            //more =================================================================================
             setDateTimeFormatScreen(
                 appViewModel = appViewModel,
                 externalState = externalState,
@@ -352,7 +356,7 @@ fun SomewhereNavHost(
             )
 
 
-            //trip =====================================================================================
+            //trip =================================================================================
             tripScreen(
                 appViewModel = appViewModel,
                 externalState = externalState,
@@ -384,7 +388,14 @@ fun SomewhereNavHost(
 
 
 
-private suspend fun organizeNavStack(
+
+
+
+
+
+
+
+private fun organizeNavStack(
     use2Panes: Boolean,
     appUiState: AppUiState,
     mainNavController: NavHostController,
@@ -392,6 +403,9 @@ private suspend fun organizeNavStack(
     setMoreNavKey: () -> Unit
 ){
     val currentScreenDestination = appUiState.screenDestination.currentScreenDestination
+
+    val isOnTrip = currentScreenDestination == ScreenDestination.TRIP
+    val isOnDate = currentScreenDestination == ScreenDestination.DATE
 
     val isOnMoreDetail = currentScreenDestination == ScreenDestination.SET_DATE_TIME_FORMAT
             || currentScreenDestination == ScreenDestination.SET_THEME
@@ -406,12 +420,36 @@ private suspend fun organizeNavStack(
 
     // 1pane -> 2panes
     if (use2Panes){
-        if (isOnMore3rd) {
-            mainNavController.popBackStack()
-            val route = mainNavController.currentDestination?.route
-            mainNavController.popBackStack()
+        if (isOnTrip){
+            //delete Trip, add Date
+            //    Trips - Trip
+            // -> Trips - Date
+            mainNavController.navigate(
+                route = ScreenDestination.DATE.route,
+                navOptions = navOptions {
+                    popUpTo(ScreenDestination.TRIPS.route){ inclusive = false }
+                }
+            )
+        }
+        else if (isOnDate){
+            //delete Trip
+            //    Trips - Trip - Date
+            // -> Trips - Date
             mainNavController.navigate(
                 route = appUiState.screenDestination.currentScreenDestination.route,
+                navOptions = navOptions {
+                    popUpTo(ScreenDestination.TRIPS.route){ inclusive = false }
+                }
+            )
+        }
+        else if (isOnMore3rd) {
+            //    More - About - OSL (Open source license)
+            // -> More - OSL
+            mainNavController.navigate(
+                route = appUiState.screenDestination.currentScreenDestination.route,
+                navOptions = navOptions {
+                    popUpTo(ScreenDestination.MORE.route) {inclusive = false}
+                }
             )
         }
         else if (isOnMoreDetail) {
@@ -420,9 +458,20 @@ private suspend fun organizeNavStack(
     }
     // 2panes -> 1pane
     else {
-        setMoreNavKey()
-
-        if (isOnMore3rd) {
+        if (isOnDate){
+            //add Trip
+            //    Trips - Date
+            // -> Trips - Trip - Date
+            mainNavController.popBackStack()
+            mainNavController.navigate(
+                route = ScreenDestination.TRIP.route
+            )
+            mainNavController.navigate(
+                route = ScreenDestination.DATE.route
+            )
+        }
+        else if (isOnMore3rd) {
+            setMoreNavKey()
             val moreDetailRoute = when (currentScreenDestination){
                 ScreenDestination.EDIT_PROFILE -> ScreenDestination.ACCOUNT
                 ScreenDestination.DELETE_ACCOUNT -> ScreenDestination.ACCOUNT
@@ -444,6 +493,7 @@ private suspend fun organizeNavStack(
             moreNavController.popBackStack()
         }
         else if (isOnMoreDetail) {
+            setMoreNavKey()
             mainNavController.navigate(
                 route = currentScreenDestination.route,
             )
