@@ -123,7 +123,7 @@ fun DateRoute(
 
     //navigate
     navigateUp: () -> Unit,
-    navigateToSpot: (dateId: Int, spotId: Int) -> Unit,
+    navigateToSpot: (dateIndex: Int, spotIndex: Int) -> Unit,
     navigateToDateMap: () -> Unit,
 
     setIsShowingDialog: (isShowingDialog: Boolean) -> Unit,
@@ -180,7 +180,7 @@ fun DateRoute(
     }
 
     //when back button click
-    val onBackButtonClick = {
+    val onClickBackButton = {
         if (!isEditMode) navigateUp()
         else {
             if (originalTrip != tempTrip)
@@ -192,7 +192,7 @@ fun DateRoute(
     }
 
     BackHandler {
-        onBackButtonClick()
+        onClickBackButton()
     }
 
     var isFABExpanded by rememberSaveable { mutableStateOf(true) }
@@ -237,7 +237,7 @@ fun DateRoute(
             _setSelectedSpot = dateViewModel::setSelectedSpot
         ),
         navigate = DateNavigate(
-            _navigateUp = onBackButtonClick,
+            _navigateUp = onClickBackButton,
             _navigateToSpot = navigateToSpot,
             _navigateToDateMap = navigateToDateMap
         ),
@@ -434,7 +434,6 @@ private fun DateScreen(
             )
         }
 
-        //memo
         if (dialog.showMemoDialog && currentDate != null){
             MemoDialog(
                 memoText = currentDate.memo ?: "",

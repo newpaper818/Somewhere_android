@@ -78,13 +78,13 @@ internal data class DateDialog(
 
 internal data class DateNavigate(
     private val _navigateUp: () -> Unit = {},
-    private val _navigateToSpot: (dateId: Int, spotId: Int) -> Unit = {_,_ ->},
+    private val _navigateToSpot: (dateIndex: Int, spotIndex: Int) -> Unit = {_,_ ->},
     private val _navigateToDateMap: () -> Unit = {}
 ){
     fun navigateUp(){
         _navigateUp() }
-    fun navigateToSpot(dateId: Int, spotId: Int){
-        _navigateToSpot(dateId, spotId) }
+    fun navigateToSpot(dateIndex: Int, spotIndex: Int){
+        _navigateToSpot(dateIndex, spotIndex) }
     fun navigateToDateMap(){
         _navigateToDateMap() }
 }

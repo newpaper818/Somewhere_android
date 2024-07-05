@@ -38,6 +38,7 @@ fun NavGraphBuilder.dateScreen(
 
     navigateTo: () -> Unit,
     navigateUp: () -> Unit,
+    navigateToSpot: (dateIndex: Int, spotIndex: Int) -> Unit,
 
     modifier: Modifier = Modifier,
 ) {
@@ -112,7 +113,7 @@ fun NavGraphBuilder.dateScreen(
                     commonTripViewModel = commonTripViewModel,
 
                     navigateUp = navigateUp,
-                    navigateToSpot = {_,_ ->},
+                    navigateToSpot = navigateToSpot,
                     navigateToDateMap = { /*TODO*/ },
                     setIsShowingDialog = {isShowingDialog ->
                         commonTripViewModel.setIsShowingDialog(isShowingDialog)

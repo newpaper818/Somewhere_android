@@ -25,7 +25,7 @@ import com.newpaper.somewhere.core.ui.designsystem.R
 import java.text.DecimalFormat
 
 @Composable
-fun FocusOnToSpotButton(
+fun FocusOnToSpotButtonUi(
     focusOnToSpotEnabled: Boolean,
     onClickEnabled: () -> Unit,
     onClickDisabled: () -> Unit
@@ -47,7 +47,7 @@ fun FocusOnToSpotButton(
 }
 
 @Composable
-fun UserLocationButton(
+fun UserLocationButtonUi(
     userLocationPermissionGranted: Boolean,
     onClickLocationPermissionGranted: () -> Unit,
     onClickLocationPermissionNotGranted: () -> Unit
@@ -69,7 +69,7 @@ fun UserLocationButton(
 }
 
 @Composable
-fun ZoomButtonsForSetLocation(
+fun ZoomButtonsUi(
     zoomLevel: Float,
     onClickZoomOut: () -> Unit,
     onClickZoomOutLess: () -> Unit,
@@ -106,56 +106,6 @@ fun ZoomButtonsForSetLocation(
     }
 }
 
-/**
- * use at set location
- */
-@Composable
-fun ZoomButtons(
-    zoomLevel: Float,
-    onClickZoomOut: () -> Unit,
-    onClickZoomOutLess: () -> Unit,
-    onClickZoomInLess: () -> Unit,
-    onClickZoomIn: () -> Unit,
-
-    userLocationPermissionGranted: Boolean,
-    onClickLocationPermissionGranted: () -> Unit,
-    onClickLocationPermissionNotGranted: () -> Unit
-){
-    Row(
-        verticalAlignment = Alignment.Bottom,
-        modifier = Modifier.padding(0.dp, 10.dp)
-    ) {
-        //set zoom level
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = stringResource(id = R.string.zoom_card_zoom_level),
-                style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-                modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 3.dp)
-            )
-
-            ZoomButtonsForSetLocation(
-                zoomLevel = zoomLevel,
-                onClickZoomOut = onClickZoomOut,
-                onClickZoomOutLess = onClickZoomOutLess,
-                onClickZoomInLess = onClickZoomInLess,
-                onClickZoomIn = onClickZoomIn
-            )
-        }
-
-        MySpacerRow(width = 16.dp)
-
-        //user location button
-        MyCard(
-            shape = MaterialTheme.shapes.extraLarge
-        ) {
-            UserLocationButton(
-                userLocationPermissionGranted = userLocationPermissionGranted,
-                onClickLocationPermissionGranted = onClickLocationPermissionGranted,
-                onClickLocationPermissionNotGranted = onClickLocationPermissionNotGranted
-            )
-        }
-    }
-}
 
 
 
@@ -194,7 +144,7 @@ private fun FocusOnToSpotButtonPreview(){
             MyCard(
                 shape = MaterialTheme.shapes.extraLarge
             ) {
-                FocusOnToSpotButton(
+                FocusOnToSpotButtonUi(
                     focusOnToSpotEnabled = true,
                     onClickEnabled = { },
                     onClickDisabled = { }
@@ -206,7 +156,7 @@ private fun FocusOnToSpotButtonPreview(){
             MyCard(
                 shape = MaterialTheme.shapes.extraLarge
             ) {
-                FocusOnToSpotButton(
+                FocusOnToSpotButtonUi(
                     focusOnToSpotEnabled = false,
                     onClickEnabled = { },
                     onClickDisabled = { }
@@ -229,7 +179,7 @@ private fun UserLocationButtonPreview(){
             MyCard(
                 shape = MaterialTheme.shapes.extraLarge
             ) {
-                UserLocationButton(
+                UserLocationButtonUi(
                     userLocationPermissionGranted = true,
                     onClickLocationPermissionGranted = { },
                     onClickLocationPermissionNotGranted = { }
@@ -241,36 +191,10 @@ private fun UserLocationButtonPreview(){
             MyCard(
                 shape = MaterialTheme.shapes.extraLarge
             ) {
-                UserLocationButton(
+                UserLocationButtonUi(
                     userLocationPermissionGranted = false,
                     onClickLocationPermissionGranted = { },
                     onClickLocationPermissionNotGranted = { }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-@PreviewLightDark
-private fun ZoomButtonsForSetLocationPreview(){
-    SomewhereTheme {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(16.dp)
-                .width(300.dp)
-        ) {
-            MyCard(
-                shape = MaterialTheme.shapes.extraLarge
-            ) {
-                ZoomButtonsForSetLocation(
-                    zoomLevel = 10.5f,
-                    onClickZoomOut = { },
-                    onClickZoomOutLess = { },
-                    onClickZoomInLess = { },
-                    onClickZoomIn = { }
                 )
             }
         }
@@ -288,16 +212,17 @@ private fun ZoomButtonsPreview(){
                 .padding(16.dp)
                 .width(300.dp)
         ) {
-            ZoomButtons(
-                zoomLevel = 16.0f,
-                onClickZoomOut = { },
-                onClickZoomOutLess = { },
-                onClickZoomInLess = { },
-                onClickZoomIn = { },
-                userLocationPermissionGranted = true,
-                onClickLocationPermissionGranted = { },
-                onClickLocationPermissionNotGranted = { }
-            )
+            MyCard(
+                shape = MaterialTheme.shapes.extraLarge
+            ) {
+                ZoomButtonsUi(
+                    zoomLevel = 10.5f,
+                    onClickZoomOut = { },
+                    onClickZoomOutLess = { },
+                    onClickZoomInLess = { },
+                    onClickZoomIn = { }
+                )
+            }
         }
     }
 }

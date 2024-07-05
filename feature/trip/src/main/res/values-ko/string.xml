@@ -20,7 +20,11 @@
 
 
     <!--spot/ ===================================================================================-->
-
+    <string name="edit_spot">장소 편집</string>
+    <string name="set_location">위치 설정</string>
+    <string name="sub_title">%s - %s</string>
+    <string name="delete_spot">장소 삭제</string>
+    <string name="no_spot">장소 없음</string>
 
     <!--trip/ ===================================================================================-->
     <!--SharingWithFriendsCard.kt-->

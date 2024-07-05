@@ -126,20 +126,20 @@ fun SpotListProgressBar(
 
     dateTimeFormat: DateTimeFormat,
     dateList: List<Date>,
-    dateId: Int,
+    dateIndex: Int,
     spotList: List<Spot>,
-    currentSpotIdx: Int,
+    currentSpotIndex: Int,
 
     addNewSpot: () -> Unit,
     onClickSpot: (spotId: Int) -> Unit,
     onPrevDateClick: (dateId: Int) -> Unit,
     onNextDateClick: (dateId: Int) -> Unit,
 ){
-    val spot = spotList.getOrNull(currentSpotIdx)
+    val spot = spotList.getOrNull(currentSpotIndex)
 
     val moveIdx =
         if (spot?.spotType?.isMove() == true){
-            currentSpotIdx - 1
+            currentSpotIndex - 1
         }
         else    null
 
@@ -150,7 +150,7 @@ fun SpotListProgressBar(
 
         //to prev date button
         item {
-            if (!isEditMode && dateList.first() != dateList[dateId]) {
+            if (!isEditMode && dateList.first() != dateList[dateIndex]) {
                 MySpacerRow(width = spacerValue)
 
                 Column(
@@ -158,8 +158,8 @@ fun SpotListProgressBar(
                     verticalArrangement = Arrangement.Center
                 ) {
                     ToPrevDateButton(
-                        text = dateList[dateId - 1].getDateText(dateTimeFormat, false),
-                        onClick = { onPrevDateClick(dateId - 1) }
+                        text = dateList[dateIndex - 1].getDateText(dateTimeFormat, false),
+                        onClick = { onPrevDateClick(dateIndex - 1) }
                     )
                 }
             }
@@ -170,7 +170,7 @@ fun SpotListProgressBar(
             if (spotList.isNotEmpty()) {
                 val currentSpotSpotTypeIsMove = spotList[0].spotType.isMove()
                 val prevSpotSpotTypeIsMove =
-                    spotList[0].getPrevSpot(dateList, dateId)?.spotType?.isMove() ?: false
+                    spotList[0].getPrevSpot(dateList, dateIndex)?.spotType?.isMove() ?: false
 
                 Column(
                     modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
@@ -184,7 +184,7 @@ fun SpotListProgressBar(
                     ) {
                         Line(
                             isShown = currentSpotSpotTypeIsMove || prevSpotSpotTypeIsMove,
-                            isHighlight = currentSpotIdx == 0 && spotList[0].spotType.isMove(),
+                            isHighlight = currentSpotIndex == 0 && spotList[0].spotType.isMove(),
                             modifier = Modifier.fillMaxWidth(),
                             useMoveColor = currentSpotSpotTypeIsMove || prevSpotSpotTypeIsMove
                         )
@@ -209,16 +209,16 @@ fun SpotListProgressBar(
                 isHighlight = it == spot ||
                         moveIdx != null && (it.index == moveIdx || it.index == moveIdx + 2),
                 isLeftHighlight = moveIdx != null && it.index == moveIdx + 2
-                        || it.spotType.isMove() && it.index == currentSpotIdx,
+                        || it.spotType.isMove() && it.index == currentSpotIndex,
                 isRightHighlight = moveIdx != null && it.index == moveIdx
-                        || it.spotType.isMove() && it.index == currentSpotIdx,
-                isFirst = it == spotList.first() && it.getPrevSpot(dateList, dateId)?.spotType?.isNotMove() ?: true && it.spotType.isNotMove(),
-                isLast = it == spotList.last() && it.getNextSpot(dateList, dateId)?.spotType?.isNotMove() ?: true && it.spotType.isNotMove(),
+                        || it.spotType.isMove() && it.index == currentSpotIndex,
+                isFirst = it == spotList.first() && it.getPrevSpot(dateList, dateIndex)?.spotType?.isNotMove() ?: true && it.spotType.isNotMove(),
+                isLast = it == spotList.last() && it.getNextSpot(dateList, dateIndex)?.spotType?.isNotMove() ?: true && it.spotType.isNotMove(),
                 onClickItem = {
                     onClickSpot(it.index)
                 },
-                useLeftLineMoveColor = it.getPrevSpot(dateList, dateId)?.spotType?.isMove() ?: false || it.spotType.isMove(),
-                useRightLineMoveColor = it.getNextSpot(dateList, dateId)?.spotType?.isMove() ?: false || it.spotType.isMove()
+                useLeftLineMoveColor = it.getPrevSpot(dateList, dateIndex)?.spotType?.isMove() ?: false || it.spotType.isMove(),
+                useRightLineMoveColor = it.getNextSpot(dateList, dateIndex)?.spotType?.isMove() ?: false || it.spotType.isMove()
             )
 //            }
         }
@@ -228,7 +228,7 @@ fun SpotListProgressBar(
             if (spotList.isNotEmpty()) {
                 val lastSpotIdx = spotList.lastIndexOf(spotList.last())
                 val currentSpotSpotTypeIsMove = spotList[lastSpotIdx].spotType.isMove()
-                val nextSpotSpotTypeIsMove = spotList[lastSpotIdx].getNextSpot(dateList, dateId)?.spotType?.isMove() ?: false
+                val nextSpotSpotTypeIsMove = spotList[lastSpotIdx].getNextSpot(dateList, dateIndex)?.spotType?.isMove() ?: false
 
                 Column(
                     modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
@@ -242,7 +242,7 @@ fun SpotListProgressBar(
                     ) {
                         Line(
                             isShown = currentSpotSpotTypeIsMove || nextSpotSpotTypeIsMove,
-                            isHighlight = currentSpotIdx == lastSpotIdx && spotList[lastSpotIdx].spotType.isMove(),
+                            isHighlight = currentSpotIndex == lastSpotIdx && spotList[lastSpotIdx].spotType.isMove(),
                             modifier = Modifier.fillMaxWidth(),
                             useMoveColor = currentSpotSpotTypeIsMove || nextSpotSpotTypeIsMove
                         )
@@ -272,7 +272,7 @@ fun SpotListProgressBar(
 
         //to next date button
         item {
-            if (!isEditMode && dateList.last() != dateList[dateId]) {
+            if (!isEditMode && dateList.last() != dateList[dateIndex]) {
                 if (spot == null)
                     MySpacerRow(width = 32.dp)
 
@@ -281,8 +281,8 @@ fun SpotListProgressBar(
                     verticalArrangement = Arrangement.Center
                 ) {
                     ToNextDateButton(
-                        text = dateList[dateId + 1].getDateText(dateTimeFormat, false),
-                        onClick = { onNextDateClick(dateId + 1) }
+                        text = dateList[dateIndex + 1].getDateText(dateTimeFormat, false),
+                        onClick = { onNextDateClick(dateIndex + 1) }
                     )
                 }
 

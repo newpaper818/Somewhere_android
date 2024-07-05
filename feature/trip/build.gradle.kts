@@ -52,6 +52,9 @@ dependencies {
     //google ad
     implementation(libs.play.services.ads)
 
+    //google map
+    implementation(libs.maps.compose)
+
     //LatLng
     implementation(libs.places)
 

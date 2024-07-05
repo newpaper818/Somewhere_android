@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.newpaper.somewhere.feature.trip.trips.TripsViewModel
 import com.newpaper.somewhere.navigation.SomewhereNavHost
 
@@ -13,6 +14,7 @@ fun SomewhereApp(
     appViewModel: AppViewModel,
     tripsViewModel: TripsViewModel,
     isDarkAppTheme: Boolean,
+    fusedLocationClient: FusedLocationProviderClient,
 
     modifier: Modifier = Modifier,
 ) {
@@ -72,6 +74,7 @@ fun SomewhereApp(
             tripsViewModel = tripsViewModel,
             isDarkAppTheme = isDarkAppTheme,
             startDestination = startDestination,
+            fusedLocationClient = fusedLocationClient,
             modifier = modifier
         )
     }

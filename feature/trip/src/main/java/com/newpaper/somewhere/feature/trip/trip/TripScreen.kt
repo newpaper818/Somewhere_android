@@ -144,7 +144,7 @@ fun TripRoute(
     }
 
 
-    val onBackButtonClick = {
+    val onClickBackButton = {
         if (originalTrip != tempTrip)
             tripViewModel.setShowExitDialog(true)
         else {
@@ -159,7 +159,7 @@ fun TripRoute(
     //when back button click
     if (isEditMode)
         BackHandler {
-            onBackButtonClick()
+            onClickBackButton()
         }
 
     TripScreen(
@@ -206,7 +206,7 @@ fun TripRoute(
         navigate = TripNavigate(
             _navigateUp = {
                 if (!isEditMode) navigateUp()
-                else onBackButtonClick()
+                else onClickBackButton()
             },
             _navigateToInviteFriend = navigateToInviteFriend,
             _navigateToInvitedFriends = navigateToInvitedFriends,

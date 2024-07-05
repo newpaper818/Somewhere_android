@@ -46,6 +46,13 @@ dependencies {
     implementation(libs.material)
     implementation(libs.coil.compose)
 
+    //map
+    implementation(libs.play.services.maps)
+    implementation(libs.maps.compose)
+
+    //permission
+    implementation(libs.accompanist.permissions)
+
     //test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
