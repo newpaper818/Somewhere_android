@@ -21,6 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
+import com.google.android.gms.location.LocationServices
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
@@ -125,6 +126,8 @@ class MainActivity : ComponentActivity() {
 
 
             SomewhereTheme(darkTheme = isDarkAppTheme) {
+                val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -134,7 +137,8 @@ class MainActivity : ComponentActivity() {
                         externalState = externalState,
                         appViewModel = appViewModel,
                         tripsViewModel = tripsViewModel,
-                        isDarkAppTheme = isDarkAppTheme
+                        isDarkAppTheme = isDarkAppTheme,
+                        fusedLocationClient = fusedLocationClient
                     )
                 }
             }

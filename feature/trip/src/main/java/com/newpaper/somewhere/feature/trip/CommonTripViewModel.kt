@@ -70,6 +70,16 @@ class CommonTripViewModel @Inject constructor(
         }
     }
 
+    fun setCurrentSpotIndex(
+        spotIndex: Int
+    ){
+        commonTripUiStateRepository._commonTripUiState.update {
+            it.copy(tripInfo = it.tripInfo.copy(
+                spotIndex = spotIndex
+            ))
+        }
+    }
+
 
     fun setIsShowingDialog(
         isShowingDialog: Boolean

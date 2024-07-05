@@ -1,6 +1,7 @@
 package com.newpaper.somewhere.core.utils
 
 import androidx.compose.ui.unit.dp
+import com.google.android.gms.maps.model.LatLng
 
 const val PRIVACY_POLICY_URL = "https://newpaper818.github.io/Somewhere_privacy_policy/"
 
@@ -25,3 +26,25 @@ const val OAUTH_WEB_CLIENT_ID = "141125479046-n0dciq6m90m841sq88coqkct8qdm3pk1.a
 val itemMaxWidth = 700.dp
 
 const val MAX_FRIEND_CNT = 35
+
+
+
+
+
+/**seoul location, initial location*/
+val SEOUL_LOCATION = LatLng(37.55, 126.98)
+
+/**10f, default map zoom level*/
+const val DEFAULT_ZOOM_LEVEL = 10f
+
+/**21f, max map zoom level*/
+const val MAX_ZOOM_LEVEL = 21f
+
+/**3f, minimum map zoom level*/
+const val MIN_ZOOM_LEVEL = 3f
+
+/**300ms, map move spot animation duration*/
+const val ANIMATION_DURATION_MS = 300
+
+/**200, map LatLng bound padding value*/
+const val LAT_LNG_BOUND_PADDING = 200

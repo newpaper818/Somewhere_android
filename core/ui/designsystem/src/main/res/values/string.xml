@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="light_map_id" translatable="false">1b6b3c8ee88760e9</string>
+    <string name="dark_map_id" translatable="false">c99ac47fc79e73ea</string>
+
 
     <!--component/button/ =======================================================================-->
     <!-- AuthButtons.kt -->
@@ -25,8 +28,13 @@
     <!-- FABs.kt -->
     <string name="see_on_map">See on Map</string>
 
-    <!-- MapButtons.kt -->
+    <!-- MapButtonsUi.kt -->
     <string name="zoom_card_zoom_level">Zoom Level</string>
+
+
+    <!--component/button/ =======================================================================-->
+    <!-- Map.kt -->
+    <string name="no_title">No Title</string>
 
 
     <!--component/topAppBars/ ===================================================================-->

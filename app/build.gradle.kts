@@ -97,6 +97,7 @@ dependencies {
     implementation(project(":core:data:data"))
     implementation(project(":core:ui:designsystem"))
     implementation(project(":core:ui:ui"))
+    implementation(project(":core:utils"))
 
     implementation(project(":feature:signin"))
     implementation(project(":feature:trip"))
@@ -127,6 +128,8 @@ dependencies {
     implementation(libs.firebase.appcheck.playintegrity)
     implementation(libs.firebase.appcheck.debug)
 
+    //map
+    implementation(libs.play.services.location)
 
     //review
     implementation(libs.android.play.review)

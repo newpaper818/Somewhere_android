@@ -13,14 +13,17 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.newpaper.somewhere.core.model.enums.MapTheme
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
+import com.newpaper.somewhere.core.utils.checkPermissionUserLocation
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.trips.TripsViewModel
 import com.newpaper.somewhere.navigation.more.aboutScreen
@@ -28,7 +31,6 @@ import com.newpaper.somewhere.navigation.more.accountScreen
 import com.newpaper.somewhere.navigation.more.deleteAccountScreen
 import com.newpaper.somewhere.navigation.more.editProfileScreen
 import com.newpaper.somewhere.navigation.more.moreScreen
-import com.newpaper.somewhere.navigation.more.navigateToAccount
 import com.newpaper.somewhere.navigation.more.navigateToDeleteAccount
 import com.newpaper.somewhere.navigation.more.navigateToEditProfile
 import com.newpaper.somewhere.navigation.more.navigateToOpenSourceLicense
@@ -40,7 +42,9 @@ import com.newpaper.somewhere.navigation.signIn.navigateToSignIn
 import com.newpaper.somewhere.navigation.signIn.signInScreen
 import com.newpaper.somewhere.navigation.trip.dateScreen
 import com.newpaper.somewhere.navigation.trip.navigateToDate
+import com.newpaper.somewhere.navigation.trip.navigateToSpot
 import com.newpaper.somewhere.navigation.trip.navigateToTrip
+import com.newpaper.somewhere.navigation.trip.spotScreen
 import com.newpaper.somewhere.navigation.trip.tripScreen
 import com.newpaper.somewhere.navigation.trip.tripsScreen
 import com.newpaper.somewhere.navigationUi.ScreenWithNavigationBar
@@ -48,7 +52,6 @@ import com.newpaper.somewhere.navigationUi.TopLevelDestination
 import com.newpaper.somewhere.ui.AppUiState
 import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -59,6 +62,7 @@ fun SomewhereNavHost(
     tripsViewModel: TripsViewModel,
     isDarkAppTheme: Boolean,
     startDestination: String,
+    fusedLocationClient: FusedLocationProviderClient,
 
     modifier: Modifier = Modifier,
     commonTripViewModel: CommonTripViewModel = hiltViewModel()
@@ -76,6 +80,16 @@ fun SomewhereNavHost(
     }
 
     val appUiState by appViewModel.appUiState.collectAsState()
+
+    val isDarkMapTheme = appUiState.appPreferences.theme.mapTheme == MapTheme.DARK
+            || appUiState.appPreferences.theme.mapTheme == MapTheme.AUTO && isDarkAppTheme
+
+    val context = LocalContext.current
+
+    var userLocationEnabled by rememberSaveable {
+        mutableStateOf(checkPermissionUserLocation(context))
+    }
+
 
     val navigateUp = {
         if (mainNavController.previousBackStackEntry != null) {
@@ -379,6 +393,26 @@ fun SomewhereNavHost(
                 navigateTo = {
                     //TODO
                 },
+                navigateUp = navigateUp,
+                navigateToSpot = { dateIndex, spotIndex ->
+                    commonTripViewModel.setCurrentDateIndex(dateIndex)
+                    commonTripViewModel.setCurrentSpotIndex(spotIndex)
+                    mainNavController.navigateToSpot()
+                },
+                modifier = modifier
+            )
+
+            spotScreen(
+                appViewModel = appViewModel,
+                externalState = externalState,
+                commonTripViewModel = commonTripViewModel,
+                isDarkMapTheme = isDarkMapTheme,
+                fusedLocationClient = fusedLocationClient,
+                userLocationEnabled = userLocationEnabled,
+                setUserLocationEnabled = {
+                    userLocationEnabled = it
+                },
+                navigateTo = { },
                 navigateUp = navigateUp,
                 modifier = modifier
             )

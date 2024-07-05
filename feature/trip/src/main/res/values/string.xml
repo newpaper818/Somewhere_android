@@ -20,7 +20,11 @@
 
 
     <!--spot/ ===================================================================================-->
-
+    <string name="edit_spot">Edit Spot</string>
+    <string name="set_location">Set Location</string>
+    <string name="sub_title">%s - %s</string>
+    <string name="delete_spot">Delete spot</string>
+    <string name="no_spot">No spot</string>
 
     <!--trip/ ===================================================================================-->
     <!--SharingWithFriendsCard.kt-->

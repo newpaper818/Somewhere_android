@@ -25,6 +25,13 @@
     <string name="old_version">(old ver)</string>
 
     <!--card/trip/ ==============================================================================-->
+    <!--DateTimeCard.kt-->
+    <string name="date_time_card_date_text">%s - %s</string>
+    <string name="date_time_card_starts">Starts</string>
+    <string name="date_time_card_ends">Ends</string>
+    <string name="delete_start_time">Delete start time</string>
+    <string name="delete_end_time">Delete end time</string>
+
     <!--ImageCard.kt-->
     <string name="image_card_title">Images %d/%d</string>
     <string name="image_card_subtitle_add_images">+ Add images</string>
@@ -135,11 +142,19 @@
 
 
 
+
     <!--FriendInfo.kt-->
     <string name="unknown">Unknown</string>
 
     <!--InternetUnavailableIconWithText.kt-->
     <string name="internet_unavailable_check_connection">Internet unavailable\nCheck internet connection</string>
+
+    <!--MapButtons.kt-->
+    <string name="snackbar_no_location_to_show">No location to show</string>
+    <string name="snackbar_no_user_location">Can\'t find your location</string>
+    <string name="snackbar_location_permission_denied">User location permission denied</string>
+    <string name="snackbar_settings">Settings</string>
+    <string name="zoom_card_zoom_level">Zoom Level</string>
 
     <!--ProgressBar.kt-->
     <string name="new_spot">New Spot</string>

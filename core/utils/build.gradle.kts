@@ -43,8 +43,13 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
 
+    //google map
+    implementation(libs.maps.compose)
     implementation(libs.places)
 
+    //
+    implementation(libs.activity.compose)
+    implementation(libs.accompanist.permissions)
 
     //
     implementation(libs.androidx.animation.core.android)

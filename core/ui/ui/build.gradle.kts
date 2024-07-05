@@ -54,6 +54,11 @@ dependencies {
     //
     implementation(libs.activity.compose)
 
+    //google map
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.location)
+    implementation(libs.play.services.maps)
+
     //
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
