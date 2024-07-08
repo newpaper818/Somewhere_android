@@ -123,8 +123,10 @@ fun SpotRoute(
     val showingTrip = if (commonTripUiState.isEditMode) tempTrip
                         else            originalTrip
 
-    var currentDateIndex = commonTripUiState.tripInfo.dateIndex ?: 0
-    var currentSpotIndex = commonTripUiState.tripInfo.spotIndex ?: 0
+    val currentDateIndex = spotUiState.currentDateIndex
+    val currentSpotIndex = spotUiState.currentSpotIndex ?: 0
+
+
     var userSwiping by rememberSaveable { mutableStateOf(true) }
 
 //    LaunchedEffect(currentDateIndex){
@@ -220,28 +222,28 @@ fun SpotRoute(
     }
 
     LaunchedEffect(userDragTouching){
-        if (userDragTouching)
-            userSwiping = true
+        userSwiping = userDragTouching
     }
 
     //when user swipe page
     LaunchedEffect(spotPagerState.currentPage){
         if (userSwiping) {
-            currentSpotIndex = spotPagerState.currentPage
+            val newSpotIndex = spotPagerState.currentPage
+            spotViewModel.setCurrentSpotIndex(newSpotIndex)
 
             //animate progress bar
             coroutineScope.launch {
-                val toIdx = if (currentSpotIndex == 0) 0
-                else currentSpotIndex + 1
+                val toIdx = if (newSpotIndex == 0) 0
+                else newSpotIndex + 1
                 progressBarState.animateScrollToItem(toIdx)
             }
 
             //animate map spot
-            if (currentSpotIndex < spotList.size)
+            if (newSpotIndex < spotList.size)
                 coroutineScope.launch {
                     mapAnimateToSpot(
                         scrollState,
-                        spotList[currentSpotIndex],
+                        spotList[newSpotIndex],
                         dateList,
                         spotList,
                         currentDateIndex,
@@ -296,14 +298,16 @@ fun SpotRoute(
             dateTimeFormat = dateTimeFormat,
             internetEnabled = internetEnabled,
             isDarkMapTheme = isDarkMapTheme,
+            userSwiping = userSwiping,
+            _setUserSwiping = { userSwiping = it },
             isEditMode = isEditMode,
             _setIsEditMode = commonTripViewModel::setIsEditMode
         ),
         spotData = SpotData(
             originalTrip = originalTrip,
             tempTrip = tempTrip,
-            currentDateIndex = currentDateIndex,
-            currentSpotIndex = currentSpotIndex,
+            currentDateIndex = spotUiState.currentDateIndex,
+            currentSpotIndex = spotUiState.currentSpotIndex,
             _setCurrentDateIndex = spotViewModel::setCurrentDateIndex,
             _setCurrentSpotIndex = spotViewModel::setCurrentSpotIndex
         ),
@@ -387,6 +391,10 @@ fun SpotRoute(
 }
 
 
+
+
+
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SpotScreen(
@@ -412,10 +420,8 @@ private fun SpotScreen(
     val showingTrip = if (spotUiInfo.isEditMode) spotData.tempTrip
                         else            spotData.originalTrip
 
-    var currentDateIndex = spotData.currentDateIndex
-    var currentSpotIndex = spotData.currentSpotIndex ?: 0
-    var userSwiping by rememberSaveable { mutableStateOf(true) }
-
+    val currentDateIndex = spotData.currentDateIndex
+    val currentSpotIndex = spotData.currentSpotIndex ?: 0
 
     val dateList = showingTrip.dateList
     val spotList = dateList[currentDateIndex].spotList
@@ -631,23 +637,23 @@ private fun SpotScreen(
                             addNewSpot(currentDateIndex)
                             delay(70)
                             val lastIdx = spotList.size
-                            currentSpotIndex = lastIdx
+                            spotData.setCurrentSpotIndex(lastIdx)
                             spotState.spotPagerState.animateScrollToPage(lastIdx)
                         }
                     },
-                    onClickSpot = {toSpotId ->
-                        userSwiping = false
-                        currentSpotIndex = toSpotId
+                    onClickSpot = {toSpotIndex ->
+                        spotUiInfo.setUserSwiping(false)
+                        spotData.setCurrentSpotIndex(toSpotIndex)
                     },
                     onPrevDateClick = {toDateIndex ->
-                        userSwiping = false
-                        currentDateIndex = toDateIndex
-                        currentSpotIndex = dateList[toDateIndex].spotList.lastIndex
+                        spotUiInfo.setUserSwiping(false)
+                        spotData.setCurrentDateIndex(toDateIndex)
+                        spotData.setCurrentSpotIndex(dateList[toDateIndex].spotList.lastIndex)
                     },
                     onNextDateClick = {toDateIndex ->
-                        userSwiping = false
-                        currentDateIndex = toDateIndex
-                        currentSpotIndex = 0
+                        spotUiInfo.setUserSwiping(false)
+                        spotData.setCurrentDateIndex(toDateIndex)
+                        spotData.setCurrentSpotIndex(0)
                     }
                 )
 
@@ -669,7 +675,7 @@ private fun SpotScreen(
                         snackBarHostState = snackBarHostState,
                         focusManager = focusManager,
                         updateTripState = updateTripState,
-                        setUserSwiping = { userSwiping = it },
+                        setUserSwiping = spotUiInfo::setUserSwiping,
                         deleteTime = { }
 
                     )
@@ -691,7 +697,7 @@ private fun SpotScreen(
                         snackBarHostState = snackBarHostState,
                         focusManager = focusManager,
                         updateTripState = updateTripState,
-                        setUserSwiping = { userSwiping = it },
+                        setUserSwiping = spotUiInfo::setUserSwiping,
                         deleteTime = {  }
                     )
                 }

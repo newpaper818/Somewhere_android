@@ -131,9 +131,9 @@ fun SpotListProgressBar(
     currentSpotIndex: Int,
 
     addNewSpot: () -> Unit,
-    onClickSpot: (spotId: Int) -> Unit,
-    onPrevDateClick: (dateId: Int) -> Unit,
-    onNextDateClick: (dateId: Int) -> Unit,
+    onClickSpot: (spotIndex: Int) -> Unit,
+    onPrevDateClick: (dateIndex: Int) -> Unit,
+    onNextDateClick: (dateIndex: Int) -> Unit,
 ){
     val spot = spotList.getOrNull(currentSpotIndex)
 
