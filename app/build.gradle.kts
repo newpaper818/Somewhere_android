@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -5,6 +7,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.gmsGoogleServices)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.googleMapsPlatformGraglePlugin)
 }
 
 android {
@@ -23,7 +26,7 @@ android {
             useSupportLibrary = true
         }
 
-//        buildConfigField("String", "MAPS_API_KEY", getApiKey("MAPS_API_KEY"))
+        buildConfigField("String", "MAPS_API_KEY", getApiKey("MAPS_API_KEY"))
     }
 
     sourceSets {
@@ -86,9 +89,9 @@ android {
     }
 }
 
-//fun getApiKey(propertyKey: String): String {
-//    return gradleLocalProperties(rootDir).getProperty(propertyKey)
-//}
+fun getApiKey(propertyKey: String): String {
+    return gradleLocalProperties(rootDir).getProperty(propertyKey)
+}
 
 dependencies {
 
