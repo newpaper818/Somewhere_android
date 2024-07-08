@@ -20,11 +20,16 @@ internal data class SpotUiInfo(
     val internetEnabled: Boolean = true,
     val isDarkMapTheme: Boolean = false,
 
+    val userSwiping: Boolean = false,
+    private val _setUserSwiping: (userSwiping: Boolean) -> Unit = {},
+
     val isEditMode: Boolean = false,
     private val _setIsEditMode: (isEditMode: Boolean?) -> Unit = {}
 ){
     fun setIsEditMode(isEditMode: Boolean?){
         _setIsEditMode(isEditMode) }
+    fun setUserSwiping(userSwiping: Boolean){
+        _setUserSwiping(userSwiping) }
 }
 
 internal data class SpotData(
