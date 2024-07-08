@@ -1073,7 +1073,7 @@ private fun Spot2Panes(
                                 //each page
                                 SpotDetailPage(
                                     spotUiInfo = spotUiInfo,
-                                    spotData = spotData.copy(currentDateIndex = pageIndex),
+                                    spotData = spotData.copy(currentSpotIndex = pageIndex),
                                     errorCount = errorCount,
                                     dialog = dialog,
                                     navigate = navigate,
