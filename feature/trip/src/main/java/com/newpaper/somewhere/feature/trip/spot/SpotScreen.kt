@@ -227,7 +227,7 @@ fun SpotRoute(
     }
 
     LaunchedEffect(userDragTouching){
-        userSwiping = userDragTouching
+        if (userDragTouching) userSwiping = true
     }
 
     //when user swipe page
