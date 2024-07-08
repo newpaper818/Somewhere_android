@@ -10,9 +10,6 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 data class SpotUiState(
-    val currentDateIndex: Int = 0,
-    val currentSpotIndex: Int? = null,
-
     val mapSize: IntSize = IntSize.Zero,
     val isMapExpanded: Boolean = false,
 
@@ -44,18 +41,6 @@ class SpotViewModel @Inject constructor(
 
     private val commonTripUiState = commonTripUiStateRepository.commonTripUiState
 
-
-    //current date/spot index
-    fun setCurrentDateIndex(currentDateIndex: Int) {
-        _spotUiState.update {
-            it.copy(currentDateIndex = currentDateIndex)
-        }
-    }
-    fun setCurrentSpotIndex(currentSpotIndex: Int?) {
-        _spotUiState.update {
-            it.copy(currentSpotIndex = currentSpotIndex)
-        }
-    }
 
     //map
     fun setMapSize(mapSize: IntSize) {
@@ -192,40 +177,37 @@ class SpotViewModel @Inject constructor(
 
     fun reorderSpotImageList(
         currentIndex: Int,
-        destinationIndex: Int
+        destinationIndex: Int,
+        dateIndex: Int,
+        spotIndex: Int
     ){
         val tempTrip = commonTripUiState.value.tripInfo.tempTrip
-        val dateIndex = _spotUiState.value.currentDateIndex
-        val spotIndex = _spotUiState.value.currentSpotIndex
 
-        if (spotIndex != null) {
+        val imagePathList =
+            tempTrip?.dateList?.get(dateIndex)?.spotList?.get(spotIndex)?.imagePathList
 
-            val imagePathList =
-                tempTrip?.dateList?.get(dateIndex)?.spotList?.get(spotIndex)?.imagePathList
+        if (imagePathList != null) {
+            val newImagePathList = imagePathList.toMutableList()
 
-            if (imagePathList != null) {
-                val newImagePathList = imagePathList.toMutableList()
+            //reorder
+            val imagePath = newImagePathList[currentIndex]
+            newImagePathList.removeAt(currentIndex)
+            newImagePathList.add(destinationIndex, imagePath)
 
-                //reorder
-                val imagePath = newImagePathList[currentIndex]
-                newImagePathList.removeAt(currentIndex)
-                newImagePathList.add(destinationIndex, imagePath)
+            //update ui state
+            val newTempSpot =
+                tempTrip.dateList[dateIndex].spotList[spotIndex].copy(imagePathList = newImagePathList)
+            val newTempSpotList = tempTrip.dateList[dateIndex].spotList.toMutableList()
+            newTempSpotList[spotIndex] = newTempSpot
+            val newTempDate = tempTrip.dateList[dateIndex].copy(spotList = newTempSpotList)
+            val newTempDateList = tempTrip.dateList.toMutableList()
+            newTempDateList[dateIndex] = newTempDate
+            val newTempTrip = tempTrip.copy(dateList = newTempDateList)
 
-                //update ui state
-                val newTempSpot =
-                    tempTrip.dateList[dateIndex].spotList[spotIndex].copy(imagePathList = newImagePathList)
-                val newTempSpotList = tempTrip.dateList[dateIndex].spotList.toMutableList()
-                newTempSpotList[spotIndex] = newTempSpot
-                val newTempDate = tempTrip.dateList[dateIndex].copy(spotList = newTempSpotList)
-                val newTempDateList = tempTrip.dateList.toMutableList()
-                newTempDateList[dateIndex] = newTempDate
-                val newTempTrip = tempTrip.copy(dateList = newTempDateList)
-
-                commonTripUiStateRepository._commonTripUiState.update {
-                    it.copy(
-                        tripInfo = it.tripInfo.copy(tempTrip = newTempTrip)
-                    )
-                }
+            commonTripUiStateRepository._commonTripUiState.update {
+                it.copy(
+                    tripInfo = it.tripInfo.copy(tempTrip = newTempTrip)
+                )
             }
         }
     }

@@ -116,11 +116,6 @@ fun SpotRoute(
     val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsState()
     val spotUiState by spotViewModel.spotUiState.collectAsState()
 
-    LaunchedEffect(Unit) {
-        spotViewModel.setCurrentDateIndex(commonTripUiState.tripInfo.dateIndex ?: 0)
-        spotViewModel.setCurrentSpotIndex(commonTripUiState.tripInfo.spotIndex ?: 0)
-    }
-
     val originalTrip = commonTripUiState.tripInfo.trip!!
     val tempTrip = commonTripUiState.tripInfo.tempTrip!!
     val isEditMode = commonTripUiState.isEditMode
@@ -128,16 +123,10 @@ fun SpotRoute(
     val showingTrip = if (commonTripUiState.isEditMode) tempTrip
                         else            originalTrip
 
-    val currentDateIndex = spotUiState.currentDateIndex
-    val currentSpotIndex = spotUiState.currentSpotIndex ?: 0
-
+    val currentDateIndex = commonTripUiState.tripInfo.dateIndex ?: 0
+    val currentSpotIndex = commonTripUiState.tripInfo.spotIndex ?: 0
 
     var userSwiping by rememberSaveable { mutableStateOf(true) }
-
-//    LaunchedEffect(currentDateIndex){
-//        updateDateIndex(currentDateIndex)
-//        Log.d("ddd", "in spot screen  $currentDateIndex")
-//    }
 
     val dateList = showingTrip.dateList
     val spotList = dateList[currentDateIndex].spotList
@@ -234,7 +223,7 @@ fun SpotRoute(
     LaunchedEffect(spotPagerState.currentPage){
         if (userSwiping) {
             val newSpotIndex = spotPagerState.currentPage
-            spotViewModel.setCurrentSpotIndex(newSpotIndex)
+            commonTripViewModel.setCurrentSpotIndex(newSpotIndex)
 
             //animate progress bar
             coroutineScope.launch {
@@ -311,10 +300,10 @@ fun SpotRoute(
         spotData = SpotData(
             originalTrip = originalTrip,
             tempTrip = tempTrip,
-            currentDateIndex = spotUiState.currentDateIndex,
-            currentSpotIndex = spotUiState.currentSpotIndex,
-            _setCurrentDateIndex = spotViewModel::setCurrentDateIndex,
-            _setCurrentSpotIndex = spotViewModel::setCurrentSpotIndex
+            currentDateIndex = currentDateIndex,
+            currentSpotIndex = currentSpotIndex,
+            _setCurrentDateIndex = commonTripViewModel::setCurrentDateIndex,
+            _setCurrentSpotIndex = commonTripViewModel::setCurrentSpotIndex
         ),
         spotState = SpotState(
             scrollState = scrollState,
@@ -383,7 +372,14 @@ fun SpotRoute(
                     isInTripsScreen = true
                 )
             },
-            _reorderSpotImageList = spotViewModel::reorderSpotImageList
+            _reorderSpotImageList = { currentIndex, destinationIndex ->
+                spotViewModel.reorderSpotImageList(
+                    currentIndex = currentIndex,
+                    destinationIndex = destinationIndex,
+                    dateIndex = currentDateIndex,
+                    spotIndex = currentSpotIndex
+                )
+            }
         ),
         appUserId = appUserId,
         isCompactWidth = isCompactWidth,

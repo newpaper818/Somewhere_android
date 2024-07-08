@@ -61,7 +61,7 @@ class CommonTripViewModel @Inject constructor(
     }
 
     fun setCurrentDateIndex(
-        dateIndex: Int
+        dateIndex: Int?
     ){
         commonTripUiStateRepository._commonTripUiState.update {
             it.copy(tripInfo = it.tripInfo.copy(
@@ -71,7 +71,7 @@ class CommonTripViewModel @Inject constructor(
     }
 
     fun setCurrentSpotIndex(
-        spotIndex: Int
+        spotIndex: Int?
     ){
         commonTripUiStateRepository._commonTripUiState.update {
             it.copy(tripInfo = it.tripInfo.copy(
