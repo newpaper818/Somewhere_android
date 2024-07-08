@@ -6,4 +6,5 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinJvm) apply false
     alias(libs.plugins.googleDevToolsKsp) apply false
     alias(libs.plugins.hilt) apply false
+    alias(libs.plugins.googleMapsPlatformGraglePlugin) apply false
 }
