@@ -482,13 +482,14 @@ private fun SpotScreen(
 
 
 
-    val scaffoldModifier = if (!spotDialog.showSetLocationDialog) Modifier
-                                .navigationBarsPadding()
-                                .displayCutoutPadding()
-                                .imePadding()
-                            else Modifier
-                                .navigationBarsPadding()
-                                .displayCutoutPadding()
+    val scaffoldModifier =
+        if (!spotDialog.showSetLocationDialog) Modifier
+            .navigationBarsPadding()
+            .displayCutoutPadding()
+            .imePadding()
+        else Modifier
+            .navigationBarsPadding()
+            .displayCutoutPadding()
 
 
 
@@ -832,7 +833,7 @@ private fun Spot1Pane(
                     } else {
                         //first date and first spot will not be here
                         spotData.setCurrentDateIndex(currentDateIndex - 1)
-                        spotData.setCurrentSpotIndex(dateList[currentDateIndex].spotList.lastIndex)
+                        spotData.setCurrentSpotIndex(dateList[currentDateIndex - 1].spotList.lastIndex)
                     }
                 },
                 toNextSpot = {
@@ -989,7 +990,7 @@ private fun Spot2Panes(
                     } else {
                         //first date and first spot will not be here
                         spotData.setCurrentDateIndex(currentDateIndex - 1)
-                        spotData.setCurrentSpotIndex(dateList[currentDateIndex].spotList.lastIndex)
+                        spotData.setCurrentSpotIndex(dateList[currentDateIndex - 1].spotList.lastIndex)
                     }
                 },
                 toNextSpot = {
