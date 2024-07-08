@@ -116,6 +116,11 @@ fun SpotRoute(
     val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsState()
     val spotUiState by spotViewModel.spotUiState.collectAsState()
 
+    LaunchedEffect(Unit) {
+        spotViewModel.setCurrentDateIndex(commonTripUiState.tripInfo.dateIndex ?: 0)
+        spotViewModel.setCurrentSpotIndex(commonTripUiState.tripInfo.spotIndex ?: 0)
+    }
+
     val originalTrip = commonTripUiState.tripInfo.trip!!
     val tempTrip = commonTripUiState.tripInfo.tempTrip!!
     val isEditMode = commonTripUiState.isEditMode
