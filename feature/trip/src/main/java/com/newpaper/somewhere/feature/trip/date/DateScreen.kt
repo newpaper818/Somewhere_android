@@ -12,6 +12,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,7 +51,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
@@ -161,17 +161,41 @@ fun DateRoute(
         dateViewModel.initAllErrorCount()
     }
 
-    //at large screen, when change dateIndex(click date at trip screen), update screen
-    LaunchedEffect(dateIndex){
-        if (dateIndex != null)
-            datePagerState.animateScrollToPage(dateIndex)
+    var userSwiping by rememberSaveable { mutableStateOf(true) }
+
+    val userDragTouching by datePagerState.interactionSource.collectIsDraggedAsState()
+
+    LaunchedEffect(userDragTouching){
+        if (userDragTouching) userSwiping = true
     }
 
-    //when current page changed, animate progress bar / update trip screen's current date index
+    //when use2panes, when change dateIndex(click date at trip screen), animate progress bar and date page
+    LaunchedEffect(dateIndex){
+        if (dateIndex != null) {
+            coroutineScope.launch {
+                userSwiping = false
+            }
+            coroutineScope.launch {
+                progressBarState.animateScrollToItem(dateIndex)
+            }
+            coroutineScope.launch {
+                datePagerState.animateScrollToPage(
+                    page = dateIndex,
+                    animationSpec = tween(500)
+                )
+            }
+        }
+    }
+
+    //when current page changed, animate progress bar, update current date index
     LaunchedEffect(datePagerState.currentPage){
-        snapshotFlow { datePagerState.currentPage }.collect { currentPage ->
-            progressBarState.animateScrollToItem(currentPage)
-            commonTripViewModel.setCurrentDateIndex(currentPage)
+        if (userSwiping) {
+            coroutineScope.launch {
+                commonTripViewModel.setCurrentDateIndex(datePagerState.currentPage)
+            }
+            coroutineScope.launch {
+                progressBarState.animateScrollToItem(datePagerState.currentPage)
+            }
         }
     }
 
@@ -247,9 +271,9 @@ fun DateRoute(
                 commonTripViewModel.organizeAddedDeletedImages(showingTrip.managerId, it)
             }
         ),
-        dateIndex = dateIndex,
+        showTripBottomSaveCancelBar = showTripBottomSaveCancelBar,
+        progressBarState = progressBarState,
         datePagerState = datePagerState,
-        updateDateIndex = commonTripViewModel::setCurrentDateIndex,//common trip ui viewModel
         updateTripState = commonTripViewModel::updateTripState,
         addNewSpot = commonTripViewModel::addNewSpot,
         deleteSpot = commonTripViewModel::deleteSpot,
@@ -275,7 +299,25 @@ fun DateRoute(
                 )
             }
         },
-        showTripBottomSaveCancelBar = showTripBottomSaveCancelBar,
+        onClickProgressBarDateItem = { toDateIndex ->
+            userSwiping = false
+            coroutineScope.launch {
+                commonTripViewModel.setCurrentDateIndex(toDateIndex)
+            }
+
+            //progress bar animate
+            coroutineScope.launch {
+                progressBarState.animateScrollToItem(toDateIndex)
+            }
+
+            //page animate
+            coroutineScope.launch {
+                datePagerState.animateScrollToPage(
+                    page = toDateIndex,
+                    animationSpec = tween(500)
+                )
+            }
+        },
         setIsFABExpanded = {
             isFABExpanded = it
         },
@@ -297,17 +339,17 @@ private fun DateScreen(
     image: DateImage,
 
     showTripBottomSaveCancelBar: Boolean,
-    dateIndex: Int?,
 
+    progressBarState: LazyListState,
     datePagerState: PagerState,
 
-    updateDateIndex: (dateIndex: Int) -> Unit,
 
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     addNewSpot: (dateIndex: Int) -> Unit,
     deleteSpot: (dateIndex: Int, spotIndex: Int) -> Unit,
     reorderSpotList: (dateIndex: Int, currentIndex: Int, destinationIndex: Int) -> Unit,
     onClickSave: () -> Unit,
+    onClickProgressBarDateItem: (dateIndex: Int) -> Unit,
 
     setIsFABExpanded: (Boolean) -> Unit,
 
@@ -327,18 +369,12 @@ private fun DateScreen(
     val enabledDateList = showingTrip.dateList.filter { it.enabled }
 
 
-    val progressBarState = rememberLazyListState(
-        initialFirstVisibleItemIndex = dateIndex ?: 0
-    )
 
 
 
     val currentDate = dateData.showingTrip.dateList.getOrNull(datePagerState.currentPage)
 
     val snackBarHostState = remember { SnackbarHostState() }
-
-
-
 
 
 
@@ -354,13 +390,7 @@ private fun DateScreen(
                 showingTrip.titleText!!
         }
 
-    //when current page changed, animate progress bar / update trip screen's current date index
-    LaunchedEffect(datePagerState.currentPage) {
-        snapshotFlow { datePagerState.currentPage }.collect {currentPage ->
-            progressBarState.animateScrollToItem(currentPage)
-            updateDateIndex(currentPage)
-        }
-    }
+
 
 
 
@@ -532,7 +562,6 @@ private fun DateScreen(
                         .background(MaterialTheme.colorScheme.background)
                 ) {
 
-
                     MySpacerColumn(height = 4.dp)
 
                     //progress bar
@@ -543,17 +572,7 @@ private fun DateScreen(
                         dateList = enabledDateList,
                         currentDateIdx = datePagerState.currentPage,
                         dateTimeFormat = dateUiInfo.dateTimeFormat,
-                        onClickDate = { toDateIndex ->
-                            //progress bar animate
-                            coroutineScope.launch {
-                                progressBarState.animateScrollToItem(toDateIndex)
-                            }
-
-                            //page animate
-                            coroutineScope.launch {
-                                datePagerState.animateScrollToPage(toDateIndex)
-                            }
-                        }
+                        onClickDate = onClickProgressBarDateItem
                     )
 
                     MySpacerColumn(height = 16.dp)
