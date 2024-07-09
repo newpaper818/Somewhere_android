@@ -171,23 +171,21 @@ fun DateRoute(
 
     //when use2panes, when change dateIndex(click date at trip screen), animate progress bar and date page
     LaunchedEffect(dateIndex){
-        if (dateIndex != null) {
-            coroutineScope.launch {
-                userSwiping = false
-            }
+        if (use2Panes && dateIndex != null && !datePagerState.isScrollInProgress) {
             coroutineScope.launch {
                 progressBarState.animateScrollToItem(dateIndex)
             }
             coroutineScope.launch {
                 datePagerState.animateScrollToPage(
                     page = dateIndex,
-                    animationSpec = tween(500)
+                    animationSpec = tween(400)
                 )
             }
+            userSwiping = false
         }
     }
 
-    //when current page changed, animate progress bar, update current date index
+    //when current page changed(user swipe), animate progress bar, update current date index
     LaunchedEffect(datePagerState.currentPage){
         if (userSwiping) {
             coroutineScope.launch {
@@ -314,7 +312,7 @@ fun DateRoute(
             coroutineScope.launch {
                 datePagerState.animateScrollToPage(
                     page = toDateIndex,
-                    animationSpec = tween(500)
+                    animationSpec = tween(400)
                 )
             }
         },
