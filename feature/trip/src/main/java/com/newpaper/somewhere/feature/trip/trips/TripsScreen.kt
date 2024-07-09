@@ -62,6 +62,7 @@ import com.newpaper.somewhere.feature.trip.trips.component.GoogleBannerAd
 import com.newpaper.somewhere.feature.trip.trips.component.LoadingTripsItem
 import com.newpaper.somewhere.feature.trip.trips.component.NoTripCard
 import com.newpaper.somewhere.feature.trip.trips.component.TripItem
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -131,6 +132,13 @@ fun TripsRoute(
                 //update trip info (only at empty date list - load once)
                 glanceTrip = glanceTrip
             )
+        }
+    }
+
+    LaunchedEffect(tripsUiState.loadingTrips) {
+        if (!tripsUiState.loadingTrips && firstLaunch) {
+            delay(400)
+            firstLaunchToFalse()
         }
     }
 
@@ -429,10 +437,6 @@ private fun TripsScreen(
                     //each my trip item ================================================================
                     if (showingTrips.isNotEmpty()) {
                         item {
-                            LaunchedEffect(Unit) {
-                                tripsUiInfo.firstLaunchToFalse()
-                            }
-
                             Text(
                                 text = stringResource(id = R.string.my_trips),
                                 style = MaterialTheme.typography.labelMedium.copy(
@@ -562,10 +566,10 @@ private fun TripsScreen(
             }
 
             LoadingTripsItem(
-                    shown = loadingTrips && tripsIsEmpty,
-            modifier = Modifier
-                .padding(spacerValue, 16.dp, spacerValue, 0.dp)
-                .padding(paddingValues)
+                shown = loadingTrips && firstLaunch,
+                modifier = Modifier
+                    .padding(spacerValue, 16.dp, spacerValue, 0.dp)
+                    .padding(paddingValues)
             )
         }
     }

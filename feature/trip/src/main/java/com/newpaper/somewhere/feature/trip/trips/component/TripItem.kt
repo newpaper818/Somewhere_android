@@ -140,8 +140,9 @@ internal fun TripItem(
 
     var appear by rememberSaveable { mutableStateOf(!firstLaunch) }
     val alpha: Float by animateFloatAsState(
-        targetValue = if (appear) 1f else 0f, label = "",
-        animationSpec = tween(600)
+        targetValue = if (appear) 1f else 0f,
+        animationSpec = tween(600),
+        label = "alpha",
     )
 
     LaunchedEffect(Unit){
