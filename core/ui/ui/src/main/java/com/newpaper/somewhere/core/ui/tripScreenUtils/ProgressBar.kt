@@ -1,7 +1,12 @@
 package com.newpaper.somewhere.core.ui.tripScreenUtils
 
 import androidx.annotation.ColorInt
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,16 +25,24 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.lerp
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
@@ -64,15 +77,16 @@ private enum class Shape{
     HIGHLIGHT_LINE
 }
 
-private fun getSize(shape: Shape): Dp {
+//use with .dp
+private fun getSize(shape: Shape): Int {
     return when(shape){
-        Shape.DEFAULT_POINT_NUM -> 22.dp
-        Shape.HIGHLIGHT_POINT_NUM -> 25.dp
-        Shape.DEFAULT_POINT -> 13.dp
-        Shape.HIGHLIGHT_POINT -> 18.dp
+        Shape.DEFAULT_POINT_NUM -> 20
+        Shape.HIGHLIGHT_POINT_NUM -> 25
+        Shape.DEFAULT_POINT -> 13
+        Shape.HIGHLIGHT_POINT -> 18
 
-        Shape.DEFAULT_LINE -> 6.dp
-        Shape.HIGHLIGHT_LINE -> 8.dp
+        Shape.DEFAULT_LINE -> 6
+        Shape.HIGHLIGHT_LINE -> 8
     }
 }
 
@@ -316,24 +330,74 @@ fun OneProgressBar(
     iconText: String? = null,
     @ColorInt iconTextColor: Int? = whiteInt
 ){
-    val upperTextStyle =    if (isHighlight)    MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
-    else                MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+    val upperTextHighlightTextStyle = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+    val upperTextNoHighlightTextStyle = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
-    val titleTextStyle =    if (isHighlight && titleText != null)   MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
-    else if (isHighlight)                   MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
-    else                                    MaterialTheme.typography.bodySmall
+    var upperTextStyle by remember { mutableStateOf(
+        if (isHighlight) upperTextHighlightTextStyle
+        else upperTextNoHighlightTextStyle
+    ) }
 
-    val upperText1 =    upperText ?: ""
+    //title highlight
+    //  o      o     titleHighlightTextStyle
+    //  o      x     titleNoHighlightTextStyle
+    //  x      o     noTitleHighlightTextStyle
+    //  x      x     noTitleNoHighlightTextStyle
+    val titleHighlightTextStyle = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+    val titleNoHighlightTextStyle = MaterialTheme.typography.bodySmall
+    val noTitleHighlightTextStyle = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    val noTitleNoHighlightTextStyle = MaterialTheme.typography.bodySmall.copy(color = Color.Transparent)
 
-    val titleText1 =    if (isHighlight)  titleText ?: stringResource(id = R.string.no_title)
-    else            titleText ?: ""
 
-    val boxColor = if (isHighlight) Color(pointColor ?: 0x00000000).copy(alpha = 0.2f)
-    else Color.Transparent
+    var titleTextStyle by remember { mutableStateOf(
+        if (titleText != null){
+            if (isHighlight) titleHighlightTextStyle
+            else titleNoHighlightTextStyle
+        }
+        else {
+            if (isHighlight) noTitleHighlightTextStyle
+            else noTitleNoHighlightTextStyle
+        }
+    ) }
+
+    val animationUpperTextStyle by animateTextStyleAsState(
+        targetValue = upperTextStyle,
+    )
+
+    val animationTitleTextStyle by animateTextStyleAsState(
+        targetValue = titleTextStyle,
+    )
+
+    LaunchedEffect(isHighlight) {
+        upperTextStyle =
+            if (isHighlight) upperTextHighlightTextStyle
+            else upperTextNoHighlightTextStyle
+        titleTextStyle =
+            if (titleText != null){
+                if (isHighlight) titleHighlightTextStyle
+                else titleNoHighlightTextStyle
+            }
+            else {
+                if (isHighlight) noTitleHighlightTextStyle
+                else noTitleNoHighlightTextStyle
+            }
+    }
+
+
+    val upperText1 = upperText ?: ""
+    val titleText1 = titleText ?: stringResource(id = R.string.no_title)
+
+
+    val boxColor by animateColorAsState(
+        targetValue = if (isHighlight) Color(pointColor ?: 0x00000000).copy(alpha = 0.2f)
+                        else Color.Transparent,
+        animationSpec = tween(500),
+        label = "color"
+    )
 
 
     var itemWidth by rememberSaveable {
-        mutableStateOf(
+        mutableIntStateOf(
             if (isHighlight && showPoint) {
                 if (useLargeItemWidth)    220
                 else                170
@@ -375,7 +439,7 @@ fun OneProgressBar(
             ) {
                 Text(
                     text = upperText1,
-                    style = upperTextStyle
+                    style = animationUpperTextStyle
                 )
             }
 
@@ -415,7 +479,7 @@ fun OneProgressBar(
             //lower text
             Text(
                 text = titleText1,
-                style = titleTextStyle,
+                style = animationTitleTextStyle,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
@@ -435,28 +499,28 @@ private fun Point(
 
     includeNum: Boolean = false
 ){
-    val pointSize =
-        if(includeNum){
-            if (isHighlightPoint)   getSize(Shape.HIGHLIGHT_POINT_NUM)
-            else                    getSize(Shape.DEFAULT_POINT_NUM)
-        }
-        else{
-            if (isHighlightPoint)   getSize(Shape.HIGHLIGHT_POINT)
-            else                    getSize(Shape.DEFAULT_POINT)
-        }
+    val pointSize = if(includeNum) getSize(Shape.DEFAULT_POINT_NUM)   //20 > 25
+                    else getSize(Shape.DEFAULT_POINT)   //13 > 19
 
+    val pointSizeScale by animateFloatAsState(
+        targetValue = if (includeNum && isHighlightPoint) 1.25f
+                        else if (!includeNum && isHighlightPoint) 1.5f
+                        else 1f,
+        animationSpec = tween(500),
+        label = "",
+    )
 
     val pointColor =    if(color != null)           Color(color)
-    else if (isHighlightPoint)  ProgressBarColor.pointHighlight
-    else                        ProgressBarColor.pointDefault
+                        else if (isHighlightPoint)  ProgressBarColor.pointHighlight
+                        else                        ProgressBarColor.pointDefault
 
-    val iconTextStyle = if (isHighlightPoint)   MaterialTheme.typography.labelMedium.copy(color = Color(textColor ?: whiteInt), fontWeight = FontWeight.Bold)
-    else                    MaterialTheme.typography.labelSmall.copy(color = Color(textColor ?: whiteInt), fontWeight = FontWeight.Bold)
+    val iconTextStyle = MaterialTheme.typography.labelSmall.copy(color = Color(textColor ?: whiteInt), fontWeight = FontWeight.Bold)
 
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .size(pointSize)
+            .size(pointSize.dp)
+            .scale(pointSizeScale)
             .clip(CircleShape)
             .background(pointColor)
     ){
@@ -483,21 +547,21 @@ private fun Line(
         if (isHighlight)
             Box(
                 modifier = modifier
-                    .height(getSize(Shape.HIGHLIGHT_LINE))
+                    .height(getSize(Shape.HIGHLIGHT_LINE).dp)
                     .background(ProgressBarColor.lineHighlight)
             )
         else{
             if (useMoveColor){
                 Box(
                     modifier = modifier
-                        .height(getSize(Shape.DEFAULT_LINE))
+                        .height(getSize(Shape.DEFAULT_LINE).dp)
                         .background(ProgressBarColor.lineDefaultMove)
                 )
             }
             else{
                 Box(
                     modifier = modifier
-                        .height(getSize(Shape.DEFAULT_LINE))
+                        .height(getSize(Shape.DEFAULT_LINE).dp)
                         .background(color ?: MaterialTheme.colorScheme.outline)
                 )
             }
@@ -507,7 +571,7 @@ private fun Line(
     else{
         Box(
             modifier = modifier
-                .height(getSize(Shape.DEFAULT_LINE))
+                .height(getSize(Shape.DEFAULT_LINE).dp)
                 .background(Color.Transparent)
         )
     }
@@ -519,7 +583,33 @@ private fun Line(
 
 
 
+@Composable
+fun animateTextStyleAsState(
+    targetValue: TextStyle,
+    animationSpec: AnimationSpec<Float> = spring(),
+    finishedListener: ((TextStyle) -> Unit)? = null
+): State<TextStyle> {
 
+    val animation = remember { Animatable(0f) }
+    var previousTextStyle by remember { mutableStateOf(targetValue) }
+    var nextTextStyle by remember { mutableStateOf(targetValue) }
+
+    val textStyleState = remember(animation.value) {
+        derivedStateOf {
+            lerp(previousTextStyle, nextTextStyle, animation.value)
+        }
+    }
+
+    LaunchedEffect(targetValue, animationSpec) {
+        previousTextStyle = textStyleState.value
+        nextTextStyle = targetValue
+        animation.snapTo(0f)
+        animation.animateTo(1f, animationSpec)
+        finishedListener?.invoke(textStyleState.value)
+    }
+
+    return textStyleState
+}
 
 
 
