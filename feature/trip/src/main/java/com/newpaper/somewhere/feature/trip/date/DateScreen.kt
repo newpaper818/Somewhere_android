@@ -583,12 +583,6 @@ private fun DateScreen(
                         pageContent = { pageIndex ->
                             //pageIndex == dateOrderId
 
-                            val datePageScrollState = rememberLazyListState()
-
-                            LaunchedEffect(remember { derivedStateOf { datePageScrollState.firstVisibleItemIndex } }) {
-                                setIsFABExpanded(datePageScrollState.firstVisibleItemIndex == 0)
-                            }
-
                             DatePage(
                                 dateUiInfo = dateUiInfo,
                                 dateData = dateData,
@@ -596,7 +590,6 @@ private fun DateScreen(
                                 dialog = dialog,
                                 navigate = navigate,
                                 dateIndex = pageIndex,
-                                datePageScrollState = datePageScrollState,
                                 focusManager = focusManager,
                                 updateTripState = updateTripState,
                                 addNewSpot = { dateIndex->
@@ -606,6 +599,7 @@ private fun DateScreen(
                                     deleteSpot(dateIndex, spotIndex)
                                     image.addDeletedImages(dateList[dateIndex].spotList[spotIndex].imagePathList)
                                 },
+                                setIsFABExpanded = setIsFABExpanded,
                                 reorderSpotList = { currentIndex, destinationIndex ->
                                     reorderSpotList(pageIndex, currentIndex, destinationIndex)
                                 }
@@ -635,12 +629,12 @@ private fun DatePage(
     navigate: DateNavigate,
 
     dateIndex: Int,
-    datePageScrollState: LazyListState,
     focusManager: FocusManager,
 
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     addNewSpot: (dateIndex: Int) -> Unit,
     deleteSpot: (dateId: Int, spotId: Int) -> Unit,
+    setIsFABExpanded: (Boolean) -> Unit,
 
     reorderSpotList: (currentIndex: Int, destinationIndex: Int) -> Unit,
 
@@ -671,12 +665,13 @@ private fun DatePage(
         *showingTrip.dateList[dateIndex].spotList.map { it.id to SlideState.NONE }.toTypedArray()
     ) }
 
+    val scrollState = rememberLazyListState()
 
+    val firstItemVisible by remember { derivedStateOf { scrollState.firstVisibleItemIndex == 0 } }
 
-
-
-
-
+    LaunchedEffect(firstItemVisible){
+        setIsFABExpanded(firstItemVisible)
+    }
 
 
 
@@ -684,7 +679,7 @@ private fun DatePage(
     //왜 순서가 바뀌지?? follow order of spotList
 
     LazyColumn(
-        state = datePageScrollState,
+        state = scrollState,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
         contentPadding = PaddingValues(0.dp, 8.dp, 0.dp, 200.dp),
