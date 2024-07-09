@@ -25,7 +25,7 @@ internal fun LoadingTripsItem(
     AnimatedVisibility(
         visible = shown,
         enter = fadeIn(animationSpec = tween(300)),
-        exit = fadeOut(animationSpec = tween(300))
+        exit = fadeOut(animationSpec = tween(400))
     ) {
 
         Column(modifier = modifier) {
