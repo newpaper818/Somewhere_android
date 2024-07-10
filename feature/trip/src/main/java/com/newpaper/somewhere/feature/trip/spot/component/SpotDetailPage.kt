@@ -196,7 +196,7 @@ internal fun SpotDetailPage(
 
                 DeleteItemButton(
                     text = stringResource(id = R.string.delete_spot),
-                    onClick = { dialog.setDeleteSpotDialog(true) }
+                    onClick = { dialog.setShowDeleteSpotDialog(true) }
                 )
             }
         }
