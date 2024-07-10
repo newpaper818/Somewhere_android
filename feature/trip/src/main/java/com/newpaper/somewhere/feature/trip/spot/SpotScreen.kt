@@ -206,13 +206,13 @@ fun SpotRoute(
 
 
 
-    LaunchedEffect(!isEditMode) {
-        spotViewModel.initAllErrorCount()
-    }
 
     LaunchedEffect(isEditMode){
         if (isEditMode)
             spotViewModel.setIsMapExpanded(false)
+        else
+            spotViewModel.initAllErrorCount()
+
     }
 
     LaunchedEffect(userDragTouching){
@@ -223,6 +223,8 @@ fun SpotRoute(
     LaunchedEffect(spotPagerState.currentPage){
         if (userSwiping) {
             val newSpotIndex = spotPagerState.currentPage
+
+            //update spot index
             commonTripViewModel.setCurrentSpotIndex(newSpotIndex)
 
             //animate progress bar
