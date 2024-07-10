@@ -388,7 +388,26 @@ fun SpotRoute(
         updateTripState = commonTripViewModel::updateTripState,
         addNewSpot = commonTripViewModel::addNewSpot,
         deleteSpot = commonTripViewModel::deleteSpot,
-        saveTrip = { commonTripViewModel.saveTrip(appUserId) },
+        onClickSave = {
+            coroutineScope.launch {
+                if (originalTrip != tempTrip) {
+                    //save tripUiState trip
+                    commonTripViewModel.saveTrip(appUserId = appUserId)
+
+                    commonTripViewModel.setIsEditMode(false)
+
+                    //save to firestore
+                    commonTripViewModel.saveTripAndAllDates(trip = tempTrip)
+                }
+                else
+                    commonTripViewModel.setIsEditMode(false)
+
+                commonTripViewModel.organizeAddedDeletedImages(
+                    tripManagerId = tempTrip.managerId,
+                    isClickSave = true
+                )
+            }
+        },
         modifier = modifier
     )
 }
@@ -416,7 +435,7 @@ private fun SpotScreen(
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     addNewSpot: (dateIndex: Int) -> Unit,
     deleteSpot: (dateId: Int, spotId: Int) -> Unit,
-    saveTrip: () -> Unit,
+    onClickSave: () -> Unit,
 
     modifier: Modifier = Modifier
 ){
@@ -540,17 +559,7 @@ private fun SpotScreen(
             focusManager.clearFocus()
             spotNavigate.onClickBackButton()
         },
-        onClickSave = {
-            coroutineScope.launch {
-                if (spotData.originalTrip != spotData.tempTrip)
-                //save to firestore
-                    saveTrip()
-                else
-                    spotUiInfo.setIsEditMode(false)
-
-                spotImage.organizeAddedDeletedImages(true)
-            }
-        },
+        onClickSave = onClickSave,
         saveEnabled = spotErrorCount.totalErrorCount <= 0
 
     ) { paddingValues ->
