@@ -90,8 +90,8 @@ internal data class SpotErrorCount(
 
 internal data class SpotDialog(
     val isShowingDialog: Boolean = false,
-    val showMemoDialog: Boolean = false,
     val showExitDialog: Boolean = false,
+    val showMemoDialog: Boolean = false,
     val showMoveDateDialog: Boolean = false,
     val showSetTimeDialog: Boolean = false,
     val showSetSpotTypeDialog: Boolean = false,
@@ -100,8 +100,8 @@ internal data class SpotDialog(
     val showSetLocationDialog: Boolean = false, //full screen dialog
     val showDeleteSpotDialog: Boolean = false,
 
-    private val _setShowMemoDialog: (Boolean) -> Unit = {},
     private val _setShowExitDialog: (Boolean) -> Unit = {},
+    private val _setShowMemoDialog: (Boolean) -> Unit = {},
     private val _setShowMoveDateDialog: (Boolean) -> Unit = {},
     private val _setShowSetTimeDialog: (Boolean) -> Unit = {},
     private val _setShowSetSpotTypeDialog: (Boolean) -> Unit = {},
@@ -113,10 +113,10 @@ internal data class SpotDialog(
     val isStartTime: Boolean = true,
     private val _setIsStartTime: (isStartTime: Boolean) -> Unit = {}
 ){
-    fun setShowMemoDialog(showMemoDialog: Boolean){
-        _setShowMemoDialog(showMemoDialog) }
     fun setShowExitDialog(showExitDialog: Boolean){
         _setShowExitDialog(showExitDialog) }
+    fun setShowMemoDialog(showMemoDialog: Boolean){
+        _setShowMemoDialog(showMemoDialog) }
     fun setShowMoveDateDialog(showMoveDateDialog: Boolean){
         _setShowMoveDateDialog(showMoveDateDialog) }
     fun setShowSetTimeDialog(showSetTimeDialog: Boolean){
@@ -129,7 +129,7 @@ internal data class SpotDialog(
         _setShowSetDistanceDialog(showSetDistanceDialog) }
     fun setShowSetLocationDialog(showSetLocationDialog: Boolean){
         _setShowSetLocationDialog(showSetLocationDialog) }
-    fun setDeleteSpotDialog(showDeleteSpotDialog: Boolean){
+    fun setShowDeleteSpotDialog(showDeleteSpotDialog: Boolean){
         _setDeleteSpotDialog(showDeleteSpotDialog) }
     fun setIsStartTime(isStartTime: Boolean){
         _setIsStartTime(isStartTime) }

@@ -25,6 +25,7 @@
     <string name="sub_title">%s - %s</string>
     <string name="delete_spot">Delete spot</string>
     <string name="no_spot">No spot</string>
+    <string name="dialog_body_delete_spot">Delete this Spot?</string>
 
     <!--trip/ ===================================================================================-->
     <!--SharingWithFriendsCard.kt-->

@@ -445,7 +445,7 @@ private fun SpotScreen(
 
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     addNewSpot: (dateIndex: Int) -> Unit,
-    deleteSpot: (dateId: Int, spotId: Int) -> Unit,
+    deleteSpot: (dateIndex: Int, spotIndex: Int) -> Unit,
     onClickSave: () -> Unit,
 
     modifier: Modifier = Modifier
@@ -679,6 +679,18 @@ private fun SpotScreen(
 
         if (spotDialog.showSetLocationDialog){
 
+        }
+
+        if (spotDialog.showDeleteSpotDialog){
+            DeleteOrNotDialog(
+                bodyText = stringResource(id = R.string.dialog_body_delete_spot),
+                deleteButtonText = stringResource(id = R.string.dialog_button_delete),
+                onDismissRequest = { spotDialog.setShowDeleteSpotDialog(false) },
+                onClickDelete = {
+                    deleteSpot(currentDateIndex, currentSpotIndex)
+                    spotDialog.setShowDeleteSpotDialog(false)
+                }
+            )
         }
 
         Box(

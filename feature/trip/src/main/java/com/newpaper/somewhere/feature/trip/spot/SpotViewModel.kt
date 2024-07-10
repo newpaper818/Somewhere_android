@@ -58,11 +58,11 @@ class SpotViewModel @Inject constructor(
 
     //dialog
     private fun setIsShowingDialog() {
-        val isShowingDialog = _spotUiState.value.showMemoDialog ||
-                _spotUiState.value.showExitDialog || _spotUiState.value.showMoveDateDialog ||
+        val isShowingDialog = _spotUiState.value.showExitDialog ||
+                _spotUiState.value.showMemoDialog || _spotUiState.value.showMoveDateDialog ||
                 _spotUiState.value.showSetTimeDialog || _spotUiState.value.showSetSpotTypeDialog ||
                 _spotUiState.value.showSetBudgetDialog || _spotUiState.value.showSetDistanceDialog ||
-                _spotUiState.value.showSetLocationDialog
+                _spotUiState.value.showSetLocationDialog || _spotUiState.value.showDeleteSpotDialog
 
         _spotUiState.update {
             it.copy(isShowingDialog = isShowingDialog)
