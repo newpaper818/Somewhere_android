@@ -72,6 +72,7 @@ import com.newpaper.somewhere.core.utils.convert.SEOUL_LOCATION
 import com.newpaper.somewhere.core.utils.convert.getDateText
 import com.newpaper.somewhere.core.utils.convert.getNextSpot
 import com.newpaper.somewhere.core.utils.convert.getPrevSpot
+import com.newpaper.somewhere.core.utils.convert.moveSpotToDate
 import com.newpaper.somewhere.core.utils.convert.setBudget
 import com.newpaper.somewhere.core.utils.convert.setEndTime
 import com.newpaper.somewhere.core.utils.convert.setLocationAndUpdateTravelDistance
@@ -604,11 +605,22 @@ private fun SpotScreen(
                 dateTimeFormat = spotUiInfo.dateTimeFormat,
                 initialDate = currentDate,
                 dateList = dateList,
-                onOkClick = { dateIndex ->
-                    //TODO
-                    //navigateUp()
-                    //moveSpotData()
-                    spotDialog.setShowMoveDateDialog(false)
+                onOkClick = { newDateIndex ->
+                    if (newDateIndex != currentDateIndex){
+                        spotDialog.setShowMoveDateDialog(false)
+                        showingTrip.moveSpotToDate(showingTrip, currentDateIndex, currentSpotIndex, newDateIndex, updateTripState)
+                        spotData.setCurrentDateIndex(newDateIndex)
+                        val spotIndex = dateList[newDateIndex].spotList.lastIndex + 1
+                        spotData.setCurrentSpotIndex(spotIndex)
+                        coroutineScope.launch {
+                            delay(100)
+                            spotState.spotPagerState.animateScrollToPage(spotIndex)
+                            spotState.progressBarState.animateScrollToItem(spotIndex + 1)
+                        }
+                    }
+                    else {
+                        spotDialog.setShowMoveDateDialog(false)
+                    }
                 },
                 onDismissRequest = { spotDialog.setShowMoveDateDialog(false) }
             )
