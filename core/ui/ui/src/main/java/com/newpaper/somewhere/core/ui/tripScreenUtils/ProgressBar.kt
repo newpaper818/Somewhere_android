@@ -2,11 +2,8 @@ package com.newpaper.somewhere.core.ui.tripScreenUtils
 
 import androidx.annotation.ColorInt
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,8 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -40,9 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.lerp
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
@@ -59,6 +52,7 @@ import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.ui.ui.R
+import com.newpaper.somewhere.core.utils.animateTextStyleAsState
 import com.newpaper.somewhere.core.utils.convert.getDateText
 import com.newpaper.somewhere.core.utils.convert.getNextSpot
 import com.newpaper.somewhere.core.utils.convert.getPrevSpot
@@ -583,33 +577,15 @@ private fun Line(
 
 
 
-@Composable
-fun animateTextStyleAsState(
-    targetValue: TextStyle,
-    animationSpec: AnimationSpec<Float> = spring(),
-    finishedListener: ((TextStyle) -> Unit)? = null
-): State<TextStyle> {
 
-    val animation = remember { Animatable(0f) }
-    var previousTextStyle by remember { mutableStateOf(targetValue) }
-    var nextTextStyle by remember { mutableStateOf(targetValue) }
 
-    val textStyleState = remember(animation.value) {
-        derivedStateOf {
-            lerp(previousTextStyle, nextTextStyle, animation.value)
-        }
-    }
 
-    LaunchedEffect(targetValue, animationSpec) {
-        previousTextStyle = textStyleState.value
-        nextTextStyle = targetValue
-        animation.snapTo(0f)
-        animation.animateTo(1f, animationSpec)
-        finishedListener?.invoke(textStyleState.value)
-    }
 
-    return textStyleState
-}
+
+
+
+
+
 
 
 
