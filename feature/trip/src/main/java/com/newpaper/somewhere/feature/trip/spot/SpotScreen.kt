@@ -516,22 +516,15 @@ private fun SpotScreen(
 
 
 
-    val scaffoldModifier =
-        if (!spotDialog.showSetLocationDialog) Modifier
-            .navigationBarsPadding()
-            .displayCutoutPadding()
-            .imePadding()
-        else Modifier
-            .navigationBarsPadding()
-            .displayCutoutPadding()
-
-
+    
 
 
 
 
     MyScaffold(
-        modifier = scaffoldModifier,
+        modifier = Modifier
+            .navigationBarsPadding()
+            .displayCutoutPadding(),
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarHostState,
