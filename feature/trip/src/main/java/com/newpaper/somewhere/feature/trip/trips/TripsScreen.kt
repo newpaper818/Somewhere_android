@@ -105,6 +105,11 @@ fun TripsRoute(
 
     val coroutineScope = rememberCoroutineScope()
 
+    LaunchedEffect(Unit) {
+        delay(500)
+        commonTripViewModel.initCurrentTripAndDateSpotIndex()
+    }
+
     //get trips
     LaunchedEffect(Unit) {
         tripsViewModel.setLoadingTrips(true)
