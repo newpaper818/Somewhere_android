@@ -72,10 +72,19 @@ import com.newpaper.somewhere.core.utils.convert.SEOUL_LOCATION
 import com.newpaper.somewhere.core.utils.convert.getDateText
 import com.newpaper.somewhere.core.utils.convert.getNextSpot
 import com.newpaper.somewhere.core.utils.convert.getPrevSpot
+import com.newpaper.somewhere.core.utils.convert.setBudget
+import com.newpaper.somewhere.core.utils.convert.setEndTime
 import com.newpaper.somewhere.core.utils.convert.setLocationAndUpdateTravelDistance
+import com.newpaper.somewhere.core.utils.convert.setSpotType
+import com.newpaper.somewhere.core.utils.convert.setStartTime
+import com.newpaper.somewhere.core.utils.convert.setTravelDistance
 import com.newpaper.somewhere.core.utils.focusOnToSpots
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
 import com.newpaper.somewhere.feature.dialog.memo.MemoDialog
+import com.newpaper.somewhere.feature.dialog.selectDate.SelectDateDialog
+import com.newpaper.somewhere.feature.dialog.setBudgetOrDiatance.SetBudgetOrDistanceDialog
+import com.newpaper.somewhere.feature.dialog.setSpotType.SetSpotTypeDialog
+import com.newpaper.somewhere.feature.dialog.setTime.SetTimeDialog
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.spot.component.NoSpotCard
@@ -84,6 +93,7 @@ import com.newpaper.somewhere.feature.trip.spot.component.SpotMapCard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalTime
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -447,6 +457,8 @@ private fun SpotScreen(
 
     val dateList = showingTrip.dateList
     val spotList = dateList[currentDateIndex].spotList
+
+    val currentDate = dateList.getOrNull(currentDateIndex)
     val currentSpot = spotList.getOrNull(currentSpotIndex)
 
     val coroutineScope = rememberCoroutineScope()
@@ -587,30 +599,70 @@ private fun SpotScreen(
             )
         }
 
-        if (spotDialog.showMoveDateDialog){
-
+        if (spotDialog.showMoveDateDialog && dateList.isNotEmpty() && currentDate != null){
+            SelectDateDialog(
+                dateTimeFormat = spotUiInfo.dateTimeFormat,
+                initialDate = currentDate,
+                dateList = dateList,
+                onOkClick = { dateIndex ->
+                    //TODO
+                    //navigateUp()
+                    //moveSpotData()
+                    spotDialog.setShowMoveDateDialog(false)
+                },
+                onDismissRequest = { spotDialog.setShowMoveDateDialog(false) }
+            )
         }
 
-        if (spotDialog.showSetTimeDialog){
-//            SetTimeDialog(
-//                initialTime = dialo,
-//                timeFormat = ,
-//                isSetStartTime = ,
-//                onDismissRequest = { /*TODO*/ },
-//                onConfirm = {}
-//            )
+        if (spotDialog.showSetTimeDialog && currentSpot != null){
+            val initialTime = if  (spotDialog.isStartTime) currentSpot.startTime ?: LocalTime.of(12,0)
+                                else        currentSpot.endTime ?: LocalTime.of(12,0)
+
+            SetTimeDialog(
+                initialTime = initialTime,
+                timeFormat = spotUiInfo.dateTimeFormat.timeFormat,
+                isSetStartTime = spotDialog.isStartTime,
+                onDismissRequest = { spotDialog.setShowSetTimeDialog(false) },
+                onConfirm = { newTime ->
+                    spotDialog.setShowSetTimeDialog(false)
+                    if (spotDialog.isStartTime) currentSpot.setStartTime(showingTrip, currentDateIndex, updateTripState, newTime)
+                    else                        currentSpot.setEndTime(showingTrip, currentDateIndex, updateTripState, newTime)
+                }
+            )
         }
 
-        if (spotDialog.showSetSpotTypeDialog){
-
+        if (spotDialog.showSetSpotTypeDialog && currentSpot != null){
+            SetSpotTypeDialog(
+                initialSpotType = currentSpot.spotType,
+                onDismissRequest = { spotDialog.setShowSetSpotTypeDialog(false) },
+                onClickOk = { newSpotType ->
+                    spotDialog.setShowSetSpotTypeDialog(false)
+                    currentSpot.setSpotType(showingTrip, dateList, currentDateIndex, updateTripState, newSpotType)
+                }
+            )
         }
 
-        if (spotDialog.showSetBudgetDialog){
-
+        if (spotDialog.showSetBudgetDialog && currentSpot != null){
+            SetBudgetOrDistanceDialog(
+                currencyType = showingTrip.unitOfCurrencyType,
+                initialValue = currentSpot.budget,
+                onDismissRequest = { spotDialog.setShowSetBudgetDialog(false) },
+                onSaveClick = { newBudget ->
+                    spotDialog.setShowSetBudgetDialog(false)
+                    currentSpot.setBudget(showingTrip, currentDateIndex, updateTripState, newBudget)
+                }
+            )
         }
 
-        if (spotDialog.showSetDistanceDialog){
-
+        if (spotDialog.showSetDistanceDialog && currentSpot != null){
+            SetBudgetOrDistanceDialog(
+                initialValue = currentSpot.travelDistance,
+                onDismissRequest = { spotDialog.setShowSetDistanceDialog(false) },
+                onSaveClick = { newTravelDistance ->
+                    spotDialog.setShowSetDistanceDialog(false)
+                    currentSpot.setTravelDistance(showingTrip, currentDateIndex, updateTripState, newTravelDistance)
+                }
+            )
         }
 
         if (spotDialog.showSetLocationDialog){
