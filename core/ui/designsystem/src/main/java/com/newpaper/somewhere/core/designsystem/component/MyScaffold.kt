@@ -3,6 +3,7 @@ package com.newpaper.somewhere.core.designsystem.component
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -39,7 +40,7 @@ fun MyScaffold(
     val buttonsModifier = if (useBottomNavBar) Modifier
                             .navigationBarsPadding()
                             .padding(bottom = 80.dp)
-                        else Modifier.navigationBarsPadding()
+                        else Modifier.navigationBarsPadding().imePadding()
 
     Scaffold(
         modifier, topBar, bottomBar, snackbarHost, floatingActionButton,
