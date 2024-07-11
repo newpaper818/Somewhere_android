@@ -52,7 +52,12 @@ dependencies {
 //    implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.runtime.compose)
 
+    //map
+    implementation(libs.play.services.location)
+    implementation(libs.play.services.maps)
+    implementation(libs.maps.compose)
 
+    implementation(libs.places)
 
     //test
     testImplementation(libs.junit)

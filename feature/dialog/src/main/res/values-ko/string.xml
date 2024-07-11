@@ -35,6 +35,9 @@
     <!--SetEditableDialog.kt-->
     <string name="set_editable">권한 설정</string>
 
+    <!--SetLocationDialog.kt-->
+    <string name="search_location">위치 검색</string>
+
     <!--SetSpotTypeDialog.kt-->
     <string name="set_spot_type">장소 유형 선택</string>
 

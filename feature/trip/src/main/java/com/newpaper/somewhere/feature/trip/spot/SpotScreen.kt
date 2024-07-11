@@ -44,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -52,6 +53,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.CameraPosition
@@ -84,6 +86,8 @@ import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
 import com.newpaper.somewhere.feature.dialog.memo.MemoDialog
 import com.newpaper.somewhere.feature.dialog.selectDate.SelectDateDialog
 import com.newpaper.somewhere.feature.dialog.setBudgetOrDiatance.SetBudgetOrDistanceDialog
+import com.newpaper.somewhere.feature.dialog.setLocation.SetLocationDialog
+import com.newpaper.somewhere.feature.dialog.setLocation.SetLocationViewModel
 import com.newpaper.somewhere.feature.dialog.setSpotType.SetSpotTypeDialog
 import com.newpaper.somewhere.feature.dialog.setTime.SetTimeDialog
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
@@ -516,7 +520,7 @@ private fun SpotScreen(
 
 
 
-    
+
 
 
 
@@ -670,10 +674,6 @@ private fun SpotScreen(
             )
         }
 
-        if (spotDialog.showSetLocationDialog){
-
-        }
-
         if (spotDialog.showDeleteSpotDialog){
             DeleteOrNotDialog(
                 bodyText = stringResource(id = R.string.dialog_body_delete_spot),
@@ -686,12 +686,52 @@ private fun SpotScreen(
             )
         }
 
+
+
+
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
             contentAlignment = Alignment.BottomCenter
         ) {
+
+            //set location dialog(full screen dialog)
+            AnimatedVisibility(
+                visible = spotDialog.showSetLocationDialog,
+                enter = slideInHorizontally(animationSpec = tween(300), initialOffsetX = { it }),
+                exit = slideOutHorizontally(animationSpec = tween(300), targetOffsetX = { it }),
+                modifier = Modifier.zIndex(1f)
+            ) {
+            SetLocationDialog(
+                internetEnabled = spotUiInfo.internetEnabled,
+                showingTrip = showingTrip,
+                dateList = dateList,
+                spotList = spotList,
+                dateIndex = currentDateIndex,
+                spotIndex = currentSpotIndex,
+                isDarkMapTheme = spotUiInfo.isDarkMapTheme,
+                updateTripState = updateTripState,
+                setShowSetLocationDialogToFalse = { spotDialog.setShowSetLocationDialog(false) },
+                fusedLocationClient = spotMap.fusedLocationClient,
+                setUserLocationEnabled = spotMap::setUserLocationEnabled,
+                showSnackBar = { text, actionLabel, duration, onActionClick ->
+                    coroutineScope.launch {
+                        snackBarHostState.showSnackbar(
+                            message = text,
+                            actionLabel = actionLabel,
+                            duration = duration
+                        ).run {
+                            when (this){
+                                SnackbarResult.Dismissed -> { }
+                                SnackbarResult.ActionPerformed -> onActionClick()
+                            }
+                        }
+                    }
+                }
+            )
+            }
 
             Column(
                 modifier = Modifier
@@ -784,47 +824,13 @@ private fun SpotScreen(
                     )
                 }
             }
-
-
-            //set location page
-            AnimatedVisibility(
-                visible = spotDialog.showSetLocationDialog,
-                enter = slideInHorizontally(animationSpec = tween(300), initialOffsetX = { it }),
-                exit = slideOutHorizontally(animationSpec = tween(300), targetOffsetX = { it })
-            ) {
-//                SetLocationPage(
-//                    internetEnabled = spotUiInfo.internetEnabled,
-//                    showingTrip = showingTrip,
-//                    spotList = spotList,
-//                    currentSpotIndex = currentSpotIndex,
-//                    dateList = dateList,
-//                    dateIndex = currentDateIndex,
-//                    isDarkMapTheme = isDarkMapTheme,
-//                    updateTripState = updateTripState,
-//                    toggleIsEditLocationMode = {
-//                        isEditLocationMode = false
-//                    },
-//                    fusedLocationClient = fusedLocationClient,
-//                    setUserLocationEnabled = setUserLocationEnabled,
-//                    showSnackBar = { text, actionLabel, duration, onActionClick ->
-//                        coroutineScope.launch {
-//                            snackBarHostState.showSnackbar(
-//                                message = text,
-//                                actionLabel = actionLabel,
-//                                duration = duration
-//                            ).run {
-//                                when (this){
-//                                    SnackbarResult.Dismissed -> { }
-//                                    SnackbarResult.ActionPerformed -> onActionClick()
-//                                }
-//                            }
-//                        }
-//                    }
-//                )
-            }
         }
     }
 }
+
+
+
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -991,6 +997,7 @@ private fun Spot1Pane(
     }
 }
 
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun Spot2Panes(
@@ -1132,7 +1139,8 @@ private fun Spot2Panes(
                     .fillMaxSize()
                     .onGloballyPositioned {
                         lazyColumnHeight = it.size.height
-                    },
+                    }
+                    .imePadding(),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 userScrollEnabled = !spotMap.isMapExpand
