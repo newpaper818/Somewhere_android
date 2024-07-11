@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.dialog.setLocation
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -36,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -53,7 +55,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -115,13 +116,10 @@ fun SetLocationDialog(
 
     val setLocationUiState by setLocationViewModel.setLocationUiState.collectAsState()
 
-    setLocationViewModel.initSpotLocation(
-        firstLocation = spotList[spotIndex].getPrevLocation(dateList, dateIndex),
-        zoomLevel = spotList[spotIndex].zoomLevel ?: DEFAULT_ZOOM_LEVEL
-    )
+    val firstLocation = spotList[spotIndex].getPrevLocation(dateList, dateIndex)
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(setLocationUiState.spotLocation.firstLocation, 5f)
+        position = CameraPosition.fromLatLngZoom(firstLocation, 5f)
     }
 
     var screenWidthDp by rememberSaveable { mutableIntStateOf(0) }
@@ -132,8 +130,6 @@ fun SetLocationDialog(
     var mapSize by remember{ mutableStateOf(IntSize(0,0)) }
     var searchListSize by remember{ mutableStateOf(IntSize(0,0)) }
 
-    val context = LocalContext.current
-
     var keyBoardIsShown by rememberSaveable { mutableStateOf(false) }
 
     val mapPaddingValues = if (setLocationUiState.searchLocation.searchLocationList.isNotEmpty())
@@ -141,6 +137,9 @@ fun SetLocationDialog(
         (searchListSize.height / density).dp + SEARCH_BOX_LIST_PADDING)
     else    PaddingValues(0.dp, 64.dp, 0.dp, 0.dp)
 
+    LaunchedEffect(cameraPositionState.position.zoom) {
+        Log.d("aaa", "zoom level: ${cameraPositionState.position.zoom}")
+    }
 
 
 
@@ -179,17 +178,14 @@ fun SetLocationDialog(
                     coroutineScope.launch {
                         cameraPositionState.animate(
                             CameraUpdateFactory.newLatLngZoom(
-                                setLocationUiState.spotLocation.firstLocation,
+                                firstLocation,
                                 spotList[spotIndex].zoomLevel ?: DEFAULT_ZOOM_LEVEL)
                             , 300
                         )
                     }
                 },
                 onLocationChange = { newLocation ->
-                    setLocationViewModel.setNewLocation(newLocation)
-                },
-                onZoomChange = {newZoomLevel ->
-                    setLocationViewModel.setNewZoomLevel(newZoomLevel)
+//                    setLocationViewModel.setNewLocation(newLocation)
                 }
             )
 
@@ -302,9 +298,8 @@ fun SetLocationDialog(
                 modifier = Modifier.width(330.dp)
             ) {
                 ZoomButtonsForSetLocation(
-                    zoomLevel = setLocationUiState.spotLocation.newZoomLevel,
+                    zoomLevel = cameraPositionState.position.zoom,
                     mapZoomTo = { newZoomLevel ->
-                        setLocationViewModel.setNewZoomLevel(newZoomLevel)
                         coroutineScope.launch {
                             cameraPositionState.animate(
                                 CameraUpdateFactory.zoomTo(newZoomLevel), 300
@@ -334,8 +329,8 @@ fun SetLocationDialog(
                             showingTrip,
                             dateIndex,
                             updateTripState,
-                            setLocationUiState.spotLocation.newLocation,
-                            setLocationUiState.spotLocation.newZoomLevel
+                            cameraPositionState.position.target,
+                            cameraPositionState.position.zoom
                         )
 
                         setShowSetLocationDialogToFalse()

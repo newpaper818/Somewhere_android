@@ -87,7 +87,6 @@ import com.newpaper.somewhere.feature.dialog.memo.MemoDialog
 import com.newpaper.somewhere.feature.dialog.selectDate.SelectDateDialog
 import com.newpaper.somewhere.feature.dialog.setBudgetOrDiatance.SetBudgetOrDistanceDialog
 import com.newpaper.somewhere.feature.dialog.setLocation.SetLocationDialog
-import com.newpaper.somewhere.feature.dialog.setLocation.SetLocationViewModel
 import com.newpaper.somewhere.feature.dialog.setSpotType.SetSpotTypeDialog
 import com.newpaper.somewhere.feature.dialog.setTime.SetTimeDialog
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel

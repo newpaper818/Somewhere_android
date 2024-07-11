@@ -58,7 +58,7 @@ fun AboutRoute(
 
     modifier: Modifier = Modifier,
 
-    aboutViewModel: AboutViewModel = hiltViewModel(),
+    aboutViewModel: AboutViewModel = hiltViewModel()
 ){
     LaunchedEffect(Unit) {
         aboutViewModel.updateIsLatestAppVersion(currentAppVersionCode)

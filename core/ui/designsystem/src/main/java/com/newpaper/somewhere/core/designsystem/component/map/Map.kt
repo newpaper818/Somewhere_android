@@ -263,8 +263,7 @@ fun MapForChooseLocation(
     searchLocationMarkerList: List<LocationInfo>,
 
     onMapLoaded: () -> Unit,
-    onLocationChange: (LatLng) -> Unit,
-    onZoomChange: (Float) -> Unit
+    onLocationChange: (LatLng) -> Unit
 ){
     val userLocationPermissionState =
         rememberMultiplePermissionsState(permissions = USER_LOCATION_PERMISSION_LIST)
@@ -290,10 +289,9 @@ fun MapForChooseLocation(
 
 
     //get center location(LatLng)
-    LaunchedEffect(cameraPositionState.isMoving) {
-        onLocationChange(cameraPositionState.position.target)
-        onZoomChange(cameraPositionState.position.zoom)
-    }
+//    LaunchedEffect(cameraPositionState.isMoving) {
+//        onLocationChange(cameraPositionState.position.target)
+//    }
 
     GoogleMap(
         modifier = Modifier.fillMaxSize(),

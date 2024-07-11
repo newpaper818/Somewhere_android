@@ -1,7 +1,8 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-//    alias(libs.plugins.googleDevToolsKsp)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.googleDevToolsKsp)
 }
 
 android {
@@ -45,8 +46,8 @@ dependencies {
 
     //hilt
     implementation(libs.androidx.hilt.navigation.compose)
-//    implementation(libs.hilt.android)
-//    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
     //
 //    implementation(libs.lifecycle.viewmodel.compose)
@@ -56,8 +57,6 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.play.services.maps)
     implementation(libs.maps.compose)
-
-    implementation(libs.places)
 
     //test
     testImplementation(libs.junit)
