@@ -77,7 +77,7 @@ suspend fun focusOnToLatLng(
         val location = newLocationList.first()
 
         cameraPositionState.animate(
-            CameraUpdateFactory.newLatLngZoom(location, 16f), ANIMATION_DURATION_MS
+            CameraUpdateFactory.newLatLngZoom(location, 13f), ANIMATION_DURATION_MS
         )
     }
     else if (newLocationList.size > 1){
