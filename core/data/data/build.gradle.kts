@@ -29,6 +29,7 @@ dependencies {
     implementation(project(":core:data:firebase-authentication"))
     implementation(project(":core:data:firebase-firestore"))
     implementation(project(":core:data:firebase-storage"))
+    implementation(project(":core:data:google-map-places"))
     implementation(project(":core:data:local-image-file"))
 
     //
@@ -43,6 +44,9 @@ dependencies {
     //hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    //LatLng
+    implementation(libs.play.services.maps)
 
     //test
     testImplementation(libs.junit)
