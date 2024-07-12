@@ -891,9 +891,13 @@ private fun DatePage(
                                         errorCount.decreaseSpotTitleErrorCount()
                                     }
                                 },
-                                onClickItem = {
-                                    navigate.navigateToSpot(dateIndex, spotList.indexOf(spot))
-                                },
+                                onClickItem =
+                                if (!isEditMode){
+                                    {
+                                        navigate.navigateToSpot(dateIndex, spotList.indexOf(spot))
+                                    }
+                                }
+                                else null,
                                 onClickDelete = {
                                     //dialog: ask delete
                                     deleteSpot(dateIndex, spot.index)
