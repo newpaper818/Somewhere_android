@@ -44,7 +44,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,8 +53,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -801,13 +798,6 @@ private fun DatePage(
 
                 //spots title when edit mode
                 item {
-                    val textModifier =
-                        if (showingTrip.dateList.isNotEmpty())
-                            Modifier.padding(0.dp, 0.dp, 0.dp, 0.dp)
-                        else Modifier.padding(0.dp, 0.dp, 0.dp, 8.dp)
-
-                    var textHeight by rememberSaveable { mutableIntStateOf(0) }
-
                     AnimatedVisibility(
                         visible = isEditMode,
                         enter = expandVertically(tween(400)),
@@ -815,36 +805,32 @@ private fun DatePage(
                     ) {
                         Box(
                             modifier = Modifier
+                                .height(18.dp)
                                 .padding(startSpacerValue, 0.dp, endSpacerValue, 0.dp)
                                 .fillMaxWidth()
                                 .background(MaterialTheme.colorScheme.surfaceBright)
                         ) {
-                            Box {
-                                Row(
-                                    modifier = Modifier.padding(16.dp, 0.dp)
-                                ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp, 0.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.spots),
+                                    style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                )
+
+                                //up to 100 characters
+                                if (errorCount.spotTitleErrorCount > 0){
+                                    Spacer(modifier = Modifier.weight(1f))
+
                                     Text(
-                                        text = stringResource(id = R.string.spots),
-                                        style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-                                        modifier = textModifier.onGloballyPositioned {
-                                            textHeight = it.size.height
-                                        }
+                                        text = stringResource(id = R.string.long_text, MAX_TITLE_LENGTH),
+                                        style = MaterialTheme.typography.bodySmall.copy(color = CustomColor.outlineError)
                                     )
-
-                                    //up to 100 characters
-                                    if (errorCount.spotTitleErrorCount > 0){
-                                        Spacer(modifier = Modifier.weight(1f))
-
-                                        Text(
-                                            text = stringResource(id = R.string.long_text, MAX_TITLE_LENGTH),
-                                            style = MaterialTheme.typography.bodySmall.copy(color = CustomColor.outlineError)
-                                        )
-                                    }
                                 }
-
-                                if(firstSpotShowUpperLine)
-                                    DummySpaceWithLine(height = (textHeight / LocalDensity.current.density).dp)
                             }
+
+                            if(firstSpotShowUpperLine)
+                                DummySpaceWithLine()
                         }
                     }
                 }
