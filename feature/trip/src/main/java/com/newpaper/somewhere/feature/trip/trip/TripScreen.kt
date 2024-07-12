@@ -406,7 +406,7 @@ private fun TripScreen(
             SomewhereTopAppBar(
                 title = topBarTitle,
                 internetEnabled = internetEnabled,
-                navigationIcon = TopAppBarIcon.back,
+                navigationIcon = if(!isEditMode) TopAppBarIcon.back else null,
                 onClickNavigationIcon = { tripNavigate.navigateUp() },
                 actionIcon2 = if (!loadingTrip && !isEditMode && !use2Panes && showingTrip.editable) TopAppBarIcon.edit else null,
                 actionIcon2Onclick = {

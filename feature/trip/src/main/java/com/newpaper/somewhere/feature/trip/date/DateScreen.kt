@@ -417,7 +417,7 @@ private fun DateScreen(
                 internetEnabled = dateUiInfo.internetEnabled,
 
                 //back button
-                navigationIcon = if (!dateUiInfo.use2Panes) TopAppBarIcon.back else null,
+                navigationIcon = if (dateUiInfo.use2Panes || dateUiInfo.isEditMode) null else TopAppBarIcon.back,
                 onClickNavigationIcon = { dateNavigate.navigateUp() },
 
                 actionIcon2 = if (!dateUiInfo.isEditMode && showingTrip.editable) TopAppBarIcon.edit else null,
