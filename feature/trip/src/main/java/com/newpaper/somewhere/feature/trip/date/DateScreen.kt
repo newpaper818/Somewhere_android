@@ -953,18 +953,24 @@ private fun DatePage(
         }
 
         //new spot button
-        if(isEditMode && spotList.size < 100){
-            item {
-                MySpacerColumn(height = 16.dp)
+        item {
+            MySpacerColumn(height = 16.dp)
 
-                NewItemButton(
-                    text = stringResource(id = R.string.new_spot),
-                    onClick = {
-                        //add new spot
-                        addNewSpot(dateIndex)
-                        spotTypeWithShownList = updateSpotTypeGroupWithShownList(currentDate, spotTypeWithShownList)
-                    }
-                )
+            Box(modifier = Modifier.height(40.dp)){
+                AnimatedVisibility(
+                    visible = isEditMode && spotList.size < 100,
+                    enter = fadeIn(tween(300)) + scaleIn(tween(300)),
+                    exit = fadeOut(tween(300)) + scaleOut(tween(300))
+                ) {
+                    NewItemButton(
+                        text = stringResource(id = R.string.new_spot),
+                        onClick = {
+                            //add new spot
+                            addNewSpot(dateIndex)
+                            spotTypeWithShownList = updateSpotTypeGroupWithShownList(currentDate, spotTypeWithShownList)
+                        }
+                    )
+                }
             }
         }
     }
