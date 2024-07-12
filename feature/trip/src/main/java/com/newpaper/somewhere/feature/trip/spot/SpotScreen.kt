@@ -982,20 +982,18 @@ private fun Spot1Pane(
                     pageContent = { pageIndex ->
                         //pageIndex == spotIndex
 
-                        if (!dialog.showSetLocationDialog) {
-                            //each page
-                            SpotDetailPage(
-                                spotUiInfo = spotUiInfo,
-                                spotData = spotData.copy(currentSpotIndex = pageIndex),
-                                errorCount = errorCount,
-                                dialog = dialog,
-                                navigate = navigate,
-                                image = image,
-                                focusManager = focusManager,
-                                deleteTime = deleteTime,
-                                updateTripState = updateTripState
-                            )
-                        }
+                        //each page
+                        SpotDetailPage(
+                            spotUiInfo = spotUiInfo,
+                            spotData = spotData.copy(currentSpotIndex = pageIndex),
+                            errorCount = errorCount,
+                            dialog = dialog,
+                            navigate = navigate,
+                            image = image,
+                            focusManager = focusManager,
+                            deleteTime = deleteTime,
+                            updateTripState = updateTripState
+                        )
                     }
                 )
             }
@@ -1163,21 +1161,19 @@ private fun Spot2Panes(
                         pageContent = {pageIndex ->
                             //pageIndex == spotIndex
 
-                            if (!dialog.showSetLocationDialog) {
-                                //each page
-                                SpotDetailPage(
-                                    spotUiInfo = spotUiInfo,
-                                    spotData = spotData.copy(currentSpotIndex = pageIndex),
-                                    errorCount = errorCount,
-                                    dialog = dialog,
-                                    navigate = navigate,
-                                    image = image,
-                                    focusManager = focusManager,
-                                    deleteTime = deleteTime,
-                                    updateTripState = updateTripState,
-                                    minHeight = (lazyColumnHeight / LocalDensity.current.density).toInt().dp
-                                )
-                            }
+                            //each page
+                            SpotDetailPage(
+                                spotUiInfo = spotUiInfo,
+                                spotData = spotData.copy(currentSpotIndex = pageIndex),
+                                errorCount = errorCount,
+                                dialog = dialog,
+                                navigate = navigate,
+                                image = image,
+                                focusManager = focusManager,
+                                deleteTime = deleteTime,
+                                updateTripState = updateTripState,
+                                minHeight = (lazyColumnHeight / LocalDensity.current.density).toInt().dp
+                            )
                         }
                     )
                 }
