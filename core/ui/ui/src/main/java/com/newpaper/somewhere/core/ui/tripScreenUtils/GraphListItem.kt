@@ -2,6 +2,7 @@ package com.newpaper.somewhere.core.ui.tripScreenUtils
 
 import androidx.annotation.ColorInt
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
@@ -122,9 +123,11 @@ fun GraphListItem(
     val borderColor = if (isTextSizeLimit) CustomColor.outlineError
                         else Color.Transparent
 
-    val clickableBoxColor = if (isHighlighted) pointColor.copy(alpha = 0.2f)
-                        else Color.Transparent
-
+    val clickableBoxColor by animateColorAsState(
+        targetValue = if (isHighlighted) pointColor.copy(alpha = 0.2f) else Color.Transparent,
+        animationSpec = tween(500),
+        label = "color"
+    )
 
     if (!isEditMode)
         isTextSizeLimit = false
