@@ -383,7 +383,9 @@ private fun TripScreen(
 
 
 
-
+    LaunchedEffect(tripDialog.isShowingDialog) {
+        focusManager.clearFocus()
+    }
 
 
     MyScaffold (
