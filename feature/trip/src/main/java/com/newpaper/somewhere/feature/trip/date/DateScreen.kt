@@ -357,7 +357,6 @@ private fun DateScreen(
                             else dateUiInfo.spacerValue
     val endSpacerValue = dateUiInfo.spacerValue
 
-    val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
 
     val showingTrip = if (dateUiInfo.isEditMode) dateData.tempTrip

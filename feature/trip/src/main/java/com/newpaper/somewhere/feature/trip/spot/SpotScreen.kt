@@ -44,7 +44,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -654,8 +653,12 @@ private fun SpotScreen(
             SetBudgetOrDistanceDialog(
                 currencyType = showingTrip.unitOfCurrencyType,
                 initialValue = currentSpot.budget,
-                onDismissRequest = { spotDialog.setShowSetBudgetDialog(false) },
+                onDismissRequest = {
+                    focusManager.clearFocus()
+                    spotDialog.setShowSetBudgetDialog(false)
+                },
                 onSaveClick = { newBudget ->
+                    focusManager.clearFocus()
                     spotDialog.setShowSetBudgetDialog(false)
                     currentSpot.setBudget(showingTrip, currentDateIndex, updateTripState, newBudget)
                 }
@@ -665,8 +668,12 @@ private fun SpotScreen(
         if (spotDialog.showSetDistanceDialog && currentSpot != null){
             SetBudgetOrDistanceDialog(
                 initialValue = currentSpot.travelDistance,
-                onDismissRequest = { spotDialog.setShowSetDistanceDialog(false) },
+                onDismissRequest = {
+                    focusManager.clearFocus()
+                    spotDialog.setShowSetDistanceDialog(false)
+                },
                 onSaveClick = { newTravelDistance ->
+                    focusManager.clearFocus()
                     spotDialog.setShowSetDistanceDialog(false)
                     currentSpot.setTravelDistance(showingTrip, currentDateIndex, updateTripState, newTravelDistance)
                 }
