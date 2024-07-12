@@ -803,9 +803,7 @@ private fun SpotScreen(
                         snackBarHostState = snackBarHostState,
                         focusManager = focusManager,
                         updateTripState = updateTripState,
-                        setUserSwiping = spotUiInfo::setUserSwiping,
-                        deleteTime = { }
-
+                        setUserSwiping = spotUiInfo::setUserSwiping
                     )
                 }
                 else{
@@ -825,8 +823,7 @@ private fun SpotScreen(
                         snackBarHostState = snackBarHostState,
                         focusManager = focusManager,
                         updateTripState = updateTripState,
-                        setUserSwiping = spotUiInfo::setUserSwiping,
-                        deleteTime = {  }
+                        setUserSwiping = spotUiInfo::setUserSwiping
                     )
                 }
             }
@@ -859,7 +856,6 @@ private fun Spot1Pane(
 
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     setUserSwiping: (userSwiping: Boolean) -> Unit,
-    deleteTime: (isStartTime: Boolean) -> Unit,
 ){
     var lazyColumnHeight by rememberSaveable { mutableIntStateOf(0) }
 
@@ -991,7 +987,12 @@ private fun Spot1Pane(
                             navigate = navigate,
                             image = image,
                             focusManager = focusManager,
-                            deleteTime = deleteTime,
+                            deleteTime = { isStartTime ->
+                                if (isStartTime)
+                                    currentSpot?.setStartTime(showingTrip, currentDateIndex, updateTripState, null)
+                                else
+                                    currentSpot?.setEndTime(showingTrip, currentDateIndex, updateTripState, null)
+                            },
                             updateTripState = updateTripState
                         )
                     }
@@ -1023,7 +1024,6 @@ private fun Spot2Panes(
 
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     setUserSwiping: (userSwiping: Boolean) -> Unit,
-    deleteTime: (isStartTime: Boolean) -> Unit,
 ){
     var lazyColumnHeight by rememberSaveable { mutableIntStateOf(0) }
 
@@ -1170,7 +1170,12 @@ private fun Spot2Panes(
                                 navigate = navigate,
                                 image = image,
                                 focusManager = focusManager,
-                                deleteTime = deleteTime,
+                                deleteTime = { isStartTime ->
+                                    if (isStartTime)
+                                        currentSpot?.setStartTime(showingTrip, currentDateIndex, updateTripState, null)
+                                    else
+                                        currentSpot?.setEndTime(showingTrip, currentDateIndex, updateTripState, null)
+                                },
                                 updateTripState = updateTripState,
                                 minHeight = (lazyColumnHeight / LocalDensity.current.density).toInt().dp
                             )
