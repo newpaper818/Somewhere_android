@@ -106,8 +106,7 @@ fun TripsRoute(
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        delay(500)
-        commonTripViewModel.initCurrentTripAndDateSpotIndex()
+        commonTripViewModel.initDateSpotIndex()
     }
 
     //get trips
