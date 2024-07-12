@@ -46,7 +46,7 @@ fun MyTextField(
             Text(
                 text = placeholderText,
                 style = placeholderTextStyle,
-                modifier = Modifier.fillMaxWidth()
+                modifier = textFieldModifier.fillMaxWidth()
             )
         }
     }
