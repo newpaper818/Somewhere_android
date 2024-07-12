@@ -235,7 +235,7 @@ fun DateRoute(
             tempTrip = tempTrip,
             showingTrip = showingTrip
         ),
-        errorCount = DateErrorCount(
+        dateErrorCount = DateErrorCount(
             totalErrorCount = dateUiState.totalErrorCount,
             spotTitleErrorCount = dateUiState.spotTitleErrorCount,
             _increaseTotalErrorCount = dateViewModel::increaseTotalErrorCount,
@@ -243,7 +243,7 @@ fun DateRoute(
             _increaseSpotTitleErrorCount = dateViewModel::increaseSpotTitleErrorCount,
             _decreaseSpotTitleErrorCount = dateViewModel::decreaseSpotTitleErrorCount,
         ),
-        dialog = DateDialog(
+        dateDialog = DateDialog(
             isShowingDialog = commonTripUiState.isShowingDialog,
             showExitDialog = dateUiState.showExitDialog,
             showMemoDialog = dateUiState.showMemoDialog,
@@ -258,12 +258,12 @@ fun DateRoute(
             selectedSpot = dateUiState.selectedSpot,
             _setSelectedSpot = dateViewModel::setSelectedSpot
         ),
-        navigate = DateNavigate(
+        dateNavigate = DateNavigate(
             _navigateUp = onClickBackButton,
             _navigateToSpot = navigateToSpot,
             _navigateToDateMap = navigateToDateMap
         ),
-        image = DateImage(
+        dateImage = DateImage(
             _addDeletedImages = commonTripViewModel::addDeletedImages,
             _organizeAddedDeletedImages = {
                 commonTripViewModel.organizeAddedDeletedImages(showingTrip.managerId, it)
@@ -331,10 +331,10 @@ fun DateRoute(
 private fun DateScreen(
     dateUiInfo: DateUiInfo,
     dateData: DateData,
-    errorCount: DateErrorCount,
-    dialog: DateDialog,
-    navigate: DateNavigate,
-    image: DateImage,
+    dateErrorCount: DateErrorCount,
+    dateDialog: DateDialog,
+    dateNavigate: DateNavigate,
+    dateImage: DateImage,
 
     showTripBottomSaveCancelBar: Boolean,
 
@@ -418,7 +418,7 @@ private fun DateScreen(
 
                 //back button
                 navigationIcon = if (!dateUiInfo.use2Panes) TopAppBarIcon.back else null,
-                onClickNavigationIcon = { navigate.navigateUp() },
+                onClickNavigationIcon = { dateNavigate.navigateUp() },
 
                 actionIcon2 = if (!dateUiInfo.isEditMode && showingTrip.editable) TopAppBarIcon.edit else null,
                 actionIcon2Onclick = {
@@ -431,92 +431,92 @@ private fun DateScreen(
         floatingActionButton = {
             SeeOnMapExtendedFAB(
                 visible = !dateUiInfo.isEditMode && showingTrip.getFirstLocation() != null,
-                onClick = navigate::navigateToDateMap,
+                onClick = dateNavigate::navigateToDateMap,
                 expanded = dateUiInfo.isFABExpanded
             )
         },
 
         //bottom save cancel bar
-        bottomSaveCancelBarVisible = dateUiInfo.isEditMode && !dialog.isShowingDialog && showTripBottomSaveCancelBar,
+        bottomSaveCancelBarVisible = dateUiInfo.isEditMode && !dateDialog.isShowingDialog && showTripBottomSaveCancelBar,
         onClickCancel = {
             focusManager.clearFocus()
-            navigate.navigateUp()
+            dateNavigate.navigateUp()
         },
         onClickSave = onClickSave,
-        saveEnabled = errorCount.totalErrorCount <= 0
+        saveEnabled = dateErrorCount.totalErrorCount <= 0
 
     ) { paddingValues ->
 
         //dialogs
-        if(dialog.showExitDialog){
+        if(dateDialog.showExitDialog){
             DeleteOrNotDialog(
                 bodyText = stringResource(id = R.string.dialog_body_are_you_sure_to_exit),
                 deleteButtonText = stringResource(id = R.string.dialog_button_exit),
-                onDismissRequest = { dialog.setShowExitDialog(false) },
+                onDismissRequest = { dateDialog.setShowExitDialog(false) },
                 onClickDelete = {
-                    dialog.setShowExitDialog(false)
+                    dateDialog.setShowExitDialog(false)
                     dateUiInfo.setIsEditMode(false)
                     updateTripState(true, dateData.originalTrip)
 
-                    image.organizeAddedDeletedImages(false)
+                    dateImage.organizeAddedDeletedImages(false)
                 }
             )
         }
 
-        if (dialog.showMemoDialog && currentDate != null){
+        if (dateDialog.showMemoDialog && currentDate != null){
             MemoDialog(
                 memoText = currentDate.memo ?: "",
-                onDismissRequest = { dialog.setShowMemoDialog(false) }
+                onDismissRequest = { dateDialog.setShowMemoDialog(false) }
             )
         }
 
-        if (dialog.showSetColorDialog && currentDate != null){
+        if (dateDialog.showSetColorDialog && currentDate != null){
             SetColorDialog(
                 initialColor = currentDate.color,
                 onDismissRequest = {
-                    dialog.setShowSetColorDialog(false)
+                    dateDialog.setShowSetColorDialog(false)
                 },
                 onOkClick = {
-                    dialog.setShowSetColorDialog(false)
+                    dateDialog.setShowSetColorDialog(false)
                     currentDate.setColor(dateData.showingTrip, updateTripState, it)
                 }
             )
         }
 
-        if (dialog.showSetTimeDialog && dialog.selectedSpot != null){
+        if (dateDialog.showSetTimeDialog && dateDialog.selectedSpot != null){
             SetTimeDialog(
-                initialTime = dialog.selectedSpot.startTime ?: LocalTime.of(12,0),
+                initialTime = dateDialog.selectedSpot.startTime ?: LocalTime.of(12,0),
                 timeFormat = dateUiInfo.dateTimeFormat.timeFormat,
                 isSetStartTime = true,
                 onDismissRequest = {
-                    dialog.setShowSetTimeDialog(false)
-                    dialog.setSelectedDate(null)
+                    dateDialog.setShowSetTimeDialog(false)
+                    dateDialog.setSelectedDate(null)
                 },
                 onConfirm = {newTime ->
-                    dialog.selectedSpot.setStartTime(showingTrip, datePagerState.currentPage, updateTripState, newTime)
-                    dialog.setShowSetTimeDialog(false)
-                    dialog.setSelectedDate(null)
+                    dateDialog.selectedSpot.setStartTime(showingTrip, datePagerState.currentPage, updateTripState, newTime)
+                    dateDialog.setShowSetTimeDialog(false)
+                    dateDialog.setSelectedDate(null)
                 }
             )
         }
 
-        if (dialog.showSetSpotTypeDialog && dialog.selectedSpot != null) {
+        if (dateDialog.showSetSpotTypeDialog && dateDialog.selectedSpot != null) {
             SetSpotTypeDialog(
-                initialSpotType = dialog.selectedSpot.spotType,
+                initialSpotType = dateDialog.selectedSpot.spotType,
                 onDismissRequest = {
-                    dialog.setShowSetSpotTypeDialog(false)
-                    dialog.setSelectedDate(null)
+                    dateDialog.setShowSetSpotTypeDialog(false)
+                    dateDialog.setSelectedDate(null)
                 },
                 onClickOk = { newSpotType ->
-                    dialog.setShowSetSpotTypeDialog(false)
-                    dialog.selectedSpot.setSpotType(
+                    dateDialog.setShowSetSpotTypeDialog(false)
+                    dateDialog.selectedSpot.setSpotType(
                         showingTrip,
                         dateList,
                         datePagerState.currentPage,
                         updateTripState,
                         newSpotType
                     )
-                    dialog.setSelectedDate(null)
+                    dateDialog.setSelectedDate(null)
                 }
             )
         }
@@ -587,9 +587,9 @@ private fun DateScreen(
                             DatePage(
                                 dateUiInfo = dateUiInfo,
                                 dateData = dateData,
-                                errorCount = errorCount,
-                                dialog = dialog,
-                                navigate = navigate,
+                                errorCount = dateErrorCount,
+                                dialog = dateDialog,
+                                navigate = dateNavigate,
                                 dateIndex = pageIndex,
                                 focusManager = focusManager,
                                 updateTripState = updateTripState,
@@ -598,7 +598,7 @@ private fun DateScreen(
                                 },
                                 deleteSpot = { dateIndex, spotIndex ->
                                     deleteSpot(dateIndex, spotIndex)
-                                    image.addDeletedImages(dateList[dateIndex].spotList[spotIndex].imagePathList)
+                                    dateImage.addDeletedImages(dateList[dateIndex].spotList[spotIndex].imagePathList)
                                 },
                                 setIsFABExpanded = setIsFABExpanded,
                                 reorderSpotList = { currentIndex, destinationIndex ->
