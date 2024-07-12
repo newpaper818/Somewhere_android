@@ -166,9 +166,9 @@ fun DateRoute(
         if (userDragTouching) userSwiping = true
     }
 
-    //when use2panes, when change dateIndex(click date at trip screen), animate progress bar and date page
+    //when change dateIndex(click date at trip screen), animate progress bar and date page
     LaunchedEffect(dateIndex){
-        if (use2Panes && dateIndex != null && !datePagerState.isScrollInProgress) {
+        if (dateIndex != null && !datePagerState.isScrollInProgress) {
             coroutineScope.launch {
                 progressBarState.animateScrollToItem(dateIndex)
             }
