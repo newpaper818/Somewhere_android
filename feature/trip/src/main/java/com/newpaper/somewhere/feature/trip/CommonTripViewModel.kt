@@ -90,11 +90,10 @@ class CommonTripViewModel @Inject constructor(
     }
 
 
-    fun initCurrentTripAndDateSpotIndex() {
+    fun initDateSpotIndex() {
         commonTripUiStateRepository._commonTripUiState.update {
             it.copy(
                 tripInfo = it.tripInfo.copy(
-                    trip = null, tempTrip = null,
                     dateIndex = null, spotIndex = null
                 )
             )
