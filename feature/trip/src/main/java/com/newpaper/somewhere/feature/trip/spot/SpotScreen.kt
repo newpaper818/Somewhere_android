@@ -473,9 +473,6 @@ private fun SpotScreen(
 
 
 
-
-
-
     //set top bar title
     val topBarTitle =
         if (spotDialog.showSetLocationDialog)
@@ -519,7 +516,9 @@ private fun SpotScreen(
 
 
 
-
+    LaunchedEffect(spotDialog.isShowingDialog) {
+        focusManager.clearFocus()
+    }
 
 
 
@@ -653,12 +652,8 @@ private fun SpotScreen(
             SetBudgetOrDistanceDialog(
                 currencyType = showingTrip.unitOfCurrencyType,
                 initialValue = currentSpot.budget,
-                onDismissRequest = {
-                    focusManager.clearFocus()
-                    spotDialog.setShowSetBudgetDialog(false)
-                },
+                onDismissRequest = { spotDialog.setShowSetBudgetDialog(false) },
                 onSaveClick = { newBudget ->
-                    focusManager.clearFocus()
                     spotDialog.setShowSetBudgetDialog(false)
                     currentSpot.setBudget(showingTrip, currentDateIndex, updateTripState, newBudget)
                 }
@@ -668,12 +663,8 @@ private fun SpotScreen(
         if (spotDialog.showSetDistanceDialog && currentSpot != null){
             SetBudgetOrDistanceDialog(
                 initialValue = currentSpot.travelDistance,
-                onDismissRequest = {
-                    focusManager.clearFocus()
-                    spotDialog.setShowSetDistanceDialog(false)
-                },
+                onDismissRequest = { spotDialog.setShowSetDistanceDialog(false) },
                 onSaveClick = { newTravelDistance ->
-                    focusManager.clearFocus()
                     spotDialog.setShowSetDistanceDialog(false)
                     currentSpot.setTravelDistance(showingTrip, currentDateIndex, updateTripState, newTravelDistance)
                 }

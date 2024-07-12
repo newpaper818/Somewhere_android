@@ -389,7 +389,9 @@ private fun DateScreen(
 
 
 
-
+    LaunchedEffect(dateDialog.isShowingDialog) {
+        focusManager.clearFocus()
+    }
 
 
 
