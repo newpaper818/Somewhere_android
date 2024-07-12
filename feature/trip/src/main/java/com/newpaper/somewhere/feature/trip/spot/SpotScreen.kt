@@ -886,6 +886,7 @@ private fun Spot1Pane(
         state = spotState.scrollState,
         modifier = Modifier
             .fillMaxSize()
+            .imePadding()
             .onGloballyPositioned {
                 lazyColumnHeight = it.size.height
             },
