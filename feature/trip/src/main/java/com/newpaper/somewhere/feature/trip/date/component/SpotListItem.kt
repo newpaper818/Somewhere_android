@@ -47,7 +47,7 @@ internal fun SpotListItem(
     onTitleTextChange: (title: String) -> Unit,
     isLongText: (Boolean) -> Unit,
 
-    onClickItem: () -> Unit,
+    onClickItem: (() -> Unit)?,
     onClickDelete: () -> Unit,
     onClickSideText: (() -> Unit)?,
     onClickPoint: (() -> Unit)?,
