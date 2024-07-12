@@ -498,7 +498,10 @@ private fun organizeNavStack(
             // -> Trips - Trip - Date
             mainNavController.popBackStack()
             mainNavController.navigate(
-                route = ScreenDestination.TRIP.route
+                route = ScreenDestination.TRIP.route,
+                navOptions {
+                    launchSingleTop = true
+                }
             )
             mainNavController.navigate(
                 route = ScreenDestination.DATE.route
