@@ -37,7 +37,13 @@ class SetLocationViewModel @Inject constructor(
 
     private var job: Job? = null
 
-
+    fun init(){
+        _setLocationUiState.update {
+            it.copy(
+                searchLocation = SearchLocation()
+            )
+        }
+    }
 
     fun setSearchText(
         searchText: String

@@ -112,6 +112,10 @@ fun SetLocationDialog(
 
     setLocationViewModel: SetLocationViewModel = hiltViewModel()
 ){
+    LaunchedEffect(Unit) {
+        setLocationViewModel.init()
+    }
+
     val coroutineScope = rememberCoroutineScope()
 
     val setLocationUiState by setLocationViewModel.setLocationUiState.collectAsState()
