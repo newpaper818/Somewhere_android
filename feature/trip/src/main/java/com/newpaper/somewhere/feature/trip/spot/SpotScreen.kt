@@ -562,8 +562,9 @@ private fun SpotScreen(
 
                 //back button
                 navigationIcon =
-                    if (spotDialog.showSetLocationDialog) TopAppBarIcon.close
-                    else                    TopAppBarIcon.back,
+                    if (spotDialog.showSetLocationDialog)   TopAppBarIcon.close
+                    else if (!spotUiInfo.isEditMode)        TopAppBarIcon.back
+                    else                                    null,
                 onClickNavigationIcon = spotNavigate::onClickBackButton,
 
                 actionIcon1 = if (!spotUiInfo.isEditMode && showingTrip.editable) TopAppBarIcon.edit
