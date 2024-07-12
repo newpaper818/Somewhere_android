@@ -299,6 +299,23 @@ fun SpotRoute(
         }
     }
 
+    //if after set location, animate map spot
+    LaunchedEffect(spotUiState.showSetLocationDialog) {
+        if (!spotUiState.showSetLocationDialog && currentSpot?.location != null){
+            mapAnimateToSpot(
+                scrollState,
+                currentSpot,
+                dateList,
+                spotList,
+                currentDateIndex,
+                cameraPositionState,
+                spotUiState.mapSize,
+                density,
+                coroutineScope
+            )
+        }
+    }
+
 
     SpotScreen(
         spotUiInfo = SpotUiInfo(
