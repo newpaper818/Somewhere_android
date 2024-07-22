@@ -31,8 +31,8 @@ fun ImageTopAppBar(
 ) {
     AnimatedVisibility(
         visible = visible,
-        enter = fadeIn(tween(500)),
-        exit = fadeOut(tween(500))
+        enter = fadeIn(tween(420)),
+        exit = fadeOut(tween(420))
     ) {
 
 
