@@ -63,6 +63,12 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
 
+    //system bar
+    implementation(libs.accompanist.systemuicontroller)
+
+    //zoomable
+    implementation(libs.zoomable)
+
 
     //test
     testImplementation(libs.junit)

@@ -100,6 +100,18 @@ class CommonTripViewModel @Inject constructor(
         }
     }
 
+    fun setImageListAndInitialImageIndex(
+        imageList: List<String>,
+        initialImageIndex: Int
+    ){
+        commonTripUiStateRepository._commonTripUiState.update {
+            it.copy(
+                imageList = imageList,
+                initialImageIndex = initialImageIndex
+            )
+        }
+    }
+
 
 
 
@@ -339,6 +351,12 @@ class CommonTripViewModel @Inject constructor(
         return commonImageRepository.saveImageToInternalStorage(
             tripId = tripId, index = index, uri = uri, isProfileImage = isProfileImage
         )
+    }
+
+    fun saveImageToExternalStorage(
+        imageFileName: String
+    ): Boolean {
+        return commonImageRepository.saveImageToExternalStorage(imageFileName = imageFileName)
     }
 
     fun organizeAddedDeletedImages(

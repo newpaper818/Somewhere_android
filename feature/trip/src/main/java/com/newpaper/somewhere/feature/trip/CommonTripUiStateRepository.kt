@@ -30,6 +30,9 @@ data class CommonTripUiState(
 
     val addedImages: List<String> = listOf(),
     val deletedImages: List<String> = listOf(),
+
+    val imageList: List<String> = listOf(),
+    val initialImageIndex: Int = 0
 )
 
 @Singleton

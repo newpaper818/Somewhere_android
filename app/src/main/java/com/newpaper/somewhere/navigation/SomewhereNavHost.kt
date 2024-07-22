@@ -41,6 +41,7 @@ import com.newpaper.somewhere.navigation.profile.profileScreen
 import com.newpaper.somewhere.navigation.signIn.navigateToSignIn
 import com.newpaper.somewhere.navigation.signIn.signInScreen
 import com.newpaper.somewhere.navigation.trip.dateScreen
+import com.newpaper.somewhere.navigation.trip.imageScreen
 import com.newpaper.somewhere.navigation.trip.navigateToDate
 import com.newpaper.somewhere.navigation.trip.navigateToSpot
 import com.newpaper.somewhere.navigation.trip.navigateToTrip
@@ -375,8 +376,8 @@ fun SomewhereNavHost(
                 appViewModel = appViewModel,
                 externalState = externalState,
                 commonTripViewModel = commonTripViewModel,
-                navigateTo = {
-                    //TODO
+                navigateTo = { screenDestination ->
+                    mainNavController.navigate(screenDestination.route)
                 },
                 navigateToDate = { dateIndex ->
                     commonTripViewModel.setIsNewTrip(false)
@@ -390,8 +391,8 @@ fun SomewhereNavHost(
                 appViewModel = appViewModel,
                 externalState = externalState,
                 commonTripViewModel = commonTripViewModel,
-                navigateTo = {
-                    //TODO
+                navigateTo = { screenDestination ->
+                    mainNavController.navigate(screenDestination.route)
                 },
                 navigateUp = navigateUp,
                 navigateToSpot = { dateIndex, spotIndex ->
@@ -412,9 +413,19 @@ fun SomewhereNavHost(
                 setUserLocationEnabled = {
                     userLocationEnabled = it
                 },
-                navigateTo = { },
+                navigateTo = { screenDestination ->
+                    mainNavController.navigate(screenDestination.route)
+                },
                 navigateUp = navigateUp,
                 modifier = modifier
+            )
+
+            //image ================================================================================
+            imageScreen(
+                appViewModel = appViewModel,
+                externalState = externalState,
+                commonTripViewModel = commonTripViewModel,
+                navigateUp = navigateUp
             )
         }
     }

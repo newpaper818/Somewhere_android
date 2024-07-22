@@ -8,7 +8,8 @@
     <string name="no_plan">No Plan…\nLet\'s create a new spot!</string>
 
     <!--image/ ==================================================================================-->
-
+    <string name="toast_download_complete">Download complete</string>
+    <string name="toast_download_error">Download error</string>
 
     <!--invitedFriend/ ==========================================================================-->
 

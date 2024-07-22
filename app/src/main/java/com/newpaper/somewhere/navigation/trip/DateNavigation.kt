@@ -36,7 +36,7 @@ fun NavGraphBuilder.dateScreen(
     externalState: ExternalState,
     commonTripViewModel: CommonTripViewModel,
 
-    navigateTo: () -> Unit,
+    navigateTo: (ScreenDestination) -> Unit,
     navigateUp: () -> Unit,
     navigateToSpot: (dateIndex: Int, spotIndex: Int) -> Unit,
 
@@ -86,7 +86,10 @@ fun NavGraphBuilder.dateScreen(
                             },
                             navigateToInviteFriend = { /*TODO*/ },
                             navigateToInvitedFriends = { /*TODO*/ },
-                            navigateToImage = { _, _, -> /*TODO*/ },
+                            navigateToImage = { imageList, initialImageIndex ->
+                                commonTripViewModel.setImageListAndInitialImageIndex(imageList, initialImageIndex)
+                                navigateTo(ScreenDestination.IMAGE)
+                            },
                             navigateToDate = { dateIndex, ->
                                 commonTripViewModel.setCurrentDateIndex(dateIndex)
                             },

@@ -74,20 +74,6 @@ class MainActivity : ComponentActivity() {
             appViewModel.appUiState.value.screenDestination.startScreenDestination == null
         }
 
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.light(
-                Color.TRANSPARENT, Color.TRANSPARENT
-            ),
-            navigationBarStyle = SystemBarStyle.light(
-                Color.TRANSPARENT, Color.TRANSPARENT
-            )
-        )
-
-
-
-        //expand screen to status bar
-//        Log.d(MAIN_ACTIVITY_TAG, "expand screen to status bar")
-//        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         //firebase init app check
         initFirebase()
@@ -104,7 +90,7 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
-            //DO NOT REMOVE: if remove and add new spot, app will crash!!!
+            //DO NOT REMOVE: if remove and add new spot, app will crash!!!???
             //val tempSpot = Spot(id = 0, date = LocalDate.of(2023, 12, 13))
 
             Log.d(MAIN_ACTIVITY_TAG, "create externalState, appUiState")

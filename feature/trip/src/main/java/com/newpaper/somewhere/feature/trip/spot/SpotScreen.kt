@@ -115,7 +115,6 @@ fun SpotRoute(
 
     //navigate
     navigateUp: () -> Unit,
-    navigateTo: () -> Unit,
     navigateToImage: (imageList: List<String>, initialImageIndex: Int) -> Unit,
 
     //

@@ -1,10 +1,15 @@
 package com.newpaper.somewhere.ui
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.newpaper.somewhere.core.model.enums.MapTheme
+import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.feature.trip.trips.TripsViewModel
 import com.newpaper.somewhere.navigation.SomewhereNavHost
 
@@ -21,47 +26,47 @@ fun SomewhereApp(
 
     val appUiState by appViewModel.appUiState.collectAsState()
 
-//    val isDarkMapTheme = appUiState.appPreferences.theme.mapTheme == MapTheme.DARK
-//            || appUiState.appPreferences.theme.mapTheme == MapTheme.AUTO && isDarkAppTheme
+    val isDarkMapTheme = appUiState.appPreferences.theme.mapTheme == MapTheme.DARK
+            || appUiState.appPreferences.theme.mapTheme == MapTheme.AUTO && isDarkAppTheme
 
     //system ui controller for status bar icon color
-//    val systemUiController = rememberSystemUiController()
+    val systemUiController = rememberSystemUiController()
 
     //set status bar color FIXME: use when dark map theme?
-//    when (appUiState.screenDestination.currentScreenDestination) {
-//        //image
-//        ScreenDestination.IMAGE -> {
-//            systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = false)
-//        }
-//
-//        //trip map
-//        ScreenDestination.TRIP_MAP -> {
-//            if (isDarkMapTheme)
-//                systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = false)
-//            else
-//                systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = true)
-//        }
-//
-//        else -> {
-//            if (isDarkAppTheme)
-//                systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = false)
-//            else
-//                systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = true)
-//        }
-//    }
-//
-//
-//    //set navigation bar color
-//    when (appUiState.screenDestination.currentScreenDestination) {
-//        ScreenDestination.IMAGE -> systemUiController.setNavigationBarColor(color = Color.Transparent)
-//
-//        ScreenDestination.TRIPS, ScreenDestination.PROFILE,
-//        ScreenDestination.MORE, ScreenDestination.TRIP,
-//        ScreenDestination.DATE, ScreenDestination.SPOT,
-//        ScreenDestination.TRIP_MAP -> systemUiController.setNavigationBarColor(color = MaterialTheme.colorScheme.surfaceDim)
-//
-//        else -> systemUiController.setNavigationBarColor(color = MaterialTheme.colorScheme.surface)
-//    }
+    when (appUiState.screenDestination.currentScreenDestination) {
+        //image
+        ScreenDestination.IMAGE -> {
+            systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = false)
+        }
+
+        //trip map
+        ScreenDestination.TRIP_MAP -> {
+            if (isDarkMapTheme)
+                systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = false)
+            else
+                systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = true)
+        }
+
+        else -> {
+            if (isDarkAppTheme)
+                systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = false)
+            else
+                systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = true)
+        }
+    }
+
+
+    //set navigation bar color
+    when (appUiState.screenDestination.currentScreenDestination) {
+        ScreenDestination.IMAGE -> systemUiController.setNavigationBarColor(color = Color.Transparent)
+
+        ScreenDestination.TRIPS, ScreenDestination.PROFILE,
+        ScreenDestination.MORE, ScreenDestination.TRIP,
+        ScreenDestination.DATE, ScreenDestination.SPOT,
+        ScreenDestination.TRIP_MAP -> systemUiController.setNavigationBarColor(color = MaterialTheme.colorScheme.surfaceDim)
+
+        else -> systemUiController.setNavigationBarColor(color = MaterialTheme.colorScheme.surface)
+    }
 
 
 
