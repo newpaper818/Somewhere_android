@@ -8,7 +8,8 @@
     <string name="no_plan">계획이 없어요…\n새 장소를 추가해 보세요!</string>
 
     <!--image/ ==================================================================================-->
-
+    <string name="toast_download_complete">다운로드 완료</string>
+    <string name="toast_download_error">다운로드 에러</string>
 
     <!--invitedFriend/ ==========================================================================-->
 

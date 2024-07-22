@@ -89,4 +89,12 @@ class CommonImageRepository @Inject constructor(
             isProfileImage = isProfileImage
         )
     }
+
+    fun saveImageToExternalStorage(
+        imageFileName: String
+    ): Boolean {
+        return imageLocalDataSource.saveImageToExternalStorage(
+            imageFileName = imageFileName
+        )
+    }
 }

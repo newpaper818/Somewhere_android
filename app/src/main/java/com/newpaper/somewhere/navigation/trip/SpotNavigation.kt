@@ -42,7 +42,7 @@ fun NavGraphBuilder.spotScreen(
     setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
 
     //
-    navigateTo: () -> Unit,
+    navigateTo: (ScreenDestination) -> Unit,
     navigateUp: () -> Unit,
 
     modifier: Modifier = Modifier,
@@ -76,8 +76,10 @@ fun NavGraphBuilder.spotScreen(
                 fusedLocationClient = fusedLocationClient,
                 userLocationEnabled = userLocationEnabled,
                 navigateUp = navigateUp,
-                navigateTo = navigateTo,
-                navigateToImage = { _,_, -> /*TODO*/},
+                navigateToImage = { imageList, initialImageIndex ->
+                    commonTripViewModel.setImageListAndInitialImageIndex(imageList, initialImageIndex)
+                    navigateTo(ScreenDestination.IMAGE)
+                },
                 setUserLocationEnabled = setUserLocationEnabled,
                 modifier = modifier
             )
