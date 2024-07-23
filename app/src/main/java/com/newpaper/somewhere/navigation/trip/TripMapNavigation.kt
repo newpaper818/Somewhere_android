@@ -1,13 +1,19 @@
 package com.newpaper.somewhere.navigation.trip
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
+import com.newpaper.somewhere.feature.trip.CommonTripViewModel
+import com.newpaper.somewhere.feature.trip.tripMap.TripMapRoute
 import com.newpaper.somewhere.navigation.enterTransition
 import com.newpaper.somewhere.navigation.exitTransition
 import com.newpaper.somewhere.navigation.popEnterTransition
@@ -24,8 +30,14 @@ fun NavController.navigateToTripMap(navOptions: NavOptions? = null) =
 fun NavGraphBuilder.tripMapScreen(
     appViewModel: AppViewModel,
     externalState: ExternalState,
+    commonTripViewModel: CommonTripViewModel,
 
-    navigateTo: () -> Unit,
+    isDarkMapTheme: Boolean,
+
+    fusedLocationClient: FusedLocationProviderClient,
+    userLocationEnabled: Boolean,
+    setUserLocationEnabled: (Boolean) -> Unit,
+
     navigateUp: () -> Unit,
 
     modifier: Modifier = Modifier,
@@ -44,5 +56,24 @@ fun NavGraphBuilder.tripMapScreen(
             appViewModel.updateCurrentScreenDestination(ScreenDestination.TRIP_MAP)
         }
 
+        val appUiState by appViewModel.appUiState.collectAsState()
+        val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsState()
+
+        val currentTrip = commonTripUiState.tripInfo.trip
+
+        if (currentTrip != null) {
+            TripMapRoute(
+                currentTrip = currentTrip,
+                dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
+                navigateUp = navigateUp,
+                isDarkMapTheme = isDarkMapTheme,
+                fusedLocationClient = fusedLocationClient,
+                userLocationEnabled = userLocationEnabled,
+                setUserLocationEnabled = setUserLocationEnabled
+            )
+        }
+        else {
+            Text(text = "No trip")
+        }
     }
 }
