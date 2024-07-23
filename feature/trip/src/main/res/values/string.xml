@@ -47,7 +47,7 @@
     <string name="dates_no_plan">No Plan</string>
 
     <!--tripMap/ ================================================================================-->
-
+    <string name="snackbar_no_location_to_show">No location to show</string>
 
     <!--trips/ ==================================================================================-->
     <string name="trips">Trips</string>

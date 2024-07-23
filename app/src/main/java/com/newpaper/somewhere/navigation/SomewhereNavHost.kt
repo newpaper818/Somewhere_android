@@ -46,6 +46,7 @@ import com.newpaper.somewhere.navigation.trip.navigateToDate
 import com.newpaper.somewhere.navigation.trip.navigateToSpot
 import com.newpaper.somewhere.navigation.trip.navigateToTrip
 import com.newpaper.somewhere.navigation.trip.spotScreen
+import com.newpaper.somewhere.navigation.trip.tripMapScreen
 import com.newpaper.somewhere.navigation.trip.tripScreen
 import com.newpaper.somewhere.navigation.trip.tripsScreen
 import com.newpaper.somewhere.navigationUi.ScreenWithNavigationBar
@@ -418,6 +419,21 @@ fun SomewhereNavHost(
                 },
                 navigateUp = navigateUp,
                 modifier = modifier
+            )
+
+            tripMapScreen(
+                appViewModel = appViewModel,
+                externalState = externalState,
+                commonTripViewModel = commonTripViewModel,
+                isDarkMapTheme = isDarkMapTheme,
+                fusedLocationClient = fusedLocationClient,
+                userLocationEnabled = userLocationEnabled,
+                setUserLocationEnabled = {
+                    userLocationEnabled = it
+                },
+                navigateUp = navigateUp,
+                modifier = modifier
+
             )
 
             //image ================================================================================

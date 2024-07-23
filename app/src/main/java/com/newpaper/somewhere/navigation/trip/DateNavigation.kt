@@ -93,7 +93,9 @@ fun NavGraphBuilder.dateScreen(
                             navigateToDate = { dateIndex, ->
                                 commonTripViewModel.setCurrentDateIndex(dateIndex)
                             },
-                            navigateToTripMap = { /*TODO*/ },
+                            navigateToTripMap = {
+                                navigateTo(ScreenDestination.TRIP_MAP)
+                            },
                             setIsShowingDialog = {isShowingDialog ->
                                 commonTripViewModel.setIsShowingDialog(isShowingDialog)
                             }
@@ -117,7 +119,9 @@ fun NavGraphBuilder.dateScreen(
 
                     navigateUp = navigateUp,
                     navigateToSpot = navigateToSpot,
-                    navigateToDateMap = { /*TODO*/ },
+                    navigateToDateMap = {
+                        navigateTo(ScreenDestination.TRIP_MAP)
+                    },
                     setIsShowingDialog = {isShowingDialog ->
                         commonTripViewModel.setIsShowingDialog(isShowingDialog)
                     }
