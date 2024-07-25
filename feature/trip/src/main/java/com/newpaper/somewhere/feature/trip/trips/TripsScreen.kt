@@ -123,8 +123,7 @@ fun TripsRoute(
         //update glance
         val glanceTripWithEmptyDateList = tripsViewModel.findCurrentDateTripAndUpdateGlanceTrip()
 
-        if (glanceTripWithEmptyDateList != null &&
-            glanceTripWithEmptyDateList.dateList.isEmpty()){
+        if (glanceTripWithEmptyDateList != null){
 
             val glanceTrip = commonTripViewModel.updateTrip(
                 internetEnabled = internetEnabled,
