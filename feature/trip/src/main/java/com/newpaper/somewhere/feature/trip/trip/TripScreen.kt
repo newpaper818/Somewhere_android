@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.trip.trip
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -106,6 +107,7 @@ fun TripRoute(
 
     //
     modifier: Modifier = Modifier,
+    setIsErrorExit: (Boolean) -> Unit = {},
     tripViewModel: TripViewModel = hiltViewModel()
 ){
     val coroutineScope = rememberCoroutineScope()
@@ -135,8 +137,11 @@ fun TripRoute(
         }
     }
 
-    LaunchedEffect(!isEditMode) {
-        tripViewModel.initAllErrorCount()
+    LaunchedEffect(isEditMode) {
+        if (!isEditMode) {
+            tripViewModel.initAllErrorCount()
+            setIsErrorExit(false)
+        }
     }
 
     LaunchedEffect(tripUiState.isShowingDialog) {
@@ -181,8 +186,15 @@ fun TripRoute(
         tripErrorCount = TripErrorCount(
             totalErrorCount = tripUiState.totalErrorCount,
             dateTitleErrorCount = tripUiState.dateTitleErrorCount,
-            _increaseTotalErrorCount = tripViewModel::increaseTotalErrorCount,
-            _decreaseTotalErrorCount = tripViewModel::decreaseTotalErrorCount,
+            _increaseTotalErrorCount = {
+                tripViewModel.increaseTotalErrorCount()
+                Log.d("aaa", "trip screen increase error ${tripUiState.totalErrorCount}")
+                setIsErrorExit(tripUiState.totalErrorCount + 1 > 0)
+            },
+            _decreaseTotalErrorCount = {
+                tripViewModel.decreaseTotalErrorCount()
+                setIsErrorExit(tripUiState.totalErrorCount - 1 > 0)
+            },
             _increaseDateTitleErrorCount = tripViewModel::increaseDateTitleErrorCount,
             _decreaseDateTitleErrorCount = tripViewModel::decreaseDateTitleErrorCount
         ),
