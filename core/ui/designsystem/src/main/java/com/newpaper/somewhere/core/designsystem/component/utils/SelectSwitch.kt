@@ -26,10 +26,11 @@ import com.newpaper.somewhere.core.utils.itemMaxWidth
 
 @Composable
 fun SelectSwitch(
-    content: @Composable RowScope.() -> Unit
+    modifier: Modifier = Modifier,
+    content: @Composable RowScope.() -> Unit,
 ){
     MyCard(
-        modifier = Modifier.widthIn(max = itemMaxWidth),
+        modifier = modifier.widthIn(max = itemMaxWidth),
     ) {
         Row(modifier = Modifier.padding(8.dp)) {
             content()

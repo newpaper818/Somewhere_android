@@ -248,6 +248,7 @@ private fun InviteFriendScreen(
                     internetEnabled = internetEnabled,
                     dateTimeFormat = dateTimeFormat,
                     downloadImage = downloadImage,
+                    modifier = Modifier.widthIn(max = itemMaxWidth)
                 )
             }
 

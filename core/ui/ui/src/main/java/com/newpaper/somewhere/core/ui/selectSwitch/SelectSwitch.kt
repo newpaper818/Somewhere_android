@@ -1,8 +1,10 @@
 package com.newpaper.somewhere.core.ui.selectSwitch
 
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.SelectSwitch
 import com.newpaper.somewhere.core.designsystem.component.utils.SelectSwitchItem
 import com.newpaper.somewhere.core.designsystem.icon.SelectSwitchIcon
@@ -14,8 +16,9 @@ fun AllowEditViewSelectSwitch(
     isEditable: Boolean,
     setIsAllowEdit: (isAllowEdit: Boolean) -> Unit
 ){
-
-    SelectSwitch {
+    SelectSwitch(
+        modifier = Modifier.widthIn(max = 330.dp)
+    ) {
         SelectSwitchItem(
             modifier = Modifier.weight(1f),
             isSelected = isEditable,

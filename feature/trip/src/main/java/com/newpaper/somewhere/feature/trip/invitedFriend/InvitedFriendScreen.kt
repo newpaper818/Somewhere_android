@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -35,6 +36,7 @@ import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.utils.MAX_FRIEND_CNT
 import com.newpaper.somewhere.core.utils.convert.setSharingTo
+import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteFriendDialog
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.GetOutSharedTripDialog
 import com.newpaper.somewhere.feature.dialog.setEditable.SetEditableDialog
@@ -307,7 +309,6 @@ private fun InvitedFriendsScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-
         ) {
             item {
                 //trip image, title, date
@@ -315,7 +316,8 @@ private fun InvitedFriendsScreen(
                     trip = trip,
                     internetEnabled = internetEnabled,
                     dateTimeFormat = dateTimeFormat,
-                    downloadImage = downloadImage
+                    downloadImage = downloadImage,
+                    modifier = Modifier.widthIn(max = itemMaxWidth)
                 )
             }
 
