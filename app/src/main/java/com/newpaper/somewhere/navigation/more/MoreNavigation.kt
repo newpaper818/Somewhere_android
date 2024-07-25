@@ -1,6 +1,5 @@
 package com.newpaper.somewhere.navigation.more
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.displayCutoutPadding
@@ -90,14 +89,14 @@ fun NavGraphBuilder.moreScreen(
 //        val moreNavController = rememberNavController()
 
 
-        moreNavController.addOnDestinationChangedListener { controller, _, _ ->
-            val routes = controller
-                .currentBackStack.value
-                .map { it.destination.route }
-                .joinToString(", ")
-
-            Log.d("moreBackStackLog", "more BackStack: $routes")
-        }
+//        moreNavController.addOnDestinationChangedListener { controller, _, _ ->
+//            val routes = controller
+//                .currentBackStack.value
+//                .map { it.destination.route }
+//                .joinToString(", ")
+//
+//            Log.d("moreBackStackLog", "more BackStack: $routes")
+//        }
 
 
         Row(
