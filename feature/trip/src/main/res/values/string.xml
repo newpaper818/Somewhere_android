@@ -27,7 +27,7 @@
     <string name="snackbar_no_user">Can\'t find user</string>
     <string name="snackbar_same_email">Do not enter your email</string>
     <string name="snackbar_invalid_email">Invalid email format</string>
-    <string name="snackbar_share_trip_error">Share trip error</string>
+    <string name="snackbar_invite_friend_error">Invite friend error</string>
 
     <!--setLocation/ ============================================================================-->
 

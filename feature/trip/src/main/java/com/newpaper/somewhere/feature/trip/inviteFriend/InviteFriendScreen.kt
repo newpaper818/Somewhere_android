@@ -99,7 +99,7 @@ fun InviteFriendRoute(
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
 
-    val shareTripErrorText = stringResource(id = R.string.snackbar_share_trip_error)
+    val shareTripErrorText = stringResource(id = R.string.snackbar_invite_friend_error)
     val sameEmailText = stringResource(id = R.string.snackbar_same_email)
     val invalidEmailText = stringResource(id = R.string.snackbar_invalid_email)
     val noUserText = stringResource(id = R.string.snackbar_no_user)
