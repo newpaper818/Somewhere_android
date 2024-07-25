@@ -84,7 +84,9 @@ fun NavGraphBuilder.dateScreen(
                                 navigateUp()
                                 commonTripViewModel.deleteTempTrip(deleteTrip)
                             },
-                            navigateToInviteFriend = { /*TODO*/ },
+                            navigateToInviteFriend = {
+                                navigateTo(ScreenDestination.INVITE_FRIEND)
+                            },
                             navigateToInvitedFriends = {
                                 navigateTo(ScreenDestination.INVITED_FRIENDS)
                             },
