@@ -188,7 +188,6 @@ fun TripRoute(
             dateTitleErrorCount = tripUiState.dateTitleErrorCount,
             _increaseTotalErrorCount = {
                 tripViewModel.increaseTotalErrorCount()
-                Log.d("aaa", "trip screen increase error ${tripUiState.totalErrorCount}")
                 setIsErrorExit(tripUiState.totalErrorCount + 1 > 0)
             },
             _decreaseTotalErrorCount = {
