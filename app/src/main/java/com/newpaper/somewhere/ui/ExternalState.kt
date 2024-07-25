@@ -7,8 +7,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.newpaper.somewhere.util.ConnectivityObserver
 import com.newpaper.somewhere.util.WindowSizeClass
 import com.newpaper.somewhere.util.currentConnectivityState

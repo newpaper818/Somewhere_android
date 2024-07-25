@@ -6,16 +6,11 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
@@ -30,8 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
@@ -44,9 +37,6 @@ import com.newpaper.somewhere.core.designsystem.component.button.UserLocationBut
 import com.newpaper.somewhere.core.designsystem.component.button.ZoomButtonsUi
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
-import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
-import com.newpaper.somewhere.core.designsystem.icon.MapButtonIcon
-import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.ui.ui.R
 import com.newpaper.somewhere.core.utils.ANIMATION_DURATION_MS
@@ -54,7 +44,6 @@ import com.newpaper.somewhere.core.utils.USER_LOCATION_PERMISSION_ARRAY
 import com.newpaper.somewhere.core.utils.checkPermissionUserLocation
 import com.newpaper.somewhere.core.utils.focusOnToSpots
 import kotlinx.coroutines.launch
-import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
 //map button =======================================================================================

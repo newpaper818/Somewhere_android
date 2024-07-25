@@ -21,7 +21,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -44,7 +43,6 @@ import com.newpaper.somewhere.core.utils.PLAY_STORE_URL
 import com.newpaper.somewhere.core.utils.PRIVACY_POLICY_URL
 import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.more.R
-import kotlinx.coroutines.launch
 
 @Composable
 fun AboutRoute(

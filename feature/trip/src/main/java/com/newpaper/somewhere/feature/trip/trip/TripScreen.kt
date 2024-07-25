@@ -1,6 +1,5 @@
 package com.newpaper.somewhere.feature.trip.trip
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState

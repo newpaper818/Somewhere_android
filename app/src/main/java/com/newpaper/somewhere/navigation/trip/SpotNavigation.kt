@@ -11,7 +11,6 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.newpaper.somewhere.core.model.enums.MapTheme
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.spot.SpotRoute
