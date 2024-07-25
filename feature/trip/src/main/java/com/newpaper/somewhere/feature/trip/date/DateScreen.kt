@@ -114,6 +114,7 @@ fun DateRoute(
     appUserId: String,
     dateTimeFormat: DateTimeFormat,
     internetEnabled: Boolean,
+    isErrorExitOnTripScreen: Boolean,
 
     showTripBottomSaveCancelBar: Boolean,
 
@@ -225,6 +226,7 @@ fun DateRoute(
             dateTimeFormat = dateTimeFormat,
             internetEnabled = internetEnabled,
             isFABExpanded = isFABExpanded,
+            isErrorExitOnTripScreen = isErrorExitOnTripScreen,
             isEditMode = isEditMode,
             _setIsEditMode = commonTripViewModel::setIsEditMode
         ),
@@ -441,7 +443,7 @@ private fun DateScreen(
             dateNavigate.navigateUp()
         },
         onClickSave = onClickSave,
-        saveEnabled = dateErrorCount.totalErrorCount <= 0
+        saveEnabled = dateErrorCount.totalErrorCount <= 0 && !dateUiInfo.isErrorExitOnTripScreen
 
     ) { paddingValues ->
 

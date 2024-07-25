@@ -12,6 +12,7 @@ internal data class DateUiInfo(
     val dateTimeFormat: DateTimeFormat = DateTimeFormat(),
     val internetEnabled: Boolean = true,
     val isFABExpanded: Boolean = true,
+    val isErrorExitOnTripScreen: Boolean = false,
 
     val isEditMode: Boolean = false,
     private val _setIsEditMode: (isEditMode: Boolean?) -> Unit = {},
