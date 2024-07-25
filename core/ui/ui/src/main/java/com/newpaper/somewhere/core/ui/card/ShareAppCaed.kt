@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.ImageFromDrawable
-import com.newpaper.somewhere.core.designsystem.component.button.CopyAppPlayStoreLinkButton
+import com.newpaper.somewhere.core.designsystem.component.button.ShareAppButton
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
@@ -24,7 +24,7 @@ import com.newpaper.somewhere.core.ui.ui.R
 
 @Composable
 fun ShareAppCard(
-    onClickCopyPlayStoreLink: () -> Unit,
+    onClickShareApp: () -> Unit,
     modifier: Modifier = Modifier
 ){
     MyCard(
@@ -34,8 +34,8 @@ fun ShareAppCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier.padding(16.dp)
         ) {
-            CopyAppPlayStoreLinkButton(
-                onClick = onClickCopyPlayStoreLink
+            ShareAppButton(
+                onClick = onClickShareApp
             )
 
             Text(
@@ -92,7 +92,7 @@ private fun ShareAppCardPreview(){
                 .padding(16.dp)
         ) {
             ShareAppCard(
-                onClickCopyPlayStoreLink = { }
+                onClickShareApp = { }
             )
         }
     }

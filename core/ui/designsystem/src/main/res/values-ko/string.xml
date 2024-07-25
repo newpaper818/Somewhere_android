@@ -22,7 +22,7 @@
     <string name="update">업데이트</string>
     <string name="new_trip">새 여행</string>
     <string name="invite">초대하기</string>
-    <string name="copy_somewhere_link">Somewhere Play 스토어 링크 복사</string>
+    <string name="share_app">친구에게 앱 공유하기</string>
     <string name="delete_account">계정 삭제</string>
 
     <!-- FABs.kt -->

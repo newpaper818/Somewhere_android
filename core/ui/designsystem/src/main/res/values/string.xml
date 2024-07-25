@@ -22,7 +22,7 @@
     <string name="update">Update</string>
     <string name="new_trip">New trip</string>
     <string name="invite">Invite</string>
-    <string name="copy_somewhere_link">Copy Somewhere Play Store link</string>
+    <string name="share_app">Share app to friends</string>
     <string name="delete_account">Delete account</string>
 
     <!-- FABs.kt -->

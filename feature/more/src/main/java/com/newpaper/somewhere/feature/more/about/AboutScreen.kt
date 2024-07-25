@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.more.about
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -23,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -66,9 +68,15 @@ fun AboutRoute(
 
     val aboutUiState by aboutViewModel.aboutUiState.collectAsState()
 
-    val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
-    val copiedLinkText = stringResource(id = R.string.play_link_copied)
+
+    val sendIntent: Intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, PLAY_STORE_URL)
+        type = "text/plain"
+    }
+    val shareIntent = Intent.createChooser(sendIntent, null)
+    val context = LocalContext.current
 
     AboutScreen(
         use2Panes = use2Panes,
@@ -79,12 +87,8 @@ fun AboutRoute(
         isDebugMode = isDebugMode,
         navigateToOpenSourceLicense = navigateToOpenSourceLicense,
         navigateUp = navigateUp,
-        onClickCopyPlayStoreLink = {
-            coroutineScope.launch {
-                snackBarHostState.showSnackbar(
-                    message = copiedLinkText
-                )
-            }
+        onClickShareApp = {
+            context.startActivity(shareIntent)
         },
         snackBarHostState = snackBarHostState,
         modifier = modifier
@@ -104,7 +108,7 @@ private fun AboutScreen(
     navigateToOpenSourceLicense: () -> Unit,
     navigateUp: () -> Unit,
 
-    onClickCopyPlayStoreLink: () -> Unit,
+    onClickShareApp: () -> Unit,
 
     snackBarHostState: SnackbarHostState,
 
@@ -200,7 +204,7 @@ private fun AboutScreen(
                 //copy link / qr code
                 ShareAppCard(
                     modifier = itemModifier.fillMaxWidth(),
-                    onClickCopyPlayStoreLink = onClickCopyPlayStoreLink,
+                    onClickShareApp = onClickShareApp,
                 )
             }
 

@@ -2,12 +2,10 @@ package com.newpaper.somewhere.core.designsystem.component.button
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -114,12 +112,12 @@ fun SaveButton(
 }
 
 @Composable
-fun CopyAppPlayStoreLinkButton(
+fun ShareAppButton(
     onClick: () -> Unit,
 ){
     MyTextButton(
         modifier = Modifier.widthIn(min = 120.dp),
-        text = stringResource(id = R.string.copy_somewhere_link),
+        text = stringResource(id = R.string.share_app),
         containerColor = Color.Transparent,
         onClick = onClick
     )
@@ -449,7 +447,7 @@ private fun CopyAppPlayStoreLinkButtonPreview(){
                 .padding(16.dp)
                 .width(260.dp)
         ) {
-            CopyAppPlayStoreLinkButton{ }
+            ShareAppButton{ }
         }
     }
 }

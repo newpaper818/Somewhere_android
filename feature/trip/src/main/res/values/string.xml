@@ -22,7 +22,6 @@
     <string name="invite_friend">Invite friend</string>
     <string name="friend_to_invite">Friend to invite</string>
     <string name="or">or</string>
-    <string name="play_link_copied">Link copied!</string>
 
     <string name="snackbar_invite_friend_success">Invite friend success!</string>
     <string name="snackbar_no_user">Can\'t find user</string>

@@ -4,7 +4,6 @@
     <!--about====================================================================================-->
     <string name="privacy_policy">개인정보 처리방침</string>
     <string name="open_source_license">오픈소스 라이선스</string>
-    <string name="play_link_copied">Play store 링크 복사됨!</string>
 
     <!--account==================================================================================-->
     <string name="edit_profile">프로필 수정</string>

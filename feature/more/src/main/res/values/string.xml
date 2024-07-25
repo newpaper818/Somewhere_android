@@ -4,7 +4,6 @@
     <!--about====================================================================================-->
     <string name="privacy_policy">Privacy policy</string>
     <string name="open_source_license">Open source license</string>
-    <string name="play_link_copied">Play store link copied!</string>
 
     <!--account==================================================================================-->
     <string name="edit_profile">Edit profile</string>
