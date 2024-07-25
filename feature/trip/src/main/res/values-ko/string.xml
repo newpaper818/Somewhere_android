@@ -12,10 +12,23 @@
     <string name="toast_download_error">다운로드 에러</string>
 
     <!--invitedFriend/ ==========================================================================-->
-
+    <string name="friends">친구</string>
+    <string name="no_friends">초대한 친구 없음\n친구를 초대해 여행을 공유하세요!</string>
+    <string name="unknown">알 수 없음</string>
+    <string name="snackbar_delete_friend_error">친구 삭제 에러</string>
+    <string name="snackbar_set_editable_error">권한 설정 에러</string>
 
     <!--inviteFriend/ ===========================================================================-->
+    <string name="invite_friend">Invite friend</string>
+    <string name="friend_to_invite">Friend to invite</string>
+    <string name="or">or</string>
+    <string name="play_link_copied">Link copied!</string>
 
+    <string name="snackbar_invite_friend_success">친구 초대 성공!</string>
+    <string name="snackbar_no_user">사용자를 찾을 수 없음</string>
+    <string name="snackbar_same_email">이 계정의 이메일을 입력하지 마세요</string>
+    <string name="snackbar_invalid_email">유효하지 않은 이메일 형식</string>
+    <string name="snackbar_share_trip_error">여행 공유 에러</string>
 
     <!--setLocation/ ============================================================================-->
 

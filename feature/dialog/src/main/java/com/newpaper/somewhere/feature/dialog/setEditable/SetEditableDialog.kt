@@ -27,7 +27,7 @@ fun SetEditableDialog(
     downloadImage: (imagePath: String, profileUserId: String, (Boolean) -> Unit) -> Unit,
 
     onDismissRequest: () -> Unit,
-    onOkClick: (editable: Boolean) -> Unit
+    onClickOk: (editable: Boolean) -> Unit
 ) {
 
     var newEditable by rememberSaveable { mutableStateOf(friendData.allowEdit) }
@@ -68,7 +68,7 @@ fun SetEditableDialog(
                 DialogButton(
                     text = stringResource(id = R.string.button_ok),
                     onClick = {
-                        onOkClick(newEditable)
+                        onClickOk(newEditable)
                     }
                 )
             }
@@ -118,7 +118,7 @@ private fun SetEditableDialogPreview(){
                 ),
                 downloadImage = {_,_,_->},
                 onDismissRequest = {},
-                onOkClick = {_ ->}
+                onClickOk = { _ ->}
             )
         }
     }

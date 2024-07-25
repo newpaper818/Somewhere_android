@@ -100,11 +100,11 @@ class CommonFirestoreApi @Inject constructor(
 
     override suspend fun deleteInvitedFriendsFromTrip(
         tripId: Int,
-        managerId: String
+        tripManagerId: String
     ): Boolean {
         val deleteResult = CompletableDeferred<Boolean>()
 
-        val managerTripRef = firestoreDb.collection(USERS).document(managerId)
+        val managerTripRef = firestoreDb.collection(USERS).document(tripManagerId)
             .collection(TRIPS).document("${TRIP}${tripId}")
 
         firestoreDb.runTransaction { transaction ->
@@ -128,8 +128,8 @@ class CommonFirestoreApi @Inject constructor(
                 val existingSharedTrips = friendSnapshot.get(SHARED_TRIPS) as? List<*> ?: emptyList<Any?>()
 
                 val newSharedTrips = existingSharedTrips.filter {
-                    it.toString() != mapOf(TRIP_ID to tripId, MANAGER_ID to managerId).toString() &&
-                            it.toString() != mapOf(MANAGER_ID to managerId, TRIP_ID to tripId).toString()
+                    it.toString() != mapOf(TRIP_ID to tripId, MANAGER_ID to tripManagerId).toString() &&
+                            it.toString() != mapOf(MANAGER_ID to tripManagerId, TRIP_ID to tripId).toString()
                 }
 
                 item.sharedTrips = newSharedTrips

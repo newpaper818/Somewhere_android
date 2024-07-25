@@ -12,10 +12,23 @@
     <string name="toast_download_error">Download error</string>
 
     <!--invitedFriend/ ==========================================================================-->
-
+    <string name="friends">friends</string>
+    <string name="no_friends">No invited friend\nInvite friend to share trip!</string>
+    <string name="unknown">Unknown</string>
+    <string name="snackbar_delete_friend_error">Delete friend error</string>
+    <string name="snackbar_set_editable_error">Set permission error</string>
 
     <!--inviteFriend/ ===========================================================================-->
+    <string name="invite_friend">친구 초대</string>
+    <string name="friend_to_invite">초대할 친구</string>
+    <string name="or">또는</string>
+    <string name="play_link_copied">링크 복사됨!</string>
 
+    <string name="snackbar_invite_friend_success">Invite friend success!</string>
+    <string name="snackbar_no_user">Can\'t find user</string>
+    <string name="snackbar_same_email">Do not enter your email</string>
+    <string name="snackbar_invalid_email">Invalid email format</string>
+    <string name="snackbar_share_trip_error">Share trip error</string>
 
     <!--setLocation/ ============================================================================-->
 

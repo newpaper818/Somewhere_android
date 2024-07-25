@@ -29,7 +29,6 @@ fun NavController.navigateToTripMap(navOptions: NavOptions? = null) =
 
 fun NavGraphBuilder.tripMapScreen(
     appViewModel: AppViewModel,
-    externalState: ExternalState,
     commonTripViewModel: CommonTripViewModel,
 
     isDarkMapTheme: Boolean,

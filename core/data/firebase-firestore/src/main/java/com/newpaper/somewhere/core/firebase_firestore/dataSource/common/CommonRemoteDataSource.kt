@@ -29,7 +29,7 @@ interface CommonRemoteDataSource {
      */
     suspend fun deleteInvitedFriendsFromTrip(
         tripId: Int,
-        managerId: String
+        tripManagerId: String
     ): Boolean
 
     /**

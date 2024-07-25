@@ -126,7 +126,7 @@ class TripsFirestoreApi @Inject constructor(
             CoroutineScope(Dispatchers.IO).launch {
                 val deleteFriendResult = commonApi.deleteInvitedFriendsFromTrip(
                     tripId = tripId,
-                    managerId = appUserId
+                    tripManagerId = appUserId
                 )
                 Log.d(FIREBASE_FIRESTORE_TRIPS_TAG, "save trips - delete friend result: $deleteFriendResult")
 
