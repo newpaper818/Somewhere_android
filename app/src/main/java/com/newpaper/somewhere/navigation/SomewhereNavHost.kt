@@ -42,8 +42,10 @@ import com.newpaper.somewhere.navigation.signIn.navigateToSignIn
 import com.newpaper.somewhere.navigation.signIn.signInScreen
 import com.newpaper.somewhere.navigation.trip.dateScreen
 import com.newpaper.somewhere.navigation.trip.imageScreen
+import com.newpaper.somewhere.navigation.trip.inviteFriendScreen
 import com.newpaper.somewhere.navigation.trip.invitedFriendsScreen
 import com.newpaper.somewhere.navigation.trip.navigateToDate
+import com.newpaper.somewhere.navigation.trip.navigateToInviteFriend
 import com.newpaper.somewhere.navigation.trip.navigateToSpot
 import com.newpaper.somewhere.navigation.trip.navigateToTrip
 import com.newpaper.somewhere.navigation.trip.navigateToTrips
@@ -443,7 +445,9 @@ fun SomewhereNavHost(
                 commonTripViewModel = commonTripViewModel,
                 tripsViewModel = tripsViewModel,
                 navigateUp = navigateUp,
-                navigateToInviteFriend = { /*TODO*/ },
+                navigateToInviteFriend = {
+                    mainNavController.navigateToInviteFriend()
+                },
                 navigateToMyTrips = {
                     mainNavController.navigateToTrips(
                         navOptions = navOptions {
@@ -452,7 +456,14 @@ fun SomewhereNavHost(
                     )
                 },
                 modifier = modifier
+            )
 
+            inviteFriendScreen(
+                externalState = externalState,
+                appViewModel = appViewModel,
+                commonTripViewModel = commonTripViewModel,
+                navigateUp = navigateUp,
+                modifier = modifier
             )
 
             //image ================================================================================

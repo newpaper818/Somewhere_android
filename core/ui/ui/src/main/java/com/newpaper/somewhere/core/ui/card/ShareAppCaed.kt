@@ -44,7 +44,7 @@ fun ShareAppCard(
             )
 
             MySpacerColumn(height = 12.dp)
-            //qr
+            //qr code
             ImageFromDrawable(
                 imageDrawable = R.drawable.play_store_qr,
                 contentDescription = "",

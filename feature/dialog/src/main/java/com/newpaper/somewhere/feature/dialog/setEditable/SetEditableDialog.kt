@@ -48,7 +48,7 @@ fun SetEditableDialog(
 
             //allow edit / view only button
             AllowEditViewSelectSwitch(
-                isAllowEdit = newEditable,
+                isEditable = newEditable,
                 setIsAllowEdit = {
                     newEditable = it
                 }

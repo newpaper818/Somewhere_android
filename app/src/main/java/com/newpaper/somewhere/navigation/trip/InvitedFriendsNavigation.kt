@@ -33,7 +33,6 @@ fun NavGraphBuilder.invitedFriendsScreen(
     commonTripViewModel: CommonTripViewModel,
     tripsViewModel: TripsViewModel,
 
-
     navigateUp: () -> Unit,
     navigateToInviteFriend: () -> Unit,
     navigateToMyTrips: () -> Unit,
@@ -83,7 +82,8 @@ fun NavGraphBuilder.invitedFriendsScreen(
 
                 navigateUp = navigateUp,
                 navigateToInviteFriend = navigateToInviteFriend,
-                updateTripState = commonTripViewModel::updateTripState
+                updateTripState = commonTripViewModel::updateTripState,
+                modifier = modifier
             )
         }
         else {
