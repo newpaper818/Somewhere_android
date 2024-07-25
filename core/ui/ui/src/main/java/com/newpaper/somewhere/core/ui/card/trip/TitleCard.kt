@@ -77,7 +77,6 @@ fun TitleCard(
         Column(modifier = modifier) {
             Row {
                 //TODO focus 되면 배경색 달라지게?
-                //TODO text num limit
                 TitleCardUi(isEditMode, titleText, onTitleChange, focusManager, isLongText,
                     getCardHeight = { }, modifier = Modifier.weight(1f)
                 )
@@ -116,7 +115,6 @@ fun TitleWithColorCard(
         Column(modifier = modifier) {
             Row {
                 //TODO focus 되면 배경색 달라지게?
-                //TODO text num limit
                 TitleCardUi(isEditMode, titleText, onTitleChange, focusManager, isLongText,
                     getCardHeight = {newCardHeight ->
                         cardHeight = newCardHeight
