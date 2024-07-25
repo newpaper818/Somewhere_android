@@ -1,6 +1,5 @@
 package com.newpaper.somewhere.navigation.trip
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.displayCutoutPadding

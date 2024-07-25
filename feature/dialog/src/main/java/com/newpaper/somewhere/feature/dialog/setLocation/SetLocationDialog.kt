@@ -1,6 +1,5 @@
 package com.newpaper.somewhere.feature.dialog.setLocation
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -140,11 +139,6 @@ fun SetLocationDialog(
         PaddingValues(0.dp, 64.dp, 0.dp,
         (searchListSize.height / density).dp + SEARCH_BOX_LIST_PADDING)
     else    PaddingValues(0.dp, 64.dp, 0.dp, 0.dp)
-
-    LaunchedEffect(cameraPositionState.position.zoom) {
-        Log.d("aaa", "zoom level: ${cameraPositionState.position.zoom}")
-    }
-
 
 
 

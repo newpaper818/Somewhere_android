@@ -1,9 +1,7 @@
 package com.newpaper.somewhere.feature.dialog.setLocation
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.maps.model.LatLng
 import com.newpaper.somewhere.core.data.repository.PlacesRepository
 import com.newpaper.somewhere.core.model.data.LocationInfo
 import dagger.hilt.android.lifecycle.HiltViewModel

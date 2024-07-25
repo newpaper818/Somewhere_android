@@ -19,7 +19,6 @@ import com.newpaper.somewhere.navigation.exitTransition
 import com.newpaper.somewhere.navigation.popEnterTransition
 import com.newpaper.somewhere.navigation.popExitTransition
 import com.newpaper.somewhere.ui.AppViewModel
-import com.newpaper.somewhere.ui.ExternalState
 
 private const val DEEP_LINK_URI_PATTERN =
     "https://www.somewhere.newpaper.com/main/tripMap"

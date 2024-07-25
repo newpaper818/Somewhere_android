@@ -16,20 +16,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.maps.android.compose.CameraPositionState
-import com.newpaper.somewhere.core.designsystem.component.button.FocusOnToSpotButtonUi
-import com.newpaper.somewhere.core.designsystem.component.button.UserLocationButtonUi
 import com.newpaper.somewhere.core.designsystem.component.map.MapForSpot
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
@@ -41,9 +35,6 @@ import com.newpaper.somewhere.core.ui.FocusOnToSpotButton
 import com.newpaper.somewhere.core.ui.UserLocationButton
 import com.newpaper.somewhere.core.utils.convert.nextSpotOrDateIsExist
 import com.newpaper.somewhere.core.utils.convert.prevSpotOrDateIsExist
-import com.newpaper.somewhere.core.utils.focusOnToSpots
-import com.newpaper.somewhere.feature.trip.R
-import kotlinx.coroutines.launch
 
 @Composable
 fun SpotMapCard(
