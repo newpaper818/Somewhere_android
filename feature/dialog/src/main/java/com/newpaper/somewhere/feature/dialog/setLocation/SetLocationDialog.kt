@@ -187,9 +187,6 @@ fun SetLocationDialog(
                             , 300
                         )
                     }
-                },
-                onLocationChange = { newLocation ->
-//                    setLocationViewModel.setNewLocation(newLocation)
                 }
             )
 
