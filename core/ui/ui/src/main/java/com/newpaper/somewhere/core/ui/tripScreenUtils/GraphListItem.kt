@@ -497,11 +497,12 @@ private fun ExpandedTextWithLine(
  */
 @Composable
 fun DummySpaceWithLine(
+    modifier: Modifier = Modifier,
     height: Dp = DUMMY_SPACE_HEIGHT,
     lineColor: Color = GraphColor.line
 ){
     Row (
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(height)
     ){
