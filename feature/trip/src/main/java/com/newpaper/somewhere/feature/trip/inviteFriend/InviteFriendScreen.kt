@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.trip.inviteFriend
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,10 +35,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
@@ -107,6 +107,15 @@ fun InviteFriendRoute(
 
     val focusManager = LocalFocusManager.current
 
+
+    val sendIntent: Intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, PLAY_STORE_URL)
+        type = "text/plain"
+    }
+    val shareIntent = Intent.createChooser(sendIntent, null)
+    val context = LocalContext.current
+
     InviteFriendScreen(
         spacerValue = spacerValue,
         snackBarHostState = snackBarHostState,
@@ -175,6 +184,9 @@ fun InviteFriendRoute(
                 )
             }
         },
+        onClickShareApp = {
+            context.startActivity(shareIntent)
+        },
         downloadImage = inviteFriendViewModel::getImage,
         navigateUp = navigateUp,
         modifier = modifier
@@ -200,6 +212,8 @@ private fun InviteFriendScreen(
     setIsEditable: (Boolean) -> Unit,
 
     onClickInviteButton: () -> Unit,
+
+    onClickShareApp: () -> Unit,
 
     downloadImage: (imagePath: String, tripManagerId: String, (Boolean) -> Unit) -> Unit,
     navigateUp: () -> Unit,
@@ -229,8 +243,6 @@ private fun InviteFriendScreen(
             )
         }
     ) { paddingValues ->
-
-        val coroutineScope = rememberCoroutineScope()
 
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -277,19 +289,9 @@ private fun InviteFriendScreen(
             }
 
             item{
-                val clipboardManager = LocalClipboardManager.current
-                val copiedLinkText = stringResource(id = R.string.play_link_copied)
-
                 MySpacerColumn(height = 16.dp)
                 ShareAppCard(
-                    onClickCopyPlayStoreLink = {
-                        coroutineScope.launch {
-                            clipboardManager.setText(AnnotatedString(PLAY_STORE_URL))
-                            snackBarHostState.showSnackbar(
-                                message = copiedLinkText
-                            )
-                        }
-                    }
+                    onClickShareApp = onClickShareApp
                 )
             }
         }
