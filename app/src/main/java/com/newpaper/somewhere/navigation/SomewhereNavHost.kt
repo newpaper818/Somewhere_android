@@ -249,8 +249,17 @@ fun SomewhereNavHost(
                     else
                         mainNavController.navigateToTrip()
                 },
-                navigateToGlanceSpot = {
-                    //TODO
+                navigateToGlanceSpot = { glance ->
+                    if (glance.trip != null)
+                        commonTripViewModel.setTrip(glance.trip)
+                    commonTripViewModel.setCurrentDateIndex(glance.date?.index)
+                    commonTripViewModel.setCurrentSpotIndex(glance.spot?.index)
+
+                    if (!externalState.windowSizeClass.use2Panes)
+                        mainNavController.navigateToTrip()
+
+                    mainNavController.navigateToDate()
+                    mainNavController.navigateToSpot()
                 }
             )
 
