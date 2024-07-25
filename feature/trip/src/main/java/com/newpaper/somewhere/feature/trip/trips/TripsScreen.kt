@@ -416,7 +416,7 @@ private fun TripsScreen(
                 state = lazyListState,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(spacerValue, 16.dp, spacerValue, 200.dp),
+                contentPadding = PaddingValues(spacerValue, 16.dp, spacerValue, 300.dp),
                 modifier = modifier
                     .fillMaxSize()
                     .padding(paddingValues)
