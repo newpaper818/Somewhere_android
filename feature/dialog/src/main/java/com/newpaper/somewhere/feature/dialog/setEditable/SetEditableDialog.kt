@@ -33,7 +33,7 @@ fun SetEditableDialog(
     var newEditable by rememberSaveable { mutableStateOf(friendData.allowEdit) }
 
     MyDialog(
-        onDismissRequest = { /*TODO*/ },
+        onDismissRequest = onDismissRequest,
         titleText = stringResource(id = R.string.set_editable),
         bodyContent = {
             //user info card
