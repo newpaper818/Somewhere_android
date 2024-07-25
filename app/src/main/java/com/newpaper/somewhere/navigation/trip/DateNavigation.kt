@@ -108,7 +108,6 @@ fun NavGraphBuilder.dateScreen(
                                 commonTripViewModel.setIsShowingDialog(isShowingDialog)
                             },
                             setIsErrorExit = { isErrorExit ->
-                                Log.d("aaa", "isErrorExit $isErrorExit")
                                 isErrorExitOnTripScreen = isErrorExit
                             }
                         )
