@@ -135,7 +135,6 @@ fun MemoCard(
                 val focusManager = LocalFocusManager.current
 
                 //TODO focus 되면 배경색 달라지게?
-                //TODO text num limit
                 MyTextField(
                     inputText = memoText,
                     inputTextStyle = MaterialTheme.typography.bodyLarge,
