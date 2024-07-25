@@ -143,17 +143,6 @@ fun TitleWithColorCard(
 }
 
 @Composable
-fun TitleCardMove(
-    isEditMode: Boolean,
-    titleText: String?,
-    onTitleChange: (String) -> Unit,
-    focusManager: FocusManager,
-    isLongText: (Boolean) -> Unit
-){
-    TitleCardUi(isEditMode, titleText, onTitleChange, focusManager, isLongText, getCardHeight = { })
-}
-
-@Composable
 private fun TitleCardUi(
     isEditMode: Boolean,
 
