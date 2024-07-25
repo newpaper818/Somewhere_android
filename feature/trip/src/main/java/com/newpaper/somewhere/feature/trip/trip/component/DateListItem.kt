@@ -118,7 +118,7 @@ internal fun DateListItem(
 
         sideText = date.getDateText(dateTimeFormat.copy(includeDayOfWeek = false), false),
         mainText = date.titleText,
-        expandedText = date.getExpandedText(trip, isEditMode),
+        expandedText = date.getExpandedText(trip),
 
         onMainTextChange = { mainText ->
             trip.dateList[date.index].setTitleText(trip, updateTripState, mainText)
