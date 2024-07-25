@@ -19,10 +19,10 @@
     <string name="snackbar_set_editable_error">권한 설정 에러</string>
 
     <!--inviteFriend/ ===========================================================================-->
-    <string name="invite_friend">Invite friend</string>
-    <string name="friend_to_invite">Friend to invite</string>
-    <string name="or">or</string>
-    <string name="play_link_copied">Link copied!</string>
+    <string name="invite_friend">친구 초대</string>
+    <string name="friend_to_invite">초대할 친구</string>
+    <string name="or">또는</string>
+    <string name="play_link_copied">링크 복사됨!</string>
 
     <string name="snackbar_invite_friend_success">친구 초대 성공!</string>
     <string name="snackbar_no_user">사용자를 찾을 수 없음</string>
