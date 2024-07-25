@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 data class InviteFriendUiState(
     val inviteButtonEnabled: Boolean = false,
-    val friendEmailText: String? = null,
+    val friendEmailText: String = "",
     val isEditable: Boolean = false
 )
 
@@ -47,7 +47,7 @@ class InviteFriendViewModel @Inject constructor(
     }
 
     fun setFriendEmailText(
-        friendEmailText: String?
+        friendEmailText: String
     ){
         _inviteFriendUiState.update {
             it.copy(friendEmailText = friendEmailText)

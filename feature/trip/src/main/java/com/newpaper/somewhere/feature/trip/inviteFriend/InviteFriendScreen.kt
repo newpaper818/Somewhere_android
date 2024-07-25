@@ -3,10 +3,12 @@ package com.newpaper.somewhere.feature.trip.inviteFriend
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -16,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -44,6 +47,8 @@ import com.newpaper.somewhere.core.designsystem.component.button.InviteButton
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
+import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
+import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.data.UserData
@@ -188,8 +193,8 @@ private fun InviteFriendScreen(
 
     inviteButtonEnabled: Boolean,
 
-    friendEmailText: String?,
-    setFriendEmailText: (String?) -> Unit,
+    friendEmailText: String,
+    setFriendEmailText: (String) -> Unit,
 
     isEditable: Boolean,
     setIsEditable: (Boolean) -> Unit,
@@ -295,8 +300,8 @@ private fun InviteFriendScreen(
 
 @Composable
 private fun EmailTextField(
-    emailText: String?,
-    onEmailTextChange: (newEmailText: String?) -> Unit
+    emailText: String,
+    onEmailTextChange: (newEmailText: String) -> Unit
 ){
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
@@ -324,28 +329,39 @@ private fun EmailTextField(
             colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceBright),
             modifier = Modifier.fillMaxWidth()
         ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.height(48.dp).padding(start = 16.dp)
+            ) {
+                MyTextField(
+                    modifier = Modifier.weight(1f),
+                    inputText = if (emailText == "") null else emailText,
+                    inputTextStyle = MaterialTheme.typography.bodyLarge,
+                    placeholderText = "somewhere@example.com",
+                    placeholderTextStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                    onValueChange = {
+                        val newText = it.substring(0, min(60, it.length))
+                        onEmailTextChange(newText)
+                    },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(onDone = {
+                        focusManager.clearFocus()
+                    }),
+                    textFieldModifier = Modifier.focusRequester(focusRequester)
+                )
 
-            MyTextField(
-                modifier = Modifier.padding(16.dp),
-                inputText = emailText,
-                inputTextStyle = MaterialTheme.typography.bodyLarge,
-                placeholderText = "somewhere@example.com",
-                placeholderTextStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-                onValueChange = {
-                    val newText = if (it == "") null
-                    else it.substring(0, min(60, it.length))
-                    onEmailTextChange(newText)
-                },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(onDone = {
-                    focusManager.clearFocus()
-                }),
-                textFieldModifier = Modifier.focusRequester(focusRequester)
-            )
+                //if texting show x icon
+                if (emailText != "")
+                    IconButton(
+                        onClick = { onEmailTextChange("") }
+                    ) {
+                        DisplayIcon(icon = MyIcons.clearInputText)
+                    }
+            }
         }
     }
 }
