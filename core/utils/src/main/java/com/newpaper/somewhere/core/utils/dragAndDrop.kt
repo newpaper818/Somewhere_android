@@ -126,7 +126,7 @@ fun <T> Modifier.dragAndDropVertical(
                         onDragStart()
 
                     },
-                    onDrag = { change, offset -> onDrag(change) },
+                    onDrag = { change, _ -> onDrag(change) },
                     onDragEnd = { onDragEnd() }
                 )
         }

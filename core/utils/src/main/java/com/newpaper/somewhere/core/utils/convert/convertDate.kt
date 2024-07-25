@@ -14,7 +14,7 @@ import com.newpaper.somewhere.core.utils.getNumToText
 
 // get =========================================================================================
 @Composable
-fun Date.getExpandedText(trip: Trip, isEditMode: Boolean):String{
+fun Date.getExpandedText(trip: Trip):String{
     val budgetText = getTotalBudgetText(trip, 0)
 
     val spotCountText = "${getSpotTypeGroupCountExcludeMove(spotList)} " + stringResource(id = R.string.spots)
