@@ -263,7 +263,6 @@ fun MapForChooseLocation(
     searchLocationMarkerList: List<LocationInfo>,
 
     onMapLoaded: () -> Unit,
-    onLocationChange: (LatLng) -> Unit
 ){
     val userLocationPermissionState =
         rememberMultiplePermissionsState(permissions = USER_LOCATION_PERMISSION_LIST)
