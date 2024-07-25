@@ -481,8 +481,6 @@ class CommonTripViewModel @Inject constructor(
     ){
         if(commonTripUiState.value.tripInfo.tempTrip != null){
 
-            val dateList = commonTripUiState.value.tripInfo.tempTrip!!.clone().dateList
-
             //tempTrip's spotList
             val newSpotList = commonTripUiState.value.tripInfo.tempTrip!!.clone().dateList[dateIndex].spotList.toMutableList()
 

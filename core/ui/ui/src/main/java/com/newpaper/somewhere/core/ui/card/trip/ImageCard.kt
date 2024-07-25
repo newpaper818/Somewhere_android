@@ -113,8 +113,6 @@ fun ImageCard(
     val modifier1 = if (isEditMode) modifier.sizeIn(maxHeight = 390.dp)
                     else modifier.sizeIn(maxWidth = 650.dp, maxHeight = 390.dp)
 
-    val haptic = LocalHapticFeedback.current
-
     val galleryLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetMultipleContents()
     ){ uriList ->
