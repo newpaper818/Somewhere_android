@@ -9,7 +9,7 @@ interface InviteFriendRemoteDataSource {
      */
     fun getInvitedFriends(
         internetEnabled: Boolean,
-        managerId: String,
+        tripManagerId: String,
         tripId: Int,
 
         onSuccess: (friendList: List<UserData>) -> Unit,

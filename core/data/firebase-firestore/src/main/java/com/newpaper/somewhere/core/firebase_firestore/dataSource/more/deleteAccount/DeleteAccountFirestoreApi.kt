@@ -144,7 +144,7 @@ class DeleteAccountFirestoreApi @Inject constructor(
                         CoroutineScope(Dispatchers.IO).launch {
                             val deleteResult = commonApi.deleteInvitedFriendsFromTrip(
                                 tripId = tripId,
-                                managerId = appUserId
+                                tripManagerId = appUserId
                             )
 
                             if (deleteResult) {

@@ -42,9 +42,11 @@ import com.newpaper.somewhere.navigation.signIn.navigateToSignIn
 import com.newpaper.somewhere.navigation.signIn.signInScreen
 import com.newpaper.somewhere.navigation.trip.dateScreen
 import com.newpaper.somewhere.navigation.trip.imageScreen
+import com.newpaper.somewhere.navigation.trip.invitedFriendsScreen
 import com.newpaper.somewhere.navigation.trip.navigateToDate
 import com.newpaper.somewhere.navigation.trip.navigateToSpot
 import com.newpaper.somewhere.navigation.trip.navigateToTrip
+import com.newpaper.somewhere.navigation.trip.navigateToTrips
 import com.newpaper.somewhere.navigation.trip.spotScreen
 import com.newpaper.somewhere.navigation.trip.tripMapScreen
 import com.newpaper.somewhere.navigation.trip.tripScreen
@@ -423,7 +425,6 @@ fun SomewhereNavHost(
 
             tripMapScreen(
                 appViewModel = appViewModel,
-                externalState = externalState,
                 commonTripViewModel = commonTripViewModel,
                 isDarkMapTheme = isDarkMapTheme,
                 fusedLocationClient = fusedLocationClient,
@@ -432,6 +433,24 @@ fun SomewhereNavHost(
                     userLocationEnabled = it
                 },
                 navigateUp = navigateUp,
+                modifier = modifier
+
+            )
+
+            invitedFriendsScreen(
+                externalState = externalState,
+                appViewModel = appViewModel,
+                commonTripViewModel = commonTripViewModel,
+                tripsViewModel = tripsViewModel,
+                navigateUp = navigateUp,
+                navigateToInviteFriend = { /*TODO*/ },
+                navigateToMyTrips = {
+                    mainNavController.navigateToTrips(
+                        navOptions = navOptions {
+                            popUpTo(ScreenDestination.TRIPS.route) { inclusive = true }
+                        }
+                    )
+                },
                 modifier = modifier
 
             )

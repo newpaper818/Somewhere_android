@@ -454,7 +454,7 @@ class TripsViewModel @Inject constructor(
     }
 
     /** delete given [trip] from tempSharedTripList */
-    private fun deleteTripFromTempSharedTrip(trip: Trip){
+    fun deleteTripFromTempSharedTrip(trip: Trip){
         if (commonTripUiState.value.tripInfo.tempSharedTrips != null) {
             val newTempSharedTripList = commonTripUiState.value.tripInfo.tempSharedTrips!!.toMutableList()
             newTempSharedTripList.removeIf {
@@ -476,6 +476,26 @@ class TripsViewModel @Inject constructor(
                     deletedSharedTrips = newDeletedSharedTripList
                 )
             }
+        }
+    }
+
+    fun updateTripListAndShardTripList(){
+        commonTripUiStateRepository._commonTripUiState.update {
+            it.copy(
+                tripInfo = it.tripInfo.copy(
+                    trips = it.tripInfo.tempTrips,
+                    sharedTrips = it.tripInfo.tempSharedTrips
+                )
+            )
+        }
+    }
+
+    fun initDeletedTripsIdListAndDeletedSharedTripList(){
+        _tripsUiState.update {
+            it.copy(
+                deletedTripIds = listOf(),
+                deletedSharedTrips = listOf()
+            )
         }
     }
 

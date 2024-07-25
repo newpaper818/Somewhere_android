@@ -65,7 +65,9 @@ fun NavGraphBuilder.tripScreen(
                     commonTripViewModel.deleteTempTrip(deleteTrip)
                 },
                 navigateToInviteFriend = { /*TODO*/ },
-                navigateToInvitedFriends = { /*TODO*/ },
+                navigateToInvitedFriends = {
+                    navigateTo(ScreenDestination.INVITED_FRIENDS)
+                },
                 navigateToImage = { imageList, initialImageIndex ->
                     commonTripViewModel.setImageListAndInitialImageIndex(imageList, initialImageIndex)
                     navigateTo(ScreenDestination.IMAGE)

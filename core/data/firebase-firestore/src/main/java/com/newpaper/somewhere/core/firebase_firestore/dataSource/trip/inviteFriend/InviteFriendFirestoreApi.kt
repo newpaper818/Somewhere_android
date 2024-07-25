@@ -31,7 +31,7 @@ class InviteFriendFirestoreApi @Inject constructor(
 
     override fun getInvitedFriends(
         internetEnabled: Boolean,
-        managerId: String,
+        tripManagerId: String,
         tripId: Int,
 
         onSuccess: (friendList: List<UserData>) -> Unit,
@@ -39,7 +39,7 @@ class InviteFriendFirestoreApi @Inject constructor(
     ) {
         val source = if (internetEnabled) Source.DEFAULT else Source.CACHE
 
-        firestoreDb.collection(USERS).document(managerId)
+        firestoreDb.collection(USERS).document(tripManagerId)
             .collection(TRIPS).document("${TRIP}${tripId}")
             .get(source)
             .addOnSuccessListener {document ->
@@ -48,7 +48,7 @@ class InviteFriendFirestoreApi @Inject constructor(
                 val sharingToList = document.get(SHARING_TO) as? List<Map<String, Any>> ?: listOf()
 
                 val sharingToListWithManager = sharingToList.toMutableList()
-                sharingToListWithManager.add(0, mapOf(EDITABLE to true, FRIEND_ID to managerId))
+                sharingToListWithManager.add(0, mapOf(EDITABLE to true, FRIEND_ID to tripManagerId))
 
                 CoroutineScope(Dispatchers.IO).launch {
                     val friendList = getUserAndConvertToUserDataList(sharingToListWithManager, source)
