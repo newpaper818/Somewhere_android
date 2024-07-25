@@ -253,7 +253,6 @@ fun SpotRoute(
                         scrollState,
                         spotList[newSpotIndex],
                         dateList,
-                        spotList,
                         currentDateIndex,
                         cameraPositionState,
                         spotUiState.mapSize,
@@ -287,7 +286,6 @@ fun SpotRoute(
                         scrollState,
                         spotList[currentSpotIndex],
                         dateList,
-                        spotList,
                         currentDateIndex,
                         cameraPositionState,
                         spotUiState.mapSize,
@@ -305,7 +303,6 @@ fun SpotRoute(
                 scrollState,
                 currentSpot,
                 dateList,
-                spotList,
                 currentDateIndex,
                 cameraPositionState,
                 spotUiState.mapSize,
@@ -412,7 +409,6 @@ fun SpotRoute(
                 )
             }
         ),
-        appUserId = appUserId,
         isCompactWidth = isCompactWidth,
         updateTripState = commonTripViewModel::updateTripState,
         addNewSpot = commonTripViewModel::addNewSpot,
@@ -458,7 +454,6 @@ private fun SpotScreen(
     spotNavigate: SpotNavigate,
     spotImage: SpotImage,
 
-    appUserId: String,
     isCompactWidth: Boolean,
 
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
@@ -539,7 +534,7 @@ private fun SpotScreen(
 
 
     MyScaffold(
-        modifier = Modifier
+        modifier = modifier
             .navigationBarsPadding()
             .displayCutoutPadding(),
         snackbarHost = {
@@ -1202,7 +1197,6 @@ private fun mapAnimateToSpot(
     scrollState: LazyListState,
     currentSpot: Spot,
     dateList: List<Date>,
-    spotList: List<Spot>,
     dateId: Int,
     cameraPositionState: CameraPositionState,
     mapSize: IntSize,

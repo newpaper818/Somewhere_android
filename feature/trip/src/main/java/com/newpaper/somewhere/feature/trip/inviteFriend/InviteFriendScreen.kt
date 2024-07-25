@@ -134,7 +134,7 @@ fun InviteFriendRoute(
                     tripId = trip.id,
                     myEmail = appUserData.email ?: "",
                     myUserId = appUserData.userId,
-                    friendUserEmail = inviteFriendUiState.friendEmailText?.replace(" ", "") ?: "",
+                    friendUserEmail = inviteFriendUiState.friendEmailText.replace(" ", ""),
                     editable = inviteFriendUiState.isEditable,
                     onSuccess = {
                         focusManager.clearFocus()

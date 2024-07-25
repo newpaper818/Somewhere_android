@@ -77,7 +77,7 @@ fun InvitedFriendsRoute(
     LaunchedEffect(Unit){
         invitedFriendViewModel.getInvitedFriends(
             internetEnabled = internetEnabled,
-            tripManagerId = trip.managerId ?: "",
+            tripManagerId = trip.managerId,
             tripId = trip.id,
             onSuccess = { invitedFriendList ->
                 //exclude app user
@@ -344,7 +344,7 @@ private fun InvitedFriendsScreen(
                         MySpacerColumn(height = 16.dp)
                         FriendList(
                             isLoading = loading,
-                            managerId = trip.managerId ?: "",
+                            managerId = trip.managerId,
                             friendList = friendList,
                             showEditButton = appUserIsTripManager,
                             internetEnabled = internetEnabled,

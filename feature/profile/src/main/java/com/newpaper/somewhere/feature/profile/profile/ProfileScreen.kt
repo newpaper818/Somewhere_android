@@ -42,7 +42,6 @@ fun ProfileRoute(
         internetEnabled = internetEnabled,
         spacerValue = spacerValue,
         lazyListState = lazyListState,
-        use2Panes = use2Panes,
         userData = userData,
         onProfileClick = navigateToAccount,
         downloadImage = imageViewModel::getImage,
@@ -55,7 +54,6 @@ fun ProfileScreen(
     internetEnabled: Boolean,
     spacerValue: Dp,
     lazyListState: LazyListState,
-    use2Panes: Boolean,
     userData: UserData?,
     onProfileClick: () -> Unit,
     downloadImage: (imagePath: String, tripManagerId: String, (Boolean) -> Unit) -> Unit,
@@ -143,7 +141,6 @@ private fun ProfileScreenPreview(){
                 internetEnabled = true,
                 spacerValue = 16.dp,
                 lazyListState = LazyListState(),
-                use2Panes = false,
                 userData = UserData(
                     userId = "dfsd",
                     userName = "user name",

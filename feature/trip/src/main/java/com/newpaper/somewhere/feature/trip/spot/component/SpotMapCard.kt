@@ -82,13 +82,13 @@ fun SpotMapCard(
     val toNextSpotEnabled =
         currentSpot?.nextSpotOrDateIsExist(spotList, dateList, dateIndex) ?: (dateIndex < dateList.lastIndex)
 
-    val boxModifier = if (!use2Panes) Modifier
+    val boxModifier = if (!use2Panes) modifier
         .fillMaxWidth()
         .height(cardHeight.dp)
         .onSizeChanged {
             setMapSize(it)
         }
-    else Modifier
+    else modifier
         .fillMaxSize()
         .onSizeChanged {
             setMapSize(it)
