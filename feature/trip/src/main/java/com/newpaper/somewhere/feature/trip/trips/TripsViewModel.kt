@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.trip.trips
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.newpaper.somewhere.core.data.repository.image.CommonImageRepository
 import com.newpaper.somewhere.core.data.repository.trip.TripsRepository
@@ -222,6 +223,7 @@ class TripsViewModel @Inject constructor(
     fun updateGlanceSpotInfo(
         glanceTrip: Trip?
     ){
+        Log.d("aaa", "update glance ")
         //get current date time
         val currentDateTime = LocalDateTime.now()
         val currentDate = currentDateTime.toLocalDate()
