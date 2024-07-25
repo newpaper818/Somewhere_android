@@ -3,6 +3,10 @@ package com.newpaper.somewhere.feature.trip.tripMap.component
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -425,9 +429,6 @@ internal fun DateItem(
     isShown: Boolean,
     onItemClicked: (Date) -> Unit
 ){
-    val pointColor = if (isShown) Color(date.color.color)
-    else Color.Transparent
-
     ClickableBox(
         shape = RectangleShape,
         containerColor = MaterialTheme.colorScheme.surfaceBright,
@@ -443,12 +444,21 @@ internal fun DateItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             //circle
-            Box(
-                modifier = Modifier
-                    .size(15.dp)
-                    .clip(CircleShape)
-                    .background(pointColor)
-            )
+            Row(modifier = Modifier.size(15.dp)) {
+                AnimatedVisibility(
+                    visible = isShown,
+                    enter = scaleIn(tween(200)),
+                    exit = scaleOut(tween(200))
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(15.dp)
+                            .clip(CircleShape)
+                            .background(Color(date.color.color))
+                    )
+                }
+            }
+
 
             MySpacerRow(width = 12.dp)
 
