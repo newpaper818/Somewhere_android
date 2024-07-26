@@ -80,11 +80,10 @@ class MainActivity : ComponentActivity() {
         initializeAdmob()
 
         //in app review
-//        showFeedbackDialog()
+        showFeedbackDialog()
 
         Log.d(MAIN_ACTIVITY_TAG, "set connectivity observer")
         connectivityObserver = NetworkConnectivityObserver(applicationContext)
-
 
 
         setContent {
