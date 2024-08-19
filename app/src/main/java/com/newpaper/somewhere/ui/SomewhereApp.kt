@@ -56,14 +56,12 @@ fun SomewhereApp(
     }
 
 
-    //set navigation bar color
+    //set navigation bar(recent, home, back) color
     when (appUiState.screenDestination.currentScreenDestination) {
         ScreenDestination.IMAGE -> systemUiController.setNavigationBarColor(color = Color.Transparent)
 
-        ScreenDestination.TRIPS, ScreenDestination.PROFILE,
-        ScreenDestination.MORE, ScreenDestination.TRIP,
-        ScreenDestination.DATE, ScreenDestination.SPOT,
-        ScreenDestination.TRIP_MAP -> systemUiController.setNavigationBarColor(color = MaterialTheme.colorScheme.surfaceDim)
+        ScreenDestination.TRIPS, ScreenDestination.PROFILE, ScreenDestination.MORE
+         -> systemUiController.setNavigationBarColor(color = MaterialTheme.colorScheme.surfaceDim)
 
         else -> systemUiController.setNavigationBarColor(color = MaterialTheme.colorScheme.surface)
     }
