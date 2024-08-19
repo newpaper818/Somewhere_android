@@ -284,7 +284,9 @@ fun SetLocationDialog(
 
         //buttons
         FlowRow(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(enabled = false) { },
             horizontalArrangement = Arrangement.SpaceAround,
             verticalArrangement = Arrangement.Bottom
         ) {
