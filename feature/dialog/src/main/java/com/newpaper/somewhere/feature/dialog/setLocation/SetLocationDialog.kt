@@ -266,9 +266,9 @@ fun SetLocationDialog(
                         .padding(SEARCH_BOX_LIST_PADDING)
                 ) {
 
-                //search box
-                if (internetEnabled) {
+                    //search box
                     MapSearchBox(
+                        visible = internetEnabled,
                         isLoading = setLocationUiState.searchLocation.isLoading,
                         searchText = setLocationUiState.searchLocation.searchText,
                         onTextChanged = {
@@ -310,25 +310,28 @@ fun SetLocationDialog(
                         }
                     )
 
-
-                    if (!setLocationUiState.keyboardIsShown){
+                    if (!setLocationUiState.keyboardIsShown)
                         Spacer(modifier = Modifier.weight(1f))
-
-                        //date with colored circle
-                        if (setLocationUiState.showOtherDateSpotMarkers) {
-                            Box(modifier = Modifier.fillMaxWidth()) {
-                                DateListWithCircle(
-                                    dateTimeFormat = dateTimeFormat,
-                                    dateList = dateList
-                                )
-                            }
-
-                            if (setLocationUiState.searchLocation.searchLocationList.isNotEmpty())
-                                MySpacerColumn(height = 16.dp)
-                        }
-                    }
                     else
                         MySpacerColumn(height = 8.dp)
+
+
+                    //date with colored circle
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        DateListWithCircle(
+                            visible = setLocationUiState.showOtherDateSpotMarkers &&
+                                    !setLocationUiState.keyboardIsShown,
+                            dateTimeFormat = dateTimeFormat,
+                            dateList = dateList
+                        )
+                    }
+
+                    if (!setLocationUiState.keyboardIsShown
+                        && setLocationUiState.searchLocation.searchLocationList.isNotEmpty()
+                        && setLocationUiState.showOtherDateSpotMarkers)
+                        MySpacerColumn(height = 16.dp)
+
+
 
                     //list of find places
                     MapSearchList(
@@ -460,12 +463,17 @@ private fun MapSearchBox(
         .clip(CircleShape)
         .background(MaterialTheme.colorScheme.surfaceBright)
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = if (isLoading) boxModifier.searchBoxShimmerEffect()
-                    else boxModifier
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(tween(400)) + scaleIn(tween(400)),
+        exit = fadeOut(tween(400)) + scaleOut(tween(400))
     ) {
-        MySpacerRow(width = 20.dp)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = if (isLoading) boxModifier.searchBoxShimmerEffect()
+            else boxModifier
+        ) {
+            MySpacerRow(width = 20.dp)
 
             MyTextField(
                 inputText = if (searchText == "") null else searchText,
@@ -522,11 +530,11 @@ private fun MapSearchList(
         enter = expandVertically(
                 animationSpec = tween(durationMillis = 300),
                 expandFrom = Alignment.Top
-            ),
+            ) + fadeIn(tween(300)),
         exit = shrinkVertically(
                 animationSpec = tween(durationMillis = 300),
                 shrinkTowards = Alignment.Top
-            )
+            ) + fadeOut(tween(300))
     ) {
         LazyColumn(
             modifier = Modifier
@@ -538,6 +546,16 @@ private fun MapSearchList(
                     onSearchListSizeChanged(it)
                 }
         ){
+            if (locationAutoFillList.isEmpty()){
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(itemHeight)
+                    )
+                }
+            }
+
             items(locationAutoFillList) {
                 Column {
                     ClickableBox(
@@ -580,39 +598,49 @@ private fun MapSearchList(
 
 @Composable
 private fun DateListWithCircle(
+    visible: Boolean,
     dateTimeFormat: DateTimeFormat,
     dateList: List<Date>
 ){
-    MyCard(
-        modifier = Modifier.padding(0.dp, 0.dp, 16.dp, 20.dp),
-        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceBright.copy(alpha = 0.93f))
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(tween(400)) + scaleIn(tween(400)),
+        exit = fadeOut(tween(400)) + scaleOut(tween(400))
     ) {
-        Column(
-            modifier = Modifier.padding(12.dp, 10.dp)
+        MyCard(
+            modifier = Modifier.padding(0.dp, 0.dp, 16.dp, 20.dp),
+            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceBright.copy(alpha = 0.93f))
         ) {
-            for (date in dateList){
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    //colored circle
-                    Box(
-                        modifier = Modifier
-                            .size(12.dp)
-                            .clip(CircleShape)
-                            .background(Color(date.color.color))
-                    )
+            Column(
+                modifier = Modifier.padding(12.dp, 10.dp)
+            ) {
+                for (date in dateList) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        //colored circle
+                        Box(
+                            modifier = Modifier
+                                .size(12.dp)
+                                .clip(CircleShape)
+                                .background(Color(date.color.color))
+                        )
 
-                    MySpacerRow(width = 6.dp)
+                        MySpacerRow(width = 6.dp)
 
-                    //date
-                    Text(
-                        text = date.getDateText(dateTimeFormat.copy(includeDayOfWeek = false), false),
-                        style = MaterialTheme.typography.bodySmall
-                    )
+                        //date
+                        Text(
+                            text = date.getDateText(
+                                dateTimeFormat.copy(includeDayOfWeek = false),
+                                false
+                            ),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+
+                    if (dateList.last() != date)
+                        MySpacerColumn(height = 4.dp)
                 }
-
-                if (dateList.last() != date)
-                    MySpacerColumn(height = 4.dp)
             }
         }
     }
