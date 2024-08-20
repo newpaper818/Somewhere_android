@@ -611,35 +611,40 @@ private fun DateListWithCircle(
             modifier = Modifier.padding(0.dp, 0.dp, 16.dp, 20.dp),
             colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceBright.copy(alpha = 0.93f))
         ) {
-            Column(
-                modifier = Modifier.padding(12.dp, 10.dp)
+            LazyColumn(
+                modifier = Modifier
+                    .widthIn(min = 90.dp)
+                    .heightIn(max = 200.dp),
+                contentPadding = PaddingValues(12.dp, 10.dp)
             ) {
                 for (date in dateList) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        //colored circle
-                        Box(
-                            modifier = Modifier
-                                .size(12.dp)
-                                .clip(CircleShape)
-                                .background(Color(date.color.color))
-                        )
+                    item {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            //colored circle
+                            Box(
+                                modifier = Modifier
+                                    .size(12.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(date.color.color))
+                            )
 
-                        MySpacerRow(width = 6.dp)
+                            MySpacerRow(width = 8.dp)
 
-                        //date
-                        Text(
-                            text = date.getDateText(
-                                dateTimeFormat.copy(includeDayOfWeek = false),
-                                false
-                            ),
-                            style = MaterialTheme.typography.bodySmall
-                        )
+                            //date
+                            Text(
+                                text = date.getDateText(
+                                    dateTimeFormat.copy(includeDayOfWeek = false),
+                                    false
+                                ),
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+
+                        if (dateList.last() != date)
+                            MySpacerColumn(height = 4.dp)
                     }
-
-                    if (dateList.last() != date)
-                        MySpacerColumn(height = 4.dp)
                 }
             }
         }
