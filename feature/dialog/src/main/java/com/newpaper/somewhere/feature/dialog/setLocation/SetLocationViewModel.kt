@@ -24,6 +24,9 @@ data class SearchLocation(
 data class SetLocationUiState(
     val searchLocation: SearchLocation = SearchLocation(),
     val keyboardIsShown: Boolean = false,
+
+    val showDropdownMenu: Boolean = false,
+    val showOtherDateSpotMarkers: Boolean = false
 )
 
 @HiltViewModel
@@ -91,6 +94,30 @@ class SetLocationViewModel @Inject constructor(
         }
     }
 
+
+    fun setKeyboardIsShown(
+        keyboardIsShown: Boolean
+    ){
+        _setLocationUiState.update {
+            it.copy(keyboardIsShown = keyboardIsShown)
+        }
+    }
+
+    fun setShowDropdownMenu(
+        showDropdownMenu: Boolean
+    ) {
+        _setLocationUiState.update {
+            it.copy(showDropdownMenu = showDropdownMenu)
+        }
+    }
+
+    fun setShowOtherDateSpotMarkers(
+        showOtherDateSpotMarkers: Boolean
+    ){
+        _setLocationUiState.update {
+            it.copy(showOtherDateSpotMarkers = showOtherDateSpotMarkers)
+        }
+    }
 
 
 

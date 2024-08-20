@@ -151,7 +151,8 @@ private fun ImageScreen(
                     //why using this? BoxWithConstraints
                     BoxWithConstraints(
                         contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier
+                            .fillMaxSize()
                             .clickable(
                                 indication = null,
                                 interactionSource = remember { MutableInteractionSource() },

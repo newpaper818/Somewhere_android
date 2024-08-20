@@ -53,6 +53,8 @@ fun SomewhereTopAppBar(
     actionIcon2: MyIcon? = null,
     actionIcon2Onclick: () -> Unit = {},
 
+    dropdownMenuContent: @Composable () -> Unit = {},
+
     useHorizontalLayoutTitles: Boolean = false,
     startPadding: Dp = 16.dp
 ) {
@@ -140,11 +142,14 @@ fun SomewhereTopAppBar(
                 }
             },
             actions = {
+                //action1
                 if (actionIcon1 != null) {
                     IconButton(onClick = actionIcon1Onclick) {
                         DisplayIcon(icon = actionIcon1)
                     }
                 }
+
+                //action2
                 AnimatedVisibility(
                     visible = actionIcon2 != null,
                     enter = fadeIn(tween(500)),
@@ -155,6 +160,9 @@ fun SomewhereTopAppBar(
                             DisplayIcon(icon = actionIcon2)
                     }
                 }
+
+                //dropdown menu
+                dropdownMenuContent()
             }
         )
     }
