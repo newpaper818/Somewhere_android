@@ -38,6 +38,7 @@ import androidx.compose.material.icons.rounded.ManageAccounts
 import androidx.compose.material.icons.rounded.Map
 import androidx.compose.material.icons.rounded.MoreHoriz
 import androidx.compose.material.icons.rounded.MoreTime
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.MyLocation
 import androidx.compose.material.icons.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Payments
@@ -81,6 +82,7 @@ object TopAppBarIcon {
     val back = MyIcon(Icons.AutoMirrored.Rounded.ArrowBack,     22.dp, false, null, R.string.back)
     val edit = MyIcon(Icons.Rounded.Edit,                       22.dp, false, null, R.string.edit)
     val close = MyIcon(Icons.Rounded.Close,                     22.dp, false, null, R.string.close)
+    val more = MyIcon(Icons.Rounded.MoreVert,                   22.dp, false, null, R.string.more)
     val closeImageScreen = MyIcon(Icons.Rounded.Close,          22.dp, false, CustomColor.white, R.string.close)
     val downloadImage = MyIcon(Icons.Rounded.FileDownload,      22.dp, false, CustomColor.white, R.string.download_image)
     val inviteFriend = MyIcon(Icons.Rounded.PersonAdd,          22.dp, false, null, R.string.invite_friend)

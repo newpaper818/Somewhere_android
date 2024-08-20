@@ -486,10 +486,7 @@ private fun SpotScreen(
 
     //set top bar title
     val topBarTitle =
-        if (spotDialog.showSetLocationDialog)
-            stringResource(id = R.string.set_location)
-
-        else if (spotUiInfo.isEditMode)
+        if (spotUiInfo.isEditMode)
             stringResource(id = R.string.edit_spot)
 
         else {
@@ -501,14 +498,10 @@ private fun SpotScreen(
 
     val dateTitle = dateList[currentDateIndex].titleText
     val subTitle =
-        if (spotDialog.showSetLocationDialog)
-            null
-        else {
-            if (dateTitle == null)
-                dateList[currentDateIndex].getDateText(spotUiInfo.dateTimeFormat, includeYear = true)
-            else
-                stringResource(id = R.string.sub_title, dateList[currentDateIndex].getDateText(spotUiInfo.dateTimeFormat, includeYear = true), dateTitle)
-        }
+        if (dateTitle == null)
+            dateList[currentDateIndex].getDateText(spotUiInfo.dateTimeFormat, includeYear = true)
+        else
+            stringResource(id = R.string.sub_title, dateList[currentDateIndex].getDateText(spotUiInfo.dateTimeFormat, includeYear = true), dateTitle)
 
     val snackBarPadding by animateFloatAsState(
         targetValue = if (spotMap.isMapExpand) 75f
@@ -532,6 +525,43 @@ private fun SpotScreen(
     }
 
 
+    //set location dialog(full screen dialog)
+    AnimatedVisibility(
+        visible = spotDialog.showSetLocationDialog,
+        enter = slideInHorizontally(animationSpec = tween(300), initialOffsetX = { it }),
+        exit = slideOutHorizontally(animationSpec = tween(300), targetOffsetX = { it }),
+        modifier = Modifier.zIndex(1f)
+    ) {
+        SetLocationDialog(
+            internetEnabled = spotUiInfo.internetEnabled,
+            dateTimeFormat = spotUiInfo.dateTimeFormat,
+            showingTrip = showingTrip,
+            dateList = dateList,
+            spotList = spotList,
+            dateIndex = currentDateIndex,
+            spotIndex = currentSpotIndex,
+            isDarkMapTheme = spotUiInfo.isDarkMapTheme,
+            onClickCloseButton = spotNavigate::onClickBackButton,
+            updateTripState = updateTripState,
+            setShowSetLocationDialogToFalse = { spotDialog.setShowSetLocationDialog(false) },
+            fusedLocationClient = spotMap.fusedLocationClient,
+            setUserLocationEnabled = spotMap::setUserLocationEnabled,
+            showSnackBar = { text, actionLabel, duration, onActionClick ->
+                coroutineScope.launch {
+                    snackBarHostState.showSnackbar(
+                        message = text,
+                        actionLabel = actionLabel,
+                        duration = duration
+                    ).run {
+                        when (this){
+                            SnackbarResult.Dismissed -> { }
+                            SnackbarResult.ActionPerformed -> onActionClick()
+                        }
+                    }
+                }
+            }
+        )
+    }
 
     MyScaffold(
         modifier = modifier
@@ -556,9 +586,8 @@ private fun SpotScreen(
 
                 //back button
                 navigationIcon =
-                    if (spotDialog.showSetLocationDialog)   TopAppBarIcon.close
-                    else if (!spotUiInfo.isEditMode)        TopAppBarIcon.back
-                    else                                    null,
+                    if (!spotUiInfo.isEditMode)        TopAppBarIcon.back
+                    else                               null,
                 onClickNavigationIcon = spotNavigate::onClickBackButton,
 
                 actionIcon1 = if (!spotUiInfo.isEditMode && showingTrip.editable) TopAppBarIcon.edit
@@ -705,43 +734,6 @@ private fun SpotScreen(
                 .padding(paddingValues),
             contentAlignment = Alignment.BottomCenter
         ) {
-
-            //set location dialog(full screen dialog)
-            AnimatedVisibility(
-                visible = spotDialog.showSetLocationDialog,
-                enter = slideInHorizontally(animationSpec = tween(300), initialOffsetX = { it }),
-                exit = slideOutHorizontally(animationSpec = tween(300), targetOffsetX = { it }),
-                modifier = Modifier.zIndex(1f)
-            ) {
-            SetLocationDialog(
-                internetEnabled = spotUiInfo.internetEnabled,
-                showingTrip = showingTrip,
-                dateList = dateList,
-                spotList = spotList,
-                dateIndex = currentDateIndex,
-                spotIndex = currentSpotIndex,
-                isDarkMapTheme = spotUiInfo.isDarkMapTheme,
-                updateTripState = updateTripState,
-                setShowSetLocationDialogToFalse = { spotDialog.setShowSetLocationDialog(false) },
-                fusedLocationClient = spotMap.fusedLocationClient,
-                setUserLocationEnabled = spotMap::setUserLocationEnabled,
-                showSnackBar = { text, actionLabel, duration, onActionClick ->
-                    coroutineScope.launch {
-                        snackBarHostState.showSnackbar(
-                            message = text,
-                            actionLabel = actionLabel,
-                            duration = duration
-                        ).run {
-                            when (this){
-                                SnackbarResult.Dismissed -> { }
-                                SnackbarResult.ActionPerformed -> onActionClick()
-                            }
-                        }
-                    }
-                }
-            )
-            }
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()

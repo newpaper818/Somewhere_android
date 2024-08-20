@@ -36,7 +36,9 @@
     <string name="set_editable">Set permission</string>
 
     <!--SetLocationDialog.kt-->
+    <string name="set_location">Set Location</string>
     <string name="search_location">Search location</string>
+    <string name="show_other_date_spot_marker">Show other date\'s spot markers</string>
 
     <!--SetSpotTypeDialog.kt-->
     <string name="set_spot_type">Set spot type</string>
