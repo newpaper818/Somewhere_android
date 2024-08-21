@@ -546,21 +546,7 @@ private fun SpotScreen(
             updateTripState = updateTripState,
             setShowSetLocationDialogToFalse = { spotDialog.setShowSetLocationDialog(false) },
             fusedLocationClient = spotMap.fusedLocationClient,
-            setUserLocationEnabled = spotMap::setUserLocationEnabled,
-            showSnackBar = { text, actionLabel, duration, onActionClick ->
-                coroutineScope.launch {
-                    snackBarHostState.showSnackbar(
-                        message = text,
-                        actionLabel = actionLabel,
-                        duration = duration
-                    ).run {
-                        when (this){
-                            SnackbarResult.Dismissed -> { }
-                            SnackbarResult.ActionPerformed -> onActionClick()
-                        }
-                    }
-                }
-            }
+            setUserLocationEnabled = spotMap::setUserLocationEnabled
         )
     }
 
