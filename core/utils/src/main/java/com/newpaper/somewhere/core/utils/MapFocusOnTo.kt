@@ -66,7 +66,7 @@ suspend fun focusOnToSpots(
     }
 }
 
-suspend fun focusOnToLatLng(
+suspend fun focusOnToLatLngForSetLocation(
     cameraPositionState: CameraPositionState,
     mapSize: IntSize,
     locationList: List<LatLng?>,

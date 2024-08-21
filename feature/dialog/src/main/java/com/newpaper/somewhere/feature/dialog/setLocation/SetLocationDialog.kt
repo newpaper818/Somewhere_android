@@ -43,7 +43,6 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -105,7 +104,7 @@ import com.newpaper.somewhere.core.utils.DEFAULT_ZOOM_LEVEL
 import com.newpaper.somewhere.core.utils.convert.getDateText
 import com.newpaper.somewhere.core.utils.convert.getPrevLocation
 import com.newpaper.somewhere.core.utils.convert.setLocationAndUpdateTravelDistance
-import com.newpaper.somewhere.core.utils.focusOnToLatLng
+import com.newpaper.somewhere.core.utils.focusOnToLatLngForSetLocation
 import com.newpaper.somewhere.feature.dialog.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -745,7 +744,7 @@ private fun mapAnimateToLatLng(
     coroutineScope: CoroutineScope,
 ){
     coroutineScope.launch {
-        focusOnToLatLng(
+        focusOnToLatLngForSetLocation(
             cameraPositionState,
             mapSize,
             locationList.map { it.location },
