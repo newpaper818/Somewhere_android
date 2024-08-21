@@ -342,8 +342,8 @@ fun SetLocationDialog(
                     //spacer
                     if (!setLocationUiState.userTexting)
                         Spacer(modifier = Modifier.weight(1f))
-                    else
-                        MySpacerColumn(height = 8.dp)
+
+                    MySpacerColumn(height = 8.dp)
 
 
 
@@ -389,7 +389,7 @@ fun SetLocationDialog(
                     if (!use2Panes)
                         PaddingValues(
                             mapPaddingValues.calculateLeftPadding(LayoutDirection.Ltr),
-                            mapPaddingValues.calculateTopPadding(),
+                            mapPaddingValues.calculateTopPadding() + 8.dp,
                             mapPaddingValues.calculateRightPadding(LayoutDirection.Ltr),
                             mapPaddingValues.calculateBottomPadding() + 34.dp,
                         )
