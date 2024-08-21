@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -107,8 +108,10 @@ fun NavGraphBuilder.moreScreen(
             Row(
                 modifier = Modifier.weight(1f)
             ) {
-
-                if (
+                if (widthSizeClass == WindowWidthSizeClass.Compact){
+                    MySpacerRow(width = 0.dp)
+                }
+                else if (
                     heightSizeClass == WindowHeightSizeClass.Compact
                     || widthSizeClass == WindowWidthSizeClass.Medium
                 ) {

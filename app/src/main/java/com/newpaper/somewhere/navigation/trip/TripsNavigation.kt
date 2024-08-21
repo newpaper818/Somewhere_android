@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -64,13 +65,15 @@ fun NavGraphBuilder.tripsScreen(
         }
 
         val appUiState by appViewModel.appUiState.collectAsState()
-        val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsState()
 
         val widthSizeClass = externalState.windowSizeClass.widthSizeClass
         val heightSizeClass = externalState.windowSizeClass.heightSizeClass
 
         Row {
-            if (
+            if (widthSizeClass == WindowWidthSizeClass.Compact){
+                MySpacerRow(width = 0.dp)
+            }
+            else if (
                 heightSizeClass == WindowHeightSizeClass.Compact
                 || widthSizeClass == WindowWidthSizeClass.Medium
             ) {
