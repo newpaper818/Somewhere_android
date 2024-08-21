@@ -151,10 +151,12 @@ fun SetLocationDialog(
     var searchListSize by remember{ mutableStateOf(IntSize(0,0)) }
 
 
-    val mapPaddingValues = if (setLocationUiState.searchLocation.searchLocationList.isNotEmpty())
-        PaddingValues(16.dp, 64.dp, 12.dp,
+    val mapPaddingValues = if (setLocationUiState.userTexting
+        || setLocationUiState.searchLocation.searchText.isEmpty())
+        PaddingValues(16.dp, 64.dp, 16.dp, 0.dp)
+    else PaddingValues(16.dp, 64.dp, 16.dp,
         (searchListSize.height / density).dp + SEARCH_BOX_LIST_PADDING)
-    else    PaddingValues(16.dp, 64.dp, 12.dp, 0.dp)
+
 
 
 
@@ -265,15 +267,14 @@ fun SetLocationDialog(
                         .fillMaxSize()
                         .padding(SEARCH_BOX_LIST_PADDING)
                 ) {
-
                     //search box
                     MapSearchBox(
                         visible = internetEnabled,
                         isLoading = setLocationUiState.searchLocation.isLoading,
                         searchText = setLocationUiState.searchLocation.searchText,
                         onTextChanged = {
-                            if (!setLocationUiState.keyboardIsShown)
-                                setLocationViewModel.setKeyboardIsShown(true)
+                            if (!setLocationUiState.userTexting)
+                                setLocationViewModel.setUserTexting(true)
 
                             setLocationViewModel.setSearchText(it)
 
@@ -292,11 +293,11 @@ fun SetLocationDialog(
                             setLocationViewModel.clearSearchLocationList()
                         },
                         onSearchClicked = {
-                            if (setLocationUiState.searchLocation.searchText != "")
+                            if (setLocationUiState.searchLocation.searchText != "") {
                                 coroutineScope.launch {
                                     setLocationViewModel.setIsLoading(true)
                                     focusManager.clearFocus()
-                                    setLocationViewModel.setKeyboardIsShown(false)
+                                    setLocationViewModel.setUserTexting(false)
 
                                     setLocationViewModel.updateAllLatLng()
                                     mapAnimateToLatLng(
@@ -307,10 +308,16 @@ fun SetLocationDialog(
                                     )
                                     setLocationViewModel.setIsLoading(false)
                                 }
+                            }
+                            else {
+                                focusManager.clearFocus()
+                                setLocationViewModel.setUserTexting(false)
+                                setLocationViewModel.clearSearchLocationList()
+                            }
                         }
                     )
 
-                    if (!setLocationUiState.keyboardIsShown)
+                    if (!setLocationUiState.userTexting)
                         Spacer(modifier = Modifier.weight(1f))
                     else
                         MySpacerColumn(height = 8.dp)
@@ -320,13 +327,13 @@ fun SetLocationDialog(
                     Box(modifier = Modifier.fillMaxWidth()) {
                         DateListWithCircle(
                             visible = setLocationUiState.showOtherDateSpotMarkers &&
-                                    !setLocationUiState.keyboardIsShown,
+                                    !setLocationUiState.userTexting,
                             dateTimeFormat = dateTimeFormat,
                             dateList = dateList
                         )
                     }
 
-                    if (!setLocationUiState.keyboardIsShown
+                    if (!setLocationUiState.userTexting
                         && setLocationUiState.searchLocation.searchLocationList.isNotEmpty()
                         && setLocationUiState.showOtherDateSpotMarkers)
                         MySpacerColumn(height = 16.dp)
@@ -341,7 +348,7 @@ fun SetLocationDialog(
                         onClickItem = {
                             //get one location from touched item
                             focusManager.clearFocus()
-                            setLocationViewModel.setKeyboardIsShown(false)
+                            setLocationViewModel.setUserTexting(false)
 
                             if (it.location != null) {
                                 mapAnimateToLatLng(
@@ -725,3 +732,4 @@ fun Modifier.searchBoxShimmerEffect(): Modifier = composed {
             size = it.size
         }
 }
+
