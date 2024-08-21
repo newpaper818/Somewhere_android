@@ -703,7 +703,7 @@ private fun DateListWithCircle(
                         }
 
                         if (dateList.last() != date)
-                            MySpacerColumn(height = 4.dp)
+                            MySpacerColumn(height = 6.dp)
                     }
                 }
             }
