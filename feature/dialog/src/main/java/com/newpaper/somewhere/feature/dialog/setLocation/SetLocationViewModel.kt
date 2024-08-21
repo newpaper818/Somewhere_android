@@ -23,7 +23,9 @@ data class SearchLocation(
 
 data class SetLocationUiState(
     val searchLocation: SearchLocation = SearchLocation(),
-    val keyboardIsShown: Boolean = false,
+
+    val userTexting: Boolean = false,
+    val clickedSearch: Boolean = false,
 
     val showDropdownMenu: Boolean = false,
     val showOtherDateSpotMarkers: Boolean = false
@@ -95,11 +97,11 @@ class SetLocationViewModel @Inject constructor(
     }
 
 
-    fun setKeyboardIsShown(
-        keyboardIsShown: Boolean
+    fun setUserTexting(
+        userTexting: Boolean
     ){
         _setLocationUiState.update {
-            it.copy(keyboardIsShown = keyboardIsShown)
+            it.copy(userTexting = userTexting)
         }
     }
 
