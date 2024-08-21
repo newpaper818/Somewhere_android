@@ -742,13 +742,14 @@ private fun mapAnimateToLatLng(
     locationList: List<LocationInfo>,
     cameraPositionState: CameraPositionState,
     mapSize: IntSize,
-    coroutineScope: CoroutineScope
+    coroutineScope: CoroutineScope,
 ){
     coroutineScope.launch {
         focusOnToLatLng(
             cameraPositionState,
             mapSize,
             locationList.map { it.location },
+            cameraPositionState.position.zoom
         )
     }
 }

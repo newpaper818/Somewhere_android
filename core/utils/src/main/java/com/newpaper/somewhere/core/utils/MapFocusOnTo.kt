@@ -69,7 +69,8 @@ suspend fun focusOnToSpots(
 suspend fun focusOnToLatLng(
     cameraPositionState: CameraPositionState,
     mapSize: IntSize,
-    locationList: List<LatLng?>
+    locationList: List<LatLng?>,
+    zoomLevel: Float = 13f
 ){
     val newLocationList: List<LatLng> = locationList.filterNotNull()
 
@@ -77,7 +78,7 @@ suspend fun focusOnToLatLng(
         val location = newLocationList.first()
 
         cameraPositionState.animate(
-            CameraUpdateFactory.newLatLngZoom(location, 13f), ANIMATION_DURATION_MS
+            CameraUpdateFactory.newLatLngZoom(location, zoomLevel), ANIMATION_DURATION_MS
         )
     }
     else if (newLocationList.size > 1){
