@@ -535,6 +535,7 @@ private fun SpotScreen(
         SetLocationDialog(
             internetEnabled = spotUiInfo.internetEnabled,
             dateTimeFormat = spotUiInfo.dateTimeFormat,
+            use2Panes = spotUiInfo.use2Panes,
             showingTrip = showingTrip,
             dateList = dateList,
             spotList = spotList,

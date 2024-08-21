@@ -69,6 +69,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -111,6 +112,7 @@ val SEARCH_BOX_LIST_PADDING = 14.dp
 fun SetLocationDialog(
     internetEnabled: Boolean,
     dateTimeFormat: DateTimeFormat,
+    use2Panes: Boolean,
     showingTrip: Trip,
     dateList: List<Date>,
     spotList: List<Spot>,
@@ -213,7 +215,7 @@ fun SetLocationDialog(
                     screenWidthDp = (it.width.toFloat() / density).toInt()
                 }
         ) {
-            //google map
+            //map, search box ... ==================================================================
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
@@ -223,6 +225,8 @@ fun SetLocationDialog(
                         mapSize = it
                     }
             ) {
+
+                //google map ---------------------
                 MapForSetLocation(
                     mapPadding = mapPaddingValues,
                     isDarkMapTheme = isDarkMapTheme,
@@ -245,13 +249,13 @@ fun SetLocationDialog(
                     }
                 )
 
+                //center marker ---------------------
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .padding(mapPaddingValues)
                         .fillMaxSize()
                 ) {
-                    //center marker
                     CenterMarker(
                         color = if (setLocationUiState.showOtherDateSpotMarkers) Color(dateList[dateIndex].color.color)
                                 else Color(spotList[spotIndex].spotType.group.color.color),
@@ -261,6 +265,7 @@ fun SetLocationDialog(
                     )
                 }
 
+                //search box, search list, date list ----------------
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
@@ -286,7 +291,6 @@ fun SetLocationDialog(
                                     setLocationViewModel.setIsLoadingSearchPlaces(false)
                                 }
                             }
-
                         },
                         onClearClicked = {
                             setLocationViewModel.setSearchText("")
@@ -308,8 +312,7 @@ fun SetLocationDialog(
                                     )
                                     setLocationViewModel.setIsLoading(false)
                                 }
-                            }
-                            else {
+                            } else {
                                 focusManager.clearFocus()
                                 setLocationViewModel.setUserTexting(false)
                                 setLocationViewModel.clearSearchLocationList()
@@ -317,26 +320,15 @@ fun SetLocationDialog(
                         }
                     )
 
+
+
+                    //spacer
                     if (!setLocationUiState.userTexting)
                         Spacer(modifier = Modifier.weight(1f))
                     else
                         MySpacerColumn(height = 8.dp)
 
 
-                    //date with colored circle
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                        DateListWithCircle(
-                            visible = setLocationUiState.showOtherDateSpotMarkers &&
-                                    !setLocationUiState.userTexting,
-                            dateTimeFormat = dateTimeFormat,
-                            dateList = dateList
-                        )
-                    }
-
-                    if (!setLocationUiState.userTexting
-                        && setLocationUiState.searchLocation.searchLocationList.isNotEmpty()
-                        && setLocationUiState.showOtherDateSpotMarkers)
-                        MySpacerColumn(height = 16.dp)
 
 
 
@@ -374,9 +366,40 @@ fun SetLocationDialog(
                         }
                     )
                 }
+
+                //date list with circle --------------
+                val padding =
+                    if (!use2Panes)
+                        PaddingValues(
+                            mapPaddingValues.calculateLeftPadding(LayoutDirection.Ltr),
+                            mapPaddingValues.calculateTopPadding(),
+                            mapPaddingValues.calculateRightPadding(LayoutDirection.Ltr),
+                            mapPaddingValues.calculateBottomPadding() + 34.dp,
+                        )
+                    else PaddingValues(
+                        SEARCH_BOX_LIST_PADDING,
+                        SEARCH_BOX_LIST_PADDING,
+                        SEARCH_BOX_LIST_PADDING,
+                        if (setLocationUiState.searchLocation.searchLocationList.isEmpty()) SEARCH_BOX_LIST_PADDING + 20.dp
+                        else SEARCH_BOX_LIST_PADDING
+                    )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    contentAlignment = Alignment.BottomStart
+                ) {
+                    DateListWithCircle(
+                        visible = setLocationUiState.showOtherDateSpotMarkers &&
+                                !setLocationUiState.userTexting,
+                        dateTimeFormat = dateTimeFormat,
+                        dateList = dateList
+                    )
+                }
             }
 
-            //buttons
+            //buttons ==============================================================================
             FlowRow(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -466,7 +489,7 @@ private fun MapSearchBox(
 ){
     val boxModifier = Modifier
         .height(50.dp)
-        .widthIn(max = 600.dp)
+        .widthIn(max = 450.dp)
         .clip(CircleShape)
         .background(MaterialTheme.colorScheme.surfaceBright)
 
@@ -547,7 +570,7 @@ private fun MapSearchList(
             modifier = Modifier
                 .clip(RoundedCornerShape(25.dp))
                 .heightIn(max = 200.dp)
-                .widthIn(max = 600.dp)
+                .widthIn(max = 450.dp)
                 .background(MaterialTheme.colorScheme.surfaceBright.copy(alpha = 0.93f))
                 .onSizeChanged {
                     onSearchListSizeChanged(it)
@@ -615,7 +638,6 @@ private fun DateListWithCircle(
         exit = fadeOut(tween(400)) + scaleOut(tween(400))
     ) {
         MyCard(
-            modifier = Modifier.padding(0.dp, 0.dp, 16.dp, 20.dp),
             colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceBright.copy(alpha = 0.93f))
         ) {
             LazyColumn(
