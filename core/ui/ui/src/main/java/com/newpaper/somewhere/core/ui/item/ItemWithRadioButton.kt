@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
+import com.newpaper.somewhere.core.utils.listItemHeight
 
 @Composable
 fun ItemWithRadioButton(
@@ -31,7 +32,7 @@ fun ItemWithRadioButton(
         onClick = { onItemClick() },
         modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp)
+            .height(listItemHeight)
     ){
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -44,7 +45,7 @@ fun ItemWithRadioButton(
                 onClick = onItemClick
             )
 
-            MySpacerRow(width = 8.dp)
+            MySpacerRow(width = 2.dp)
 
             Text(
                 text = text,

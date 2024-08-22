@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
+import com.newpaper.somewhere.core.utils.listItemHeight
 
 @Composable
 fun ItemWithSwitch(
@@ -39,7 +40,7 @@ fun ItemWithSwitch(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp)
+            .height(listItemHeight)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

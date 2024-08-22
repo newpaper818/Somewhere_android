@@ -24,6 +24,7 @@ const val OAUTH_WEB_CLIENT_ID = "141125479046-n0dciq6m90m841sq88coqkct8qdm3pk1.a
 
 
 val itemMaxWidth = 700.dp
+val listItemHeight = 56.dp
 
 const val MAX_FRIEND_CNT = 35
 
