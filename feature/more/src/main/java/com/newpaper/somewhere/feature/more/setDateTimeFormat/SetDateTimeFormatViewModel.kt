@@ -33,7 +33,7 @@ class SetDateTimeFormatViewModel @Inject constructor(
     fun updateDateTimeExample(
         dateTimeFormat: DateTimeFormat
     ){
-        val localDate = LocalDate.of(2023,10,22)
+        val localDate = LocalDate.of(2023,10,21)
         val localTime = LocalTime.of(21,24)
 
         val newDateExample = getDateText(localDate, dateTimeFormat, true)
