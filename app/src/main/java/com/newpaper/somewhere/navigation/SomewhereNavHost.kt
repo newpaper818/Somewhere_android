@@ -436,6 +436,7 @@ fun SomewhereNavHost(
 
             tripMapScreen(
                 appViewModel = appViewModel,
+                externalState = externalState,
                 commonTripViewModel = commonTripViewModel,
                 isDarkMapTheme = isDarkMapTheme,
                 fusedLocationClient = fusedLocationClient,

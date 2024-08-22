@@ -65,6 +65,7 @@ private const val CONTROL_PANEL_MIN_WIDTH = 366
 @Composable
 fun TripMapRoute(
     currentTrip: Trip,
+    useVerticalLayout: Boolean,
     dateTimeFormat: DateTimeFormat,
     navigateUp: () -> Unit,
     isDarkMapTheme: Boolean,
@@ -99,6 +100,7 @@ fun TripMapRoute(
         dateTimeFormat,
         dateListState,
         currentTrip,
+        useVerticalLayout,
         isDarkMapTheme,
         cameraPositionState,
         userLocationEnabled,
@@ -118,6 +120,7 @@ private fun TripMapScreen(
     dateListState: LazyListState,
     currentTrip: Trip,
 
+    useVerticalLayout: Boolean,
     isDarkMapTheme: Boolean,
     cameraPositionState: CameraPositionState,
     userLocationEnabled: Boolean,
@@ -131,43 +134,41 @@ private fun TripMapScreen(
     //screen is horizontal/vertical
     val configuration = LocalConfiguration.current
 
-    when (configuration.orientation){
-        //at vertical
-        Configuration.ORIENTATION_PORTRAIT -> {
-            TripMapScreenVertical(
-                tripMapViewModel,
-                snackBarHostState,
-                dateTimeFormat,
-                dateListState,
-                currentTrip,
-                isDarkMapTheme,
-                cameraPositionState,
-                userLocationEnabled,
-                fusedLocationClient,
-                setUserLocationEnabled,
-                navigateUp,
-                modifier
-            )
-        }
+    //at vertical
+    if (useVerticalLayout) {
+        TripMapScreenVertical(
+            tripMapViewModel,
+            snackBarHostState,
+            dateTimeFormat,
+            dateListState,
+            currentTrip,
+            isDarkMapTheme,
+            cameraPositionState,
+            userLocationEnabled,
+            fusedLocationClient,
+            setUserLocationEnabled,
+            navigateUp,
+            modifier
+        )
+    }
 
-        //at horizontal
-        else -> {
-            TripMapScreenHorizontal(
-                configuration,
-                tripMapViewModel,
-                snackBarHostState,
-                dateTimeFormat,
-                dateListState,
-                currentTrip,
-                isDarkMapTheme,
-                cameraPositionState,
-                userLocationEnabled,
-                fusedLocationClient,
-                setUserLocationEnabled,
-                navigateUp,
-                modifier
-            )
-        }
+    //at horizontal
+    else {
+        TripMapScreenHorizontal(
+            configuration,
+            tripMapViewModel,
+            snackBarHostState,
+            dateTimeFormat,
+            dateListState,
+            currentTrip,
+            isDarkMapTheme,
+            cameraPositionState,
+            userLocationEnabled,
+            fusedLocationClient,
+            setUserLocationEnabled,
+            navigateUp,
+            modifier
+        )
     }
 }
 

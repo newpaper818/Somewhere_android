@@ -19,6 +19,8 @@ import com.newpaper.somewhere.navigation.exitTransition
 import com.newpaper.somewhere.navigation.popEnterTransition
 import com.newpaper.somewhere.navigation.popExitTransition
 import com.newpaper.somewhere.ui.AppViewModel
+import com.newpaper.somewhere.ui.ExternalState
+import com.newpaper.somewhere.util.WindowWidthSizeClass
 
 private const val DEEP_LINK_URI_PATTERN =
     "https://www.somewhere.newpaper.com/main/tripMap"
@@ -28,6 +30,7 @@ fun NavController.navigateToTripMap(navOptions: NavOptions? = null) =
 
 fun NavGraphBuilder.tripMapScreen(
     appViewModel: AppViewModel,
+    externalState: ExternalState,
     commonTripViewModel: CommonTripViewModel,
 
     isDarkMapTheme: Boolean,
@@ -62,6 +65,8 @@ fun NavGraphBuilder.tripMapScreen(
         if (currentTrip != null) {
             TripMapRoute(
                 currentTrip = currentTrip,
+                useVerticalLayout = externalState.windowSizeClass.isVertical
+                        || externalState.windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact,
                 dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
                 navigateUp = navigateUp,
                 isDarkMapTheme = isDarkMapTheme,
