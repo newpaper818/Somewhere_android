@@ -15,6 +15,7 @@ import com.newpaper.somewhere.navigation.popEnterTransition
 import com.newpaper.somewhere.navigation.popExitTransition
 import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
+import com.newpaper.somewhere.util.WindowWidthSizeClass
 
 private const val DEEP_LINK_URI_PATTERN =
     "https://www.somewhere.newpaper.com/signIn"
@@ -47,7 +48,8 @@ fun NavGraphBuilder.signInScreen(
         SignInRoute(
             isDarkAppTheme = isDarkAppTheme,
             internetEnabled = externalState.internetEnabled,
-            isVertical = externalState.windowSizeClass.isVertical,
+            useVerticalLayout = externalState.windowSizeClass.isVertical
+                    || externalState.windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact,
             appVersionName = BuildConfig.VERSION_NAME,
             updateUserData = {usrData ->
                 appViewModel.updateUserData(userData = usrData)
