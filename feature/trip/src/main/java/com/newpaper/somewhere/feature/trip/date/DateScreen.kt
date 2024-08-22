@@ -278,23 +278,53 @@ fun DateRoute(
         reorderSpotList = commonTripViewModel::reorderSpotListAndUpdateTravelDistance,
         onClickSave = {
             coroutineScope.launch {
-                if (originalTrip != tempTrip){
-                    //save tripUiState trip
-                    commonTripViewModel.saveTrip(appUserId = appUserId)
+                if (use2Panes){
+                    if (commonTripUiState.isNewTrip || originalTrip != tempTrip){
+                        //save tripUiState tripList
+                        val beforeTempTripDateListLastIndex =
+                            commonTripViewModel.saveTrip(
+                                appUserId = appUserId,
+                                deleteNotEnabledDate = true
+                            )
 
-                    commonTripViewModel.setIsEditMode(false)
+                        commonTripViewModel.setIsEditMode(false)
+                        commonTripViewModel.setIsNewTrip(false)
 
-                    //save to firestore
-                    commonTripViewModel.saveTripAndAllDates(trip = tempTrip)
+                        //save to firestore
+                        commonTripViewModel.saveTripAndAllDates(
+                            trip = commonTripViewModel.commonTripUiState.value.tripInfo.tempTrip!!,
+                            tempTripDateListLastIndex = beforeTempTripDateListLastIndex
+                        )
+                    }
+                    else {
+                        commonTripViewModel.setIsEditMode(false)
+                    }
+
+                    commonTripViewModel.organizeAddedDeletedImages(
+                        tripManagerId = tempTrip.managerId,
+                        isClickSave = true,
+                        isInTripsScreen = true
+                    )
                 }
                 else {
-                    commonTripViewModel.setIsEditMode(false)
-                }
+                    if (originalTrip != tempTrip){
+                        //save tripUiState trip
+                        commonTripViewModel.saveTrip(appUserId = appUserId)
 
-                commonTripViewModel.organizeAddedDeletedImages(
-                    tripManagerId = tempTrip.managerId,
-                    isClickSave = true
-                )
+                        commonTripViewModel.setIsEditMode(false)
+
+                        //save to firestore
+                        commonTripViewModel.saveTripAndAllDates(trip = tempTrip)
+                    }
+                    else {
+                        commonTripViewModel.setIsEditMode(false)
+                    }
+
+                    commonTripViewModel.organizeAddedDeletedImages(
+                        tripManagerId = tempTrip.managerId,
+                        isClickSave = true
+                    )
+                }
             }
         },
         onClickProgressBarDateItem = { toDateIndex ->
