@@ -23,6 +23,7 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
+import com.newpaper.somewhere.core.utils.listItemHeight
 
 @Composable
 fun ItemWithText(
@@ -40,9 +41,7 @@ fun ItemWithText(
     ClickableBox(
         containerColor = if (isSelected) MaterialTheme.colorScheme.outlineVariant
                             else Color.Transparent,
-        modifier = Modifier
-            .fillMaxWidth(),
-//            .height(60.dp),
+        modifier = Modifier.fillMaxWidth(),
         enabled = onItemClick != null,
         onClick = onItemClick ?: { }
     ) {
@@ -52,7 +51,7 @@ fun ItemWithText(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp)
+                    .height(listItemHeight)
                     .padding(16.dp, 0.dp)
             ) {
                 if (text != null) {

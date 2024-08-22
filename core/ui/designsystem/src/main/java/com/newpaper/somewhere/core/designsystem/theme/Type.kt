@@ -18,88 +18,88 @@ val Typography = Typography(
     displayLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
-        fontSize = 24.sp,
-        lineHeight = 24.sp * 1.3
+        fontSize = 23.sp,
+        lineHeight = 23.sp * 1.3
     ),
     displayMedium = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 22.sp * 1.3
+        fontSize = 21.sp,
+        lineHeight = 21.sp * 1.3
     ),
     displaySmall = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = 20.sp,
-        lineHeight = 20.sp * 1.3
+        fontSize = 19.sp,
+        lineHeight = 19.sp * 1.3
     ),
 
     //headline bold
     headlineLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
-        fontSize = 24.sp,
-        lineHeight = 24.sp * 1.3
+        fontSize = 23.sp,
+        lineHeight = 23.sp * 1.3
     ),
     headlineMedium = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
-        fontSize = 22.sp,
-        lineHeight = 22.sp * 1.3
+        fontSize = 21.sp,
+        lineHeight = 21.sp * 1.3
     ),
     headlineSmall = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
-        fontSize = 20.sp,
-        lineHeight = 20.sp * 1.3
+        fontSize = 19.sp,
+        lineHeight = 19.sp * 1.3
     ),
 
     //title bold    app bar title
     titleLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
-        fontSize = 24.sp,
-        lineHeight = 24.sp * 1.3
+        fontSize = 23.sp,
+        lineHeight = 23.sp * 1.3
     ),
     titleMedium = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
-        fontSize = 22.sp,
-        lineHeight = 22.sp * 1.3
+        fontSize = 21.sp,
+        lineHeight = 21.sp * 1.3
     ),
     titleSmall = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
-        fontSize = 20.sp,
-        lineHeight = 20.sp * 1.3
+        fontSize = 19.sp,
+        lineHeight = 19.sp * 1.3
     ),
 
     //body not bold
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = 18.sp,
+        fontSize = 17.sp,
         lineHeight = 18.sp * 1.3
     ),
     bodyMedium = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 16.sp * 1.3
+        fontSize = 15.sp,
+        lineHeight = 15.sp * 1.3
     ),
     bodySmall = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = 14.sp,
-        lineHeight = 14.sp * 1.3
+        fontSize = 13.sp,
+        lineHeight = 13.sp * 1.3
     ),
 
     //label not bold    button, icon text
     labelLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 16.sp * 1.3
+        fontSize = 15.sp,
+        lineHeight = 15.sp * 1.3
     ),
     labelMedium = TextStyle(
         fontFamily = FontFamily.Default,
