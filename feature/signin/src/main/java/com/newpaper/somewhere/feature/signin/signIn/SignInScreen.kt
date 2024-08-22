@@ -59,7 +59,7 @@ import kotlinx.coroutines.launch
 fun SignInRoute(
     isDarkAppTheme: Boolean,
     internetEnabled: Boolean,
-    isVertical: Boolean,
+    useVerticalLayout: Boolean,
     appVersionName: String,
 
     updateUserData: (userData: UserData) -> Unit,
@@ -134,7 +134,7 @@ fun SignInRoute(
     SignInScreen(
         isDarkAppTheme = isDarkAppTheme,
         internetEnabled = internetEnabled,
-        isVertical = isVertical,
+        useVerticalLayout = useVerticalLayout,
         appVersionName = appVersionName,
 
         isSigningIn = isSigningIn,
@@ -196,7 +196,7 @@ fun SignInRoute(
 private fun SignInScreen(
     isDarkAppTheme: Boolean,
     internetEnabled: Boolean,
-    isVertical: Boolean,
+    useVerticalLayout: Boolean,
     appVersionName: String,
 
     isSigningIn: Boolean,
@@ -222,7 +222,7 @@ private fun SignInScreen(
     ) { _ ->
 
         //vertical
-        if (isVertical) {
+        if (useVerticalLayout) {
             SignInVertical(
                 isDarkAppTheme = isDarkAppTheme,
                 internetEnabled = internetEnabled,
@@ -531,7 +531,7 @@ private fun SignInScreenPreview_Default(){
         SignInScreen(
             isDarkAppTheme = isSystemInDarkTheme(),
             internetEnabled = true,
-            isVertical = true,
+            useVerticalLayout = true,
             appVersionName = "1.6.2",
             isSigningIn = false,
             signInButtonEnabled = true,
@@ -550,7 +550,7 @@ private fun SignInScreenPreview_NoInternet(){
         SignInScreen(
             isDarkAppTheme = isSystemInDarkTheme(),
             internetEnabled = false,
-            isVertical = true,
+            useVerticalLayout = true,
             appVersionName = "1.6.2",
             isSigningIn = false,
             signInButtonEnabled = true,
@@ -570,7 +570,7 @@ private fun SignInScreenPreview_SigningIn(){
             isDarkAppTheme = isSystemInDarkTheme(),
             internetEnabled = true,
             appVersionName = "1.6.2",
-            isVertical = true,
+            useVerticalLayout = true,
             isSigningIn = true,
             signInButtonEnabled = false,
             onSignInClick = {},
