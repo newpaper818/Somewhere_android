@@ -22,7 +22,9 @@ data class EditProfileUiState(
     val userProfileImagePath: String? = null,
 
     val isInvalidUserName: Boolean = false,
-    val isSaveButtonEnabled: Boolean = true
+    val isSaveButtonEnabled: Boolean = true,
+
+    val showExitDialog: Boolean = false,
 )
 
 @HiltViewModel
@@ -50,7 +52,13 @@ class EditProfileViewModel @Inject constructor(
         }
     }
 
-
+    //==============================================================================================
+    //dialog ===============================================================================
+    fun setShowExitDialog(showExitDialog: Boolean){
+        _editProfileUiState.update {
+            it.copy(showExitDialog = showExitDialog)
+        }
+    }
 
     //==============================================================================================
     //image ========================================================================================
@@ -109,6 +117,18 @@ class EditProfileViewModel @Inject constructor(
 
     //==============================================================================================
     //save =========================================================================================
+    fun checkProfileInfoChanged(
+        userData: UserData
+    ): Boolean {
+        val newUserName = _editProfileUiState.value.userName
+        val newProfileImagePath = _editProfileUiState.value.userProfileImagePath
+
+        val isUserNameChanged = userData.userName != newUserName
+        val isProfileImageChanged = userData.profileImagePath != newProfileImagePath
+
+        return isUserNameChanged || isProfileImageChanged
+    }
+
     fun saveProfile(
         userData: UserData,
 
@@ -131,13 +151,12 @@ class EditProfileViewModel @Inject constructor(
             //if same, do nothing
             //else, save to firestore
 
-            val updateUserName = userData.userName != newUserName
-            val updateProfileImage = userData.profileImagePath != newProfileImagePath
+            val isProfileImageChanged = userData.profileImagePath != newProfileImagePath
 
 
-            if (updateUserName || updateProfileImage) {
+            if (checkProfileInfoChanged(userData)) {
                 //upload profile image
-                if (updateProfileImage) {
+                if (isProfileImageChanged) {
                     editProfileRepository.updateProfileImage(
                         userId = userData.userId,
                         imagePath = newProfileImagePath

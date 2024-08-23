@@ -24,6 +24,7 @@
     <string name="invite">Invite</string>
     <string name="share_app">Share app to friends</string>
     <string name="delete_account">Delete account</string>
+    <string name="change_image">Change image</string>
 
     <!-- FABs.kt -->
     <string name="see_on_map">See on Map</string>
@@ -90,7 +91,7 @@
 
     <!--MyIcons-->
     <string name="sign_in">Sign in</string>
-    <string name="edit_profile_image">Edit profile image</string>
+    <string name="change_profile_image">Change profile image</string>
     <string name="delete_profile_image">Delete profile image</string>
     <string name="delete_image">Delete image</string>
     <string name="search_location">Search location</string>

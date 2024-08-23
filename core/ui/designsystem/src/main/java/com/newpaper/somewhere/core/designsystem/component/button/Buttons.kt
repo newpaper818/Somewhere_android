@@ -9,6 +9,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
@@ -27,13 +28,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.IconTextButtonIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcon
+import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.designsystem.R
 
@@ -99,19 +103,6 @@ fun InviteButton(
 }
 
 @Composable
-fun SaveButton(
-    onClick: () -> Unit,
-    enabled: Boolean
-){
-    MyTextButton(
-        modifier = Modifier.widthIn(min = 120.dp),
-        text = stringResource(id = R.string.save),
-        onClick = onClick,
-        enabled = enabled
-    )
-}
-
-@Composable
 fun ShareAppButton(
     onClick: () -> Unit,
 ){
@@ -163,6 +154,38 @@ fun DeleteItemButton(
         onClick = onClick,
         containerColor = MaterialTheme.colorScheme.error,
         textStyle = MaterialTheme.typography.labelLarge.copy(color = MaterialTheme.colorScheme.onError)
+    )
+}
+
+@Composable
+fun ChangeProfileImageButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    IconTextButtonColumn(
+        icon = MyIcons.changeProfileImage,
+        text = stringResource(id = R.string.change_image),
+        onClick = onClick,
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun DeleteProfileImageButton(
+    onClick: () -> Unit,
+    enabled: Boolean,
+    modifier: Modifier = Modifier
+){
+    IconTextButtonColumn(
+        icon = MyIcons.deleteProfileImage,
+        text = stringResource(id = R.string.delete_image),
+        onClick = onClick,
+        enabled = enabled,
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        modifier = modifier
     )
 }
 
@@ -255,6 +278,7 @@ private fun IconTextButton(
     icon: MyIcon,
     text: String,
     onClick: () -> Unit,
+    enabled: Boolean = true,
     containerColor: Color = MaterialTheme.colorScheme.primary,
     textStyle: TextStyle = MaterialTheme.typography.labelLarge
 ){
@@ -264,6 +288,7 @@ private fun IconTextButton(
             contentColor = MaterialTheme.colorScheme.contentColorFor(containerColor)
         ),
         contentPadding = PaddingValues(16.dp, 0.dp, 20.dp, 0.dp),
+        enabled = enabled,
         onClick = onClick
     ) {
         Row(
@@ -284,7 +309,49 @@ private fun IconTextButton(
     }
 }
 
+@Composable
+private fun IconTextButtonColumn(
+    icon: MyIcon,
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    containerColor: Color = MaterialTheme.colorScheme.primary,
+    contentColor: Color = MaterialTheme.colorScheme.onPrimary,
+    textStyle: TextStyle = MaterialTheme.typography.labelLarge
+){
+    Button(
+        colors = ButtonDefaults.buttonColors(
+            containerColor = containerColor,
+            contentColor = contentColor,
+            disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
+            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+        ),
+        shape = MaterialTheme.shapes.medium,
+        contentPadding = PaddingValues(14.dp, 8.dp),
+        enabled = enabled,
+        onClick = onClick,
+        modifier = modifier
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            DisplayIcon(
+                icon = icon
+            )
 
+            MySpacerColumn(6.dp)
+
+            Text(
+                text = text,
+                style = if (enabled) textStyle
+                        else textStyle.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
 
 
 
@@ -391,44 +458,6 @@ private fun InviteButtonDisabledPreview(){
                 .width(190.dp)
         ) {
             InviteButton(
-                onClick = { },
-                enabled = false
-            )
-        }
-    }
-}
-
-@Composable
-@PreviewLightDark
-private fun SaveButtonPreview(){
-    SomewhereTheme {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(16.dp)
-                .width(190.dp)
-        ) {
-            SaveButton(
-                onClick = { },
-                enabled = true
-            )
-        }
-    }
-}
-
-@Composable
-@PreviewLightDark
-private fun SaveButtonDisabledPreview(){
-    SomewhereTheme {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(16.dp)
-                .width(190.dp)
-        ) {
-            SaveButton(
                 onClick = { },
                 enabled = false
             )

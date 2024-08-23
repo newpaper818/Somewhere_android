@@ -128,7 +128,9 @@ private fun BigCancelButton(
         modifier = modifier.height(48.dp), //max width: 150.dp
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.surfaceTint,
-            contentColor = MaterialTheme.colorScheme.onSurface
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
+            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
         shape = MaterialTheme.shapes.medium,
         enabled = enabled,
@@ -150,6 +152,10 @@ private fun BigSaveButton(
     Button(
         modifier = modifier.height(48.dp), //max width: 150.dp
         shape = MaterialTheme.shapes.medium,
+        colors = ButtonDefaults.buttonColors(
+            disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
+            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+        ),
         enabled = enabled,
         onClick = onClick
     ) {
