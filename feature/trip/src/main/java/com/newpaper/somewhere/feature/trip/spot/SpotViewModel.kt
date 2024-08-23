@@ -62,7 +62,7 @@ class SpotViewModel @Inject constructor(
                 _spotUiState.value.showMemoDialog || _spotUiState.value.showMoveDateDialog ||
                 _spotUiState.value.showSetTimeDialog || _spotUiState.value.showSetSpotTypeDialog ||
                 _spotUiState.value.showSetBudgetDialog || _spotUiState.value.showSetDistanceDialog ||
-                _spotUiState.value.showSetLocationDialog || _spotUiState.value.showDeleteSpotDialog
+                 _spotUiState.value.showDeleteSpotDialog
 
         _spotUiState.update {
             it.copy(isShowingDialog = isShowingDialog)
