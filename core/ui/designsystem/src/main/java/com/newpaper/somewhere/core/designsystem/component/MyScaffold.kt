@@ -38,8 +38,8 @@ fun MyScaffold(
 ) {
 
     val buttonsModifier = if (useBottomNavBar) Modifier
-                            .navigationBarsPadding()
-                            .padding(bottom = 80.dp)
+                            .navigationBarsPadding()    //system nav bar padding
+                            .padding(bottom = 80.dp)    //app bottom nav bar padding
                         else Modifier.navigationBarsPadding().imePadding()
 
     Scaffold(
@@ -61,7 +61,7 @@ fun MyScaffold(
                 modifier = buttonsModifier
             )
 
-            //floating action button
+            //glance spot
             Box (
                 modifier = buttonsModifier.padding(bottom = 16.dp)
             ){

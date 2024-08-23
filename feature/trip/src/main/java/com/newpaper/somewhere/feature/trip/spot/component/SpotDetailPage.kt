@@ -63,10 +63,12 @@ internal fun SpotDetailPage(
     val currentDate = dateList[currentDateIndex]
     val currentSpot = currentDate.spotList.getOrNull(currentSpotIndex)
 
+    val startPadding = if (spotUiInfo.use2Panes) spotUiInfo.spacerValue / 2
+                        else spotUiInfo.spacerValue
 
     Column(
         modifier = modifier
-            .padding(spotUiInfo.spacerValue, 0.dp, spotUiInfo.spacerValue, 200.dp)
+            .padding(startPadding, 0.dp, spotUiInfo.spacerValue, 200.dp)
             .heightIn(min = minHeight - 200.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,

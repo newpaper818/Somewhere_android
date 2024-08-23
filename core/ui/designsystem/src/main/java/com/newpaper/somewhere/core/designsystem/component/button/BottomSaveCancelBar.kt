@@ -9,21 +9,24 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
-import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.designsystem.R
 
@@ -45,31 +48,34 @@ fun AnimatedBottomSaveCancelButtons(
             animationSpec = tween(400),
             targetOffsetY = { (it * 2).toInt() })
     ) {
-        if (!use2PanesAndSpotScreen) {
-            SaveCancelButtons(
-                onClickCancel = onClickCancel,
-                onClickSave = onClickSave,
-                modifier = modifier,
-                saveEnabled = saveEnabled
-            )
-        }
-        else{
-            Row {
+
+        Row {
+            if (use2PanesAndSpotScreen)
                 Spacer(modifier = Modifier.weight(1f))
 
-                MySpacerRow(width = 316.dp)
+            Column(modifier = Modifier.weight(1f)) {
+                //gradation
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(34.dp)
+                        .background(
+                            brush = Brush.verticalGradient(
+                                listOf(Color.Transparent, MaterialTheme.colorScheme.background)
+                            )
+                        )
+                )
 
-                Spacer(modifier = Modifier.weight(2f))
-
+                //no gradation
                 SaveCancelButtons(
                     onClickCancel = onClickCancel,
                     onClickSave = onClickSave,
-                    modifier = modifier,
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.background),
                     saveEnabled = saveEnabled
                 )
-                Spacer(modifier = Modifier.weight(1f))
             }
-
         }
     }
 }
@@ -82,17 +88,30 @@ fun SaveCancelButtons(
     saveEnabled: Boolean = true
 ) {
     Column(
-        modifier = modifier
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row {
-            BigCancelButton(onClick = onClickCancel)
+        MySpacerColumn(height = 2.dp)
 
-            Spacer(modifier = Modifier.width(16.dp))
+        Row(
+            modifier = Modifier.widthIn(max = 330.dp)
+        ) {
+            Spacer(modifier = Modifier.width(10.dp))
+
+            BigCancelButton(
+                onClick = onClickCancel,
+                modifier = Modifier.weight(1f)
+            )
+
+            Spacer(modifier = Modifier.width(10.dp))
 
             BigSaveButton(
                 onClick = onClickSave,
-                enabled = saveEnabled
+                enabled = saveEnabled,
+                modifier = Modifier.weight(1f)
             )
+
+            Spacer(modifier = Modifier.width(10.dp))
         }
 
         MySpacerColumn(height = 10.dp)
@@ -102,21 +121,16 @@ fun SaveCancelButtons(
 @Composable
 private fun BigCancelButton(
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     enabled: Boolean = true
 ){
     Button(
-        modifier = Modifier
-            .height(45.dp)
-            .width(150.dp)
-            .shadow(
-                elevation = 4.dp,
-                shape = MaterialTheme.shapes.large
-            ),
+        modifier = modifier.height(48.dp), //max width: 150.dp
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            containerColor = MaterialTheme.colorScheme.surfaceTint,
             contentColor = MaterialTheme.colorScheme.onSurface
         ),
-        shape = MaterialTheme.shapes.large,
+        shape = MaterialTheme.shapes.medium,
         enabled = enabled,
         onClick = onClick
     ) {
@@ -130,20 +144,12 @@ private fun BigCancelButton(
 @Composable
 private fun BigSaveButton(
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     enabled: Boolean = true
 ){
-    val shadowElevation = if (enabled) 4.dp
-                            else 0.dp
-
     Button(
-        modifier = Modifier
-            .height(45.dp)
-            .width(150.dp)
-            .shadow(
-                elevation = shadowElevation,
-                shape = MaterialTheme.shapes.large
-            ),
-        shape = MaterialTheme.shapes.large,
+        modifier = modifier.height(48.dp), //max width: 150.dp
+        shape = MaterialTheme.shapes.medium,
         enabled = enabled,
         onClick = onClick
     ) {
