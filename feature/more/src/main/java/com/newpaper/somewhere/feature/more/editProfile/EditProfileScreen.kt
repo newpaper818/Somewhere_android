@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.more.editProfile
 
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -26,7 +28,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -41,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -48,7 +50,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.newpaper.somewhere.core.designsystem.component.button.SaveButton
+import com.newpaper.somewhere.core.designsystem.component.MyScaffold
+import com.newpaper.somewhere.core.designsystem.component.button.ChangeProfileImageButton
+import com.newpaper.somewhere.core.designsystem.component.button.DeleteProfileImageButton
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
@@ -60,6 +64,7 @@ import com.newpaper.somewhere.core.designsystem.theme.CustomColor
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.ui.MyTextField
 import com.newpaper.somewhere.core.ui.card.ProfileImage
+import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
 import com.newpaper.somewhere.feature.more.R
 import kotlinx.coroutines.launch
 
@@ -104,11 +109,26 @@ fun EditProfileRoute(
     val failText = stringResource(id = R.string.snackbar_fail_update_profile)
     val noChangedText = stringResource(id = R.string.snackbar_no_changed)
 
+    val onClickBackButton = {
+        if (editProfileViewModel.checkProfileInfoChanged(userData))
+            editProfileViewModel.setShowExitDialog(true)
+        else
+            navigateUp()
+
+    }
+
+    BackHandler {
+        onClickBackButton()
+    }
+
+
     EditProfileScreen(
         editProfileUiState = editProfileUiState,
         userData = userData,
         spacerValue = spacerValue,
         internetEnabled = internetEnabled,
+        showExitDialog = editProfileUiState.showExitDialog,
+        setShowExitDialog = editProfileViewModel::setShowExitDialog,
         snackBarHostState = snackBarHostState,
         downloadImage = editProfileViewModel::getImage,
         onClickEditImage = {
@@ -139,6 +159,7 @@ fun EditProfileRoute(
                 updateUserState = updateUserState
             )
         },
+        onClickBack = onClickBackButton,
         navigateUp = navigateUp,
         modifier = modifier
     )
@@ -150,6 +171,8 @@ private fun EditProfileScreen(
     userData: UserData,
     spacerValue: Dp,
     internetEnabled: Boolean,
+    showExitDialog: Boolean,
+    setShowExitDialog: (Boolean) -> Unit,
 
     snackBarHostState: SnackbarHostState,
     downloadImage: (imagePath: String, tripManagerId: String, (Boolean) -> Unit) -> Unit,
@@ -158,33 +181,57 @@ private fun EditProfileScreen(
     onClickDeleteImage: () -> Unit,
     onUserNameChanged: (String) -> Unit,
     onSaveClick: () -> Unit,
+    onClickBack: () -> Unit,
 
     navigateUp: () -> Unit,
 
     modifier: Modifier = Modifier,
 ){
-    Scaffold(
+    MyScaffold(
         modifier = modifier
             .imePadding()
             .navigationBarsPadding()
             .displayCutoutPadding(),
         contentWindowInsets = WindowInsets(bottom = 0),
 
+        bottomSaveCancelBarVisible = !showExitDialog,
+        onClickCancel = onClickBack,
+        onClickSave = onSaveClick,
+        saveEnabled = internetEnabled
+                && !editProfileUiState.isInvalidUserName
+                && editProfileUiState.isSaveButtonEnabled,
+
         topBar = {
             SomewhereTopAppBar(
                 startPadding = spacerValue,
                 title = stringResource(id = R.string.edit_profile),
                 navigationIcon = TopAppBarIcon.close,
-                onClickNavigationIcon = { navigateUp() }
+                onClickNavigationIcon = { onClickBack() }
             )
         },
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarHostState,
-                modifier = Modifier.width(500.dp)
+                modifier = Modifier
+                    .width(500.dp)
+                    .padding(bottom = 60.dp)
+                    .imePadding()
             )
         }
     ) { paddingValues ->
+
+        //dialog
+        if (showExitDialog){
+            DeleteOrNotDialog(
+                bodyText = stringResource(id = R.string.dialog_body_are_you_sure_to_exit),
+                deleteButtonText = stringResource(id = R.string.dialog_button_exit),
+                onDismissRequest = { setShowExitDialog(false) },
+                onClickDelete = {
+                    setShowExitDialog(false)
+                    navigateUp()
+                }
+            )
+        }
 
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -194,11 +241,6 @@ private fun EditProfileScreen(
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            //email
-            item {
-                EmailText(email = userData.email)
-            }
-
             //profile image
             item {
                 EditableProfileImage(
@@ -207,7 +249,8 @@ private fun EditProfileScreen(
                     profileImage = editProfileUiState.userProfileImagePath,
                     downloadImage = downloadImage,
                     onClickEditImage = onClickEditImage,
-                    onClickDeleteImage = onClickDeleteImage
+                    onClickDeleteImage = onClickDeleteImage,
+                    modifier  = Modifier.widthIn(max = 500.dp)
                 )
             }
 
@@ -226,13 +269,12 @@ private fun EditProfileScreen(
             //save button
             item {
                 InternetUnavailableText(internetEnabled)
+            }
 
-                SaveButton(
-                    onClick = {
-                        onSaveClick()
-                    },
-                    enabled = internetEnabled && !editProfileUiState.isInvalidUserName && editProfileUiState.isSaveButtonEnabled
-                )
+            //email
+            item {
+                MySpacerColumn(height = 32.dp)
+                AccountInfo(userData = userData)
             }
         }
     }
@@ -248,45 +290,86 @@ private fun EditableProfileImage(
     onClickDeleteImage: () -> Unit,
     modifier: Modifier = Modifier
 ){
-    MyCard {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = modifier.padding(16.dp)
-        ) {
-
-            ProfileImage(
-                profileUserId = userId,
-                internetEnabled = internetEnabled,
-                profileImagePath = profileImage,
-                downloadImage = downloadImage
+    Column(
+        modifier = modifier
+    ) {
+        Row {
+            MySpacerRow(width = 16.dp)
+            Text(
+                text = stringResource(id = R.string.profile_image),
+                style = MaterialTheme.typography.labelMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             )
+        }
 
-            MySpacerColumn(height = 8.dp)
+        MySpacerColumn(height = 6.dp)
 
-            Row{
+        MyCard {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+
+                ProfileImage(
+                    profileUserId = userId,
+                    internetEnabled = internetEnabled,
+                    profileImagePath = profileImage,
+                    downloadImage = downloadImage
+                )
+
+                MySpacerRow(12.dp)
+
                 //edit button
-                IconButton(onClick = onClickEditImage) {
-                    DisplayIcon(icon = MyIcons.editProfileImage)
-                }
+                ChangeProfileImageButton(
+                    onClick = onClickEditImage,
+                    modifier = Modifier
+                        .weight(1f)
+                        .heightIn(min = 66.dp)
+                )
 
-                MySpacerRow(width = 8.dp)
+                MySpacerRow(8.dp)
 
                 //delete button
-                IconButton(onClick = onClickDeleteImage) {
-                    DisplayIcon(icon = MyIcons.deleteProfileImage)
-                }
+                DeleteProfileImageButton(
+                    onClick = onClickDeleteImage,
+                    enabled = profileImage != null,
+                    modifier = Modifier
+                        .weight(1f)
+                        .heightIn(min = 66.dp)
+                )
             }
         }
     }
 }
 
 @Composable
-private fun EmailText(
-    email: String?
+private fun AccountInfo(
+    userData: UserData,
+    textStyle: TextStyle = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
 ){
     Text(
-        text = email ?: "no email",
-        style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+        text = userData.email ?: "no email",
+        style = textStyle
+    )
+    
+    MySpacerColumn(height = 6.dp)
+
+    var connectedWithInfoText = stringResource(id = R.string.connected_with) + " "
+
+    userData.providerIds.forEachIndexed { index, providerId ->
+        if (index != 0) {
+            connectedWithInfoText += ", "
+        }
+        connectedWithInfoText += providerId.providerName
+    }
+
+    Text(
+        text = connectedWithInfoText,
+        style = textStyle
     )
 }
 
@@ -316,16 +399,13 @@ private fun EditableUserName(
         MySpacerColumn(height = 6.dp)
 
         MyCard(
-//            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceDim),
             modifier = Modifier
                 .fillMaxWidth()
                 .border(1.dp, borderColor, RoundedCornerShape(16.dp)),
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-//                    .padding(16.dp)
+                modifier = Modifier.fillMaxWidth()
             ) {
                 MyTextField(
                     inputText = userName,
@@ -376,7 +456,6 @@ private fun InternetUnavailableText(
                 style = MaterialTheme.typography.bodyMedium.copy(MaterialTheme.colorScheme.onSurfaceVariant),
                 textAlign = TextAlign.Center
             )
-            MySpacerColumn(height = 8.dp)
         }
     }
 }

@@ -350,7 +350,7 @@ private fun TripsScreen(
     ) { paddingValues ->
 
         //dialogs
-        if(dialog.showExitDialog){
+        if (dialog.showExitDialog){
             DeleteOrNotDialog(
                 bodyText = stringResource(id = R.string.dialog_body_are_you_sure_to_exit),
                 deleteButtonText = stringResource(id = R.string.dialog_button_exit),

@@ -18,11 +18,13 @@ import com.newpaper.somewhere.core.designsystem.component.button.AnimatedBottomS
 fun MyScaffold(
     modifier: Modifier = Modifier,
 
-    bottomSaveCancelBarVisible: Boolean = false,
     glanceSpot: @Composable () -> Unit = {},
+
+    bottomSaveCancelBarVisible: Boolean = false,
     onClickCancel: () -> Unit = {},
     onClickSave: () -> Unit = {},
     saveEnabled: Boolean = true,
+
     use2PanesAndSpotScreen: Boolean = false,
     useBottomNavBar: Boolean = false,
 

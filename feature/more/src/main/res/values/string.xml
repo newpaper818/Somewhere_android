@@ -26,11 +26,15 @@
 
     <!--editProfile==============================================================================-->
     <string name="name">Name</string>
+    <string name="profile_image">Profile image</string>
     <string name="no_name">No name</string>
     <string name="internet_unavailable_check_connection">Internet unavailable\nCheck internet connection</string>
     <string name="snackbar_success_update_profile">Update profile success</string>
     <string name="snackbar_fail_update_profile">Update profile error. Do it later.</string>
     <string name="snackbar_no_changed">No changed</string>
+    <string name="connected_with">Connected with</string>
+    <string name="dialog_body_are_you_sure_to_exit">Are you sure to exit?\nUnsaved data will be delete</string>
+    <string name="dialog_button_exit">Exit</string>
 
     <!--more=====================================================================================-->
     <string name="more">More</string>
