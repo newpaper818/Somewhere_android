@@ -334,12 +334,9 @@ private fun IconTextButtonColumn(
         modifier = modifier
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            DisplayIcon(
-                icon = icon
-            )
+            DisplayIcon(icon = icon)
 
             MySpacerColumn(6.dp)
 

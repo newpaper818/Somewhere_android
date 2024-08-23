@@ -328,7 +328,7 @@ private fun EditableProfileImage(
                     onClick = onClickEditImage,
                     modifier = Modifier
                         .weight(1f)
-                        .heightIn(min = 66.dp)
+                        .heightIn(min = 88.dp)
                 )
 
                 MySpacerRow(8.dp)
@@ -339,7 +339,7 @@ private fun EditableProfileImage(
                     enabled = profileImage != null,
                     modifier = Modifier
                         .weight(1f)
-                        .heightIn(min = 66.dp)
+                        .heightIn(min = 88.dp)
                 )
             }
         }
