@@ -504,7 +504,7 @@ private fun SpotScreen(
             stringResource(id = R.string.sub_title, dateList[currentDateIndex].getDateText(spotUiInfo.dateTimeFormat, includeYear = true), dateTitle)
 
     val snackBarPadding by animateFloatAsState(
-        targetValue = if (spotMap.isMapExpand) 75f
+        targetValue = if (spotMap.isMapExpand) 66f
                         else if (spotUiInfo.isEditMode && !spotDialog.showSetLocationDialog) 56f
                         else if (spotDialog.showSetLocationDialog) {
                             if (LocalConfiguration.current.screenWidthDp > 670)
