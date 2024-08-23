@@ -27,6 +27,7 @@ import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.material.icons.rounded.ExpandMore
 import androidx.compose.material.icons.rounded.FileDownload
 import androidx.compose.material.icons.rounded.Fullscreen
+import androidx.compose.material.icons.rounded.Image
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.LocationDisabled
@@ -137,7 +138,7 @@ object MyIcons {
     val noSpot = MyIcon(Icons.Rounded.LocationOff,    40.dp, true, null, null)
 
     //edit profile
-    val changeProfileImage = MyIcon(Icons.Rounded.Edit,       24.dp, false, null, R.string.change_profile_image)
+    val changeProfileImage = MyIcon(Icons.Rounded.Image,    24.dp, false, null, R.string.change_profile_image)
     val deleteProfileImage = MyIcon(Icons.Rounded.Delete,   24.dp, false, null, R.string.delete_profile_image)
 
     //image card
