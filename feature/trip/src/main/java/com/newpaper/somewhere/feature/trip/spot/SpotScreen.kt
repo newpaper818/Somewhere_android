@@ -1028,7 +1028,7 @@ private fun Spot2Panes(
         MyCard(
             modifier = Modifier
                 .weight(1f)
-                .padding(start = 24.dp, bottom = 24.dp)
+                .padding(24.dp, 0.dp, 12.dp, 24.dp)
         ) {
             SpotMapCard(
                 use2Panes = true,
