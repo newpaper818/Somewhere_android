@@ -20,6 +20,7 @@ import com.newpaper.somewhere.feature.trip.trips.tripCardHeightDp
 @Composable
 internal fun LoadingTripsItem(
     shown: Boolean,
+    internetEnabled: Boolean,
     modifier: Modifier = Modifier
 ){
     AnimatedVisibility(
@@ -30,7 +31,10 @@ internal fun LoadingTripsItem(
 
         Column(modifier = modifier) {
 
-            MySpacerColumn(height = 124.dp) //
+            if (internetEnabled)
+                MySpacerColumn(height = 124.dp)
+            else
+                MySpacerColumn(height = 66.dp)
 
             repeat(3) {
                 Box(
