@@ -122,8 +122,8 @@ fun ImageCard(
             isOverImage(true)
         }
 
-        if (uriList.size > 20){
-            addUriList = addUriList.subList(0, 20)
+        if (uriList.size > 10){
+            addUriList = addUriList.subList(0, 10)
         }
 
         val fileList: MutableList<String> = mutableListOf()
