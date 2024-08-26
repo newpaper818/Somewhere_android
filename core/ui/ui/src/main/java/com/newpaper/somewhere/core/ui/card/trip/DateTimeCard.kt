@@ -266,9 +266,8 @@ private fun OneTimeRow(
                         modifier = Modifier.size(21.dp)
                     ) {
                         DisplayIcon(
-                            icon = MyIcons.delete,
-                            descriptionTextId = if (isStart) R.string.delete_start_time
-                                                else R.string.delete_end_time
+                            icon = if (isStart) MyIcons.deleteStartTime
+                                    else MyIcons.deleteEndTime
                         )
                     }
                 }

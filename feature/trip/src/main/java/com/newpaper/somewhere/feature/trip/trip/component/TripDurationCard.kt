@@ -169,7 +169,10 @@ internal fun TripDurationCard(
 
                 //clickable icon
                 if (isEditMode)
-                    DisplayIcon(icon = MyIcons.clickableItem)
+                    DisplayIcon(
+                        icon = MyIcons.clickableItem,
+                        contentDescriptionIsNull = true
+                    )
             }
         }
 

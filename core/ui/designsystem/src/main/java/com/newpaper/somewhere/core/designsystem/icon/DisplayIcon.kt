@@ -1,6 +1,5 @@
 package com.newpaper.somewhere.core.designsystem.icon
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -17,13 +16,12 @@ fun DisplayIcon(
 
     enabled: Boolean = true,/**color priority: [enabled] > [color] > [icon.color]**/
     color: Color? = null,
-
-    @StringRes descriptionTextId: Int? = null
+    contentDescriptionIsNull: Boolean = false
 ){
     val imageVector = icon.imageVector
-    val contentDescriptionId = descriptionTextId ?: icon.descriptionTextId
-    val contentDescription = if (contentDescriptionId != null) stringResource(id = contentDescriptionId)
+    val contentDescription = if (!contentDescriptionIsNull) stringResource(id = icon.descriptionTextId)
                                 else null
+
 
     val modifier = Modifier.size(icon.size)
 
