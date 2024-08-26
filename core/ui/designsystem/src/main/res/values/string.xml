@@ -91,6 +91,9 @@
 
     <!--MyIcons-->
     <string name="sign_in">Sign in</string>
+    <string name="no_trips">No trips</string>
+    <string name="no_plan">No plan</string>
+    <string name="no_spot">No spot</string>
     <string name="change_profile_image">Change profile image</string>
     <string name="delete_profile_image">Delete profile image</string>
     <string name="delete_image">Delete image</string>
@@ -98,9 +101,11 @@
     <string name="clear_text">Clear text</string>
     <string name="expand">Expand</string>
     <string name="collapse">Collapse</string>
+    <string name="delete_spot">Delete spot</string>
     <string name="delete_start_time">Delete start time</string>
     <string name="delete_end_time">Delete end time</string>
     <string name="drag_handle">Drag handle</string>
+    <string name="clickable_item">Clickable menu</string>
     <string name="set_color">Set color</string>
     <string name="selected_color">Selected color</string>
     <string name="date">Date</string>

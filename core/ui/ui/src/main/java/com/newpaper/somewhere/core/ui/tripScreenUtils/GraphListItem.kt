@@ -410,8 +410,7 @@ private fun Icons(
     ) {
         IconButton(onClick = onClickDelete) {
             DisplayIcon(
-                icon = MyIcons.delete,
-                descriptionTextId = R.string.delete_spot
+                icon = MyIcons.deleteSpot
             )
         }
     }

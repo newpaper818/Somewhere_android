@@ -34,7 +34,10 @@ internal fun NoTripCard(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             //icon
-            DisplayIcon(icon = MyIcons.noTrips)
+            DisplayIcon(
+                icon = MyIcons.noTrips,
+                contentDescriptionIsNull = true
+            )
 
             MySpacerColumn(height = 16.dp)
 

@@ -27,7 +27,10 @@ internal fun NoSpotCard(
         verticalArrangement = Arrangement.Center
     ){
         //icon
-        DisplayIcon(icon = MyIcons.noSpot)
+        DisplayIcon(
+            icon = MyIcons.noSpot,
+            contentDescriptionIsNull = true
+        )
 
         MySpacerColumn(height = 16.dp)
 

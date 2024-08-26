@@ -168,7 +168,10 @@ fun IconTextRow(
                         MySpacerRow(width = 4.dp)
 
                         //clickable icon
-                        DisplayIcon(icon = MyIcons.clickableItem)
+                        DisplayIcon(
+                            icon = MyIcons.clickableItem,
+                            contentDescriptionIsNull = true
+                        )
                     }
                 }
             }

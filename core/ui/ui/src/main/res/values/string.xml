@@ -29,8 +29,6 @@
     <string name="date_time_card_date_text">%s - %s</string>
     <string name="date_time_card_starts">Starts</string>
     <string name="date_time_card_ends">Ends</string>
-    <string name="delete_start_time">Delete start time</string>
-    <string name="delete_end_time">Delete end time</string>
 
     <!--ImageCard.kt-->
     <string name="image_card_title">Images %d/%d</string>
@@ -137,7 +135,6 @@
     <!--GraphListItem.kt-->
     <string name="no_title">No Title</string>
     <string name="add_a_title">Add a Title</string>
-    <string name="delete_spot">Delete spot</string>
 
 
 

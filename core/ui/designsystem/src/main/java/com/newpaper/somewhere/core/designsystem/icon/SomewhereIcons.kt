@@ -63,7 +63,7 @@ data class MyIcon(
     val size: Dp = 22.dp,
     val isGray: Boolean = false,
     val color: Color? = null,  /**if null, set [color] to Material.colors.onSurface, onBackground...*/
-    @StringRes val descriptionTextId: Int? = null
+    @StringRes val descriptionTextId: Int = 0
 )
 
 
@@ -80,7 +80,7 @@ object NavigationBarIcon {
 }
 
 object TopAppBarIcon {
-    val back = MyIcon(Icons.AutoMirrored.Rounded.ArrowBack,     22.dp, false, null, R.string.back)
+    val back = MyIcon(Icons.AutoMirrored.Rounded.ArrowBack,     22.dp, false, null, R.string.navigate_up)
     val edit = MyIcon(Icons.Rounded.Edit,                       22.dp, false, null, R.string.edit)
     val close = MyIcon(Icons.Rounded.Close,                     22.dp, false, null, R.string.close)
     val more = MyIcon(Icons.Rounded.MoreVert,                   22.dp, false, null, R.string.more)
@@ -133,9 +133,9 @@ object MyIcons {
     val internetUnavailable = MyIcon(Icons.Rounded.CloudOff,    40.dp, true, null, R.string.internet_unavailable)
 
     //no item
-    val noTrips = MyIcon(Icons.Rounded.Luggage,       40.dp, true, null, null)
-    val noPlan = MyIcon(Icons.Rounded.EditNote,       40.dp, true, null, null)
-    val noSpot = MyIcon(Icons.Rounded.LocationOff,    40.dp, true, null, null)
+    val noTrips = MyIcon(Icons.Rounded.Luggage,       40.dp, true, null, R.string.no_trips)
+    val noPlan = MyIcon(Icons.Rounded.EditNote,       40.dp, true, null, R.string.no_plan)
+    val noSpot = MyIcon(Icons.Rounded.LocationOff,    40.dp, true, null, R.string.no_spot)
 
     //edit profile
     val changeProfileImage = MyIcon(Icons.Rounded.Image,    24.dp, false, null, R.string.change_profile_image)
@@ -155,8 +155,11 @@ object MyIcons {
 
     //
     val delete = MyIcon(Icons.Rounded.Delete,            22.dp, true, null, R.string.delete)
+    val deleteSpot = MyIcon(Icons.Rounded.Delete,            22.dp, true, null, R.string.delete_spot)
+    val deleteStartTime = MyIcon(Icons.Rounded.Delete,   22.dp, true, null, R.string.delete_start_time)
+    val deleteEndTime = MyIcon(Icons.Rounded.Delete,     22.dp, true, null, R.string.delete_end_time)
     val dragHandle = MyIcon(Icons.Rounded.DragHandle,    22.dp, true, null, R.string.drag_handle)
-    val clickableItem = MyIcon(Icons.AutoMirrored.Rounded.NavigateNext,    22.dp, true, null, null)
+    val clickableItem = MyIcon(Icons.AutoMirrored.Rounded.NavigateNext,    22.dp, true, null, R.string.clickable_item)
 
 
     //set color
