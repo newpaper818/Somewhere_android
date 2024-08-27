@@ -314,10 +314,9 @@ private fun TripsScreen(
                 title = if (!isEditMode) stringResource(id = R.string.trips)
                         else stringResource(id = R.string.edit_trips),
 
-                actionIcon2 = if (!isEditMode && !loadingTrips) TopAppBarIcon.edit else null,
-                actionIcon2Onclick = {
-                    tripsUiInfo.setIsEditMode(true)
-                },
+                actionIcon1 = TopAppBarIcon.edit,
+                actionIcon1Onclick = { tripsUiInfo.setIsEditMode(true) },
+                actionIcon1Visible = !isEditMode && !loadingTrips,
                 startPadding = spacerValue
             )
         },
