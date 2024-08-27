@@ -25,6 +25,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
+import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
@@ -104,8 +106,10 @@ fun MyDialog(
                                 modifier.fillMaxWidth(),
                                 contentAlignment = Alignment.CenterEnd
                             ) {
-                                IconButton(onClick = onDismissRequest) {
-                                    DisplayIcon(icon = TopAppBarIcon.close)
+                                MyPlainTooltipBox(tooltipText = stringResource(id = TopAppBarIcon.close.descriptionTextId)) {
+                                    IconButton(onClick = onDismissRequest) {
+                                        DisplayIcon(icon = TopAppBarIcon.close)
+                                    }
                                 }
                             }
                         }

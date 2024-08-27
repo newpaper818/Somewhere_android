@@ -83,7 +83,7 @@ object TopAppBarIcon {
     val back = MyIcon(Icons.AutoMirrored.Rounded.ArrowBack,     22.dp, false, null, R.string.navigate_up)
     val edit = MyIcon(Icons.Rounded.Edit,                       22.dp, false, null, R.string.edit)
     val close = MyIcon(Icons.Rounded.Close,                     22.dp, false, null, R.string.close)
-    val more = MyIcon(Icons.Rounded.MoreVert,                   22.dp, false, null, R.string.more)
+    val more = MyIcon(Icons.Rounded.MoreVert,                   22.dp, false, null, R.string.more_options)
     val closeImageScreen = MyIcon(Icons.Rounded.Close,          22.dp, false, CustomColor.white, R.string.close)
     val downloadImage = MyIcon(Icons.Rounded.FileDownload,      22.dp, false, CustomColor.white, R.string.download_image)
     val inviteFriend = MyIcon(Icons.Rounded.PersonAdd,          22.dp, false, null, R.string.invite_friend)
@@ -179,7 +179,7 @@ object MyIcons {
     val rightArrowToSmall = MyIcon(Icons.Rounded.East,  18.dp, true, null, R.string.to)
 
     //set time dialog
-    val switchToTextInput = MyIcon(Icons.Outlined.Keyboard,   22.dp, true, null, R.string.switch_to_text_input)
+    val switchToTextInput = MyIcon(Icons.Outlined.Keyboard,   22.dp, true, null, R.string.switch_to_keyboard_input)
     val switchToTouchInput = MyIcon(Icons.Rounded.Schedule,   22.dp, true, null, R.string.switch_to_touch_input)
 
     //information card
@@ -195,5 +195,5 @@ object MyIcons {
     val friends = MyIcon(Icons.Rounded.People,          22.dp, true, null, R.string.number_of_trip_mates)
     val inviteFriend = MyIcon(Icons.Rounded.PersonAdd,  22.dp, false, null, R.string.invite_friend)
     val manager = MyIcon(Icons.Rounded.ManageAccounts,  22.dp, true, null, R.string.manager)
-    val getOut = MyIcon(Icons.Rounded.Logout,           24.dp, true, null, R.string.get_out)
+    val leaveTrip = MyIcon(Icons.Rounded.Logout,           24.dp, true, null, R.string.leave_trip)
 }

@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
+import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
@@ -87,9 +88,14 @@ fun SetTimeDialog(
             Row {
                 //switch to touch/text input icon button
                 if (screenHeightLong) {
-                    IconButton(onClick = { isTouchInput = !isTouchInput }) {
-                        if (isTouchInput) DisplayIcon(icon = MyIcons.switchToTextInput)
-                        else DisplayIcon(icon = MyIcons.switchToTouchInput)
+                    MyPlainTooltipBox(
+                        tooltipText = if (isTouchInput) stringResource(id = MyIcons.switchToTextInput.descriptionTextId)
+                                        else stringResource(id = MyIcons.switchToTouchInput.descriptionTextId)
+                    ) {
+                        IconButton(onClick = { isTouchInput = !isTouchInput }) {
+                            if (isTouchInput) DisplayIcon(icon = MyIcons.switchToTextInput)
+                            else DisplayIcon(icon = MyIcons.switchToTouchInput)
+                        }
                     }
 
                     Spacer(modifier = Modifier.weight(1f))

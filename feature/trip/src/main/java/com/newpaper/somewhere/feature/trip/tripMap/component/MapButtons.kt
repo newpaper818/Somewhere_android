@@ -14,10 +14,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.maps.android.compose.CameraPositionState
+import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MapButtonIcon
@@ -46,30 +48,34 @@ internal fun MapButtons(
                 .background(MaterialTheme.colorScheme.surface.copy(0.85f)),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            IconButton(
-                enabled = cameraPositionState.position.zoom < MAX_ZOOM_LEVEL,
-                onClick = {
-                    coroutineScope.launch {
-                        cameraPositionState.animate(
-                            CameraUpdateFactory.zoomIn()
-                        )
+            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomIn.descriptionTextId)) {
+                IconButton(
+                    enabled = cameraPositionState.position.zoom < MAX_ZOOM_LEVEL,
+                    onClick = {
+                        coroutineScope.launch {
+                            cameraPositionState.animate(
+                                CameraUpdateFactory.zoomIn()
+                            )
+                        }
                     }
+                ) {
+                    DisplayIcon(icon = MapButtonIcon.zoomIn)
                 }
-            ) {
-                DisplayIcon(icon = MapButtonIcon.zoomIn)
             }
 
-            IconButton(
-                enabled = cameraPositionState.position.zoom > MIN_ZOOM_LEVEL,
-                onClick = {
-                    coroutineScope.launch {
-                        cameraPositionState.animate(
-                            CameraUpdateFactory.zoomOut()
-                        )
+            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomOut.descriptionTextId)) {
+                IconButton(
+                    enabled = cameraPositionState.position.zoom > MIN_ZOOM_LEVEL,
+                    onClick = {
+                        coroutineScope.launch {
+                            cameraPositionState.animate(
+                                CameraUpdateFactory.zoomOut()
+                            )
+                        }
                     }
+                ) {
+                    DisplayIcon(icon = MapButtonIcon.zoomOut)
                 }
-            ) {
-                DisplayIcon(icon = MapButtonIcon.zoomOut)
             }
         }
 

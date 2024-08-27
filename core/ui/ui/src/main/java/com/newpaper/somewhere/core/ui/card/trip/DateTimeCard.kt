@@ -41,6 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
+import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
@@ -261,14 +262,19 @@ private fun OneTimeRow(
                 Row {
                     MySpacerRow(width = 8.dp)
 
-                    IconButton(
-                        onClick = onClickDeleteTime,
-                        modifier = Modifier.size(21.dp)
+                    MyPlainTooltipBox(
+                        tooltipText = if (isStart) stringResource(id = MyIcons.deleteStartTime.descriptionTextId)
+                                        else stringResource(id = MyIcons.deleteEndTime.descriptionTextId)
                     ) {
-                        DisplayIcon(
-                            icon = if (isStart) MyIcons.deleteStartTime
-                                    else MyIcons.deleteEndTime
-                        )
+                        IconButton(
+                            onClick = onClickDeleteTime,
+                            modifier = Modifier.size(21.dp)
+                        ) {
+                            DisplayIcon(
+                                icon = if (isStart) MyIcons.deleteStartTime
+                                else MyIcons.deleteEndTime
+                            )
+                        }
                     }
                 }
             }

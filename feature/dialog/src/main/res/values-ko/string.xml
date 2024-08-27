@@ -9,8 +9,8 @@
     <string name="date_range_headline">%s - %s</string>
 
     <!--DeleteOrNotDialog.kt-->
-    <string name="delete_friend">친구를 여행에서 삭제할까요?</string>
-    <string name="get_out_shared_trip">공유받은 여행에서 나갈까요?</string>
+    <string name="dialog_delete_friend">친구를 여행에서 삭제할까요?</string>
+    <string name="leave_shared_trip">공유받은 여행에서 나갈까요?</string>
 
     <!--DeletingAccountDialog.kt-->
     <string name="deleting_account">계정 삭제하는 중…</string>

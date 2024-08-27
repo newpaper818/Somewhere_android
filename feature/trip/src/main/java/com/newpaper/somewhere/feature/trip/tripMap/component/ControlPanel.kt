@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import com.google.maps.android.compose.CameraPositionState
 import com.newpaper.somewhere.core.designsystem.component.button.SpotTypeGroupCard
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
+import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
@@ -238,8 +239,10 @@ internal fun ControlButtonsRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         //back button
-        IconButton(onClick = onBackButtonClicked) {
-            DisplayIcon(icon = TopAppBarIcon.back)
+        MyPlainTooltipBox(tooltipText = stringResource(id = TopAppBarIcon.back.descriptionTextId)) {
+            IconButton(onClick = onBackButtonClicked) {
+                DisplayIcon(icon = TopAppBarIcon.back)
+            }
         }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -275,10 +278,12 @@ internal fun ControlButtonsRow(
                     .background(MaterialTheme.colorScheme.surfaceBright),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                IconButton(
-                    onClick = onClickPreviousDate
-                ) {
-                    DisplayIcon(icon = MapButtonIcon.prevDate)
+                MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.prevDate.descriptionTextId)) {
+                    IconButton(
+                        onClick = onClickPreviousDate
+                    ) {
+                        DisplayIcon(icon = MapButtonIcon.prevDate)
+                    }
                 }
 
                 val dateTextStyle = if (isDateShown) MaterialTheme.typography.labelLarge
@@ -303,10 +308,12 @@ internal fun ControlButtonsRow(
                     }
                 }
 
-                IconButton(
-                    onClick = onClickNextDate
-                ) {
-                    DisplayIcon(icon = MapButtonIcon.nextDate)
+                MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.nextDate.descriptionTextId)) {
+                    IconButton(
+                        onClick = onClickNextDate
+                    ) {
+                        DisplayIcon(icon = MapButtonIcon.nextDate)
+                    }
                 }
             }
         }
@@ -338,27 +345,31 @@ internal fun FocusOnToSpotButton(
     }
 
     if (focusOnToTargetEnabled){
-        IconButton(
-            onClick = {
-                focusOnToSpot(
-                    mapSize = mapSize,
-                    coroutineScope = coroutineScope,
-                    dateListWithShownMarkerList = dateListWithShownIconList,
-                    spotTypeWithShownMarkerList = spotTypeGroupWithShownIconList,
-                    cameraPositionState = cameraPositionState
-                )
+        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.focusOnToTarget.descriptionTextId)) {
+            IconButton(
+                onClick = {
+                    focusOnToSpot(
+                        mapSize = mapSize,
+                        coroutineScope = coroutineScope,
+                        dateListWithShownMarkerList = dateListWithShownIconList,
+                        spotTypeWithShownMarkerList = spotTypeGroupWithShownIconList,
+                        cameraPositionState = cameraPositionState
+                    )
+                }
+            ) {
+                DisplayIcon(icon = MapButtonIcon.focusOnToTarget)
             }
-        ) {
-            DisplayIcon(icon = MapButtonIcon.focusOnToTarget)
         }
     }
     else{
-        IconButton(
-            onClick = {
-                showSnackBar(snackBarText, null, SnackbarDuration.Short)
+        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.disabledFocusOnToTarget.descriptionTextId)) {
+            IconButton(
+                onClick = {
+                    showSnackBar(snackBarText, null, SnackbarDuration.Short)
+                }
+            ) {
+                DisplayIcon(icon = MapButtonIcon.disabledFocusOnToTarget)
             }
-        ) {
-            DisplayIcon(icon = MapButtonIcon.disabledFocusOnToTarget)
         }
     }
 }

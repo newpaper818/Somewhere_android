@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
+import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
@@ -74,14 +75,16 @@ internal fun SharingWithFriendsCard(
 
                     //invite friend button
                     if (userIsManager && trip.sharingTo.size < MAX_FRIEND_CNT && internetEnabled) {
-                        ClickableBox(
-                            modifier = Modifier.size(40.dp),
-                            shape = MaterialTheme.shapes.small,
-                            containerColor = MaterialTheme.colorScheme.surface,
-                            contentAlignment = Alignment.Center,
-                            onClick = onClickShareTrip
-                        ) {
-                            DisplayIcon(icon = MyIcons.inviteFriend)
+                        MyPlainTooltipBox(tooltipText = stringResource(id = MyIcons.inviteFriend.descriptionTextId)) {
+                            ClickableBox(
+                                modifier = Modifier.size(40.dp),
+                                shape = MaterialTheme.shapes.small,
+                                containerColor = MaterialTheme.colorScheme.surface,
+                                contentAlignment = Alignment.Center,
+                                onClick = onClickShareTrip
+                            ) {
+                                DisplayIcon(icon = MyIcons.inviteFriend)
+                            }
                         }
                     }
                 }

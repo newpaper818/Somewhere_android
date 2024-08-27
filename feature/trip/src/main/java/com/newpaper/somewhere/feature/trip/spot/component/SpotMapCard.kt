@@ -20,11 +20,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.maps.android.compose.CameraPositionState
 import com.newpaper.somewhere.core.designsystem.component.map.MapForSpot
+import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
@@ -233,10 +235,13 @@ fun UserLocationAndFullScreenButtons(
         UserLocationButton(fusedLocationClient, cameraPositionState, setUserLocationEnabled, showSnackBar)
 
         //fullscreen map
-        if (showFullScreenButton)
-            IconButton(onClick = onFullScreenClicked) {
-                DisplayIcon(icon = MapButtonIcon.fullscreen)
+        if (showFullScreenButton) {
+            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.fullscreen.descriptionTextId)) {
+                IconButton(onClick = onFullScreenClicked) {
+                    DisplayIcon(icon = MapButtonIcon.fullscreen)
+                }
             }
+        }
     }
 }
 
@@ -250,19 +255,29 @@ fun EditAndDeleteLocationButtons(
 ){
     MapButtonsRow {
         //edit location
-        IconButton(
-            enabled = editEnabled,
-            onClick = toggleIsEditLocation
-        ) {
-            DisplayIcon(icon = MapButtonIcon.editLocation, enabled = editEnabled)
+        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.editLocation.descriptionTextId)) {
+            IconButton(
+                enabled = editEnabled,
+                onClick = toggleIsEditLocation
+            ) {
+                DisplayIcon(
+                    icon = MapButtonIcon.editLocation,
+                    enabled = editEnabled
+                )
+            }
         }
 
         //delete location
-        IconButton(
-            enabled = deleteEnabled,
-            onClick = deleteLocation
-        ) {
-            DisplayIcon(icon = MapButtonIcon.deleteLocation, enabled = deleteEnabled)
+        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.deleteLocation.descriptionTextId)) {
+            IconButton(
+                enabled = deleteEnabled,
+                onClick = deleteLocation
+            ) {
+                DisplayIcon(
+                    icon = MapButtonIcon.deleteLocation,
+                    enabled = deleteEnabled
+                )
+            }
         }
     }
 }
@@ -283,11 +298,16 @@ fun SpotNavigateWithFocusOnToSpotButtons(
 ){
     MapButtonsRow {
         //to prev spot
-        IconButton(
-            enabled = toPrevSpotEnabled,
-            onClick = toPrevSpot
-        ) {
-            DisplayIcon(icon = MapButtonIcon.prevSpot, enabled = toPrevSpotEnabled)
+        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.prevSpot.descriptionTextId)) {
+            IconButton(
+                enabled = toPrevSpotEnabled,
+                onClick = toPrevSpot
+            ) {
+                DisplayIcon(
+                    icon = MapButtonIcon.prevSpot,
+                    enabled = toPrevSpotEnabled
+                )
+            }
         }
 
         //focus on to spot
@@ -295,11 +315,16 @@ fun SpotNavigateWithFocusOnToSpotButtons(
 
 
         //to next spot
-        IconButton(
-            enabled = toNextSpotEnabled,
-            onClick = toNextSpot
-        ) {
-            DisplayIcon(icon = MapButtonIcon.nextSpot, enabled = toNextSpotEnabled)
+        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.nextSpot.descriptionTextId)) {
+            IconButton(
+                enabled = toNextSpotEnabled,
+                onClick = toNextSpot
+            ) {
+                DisplayIcon(
+                    icon = MapButtonIcon.nextSpot,
+                    enabled = toNextSpotEnabled
+                )
+            }
         }
     }
 }
