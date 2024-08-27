@@ -1,5 +1,5 @@
 [versions]
-composeBom = "2024.02.00"
+composeBom = "2024.08.00"
 firebaseBom = "32.6.0"
 
 playService = "21.0.0"
