@@ -37,7 +37,6 @@ class TripMapViewModel @Inject constructor(
     fun initDateListWithShownMarkerList(
         dateList: List<Date>
     ){
-        Log.d("aaa", "initDateListWithShownMarkerList")
         val newList: MutableList<DateWithBoolean> = mutableListOf()
 
         for (date in dateList){

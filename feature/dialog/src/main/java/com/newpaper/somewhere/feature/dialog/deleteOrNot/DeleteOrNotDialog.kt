@@ -63,7 +63,7 @@ fun DeleteFriendDialog(
     onClickDelete: () -> Unit
 ){
     DeleteOrNotDialog(
-        bodyText = stringResource(id = R.string.delete_friend),
+        bodyText = stringResource(id = R.string.dialog_delete_friend),
         deleteButtonText = stringResource(id = R.string.button_delete),
         onDismissRequest = onDismissRequest,
         onClickDelete = onClickDelete
@@ -76,7 +76,7 @@ fun GetOutSharedTripDialog(
     onClickGetOut: () -> Unit
 ){
     DeleteOrNotDialog(
-        bodyText = stringResource(id = R.string.get_out_shared_trip),
+        bodyText = stringResource(id = R.string.leave_shared_trip),
         deleteButtonText = stringResource(id = R.string.button_get_out),
         onDismissRequest = onDismissRequest,
         onClickDelete = onClickGetOut
