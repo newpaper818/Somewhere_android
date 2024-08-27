@@ -551,21 +551,17 @@ private fun MapSearchBox(
             )
 
             //if texting show x icon
-            if (searchText != "")
+            if (searchText != "") {
                 IconButton(
-                    onClick = {
-                        onClearClicked()
-                    }
+                    onClick = { onClearClicked() }
                 ) {
                     DisplayIcon(icon = MyIcons.clearInputText)
                 }
+            }
 
             IconButton(
                 enabled = searchText != "",
-                onClick = {
-                    //search
-                    onSearchClicked()
-                }
+                onClick = { onSearchClicked() }
             ) {
                 DisplayIcon(icon = MyIcons.searchLocation)
             }
