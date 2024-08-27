@@ -49,125 +49,127 @@ fun SomewhereTopAppBar(
 
     actionIcon1: MyIcon? = null,
     actionIcon1Onclick: () -> Unit = {},
+    actionIcon1Visible: Boolean = true,
 
     actionIcon2: MyIcon? = null,
     actionIcon2Onclick: () -> Unit = {},
-    actionIcon2Visible: Boolean = false,
+    actionIcon2Visible: Boolean = true,
 
     dropdownMenuContent: @Composable () -> Unit = {},
 
     useHorizontalLayoutTitles: Boolean = false,
     startPadding: Dp = 16.dp
 ) {
-    Column {
 
+    //app bar
+    TopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+            actionIconContentColor = MaterialTheme.colorScheme.onSurface
+        ),
+        title = {
+            Row {
+                if (navigationIcon == null)
+                    MySpacerRow(width = startPadding)
 
-        //app bar
-        TopAppBar(
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-                navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
-                actionIconContentColor = MaterialTheme.colorScheme.onSurface
-            ),
-            title = {
-                Row {
-                    if (navigationIcon == null)
-                        MySpacerRow(width = startPadding)
-
-                    if (!useHorizontalLayoutTitles) {
-                        Column(
-                            modifier = Modifier,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = title,
-                                style = MaterialTheme.typography.titleLarge,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            if (subtitle != null) {
+                if (!useHorizontalLayoutTitles) {
+                    Column(
+                        modifier = Modifier,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.titleLarge,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        if (subtitle != null) {
+                            MySpacerColumn(height = 2.dp)
+                            TopAppBarSubtitle(subtitle = subtitle)
+                        }
+                        else {
+                            AnimatedVisibility(
+                                visible = !internetEnabled,
+                                enter = expandVertically(tween(300)),
+                                exit = shrinkVertically(tween(300))
+                            ) {
                                 MySpacerColumn(height = 2.dp)
-                                TopAppBarSubtitle(subtitle = subtitle)
+                                InternetUnavailable()
                             }
-                            else {
-                                AnimatedVisibility(
-                                    visible = !internetEnabled,
-                                    enter = expandVertically(tween(300)),
-                                    exit = shrinkVertically(tween(300))
-                                ) {
-                                    MySpacerColumn(height = 2.dp)
+                        }
+                    }
+                }
+                else {
+                    Row(
+                        modifier = Modifier,
+                        verticalAlignment = Alignment.Bottom
+                    ) {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.titleLarge,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        if (subtitle != null) {
+                            MySpacerRow(width = 24.dp)
+                            TopAppBarSubtitle(subtitle = subtitle)
+                        }
+                        else {
+                            AnimatedVisibility(
+                                visible = !internetEnabled,
+                                enter = expandHorizontally(tween(300)),
+                                exit = shrinkHorizontally(tween(300))
+                            ) {
+                                Row {
+                                    MySpacerRow(width = 24.dp)
                                     InternetUnavailable()
                                 }
                             }
                         }
                     }
-                    else {
-                        Row(
-                            modifier = Modifier,
-                            verticalAlignment = Alignment.Bottom
-                        ) {
-                            Text(
-                                text = title,
-                                style = MaterialTheme.typography.titleLarge,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            if (subtitle != null) {
-                                MySpacerRow(width = 24.dp)
-                                TopAppBarSubtitle(subtitle = subtitle)
-                            }
-                            else {
-                                AnimatedVisibility(
-                                    visible = !internetEnabled,
-                                    enter = expandHorizontally(tween(300)),
-                                    exit = shrinkHorizontally(tween(300))
-                                ) {
-                                    Row {
-                                        MySpacerRow(width = 24.dp)
-                                        InternetUnavailable()
-                                    }
-                                }
-                            }
-                        }
-                    }
                 }
+            }
 
-            },
-            navigationIcon = {
-                Row {
-                    if (navigationIcon != null) {
-                        IconButton(onClick = onClickNavigationIcon) {
-                            DisplayIcon(icon = navigationIcon)
-                        }
-                    }
+        },
+        navigationIcon = {
+            if (navigationIcon != null) {
+                IconButton(onClick = onClickNavigationIcon) {
+                    DisplayIcon(icon = navigationIcon)
                 }
-            },
-            actions = {
-                //action1
+            }
+        },
+        actions = {
+            //action1
+            AnimatedVisibility(
+                visible = actionIcon1Visible,
+                enter = fadeIn(tween(350)),
+                exit = fadeOut(tween(350))
+            ) {
                 if (actionIcon1 != null) {
                     IconButton(onClick = actionIcon1Onclick) {
                         DisplayIcon(icon = actionIcon1)
                     }
                 }
+            }
 
-                //action2
-                AnimatedVisibility(
-                    visible = actionIcon2Visible,
-                    enter = fadeIn(tween(500)),
-                    exit = fadeOut(tween(500))
-                ) {
-                    if (actionIcon2 != null) {
-                        IconButton(onClick = actionIcon2Onclick) {
-                            DisplayIcon(icon = actionIcon2)
-                        }
+            //action2
+            AnimatedVisibility(
+                visible = actionIcon2Visible,
+                enter = fadeIn(tween(350)),
+                exit = fadeOut(tween(350))
+            ) {
+                if (actionIcon2 != null) {
+                    IconButton(onClick = actionIcon2Onclick) {
+                        DisplayIcon(icon = actionIcon2)
                     }
                 }
-
-                //dropdown menu
-                dropdownMenuContent()
             }
-        )
-    }
+
+            //dropdown menu
+            dropdownMenuContent()
+        }
+    )
 }
 
 @Composable
