@@ -419,10 +419,9 @@ private fun TripScreen(
                 internetEnabled = internetEnabled,
                 navigationIcon = if(!isEditMode) TopAppBarIcon.back else null,
                 onClickNavigationIcon = { tripNavigate.navigateUp() },
-                actionIcon2 = if (!loadingTrip && !isEditMode && !use2Panes && showingTrip.editable) TopAppBarIcon.edit else null,
-                actionIcon2Onclick = {
-                    tripUiInfo.setIsEditMode(true)
-                }
+                actionIcon1 = TopAppBarIcon.edit,
+                actionIcon1Onclick = { tripUiInfo.setIsEditMode(true) },
+                actionIcon1Visible = !loadingTrip && !isEditMode && !use2Panes && showingTrip.editable
             )
         },
 

@@ -450,10 +450,9 @@ private fun DateScreen(
                 navigationIcon = if (dateUiInfo.use2Panes || dateUiInfo.isEditMode) null else TopAppBarIcon.back,
                 onClickNavigationIcon = { dateNavigate.navigateUp() },
 
-                actionIcon2 = if (!dateUiInfo.isEditMode && showingTrip.editable) TopAppBarIcon.edit else null,
-                actionIcon2Onclick = {
-                    dateUiInfo.setIsEditMode(true)
-                }
+                actionIcon1 = TopAppBarIcon.edit,
+                actionIcon1Onclick = { dateUiInfo.setIsEditMode(true) },
+                actionIcon1Visible = !dateUiInfo.isEditMode && showingTrip.editable
             )
         },
 

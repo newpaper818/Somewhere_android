@@ -577,13 +577,13 @@ private fun SpotScreen(
                     else                               null,
                 onClickNavigationIcon = spotNavigate::onClickBackButton,
 
-                actionIcon1 = if (!spotUiInfo.isEditMode && showingTrip.editable) TopAppBarIcon.edit
-                                else null,
+                actionIcon1 = TopAppBarIcon.edit,
                 actionIcon1Onclick = {
                     if (spotMap.isMapExpand)
                         spotMap.setIsMapExpanded(false)
                     spotUiInfo.setIsEditMode(true)
-                }
+                },
+                actionIcon1Visible = !spotUiInfo.isEditMode && showingTrip.editable
             )
         },
 
