@@ -52,6 +52,7 @@ fun SomewhereTopAppBar(
 
     actionIcon2: MyIcon? = null,
     actionIcon2Onclick: () -> Unit = {},
+    actionIcon2Visible: Boolean = false,
 
     dropdownMenuContent: @Composable () -> Unit = {},
 
@@ -151,13 +152,14 @@ fun SomewhereTopAppBar(
 
                 //action2
                 AnimatedVisibility(
-                    visible = actionIcon2 != null,
+                    visible = actionIcon2Visible,
                     enter = fadeIn(tween(500)),
                     exit = fadeOut(tween(500))
                 ) {
-                    IconButton(onClick = actionIcon2Onclick) {
-                        if (actionIcon2 != null)
+                    if (actionIcon2 != null) {
+                        IconButton(onClick = actionIcon2Onclick) {
                             DisplayIcon(icon = actionIcon2)
+                        }
                     }
                 }
 
