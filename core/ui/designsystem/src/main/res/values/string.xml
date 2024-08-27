@@ -55,9 +55,10 @@
     <string name="more">More</string>
 
     <!--TopBarIcon-->
-    <string name="back">Go Back</string>
+    <string name="navigate_up">Navigate up</string>
     <string name="edit">Edit</string>
     <string name="close">Close</string>
+    <string name="more_options">More options</string>
     <string name="download_image">Download image</string>
     <string name="invite_friend">Invite friend</string>
 
@@ -111,7 +112,7 @@
     <string name="date">Date</string>
     <string name="time">Time</string>
     <string name="to">To</string>
-    <string name="switch_to_text_input">Switch to text input</string>
+    <string name="switch_to_keyboard_input">Switch to keyboard input</string>
     <string name="switch_to_touch_input">Switch to touch input</string>
     <string name="category">Category</string>
     <string name="budget">Budget</string>
@@ -120,6 +121,6 @@
     <string name="delete_friend">Delete friend</string>
     <string name="number_of_trip_mates">Number of trip mates</string>
     <string name="manager">Manager</string>
-    <string name="get_out">Get out</string>
+    <string name="leave_trip">Leave trip</string>
 
 </resources>

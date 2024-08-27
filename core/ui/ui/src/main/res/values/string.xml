@@ -58,7 +58,7 @@
     <!--DeleteOrNotDialog.kt-->
     <string name="dialog_title_delete_friend">Delete friend from this trip?</string>
     <string name="dialog_title_get_out_shared_trip">Get out this shared trip?</string>
-    <string name="get_out">Get out</string>
+    <string name="leave_trip">Leave trip</string>
 
     <!--DeletingAccountDialog.kt-->
     <string name="deleting_account">Deleting account…</string>

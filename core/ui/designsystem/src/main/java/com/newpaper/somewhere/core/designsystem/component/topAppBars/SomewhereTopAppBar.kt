@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
+import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.IconTextButtonIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcon
@@ -134,8 +135,12 @@ fun SomewhereTopAppBar(
         },
         navigationIcon = {
             if (navigationIcon != null) {
-                IconButton(onClick = onClickNavigationIcon) {
-                    DisplayIcon(icon = navigationIcon)
+                MyPlainTooltipBox(
+                    tooltipText = stringResource(id = navigationIcon.descriptionTextId)
+                ) {
+                    IconButton(onClick = onClickNavigationIcon) {
+                        DisplayIcon(icon = navigationIcon)
+                    }
                 }
             }
         },
@@ -147,8 +152,12 @@ fun SomewhereTopAppBar(
                 exit = fadeOut(tween(350))
             ) {
                 if (actionIcon1 != null) {
-                    IconButton(onClick = actionIcon1Onclick) {
-                        DisplayIcon(icon = actionIcon1)
+                    MyPlainTooltipBox(
+                        tooltipText = stringResource(id = actionIcon1.descriptionTextId)
+                    ) {
+                        IconButton(onClick = actionIcon1Onclick) {
+                            DisplayIcon(icon = actionIcon1)
+                        }
                     }
                 }
             }
@@ -160,8 +169,12 @@ fun SomewhereTopAppBar(
                 exit = fadeOut(tween(350))
             ) {
                 if (actionIcon2 != null) {
-                    IconButton(onClick = actionIcon2Onclick) {
-                        DisplayIcon(icon = actionIcon2)
+                    MyPlainTooltipBox(
+                        tooltipText = stringResource(id = actionIcon2.descriptionTextId)
+                    ) {
+                        IconButton(onClick = actionIcon2Onclick) {
+                            DisplayIcon(icon = actionIcon2)
+                        }
                     }
                 }
             }

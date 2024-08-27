@@ -9,8 +9,8 @@
     <string name="date_range_headline">%s - %s</string>
 
     <!--DeleteOrNotDialog.kt-->
-    <string name="delete_friend">Delete friend from this trip?</string>
-    <string name="get_out_shared_trip">Get out this shared trip?</string>
+    <string name="dialog_delete_friend">Delete friend from this trip?</string>
+    <string name="leave_shared_trip">Leave this shared trip?</string>
 
     <!--DeletingAccountDialog.kt-->
     <string name="deleting_account">Deleting account…</string>

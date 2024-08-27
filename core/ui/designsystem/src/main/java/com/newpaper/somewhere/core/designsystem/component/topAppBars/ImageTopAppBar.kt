@@ -12,9 +12,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.designsystem.theme.CustomColor
@@ -51,13 +53,18 @@ fun ImageTopAppBar(
                 )
             },
             navigationIcon = {
-                IconButton(onClick = navigationIconOnClick) {
-                    DisplayIcon(icon = TopAppBarIcon.closeImageScreen)
+                MyPlainTooltipBox(tooltipText = stringResource(id = TopAppBarIcon.closeImageScreen.descriptionTextId)) {
+                    IconButton(onClick = navigationIconOnClick) {
+                        DisplayIcon(icon = TopAppBarIcon.closeImageScreen)
+                    }
                 }
+
             },
             actions = {
-                IconButton(onClick = actionIcon1Onclick) {
-                    DisplayIcon(icon = TopAppBarIcon.downloadImage)
+                MyPlainTooltipBox(tooltipText = stringResource(id = TopAppBarIcon.downloadImage.descriptionTextId)) {
+                    IconButton(onClick = actionIcon1Onclick) {
+                        DisplayIcon(icon = TopAppBarIcon.downloadImage)
+                    }
                 }
             }
         )

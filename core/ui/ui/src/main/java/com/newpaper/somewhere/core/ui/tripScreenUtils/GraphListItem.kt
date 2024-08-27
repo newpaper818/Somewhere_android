@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
+import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcon
@@ -408,10 +409,12 @@ private fun Icons(
         enter = scaleIn(tween(300)),
         exit = scaleOut(tween(400)) + fadeOut(tween(300))
     ) {
-        IconButton(onClick = onClickDelete) {
-            DisplayIcon(
-                icon = MyIcons.deleteSpot
-            )
+        MyPlainTooltipBox(tooltipText = stringResource(id = MyIcons.deleteSpot.descriptionTextId)) {
+            IconButton(onClick = onClickDelete) {
+                DisplayIcon(
+                    icon = MyIcons.deleteSpot
+                )
+            }
         }
     }
 
@@ -438,13 +441,19 @@ private fun Icons(
         enter = expandHorizontally(tween(400)),
         exit = shrinkHorizontally(tween(300))
     ) {
-        if (!expandedTextIsNull)
-            IconButton(onClick = onClickExpanded) {
-                if (!isExpanded)
-                    DisplayIcon(icon = MyIcons.expand)
-                else
-                    DisplayIcon(icon = MyIcons.collapse)
+        if (!expandedTextIsNull) {
+            MyPlainTooltipBox(
+                tooltipText = if (!isExpanded) stringResource(id = MyIcons.expand.descriptionTextId)
+                                else stringResource(id = MyIcons.collapse.descriptionTextId)
+            ) {
+                IconButton(onClick = onClickExpanded) {
+                    if (!isExpanded)
+                        DisplayIcon(icon = MyIcons.expand)
+                    else
+                        DisplayIcon(icon = MyIcons.collapse)
+                }
             }
+        }
     }
 }
 

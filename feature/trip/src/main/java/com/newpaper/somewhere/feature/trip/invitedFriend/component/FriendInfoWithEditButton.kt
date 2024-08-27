@@ -8,7 +8,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.model.data.UserData
@@ -44,31 +46,40 @@ internal fun FriendInfoWithEditButton(
 
         if (showEditDeleteButton) {
             //allow edit / view only button
-            IconButton(
-                enabled = internetEnabled,
-                onClick = { onClickEditable(friendData) }
+            MyPlainTooltipBox(
+                tooltipText = if (friendData.allowEdit) stringResource(id = MyIcons.allowEdit.descriptionTextId)
+                                else stringResource(id = MyIcons.viewOnly.descriptionTextId)
             ) {
-                DisplayIcon(
-                    icon = if (friendData.allowEdit) MyIcons.allowEdit
-                    else MyIcons.viewOnly
-                )
+                IconButton(
+                    enabled = internetEnabled,
+                    onClick = { onClickEditable(friendData) }
+                ) {
+                    DisplayIcon(
+                        icon = if (friendData.allowEdit) MyIcons.allowEdit
+                        else MyIcons.viewOnly
+                    )
+                }
             }
 
             //delete friend button
             if (internetEnabled) {
-                IconButton(
-                    onClick = { onClickDeleteFriend(friendData) }
-                ) {
-                    DisplayIcon(icon = MyIcons.deleteFriend)
+                MyPlainTooltipBox(tooltipText = stringResource(id = MyIcons.deleteFriend.descriptionTextId)) {
+                    IconButton(
+                        onClick = { onClickDeleteFriend(friendData) }
+                    ) {
+                        DisplayIcon(icon = MyIcons.deleteFriend)
+                    }
                 }
             }
         }
 
         if (showGetOutButton && internetEnabled) {
-            IconButton(
-                onClick = { onClickGetOut() }
-            ) {
-                DisplayIcon(icon = MyIcons.getOut)
+            MyPlainTooltipBox(tooltipText = stringResource(id = MyIcons.leaveTrip.descriptionTextId)) {
+                IconButton(
+                    onClick = { onClickGetOut() }
+                ) {
+                    DisplayIcon(icon = MyIcons.leaveTrip)
+                }
             }
         }
     }

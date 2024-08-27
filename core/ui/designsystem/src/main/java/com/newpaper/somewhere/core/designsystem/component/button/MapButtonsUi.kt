@@ -11,10 +11,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
+import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MapButtonIcon
@@ -27,19 +29,24 @@ fun FocusOnToSpotButtonUi(
     onClickEnabled: () -> Unit,
     onClickDisabled: () -> Unit
 ){
-    IconButton(
-        onClick = {
-            if (focusOnToSpotEnabled)
-                onClickEnabled()
-            else
-                onClickDisabled()
-        }
+    MyPlainTooltipBox(
+        tooltipText = if (focusOnToSpotEnabled) stringResource(id = MapButtonIcon.focusOnToTarget.descriptionTextId)
+            else stringResource(id = MapButtonIcon.disabledFocusOnToTarget.descriptionTextId)
     ) {
-        DisplayIcon(
-            icon =
-                if (focusOnToSpotEnabled ) MapButtonIcon.focusOnToTarget
+        IconButton(
+            onClick = {
+                if (focusOnToSpotEnabled)
+                    onClickEnabled()
+                else
+                    onClickDisabled()
+            }
+        ) {
+            DisplayIcon(
+                icon =
+                if (focusOnToSpotEnabled) MapButtonIcon.focusOnToTarget
                 else MapButtonIcon.disabledFocusOnToTarget
-        )
+            )
+        }
     }
 }
 
@@ -49,19 +56,22 @@ fun UserLocationButtonUi(
     onClickLocationPermissionGranted: () -> Unit,
     onClickLocationPermissionNotGranted: () -> Unit
 ){
-    IconButton(
-        onClick = {
-            if (userLocationPermissionGranted)
-                onClickLocationPermissionGranted()
-            else
-                onClickLocationPermissionNotGranted()
-        }
+    MyPlainTooltipBox(
+        tooltipText = if (userLocationPermissionGranted) stringResource(id = MapButtonIcon.myLocation.descriptionTextId)
+                        else stringResource(id = MapButtonIcon.disabledMyLocation.descriptionTextId)
     ) {
-        DisplayIcon(
-            icon =
+        IconButton(
+            onClick = {
+                if (userLocationPermissionGranted) onClickLocationPermissionGranted()
+                else onClickLocationPermissionNotGranted()
+            }
+        ) {
+            DisplayIcon(
+                icon =
                 if (userLocationPermissionGranted) MapButtonIcon.myLocation
                 else MapButtonIcon.disabledMyLocation
-        )
+            )
+        }
     }
 }
 
@@ -77,12 +87,16 @@ fun ZoomButtonsUi(
         shape = MaterialTheme.shapes.extraLarge
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = onClickZoomOut) {
-                DisplayIcon(icon = MapButtonIcon.zoomOut)
+            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomOut.descriptionTextId)) {
+                IconButton(onClick = onClickZoomOut) {
+                    DisplayIcon(icon = MapButtonIcon.zoomOut)
+                }
             }
 
-            IconButton(onClick = onClickZoomOutLess) {
-                DisplayIcon(icon = MapButtonIcon.zoomOutLess)
+            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomOutLess.descriptionTextId)) {
+                IconButton(onClick = onClickZoomOutLess) {
+                    DisplayIcon(icon = MapButtonIcon.zoomOutLess)
+                }
             }
 
             Text(
@@ -91,13 +105,16 @@ fun ZoomButtonsUi(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.width(50.dp)
             )
-
-            IconButton(onClick = onClickZoomInLess) {
-                DisplayIcon(icon = MapButtonIcon.zoomInLess)
+            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomInLess.descriptionTextId)) {
+                IconButton(onClick = onClickZoomInLess) {
+                    DisplayIcon(icon = MapButtonIcon.zoomInLess)
+                }
             }
 
-            IconButton(onClick = onClickZoomIn) {
-                DisplayIcon(icon = MapButtonIcon.zoomIn)
+            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomIn.descriptionTextId)) {
+                IconButton(onClick = onClickZoomIn) {
+                    DisplayIcon(icon = MapButtonIcon.zoomIn)
+                }
             }
         }
     }
