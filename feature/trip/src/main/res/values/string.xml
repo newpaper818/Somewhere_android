@@ -21,6 +21,7 @@
     <!--inviteFriend/ ===========================================================================-->
     <string name="invite_friend">Invite friend</string>
     <string name="friend_to_invite">Friend to invite</string>
+    <string name="friend_email">Friend Email</string>
     <string name="or">or</string>
 
     <string name="snackbar_invite_friend_success">Invite friend success!</string>
