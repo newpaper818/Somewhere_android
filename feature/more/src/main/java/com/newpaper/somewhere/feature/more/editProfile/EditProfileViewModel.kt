@@ -184,7 +184,7 @@ class EditProfileViewModel @Inject constructor(
                 showNoChangedSnackbar()
             }
 
-            delay(700)
+            delay(1300)
 
             _editProfileUiState.update {
                 it.copy(isSaveButtonEnabled = true)
