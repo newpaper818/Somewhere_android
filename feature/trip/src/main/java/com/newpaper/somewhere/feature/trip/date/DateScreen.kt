@@ -36,6 +36,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -436,7 +437,13 @@ private fun DateScreen(
                 hostState = snackBarHostState,
                 modifier = Modifier
                     .width(500.dp)
-                    .imePadding()
+                    .imePadding(),
+                snackbar = {
+                    Snackbar(
+                        snackbarData = it,
+                        shape = MaterialTheme.shapes.medium
+                    )
+                }
             )
         },
         //top app bar

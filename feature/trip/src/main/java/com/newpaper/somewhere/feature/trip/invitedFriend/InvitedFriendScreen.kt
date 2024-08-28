@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -297,7 +299,13 @@ private fun InvitedFriendsScreen(
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarHostState,
-                modifier = Modifier.width(500.dp)
+                modifier = Modifier.width(500.dp),
+                snackbar = {
+                    Snackbar(
+                        snackbarData = it,
+                        shape = MaterialTheme.shapes.medium
+                    )
+                }
             )
         }
     ) { paddingValues ->

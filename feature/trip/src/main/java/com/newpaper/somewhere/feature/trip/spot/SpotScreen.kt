@@ -28,6 +28,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -559,8 +560,14 @@ private fun SpotScreen(
                 hostState = snackBarHostState,
                 modifier = Modifier
                     .width(500.dp)
-                    .padding(0.dp, 0.dp, 0.dp, snackBarPadding.dp)
-                    .imePadding()
+                    .padding(bottom = snackBarPadding.dp)
+                    .imePadding(),
+                snackbar = {
+                    Snackbar(
+                        snackbarData = it,
+                        shape = MaterialTheme.shapes.medium
+                    )
+                }
             )
         },
         //top bar

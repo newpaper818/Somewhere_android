@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -216,7 +217,13 @@ private fun SignInScreen(
                 hostState = snackBarHostState,
                 modifier = Modifier
                     .width(500.dp)
-                    .navigationBarsPadding()
+                    .navigationBarsPadding(),
+                snackbar = {
+                    Snackbar(
+                        snackbarData = it,
+                        shape = MaterialTheme.shapes.medium
+                    )
+                }
             )
         }
     ) { _ ->

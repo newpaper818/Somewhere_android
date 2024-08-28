@@ -43,6 +43,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -178,11 +179,17 @@ fun SetLocationDialog(
                 hostState = snackBarHostState,
                 modifier = Modifier
                     .width(500.dp)
-                    .padding(0.dp, 0.dp, 0.dp,
+                    .padding(bottom =
                         if (LocalConfiguration.current.screenWidthDp > 670) 90.dp
                         else 150.dp
                     )
-                    .imePadding()
+                    .imePadding(),
+                snackbar = {
+                    Snackbar(
+                        snackbarData = it,
+                        shape = MaterialTheme.shapes.medium
+                    )
+                }
             )
         },
         //top bar

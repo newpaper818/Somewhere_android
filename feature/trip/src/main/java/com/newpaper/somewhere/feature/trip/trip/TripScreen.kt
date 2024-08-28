@@ -20,6 +20,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -404,13 +406,21 @@ private fun TripScreen(
             .navigationBarsPadding()
             .displayCutoutPadding()
             .imePadding(),
-        snackbarHost = { SnackbarHost(
-            hostState = snackBarHostState,
-            modifier = Modifier
-                .width(500.dp)
-                .padding(0.dp, 0.dp, 0.dp, snackBarPadding.dp)
-                .imePadding()
-        ) },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackBarHostState,
+                modifier = Modifier
+                    .width(500.dp)
+                    .padding(bottom = snackBarPadding.dp)
+                    .imePadding(),
+                snackbar = {
+                    Snackbar(
+                        snackbarData = it,
+                        shape = MaterialTheme.shapes.medium
+                    )
+                }
+            )
+        },
 
         //top app bar
         topBar = {
