@@ -21,6 +21,7 @@
     <!--inviteFriend/ ===========================================================================-->
     <string name="invite_friend">친구 초대</string>
     <string name="friend_to_invite">초대할 친구</string>
+    <string name="friend_email">친구 이메일</string>
     <string name="or">또는</string>
 
     <string name="snackbar_invite_friend_success">친구 초대 성공!</string>
