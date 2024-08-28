@@ -59,6 +59,7 @@ import com.newpaper.somewhere.core.ui.card.ShareAppCard
 import com.newpaper.somewhere.core.ui.selectSwitch.AllowEditViewSelectSwitch
 import com.newpaper.somewhere.core.utils.PLAY_STORE_URL
 import com.newpaper.somewhere.core.utils.convert.setSharingTo
+import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.trips.component.TripItem
@@ -298,7 +299,8 @@ private fun InviteFriendScreen(
             item{
                 MySpacerColumn(height = 32.dp)
                 ShareAppCard(
-                    onClickShareApp = onClickShareApp
+                    onClickShareApp = onClickShareApp,
+                    modifier = Modifier.widthIn(max = itemMaxWidthSmall).fillMaxWidth(),
                 )
             }
         }
