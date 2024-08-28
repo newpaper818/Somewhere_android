@@ -19,6 +19,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -232,7 +233,16 @@ private fun TripMapScreenVertical(
             ) {
                 SnackbarHost(
                     hostState = snackBarHostState,
-                    modifier = Modifier.width(300.dp).padding(bottom = bottomPadding.dp)
+                    modifier = Modifier
+                        .width(300.dp)
+                        .padding(bottom = bottomPadding.dp)
+                        .padding(horizontal = 4.dp),
+                    snackbar = {
+                        Snackbar(
+                            snackbarData = it,
+                            shape = MaterialTheme.shapes.medium
+                        )
+                    }
                 )
             }
         }
@@ -374,7 +384,13 @@ private fun TripMapScreenHorizontal(
             ) {
                 SnackbarHost(
                     hostState = snackBarHostState,
-                    modifier = Modifier.width(300.dp)
+                    modifier = Modifier.width(300.dp),
+                    snackbar = {
+                        Snackbar(
+                            snackbarData = it,
+                            shape = MaterialTheme.shapes.medium
+                        )
+                    }
                 )
             }
         }

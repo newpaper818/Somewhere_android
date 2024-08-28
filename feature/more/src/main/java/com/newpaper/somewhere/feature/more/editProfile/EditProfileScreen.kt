@@ -28,6 +28,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -39,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -216,7 +218,13 @@ private fun EditProfileScreen(
                 modifier = Modifier
                     .width(500.dp)
                     .padding(bottom = 60.dp)
-                    .imePadding()
+                    .imePadding(),
+                snackbar = {
+                    Snackbar(
+                        snackbarData = it,
+                        shape = MaterialTheme.shapes.medium
+                    )
+                }
             )
         }
     ) { paddingValues ->
@@ -267,7 +275,7 @@ private fun EditProfileScreen(
                 )
             }
 
-            //save button
+            //internet unavailable
             item {
                 InternetUnavailableText(internetEnabled)
             }
