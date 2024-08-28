@@ -46,7 +46,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -504,21 +503,14 @@ private fun SpotScreen(
         else
             stringResource(id = R.string.sub_title, dateList[currentDateIndex].getDateText(spotUiInfo.dateTimeFormat, includeYear = true), dateTitle)
 
-    val snackBarPadding by animateFloatAsState(
-        targetValue = if (spotMap.isMapExpand) 66f
-                        else if (spotUiInfo.isEditMode && !spotDialog.showSetLocationDialog) 56f
-                        else if (spotDialog.showSetLocationDialog) {
-                            if (LocalConfiguration.current.screenWidthDp > 670)
-                                90f
-                            else 150f
-                        }
+    val bottomSnackBarPadding by animateFloatAsState(
+        targetValue = if (spotUiInfo.use2Panes) 88f
+                        else if (spotMap.isMapExpand) 66f
+                        else if (spotUiInfo.isEditMode) 56f
                         else 0f,
         animationSpec = tween(300),
         label = "snackbar padding"
     )
-
-
-
 
 
     LaunchedEffect(spotDialog.isShowingDialog) {
@@ -551,24 +543,41 @@ private fun SpotScreen(
         )
     }
 
+    val snackbarModifier =
+        if (!spotUiInfo.use2Panes)Modifier
+            .width(500.dp)
+            .padding(bottom = bottomSnackBarPadding.dp)
+            .imePadding()
+        else Modifier
+            .width(500.dp)
+            .padding(bottom = bottomSnackBarPadding.dp)
+            .padding(start = 20.dp, end = 8.dp)
+            .imePadding()
+
     MyScaffold(
         modifier = modifier
             .navigationBarsPadding()
             .displayCutoutPadding(),
         snackbarHost = {
-            SnackbarHost(
-                hostState = snackBarHostState,
-                modifier = Modifier
-                    .width(500.dp)
-                    .padding(bottom = snackBarPadding.dp)
-                    .imePadding(),
-                snackbar = {
-                    Snackbar(
-                        snackbarData = it,
-                        shape = MaterialTheme.shapes.medium
+            Row {
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.BottomCenter
+                ){
+                    SnackbarHost(
+                        hostState = snackBarHostState,
+                        modifier = snackbarModifier,
+                        snackbar = {
+                            Snackbar(
+                                snackbarData = it,
+                                shape = MaterialTheme.shapes.medium
+                            )
+                        }
                     )
                 }
-            )
+                if (spotUiInfo.use2Panes)
+                    Box(modifier = Modifier.weight(1f))
+            }
         },
         //top bar
         topBar = {
