@@ -39,6 +39,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateMapOf
@@ -111,6 +112,10 @@ fun ImageCard(
 
     val modifier1 = if (isEditMode) modifier.sizeIn(maxHeight = 390.dp)
                     else modifier.sizeIn(maxWidth = 650.dp, maxHeight = 390.dp)
+
+    LaunchedEffect(isEditMode){
+        isImageCountLimit = imagePathList.size > IMAGE_MAX_COUNT
+    }
 
     val galleryLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetMultipleContents()
