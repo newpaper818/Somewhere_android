@@ -350,7 +350,7 @@ private fun EmailTextField(
                     placeholderText = stringResource(id = R.string.friend_email),
                     placeholderTextStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
                     onValueChange = {
-                        val newText = it.substring(0, min(60, it.length))
+                        val newText = it.substring(0, min(200, it.length))
                         onEmailTextChange(newText)
                     },
                     singleLine = true,
