@@ -64,6 +64,7 @@ import com.newpaper.somewhere.core.designsystem.theme.CustomColor
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.ui.MyTextField
 import com.newpaper.somewhere.core.ui.card.ProfileImage
+import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
 import com.newpaper.somewhere.feature.more.R
 import kotlinx.coroutines.launch
@@ -250,7 +251,7 @@ private fun EditProfileScreen(
                     downloadImage = downloadImage,
                     onClickEditImage = onClickEditImage,
                     onClickDeleteImage = onClickDeleteImage,
-                    modifier  = Modifier.widthIn(max = 500.dp)
+                    modifier  = Modifier.widthIn(max = itemMaxWidthSmall)
                 )
             }
 
@@ -262,7 +263,7 @@ private fun EditProfileScreen(
                     userName = editProfileUiState.userName,
                     isInvalidText = editProfileUiState.isInvalidUserName,
                     onUserNameChanged = onUserNameChanged,
-                    modifier  = Modifier.widthIn(max = 500.dp)
+                    modifier  = Modifier.widthIn(max = itemMaxWidthSmall)
                 )
             }
 

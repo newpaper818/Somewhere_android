@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +28,7 @@ import com.newpaper.somewhere.core.ui.item.ItemWithText
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
 import com.newpaper.somewhere.core.utils.BUG_REPORT_URL
 import com.newpaper.somewhere.core.utils.FEEDBACK_URL
+import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.more.R
 
 @Composable
@@ -67,6 +69,9 @@ private fun MoreScreen(
     modifier: Modifier = Modifier,
     currentScreenRoute: String? = null
 ) {
+
+    val itemModifier = Modifier.widthIn(max = itemMaxWidth)
+
     Scaffold(
         modifier = modifier
             .fillMaxSize()
@@ -93,7 +98,8 @@ private fun MoreScreen(
             //setting
             item {
                 ListGroupCard(
-                    title = stringResource(id = R.string.settings)
+                    title = stringResource(id = R.string.settings),
+                    modifier = itemModifier
                 ) {
                     //date time format
                     ItemWithText(
@@ -133,7 +139,8 @@ private fun MoreScreen(
                 val uriHandler = LocalUriHandler.current
 
                 ListGroupCard(
-                    title = stringResource(id = R.string.feedback)
+                    title = stringResource(id = R.string.feedback),
+                    modifier = itemModifier
                 ) {
                     //send feedback - open web browser to google form
                     ItemWithText(
@@ -155,7 +162,9 @@ private fun MoreScreen(
 
             //about
             item {
-                ListGroupCard {
+                ListGroupCard(
+                    modifier = itemModifier
+                ) {
                     ItemWithText(
                         isSelected = currentScreenRoute == ScreenDestination.ABOUT.route,
                         text = stringResource(id = R.string.about),
