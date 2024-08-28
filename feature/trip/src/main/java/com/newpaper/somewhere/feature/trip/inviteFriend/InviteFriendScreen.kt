@@ -296,7 +296,7 @@ private fun InviteFriendScreen(
             }
 
             item{
-                MySpacerColumn(height = 16.dp)
+                MySpacerColumn(height = 32.dp)
                 ShareAppCard(
                     onClickShareApp = onClickShareApp
                 )
