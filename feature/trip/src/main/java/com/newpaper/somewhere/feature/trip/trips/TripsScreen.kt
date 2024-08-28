@@ -316,7 +316,7 @@ private fun TripsScreen(
 
                 actionIcon1 = TopAppBarIcon.edit,
                 actionIcon1Onclick = { tripsUiInfo.setIsEditMode(true) },
-                actionIcon1Visible = !isEditMode && !loadingTrips,
+                actionIcon1Visible = !isEditMode && !loadingTrips && !tripsIsEmpty,
                 startPadding = spacerValue
             )
         },
