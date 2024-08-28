@@ -58,7 +58,7 @@ import com.newpaper.somewhere.core.ui.card.ShareAppCard
 import com.newpaper.somewhere.core.ui.selectSwitch.AllowEditViewSelectSwitch
 import com.newpaper.somewhere.core.utils.PLAY_STORE_URL
 import com.newpaper.somewhere.core.utils.convert.setSharingTo
-import com.newpaper.somewhere.core.utils.itemMaxWidth
+import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.trips.component.TripItem
 import kotlinx.coroutines.delay
@@ -260,7 +260,7 @@ private fun InviteFriendScreen(
                     internetEnabled = internetEnabled,
                     dateTimeFormat = dateTimeFormat,
                     downloadImage = downloadImage,
-                    modifier = Modifier.widthIn(max = itemMaxWidth)
+                    modifier = Modifier.widthIn(max = itemMaxWidthSmall)
                 )
             }
 
@@ -314,14 +314,14 @@ private fun EmailTextField(
     }
 
     Column(
-        modifier = Modifier.widthIn(max = itemMaxWidth)
+        modifier = Modifier.widthIn(max = itemMaxWidthSmall)
     ) {
 
         Text(
             text = stringResource(id = R.string.friend_to_invite),
             style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
             modifier = Modifier
-                .widthIn(max = itemMaxWidth)
+                .widthIn(max = itemMaxWidthSmall)
                 .padding(start = 16.dp)
         )
 
