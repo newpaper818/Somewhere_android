@@ -23,7 +23,7 @@ import androidx.navigation.navOptions
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.newpaper.somewhere.core.model.enums.MapTheme
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
-import com.newpaper.somewhere.core.utils.checkPermissionUserLocation
+import com.newpaper.somewhere.core.utils.checkUserLocationPermission
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.trips.TripsViewModel
 import com.newpaper.somewhere.navigation.more.aboutScreen
@@ -93,7 +93,7 @@ fun SomewhereNavHost(
     val context = LocalContext.current
 
     var userLocationEnabled by rememberSaveable {
-        mutableStateOf(checkPermissionUserLocation(context))
+        mutableStateOf(checkUserLocationPermission(context))
     }
 
 
