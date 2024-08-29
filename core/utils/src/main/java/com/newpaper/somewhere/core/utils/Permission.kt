@@ -79,11 +79,11 @@ fun checkPermissions(
  * @return true: user location permission is granted,
  *         false: user location permission is denied
  */
-fun checkPermissionUserLocation(
+fun checkUserLocationPermission(
     context: Context,
 ): Boolean{
-    return checkPermission(context, USER_LOCATION_PERMISSION_COARSE)
-            || checkPermission(context, USER_LOCATION_PERMISSION_FINE)
+    return checkPermission(context, USER_COARSE_LOCATION_PERMISSION)
+            || checkPermission(context, USER_FINE_LOCATION_PERMISSION)
 }
 
 fun checkAndRequestPermissionForUserLocation(

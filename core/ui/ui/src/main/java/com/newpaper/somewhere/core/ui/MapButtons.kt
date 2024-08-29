@@ -41,7 +41,7 @@ import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.ui.ui.R
 import com.newpaper.somewhere.core.utils.ANIMATION_DURATION_MS
 import com.newpaper.somewhere.core.utils.USER_LOCATION_PERMISSION_ARRAY
-import com.newpaper.somewhere.core.utils.checkPermissionUserLocation
+import com.newpaper.somewhere.core.utils.checkUserLocationPermission
 import com.newpaper.somewhere.core.utils.focusOnToSpots
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -86,7 +86,7 @@ fun UserLocationButton(
 
     var userLocationPermissionGranted: Boolean by rememberSaveable {
         mutableStateOf(
-            checkPermissionUserLocation(context)
+            checkUserLocationPermission(context)
         )
     }
 
@@ -145,7 +145,7 @@ fun UserLocationButton(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { _ ->
         //after end permission dialog
-        userLocationPermissionGranted = checkPermissionUserLocation(context)
+        userLocationPermissionGranted = checkUserLocationPermission(context)
 
         if (userLocationPermissionGranted) {
             setUserLocationEnabled(true)
