@@ -471,9 +471,10 @@ fun SetLocationDialog(
                         .width(330.dp)
                 ) {
                     //cancel save buttons
-                    SaveCancelButtons(
+                    CancelPositiveButtons(
+                        positiveButtonText = stringResource(id = R.string.save),
                         onClickCancel = setShowSetLocationDialogToFalse,
-                        onClickSave = {
+                        onClickPositive = {
                             //set location and zoom level
                             //spotList[currentSpotId].zoomLevel = zoomLevel
                             spotList[spotIndex].setLocationAndUpdateTravelDistance(
@@ -486,7 +487,9 @@ fun SetLocationDialog(
 
                             setShowSetLocationDialogToFalse()
                         },
-                        modifier = Modifier.background(MaterialTheme.colorScheme.background)
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(10.dp, 2.dp, 10.dp, 10.dp)
                     )
                 }
             }

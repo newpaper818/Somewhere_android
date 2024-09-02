@@ -66,14 +66,17 @@ fun AnimatedBottomSaveCancelButtons(
                         )
                 )
 
+
                 //no gradation
-                SaveCancelButtons(
+                CancelPositiveButtons(
+                    positiveButtonText = stringResource(id = R.string.save),
                     onClickCancel = onClickCancel,
-                    onClickSave = onClickSave,
+                    onClickPositive = onClickSave,
                     modifier = modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.background),
-                    saveEnabled = saveEnabled
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(10.dp, 2.dp, 10.dp, 10.dp),
+                    positiveEnabled = saveEnabled,
                 )
             }
         }
@@ -81,23 +84,20 @@ fun AnimatedBottomSaveCancelButtons(
 }
 
 @Composable
-fun SaveCancelButtons(
+fun CancelPositiveButtons(
+    positiveButtonText: String,
     onClickCancel: () -> Unit,
-    onClickSave: () -> Unit,
+    onClickPositive: () -> Unit,
     modifier: Modifier = Modifier,
-    saveEnabled: Boolean = true
+    positiveEnabled: Boolean = true
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        MySpacerColumn(height = 2.dp)
-
         Row(
-            modifier = Modifier.widthIn(max = 330.dp)
+            modifier = Modifier.widthIn(max = 310.dp)
         ) {
-            Spacer(modifier = Modifier.width(10.dp))
-
             BigCancelButton(
                 onClick = onClickCancel,
                 modifier = Modifier.weight(1f)
@@ -105,16 +105,13 @@ fun SaveCancelButtons(
 
             Spacer(modifier = Modifier.width(10.dp))
 
-            BigSaveButton(
-                onClick = onClickSave,
-                enabled = saveEnabled,
+            BigPositiveButton(
+                text = positiveButtonText,
+                onClick = onClickPositive,
+                enabled = positiveEnabled,
                 modifier = Modifier.weight(1f)
             )
-
-            Spacer(modifier = Modifier.width(10.dp))
         }
-
-        MySpacerColumn(height = 10.dp)
     }
 }
 
@@ -144,7 +141,8 @@ private fun BigCancelButton(
 }
 
 @Composable
-private fun BigSaveButton(
+private fun BigPositiveButton(
+    text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true
@@ -160,7 +158,7 @@ private fun BigSaveButton(
         onClick = onClick
     ) {
         Text(
-            text = stringResource(id = R.string.save),
+            text = text,
             style = MaterialTheme.typography.labelLarge
         )
     }
@@ -195,9 +193,10 @@ private fun SaveCancelButtonPreview(){
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)
         ){
-            SaveCancelButtons(
+            CancelPositiveButtons(
+                positiveButtonText = "Save",
                 onClickCancel = {},
-                onClickSave = {}
+                onClickPositive = {}
             )
         }
     }
@@ -212,10 +211,11 @@ private fun SaveCancelButtonPreview1(){
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)
         ){
-            SaveCancelButtons(
+            CancelPositiveButtons(
+                positiveButtonText = "Save",
                 onClickCancel = {},
-                onClickSave = {},
-                saveEnabled = false
+                onClickPositive = {},
+                positiveEnabled = false
             )
         }
     }
