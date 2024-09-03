@@ -26,7 +26,7 @@
     <string name="invite">Invite</string>
     <string name="scan_friends_qr">Scan friend\'s QR code to invite\n(Profile > show QR code)</string>
     <string name="camera_permission_denied">Camera permissions denied</string>
-    <string name="camera_permission_denied2">Please allow camera permissions\nin settings</string>
+    <string name="please_allow_camera_permissions">Please allow camera permissions in settings (Settings > Permissions > Camera > While using the app or Ask every time)</string>
     <string name="internet_unavailable_">Internet unavailable</string>
     <string name="check_internet_connection">Check internet connection</string>
 
