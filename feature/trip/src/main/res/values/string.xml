@@ -23,12 +23,20 @@
     <string name="friend_to_invite">Friend to invite</string>
     <string name="friend_email">Friend Email</string>
     <string name="or">or</string>
+    <string name="invite">Invite</string>
+    <string name="scan_friends_qr">Scan friend\'s QR code to invite\n(Profile > show QR code)</string>
+    <string name="camera_permission_denied">Camera permissions denied</string>
+    <string name="camera_permission_denied2">Please allow camera permissions\nin settings</string>
+    <string name="internet_unavailable_">Internet unavailable</string>
+    <string name="check_internet_connection">Check internet connection</string>
 
     <string name="snackbar_invite_friend_success">Invite friend success!</string>
-    <string name="snackbar_no_user">Can\'t find user</string>
-    <string name="snackbar_same_email">Do not enter your email</string>
+    <string name="snackbar_invalid_qr_code">Invalid QR code</string>
+    <string name="snackbar_user_not_found">Can\'t find user</string>
+    <string name="snackbar_friend_is_me">Friend user is same with me</string>
     <string name="snackbar_invalid_email">Invalid email format</string>
     <string name="snackbar_invite_friend_error">Invite friend error</string>
+    <string name="snackbar_search_friend_error">Search friend error</string>
 
     <!--setLocation/ ============================================================================-->
 

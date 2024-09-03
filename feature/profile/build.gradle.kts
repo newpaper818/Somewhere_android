@@ -30,6 +30,10 @@ dependencies {
     implementation(project(":core:ui:designsystem"))
     implementation(project(":feature:trip"))
 
+    //del?
+    implementation(project(":core:utils"))
+
+
     //compose bom
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material3)
@@ -38,6 +42,9 @@ dependencies {
 
     //hilt
     implementation(libs.androidx.hilt.navigation.compose)
+
+    //qr code
+    implementation(libs.qr.code.compose)
 
     //
     implementation(libs.androidx.core.ktx)

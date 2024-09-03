@@ -69,6 +69,10 @@ dependencies {
     //zoomable
     implementation(libs.zoomable)
 
+    //qr scan
+    implementation(libs.easy.qr.scan)
+    
+
 
     //test
     testImplementation(libs.junit)

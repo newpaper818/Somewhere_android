@@ -2,7 +2,6 @@ package com.newpaper.somewhere.core.utils
 
 import android.content.Context
 import android.content.pm.PackageManager
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.core.content.ContextCompat
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
@@ -13,12 +12,17 @@ val USER_LOCATION_PERMISSION_LIST = listOf(
     android.Manifest.permission.ACCESS_FINE_LOCATION
 )
 
-const val USER_LOCATION_PERMISSION_FINE = android.Manifest.permission.ACCESS_FINE_LOCATION
-val USER_LOCATION_PERMISSION_COARSE = android.Manifest.permission.ACCESS_COARSE_LOCATION
+const val USER_FINE_LOCATION_PERMISSION = android.Manifest.permission.ACCESS_FINE_LOCATION
+const val USER_COARSE_LOCATION_PERMISSION = android.Manifest.permission.ACCESS_COARSE_LOCATION
+const val CAMERA_PERMISSION = android.Manifest.permission.CAMERA
 
 val USER_LOCATION_PERMISSION_ARRAY = arrayOf(
     android.Manifest.permission.ACCESS_COARSE_LOCATION,
     android.Manifest.permission.ACCESS_FINE_LOCATION
+)
+
+val CAMERA_PERMISSION_ARRAY = arrayOf(
+    android.Manifest.permission.CAMERA
 )
 
 //permission launcher
@@ -86,34 +90,40 @@ fun checkUserLocationPermission(
             || checkPermission(context, USER_FINE_LOCATION_PERMISSION)
 }
 
-fun checkAndRequestPermissionForUserLocation(
+fun checkCameraPermission(
     context: Context,
-    permissionLauncher: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>,
-    permissionRequestEnd: Boolean,
-    permissions: Array<String> = USER_LOCATION_PERMISSION_ARRAY
-): Boolean? {   //return permission granted (can use user location)
-                //true(granted), false(deny), null(request not end)
-
-    //if permissions granted (PRECISE or APPROXIMATE)
-    if (checkPermissionUserLocation(context)){
-        return true
-    }
-
-    //if not granted(denied), request permissions
-    else{
-        //launch permission request
-        permissionLauncher.launch(permissions)
-
-
-        if (permissionRequestEnd){
-            //check is granted
-            return checkPermissionUserLocation(context)
-        }
-        else{
-            return null
-        }
-    }
+): Boolean{
+    return checkPermission(context, CAMERA_PERMISSION)
 }
+
+//fun checkAndRequestPermissionForUserLocation(
+//    context: Context,
+//    permissionLauncher: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>,
+//    permissionRequestEnd: Boolean,
+//    permissions: Array<String> = USER_LOCATION_PERMISSION_ARRAY
+//): Boolean? {   //return permission granted (can use user location)
+//                //true(granted), false(deny), null(request not end)
+//
+//    //if permissions granted (PRECISE or APPROXIMATE)
+//    if (checkPermissionUserLocation(context)){
+//        return true
+//    }
+//
+//    //if not granted(denied), request permissions
+//    else{
+//        //launch permission request
+//        permissionLauncher.launch(permissions)
+//
+//
+//        if (permissionRequestEnd){
+//            //check is granted
+//            return checkPermissionUserLocation(context)
+//        }
+//        else{
+//            return null
+//        }
+//    }
+//}
 
 @OptIn(ExperimentalPermissionsApi::class)
 fun checkPermissionsIsGranted(

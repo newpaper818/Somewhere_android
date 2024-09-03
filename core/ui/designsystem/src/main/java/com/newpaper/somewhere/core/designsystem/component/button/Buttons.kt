@@ -115,6 +115,41 @@ fun ShareAppButton(
 }
 
 @Composable
+fun SettingsButton(
+    onClick: () -> Unit,
+){
+    MyTextButton(
+        modifier = Modifier.widthIn(min = 100.dp),
+        text = stringResource(id = R.string.settings),
+        onClick = onClick
+    )
+}
+
+@Composable
+fun InviteFriendWithEmailButton(
+    onClick: () -> Unit,
+){
+    MyTextButton(
+        modifier = Modifier.widthIn(min = 120.dp),
+        text = stringResource(id = R.string.invite_friend_with_email),
+        containerColor = Color.Transparent,
+        onClick = onClick
+    )
+}
+
+@Composable
+fun InviteFriendWithQrCodeButton(
+    onClick: () -> Unit,
+){
+    MyTextButton(
+        modifier = Modifier.widthIn(min = 120.dp),
+        text = stringResource(id = R.string.invite_friend_with_qr_code),
+        containerColor = Color.Transparent,
+        onClick = onClick
+    )
+}
+
+@Composable
 fun DeleteAccountButton(
     enabled: Boolean,
     onClick: () -> Unit,

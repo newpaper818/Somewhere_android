@@ -36,6 +36,7 @@
     <string name="set_editable">권한 설정</string>
 
     <!--SetLocationDialog.kt-->
+    <string name="save">저장</string>
     <string name="set_location">위치 설정</string>
     <string name="search_location">위치 검색</string>
     <string name="show_other_date_spot_marker">다른 날짜 장소 보기</string>
@@ -48,7 +49,6 @@
     <string name="set_end_time">종료 시간 설정</string>
 
     <!---->
-    <string name="button_close">닫기</string>
     <string name="button_get_out">나가기</string>
     <string name="button_cancel">취소</string>
     <string name="button_delete">삭제</string>

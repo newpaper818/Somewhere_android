@@ -21,3 +21,12 @@ fun InternetUnavailableIconWithText(){
         style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
     )
 }
+
+@Composable
+fun InternetUnavailableText(){
+    Text(
+        text = stringResource(id = R.string.internet_unavailable_check_connection),
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+    )
+}

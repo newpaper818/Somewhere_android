@@ -52,29 +52,37 @@ class InviteFriendRepository @Inject constructor(
         )
     }
 
-    suspend fun checkAndAddSharingTripFriend(
+    suspend fun getFriendUserFromEmail(
+        friendUserEmail: String
+    ): Pair<UserData?, Boolean> {
+        return inviteFriendRemoteDataSource.getFriendUserDataFromEmail(
+            friendUserEmail = friendUserEmail
+        )
+    }
+
+    suspend fun getFriendUserFromUserId(
+        friendUserUserId: String
+    ): Pair<UserData?, Boolean> {
+        return inviteFriendRemoteDataSource.getFriendUserDataFromUserId(
+            friendUserUserId = friendUserUserId
+        )
+    }
+
+    suspend fun inviteFriend(
         tripId: Int,
-        myEmail: String,
-        myUserId: String,
-        friendUserEmail: String,
+        appUserId: String,
+        friendUserId: String,
         editable: Boolean,
         onSuccess: () -> Unit,
-        onErrorSnackbar: () -> Unit,
-        onMyEmailSnackbar: () -> Unit,
-        onInvalidEmailSnackbar: () -> Unit,
-        onNoUserSnackbar: () -> Unit
+        onErrorSnackbar: () -> Unit
     ){
-        inviteFriendRemoteDataSource.checkAndAddSharingTripFriend(
+        inviteFriendRemoteDataSource.inviteFriend(
             tripId = tripId,
-            myEmail = myEmail,
-            myUserId = myUserId,
-            friendUserEmail = friendUserEmail,
+            appUserId = appUserId,
+            friendUserId = friendUserId,
             editable = editable,
             onSuccess = onSuccess,
-            onErrorSnackbar = onErrorSnackbar,
-            onMyEmailSnackbar = onMyEmailSnackbar,
-            onInvalidEmailSnackbar = onInvalidEmailSnackbar,
-            onNoUserSnackbar = onNoUserSnackbar
+            onErrorSnackbar = onErrorSnackbar
         )
     }
 

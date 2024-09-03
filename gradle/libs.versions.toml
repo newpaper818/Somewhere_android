@@ -30,6 +30,8 @@ zoomable = "1.5.2"
 splashscreen = "1.0.1"
 datastore = "1.0.0"
 viewbinding = "1.6.0"
+qrCode = "1.0.1"
+easyQrScan = "0.1.5"
 
 
 agp = "8.5.2"
@@ -181,6 +183,10 @@ datastore-preferences = { group = "androidx.datastore", name = "datastore-prefer
 
 # view binding
 ui-viewbinding = { group = "androidx.compose.ui", name = "ui-viewbinding", version.ref = "viewbinding" }
+
+# qr code
+qr-code-compose = { group = "com.lightspark", name = "compose-qr-code", version.ref = "qrCode" }
+easy-qr-scan = { group = "io.github.kalinjul.easyqrscan", name = "scanner", version.ref = "easyQrScan" }
 
 
 junit =                     { group = "junit", name = "junit", version.ref = "junit" }

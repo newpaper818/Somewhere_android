@@ -16,20 +16,24 @@ interface InviteFriendRemoteDataSource {
         onError: () -> Unit
     )
 
+    suspend fun getFriendUserDataFromEmail(
+        friendUserEmail: String,
+    ): Pair<UserData?, Boolean>
+
+    suspend fun getFriendUserDataFromUserId(
+        friendUserUserId: String,
+    ): Pair<UserData?, Boolean>
+
     /**
      * add sharing trip friend
      */
-    suspend fun checkAndAddSharingTripFriend(
+    suspend fun inviteFriend(
         tripId: Int,
-        myEmail: String,
-        myUserId: String,
-        friendUserEmail: String,
+        appUserId: String,
+        friendUserId: String,
         editable: Boolean,
         onSuccess: () -> Unit,
-        onErrorSnackbar: () -> Unit,
-        onMyEmailSnackbar: () -> Unit,
-        onInvalidEmailSnackbar: () -> Unit,
-        onNoUserSnackbar: () -> Unit
+        onErrorSnackbar: () -> Unit
     )
 
     /**

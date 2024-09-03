@@ -11,9 +11,20 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 data class InviteFriendUiState(
+    //friend user info with invite card
+    val friendInfoWithInviteCardVisible: Boolean = false,
+    val friendUserData: UserData? = null,
+    val isEditable: Boolean = false, //true: allow edit / false: view only
     val inviteButtonEnabled: Boolean = false,
+
+    //qr or email
+    val isInviteWithQr: Boolean = true, //false: invite with email
+
+    //search friend available
+    val searchFriendAvailable: Boolean = true,
+
+    //email text
     val friendEmailText: String = "",
-    val isEditable: Boolean = false
 )
 
 @HiltViewModel
@@ -54,11 +65,65 @@ class InviteFriendViewModel @Inject constructor(
         }
     }
 
-    fun setIsEditable(
+    fun setIsAllowEdit(
         isAllowEdit: Boolean
     ) {
         _inviteFriendUiState.update {
             it.copy(isEditable = isAllowEdit)
+        }
+    }
+
+    fun setIsInviteWithQr(
+        inviteWithQr: Boolean
+    ) {
+        _inviteFriendUiState.update {
+            it.copy(
+                isInviteWithQr = inviteWithQr
+            )
+        }
+    }
+
+    fun setFriendUserData(
+        friendInfo: UserData
+    ){
+        _inviteFriendUiState.update {
+            it.copy(friendUserData = friendInfo)
+        }
+    }
+
+    fun setFriendInfoWithInviteCardVisible(
+        isVisible: Boolean
+    ) {
+        _inviteFriendUiState.update {
+            it.copy(friendInfoWithInviteCardVisible = isVisible)
+        }
+    }
+
+    fun setSearchFriendAvailable(
+        searchFriendAvailable: Boolean
+    ) {
+        _inviteFriendUiState.update {
+            it.copy(searchFriendAvailable = searchFriendAvailable)
+        }
+    }
+
+
+
+    fun getFriendUserIdFromScannedValue(
+        scannedValue: String
+    ): String? {
+        //somewhere_{userId}
+
+        if (!scannedValue.startsWith("somewhere_")){
+            return null
+        }
+        else {
+            val splitScannedValue = scannedValue.split("_")
+
+            return if(splitScannedValue.size == 2 && splitScannedValue[1] != "")
+                splitScannedValue[1]
+            else
+                null
         }
     }
 
@@ -79,29 +144,71 @@ class InviteFriendViewModel @Inject constructor(
         )
     }
 
-    suspend fun checkAndAddSharingTripFriend(
+
+    suspend fun getFriendUserData(
+        searchByUserId: Boolean, //or email
+        friendUserIdOrEmail: String,
+        appUserData: UserData,
+
+        onErrorSnackbar: () -> Unit,
+        onFriendNotFoundSnackbar: () -> Unit,
+        onFriendIsAppUserSnackbar: () -> Unit,
+        onInvalidEmailSnackbar: () -> Unit,
+    ){
+        //empty or not email
+        if (!searchByUserId && (friendUserIdOrEmail.isEmpty() || "@" !in friendUserIdOrEmail)){
+            onInvalidEmailSnackbar()
+            return
+        }
+
+        //friend userId or email is app user
+        if (searchByUserId && appUserData.userId == friendUserIdOrEmail
+            || !searchByUserId && appUserData.email == friendUserIdOrEmail
+        ){
+            onFriendIsAppUserSnackbar()
+            return
+        }
+
+        //search friend
+        val (friendUserData, success) =
+            if (searchByUserId){
+                inviteFriendRepository.getFriendUserFromUserId(friendUserIdOrEmail)
+            }
+            else {
+                inviteFriendRepository.getFriendUserFromEmail(friendUserIdOrEmail)
+            }
+
+        if (friendUserData != null && success){
+            //success to get friend UserData
+            setFriendUserData(friendUserData)
+            setFriendInfoWithInviteCardVisible(true)
+        }
+        else if (friendUserData == null && success){
+            //friend not found
+            onFriendNotFoundSnackbar()
+        }
+        else {
+            //error
+            onErrorSnackbar()
+        }
+    }
+
+    //invite friend to trip
+    suspend fun inviteFriend(
         tripId: Int,
-        myEmail: String,
-        myUserId: String,
-        friendUserEmail: String,
+        appUserId: String,
+        friendUserId: String,
         editable: Boolean,
         onSuccess: () -> Unit,
-        onErrorSnackbar: () -> Unit,
-        onMyEmailSnackbar: () -> Unit,
-        onInvalidEmailSnackbar: () -> Unit,
-        onNoUserSnackbar: () -> Unit
+        onErrorSnackbar: () -> Unit
     ){
-        inviteFriendRepository.checkAndAddSharingTripFriend(
+        inviteFriendRepository.inviteFriend(
             tripId = tripId,
-            myEmail = myEmail,
-            myUserId = myUserId,
-            friendUserEmail = friendUserEmail,
+            appUserId = appUserId,
+            friendUserId = friendUserId,
             editable = editable,
             onSuccess = onSuccess,
-            onErrorSnackbar = onErrorSnackbar,
-            onMyEmailSnackbar = onMyEmailSnackbar,
-            onInvalidEmailSnackbar = onInvalidEmailSnackbar,
-            onNoUserSnackbar = onNoUserSnackbar
+            onErrorSnackbar = onErrorSnackbar
         )
     }
 }

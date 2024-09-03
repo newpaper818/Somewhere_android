@@ -17,7 +17,6 @@
     <string name="re_auth_error">Authentication error. Do it later.</string>
     <string name="re_auth_match_user">Authenticate with the currently signed in account.</string>
     <string name="delete_account_error">Delete account error. Do it later.</string>
-    <string name="authentication_done">Authentication complete</string>
 
     <string name="authenticating">Authenticating…</string>
     <string name="authentication_with_google">Authenticate with Google</string>
@@ -28,7 +27,6 @@
     <string name="name">Name</string>
     <string name="profile_image">Profile image</string>
     <string name="no_name">No name</string>
-    <string name="internet_unavailable_check_connection">Internet unavailable\nCheck internet connection</string>
     <string name="snackbar_success_update_profile">Update profile success</string>
     <string name="snackbar_fail_update_profile">Update profile error. Do it later.</string>
     <string name="snackbar_no_changed">No changed</string>

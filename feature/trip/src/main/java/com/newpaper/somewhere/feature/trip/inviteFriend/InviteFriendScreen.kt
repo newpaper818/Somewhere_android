@@ -1,10 +1,14 @@
 package com.newpaper.somewhere.feature.trip.inviteFriend
 
-import android.content.Intent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,16 +20,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -34,38 +34,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.newpaper.somewhere.core.designsystem.component.button.InviteButton
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
-import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
-import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
-import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
-import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.tripData.Trip
-import com.newpaper.somewhere.core.ui.MyTextField
-import com.newpaper.somewhere.core.ui.card.ShareAppCard
-import com.newpaper.somewhere.core.ui.selectSwitch.AllowEditViewSelectSwitch
-import com.newpaper.somewhere.core.utils.PLAY_STORE_URL
 import com.newpaper.somewhere.core.utils.convert.setSharingTo
-import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.trip.R
+import com.newpaper.somewhere.feature.trip.inviteFriend.component.EmailPage
+import com.newpaper.somewhere.feature.trip.inviteFriend.component.FriendInfoWithInviteCard
+import com.newpaper.somewhere.feature.trip.inviteFriend.component.QrCodePage
 import com.newpaper.somewhere.feature.trip.trips.component.TripItem
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.math.min
 
 @Composable
 fun InviteFriendRoute(
@@ -84,110 +70,145 @@ fun InviteFriendRoute(
 ){
     val inviteFriendUiState by inviteFriendViewModel.inviteFriendUiState.collectAsState()
 
+    //invite button enabled
     LaunchedEffect(Unit) {
         inviteFriendViewModel.setInviteButtonEnabled(internetEnabled)
     }
 
     LaunchedEffect(internetEnabled, inviteFriendUiState.inviteButtonEnabled){
         if (!inviteFriendUiState.inviteButtonEnabled){
-            //block click for 1.5 sec if user click invite button
-            delay(1500)
+            //block click for 1.7 sec if user click invite button
+            delay(2000)
             inviteFriendViewModel.setInviteButtonEnabled(internetEnabled)
         } else {
             inviteFriendViewModel.setInviteButtonEnabled(internetEnabled)
         }
     }
 
+    //qr scan ready
+    LaunchedEffect(inviteFriendUiState.searchFriendAvailable) {
+        delay(2000)
+        if (!inviteFriendUiState.isInviteWithQr
+            || !inviteFriendUiState.searchFriendAvailable && !inviteFriendUiState.friendInfoWithInviteCardVisible){
+            inviteFriendViewModel.setSearchFriendAvailable(true)
+        }
+    }
+
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
 
-    val shareTripErrorText = stringResource(id = R.string.snackbar_invite_friend_error)
-    val sameEmailText = stringResource(id = R.string.snackbar_same_email)
+    val invalidQrCodeText = stringResource(id = R.string.snackbar_invalid_qr_code)
+    val searchFriendErrorText = stringResource(id = R.string.snackbar_search_friend_error)
+    val inviteFriendErrorText = stringResource(id = R.string.snackbar_invite_friend_error)
+    val friendIsAppUserText = stringResource(id = R.string.snackbar_friend_is_me)
     val invalidEmailText = stringResource(id = R.string.snackbar_invalid_email)
-    val noUserText = stringResource(id = R.string.snackbar_no_user)
+    val userNotFoundText = stringResource(id = R.string.snackbar_user_not_found)
     val shareTripSuccessText = stringResource(id = R.string.snackbar_invite_friend_success)
 
-    val focusManager = LocalFocusManager.current
-
-
-    val sendIntent: Intent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, PLAY_STORE_URL)
-        type = "text/plain"
-    }
-    val shareIntent = Intent.createChooser(sendIntent, null)
-    val context = LocalContext.current
 
     InviteFriendScreen(
         spacerValue = spacerValue,
-        snackBarHostState = snackBarHostState,
         internetEnabled = internetEnabled,
         dateTimeFormat = dateTimeFormat,
+        snackBarHostState = snackBarHostState,
+        inviteFriendUiState = inviteFriendUiState,
         trip = trip,
-        inviteButtonEnabled = inviteFriendUiState.inviteButtonEnabled,
-        friendEmailText = inviteFriendUiState.friendEmailText,
+        getFriendUserIdFromScannedValue = inviteFriendViewModel::getFriendUserIdFromScannedValue,
+        setIsInviteWithQr = {
+            inviteFriendViewModel.setIsInviteWithQr(it)
+            inviteFriendViewModel.setFriendInfoWithInviteCardVisible(false)
+            inviteFriendViewModel.setSearchFriendAvailable(true)
+        },
         setFriendEmailText = inviteFriendViewModel::setFriendEmailText,
-        isEditable = inviteFriendUiState.isEditable,
-        setIsEditable = inviteFriendViewModel::setIsEditable,
-        onClickInviteButton = {
-            inviteFriendViewModel.setInviteButtonEnabled(false)
-            coroutineScope.launch {
-                inviteFriendViewModel.checkAndAddSharingTripFriend(
-                    tripId = trip.id,
-                    myEmail = appUserData.email ?: "",
-                    myUserId = appUserData.userId,
-                    friendUserEmail = inviteFriendUiState.friendEmailText.replace(" ", ""),
-                    editable = inviteFriendUiState.isEditable,
-                    onSuccess = {
-                        focusManager.clearFocus()
-                        coroutineScope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = shareTripSuccessText
-                            )
+        setIsAllowEdit = inviteFriendViewModel::setIsAllowEdit,
 
-                            inviteFriendViewModel.getInvitedFriends(
-                                internetEnabled = internetEnabled,
-                                tripManagerId = trip.managerId,
-                                tripId = trip.id,
-                                onSuccess = { invitedFriendList ->
-                                    //exclude app user
-                                    val newInvitedFriendList = invitedFriendList.filter { it.userId != appUserData.userId }
+        getFriendUserData = { searchByUserId, friendUserIdOrEmail ->
+            if (inviteFriendUiState.searchFriendAvailable) {
+                inviteFriendViewModel.setSearchFriendAvailable(false)
 
-                                    //update trip state
-                                    trip.setSharingTo(
-                                        updateTripState = updateTripState,
-                                        userDataList = newInvitedFriendList
-                                    )
-                                },
-                                onError = { }
-                            )
-                        }
-                    },
-                    onErrorSnackbar = {
+                coroutineScope.launch {
+                    if (friendUserIdOrEmail == null){
                         coroutineScope.launch {
-                            snackBarHostState.showSnackbar(message = shareTripErrorText)
-                        }
-                    },
-                    onMyEmailSnackbar = {
-                        coroutineScope.launch {
-                            snackBarHostState.showSnackbar(message = sameEmailText)
-                        }
-                    },
-                    onInvalidEmailSnackbar = {
-                        coroutineScope.launch {
-                            snackBarHostState.showSnackbar(message = invalidEmailText)
-                        }
-                    },
-                    onNoUserSnackbar = {
-                        coroutineScope.launch {
-                            snackBarHostState.showSnackbar(message = noUserText)
+                            snackBarHostState.showSnackbar(message = invalidQrCodeText)
                         }
                     }
-                )
+                    else{
+                        inviteFriendViewModel.getFriendUserData(
+                            searchByUserId = searchByUserId,
+                            friendUserIdOrEmail = friendUserIdOrEmail,
+                            appUserData = appUserData,
+                            onErrorSnackbar = {
+                                coroutineScope.launch {
+                                    snackBarHostState.showSnackbar(message = searchFriendErrorText)
+                                }
+                            },
+                            onFriendNotFoundSnackbar = {
+                                coroutineScope.launch {
+                                    snackBarHostState.showSnackbar(message = userNotFoundText)
+                                }
+                            },
+                            onFriendIsAppUserSnackbar = {
+                                coroutineScope.launch {
+                                    snackBarHostState.showSnackbar(message = friendIsAppUserText)
+                                }
+                            },
+                            onInvalidEmailSnackbar = {
+                                coroutineScope.launch {
+                                    snackBarHostState.showSnackbar(message = invalidEmailText)
+                                }
+                            }
+                        )
+                    }
+                }
             }
         },
-        onClickShareApp = {
-            context.startActivity(shareIntent)
+        onClickFriendCardCancel = {
+            inviteFriendViewModel.setFriendInfoWithInviteCardVisible(false)
+            inviteFriendViewModel.setSearchFriendAvailable(true)
+        },
+        onClickFriendCardInvite = {
+            inviteFriendViewModel.setInviteButtonEnabled(false)
+
+            if (inviteFriendUiState.friendUserData != null) {
+                coroutineScope.launch {
+                    inviteFriendViewModel.inviteFriend(
+                        tripId = trip.id,
+                        appUserId = appUserData.userId,
+                        friendUserId = inviteFriendUiState.friendUserData!!.userId,
+                        editable = inviteFriendUiState.isEditable,
+                        onSuccess = {
+                            coroutineScope.launch {
+                                snackBarHostState.showSnackbar(
+                                    message = shareTripSuccessText
+                                )
+
+                                inviteFriendViewModel.getInvitedFriends(
+                                    internetEnabled = internetEnabled,
+                                    tripManagerId = trip.managerId,
+                                    tripId = trip.id,
+                                    onSuccess = { invitedFriendList ->
+                                        //exclude app user
+                                        val newInvitedFriendList =
+                                            invitedFriendList.filter { it.userId != appUserData.userId }
+
+                                        //update trip state
+                                        trip.setSharingTo(
+                                            updateTripState = updateTripState,
+                                            userDataList = newInvitedFriendList
+                                        )
+                                    },
+                                    onError = { }
+                                )
+                            }
+                        },
+                        onErrorSnackbar = {
+                            coroutineScope.launch {
+                                snackBarHostState.showSnackbar(message = inviteFriendErrorText)
+                            }
+                        }
+                    )
+                }
+            }
         },
         downloadImage = inviteFriendViewModel::getImage,
         navigateUp = navigateUp,
@@ -195,27 +216,29 @@ fun InviteFriendRoute(
     )
 }
 
+
+
+
+
 @Composable
 private fun InviteFriendScreen(
     spacerValue: Dp,
-    snackBarHostState: SnackbarHostState,
-
     internetEnabled: Boolean,
     dateTimeFormat: DateTimeFormat,
 
+    snackBarHostState: SnackbarHostState,
+    inviteFriendUiState: InviteFriendUiState,
+
     trip: Trip,
 
-    inviteButtonEnabled: Boolean,
-
-    friendEmailText: String,
+    getFriendUserIdFromScannedValue: (String) -> String?,
+    setIsInviteWithQr: (Boolean) -> Unit,
     setFriendEmailText: (String) -> Unit,
+    setIsAllowEdit: (Boolean) -> Unit,
+    getFriendUserData: (searchByUserId: Boolean, friendUserIdOrEmail: String?) -> Unit,
 
-    isEditable: Boolean,
-    setIsEditable: (Boolean) -> Unit,
-
-    onClickInviteButton: () -> Unit,
-
-    onClickShareApp: () -> Unit,
+    onClickFriendCardCancel: () -> Unit,
+    onClickFriendCardInvite: () -> Unit,
 
     downloadImage: (imagePath: String, tripManagerId: String, (Boolean) -> Unit) -> Unit,
     navigateUp: () -> Unit,
@@ -232,12 +255,25 @@ private fun InviteFriendScreen(
         topBar = {
             SomewhereTopAppBar(
                 startPadding = spacerValue,
-                internetEnabled = internetEnabled,
                 title = stringResource(id = R.string.invite_friend),
-                navigationIcon = TopAppBarIcon.back,
+                navigationIcon = TopAppBarIcon.close,
                 onClickNavigationIcon = { navigateUp() }
             )
         },
+        floatingActionButton = {
+            FriendInfoWithInviteCard(
+                visible = inviteFriendUiState.friendInfoWithInviteCardVisible,
+                internetEnabled = internetEnabled,
+                friendUserData = inviteFriendUiState.friendUserData ?: UserData("", "", "", "", listOf()),
+                isEditable = inviteFriendUiState.isEditable,
+                setIsAllowEdit = setIsAllowEdit,
+                inviteButtonEnabled = inviteFriendUiState.inviteButtonEnabled,
+                onClickCancel = onClickFriendCardCancel,
+                onClickInvite = onClickFriendCardInvite,
+                downloadImage = downloadImage
+            )
+        },
+        floatingActionButtonPosition = FabPosition.Center,
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarHostState,
@@ -255,7 +291,7 @@ private fun InviteFriendScreen(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(spacerValue, 8.dp, spacerValue, 200.dp),
+            contentPadding = PaddingValues(spacerValue, 8.dp, spacerValue, 40.dp),
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
@@ -273,106 +309,58 @@ private fun InviteFriendScreen(
             }
 
             item {
-                //email text field
-                EmailTextField(
-                    emailText = friendEmailText,
-                    onEmailTextChange = setFriendEmailText
-                )
-            }
+                //qr or email
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.TopCenter
+                ) {
 
-            item {
-                //view only / allow edit
-                AllowEditViewSelectSwitch(
-                    isEditable = isEditable,
-                    setIsAllowEdit = setIsEditable
-                )
-            }
-
-            item {
-                //invite button
-                InviteButton(
-                    enabled = inviteButtonEnabled,
-                    onClick = onClickInviteButton
-                )
-            }
-
-            item{
-                MySpacerColumn(height = 32.dp)
-                ShareAppCard(
-                    onClickShareApp = onClickShareApp,
-                    modifier = Modifier.widthIn(max = itemMaxWidthSmall).fillMaxWidth(),
-                )
-            }
-        }
-    }
-}
-
-
-
-
-@Composable
-private fun EmailTextField(
-    emailText: String,
-    onEmailTextChange: (newEmailText: String) -> Unit
-){
-    val focusManager = LocalFocusManager.current
-    val focusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
-
-    Column(
-        modifier = Modifier.widthIn(max = itemMaxWidthSmall)
-    ) {
-
-        Text(
-            text = stringResource(id = R.string.friend_to_invite),
-            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-            modifier = Modifier
-                .widthIn(max = itemMaxWidthSmall)
-                .padding(start = 16.dp)
-        )
-
-        MySpacerColumn(height = 8.dp)
-
-        //text field
-        MyCard(
-            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceBright),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.height(48.dp).padding(start = 16.dp)
-            ) {
-                MyTextField(
-                    modifier = Modifier.weight(1f),
-                    inputText = if (emailText == "") null else emailText,
-                    inputTextStyle = MaterialTheme.typography.bodyLarge,
-                    placeholderText = stringResource(id = R.string.friend_email),
-                    placeholderTextStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-                    onValueChange = {
-                        val newText = it.substring(0, min(200, it.length))
-                        onEmailTextChange(newText)
-                    },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(onDone = {
-                        focusManager.clearFocus()
-                    }),
-                    textFieldModifier = Modifier.focusRequester(focusRequester)
-                )
-
-                //if texting show x icon
-                if (emailText != "")
-                    IconButton(
-                        onClick = { onEmailTextChange("") }
+                    AnimatedVisibility(
+                        visible = inviteFriendUiState.isInviteWithQr,
+                        enter = slideInHorizontally(
+                            animationSpec = tween(500),
+                            initialOffsetX = { -it*2 }
+                        ) + fadeIn(tween(500)),
+                        exit = slideOutHorizontally(
+                            animationSpec = tween(500),
+                            targetOffsetX = { -it*2 }
+                        ) + fadeOut(tween(500))
                     ) {
-                        DisplayIcon(icon = MyIcons.clearInputText)
+                        QrCodePage(
+                            internetEnabled = internetEnabled,
+                            searchFriendAvailable = inviteFriendUiState.searchFriendAvailable,
+                            onScanned = { scannedValue ->
+                                val friendUserId: String? = getFriendUserIdFromScannedValue(scannedValue)
+                                getFriendUserData(true, friendUserId)
+                            },
+                            onClickInviteWithEmailButton = { setIsInviteWithQr(false) },
+                            modifier = Modifier.height(430.dp)
+                        )
                     }
+                    AnimatedVisibility(
+                        visible = !inviteFriendUiState.isInviteWithQr,
+                        enter = slideInHorizontally(
+                            animationSpec = tween(500),
+                            initialOffsetX = { it*2 }
+                        ) + fadeIn(tween(500)),
+                        exit = slideOutHorizontally(
+                            animationSpec = tween(500),
+                            targetOffsetX = { it*2 }
+                        ) + fadeOut(tween(500))
+                    ) {
+                        EmailPage(
+                            internetEnabled = internetEnabled,
+                            searchFriendAvailable = inviteFriendUiState.searchFriendAvailable,
+                            emailText = inviteFriendUiState.friendEmailText,
+                            onEmailTextChange = setFriendEmailText,
+                            onSearch = {
+                                getFriendUserData(false, inviteFriendUiState.friendEmailText)
+                            },
+                            onClickInviteFriendWithQrCode = { setIsInviteWithQr(true) },
+                            modifier = Modifier.height(430.dp)
+                        )
+                    }
+                }
             }
         }
     }

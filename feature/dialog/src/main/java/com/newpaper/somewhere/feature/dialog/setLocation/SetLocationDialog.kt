@@ -83,7 +83,7 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
-import com.newpaper.somewhere.core.designsystem.component.button.SaveCancelButtons
+import com.newpaper.somewhere.core.designsystem.component.button.NegativePositiveButtons
 import com.newpaper.somewhere.core.designsystem.component.map.MapForSetLocation
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
@@ -179,9 +179,9 @@ fun SetLocationDialog(
                 hostState = snackBarHostState,
                 modifier = Modifier
                     .width(500.dp)
-                    .padding(bottom =
-                        if (LocalConfiguration.current.screenWidthDp > 670) 90.dp
-                        else 150.dp
+                    .padding(
+                        bottom = if (LocalConfiguration.current.screenWidthDp > 670) 90.dp
+                            else 150.dp
                     )
                     .imePadding(),
                 snackbar = {
@@ -471,7 +471,7 @@ fun SetLocationDialog(
                         .width(330.dp)
                 ) {
                     //cancel save buttons
-                    CancelPositiveButtons(
+                    NegativePositiveButtons(
                         positiveButtonText = stringResource(id = R.string.save),
                         onClickCancel = setShowSetLocationDialogToFalse,
                         onClickPositive = {

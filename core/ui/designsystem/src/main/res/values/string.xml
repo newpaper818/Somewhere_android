@@ -23,6 +23,9 @@
     <string name="new_trip">New trip</string>
     <string name="invite">Invite</string>
     <string name="share_app">Share app</string>
+    <string name="settings">Settings</string>
+    <string name="invite_friend_with_email">Invite friend with email</string>
+    <string name="invite_friend_with_qr_code">Invite friend with QR code</string>
     <string name="delete_account">Delete account</string>
     <string name="change_image">Change image</string>
 
@@ -99,6 +102,7 @@
     <string name="delete_profile_image">Delete profile image</string>
     <string name="delete_image">Delete image</string>
     <string name="search_location">Search location</string>
+    <string name="search_friend">Search friend</string>
     <string name="clear_text">Clear text</string>
     <string name="expand">Expand</string>
     <string name="collapse">Collapse</string>
@@ -109,6 +113,9 @@
     <string name="clickable_item">Clickable menu</string>
     <string name="set_color">Set color</string>
     <string name="selected_color">Selected color</string>
+    <string name="qr_code">QR code</string>
+    <string name="flash_on">Flash on</string>
+    <string name="flash_off">Flash off</string>
     <string name="date">Date</string>
     <string name="time">Time</string>
     <string name="to">To</string>

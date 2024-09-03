@@ -17,8 +17,6 @@
     <string name="re_auth_error">인증 에러. 나중에 다시 시도하세요.</string>
     <string name="re_auth_match_user">현재 로그인되어있는 계정과 같은 계정으로 인증하세요.</string>
     <string name="delete_account_error">계정 삭제 에러. 나중에 다시 시도하세요.</string>
-    <string name="authentication_done">인증 완료</string>
-
     <string name="authenticating">인증 중…</string>
     <string name="authentication_with_google">Google 인증</string>
     <string name="authentication_with_apple">Apple 인증</string>
@@ -28,7 +26,6 @@
     <string name="name">이름</string>
     <string name="profile_image">프로필 사진</string>
     <string name="no_name">이름 없음</string>
-    <string name="internet_unavailable_check_connection">인터넷 연결 없음\n인터넷 연결을 확인하세요</string>
     <string name="snackbar_success_update_profile">프로필 업데이트 성공</string>
     <string name="snackbar_fail_update_profile">프로필 업데이트 에러. 나중에 다시 시도하세요.</string>
     <string name="snackbar_no_changed">변경사항 없음</string>
