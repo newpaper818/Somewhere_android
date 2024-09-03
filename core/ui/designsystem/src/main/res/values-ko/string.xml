@@ -23,6 +23,9 @@
     <string name="new_trip">새 여행</string>
     <string name="invite">초대하기</string>
     <string name="share_app">앱 공유하기</string>
+    <string name="settings">설정</string>
+    <string name="invite_friend_with_email">이메일로 친구 초대</string>
+    <string name="invite_friend_with_qr_code">QR 코드로 친구 초대</string>
     <string name="delete_account">계정 삭제</string>
     <string name="change_image">사진 변경</string>
 
@@ -99,6 +102,7 @@
     <string name="delete_profile_image">프로필 사진 삭제</string>
     <string name="delete_image">사진 삭제</string>
     <string name="search_location">위치 검색</string>
+    <string name="search_friend">친구 검색</string>
     <string name="clear_text">모두 지우기</string>
     <string name="expand">펼치기</string>
     <string name="collapse">접기</string>
@@ -109,6 +113,9 @@
     <string name="clickable_item">메뉴</string>
     <string name="set_color">색 설정</string>
     <string name="selected_color">선택된 색</string>
+    <string name="qr_code">QR 코드</string>
+    <string name="flash_on">플래시 켜짐</string>
+    <string name="flash_off">플래시 꺼짐</string>
     <string name="date">날짜</string>
     <string name="time">시간</string>
     <string name="to">으로</string>

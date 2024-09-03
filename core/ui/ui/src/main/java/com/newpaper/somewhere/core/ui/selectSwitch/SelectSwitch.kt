@@ -14,10 +14,11 @@ import com.newpaper.somewhere.core.ui.ui.R
 @Composable
 fun AllowEditViewSelectSwitch(
     isEditable: Boolean,
-    setIsAllowEdit: (isAllowEdit: Boolean) -> Unit
+    setIsAllowEdit: (isAllowEdit: Boolean) -> Unit,
+    modifier: Modifier = Modifier
 ){
     SelectSwitch(
-        modifier = Modifier.widthIn(max = 330.dp)
+        modifier = modifier.widthIn(max = 330.dp)
     ) {
         SelectSwitchItem(
             modifier = Modifier.weight(1f),

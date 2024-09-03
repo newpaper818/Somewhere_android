@@ -37,7 +37,7 @@ fun FriendInfo(
             internetEnabled = internetEnabled,
             profileImagePath = friendData.profileImagePath,
             downloadImage = downloadImage,
-            size = 40.dp
+            size = 44.dp
         )
 
         MySpacerRow(width = 12.dp)
@@ -67,7 +67,7 @@ fun FriendInfo(
 
             //email
             if (friendData.email != null){
-                MySpacerColumn(height = 2.dp)
+                MySpacerColumn(height = 4.dp)
 
                 Text(
                     text = friendData.email!!,

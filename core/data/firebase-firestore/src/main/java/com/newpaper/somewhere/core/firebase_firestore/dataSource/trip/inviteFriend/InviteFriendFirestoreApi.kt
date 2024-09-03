@@ -62,51 +62,106 @@ class InviteFriendFirestoreApi @Inject constructor(
             }
     }
 
-    override suspend fun checkAndAddSharingTripFriend(
-        tripId: Int,
-        myEmail: String,
-        myUserId: String,
+    override suspend fun getFriendUserDataFromEmail(
         friendUserEmail: String,
+    ): Pair<UserData?, Boolean> {
+        val userData = CompletableDeferred<Pair<UserData?, Boolean>>()
+
+        firestoreDb.collection(USERS)
+            .whereEqualTo(EMAIL, friendUserEmail).limit(1)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (documents.size() > 0){
+                    for (document in documents){
+                        val userid = document.id
+                        val userName = document.getString(USER_NAME)
+                        val email = document.getString(EMAIL)
+                        val profileImagePath = document.getString(PROFILE_IMAGE_URL)
+
+                        userData.complete(
+                            Pair(
+                                UserData(
+                                    userId = userid,
+                                    userName = userName,
+                                    email = email,
+                                    profileImagePath = profileImagePath,
+                                    providerIds = listOf()
+                                ),
+                                true
+                            )
+                        ) //find friend
+                        break
+                    }
+                }
+                else
+                    userData.complete(Pair(null, true)) //cnn not find friend (no error)
+            }
+            .addOnFailureListener{e ->
+                Log.e(FIREBASE_FIRESTORE_INVITE_FRIEND_TAG, "get userId from email fail - ", e)
+                userData.complete(Pair(null, false)) //error
+            }
+
+        return userData.await()
+    }
+
+    override suspend fun getFriendUserDataFromUserId(
+        friendUserUserId: String,
+    ): Pair<UserData?, Boolean> {
+        val userData = CompletableDeferred<Pair<UserData?, Boolean>>()
+
+        firestoreDb.collection(USERS).document(friendUserUserId).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val userName = document.getString(USER_NAME)
+                    val email = document.getString(EMAIL)
+                    val profileImagePath = document.getString(PROFILE_IMAGE_URL)
+
+                    userData.complete(
+                        Pair(
+                            UserData(
+                                userId = friendUserUserId,
+                                userName = userName,
+                                email = email,
+                                profileImagePath = profileImagePath,
+                                providerIds = listOf()
+                            ),
+                            true
+                        )
+                    )
+                }
+                else {
+                    userData.complete(
+                        Pair(null, true)
+                    )
+                }
+            }
+            .addOnFailureListener{e ->
+                Log.e(FIREBASE_FIRESTORE_INVITE_FRIEND_TAG, "get userId from userId fail - ", e)
+                userData.complete(Pair(null, false))
+            }
+
+        return userData.await()
+    }
+
+    override suspend fun inviteFriend(
+        tripId: Int,
+        appUserId: String,
+        friendUserId: String,
         editable: Boolean,
         onSuccess: () -> Unit,
-        onErrorSnackbar: () -> Unit,
-        onMyEmailSnackbar: () -> Unit,
-        onInvalidEmailSnackbar: () -> Unit,
-        onNoUserSnackbar: () -> Unit
+        onErrorSnackbar: () -> Unit
     ) {
+        val addSuccess = addSharingTripFriend(
+            tripId = tripId,
+            managerId = appUserId,
+            friendId = friendUserId,
+            editable = editable
+        )
 
-        if (myEmail == friendUserEmail){
-            onMyEmailSnackbar()
-            return
-        }
-
-        if (friendUserEmail.isEmpty() || "@" !in friendUserEmail){
-            onInvalidEmailSnackbar()
-            return
-        }
-
-        val (friendUserId, success) = getUserIDFromEmail(friendUserEmail)
-        if (friendUserId != null && success){
-            val addSuccess = addSharingTripFriend(
-                tripId = tripId,
-                managerId = myUserId,
-                friendId = friendUserId,
-                editable = editable
-            )
-
-            return if (addSuccess){
-                //add complete
-                onSuccess()
-            } else {
-                //error - error do it later
-                onErrorSnackbar()
-            }
-        }
-        else if (friendUserId == null && success){
-            //user not exit
-            onNoUserSnackbar()
-        }
-        else {
+        return if (addSuccess){
+            //add complete
+            onSuccess()
+        } else {
             //error - error do it later
             onErrorSnackbar()
         }
@@ -285,12 +340,17 @@ class InviteFriendFirestoreApi @Inject constructor(
             val oppositeNewData = mapOf(FRIEND_ID to friendId, EDITABLE to !editable)
 
             var addNewData = true
+            var haveToUpdate = true
 
             var newSharingTo = existingSharingTo.map {
                 when (it) {
-                    newData -> addNewData = false
+                    newData -> {
+                        addNewData = false
+                        haveToUpdate = false
+                    }
                     oppositeNewData -> {
                         addNewData = false
+                        haveToUpdate = true
                         newData
                     }
                     else -> it
@@ -300,7 +360,10 @@ class InviteFriendFirestoreApi @Inject constructor(
             if (addNewData)
                 newSharingTo = newSharingTo + newData
 
-            if (newSharingTo != existingSharingTo && newSharingTo != listOf<Any?>(Unit)) {
+            if (haveToUpdate
+                && newSharingTo != existingSharingTo
+                && newSharingTo != listOf<Any?>(Unit)
+            ) {
                 transaction.update(myTripRef, SHARING_TO, newSharingTo)
             }
 

@@ -26,6 +26,8 @@ import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.material.icons.rounded.ExpandMore
 import androidx.compose.material.icons.rounded.FileDownload
+import androidx.compose.material.icons.rounded.FlashOff
+import androidx.compose.material.icons.rounded.FlashOn
 import androidx.compose.material.icons.rounded.Fullscreen
 import androidx.compose.material.icons.rounded.Image
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
@@ -46,6 +48,7 @@ import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material.icons.rounded.People
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.PersonAdd
+import androidx.compose.material.icons.rounded.QrCodeScanner
 import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material.icons.rounded.Route
 import androidx.compose.material.icons.rounded.Schedule
@@ -131,6 +134,7 @@ object MyIcons {
     //sign in screen
     val signIn = MyIcon(Icons.AutoMirrored.Rounded.Login,       36.dp, true, null, R.string.sign_in)
     val internetUnavailable = MyIcon(Icons.Rounded.CloudOff,    40.dp, true, null, R.string.internet_unavailable)
+    val internetUnavailableWhite = MyIcon(Icons.Rounded.CloudOff, 40.dp, false, Color.White, R.string.internet_unavailable)
 
     //no item
     val noTrips = MyIcon(Icons.Rounded.Luggage,       40.dp, true, null, R.string.no_trips)
@@ -147,6 +151,7 @@ object MyIcons {
 
     //search / text input
     val searchLocation = MyIcon(Icons.Rounded.Search,   24.dp, false, null, R.string.search_location)
+    val searchFriend = MyIcon(Icons.Rounded.Search,     24.dp, false, null, R.string.search_friend)
     val clearInputText = MyIcon(Icons.Rounded.Close,    22.dp, false, null, R.string.clear_text)
 
     //item expand collapse
@@ -170,6 +175,11 @@ object MyIcons {
     //invited friend
     val viewOnly = MyIcon(Icons.Rounded.Visibility,     24.dp, true, null, R.string.view_only)
     val allowEdit = MyIcon(Icons.Rounded.Edit,          24.dp, true, null, R.string.allow_edit)
+
+    //invite friend
+    val qrCode = MyIcon(Icons.Rounded.QrCodeScanner,    40.dp, false, null, R.string.qr_code)
+    val flashOn = MyIcon(Icons.Rounded.FlashOn,         22.dp, false, null, R.string.flash_on)
+    val flashOff = MyIcon(Icons.Rounded.FlashOff,       22.dp, false, null, R.string.flash_off)
 
     //date time
     val date = MyIcon(Icons.Rounded.CalendarMonth,      22.dp, true, null, R.string.date)
