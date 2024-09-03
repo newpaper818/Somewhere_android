@@ -1,6 +1,5 @@
 package com.newpaper.somewhere.feature.trip.tripMap
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.newpaper.somewhere.core.model.data.DateWithBoolean
 import com.newpaper.somewhere.core.model.data.SpotTypeGroupWithBoolean
