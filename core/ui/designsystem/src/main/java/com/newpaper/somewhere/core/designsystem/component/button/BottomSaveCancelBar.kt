@@ -26,7 +26,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.designsystem.R
 
@@ -68,7 +67,8 @@ fun AnimatedBottomSaveCancelButtons(
 
 
                 //no gradation
-                CancelPositiveButtons(
+                NegativePositiveButtons(
+                    negativeButtonText = stringResource(id = R.string.cancel),
                     positiveButtonText = stringResource(id = R.string.save),
                     onClickCancel = onClickCancel,
                     onClickPositive = onClickSave,
@@ -84,11 +84,12 @@ fun AnimatedBottomSaveCancelButtons(
 }
 
 @Composable
-fun CancelPositiveButtons(
+fun NegativePositiveButtons(
     positiveButtonText: String,
     onClickCancel: () -> Unit,
     onClickPositive: () -> Unit,
     modifier: Modifier = Modifier,
+    negativeButtonText: String = stringResource(id = R.string.cancel),
     positiveEnabled: Boolean = true
 ) {
     Column(
@@ -98,7 +99,8 @@ fun CancelPositiveButtons(
         Row(
             modifier = Modifier.widthIn(max = 310.dp)
         ) {
-            BigCancelButton(
+            BigNegativeButton(
+                text = negativeButtonText,
                 onClick = onClickCancel,
                 modifier = Modifier.weight(1f)
             )
@@ -116,7 +118,8 @@ fun CancelPositiveButtons(
 }
 
 @Composable
-private fun BigCancelButton(
+private fun BigNegativeButton(
+    text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true
@@ -134,7 +137,7 @@ private fun BigCancelButton(
         onClick = onClick
     ) {
         Text(
-            text = stringResource(id = R.string.cancel),
+            text = text,
             style = MaterialTheme.typography.labelLarge
         )
     }
@@ -193,7 +196,8 @@ private fun SaveCancelButtonPreview(){
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)
         ){
-            CancelPositiveButtons(
+            NegativePositiveButtons(
+                negativeButtonText = "Cancel",
                 positiveButtonText = "Save",
                 onClickCancel = {},
                 onClickPositive = {}
@@ -211,7 +215,8 @@ private fun SaveCancelButtonPreview1(){
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)
         ){
-            CancelPositiveButtons(
+            NegativePositiveButtons(
+                negativeButtonText = "Cancel",
                 positiveButtonText = "Save",
                 onClickCancel = {},
                 onClickPositive = {},
