@@ -135,6 +135,13 @@ fun DateRoute(
     val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsState()
     val dateUiState by dateViewModel.dateUiState.collectAsState()
 
+    if (commonTripUiState.tripInfo.trip == null
+        || commonTripUiState.tripInfo.tempTrip == null
+    ){
+        navigateUp()
+        return
+    }
+
     val originalTrip = commonTripUiState.tripInfo.trip!!
     val tempTrip = commonTripUiState.tripInfo.tempTrip!!
     val isEditMode = commonTripUiState.isEditMode

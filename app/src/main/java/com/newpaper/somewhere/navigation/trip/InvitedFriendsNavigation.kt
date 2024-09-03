@@ -11,6 +11,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
+import com.newpaper.somewhere.core.ui.ErrorScreen
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.invitedFriend.InvitedFriendsRoute
 import com.newpaper.somewhere.feature.trip.trips.TripsViewModel
@@ -87,7 +88,8 @@ fun NavGraphBuilder.invitedFriendsScreen(
             )
         }
         else {
-            Text(text = "No user or trip")
+            ErrorScreen()
+            navigateUp()
         }
     }
 }

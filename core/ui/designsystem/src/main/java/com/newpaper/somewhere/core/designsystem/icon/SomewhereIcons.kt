@@ -23,6 +23,7 @@ import androidx.compose.material.icons.rounded.East
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.EditNote
 import androidx.compose.material.icons.rounded.Error
+import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.material.icons.rounded.ExpandMore
 import androidx.compose.material.icons.rounded.FileDownload
@@ -130,6 +131,9 @@ object SelectSwitchIcon {
 }
 
 object MyIcons {
+
+    //error
+    val error = MyIcon(Icons.Rounded.ErrorOutline,              40.dp, false, null, R.string.error)
 
     //sign in screen
     val signIn = MyIcon(Icons.AutoMirrored.Rounded.Login,       36.dp, true, null, R.string.sign_in)
