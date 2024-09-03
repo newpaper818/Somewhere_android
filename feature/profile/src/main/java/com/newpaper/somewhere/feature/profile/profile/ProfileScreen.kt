@@ -31,6 +31,7 @@ import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.UserData
+import com.newpaper.somewhere.core.ui.ErrorScreen
 import com.newpaper.somewhere.core.ui.card.UserProfileCard
 import com.newpaper.somewhere.feature.profile.R
 import com.newpaper.somewhere.feature.trip.image.ImageViewModel
@@ -91,7 +92,7 @@ fun ProfileScreen(
         ){
             if (userData == null) {
                 item {
-                    Text(text = "no user")
+                    ErrorScreen()
                 }
             }
             else {

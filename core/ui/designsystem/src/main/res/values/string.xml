@@ -94,6 +94,7 @@
     <string name="allow_edit">Allow edit</string>
 
     <!--MyIcons-->
+    <string name="error">Error</string>
     <string name="sign_in">Sign in</string>
     <string name="no_trips">No trips</string>
     <string name="no_plan">No plan</string>

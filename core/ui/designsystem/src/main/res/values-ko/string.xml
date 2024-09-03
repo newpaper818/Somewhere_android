@@ -94,6 +94,7 @@
     <string name="allow_edit">편집 허용</string>
 
     <!--MyIcons-->
+    <string name="error">오류</string>
     <string name="sign_in">로그인</string>
     <string name="no_trips">여행 없음</string>
     <string name="no_plan">계획 없음</string>

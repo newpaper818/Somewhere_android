@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
+import com.newpaper.somewhere.core.ui.ErrorScreen
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.spot.SpotRoute
 import com.newpaper.somewhere.navigation.enterTransition
@@ -84,7 +85,8 @@ fun NavGraphBuilder.spotScreen(
             )
         }
         else{
-            Text(text = "no user")
+            ErrorScreen()
+            navigateUp()
         }
     }
 }

@@ -10,6 +10,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
+import com.newpaper.somewhere.core.ui.ErrorScreen
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.trip.TripRoute
 import com.newpaper.somewhere.navigation.enterTransition
@@ -86,7 +87,8 @@ fun NavGraphBuilder.tripScreen(
             )
         }
         else{
-            Text(text = "no user")
+            ErrorScreen()
+            navigateUp()
         }
     }
 }

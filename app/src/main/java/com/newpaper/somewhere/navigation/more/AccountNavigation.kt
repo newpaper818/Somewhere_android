@@ -11,6 +11,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
+import com.newpaper.somewhere.core.ui.ErrorScreen
 import com.newpaper.somewhere.feature.more.account.AccountRoute
 import com.newpaper.somewhere.navigation.enterTransition
 import com.newpaper.somewhere.navigation.exitTransition
@@ -68,7 +69,8 @@ fun NavGraphBuilder.accountScreen(
             )
         }
         else {
-            Text("no user")
+            ErrorScreen()
+            navigateUp()
         }
     }
 }
