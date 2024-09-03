@@ -6,6 +6,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -40,7 +42,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -48,7 +49,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -64,6 +64,7 @@ import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.designsystem.theme.CustomColor
 import com.newpaper.somewhere.core.model.data.UserData
+import com.newpaper.somewhere.core.ui.InternetUnavailableText
 import com.newpaper.somewhere.core.ui.MyTextField
 import com.newpaper.somewhere.core.ui.card.ProfileImage
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
@@ -277,7 +278,13 @@ private fun EditProfileScreen(
 
             //internet unavailable
             item {
-                InternetUnavailableText(internetEnabled)
+                AnimatedVisibility(
+                    visible = !internetEnabled,
+                    enter = expandVertically(tween(500)) + fadeIn(tween(500, 200)),
+                    exit = shrinkVertically(tween(500, 200)) + fadeOut(tween(500))
+                ) {
+                    InternetUnavailableText()
+                }
             }
 
             //email
@@ -446,25 +453,6 @@ private fun EditableUserName(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun InternetUnavailableText(
-    internetEnabled: Boolean
-){
-    AnimatedVisibility(
-        visible = !internetEnabled,
-        enter = expandVertically(tween(300)),
-        exit = shrinkVertically(tween(300))
-    ) {
-        Column {
-            Text(
-                text = stringResource(id = R.string.internet_unavailable_check_connection),
-                style = MaterialTheme.typography.bodyMedium.copy(MaterialTheme.colorScheme.onSurfaceVariant),
-                textAlign = TextAlign.Center
-            )
         }
     }
 }

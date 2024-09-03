@@ -4,6 +4,12 @@ import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,7 +55,7 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ProviderId
-import com.newpaper.somewhere.core.ui.InternetUnavailableIconWithText
+import com.newpaper.somewhere.core.ui.InternetUnavailableText
 import com.newpaper.somewhere.core.ui.card.UserProfileCard
 import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
@@ -324,64 +331,84 @@ private fun DeleteAccountScreen(
                 }
             }
 
-            if (internetEnabled) {
-                //authentication
-                item {
-                    MyCard(
-                        modifier = itemModifier
-                    ) {
-                        Column(
-                            modifier.padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            //auth with currently ...
-                            Text(
-                                text = stringResource(id = R.string.re_auth_match_user),
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.fillMaxWidth()
-                            )
+            //authentication
+            item {
+                AuthButtonsWithText(
+                    internetEnabled = internetEnabled,
+                    isDarkAppTheme = isDarkAppTheme,
+                    userData = userData,
+                    deleteAccountUiState = deleteAccountUiState,
+                    onClickAuthButton = onClickAuthButton,
+                    modifier = modifier
 
-                            //auth button
+                )
 
-                            AuthButtons(
-                                providerIds = userData.providerIds,
-                                enabled = deleteAccountUiState.authButtonEnabled && !deleteAccountUiState.isAuthDone,
-                                onClick = onClickAuthButton,
-                                authingWith = deleteAccountUiState.authingWith,
-                                isDarkAppTheme = isDarkAppTheme,
-                                isAuthDone = deleteAccountUiState.isAuthDone
-                            )
-                        }
+                AnimatedVisibility(
+                    visible = !internetEnabled,
+                    enter = expandVertically(tween(500)) + fadeIn(tween(500, 200)),
+                    exit = shrinkVertically(tween(500, 200)) + fadeOut(tween(500))
+                ) {
+                    Column {
+                        MySpacerColumn(height = 16.dp)
+
+                        InternetUnavailableText()
                     }
-
-                }
-
-                //delete account
-                item {
-                    MySpacerColumn(height = 16.dp)
-                    DeleteAccountButton(
-                        enabled = deleteAccountUiState.isAuthDone,
-                        onClick = onClickDeleteAccountButton
-                    )
                 }
             }
-            else {
-                item {
-                    MyCard(
-                        modifier = itemModifier
-                    ) {
-                        Column(
-                            modifier.padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            InternetUnavailableIconWithText()
-                        }
-                    }
-                }
+
+            //delete account
+            item {
+                MySpacerColumn(height = 16.dp)
+                DeleteAccountButton(
+                    enabled = internetEnabled && deleteAccountUiState.isAuthDone,
+                    onClick = onClickDeleteAccountButton
+                )
             }
         }
     }
 }
+
+@Composable
+private fun AuthButtonsWithText(
+    internetEnabled: Boolean,
+    isDarkAppTheme: Boolean,
+    userData: UserData,
+    deleteAccountUiState: DeleteAccountUiState,
+    onClickAuthButton: (providerId: ProviderId) -> Unit,
+    modifier: Modifier = Modifier
+){
+    MyCard(
+        modifier = modifier
+    ) {
+        Column(
+            modifier = modifier
+                .padding(16.dp)
+                .widthIn(min = 350.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            //auth with currently ...
+            Text(
+                text = stringResource(id = R.string.re_auth_match_user),
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
+            )
+
+            //auth button
+
+            AuthButtons(
+                providerIds = userData.providerIds,
+                enabled = internetEnabled
+                        && deleteAccountUiState.authButtonEnabled
+                        && !deleteAccountUiState.isAuthDone,
+                onClick = onClickAuthButton,
+                authingWith = deleteAccountUiState.authingWith,
+                isDarkAppTheme = isDarkAppTheme,
+                isAuthDone = deleteAccountUiState.isAuthDone
+            )
+        }
+    }
+}
+
 
 @Composable
 private fun AuthButtons(
@@ -405,4 +432,3 @@ private fun AuthButtons(
         )
     }
 }
-
