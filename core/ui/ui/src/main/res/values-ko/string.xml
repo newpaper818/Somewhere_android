@@ -50,21 +50,14 @@
 
     <!--dialog/ =================================================================================-->
     <!--DateRangeDialog.kt-->
-    <string name="dialog_title_date_range">여행 기간 설정</string>
-    <string name="dialog_starts">시작일</string>
-    <string name="dialog_ends">종료일</string>
-    <string name="dialog_date_range_headline">%s - %s</string>
 
     <!--DeleteOrNotDialog.kt-->
-    <string name="dialog_title_delete_friend">친구를 여행에서 삭제할까요?</string>
-    <string name="dialog_title_get_out_shared_trip">공유받은 여행에서 나갈까요?</string>
     <string name="leave_trip">나가기</string>
 
     <!--DeletingAccountDialog.kt-->
     <string name="deleting_account">계정 삭제하는 중…</string>
 
     <!--MemoDialog.kt-->
-    <string name="dialog_title_memo">메모</string>
 
     <!--SelectDateDialog.kt-->
     <string name="dialog_title_select_date">날짜 이동</string>
@@ -72,23 +65,18 @@
     <!--SetBudgetOrDistanceDialog.kt-->
     <string name="dialog_title_set_budget">예산 설정</string>
     <string name="dialog_title_set_travel_distance">이동 거리 설정</string>
-    <string name="dialog_set_distance_km">km</string>
 
     <!--SetColorDialog.kt-->
-    <string name="dialog_title_set_color">색상 설정</string>
 
     <!--SetCurrencyDialog.kt-->
     <string name="dialog_title_set_currency_type">통화 유형 선택</string>
 
     <!--SetEditableDialog.kt-->
-    <string name="dialog_title_set_editable">권한 설정</string>
 
     <!--SetSpotTypeDialog.kt-->
     <string name="dialog_title_set_spot_type">장소 유형 선택</string>
 
     <!--SetTimeDialog.kt-->
-    <string name="dialog_title_set_start_time_">시작 시간 설정</string>
-    <string name="dialog_title_set_end_time">종료 시간 설정</string>
 
     <!--SetCurrencyTypeDialog.kt-->
     <string name="aud_name">호주 달러</string>
@@ -108,16 +96,11 @@
 
     <!---->
     <string name="dialog_body_are_you_sure_to_exit">정말로 나가시겠습니까?\n저장하지 않은 데이터는 삭제됩니다</string>
-    <string name="dialog_body_delete_trip">이 여행을 삭제하시겠습니까?\n공유받은 친구도 이 여행을 볼 수 없게 됩니다</string>
     <string name="dialog_body_delete_spot">이 장소를 삭제하시겠습니까?</string>
     <string name="dialog_body_sign_out">로그아웃 하시겠습니까?</string>
 
-    <string name="dialog_button_close">닫기</string>
-    <string name="dialog_button_cancel">취소</string>
     <string name="dialog_button_delete">삭제</string>
     <string name="dialog_button_exit">나가기</string>
-    <string name="dialog_button_save">저장</string>
-    <string name="dialog_button_ok">확인</string>
 
 
     <!--item/ ===================================================================================-->
@@ -143,7 +126,7 @@
     <!--FriendInfo.kt-->
     <string name="unknown">알 수 없음</string>
 
-    <!--InternetUnavailableIconWithText.kt-->
+    <!--InternetUnavailable.kt-->
     <string name="internet_unavailable_check_connection">인터넷 연결 없음\n인터넷 연결을 확인하세요</string>
 
     <!--MapButtons.kt-->
