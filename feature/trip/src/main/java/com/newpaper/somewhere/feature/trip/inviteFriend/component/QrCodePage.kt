@@ -339,7 +339,7 @@ private fun CameraPermissionNotGrantedCard(
                 MySpacerColumn(height = 8.dp)
 
                 Text(
-                    text = stringResource(id = R.string.camera_permission_denied2),
+                    text = stringResource(id = R.string.please_allow_camera_permissions),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyMedium
                 )
