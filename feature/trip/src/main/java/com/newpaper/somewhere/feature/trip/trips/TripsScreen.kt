@@ -43,6 +43,7 @@ import com.google.android.gms.ads.AdView
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.button.NewTripButton
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
+import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
@@ -427,10 +428,9 @@ private fun TripsScreen(
                     }
             ) {
                 item {
-                    GoogleBannerAd(
-                        internetEnabled = internetEnabled,
-                        adView = adView
-                    )
+                    GoogleBannerAd(adView = adView)
+
+                    MySpacerColumn(height = 8.dp)
                 }
 
 

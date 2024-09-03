@@ -31,10 +31,7 @@ internal fun LoadingTripsItem(
 
         Column(modifier = modifier) {
 
-            if (internetEnabled)
-                MySpacerColumn(height = 124.dp)
-            else
-                MySpacerColumn(height = 66.dp)
+            MySpacerColumn(height = 124.dp)
 
             repeat(3) {
                 Box(
