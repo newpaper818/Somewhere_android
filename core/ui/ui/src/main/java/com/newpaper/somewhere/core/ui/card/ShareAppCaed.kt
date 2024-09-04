@@ -11,10 +11,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -64,16 +70,24 @@ fun ShareAppCard(
 private fun AppQrCode(
 
 ){
+    val density = LocalDensity.current
+
+    var width by rememberSaveable {
+        mutableIntStateOf(240)
+    }
+
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
-            .background(Color.White),
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color.White)
+            .size(width = 240.dp, height = width.dp)
+            .onSizeChanged {
+                with(density) { width = it.width.toDp().value.toInt() }
+            },
     ) {
         QrCodeView(
             data = PLAY_STORE_URL,
-            modifier = Modifier
-                .size(220.dp)
-                .padding(12.dp),
+            modifier = Modifier.padding(12.dp),
             dotShape = DotShape.Circle
         ) {
             Box(
