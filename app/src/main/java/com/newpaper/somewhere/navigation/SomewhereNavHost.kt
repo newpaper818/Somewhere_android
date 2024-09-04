@@ -133,15 +133,21 @@ fun SomewhereNavHost(
 //        }
     }
 
+    var beforeUse2Panes by rememberSaveable {
+        mutableStateOf(externalState.windowSizeClass.use2Panes)
+    }
+
     //nav stack
     LaunchedEffect(externalState.windowSizeClass.use2Panes) {
         organizeNavStack(
             use2Panes = externalState.windowSizeClass.use2Panes,
+            beforeUse2Panes = beforeUse2Panes,
             appUiState = appUiState,
             mainNavController = mainNavController,
             moreNavController = moreNavController,
             setMoreNavKey = { moreNavKey = UUID.randomUUID() }
         )
+        beforeUse2Panes = externalState.windowSizeClass.use2Panes
     }
 
 
@@ -498,6 +504,7 @@ fun SomewhereNavHost(
 
 private fun organizeNavStack(
     use2Panes: Boolean,
+    beforeUse2Panes: Boolean,
     appUiState: AppUiState,
     mainNavController: NavHostController,
     moreNavController: NavHostController,
@@ -507,6 +514,7 @@ private fun organizeNavStack(
 
     val isOnTrip = currentScreenDestination == ScreenDestination.TRIP
     val isOnDate = currentScreenDestination == ScreenDestination.DATE
+    val isOnSpot = currentScreenDestination == ScreenDestination.SPOT
 
     val isOnMoreDetail = currentScreenDestination == ScreenDestination.SET_DATE_TIME_FORMAT
             || currentScreenDestination == ScreenDestination.SET_THEME
@@ -517,10 +525,13 @@ private fun organizeNavStack(
             || currentScreenDestination == ScreenDestination.DELETE_ACCOUNT
             || currentScreenDestination == ScreenDestination.OPEN_SOURCE_LICENSE
 
+    //delete duplicate nav stack
+    //???
+
     //set nav stack
 
     // 1pane -> 2panes
-    if (use2Panes){
+    if (!beforeUse2Panes && use2Panes){
         if (isOnTrip){
             //delete Trip, add Date
             //    Trips - Trip
@@ -535,7 +546,7 @@ private fun organizeNavStack(
         else if (isOnDate){
             //delete Trip
             //    Trips - Trip - Date
-            // -> Trips - Date
+            // -> Trips -        Date
             mainNavController.navigate(
                 route = appUiState.screenDestination.currentScreenDestination.route,
                 navOptions = navOptions {
@@ -543,9 +554,23 @@ private fun organizeNavStack(
                 }
             )
         }
+        else if (isOnSpot){
+            //delete Trip
+            //     Trips - Trip - Date - Spot
+            // ->  Trips -        Date - spot
+            mainNavController.navigate(
+                route = ScreenDestination.DATE.route,
+                navOptions = navOptions {
+                    popUpTo(ScreenDestination.TRIPS.route){ inclusive = false }
+                }
+            )
+            mainNavController.navigate(
+                route = ScreenDestination.SPOT.route
+            )
+        }
         else if (isOnMore3rd) {
             //    More - About - OSL (Open source license)
-            // -> More - OSL
+            // -> More -         OSL
             mainNavController.navigate(
                 route = appUiState.screenDestination.currentScreenDestination.route,
                 navOptions = navOptions {
@@ -558,20 +583,34 @@ private fun organizeNavStack(
         }
     }
     // 2panes -> 1pane
-    else {
+    else if (beforeUse2Panes && !use2Panes) {
         if (isOnDate){
             //add Trip
-            //    Trips - Date
+            //    Trips -        Date
             // -> Trips - Trip - Date
             mainNavController.popBackStack()
             mainNavController.navigate(
+                route = ScreenDestination.TRIP.route
+            )
+            mainNavController.navigate(
+                route = ScreenDestination.DATE.route
+            )
+        }
+        else if (isOnSpot){
+            //add Trip
+            //    Trips -        Date - spot
+            // -> Trips - Trip - Date - Spot
+            mainNavController.navigate(
                 route = ScreenDestination.TRIP.route,
-                navOptions {
-                    launchSingleTop = true
+                navOptions = navOptions {
+                    popUpTo(ScreenDestination.TRIPS.route){ inclusive = false }
                 }
             )
             mainNavController.navigate(
                 route = ScreenDestination.DATE.route
+            )
+            mainNavController.navigate(
+                route = ScreenDestination.SPOT.route
             )
         }
         else if (isOnMore3rd) {
