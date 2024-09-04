@@ -8,6 +8,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.newpaper.somewhere.core.ui.designsystem.R
 
+//Type.kt
+
 val suite = FontFamily(
     Font(R.font.suite_extrabold, FontWeight.ExtraBold),
     Font(R.font.suite_bold, FontWeight.Bold)
