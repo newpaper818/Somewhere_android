@@ -288,7 +288,8 @@ fun SomewhereNavHost(
 
                     if (!externalState.windowSizeClass.use2Panes)
                         mainNavController.navigate(ScreenDestination.ACCOUNT.route)
-                }
+                },
+                navigateUp = navigateUp
             )
 
             moreScreen(
