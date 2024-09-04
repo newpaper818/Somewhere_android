@@ -34,6 +34,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -105,6 +107,7 @@ fun InviteFriendRoute(
     val userNotFoundText = stringResource(id = R.string.snackbar_user_not_found)
     val shareTripSuccessText = stringResource(id = R.string.snackbar_invite_friend_success)
 
+    val haptic = LocalHapticFeedback.current
 
     InviteFriendScreen(
         spacerValue = spacerValue,
@@ -124,6 +127,11 @@ fun InviteFriendRoute(
 
         getFriendUserData = { searchByUserId, friendUserIdOrEmail ->
             if (inviteFriendUiState.searchFriendAvailable) {
+
+                //haptic
+                if (searchByUserId)
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+
                 inviteFriendViewModel.setSearchFriendAvailable(false)
 
                 coroutineScope.launch {
