@@ -239,32 +239,33 @@ private fun UpperDateTimeExampleBox(
             .padding(16.dp, 0.dp)
     ) {
         FlowRow(
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.Center
         ) {
             Box(
                 modifier = Modifier
                     .height(40.dp)
                     .padding(0.dp, 0.dp, 8.dp, 0.dp),
-                contentAlignment = Alignment.CenterStart
+                contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = dateText,
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.widthIn(min = 190.dp),
-                    textAlign = TextAlign.Start
+                    textAlign = TextAlign.Center
                 )
             }
 
 
             Box(
                 modifier = Modifier.height(40.dp),
-                contentAlignment = Alignment.CenterStart
+                contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = timeText,
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.widthIn(min = 100.dp),
-                    textAlign = TextAlign.Start
+                    textAlign = TextAlign.Center
                 )
             }
         }
