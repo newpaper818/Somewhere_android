@@ -3,6 +3,8 @@ package com.newpaper.somewhere.core.utils
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
 
+//value.kt
+
 const val PRIVACY_POLICY_URL = "https://newpaper818.github.io/Somewhere_privacy_policy/"
 
 const val FEEDBACK_URL = "https://forms.gle/2UqNgmLqPdECiSb17"
