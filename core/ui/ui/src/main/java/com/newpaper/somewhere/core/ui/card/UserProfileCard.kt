@@ -1,6 +1,7 @@
 package com.newpaper.somewhere.core.ui.card
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,16 +46,15 @@ fun UserProfileCard(
     enabled: Boolean = true,
     onProfileClick: () -> Unit = { },
 ) {
-    MyCard (
-        colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-            disabledContentColor = MaterialTheme.colorScheme.onSurface,
-        ),
-        enabled = enabled,
-        onClick = onProfileClick,
-        modifier = modifier
+    val boxModifier =
+        if (enabled) modifier
+            .clip(MaterialTheme.shapes.medium)
+            .clickable { onProfileClick() }
+        else modifier
+            .clip(MaterialTheme.shapes.medium)
+
+    Box(
+        modifier = boxModifier
     ){
         Row(
             modifier = Modifier.padding(12.dp, 16.dp, 16.dp, 16.dp),
