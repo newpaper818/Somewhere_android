@@ -64,6 +64,9 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
 
+    //qr code
+    implementation(libs.qr.code.compose)
+
     //test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

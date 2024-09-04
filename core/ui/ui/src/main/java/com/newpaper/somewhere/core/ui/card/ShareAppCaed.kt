@@ -3,8 +3,10 @@ package com.newpaper.somewhere.core.ui.card
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -12,15 +14,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.lightspark.composeqr.DotShape
+import com.lightspark.composeqr.QrCodeView
 import com.newpaper.somewhere.core.designsystem.component.ImageFromDrawable
 import com.newpaper.somewhere.core.designsystem.component.button.ShareAppButton
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.ui.R
+import com.newpaper.somewhere.core.utils.PLAY_STORE_URL
 
 @Composable
 fun ShareAppCard(
@@ -34,31 +40,60 @@ fun ShareAppCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier.padding(16.dp)
         ) {
+            //share app
             ShareAppButton(
                 onClick = onClickShareApp
             )
 
+            //or
             Text(
                 text = stringResource(id = R.string.or),
                 style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
             )
 
-            MySpacerColumn(height = 12.dp)
-            //qr code
-            ImageFromDrawable(
-                imageDrawable = R.drawable.play_store_qr,
-                contentDescription = "",
-                modifier = Modifier
-                    .size(220.dp)
-                    .clip(RoundedCornerShape(8.dp))
-            )
+            MySpacerColumn(height = 14.dp)
 
+            //qr code
+            AppQrCode()
         }
     }
 }
 
 
+@Composable
+private fun AppQrCode(
 
+){
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(Color.White),
+    ) {
+        QrCodeView(
+            data = PLAY_STORE_URL,
+            modifier = Modifier
+                .size(220.dp)
+                .padding(12.dp),
+            dotShape = DotShape.Circle
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(CircleShape)
+                    .background(Color.White),
+                contentAlignment = Alignment.Center
+            ) {
+                ImageFromDrawable(
+                    imageDrawable = R.drawable.app_icon_fit,
+                    contentDescription = stringResource(id = R.string.somewhere_app_icon),
+                    modifier = Modifier
+                        .padding(6.dp)
+                        .fillMaxSize()
+                )
+            }
+        }
+    }
+}
 
 
 
