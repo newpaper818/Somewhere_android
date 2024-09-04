@@ -1,5 +1,8 @@
 package com.newpaper.somewhere.core.designsystem.component.utils
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -13,6 +16,7 @@ import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -57,35 +61,44 @@ fun SelectSwitchItem(
 
     val haptic = LocalHapticFeedback.current
 
-    MyCard(
-        modifier = modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.small,
-        colors = CardDefaults.cardColors(
-            containerColor = containerColor,
-            contentColor = contentColor
-        ),
-        onClick = {
-            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-            onClick()
-        }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if (icon != null) {
-                DisplayIcon(icon = icon)
-
-                MySpacerColumn(height = 4.dp)
+    Box(
+        modifier = modifier
+            .clip(MaterialTheme.shapes.small)
+            .clickable {
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                onClick()
             }
+    ) {
+        MyCard(
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.small,
+            colors = CardDefaults.cardColors(
+                containerColor = containerColor,
+                contentColor = contentColor
+            ),
+//        onClick = {
+//            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+//            onClick()
+//        }
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (icon != null) {
+                    DisplayIcon(icon = icon)
 
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center
-            )
+                    MySpacerColumn(height = 4.dp)
+                }
+
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }
