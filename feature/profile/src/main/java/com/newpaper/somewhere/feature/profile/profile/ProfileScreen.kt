@@ -42,7 +42,7 @@ fun ProfileRoute(
     spacerValue: Dp,
     lazyListState: LazyListState,
     use2Panes: Boolean,
-    userData: UserData?,
+    userData: UserData,
     navigateToAccount: () -> Unit,
 
     modifier: Modifier = Modifier,
@@ -65,7 +65,7 @@ fun ProfileScreen(
     internetEnabled: Boolean,
     spacerValue: Dp,
     lazyListState: LazyListState,
-    userData: UserData?,
+    userData: UserData,
     onProfileClick: () -> Unit,
     downloadImage: (imagePath: String, tripManagerId: String, (Boolean) -> Unit) -> Unit,
 
@@ -90,31 +90,21 @@ fun ProfileScreen(
                 .padding(paddingValues)
                 .navigationBarsPadding()
         ){
-            if (userData == null) {
-                item {
-                    ErrorScreen()
-                }
-            }
-            else {
-                item {
-                    //user image and name
-                    UserProfileCard(
-                        userData = userData,
-                        internetEnabled = internetEnabled,
-                        downloadImage = downloadImage,
-                        onProfileClick = onProfileClick,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            }
 
-
+            item {
+                //user image and name
+                UserProfileCard(
+                    userData = userData,
+                    internetEnabled = internetEnabled,
+                    downloadImage = downloadImage,
+                    onProfileClick = onProfileClick,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
 
             //user QR code
-            if (userData != null) {
-                item{
-                    UserQrCode(userId = userData.userId)
-                }
+            item{
+                UserQrCode(userId = userData.userId)
             }
         }
     }
