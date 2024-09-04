@@ -12,6 +12,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
+//Theme.kt
+
 private val AppLightColorScheme = lightColorScheme(
     //primary
     primary = p40,

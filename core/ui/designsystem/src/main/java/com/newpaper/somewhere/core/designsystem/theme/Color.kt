@@ -2,6 +2,8 @@ package com.newpaper.somewhere.core.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 
+//Color.kt
+
 //primary Hue Chroma Tone 280 47 40
 val p0 = Color(0xFF000000)
 val p10 = Color(0xFF000e5f)
