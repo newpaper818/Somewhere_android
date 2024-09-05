@@ -911,13 +911,14 @@ private fun Spot1Pane(
                 spotList = spotList,
                 currentSpot = currentSpot,
                 onFullScreenClicked = {
-                    spotMap.setIsMapExpanded(!spotMap.isMapExpand)
-
-                    //scroll to top(map)
-                    if (spotMap.isMapExpand)
-                        coroutineScope.launch {
+                    coroutineScope.launch {
+                        //scroll to top(map)
+                        if (!spotMap.isMapExpand)
                             spotState.scrollState.animateScrollToItem(0)
-                        }
+
+                        //expand map
+                        spotMap.setIsMapExpanded(!spotMap.isMapExpand)
+                    }
                 },
 
                 toPrevSpot = {
