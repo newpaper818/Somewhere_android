@@ -249,6 +249,7 @@ fun SomewhereNavHost(
                 navigateToTrip = { isNewTrip, trip ->
                     commonTripViewModel.setTrip(trip)
                     commonTripViewModel.setIsEditMode(isNewTrip)
+                    commonTripViewModel.setIsNewTrip(isNewTrip)
 
                     if (externalState.windowSizeClass.use2Panes)
                         mainNavController.navigateToDate()
