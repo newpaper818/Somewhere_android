@@ -190,17 +190,14 @@ internal fun SpotDetailPage(
                 saveImageToInternalStorage = image::saveImageToInternalStorage
             )
 
+            MySpacerColumn(height = 64.dp)
 
             //delete spot button
-            if (spotUiInfo.isEditMode) {
-                //delete spot
-                MySpacerColumn(height = 64.dp)
-
-                DeleteItemButton(
-                    text = stringResource(id = R.string.delete_spot),
-                    onClick = { dialog.setShowDeleteSpotDialog(true) }
-                )
-            }
+            DeleteItemButton(
+                visible = spotUiInfo.isEditMode,
+                text = stringResource(id = R.string.delete_spot),
+                onClick = { dialog.setShowDeleteSpotDialog(true) }
+            )
         }
     }
 }

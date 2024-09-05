@@ -190,16 +190,26 @@ fun NewItemButton(
 
 @Composable
 fun DeleteItemButton(
+    visible: Boolean,
     text: String,
     onClick: () -> Unit
 ){
-    IconTextButton(
-        icon = IconTextButtonIcon.delete,
-        text = text,
-        onClick = onClick,
-        containerColor = MaterialTheme.colorScheme.error,
-        textStyle = MaterialTheme.typography.labelLarge.copy(color = MaterialTheme.colorScheme.onError)
-    )
+    Box(modifier = Modifier.height(40.dp)){
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(tween(400)) + scaleIn(tween(300)),
+            exit = fadeOut(tween(300)) + scaleOut(tween(400))
+        ) {
+            IconTextButton(
+                icon = IconTextButtonIcon.delete,
+                text = text,
+                onClick = onClick,
+                containerColor = MaterialTheme.colorScheme.error,
+                textStyle = MaterialTheme.typography.labelLarge.copy(color = MaterialTheme.colorScheme.onError)
+            )
+        }
+    }
+
 }
 
 @Composable
@@ -592,6 +602,7 @@ private fun DeleteItemButtonPreview(){
                 .width(190.dp)
         ) {
             DeleteItemButton(
+                visible = true,
                 text = "Delete item",
                 onClick = {}
             )
