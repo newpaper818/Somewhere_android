@@ -87,8 +87,8 @@ fun NewTripButton(
     Box(modifier = Modifier.height(40.dp)){
         AnimatedVisibility(
             visible = visible,
-            enter = fadeIn(tween(300)) + scaleIn(tween(300)),
-            exit = fadeOut(tween(300)) + scaleOut(tween(300))
+            enter = fadeIn(tween(400)) + scaleIn(tween(300)),
+            exit = fadeOut(tween(300)) + scaleOut(tween(400))
         ) {
             IconTextButton(
                 icon = IconTextButtonIcon.add,
