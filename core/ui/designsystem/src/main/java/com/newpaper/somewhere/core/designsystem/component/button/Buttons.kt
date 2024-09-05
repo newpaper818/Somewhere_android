@@ -16,6 +16,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material.ripple.LocalRippleTheme
+import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,19 +45,33 @@ import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.designsystem.R
 
+private object GrayRippleTheme: RippleTheme {
+    @Composable
+    override fun defaultColor() = MaterialTheme.colorScheme.onSurfaceVariant
+
+    @Composable
+    override fun rippleAlpha(): RippleAlpha = RippleTheme.defaultRippleAlpha(
+        MaterialTheme.colorScheme.onSurfaceVariant, true
+    )
+}
 
 @Composable
 fun PrivacyPolicyButton(
     onClick: () -> Unit,
 ){
-    MyTextButton(
-        text = stringResource(id = R.string.privacy_policy),
-        textStyle = MaterialTheme.typography.labelMedium.copy(
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textDecoration = TextDecoration.Underline),
-        onClick = onClick,
-        containerColor = Color.Transparent
-    )
+    CompositionLocalProvider(LocalRippleTheme provides GrayRippleTheme) {
+        TextButton(
+            onClick = onClick
+        ) {
+            Text(
+                text = stringResource(id = R.string.privacy_policy),
+                style = MaterialTheme.typography.labelMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textDecoration = TextDecoration.Underline
+                )
+            )
+        }
+    }
 }
 
 @Composable
