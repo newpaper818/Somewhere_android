@@ -10,14 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -26,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.ImageFromDrawable
 import com.newpaper.somewhere.core.designsystem.component.ImageFromFile
 import com.newpaper.somewhere.core.designsystem.component.ImageFromUrl
-import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
@@ -49,6 +46,7 @@ fun UserProfileCard(
     val boxModifier =
         if (enabled) modifier
             .clip(MaterialTheme.shapes.medium)
+            .background(MaterialTheme.colorScheme.surfaceBright)
             .clickable { onProfileClick() }
         else modifier
             .clip(MaterialTheme.shapes.medium)
@@ -89,7 +87,7 @@ fun UserProfileCard(
                 MySpacerColumn(height = 4.dp)
 
                 Text(
-                    text = userData.email ?: "no email",
+                    text = userData.email ?: stringResource(id = R.string.no_email),
                     style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
                     overflow = TextOverflow.Ellipsis
                 )

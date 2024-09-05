@@ -58,6 +58,9 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation(libs.maps.compose)
 
+    //qr code
+    implementation(libs.qr.code.compose)
+
     //test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

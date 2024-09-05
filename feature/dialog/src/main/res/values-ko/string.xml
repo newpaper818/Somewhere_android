@@ -18,6 +18,10 @@
     <!--MemoDialog.kt-->
     <string name="memo">메모</string>
 
+    <!--MyQrCodeDialog.kt-->
+    <string name="no_name">이름 없음</string>
+    <string name="no_email">이메일 없음</string>
+
     <!--SelectDateDialog.kt-->
     <string name="move_date">날짜 이동</string>
 

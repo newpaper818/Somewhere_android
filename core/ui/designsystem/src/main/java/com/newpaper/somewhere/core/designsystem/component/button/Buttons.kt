@@ -57,6 +57,17 @@ fun PrivacyPolicyButton(
 }
 
 @Composable
+fun MyQrCodeButton(
+    onClick: () -> Unit
+){
+    IconTextButton(
+        icon = IconTextButtonIcon.qrCode,
+        text = stringResource(id = R.string.my_qr_code),
+        onClick = onClick
+    )
+}
+
+@Composable
 fun UpdateButton(
     onClick: () -> Unit
 ){
@@ -82,8 +93,7 @@ fun NewTripButton(
             IconTextButton(
                 icon = IconTextButtonIcon.add,
                 text = stringResource(id = R.string.new_trip),
-                onClick = onClick,
-                textStyle = MaterialTheme.typography.labelLarge
+                onClick = onClick
             )
         }
     }
