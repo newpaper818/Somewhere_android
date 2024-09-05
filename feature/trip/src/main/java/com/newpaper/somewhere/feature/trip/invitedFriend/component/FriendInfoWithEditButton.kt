@@ -14,7 +14,7 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBo
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.model.data.UserData
-import com.newpaper.somewhere.core.ui.FriendInfo
+import com.newpaper.somewhere.core.ui.UserInfo
 
 @Composable
 internal fun FriendInfoWithEditButton(
@@ -36,9 +36,9 @@ internal fun FriendInfoWithEditButton(
             .heightIn(min = 48.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        FriendInfo(
+        UserInfo(
             internetEnabled = internetEnabled,
-            friendData = friendData,
+            userData = friendData,
             isManager = isManager,
             downloadImage = downloadImage,
             modifier = Modifier.weight(1f)
