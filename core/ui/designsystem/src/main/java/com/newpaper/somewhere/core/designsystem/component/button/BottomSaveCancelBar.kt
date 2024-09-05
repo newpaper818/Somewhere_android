@@ -44,7 +44,7 @@ fun AnimatedBottomSaveCancelButtons(
             animationSpec = tween(400),
             initialOffsetY = { (it * 2).toInt() }),
         exit = slideOutVertically(
-            animationSpec = tween(400),
+            animationSpec = tween(1000),
             targetOffsetY = { (it * 2).toInt() })
     ) {
 

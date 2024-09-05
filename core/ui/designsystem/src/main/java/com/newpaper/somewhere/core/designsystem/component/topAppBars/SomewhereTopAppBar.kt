@@ -92,8 +92,8 @@ fun SomewhereTopAppBar(
                         else {
                             AnimatedVisibility(
                                 visible = !internetEnabled,
-                                enter = expandVertically(tween(300)),
-                                exit = shrinkVertically(tween(300))
+                                enter = expandVertically(tween(500)) + fadeIn(tween(500, 200)),
+                                exit = shrinkVertically(tween(500, 200)) + fadeOut(tween(500))
                             ) {
                                 MySpacerColumn(height = 2.dp)
                                 InternetUnavailable()
@@ -119,8 +119,8 @@ fun SomewhereTopAppBar(
                         else {
                             AnimatedVisibility(
                                 visible = !internetEnabled,
-                                enter = expandHorizontally(tween(300)),
-                                exit = shrinkHorizontally(tween(300))
+                                enter = expandVertically(tween(500)) + fadeIn(tween(500, 200)),
+                                exit = shrinkVertically(tween(500, 200)) + fadeOut(tween(500))
                             ) {
                                 Row {
                                     MySpacerRow(width = 24.dp)

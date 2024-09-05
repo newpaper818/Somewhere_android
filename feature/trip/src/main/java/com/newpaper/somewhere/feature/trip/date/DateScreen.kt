@@ -573,8 +573,8 @@ private fun DateScreen(
         //show when use 2 panes and no date
         AnimatedVisibility(
             visible = enabledDateList.isEmpty(),
-            enter = fadeIn(tween(800)),
-            exit = fadeOut(tween(800))
+            enter = fadeIn(tween(500)),
+            exit = fadeOut(tween(500))
         ) {
             Box(
                 contentAlignment = Alignment.Center,
@@ -589,8 +589,8 @@ private fun DateScreen(
 
         AnimatedVisibility(
             visible = enabledDateList.isNotEmpty(),
-            enter = fadeIn(tween(800)),
-            exit = fadeOut(tween(800))
+            enter = fadeIn(tween(500)),
+            exit = fadeOut(tween(500))
         ) {
             Box(
                 modifier = Modifier
