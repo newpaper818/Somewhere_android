@@ -19,9 +19,9 @@ import com.newpaper.somewhere.core.ui.card.ProfileImage
 import com.newpaper.somewhere.core.ui.ui.R
 
 @Composable
-fun FriendInfo(
+fun UserInfo(
     internetEnabled: Boolean,
-    friendData: UserData,
+    userData: UserData,
     isManager: Boolean,
     downloadImage: (imagePath: String, profileUserId: String, (Boolean) -> Unit) -> Unit,
     modifier: Modifier = Modifier
@@ -33,9 +33,9 @@ fun FriendInfo(
         MySpacerRow(width = 8.dp)
 
         ProfileImage(
-            profileUserId = friendData.userId,
+            profileUserId = userData.userId,
             internetEnabled = internetEnabled,
-            profileImagePath = friendData.profileImagePath,
+            profileImagePath = userData.profileImagePath,
             downloadImage = downloadImage,
             size = 44.dp
         )
@@ -44,9 +44,9 @@ fun FriendInfo(
 
         Column {
             //user name
-            val nameText = friendData.userName ?: stringResource(id = R.string.unknown)
+            val nameText = userData.userName ?: stringResource(id = R.string.unknown)
 
-            val textStyle = if (friendData.userName != null) MaterialTheme.typography.bodyLarge
+            val textStyle = if (userData.userName != null) MaterialTheme.typography.bodyLarge
             else MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
 
             Row(
@@ -66,11 +66,11 @@ fun FriendInfo(
             }
 
             //email
-            if (friendData.email != null){
+            if (userData.email != null){
                 MySpacerColumn(height = 4.dp)
 
                 Text(
-                    text = friendData.email!!,
+                    text = userData.email!!,
                     style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis

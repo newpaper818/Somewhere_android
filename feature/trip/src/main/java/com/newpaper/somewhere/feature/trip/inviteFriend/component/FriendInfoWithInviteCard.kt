@@ -16,7 +16,7 @@ import com.newpaper.somewhere.core.designsystem.component.button.NegativePositiv
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.model.data.UserData
-import com.newpaper.somewhere.core.ui.FriendInfo
+import com.newpaper.somewhere.core.ui.UserInfo
 import com.newpaper.somewhere.core.ui.selectSwitch.AllowEditViewSelectSwitch
 import com.newpaper.somewhere.feature.trip.R
 
@@ -49,9 +49,9 @@ internal fun FriendInfoWithInviteCard(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 //friend info
-                FriendInfo(
+                UserInfo(
                     internetEnabled = internetEnabled,
-                    friendData = friendUserData,
+                    userData = friendUserData,
                     isManager = false,
                     downloadImage = downloadImage,
                     modifier = Modifier.widthIn(min = 330.dp)

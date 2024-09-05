@@ -14,7 +14,7 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.UserData
-import com.newpaper.somewhere.core.ui.FriendInfo
+import com.newpaper.somewhere.core.ui.UserInfo
 import com.newpaper.somewhere.core.ui.selectSwitch.AllowEditViewSelectSwitch
 import com.newpaper.somewhere.feature.dialog.R
 import com.newpaper.somewhere.feature.dialog.myDialog.DialogButton
@@ -37,9 +37,9 @@ fun SetEditableDialog(
         titleText = stringResource(id = R.string.set_editable),
         bodyContent = {
             //user info card
-            FriendInfo(
+            UserInfo(
                 internetEnabled = internetEnabled,
-                friendData = friendData,
+                userData = friendData,
                 isManager = false,
                 downloadImage = downloadImage
             )
