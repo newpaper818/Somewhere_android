@@ -3,8 +3,13 @@ package com.newpaper.somewhere.feature.signin.signIn
 import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.displayCutoutPadding
@@ -291,23 +296,18 @@ private fun SignInVertical(
         }
 
         item {
-            Column(
+            Box(
                 modifier = Modifier.height(150.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                contentAlignment = Alignment.Center
             ) {
                 //signing in...
-                if (isSigningIn) {
-                    SigningIn()
-                }
+                SigningIn(isSigningIn)
+
                 //internet unavailable
-                else if (!internetEnabled) {
-                    InternetUnavailableIconWithText()
-                }
+                InternetUnavailableIconWithText(!isSigningIn && !internetEnabled)
+
                 //welcome message
-                else {
-                    WelcomeText()
-                }
+                WelcomeText(!isSigningIn && internetEnabled)
             }
 
             MySpacerColumn(height = 32.dp)
@@ -393,24 +393,20 @@ private fun SignInHorizontal(
             item {
                 MySpacerColumn(height = 16.dp)
 
-                Column(
+                Box(
                     modifier = Modifier.height(100.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    contentAlignment = Alignment.Center
                 ) {
                     //signing in...
-                    if (isSigningIn) {
-                        SigningIn()
-                    }
+                    SigningIn(isSigningIn)
+
                     //internet unavailable
-                    else if (!internetEnabled) {
-                        InternetUnavailableIconWithText()
-                    }
+                    InternetUnavailableIconWithText(!isSigningIn && !internetEnabled)
+
                     //welcome message
-                    else {
-                        WelcomeText()
-                    }
+                    WelcomeText(!isSigningIn && internetEnabled)
                 }
+
                 MySpacerColumn(height = 16.dp)
             }
             item {
@@ -458,27 +454,60 @@ private fun SignInHorizontal(
 
 
 @Composable
-private fun WelcomeText(){
-    Text(
-        text = stringResource(id = R.string.welcome_message),
-        fontSize = 18.sp,
-        fontFamily = suite,
-        fontWeight = FontWeight.Bold,
-        letterSpacing = 1.sp,
-        lineHeight = 18.sp * 1.3,
-        textAlign = TextAlign.Center
-    )
+private fun WelcomeText(
+    visible: Boolean
+){
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(tween(400)),
+        exit = fadeOut(tween(400))
+    ) {
+        Text(
+            text = stringResource(id = R.string.welcome_message),
+            fontSize = 18.sp,
+            fontFamily = suite,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 1.sp,
+            lineHeight = 18.sp * 1.3,
+            textAlign = TextAlign.Center
+        )
+    }
 }
 
 @Composable
-private fun SigningIn(){
-    DisplayIcon(icon = MyIcons.signIn)
-    MySpacerColumn(height = 6.dp)
-    Text(
-        text = stringResource(id = R.string.signing_in),
-        textAlign = TextAlign.Center,
-        modifier = Modifier.padding(start = 10.dp)
-    )
+private fun SigningIn(
+    visible: Boolean
+){
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(tween(400)),
+        exit = fadeOut(tween(400))
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            DisplayIcon(icon = MyIcons.signIn)
+            MySpacerColumn(height = 6.dp)
+            Text(
+                text = stringResource(id = R.string.signing_in),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(start = 10.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun InternetUnavailableIconWithText(
+    visible: Boolean
+){
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(tween(400)),
+        exit = fadeOut(tween(400))
+    ) {
+        InternetUnavailableIconWithText()
+    }
 }
 
 @Composable
