@@ -49,6 +49,7 @@ import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material.icons.rounded.People
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.PersonAdd
+import androidx.compose.material.icons.rounded.QrCode
 import androidx.compose.material.icons.rounded.QrCodeScanner
 import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material.icons.rounded.Route
@@ -94,6 +95,7 @@ object TopAppBarIcon {
 }
 
 object IconTextButtonIcon {
+    val qrCode = MyIcon(Icons.Rounded.QrCode,                 24.dp, false, null, R.string.qr_code)
     val add = MyIcon(Icons.Rounded.Add,                       24.dp, false, null, R.string.add)
     val delete = MyIcon(Icons.Rounded.Delete,                 24.dp, false, null, R.string.delete)
     val leftArrow = MyIcon(Icons.Rounded.KeyboardArrowLeft,   30.dp, false, null, R.string.previous_date)

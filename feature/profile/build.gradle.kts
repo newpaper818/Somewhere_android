@@ -29,6 +29,7 @@ dependencies {
     implementation(project(":core:ui:ui"))
     implementation(project(":core:ui:designsystem"))
     implementation(project(":feature:trip"))
+    implementation(project(":feature:dialog"))
 
     //del?
     implementation(project(":core:utils"))
@@ -42,9 +43,6 @@ dependencies {
 
     //hilt
     implementation(libs.androidx.hilt.navigation.compose)
-
-    //qr code
-    implementation(libs.qr.code.compose)
 
     //
     implementation(libs.androidx.core.ktx)

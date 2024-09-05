@@ -19,6 +19,7 @@
 
     <!-- buttons.kt -->
     <string name="privacy_policy">개인정보 처리방침</string>
+    <string name="my_qr_code">나의 QR 코드</string>
     <string name="update">업데이트</string>
     <string name="new_trip">새 여행</string>
     <string name="invite">초대하기</string>

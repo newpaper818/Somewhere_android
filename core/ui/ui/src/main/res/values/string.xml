@@ -15,6 +15,7 @@
 
     <!-- UserProfileCard.kt -->
     <string name="no_name">No name</string>
+    <string name="no_email">No email</string>
     <string name="connected_with">Connected with</string>
     <string name="my_profile_image">Profile image</string>
     <string name="default_profile_image">Default profile image</string>
