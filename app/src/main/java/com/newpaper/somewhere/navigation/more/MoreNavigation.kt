@@ -134,6 +134,7 @@ fun NavGraphBuilder.moreScreen(
                                     route = it.route,
                                     navOptions = navOptions {
                                         popUpTo(0) { inclusive = true }
+                                        launchSingleTop = true
                                     }
                                 )
                                 currentScreen = it
