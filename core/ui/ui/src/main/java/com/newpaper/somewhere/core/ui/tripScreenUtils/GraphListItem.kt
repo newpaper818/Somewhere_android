@@ -308,7 +308,7 @@ private fun PointWithLine(
             Box(
                 modifier = Modifier
                     .width(LINE_WIDTH)
-                    .height(MIN_CARD_HEIGHT / 2)
+                    .weight(1f)
                     .background(upperLineColor)
             )
 
@@ -316,7 +316,7 @@ private fun PointWithLine(
             Box(
                 modifier = Modifier
                     .width(LINE_WIDTH)
-                    .height(MIN_CARD_HEIGHT / 2)
+                    .weight(1f)
                     .background(lowerLineColor)
             )
         }
