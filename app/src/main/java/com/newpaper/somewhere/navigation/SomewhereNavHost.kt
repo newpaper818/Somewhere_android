@@ -162,6 +162,7 @@ fun SomewhereNavHost(
         mainNavController.navigateToSignIn(
             navOptions = navOptions {
                 popUpTo(0) { inclusive = true }
+                launchSingleTop = true
             }
         )
         appViewModel.updateCurrentTopLevelDestination(TopLevelDestination.TRIPS)
@@ -190,6 +191,7 @@ fun SomewhereNavHost(
                 route = it.route,
                 navOptions = navOptions{
                     popUpTo(TopLevelDestination.TRIPS.route) { inclusive = it == TopLevelDestination.TRIPS }
+                    launchSingleTop = true
                 }
             )
 
@@ -233,6 +235,7 @@ fun SomewhereNavHost(
                         route = ScreenDestination.TRIPS.route,
                         navOptions = navOptions {
                             popUpTo(ScreenDestination.SIGN_IN.route) { inclusive = true }
+                            launchSingleTop = true
                         }
                     )
                 }
@@ -252,9 +255,13 @@ fun SomewhereNavHost(
                     commonTripViewModel.setIsNewTrip(isNewTrip)
 
                     if (externalState.windowSizeClass.use2Panes)
-                        mainNavController.navigateToDate()
+                        mainNavController.navigateToDate(
+                            navOptions = navOptions { launchSingleTop = true }
+                        )
                     else
-                        mainNavController.navigateToTrip()
+                        mainNavController.navigateToTrip(
+                            navOptions = navOptions { launchSingleTop = true }
+                        )
                 },
                 navigateToGlanceSpot = { glance ->
                     if (glance.trip != null)
@@ -263,10 +270,16 @@ fun SomewhereNavHost(
                     commonTripViewModel.setCurrentSpotIndex(glance.spot?.index)
 
                     if (!externalState.windowSizeClass.use2Panes)
-                        mainNavController.navigateToTrip()
+                        mainNavController.navigateToTrip(
+                            navOptions = navOptions { launchSingleTop = true }
+                        )
 
-                    mainNavController.navigateToDate()
-                    mainNavController.navigateToSpot()
+                    mainNavController.navigateToDate(
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
+                    mainNavController.navigateToSpot(
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
                 }
             )
 
@@ -284,11 +297,15 @@ fun SomewhereNavHost(
                             popUpTo(ScreenDestination.PROFILE.route) {
                                 inclusive = true
                             }
+                            launchSingleTop = true
                         }
                     )
 
                     if (!externalState.windowSizeClass.use2Panes)
-                        mainNavController.navigate(ScreenDestination.ACCOUNT.route)
+                        mainNavController.navigate(
+                            route = ScreenDestination.ACCOUNT.route,
+                            navOptions = navOptions { launchSingleTop = true }
+                        )
                 },
                 navigateUp = navigateUp
             )
@@ -301,11 +318,20 @@ fun SomewhereNavHost(
                 userDataIsNull = appUiState.appUserData == null,
                 lazyListState = moreLazyListState,
                 navigateTo = {
-                    mainNavController.navigate(it.route)
+                    mainNavController.navigate(
+                        route = it.route,
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
                 },
-                navigateToDeleteAccount = { mainNavController.navigateToDeleteAccount() },
-                navigateToEditAccount = { mainNavController.navigateToEditProfile() },
-                navigateToOpenSourceLicense = { mainNavController.navigateToOpenSourceLicense() },
+                navigateToDeleteAccount = { mainNavController.navigateToDeleteAccount(
+                    navOptions = navOptions { launchSingleTop = true }
+                ) },
+                navigateToEditAccount = { mainNavController.navigateToEditProfile(
+                    navOptions = navOptions { launchSingleTop = true }
+                ) },
+                navigateToOpenSourceLicense = { mainNavController.navigateToOpenSourceLicense(
+                    navOptions = navOptions { launchSingleTop = true }
+                ) },
                 onSignOutDone = onSignOutDone,
                 modifier = modifier
             )
@@ -340,10 +366,14 @@ fun SomewhereNavHost(
                 appViewModel = appViewModel,
                 externalState = externalState,
                 navigateToDeleteAccount = {
-                    mainNavController.navigateToDeleteAccount()
+                    mainNavController.navigateToDeleteAccount(
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
                 },
                 navigateToEditAccount = {
-                    mainNavController.navigateToEditProfile()
+                    mainNavController.navigateToEditProfile(
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
                 },
                 navigateUp = navigateUp,
                 onSignOutDone = onSignOutDone,
@@ -368,6 +398,7 @@ fun SomewhereNavHost(
                             popUpTo(mainNavController.graph.findStartDestination().id) {
                                 inclusive = true
                             }
+                            launchSingleTop = true
                         }
                     )
                 },
@@ -379,7 +410,9 @@ fun SomewhereNavHost(
                 externalState = externalState,
                 appViewModel = appViewModel,
                 navigateToOpenSourceLicense = {
-                    mainNavController.navigateToOpenSourceLicense()
+                    mainNavController.navigateToOpenSourceLicense(
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
                 },
                 navigateUp = navigateUp,
                 modifier = modifier
@@ -399,12 +432,17 @@ fun SomewhereNavHost(
                 externalState = externalState,
                 commonTripViewModel = commonTripViewModel,
                 navigateTo = { screenDestination ->
-                    mainNavController.navigate(screenDestination.route)
+                    mainNavController.navigate(
+                        route = screenDestination.route,
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
                 },
                 navigateToDate = { dateIndex ->
                     commonTripViewModel.setIsNewTrip(false)
                     commonTripViewModel.setCurrentDateIndex(dateIndex)
-                    mainNavController.navigateToDate()
+                    mainNavController.navigateToDate(
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
                 },
                 navigateUp = navigateUp
             )
@@ -414,13 +452,18 @@ fun SomewhereNavHost(
                 externalState = externalState,
                 commonTripViewModel = commonTripViewModel,
                 navigateTo = { screenDestination ->
-                    mainNavController.navigate(screenDestination.route)
+                    mainNavController.navigate(
+                        route = screenDestination.route,
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
                 },
                 navigateUp = navigateUp,
                 navigateToSpot = { dateIndex, spotIndex ->
                     commonTripViewModel.setCurrentDateIndex(dateIndex)
                     commonTripViewModel.setCurrentSpotIndex(spotIndex)
-                    mainNavController.navigateToSpot()
+                    mainNavController.navigateToSpot(
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
                 },
                 modifier = modifier
             )
@@ -436,7 +479,10 @@ fun SomewhereNavHost(
                     userLocationEnabled = it
                 },
                 navigateTo = { screenDestination ->
-                    mainNavController.navigate(screenDestination.route)
+                    mainNavController.navigate(
+                        route = screenDestination.route,
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
                 },
                 navigateUp = navigateUp,
                 modifier = modifier
@@ -464,12 +510,15 @@ fun SomewhereNavHost(
                 tripsViewModel = tripsViewModel,
                 navigateUp = navigateUp,
                 navigateToInviteFriend = {
-                    mainNavController.navigateToInviteFriend()
+                    mainNavController.navigateToInviteFriend(
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
                 },
                 navigateToMyTrips = {
                     mainNavController.navigateToTrips(
                         navOptions = navOptions {
                             popUpTo(ScreenDestination.TRIPS.route) { inclusive = true }
+                            launchSingleTop = true
                         }
                     )
                 },
@@ -542,6 +591,7 @@ private fun organizeNavStack(
                 route = ScreenDestination.DATE.route,
                 navOptions = navOptions {
                     popUpTo(ScreenDestination.TRIPS.route){ inclusive = false }
+                    launchSingleTop = true
                 }
             )
         }
@@ -553,6 +603,7 @@ private fun organizeNavStack(
                 route = appUiState.screenDestination.currentScreenDestination.route,
                 navOptions = navOptions {
                     popUpTo(ScreenDestination.TRIPS.route){ inclusive = false }
+                    launchSingleTop = true
                 }
             )
         }
@@ -564,10 +615,12 @@ private fun organizeNavStack(
                 route = ScreenDestination.DATE.route,
                 navOptions = navOptions {
                     popUpTo(ScreenDestination.TRIPS.route){ inclusive = false }
+                    launchSingleTop = true
                 }
             )
             mainNavController.navigate(
-                route = ScreenDestination.SPOT.route
+                route = ScreenDestination.SPOT.route,
+                navOptions = navOptions { launchSingleTop = true }
             )
         }
         else if (isOnMore3rd) {
@@ -577,6 +630,7 @@ private fun organizeNavStack(
                 route = appUiState.screenDestination.currentScreenDestination.route,
                 navOptions = navOptions {
                     popUpTo(ScreenDestination.MORE.route) {inclusive = false}
+                    launchSingleTop = true
                 }
             )
         }
@@ -592,10 +646,12 @@ private fun organizeNavStack(
             // -> Trips - Trip - Date
             mainNavController.popBackStack()
             mainNavController.navigate(
-                route = ScreenDestination.TRIP.route
+                route = ScreenDestination.TRIP.route,
+                navOptions = navOptions { launchSingleTop = true }
             )
             mainNavController.navigate(
-                route = ScreenDestination.DATE.route
+                route = ScreenDestination.DATE.route,
+                navOptions = navOptions { launchSingleTop = true }
             )
         }
         else if (isOnSpot){
@@ -606,13 +662,16 @@ private fun organizeNavStack(
                 route = ScreenDestination.TRIP.route,
                 navOptions = navOptions {
                     popUpTo(ScreenDestination.TRIPS.route){ inclusive = false }
+                    launchSingleTop = true
                 }
             )
             mainNavController.navigate(
-                route = ScreenDestination.DATE.route
+                route = ScreenDestination.DATE.route,
+                navOptions = navOptions { launchSingleTop = true }
             )
             mainNavController.navigate(
-                route = ScreenDestination.SPOT.route
+                route = ScreenDestination.SPOT.route,
+                navOptions = navOptions { launchSingleTop = true }
             )
         }
         else if (isOnMore3rd) {
@@ -629,11 +688,13 @@ private fun organizeNavStack(
             if (moreDetailRoute != null) {
                 mainNavController.navigate(
                     route = moreDetailRoute.route,
+                    navOptions = navOptions { launchSingleTop = true }
                 )
             }
 
             mainNavController.navigate(
                 route = currentScreenDestination.route,
+                navOptions = navOptions { launchSingleTop = true }
             )
             moreNavController.popBackStack()
         }
@@ -641,6 +702,7 @@ private fun organizeNavStack(
             setMoreNavKey()
             mainNavController.navigate(
                 route = currentScreenDestination.route,
+                navOptions = navOptions { launchSingleTop = true }
             )
             moreNavController.popBackStack()
         }
