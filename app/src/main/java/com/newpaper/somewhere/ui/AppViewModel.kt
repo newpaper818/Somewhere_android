@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.system.measureNanoTime
 
 private const val APP_VIEWMODEL_TAG = "App-ViewModel"
 
@@ -130,16 +131,21 @@ class AppViewModel @Inject constructor(
     private fun initSignedInUser(
         onDone: (userDataIsNull: Boolean) -> Unit
     ){
+        Log.d("time", "   start - initSignedInUser")
+
         viewModelScope.launch {
-            val userData = userRepository.getSignedInUser()
+            val time = measureNanoTime {
+                val userData = userRepository.getSignedInUser()
 
-            Log.d(APP_VIEWMODEL_TAG, "userData: $userData, userId: ${userData?.userId}")
+                Log.d(APP_VIEWMODEL_TAG, "userData: $userData, userId: ${userData?.userId}")
 
-            _appUiState.update {
-                it.copy(appUserData = userData)
+                _appUiState.update {
+                    it.copy(appUserData = userData)
+                }
+
+                onDone(userData == null || userData.userId == "")
             }
-
-            onDone(userData == null || userData.userId == "")
+            Log.d("time", "${time*0.000000001} - initSignedInUser")
         }
     }
 

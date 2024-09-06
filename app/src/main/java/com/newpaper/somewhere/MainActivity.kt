@@ -10,6 +10,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -37,7 +38,9 @@ import com.newpaper.somewhere.util.ConnectivityObserver
 import com.newpaper.somewhere.util.NetworkConnectivityObserver
 import com.newpaper.somewhere.util.calculateWindowSizeClass
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.system.measureNanoTime
 
 private const val MAIN_ACTIVITY_TAG = "MainActivity1"
 
@@ -90,14 +93,14 @@ class MainActivity : ComponentActivity() {
             //DO NOT REMOVE: if remove and add new spot, app will crash!!!???
             //val tempSpot = Spot(id = 0, date = LocalDate.of(2023, 12, 13))
 
+            val appUiState by appViewModel.appUiState.collectAsState()
+
             Log.d(MAIN_ACTIVITY_TAG, "create externalState, appUiState")
             val externalState = rememberExternalState(
                 context = applicationContext,
                 windowSizeClass = calculateWindowSizeClass(),
                 connectivityObserver = connectivityObserver
             )
-
-            val appUiState by appViewModel.appUiState.collectAsState()
 
             //get app theme
             Log.d(MAIN_ACTIVITY_TAG, "get app theme")
@@ -142,8 +145,8 @@ class MainActivity : ComponentActivity() {
 
     private fun initializeAdmob(){
         //register admob test device
-        Log.d(MAIN_ACTIVITY_TAG, "register admob test device")
         if (BuildConfig.DEBUG) {
+            Log.d(MAIN_ACTIVITY_TAG, "register admob test device")
             MobileAds.setRequestConfiguration(
                 RequestConfiguration.Builder()
                     //SM-N976N as admob test device
