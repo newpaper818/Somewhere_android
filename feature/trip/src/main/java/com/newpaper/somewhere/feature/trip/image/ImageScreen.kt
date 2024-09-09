@@ -136,7 +136,7 @@ private fun ImageScreen(
         ) {
             HorizontalPager(
                 state = pageState,
-                beyondBoundsPageCount = 3,
+                beyondViewportPageCount = 3,
                 modifier = Modifier.fillMaxSize(),
                 verticalAlignment = Alignment.CenterVertically,
                 pageContent = {

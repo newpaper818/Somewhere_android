@@ -10,13 +10,12 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material.ripple.LocalRippleTheme
-import androidx.compose.material.ripple.RippleAlpha
-import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -179,6 +178,7 @@ fun MyDialog(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DialogButton(
     text: String,
@@ -195,8 +195,12 @@ internal fun DialogButton(
     }
     else                        MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
 
+    val redRippleConfiguration = RippleConfiguration(
+        color = MaterialTheme.colorScheme.error
+    )
+
     if (errorRipple) {
-        CompositionLocalProvider(LocalRippleTheme provides ErrorRippleTheme) {
+        CompositionLocalProvider(LocalRippleConfiguration provides redRippleConfiguration) {
             TextButton(
                 onClick = onClick,
                 enabled = enabled,
@@ -224,17 +228,6 @@ internal fun DialogButton(
         }
     }
 }
-
-private object ErrorRippleTheme: RippleTheme {
-    @Composable
-    override fun defaultColor() = MaterialTheme.colorScheme.errorContainer
-
-    @Composable
-    override fun rippleAlpha(): RippleAlpha = RippleTheme.defaultRippleAlpha(
-        MaterialTheme.colorScheme.errorContainer, true
-    )
-}
-
 
 
 
