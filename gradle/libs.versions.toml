@@ -1,5 +1,5 @@
 [versions]
-composeBom = "2024.08.00" #2024.09.00 - rippleTheme error
+composeBom = "2024.09.00" #2024.09.00 - rippleTheme error
 firebaseBom = "33.2.0"
 
 playService = "21.0.0"

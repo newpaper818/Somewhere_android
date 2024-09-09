@@ -16,12 +16,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material.ripple.LocalRippleTheme
-import androidx.compose.material.ripple.RippleAlpha
-import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.contentColorFor
@@ -45,21 +45,17 @@ import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.designsystem.R
 
-private object GrayRippleTheme: RippleTheme {
-    @Composable
-    override fun defaultColor() = MaterialTheme.colorScheme.onSurfaceVariant
 
-    @Composable
-    override fun rippleAlpha(): RippleAlpha = RippleTheme.defaultRippleAlpha(
-        MaterialTheme.colorScheme.onSurfaceVariant, true
-    )
-}
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PrivacyPolicyButton(
     onClick: () -> Unit,
 ){
-    CompositionLocalProvider(LocalRippleTheme provides GrayRippleTheme) {
+    val grayRippleConfiguration = RippleConfiguration(
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+
+    CompositionLocalProvider(LocalRippleConfiguration provides grayRippleConfiguration) {
         TextButton(
             onClick = onClick
         ) {

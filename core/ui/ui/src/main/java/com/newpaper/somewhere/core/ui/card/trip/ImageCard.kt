@@ -290,7 +290,7 @@ fun ImageCard(
                             ) {
                                 HorizontalPager(
                                     state = pageState,
-                                    beyondBoundsPageCount = 3,
+                                    beyondViewportPageCount = 3,
                                     pageContent = {
                                         ImageFromFile(
                                             internetEnabled = internetEnabled,
