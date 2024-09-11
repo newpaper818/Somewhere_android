@@ -51,8 +51,8 @@ private val AppLightColorScheme = lightColorScheme(
     surfaceBright = Color(0xFFFCFCFC),
 
 //    surfaceContainerLowest = n90,
-//    surfaceContainerLow = n80,
-//    surfaceContainer = n70,
+    surfaceContainerLow = Color(0xFFE6E6E6),
+    surfaceContainer = Color(0xFFFCFCFC),
 //    surfaceContainerHigh = n60,
 //    surfaceContainerHighest = n50,
 
@@ -108,8 +108,8 @@ private val AppDarkColorScheme = darkColorScheme(
     surfaceBright = Color(0xFF212121),
 
 //    surfaceContainerLowest = n10,
-//    surfaceContainerLow = n20,
-//    surfaceContainer = n30,
+    surfaceContainerLow = Color(0xFF2E2E2E),
+    surfaceContainer = Color(0xFF4C4C4C),
 //    surfaceContainerHigh = n40,
 //    surfaceContainerHighest = n50,
 

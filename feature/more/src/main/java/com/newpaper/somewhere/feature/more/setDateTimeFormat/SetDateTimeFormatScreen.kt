@@ -36,7 +36,7 @@ import com.newpaper.somewhere.core.ui.item.ItemDivider
 import com.newpaper.somewhere.core.ui.item.ItemWithRadioButton
 import com.newpaper.somewhere.core.ui.item.ItemWithSwitch
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
-import com.newpaper.somewhere.core.ui.selectSwitch.TimeFormatSelectSwitch
+import com.newpaper.somewhere.core.ui.segmentedButtons.TimeFormatSegmentedButtons
 import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.more.R
 import kotlinx.coroutines.launch
@@ -162,7 +162,7 @@ private fun SetDateTimeFormatScreen(
                     title = stringResource(id = R.string.time_format),
                     modifier = itemModifier
                 ) {
-                    TimeFormatSelectSwitch(
+                    TimeFormatSegmentedButtons(
                         is24h = timeFormat == TimeFormat.T24H,
                         setTimeFormat = { newTimeFormat ->
                             if (timeFormat != newTimeFormat) {
