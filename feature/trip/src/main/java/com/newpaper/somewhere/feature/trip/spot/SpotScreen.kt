@@ -281,13 +281,13 @@ fun SpotRoute(
                 progressBarState.animateScrollToItem(toIdx)
             }
 
-            //animate pager
-            coroutineScope.launch {
-                spotPagerState.animateScrollToPage(currentSpotIndex)
-            }
+            if (currentSpotIndex < spotList.size && currentSpotIndex >= 0) {
+                //animate pager
+                coroutineScope.launch {
+                    spotPagerState.animateScrollToPage(currentSpotIndex)
+                }
 
-            //animate map spot
-            if (currentSpotIndex < spotList.size && currentSpotIndex >= 0)
+                //animate map spot
                 coroutineScope.launch {
                     mapAnimateToSpot(
                         scrollState,
@@ -300,6 +300,7 @@ fun SpotRoute(
                         coroutineScope
                     )
                 }
+            }
         }
     }
 
