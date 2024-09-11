@@ -5,8 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.newpaper.somewhere.core.designsystem.component.utils.MySegmentedButtonItem
 import com.newpaper.somewhere.core.designsystem.component.utils.MySegmentedButtons
+import com.newpaper.somewhere.core.designsystem.component.utils.SegmentedButtonItem
 import com.newpaper.somewhere.core.designsystem.icon.SelectSwitchIcon
 import com.newpaper.somewhere.core.model.enums.TimeFormat
 import com.newpaper.somewhere.core.ui.ui.R
@@ -20,27 +20,22 @@ fun AllowEditViewSegmentedButtons(
 ){
     MySegmentedButtons(
         modifier = modifier.widthIn(max = 330.dp),
-    ) {
-        MySegmentedButtonItem(
-            modifier = Modifier.weight(1f),
-            isSelected = isEditable,
-            icon = SelectSwitchIcon.allowEdit,
-            text = stringResource(id = R.string.allow_edit),
-            onClick = {
-                setIsAllowEdit(true)
-            }
+        initSelectedItemIndex = if (isEditable) 0 else 1,
+        itemList = listOf(
+            //allow edit
+            SegmentedButtonItem(
+                icon = SelectSwitchIcon.allowEdit,
+                text = stringResource(id = R.string.allow_edit),
+                onClick = { setIsAllowEdit(true) }
+            ),
+            //view only
+            SegmentedButtonItem(
+                icon = SelectSwitchIcon.viewOnly,
+                text = stringResource(id = R.string.view_only),
+                onClick = { setIsAllowEdit(false) }
+            )
         )
-
-        MySegmentedButtonItem(
-            modifier = Modifier.weight(1f),
-            isSelected = !isEditable,
-            icon = SelectSwitchIcon.viewOnly,
-            text = stringResource(id = R.string.view_only),
-            onClick = {
-                setIsAllowEdit(false)
-            }
-        )
-    }
+    )
 }
 
 @Composable
@@ -50,24 +45,17 @@ fun TimeFormatSegmentedButtons(
 ){
 
     MySegmentedButtons(
-        modifier = Modifier.widthIn(max = itemMaxWidth)
-    ) {
-        MySegmentedButtonItem(
-            modifier = Modifier.weight(1f),
-            isSelected = !is24h,
-            text = stringResource(id = R.string._12h),
-            onClick = {
-                setTimeFormat(TimeFormat.T12H)
-            }
+        modifier = Modifier.widthIn(max = itemMaxWidth),
+        initSelectedItemIndex = if (!is24h) 0 else 1,
+        itemList = listOf(
+            SegmentedButtonItem(
+                text = stringResource(id = R.string._12h),
+                onClick = { setTimeFormat(TimeFormat.T12H) }
+            ),
+            SegmentedButtonItem(
+                text = stringResource(id = R.string._24h),
+                onClick = { setTimeFormat(TimeFormat.T24H) }
+            )
         )
-
-        MySegmentedButtonItem(
-            modifier = Modifier.weight(1f),
-            isSelected = is24h,
-            text = stringResource(id = R.string._24h),
-            onClick = {
-                setTimeFormat(TimeFormat.T24H)
-            }
-        )
-    }
+    )
 }
