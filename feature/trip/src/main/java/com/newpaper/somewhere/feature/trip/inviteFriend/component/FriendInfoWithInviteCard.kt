@@ -7,7 +7,6 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,7 +17,7 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.ui.UserInfo
-import com.newpaper.somewhere.core.ui.selectSwitch.AllowEditViewSelectSwitch
+import com.newpaper.somewhere.core.ui.segmentedButtons.AllowEditViewSegmentedButtons
 import com.newpaper.somewhere.feature.trip.R
 
 @Composable
@@ -61,10 +60,9 @@ internal fun FriendInfoWithInviteCard(
                 MySpacerColumn(height = 16.dp)
 
                 //set permission (allow edit / view only)
-                AllowEditViewSelectSwitch(
+                AllowEditViewSegmentedButtons(
                     isEditable = isEditable,
-                    setIsAllowEdit = setIsAllowEdit,
-                    containerColor = MaterialTheme.colorScheme.surface,
+                    setIsAllowEdit = setIsAllowEdit
                 )
 
                 MySpacerColumn(height = 16.dp)

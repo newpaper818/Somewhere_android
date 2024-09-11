@@ -1,30 +1,27 @@
-package com.newpaper.somewhere.core.ui.selectSwitch
+package com.newpaper.somewhere.core.ui.segmentedButtons
 
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.newpaper.somewhere.core.designsystem.component.utils.SelectSwitch
-import com.newpaper.somewhere.core.designsystem.component.utils.SelectSwitchItem
+import com.newpaper.somewhere.core.designsystem.component.utils.MySegmentedButtonItem
+import com.newpaper.somewhere.core.designsystem.component.utils.MySegmentedButtons
 import com.newpaper.somewhere.core.designsystem.icon.SelectSwitchIcon
 import com.newpaper.somewhere.core.model.enums.TimeFormat
 import com.newpaper.somewhere.core.ui.ui.R
+import com.newpaper.somewhere.core.utils.itemMaxWidth
 
 @Composable
-fun AllowEditViewSelectSwitch(
+fun AllowEditViewSegmentedButtons(
     isEditable: Boolean,
     setIsAllowEdit: (isAllowEdit: Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.colorScheme.surfaceBright
+    modifier: Modifier = Modifier
 ){
-    SelectSwitch(
+    MySegmentedButtons(
         modifier = modifier.widthIn(max = 330.dp),
-        containerColor = containerColor
     ) {
-        SelectSwitchItem(
+        MySegmentedButtonItem(
             modifier = Modifier.weight(1f),
             isSelected = isEditable,
             icon = SelectSwitchIcon.allowEdit,
@@ -34,7 +31,7 @@ fun AllowEditViewSelectSwitch(
             }
         )
 
-        SelectSwitchItem(
+        MySegmentedButtonItem(
             modifier = Modifier.weight(1f),
             isSelected = !isEditable,
             icon = SelectSwitchIcon.viewOnly,
@@ -47,13 +44,15 @@ fun AllowEditViewSelectSwitch(
 }
 
 @Composable
-fun TimeFormatSelectSwitch(
+fun TimeFormatSegmentedButtons(
     is24h: Boolean,
     setTimeFormat: (timeFormat: TimeFormat) -> Unit
 ){
 
-    SelectSwitch {
-        SelectSwitchItem(
+    MySegmentedButtons(
+        modifier = Modifier.widthIn(max = itemMaxWidth)
+    ) {
+        MySegmentedButtonItem(
             modifier = Modifier.weight(1f),
             isSelected = !is24h,
             text = stringResource(id = R.string._12h),
@@ -62,7 +61,7 @@ fun TimeFormatSelectSwitch(
             }
         )
 
-        SelectSwitchItem(
+        MySegmentedButtonItem(
             modifier = Modifier.weight(1f),
             isSelected = is24h,
             text = stringResource(id = R.string._24h),

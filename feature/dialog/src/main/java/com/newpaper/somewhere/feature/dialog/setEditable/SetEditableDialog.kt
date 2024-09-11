@@ -15,7 +15,7 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.ui.UserInfo
-import com.newpaper.somewhere.core.ui.selectSwitch.AllowEditViewSelectSwitch
+import com.newpaper.somewhere.core.ui.segmentedButtons.AllowEditViewSegmentedButtons
 import com.newpaper.somewhere.feature.dialog.R
 import com.newpaper.somewhere.feature.dialog.myDialog.DialogButton
 import com.newpaper.somewhere.feature.dialog.myDialog.MyDialog
@@ -47,7 +47,7 @@ fun SetEditableDialog(
             MySpacerColumn(height = 16.dp)
 
             //allow edit / view only button
-            AllowEditViewSelectSwitch(
+            AllowEditViewSegmentedButtons(
                 isEditable = newEditable,
                 setIsAllowEdit = {
                     newEditable = it
