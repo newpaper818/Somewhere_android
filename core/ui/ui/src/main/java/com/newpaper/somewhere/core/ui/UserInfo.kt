@@ -30,8 +30,6 @@ fun UserInfo(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
     ) {
-        MySpacerRow(width = 8.dp)
-
         ProfileImage(
             profileUserId = userData.userId,
             internetEnabled = internetEnabled,

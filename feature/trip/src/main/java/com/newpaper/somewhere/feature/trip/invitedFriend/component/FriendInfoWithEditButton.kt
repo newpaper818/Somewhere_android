@@ -1,5 +1,11 @@
 package com.newpaper.somewhere.feature.trip.invitedFriend.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -62,7 +68,11 @@ internal fun FriendInfoWithEditButton(
             }
 
             //delete friend button
-            if (internetEnabled) {
+            AnimatedVisibility(
+                visible = internetEnabled,
+                enter = expandHorizontally(tween(400)) + fadeIn(tween(400, 150)),
+                exit = shrinkHorizontally(tween(400, 150)) + fadeOut(tween(400))
+            ) {
                 MyPlainTooltipBox(tooltipText = stringResource(id = MyIcons.deleteFriend.descriptionTextId)) {
                     IconButton(
                         onClick = { onClickDeleteFriend(friendData) }
@@ -73,7 +83,11 @@ internal fun FriendInfoWithEditButton(
             }
         }
 
-        if (showGetOutButton && internetEnabled) {
+        AnimatedVisibility(
+            visible = showGetOutButton && internetEnabled,
+            enter = fadeIn(tween(300)),
+            exit = fadeOut(tween(300))
+        ) {
             MyPlainTooltipBox(tooltipText = stringResource(id = MyIcons.leaveTrip.descriptionTextId)) {
                 IconButton(
                     onClick = { onClickGetOut() }
