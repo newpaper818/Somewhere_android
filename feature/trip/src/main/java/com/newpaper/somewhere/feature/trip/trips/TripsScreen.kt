@@ -410,7 +410,8 @@ private fun TripsScreen(
 
 
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.TopCenter
         ) {
 
             //display trips list (my trips + shared trips)
@@ -573,7 +574,6 @@ private fun TripsScreen(
 
             LoadingTripsItem(
                 shown = loadingTrips && firstLaunch,
-                internetEnabled = internetEnabled,
                 modifier = Modifier
                     .padding(spacerValue, 16.dp, spacerValue, 0.dp)
                     .padding(paddingValues)
