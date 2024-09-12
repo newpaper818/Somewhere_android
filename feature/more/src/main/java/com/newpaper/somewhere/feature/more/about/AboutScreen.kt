@@ -42,7 +42,7 @@ import com.newpaper.somewhere.core.ui.item.ItemWithText
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
 import com.newpaper.somewhere.core.utils.PLAY_STORE_URL
 import com.newpaper.somewhere.core.utils.PRIVACY_POLICY_URL
-import com.newpaper.somewhere.core.utils.itemMaxWidth
+import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.more.R
 
 @Composable
@@ -144,7 +144,7 @@ private fun AboutScreen(
         }
     ){ paddingValues ->
 
-        val itemModifier = Modifier.widthIn(max = itemMaxWidth)
+        val itemModifier = Modifier.widthIn(max = itemMaxWidthSmall)
 
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,

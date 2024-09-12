@@ -28,7 +28,7 @@ import com.newpaper.somewhere.core.ui.item.ItemWithText
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
 import com.newpaper.somewhere.core.utils.BUG_REPORT_URL
 import com.newpaper.somewhere.core.utils.FEEDBACK_URL
-import com.newpaper.somewhere.core.utils.itemMaxWidth
+import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.more.R
 
 @Composable
@@ -70,7 +70,7 @@ private fun MoreScreen(
     currentScreenRoute: String? = null
 ) {
 
-    val itemModifier = Modifier.widthIn(max = itemMaxWidth)
+    val itemModifier = Modifier.widthIn(max = itemMaxWidthSmall)
 
     Scaffold(
         modifier = modifier

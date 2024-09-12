@@ -24,7 +24,7 @@ import com.newpaper.somewhere.core.model.enums.AppTheme
 import com.newpaper.somewhere.core.model.enums.MapTheme
 import com.newpaper.somewhere.core.ui.item.ItemWithRadioButton
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
-import com.newpaper.somewhere.core.utils.itemMaxWidth
+import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.more.R
 import kotlinx.coroutines.launch
 
@@ -98,7 +98,7 @@ private fun SetThemeScreen(
             )
         }
     ){ paddingValues ->
-        val itemModifier = Modifier.widthIn(max = itemMaxWidth)
+        val itemModifier = Modifier.widthIn(max = itemMaxWidthSmall)
 
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,

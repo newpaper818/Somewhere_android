@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -54,6 +55,7 @@ import com.newpaper.somewhere.core.utils.AD_UNIT_ID
 import com.newpaper.somewhere.core.utils.AD_UNIT_ID_TEST
 import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.convert.getAllImagesPath
+import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
 import com.newpaper.somewhere.feature.trip.BuildConfig
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
@@ -300,7 +302,7 @@ private fun TripsScreen(
 
     val tripsIsEmpty = showingTrips.isEmpty() && showingSharedTrips.isEmpty()
 
-
+    val itemModifier = Modifier.widthIn(max = itemMaxWidth)
 
 
 
@@ -445,7 +447,7 @@ private fun TripsScreen(
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 ),
-                                modifier = Modifier
+                                modifier = itemModifier
                                     .height(34.dp)
                                     .fillMaxWidth()
                                     .padding(horizontal = 16.dp)
@@ -461,6 +463,7 @@ private fun TripsScreen(
 
                         key(showingTrips) {
                             TripItem(
+                                modifier = itemModifier,
                                 showDragIcon = isEditMode,
                                 internetEnabled = internetEnabled,
                                 dateTimeFormat = dateTimeFormat,
@@ -502,7 +505,7 @@ private fun TripsScreen(
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 ),
-                                modifier = Modifier
+                                modifier = itemModifier
                                     .height(34.dp)
                                     .fillMaxWidth()
                                     .padding(horizontal = 16.dp)
@@ -514,6 +517,7 @@ private fun TripsScreen(
                     items(showingSharedTrips) { sharedTrip ->
                         key(showingSharedTrips) {
                             TripItem(
+                                modifier = itemModifier,
                                 showDragIcon = isEditMode,
                                 internetEnabled = internetEnabled,
                                 dateTimeFormat = dateTimeFormat,

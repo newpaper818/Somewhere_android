@@ -3,9 +3,9 @@ package com.newpaper.somewhere.feature.profile.profile
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
@@ -26,6 +26,7 @@ import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTo
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.ui.card.UserProfileCard
+import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.dialog.myQrCode.MyQrCodeDialog
 import com.newpaper.somewhere.feature.profile.R
 import com.newpaper.somewhere.feature.trip.image.ImageViewModel
@@ -105,7 +106,7 @@ fun ProfileScreen(
                     internetEnabled = internetEnabled,
                     downloadImage = downloadImage,
                     onProfileClick = onProfileClick,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.widthIn(max = itemMaxWidth)
                 )
             }
 

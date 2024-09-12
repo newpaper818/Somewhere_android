@@ -35,7 +35,7 @@ import com.newpaper.somewhere.core.ui.card.UserProfileCard
 import com.newpaper.somewhere.core.ui.item.ItemDivider
 import com.newpaper.somewhere.core.ui.item.ItemWithText
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
-import com.newpaper.somewhere.core.utils.itemMaxWidth
+import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
 import com.newpaper.somewhere.feature.more.R
 import kotlinx.coroutines.launch
@@ -161,7 +161,7 @@ private fun AccountScreen(
         }
     ) { paddingValues ->
 
-        val itemModifier = Modifier.widthIn(max = itemMaxWidth)
+        val itemModifier = Modifier.widthIn(max = itemMaxWidthSmall)
 
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
