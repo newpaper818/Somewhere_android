@@ -363,6 +363,7 @@ private fun TripsScreen(
         //bottom save cancel button
         bottomSaveCancelBarVisible = isEditMode && !dialog.isShowingDialog,
         useBottomNavBar = useBottomNavBar,
+        saveEnabled = internetEnabled,
         onClickCancel = { navigate.onClickBackButton() },
         onClickSave = {
             tripsEdit.saveTrips()
