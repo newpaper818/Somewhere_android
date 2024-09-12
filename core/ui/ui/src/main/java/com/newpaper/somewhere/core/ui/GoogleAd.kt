@@ -18,7 +18,6 @@ fun GoogleFullBannerAd(
     Box(
         modifier = Modifier
             .size(379.dp, 60.dp)
-            .clip(MaterialTheme.shapes.small)
             .background(MaterialTheme.colorScheme.surfaceDim)
     ) {
         //banner ad
@@ -36,7 +35,6 @@ fun GoogleMediumRectangleAd(
     Box(
         modifier = Modifier
             .size(300.dp, 250.dp)
-            .clip(MaterialTheme.shapes.small)
             .background(MaterialTheme.colorScheme.surfaceDim)
     ) {
         //banner ad
