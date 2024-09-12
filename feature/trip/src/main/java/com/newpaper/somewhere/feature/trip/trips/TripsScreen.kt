@@ -53,6 +53,7 @@ import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
+import com.newpaper.somewhere.core.ui.GoogleFullBannerAd
 import com.newpaper.somewhere.core.utils.AD_UNIT_ID
 import com.newpaper.somewhere.core.utils.AD_UNIT_ID_TEST
 import com.newpaper.somewhere.core.utils.SlideState
@@ -64,7 +65,6 @@ import com.newpaper.somewhere.feature.trip.BuildConfig
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.trips.component.GlanceSpot
-import com.newpaper.somewhere.feature.trip.trips.component.GoogleBannerAd
 import com.newpaper.somewhere.feature.trip.trips.component.LoadingTripsItem
 import com.newpaper.somewhere.feature.trip.trips.component.NoTripCard
 import com.newpaper.somewhere.feature.trip.trips.component.TripItem
@@ -153,7 +153,7 @@ fun TripsRoute(
     }
 
     val adView = AdView(context).apply {
-        setAdSize(AdSize.BANNER)
+        setAdSize(AdSize.FULL_BANNER)
         adUnitId = if (BuildConfig.DEBUG) AD_UNIT_ID_TEST
                     else AD_UNIT_ID
 
@@ -441,7 +441,7 @@ private fun TripsScreen(
                     }
             ) {
                 item {
-                    GoogleBannerAd(adView = adView)
+                    GoogleFullBannerAd(adView = adView)
 
                     MySpacerColumn(height = 8.dp)
                 }

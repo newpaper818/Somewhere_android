@@ -58,6 +58,9 @@ dependencies {
     //open source license
     implementation(libs.aboutlibraries)
 
+    //google ad
+    implementation(libs.play.services.ads)
+
     //test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
