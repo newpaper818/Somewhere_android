@@ -15,20 +15,29 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.button.MyQrCodeButton
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
+import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.UserData
+import com.newpaper.somewhere.core.ui.GoogleMediumRectangleAd
 import com.newpaper.somewhere.core.ui.card.UserProfileCard
+import com.newpaper.somewhere.core.utils.AD_UNIT_ID
+import com.newpaper.somewhere.core.utils.AD_UNIT_ID_TEST
 import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.dialog.myQrCode.MyQrCodeDialog
 import com.newpaper.somewhere.feature.profile.R
+import com.newpaper.somewhere.feature.trip.BuildConfig
 import com.newpaper.somewhere.feature.trip.image.ImageViewModel
 
 @Composable
@@ -43,6 +52,15 @@ fun ProfileRoute(
     modifier: Modifier = Modifier,
     imageViewModel: ImageViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
+    val adView = AdView(context).apply {
+        setAdSize(AdSize.MEDIUM_RECTANGLE)
+        adUnitId = if (BuildConfig.DEBUG) AD_UNIT_ID_TEST
+            else AD_UNIT_ID
+
+        loadAd(AdRequest.Builder().build())
+    }
 
     ProfileScreen(
         internetEnabled = internetEnabled,
@@ -51,6 +69,7 @@ fun ProfileRoute(
         userData = userData,
         onProfileClick = navigateToAccount,
         downloadImage = imageViewModel::getImage,
+        adView = adView,
         modifier = modifier
     )
 }
@@ -63,10 +82,12 @@ fun ProfileScreen(
     userData: UserData,
     onProfileClick: () -> Unit,
     downloadImage: (imagePath: String, tripManagerId: String, (Boolean) -> Unit) -> Unit,
+    adView: AdView,
 
     modifier: Modifier = Modifier
 ) {
-    
+    val context = LocalContext.current
+
     var showMyQrCodeDialog by rememberSaveable { mutableStateOf(false) }
 
     if (showMyQrCodeDialog) {
@@ -117,6 +138,12 @@ fun ProfileScreen(
                     onClick = { showMyQrCodeDialog = true }
                 )
             }
+
+            item{
+                MySpacerColumn(height = 32.dp)
+
+                GoogleMediumRectangleAd(adView)
+            }
         }
     }
 }
@@ -153,6 +180,7 @@ fun ProfileScreen(
 @PreviewLightDark
 private fun ProfileScreenPreview(){
     SomewhereTheme {
+        val context = LocalContext.current
         MyScaffold {
             ProfileScreen(
                 internetEnabled = true,
@@ -166,7 +194,8 @@ private fun ProfileScreenPreview(){
                     providerIds = listOf()
                 ),
                 onProfileClick = { },
-                downloadImage = { _,_,_ ->}
+                downloadImage = { _,_,_ ->},
+                adView = AdView(context).apply {}
             )
         }
     }

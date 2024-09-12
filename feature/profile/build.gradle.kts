@@ -44,6 +44,9 @@ dependencies {
     //hilt
     implementation(libs.androidx.hilt.navigation.compose)
 
+    //google ad
+    implementation(libs.play.services.ads)
+
     //
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

@@ -67,6 +67,9 @@ dependencies {
     //qr code
     implementation(libs.qr.code.compose)
 
+    //google ad
+    implementation(libs.play.services.ads)
+
     //test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

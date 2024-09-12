@@ -15,21 +15,30 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
+import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
+import com.newpaper.somewhere.core.ui.GoogleMediumRectangleAd
 import com.newpaper.somewhere.core.ui.item.ItemDivider
 import com.newpaper.somewhere.core.ui.item.ItemWithText
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
+import com.newpaper.somewhere.core.utils.AD_UNIT_ID
+import com.newpaper.somewhere.core.utils.AD_UNIT_ID_TEST
 import com.newpaper.somewhere.core.utils.BUG_REPORT_URL
 import com.newpaper.somewhere.core.utils.FEEDBACK_URL
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.more.R
+import com.newpaper.somewhere.feature.trip.BuildConfig
 
 @Composable
 fun MoreRoute(
@@ -44,6 +53,16 @@ fun MoreRoute(
     modifier: Modifier = Modifier,
     currentScreenRoute: String? = null
 ) {
+    val context = LocalContext.current
+
+    val adView = AdView(context).apply {
+        setAdSize(AdSize.MEDIUM_RECTANGLE)
+        adUnitId = if (BuildConfig.DEBUG) AD_UNIT_ID_TEST
+            else AD_UNIT_ID
+
+        loadAd(AdRequest.Builder().build())
+    }
+
     MoreScreen(
         isDebugMode = isDebugMode,
         userDataIsNull = userDataIsNull,
@@ -51,6 +70,7 @@ fun MoreRoute(
         endSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
         lazyListState = lazyListState,
         navigateTo = navigateTo,
+        adView = adView,
         modifier = modifier,
         currentScreenRoute = currentScreenRoute
     )
@@ -65,6 +85,7 @@ private fun MoreScreen(
     endSpacerValue: Dp,
     lazyListState: LazyListState,
     navigateTo: (ScreenDestination) -> Unit,
+    adView: AdView,
 
     modifier: Modifier = Modifier,
     currentScreenRoute: String? = null
@@ -180,6 +201,12 @@ private fun MoreScreen(
                         style = MaterialTheme.typography.headlineSmall.copy(color = MaterialTheme.colorScheme.primary)
                     )
                 }
+
+            item {
+                MySpacerColumn(height = 32.dp)
+
+                GoogleMediumRectangleAd(adView)
+            }
         }
     }
 }
@@ -219,13 +246,15 @@ private fun MoreScreen(
 @Composable
 private fun MoreScreenPreview(){
     SomewhereTheme {
+        val context = LocalContext.current
         MoreScreen(
             isDebugMode = false,
             userDataIsNull = false,
             startSpacerValue = 16.dp,
             endSpacerValue = 16.dp,
             lazyListState = LazyListState(),
-            navigateTo = {}
+            navigateTo = {},
+            adView = AdView(context).apply {}
         )
     }
 }
@@ -234,13 +263,15 @@ private fun MoreScreenPreview(){
 @Composable
 private fun MoreScreenPreview_Debug(){
     SomewhereTheme {
+        val context = LocalContext.current
         MoreScreen(
             isDebugMode = true,
             userDataIsNull = false,
             startSpacerValue = 16.dp,
             endSpacerValue = 16.dp,
             lazyListState = LazyListState(),
-            navigateTo = {}
+            navigateTo = {},
+            adView = AdView(context).apply {}
         )
     }
 }
