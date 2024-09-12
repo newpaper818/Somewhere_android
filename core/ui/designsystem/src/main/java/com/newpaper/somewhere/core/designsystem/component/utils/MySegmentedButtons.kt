@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.core.designsystem.component.utils
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -21,7 +22,6 @@ import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -130,8 +130,12 @@ private fun MySegmentedButtonItem(
 
     val containerColor = Color.Transparent
 
-    val contentColor = if (isSelected) MaterialTheme.colorScheme.contentColorFor(containerColor)
-        else MaterialTheme.colorScheme.onSurfaceVariant
+    val contentColor = animateColorAsState(
+        targetValue = if (isSelected) MaterialTheme.colorScheme.onSurface
+                        else MaterialTheme.colorScheme.onSurfaceVariant,
+        animationSpec = tween(150),
+        label = "content color"
+    )
 
     val haptic = LocalHapticFeedback.current
 
@@ -149,7 +153,7 @@ private fun MySegmentedButtonItem(
                 shape = MaterialTheme.shapes.small,
                 colors = CardDefaults.cardColors(
                     containerColor = containerColor,
-                    contentColor = contentColor
+                    contentColor = contentColor.value
                 )
             ) {
                 Column(
@@ -209,12 +213,12 @@ private fun NavigationDrawerPreview(){
                 itemList = listOf(
                     SegmentedButtonItem(
                         icon = SelectSwitchIcon.allowEdit,
-                        text = "Allow edit",
+                        text = "Preview",
                         onClick = { }
                     ),
                     SegmentedButtonItem(
                         icon = SelectSwitchIcon.viewOnly,
-                        text = "View only",
+                        text = "is weired",
                         onClick = { }
                     )
                 )
