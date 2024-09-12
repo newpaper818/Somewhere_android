@@ -58,6 +58,65 @@ fun DeleteOrNotDialog(
 }
 
 @Composable
+fun DeleteOrLeaveTripDialog(
+    deleteTrip: Boolean, // else leave shared trip
+    sharingToIsEmpty: Boolean,
+
+    internetEnabled: Boolean,
+    onDismissRequest: () -> Unit,
+    onClickDelete: () -> Unit,
+
+    bodyContent: @Composable() () -> Unit = {},
+){
+    val titleText = if (!deleteTrip) stringResource(id = R.string.dialog_title_leave_shared_trip)
+        else stringResource(id = R.string.dialog_title_delete_trip)
+
+    var subBodyText = if (!deleteTrip || sharingToIsEmpty) null
+        else stringResource(id = R.string.dialog_sub_body_delete_trip)
+
+    if (!internetEnabled && subBodyText == null) {
+        subBodyText = if (deleteTrip) stringResource(id = R.string.connect_internet_to_delete_trip)
+            else stringResource(id = R.string.connect_internet_to_leave_trip)
+    }
+    else if (!internetEnabled) {
+        subBodyText += if (deleteTrip) "\n" + stringResource(id = R.string.connect_internet_to_delete_trip)
+            else "\n" + stringResource(id = R.string.connect_internet_to_leave_trip)
+    }
+
+    val deleteText = if (!deleteTrip) stringResource(id = R.string.dialog_button_leave)
+        else stringResource(id = R.string.dialog_button_delete)
+
+    MyDialog(
+        onDismissRequest = onDismissRequest,
+        width = null,
+        titleText = titleText,
+        bodyText = null,
+        subBodyText = subBodyText,
+        bodyContent = bodyContent,
+        buttonContent = {
+            Row{
+                //cancel button
+                DialogButton(
+                    text = stringResource(id = R.string.button_cancel),
+                    onClick = onDismissRequest
+                )
+
+                MySpacerRow(width = 16.dp)
+
+                //delete button
+                DialogButton(
+                    text = deleteText,
+                    textColor = MaterialTheme.colorScheme.error,
+                    errorRipple = true,
+                    onClick = onClickDelete,
+                    enabled = internetEnabled
+                )
+            }
+        }
+    )
+}
+
+@Composable
 fun DeleteFriendDialog(
     onDismissRequest: () -> Unit,
     onClickDelete: () -> Unit
@@ -82,8 +141,6 @@ fun GetOutSharedTripDialog(
         onClickDelete = onClickGetOut
     )
 }
-
-
 
 
 

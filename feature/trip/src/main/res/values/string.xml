@@ -80,11 +80,7 @@
     <string name="shared_trips">Shared trips</string>
 
     <string name="dialog_body_are_you_sure_to_exit">Are you sure to exit?\nUnsaved data will be delete</string>
-    <string name="dialog_title_delete_trip">Delete trip</string>
-    <string name="dialog_sub_body_delete_trip">Friend you invited won\'t be able to see this trip</string>
-    <string name="dialog_title_leave_shared_trip">Leave shared trip</string>
     <string name="dialog_button_exit">Exit</string>
-    <string name="dialog_button_leave">Leave</string>
     <string name="dialog_button_delete">Delete</string>
 
     <string name="no_trip">No Trip…\nLet\'s create a new trip!</string>

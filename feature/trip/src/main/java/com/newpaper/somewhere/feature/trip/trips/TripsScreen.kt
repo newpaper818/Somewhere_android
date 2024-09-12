@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -60,6 +59,7 @@ import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.convert.getAllImagesPath
 import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
+import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrLeaveTripDialog
 import com.newpaper.somewhere.feature.trip.BuildConfig
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.R
@@ -389,21 +389,10 @@ private fun TripsScreen(
         if (dialog.showDeleteDialog && dialog.selectedTrip != null) {
             val isSharedTrip = dialog.selectedTrip.managerId != appUserId
 
-            val titleText = if (isSharedTrip)
-                stringResource(id = R.string.dialog_title_leave_shared_trip)
-                else stringResource(id = R.string.dialog_title_delete_trip)
-
-            val subBodyText = if (isSharedTrip || dialog.selectedTrip.sharingTo.isEmpty()) null
-            else stringResource(id = R.string.dialog_sub_body_delete_trip)
-
-            val deleteText = if (isSharedTrip) stringResource(id = R.string.dialog_button_leave)
-                            else stringResource(id = R.string.dialog_button_delete)
-
-            DeleteOrNotDialog(
-                width = null,
-                titleText = titleText,
-                subBodyText = subBodyText,
-                deleteButtonText = deleteText,
+            DeleteOrLeaveTripDialog(
+                deleteTrip = !isSharedTrip,
+                sharingToIsEmpty = dialog.selectedTrip.sharingTo.isEmpty(),
+                internetEnabled = internetEnabled,
                 bodyContent = {
                     TripItem(
                         trip = dialog.selectedTrip,
