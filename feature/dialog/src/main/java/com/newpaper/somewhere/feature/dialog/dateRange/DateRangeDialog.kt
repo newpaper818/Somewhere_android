@@ -18,6 +18,7 @@ import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -95,6 +96,7 @@ fun DateRangeDialog(
                     },
                     showModeToggle = screenHeightLong,
                     colors = DatePickerDefaults.colors(
+                        containerColor = Color.Transparent,
                         headlineContentColor = MaterialTheme.colorScheme.onSurface,
                         subheadContentColor = MaterialTheme.colorScheme.onSurface
                     )
