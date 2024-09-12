@@ -4,9 +4,11 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -20,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
@@ -42,7 +45,7 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
-import com.newpaper.somewhere.core.designsystem.component.button.NewTripButton
+import com.newpaper.somewhere.core.designsystem.component.button.NewTripExtendedFAB
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
@@ -77,6 +80,7 @@ fun TripsRoute(
     commonTripViewModel: CommonTripViewModel,
     tripsViewModel: TripsViewModel,
 
+    use2Panes: Boolean,
     spacerValue: Dp,
     appUserId: String,
     dateTimeFormat: DateTimeFormat,
@@ -182,6 +186,7 @@ fun TripsRoute(
     TripsScreen(
         appUserId = appUserId,
         tripsUiInfo = TripsUiInfo(
+            use2Panes = use2Panes,
             spacerValue = spacerValue,
             dateTimeFormat = dateTimeFormat,
             internetEnabled = internetEnabled,
@@ -304,11 +309,14 @@ private fun TripsScreen(
 
     val itemModifier = Modifier.widthIn(max = itemMaxWidth)
 
-
+    val firstItemVisible by remember { derivedStateOf { lazyListState.firstVisibleItemIndex == 0 } }
 
 
     MyScaffold(
-        modifier = modifier,
+        modifier = modifier
+            .navigationBarsPadding()
+            .displayCutoutPadding()
+            .imePadding(),
 
         //top app bar
         topBar = {
@@ -325,7 +333,19 @@ private fun TripsScreen(
         },
 
         //fab
-        floatingActionButtonPosition = FabPosition.Center,
+        floatingActionButton = {
+            NewTripExtendedFAB(
+                visible = !loadingTrips && !isEditMode && showingTrips.size < 50,
+                onClick = {
+                    tripsUiInfo.setIsLoadingTrips(true)
+                    navigate.navigateToTrip(true, null)
+                },
+                expanded = firstItemVisible,
+                useBottomNavBar = useBottomNavBar,
+                glanceSpotShown = glance.visible,
+                use2Panes = tripsUiInfo.use2Panes
+            )
+        },
         glanceSpot = {
             GlanceSpot(
                 visible = glance.visible && !isEditMode,
@@ -419,7 +439,7 @@ private fun TripsScreen(
                 state = lazyListState,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(spacerValue, 16.dp, spacerValue, 300.dp),
+                contentPadding = PaddingValues(spacerValue, 16.dp, spacerValue, 400.dp),
                 modifier = modifier
                     .fillMaxSize()
                     .padding(paddingValues)
@@ -559,16 +579,6 @@ private fun TripsScreen(
                             NoTripCard(!loadingTrips || !firstLaunch)
                         }
                     }
-                }
-
-                item {
-                    NewTripButton(
-                        visible = !loadingTrips && !isEditMode && showingTrips.size < 50,
-                        onClick = {
-                            tripsUiInfo.setIsLoadingTrips(true)
-                            navigate.navigateToTrip(true, null)
-                        }
-                    )
                 }
             }
 

@@ -107,11 +107,12 @@ internal fun GlanceSpot(
         ClickableBox(
             onClick = onClick,
             containerColor = MaterialTheme.colorScheme.surface,
+            shape = MaterialTheme.shapes.large,
             modifier = modifier
                 .height(70.dp)
-                .widthIn(max = 500.dp)
+                .widthIn(max = 420.dp)
                 .padding(horizontal = 16.dp)
-                .shadow(6.dp, RoundedCornerShape(16.dp))
+                .shadow(6.dp, MaterialTheme.shapes.large)
         ) {
             Row {
                 //line point

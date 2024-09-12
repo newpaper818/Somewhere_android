@@ -92,27 +92,6 @@ fun UpdateButton(
     )
 }
 
-
-@Composable
-fun NewTripButton(
-    visible: Boolean,
-    onClick: () -> Unit
-){
-    Box(modifier = Modifier.height(40.dp)){
-        AnimatedVisibility(
-            visible = visible,
-            enter = fadeIn(tween(400)) + scaleIn(tween(300)),
-            exit = fadeOut(tween(300)) + scaleOut(tween(400))
-        ) {
-            IconTextButton(
-                icon = IconTextButtonIcon.add,
-                text = stringResource(id = R.string.new_trip),
-                onClick = onClick
-            )
-        }
-    }
-}
-
 @Composable
 fun InviteButton(
     onClick: () -> Unit,
@@ -472,23 +451,6 @@ private fun UpdatePreview(){
             UpdateButton(
                 onClick = {}
             )
-        }
-    }
-}
-
-
-@Composable
-@PreviewLightDark
-private fun NewTripButtonPreview(){
-    SomewhereTheme {
-        Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(16.dp)
-            .width(190.dp)
-        ) {
-            NewTripButton(visible = true) {}
         }
     }
 }
