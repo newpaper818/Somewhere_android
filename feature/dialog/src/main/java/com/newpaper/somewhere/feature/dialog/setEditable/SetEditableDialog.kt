@@ -1,11 +1,13 @@
 package com.newpaper.somewhere.feature.dialog.setEditable
 
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -41,7 +43,8 @@ fun SetEditableDialog(
                 internetEnabled = internetEnabled,
                 userData = friendData,
                 isManager = false,
-                downloadImage = downloadImage
+                downloadImage = downloadImage,
+                modifier = Modifier.padding(start = 8.dp)
             )
 
             MySpacerColumn(height = 16.dp)

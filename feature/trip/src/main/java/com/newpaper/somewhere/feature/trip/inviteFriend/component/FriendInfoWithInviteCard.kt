@@ -54,7 +54,7 @@ internal fun FriendInfoWithInviteCard(
                     userData = friendUserData,
                     isManager = false,
                     downloadImage = downloadImage,
-                    modifier = Modifier.widthIn(min = 330.dp)
+                    modifier = Modifier.widthIn(min = 330.dp).padding(start = 8.dp)
                 )
 
                 MySpacerColumn(height = 16.dp)

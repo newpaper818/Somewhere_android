@@ -50,6 +50,7 @@
 
     <!--trip/ ===================================================================================-->
     <!--SharingWithFriendsCard.kt-->
+    <string name="me">Me</string>
     <string name="trip_mates">Trip mates</string>
 
     <!--TripDurationCard.kt-->

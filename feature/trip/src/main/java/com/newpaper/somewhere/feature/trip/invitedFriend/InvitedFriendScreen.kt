@@ -338,6 +338,8 @@ private fun InvitedFriendsScreen(
 
                     Column {
                         MySpacerColumn(height = 16.dp)
+
+                        //me
                         AppUserCard(
                             isLoading = loading,
                             appUserData = appUserData,
@@ -350,6 +352,8 @@ private fun InvitedFriendsScreen(
                         )
 
                         MySpacerColumn(height = 16.dp)
+
+                        //friends
                         FriendList(
                             isLoading = loading,
                             managerId = trip.managerId,
