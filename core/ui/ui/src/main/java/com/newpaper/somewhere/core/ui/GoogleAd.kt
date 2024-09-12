@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.android.gms.ads.AdView
@@ -18,7 +17,6 @@ fun GoogleFullBannerAd(
     Box(
         modifier = Modifier
             .size(379.dp, 60.dp)
-            .clip(MaterialTheme.shapes.small)
             .background(MaterialTheme.colorScheme.surfaceDim)
     ) {
         //banner ad
@@ -36,7 +34,6 @@ fun GoogleMediumRectangleAd(
     Box(
         modifier = Modifier
             .size(300.dp, 250.dp)
-            .clip(MaterialTheme.shapes.small)
             .background(MaterialTheme.colorScheme.surfaceDim)
     ) {
         //banner ad
