@@ -7,6 +7,7 @@ import com.newpaper.somewhere.core.model.tripData.Trip
 
 
 internal data class TripsUiInfo(
+    val use2Panes: Boolean = false,
     val spacerValue: Dp = 16.dp,
     val dateTimeFormat: DateTimeFormat = DateTimeFormat(),
     val internetEnabled: Boolean = true,

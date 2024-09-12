@@ -103,6 +103,7 @@ object IconTextButtonIcon {
 }
 
 object FabIcon {
+    val add = MyIcon(Icons.Rounded.Add, 24.dp, false, null, R.string.add)
     val map = MyIcon(Icons.Rounded.Map, 22.dp, false, null, R.string.map)
 }
 

@@ -6,6 +6,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -43,6 +44,44 @@ fun IconFAB(
         FloatingActionButton(onClick = onClick) {
             DisplayIcon(icon = icon)
         }
+    }
+}
+
+@Composable
+fun NewTripExtendedFAB(
+    visible: Boolean,
+    onClick: () -> Unit,
+    expanded: Boolean,
+    useBottomNavBar: Boolean,
+    glanceSpotShown: Boolean,
+    use2Panes: Boolean
+){
+    val bottomNavBarPadding = if (useBottomNavBar) 80.dp else 0.dp
+    val glanceSpotPadding = if (glanceSpotShown && !use2Panes) 70.dp else 0.dp
+    val padding = if (glanceSpotShown && !use2Panes) 16.dp else 0.dp
+
+    val modifier =
+        if (glanceSpotShown && use2Panes) Modifier
+            .padding(bottom = bottomNavBarPadding + glanceSpotPadding + padding)
+            .height(70.dp)
+        else Modifier.padding(bottom = bottomNavBarPadding + glanceSpotPadding + padding)
+
+    AnimatedVisibility(
+        visible = visible,
+        enter = slideInVertically(
+            animationSpec = tween(500),
+            initialOffsetY = { (it * 2.5f).toInt() }),
+        exit = slideOutVertically(
+            animationSpec = tween(500),
+            targetOffsetY = { (it * 2.5f).toInt() })
+    ) {
+        SomewhereFAB(
+            text = stringResource(id = R.string.new_trip),
+            icon = FabIcon.add,
+            onClick = onClick,
+            expanded = expanded,
+            modifier = modifier
+        )
     }
 }
 

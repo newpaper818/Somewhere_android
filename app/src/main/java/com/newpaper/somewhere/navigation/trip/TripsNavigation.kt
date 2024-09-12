@@ -86,6 +86,7 @@ fun NavGraphBuilder.tripsScreen(
                 commonTripViewModel = commonTripViewModel,
                 tripsViewModel = tripsViewModel,
 
+                use2Panes = externalState.windowSizeClass.use2Panes,
                 spacerValue = externalState.windowSizeClass.spacerValue,
                 appUserId = appUiState.appUserData?.userId ?: "",
                 dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
