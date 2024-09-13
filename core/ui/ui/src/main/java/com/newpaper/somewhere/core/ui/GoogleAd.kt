@@ -11,13 +11,20 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.google.android.gms.ads.AdView
 
 @Composable
-fun GoogleFullBannerAd(
-    adView: AdView
+fun GoogleBannerAd(
+    adView: AdView,
+    useFullBanner: Boolean
 ){
-    Box(
-        modifier = Modifier
-            .size(379.dp, 60.dp)
+    val modifier =
+        if (!useFullBanner)Modifier
+            .size(320.dp, 50.dp) //BANNER
             .background(MaterialTheme.colorScheme.surfaceDim)
+        else Modifier
+            .size(468.dp, 60.dp) //FULL_BANNER
+            .background(MaterialTheme.colorScheme.surfaceDim)
+
+    Box(
+        modifier = modifier
     ) {
         //banner ad
         AndroidView(
