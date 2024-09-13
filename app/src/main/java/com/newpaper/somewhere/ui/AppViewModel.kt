@@ -121,31 +121,33 @@ class AppViewModel @Inject constructor(
     fun intiUserAndUpdateStartDestination (
 
     ){
+        Log.d("MainActivity1", "[1] intiUserAndUpdateStartDestination start")
+
         initSignedInUser(
             onDone = { userDataIsNull ->
                 updateCurrentScreenDestination(userDataIsNull)
             }
         )
+        Log.d("MainActivity1", "                              [1]intiUserAndUpdateStartDestination done")
     }
 
     private fun initSignedInUser(
         onDone: (userDataIsNull: Boolean) -> Unit
     ){
-        Log.d("time", "   start - initSignedInUser")
+        Log.d("MainActivity1", "[2] initSignedInUser start")
 
         viewModelScope.launch {
             val time = measureNanoTime {
                 val userData = userRepository.getSignedInUser()
-
-                Log.d(APP_VIEWMODEL_TAG, "userData: $userData, userId: ${userData?.userId}")
 
                 _appUiState.update {
                     it.copy(appUserData = userData)
                 }
 
                 onDone(userData == null || userData.userId == "")
+                Log.d("MainActivity1", "[2] initSignedInUser - user: ${userData?.userId}")
             }
-            Log.d("time", "${time*0.000000001} - initSignedInUser")
+            Log.d("MainActivity1", "[2] ${time*0.000000001} - initSignedInUser")
         }
     }
 
@@ -160,7 +162,7 @@ class AppViewModel @Inject constructor(
 
     //==============================================================================================
     //update screen destination ====================================================================
-    private fun updateCurrentScreenDestination(
+    fun updateCurrentScreenDestination(
         userDataIsNull: Boolean
     ){
         val startScreenDestination =
@@ -174,6 +176,7 @@ class AppViewModel @Inject constructor(
                 )
             )
         }
+        Log.d("MainActivity1", "[3] update screen destination: $startScreenDestination")
     }
 
     fun updateMoreDetailCurrentScreenDestination(
