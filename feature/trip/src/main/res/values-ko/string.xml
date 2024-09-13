@@ -24,7 +24,7 @@
     <string name="friend_email">친구 이메일</string>
     <string name="or">또는</string>
     <string name="invite">초대</string>
-    <string name="scan_friends_qr">친구의 QR 코드를 스캔하세요\n(프로필 > 나의 QR 코드)</string>
+    <string name="scan_friends_qr">친구의 QR 코드를 스캔하세요\n(프로필 > 내 QR 코드)</string>
     <string name="camera_permission_denied">카메라 권한 거부됨</string>
     <string name="please_allow_camera_permissions">설정에서 카메라 권한을 허용해 주세요 (설정 > 권한 > 카메라 > 앱 사용 중 또는 항상 확인)</string>
     <string name="internet_unavailable_">인터넷 연결 없음</string>
