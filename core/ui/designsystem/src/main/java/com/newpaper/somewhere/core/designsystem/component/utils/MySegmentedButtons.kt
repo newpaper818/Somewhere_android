@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
@@ -137,6 +138,12 @@ private fun MySegmentedButtonItem(
         label = "content color"
     )
 
+    val contentScale = animateFloatAsState(
+        targetValue = if (isSelected) 1f else 0.92f,
+        animationSpec = tween(150),
+        label = "content scale"
+    )
+
     val haptic = LocalHapticFeedback.current
 
     CompositionLocalProvider(LocalRippleConfiguration provides noRippleConfiguration) {
@@ -158,6 +165,7 @@ private fun MySegmentedButtonItem(
             ) {
                 Column(
                     modifier = Modifier
+                        .scale(contentScale.value)
                         .fillMaxWidth()
                         .padding(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
