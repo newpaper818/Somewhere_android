@@ -14,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.viewModelScope
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.gms.location.LocationServices
@@ -71,7 +72,7 @@ class MainActivity : ComponentActivity() {
         }
 
         //get signed user and update start destination
-        backgroundScope.launch {
+        appViewModel.viewModelScope.launch {
             //get signed user and update start destination
             Log.d(MAIN_ACTIVITY_TAG, "- init user and update start destination start")
 
