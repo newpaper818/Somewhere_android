@@ -32,7 +32,7 @@ object PlacesClientModule {
     fun providePlacesClient(
         @ApplicationContext context: Context
     ): PlacesClient {
-        Places.initialize(context, BuildConfig.MAPS_API_KEY)
+        Places.initialize(context, BuildConfig.GOOGLE_MAPS_API_KEY)
         return Places.createClient(context)
     }
 }
