@@ -92,7 +92,7 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
         if (!Places.isInitialized()
 //            || !::placesClient.isInitialized
             ) {
-            Places.initialize(context, BuildConfig.MAPS_API_KEY)
+            Places.initialize(context, BuildConfig.GOOGLE_MAPS_API_KEY)
             placesClient = Places.createClient(context)
         }
     }

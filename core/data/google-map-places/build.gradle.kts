@@ -13,7 +13,7 @@ android {
     defaultConfig {
         minSdk = 26
 
-        buildConfigField("String", "MAPS_API_KEY", getApiKey("MAPS_API_KEY"))
+        buildConfigField("String", "GOOGLE_MAPS_API_KEY", getApiKey("GOOGLE_MAPS_API_KEY"))
     }
 
     compileOptions {
