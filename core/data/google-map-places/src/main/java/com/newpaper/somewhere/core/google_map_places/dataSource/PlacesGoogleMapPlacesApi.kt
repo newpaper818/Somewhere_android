@@ -72,9 +72,9 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
         checkPlacesClientAndInit()
 
         placesClient.fetchPlace(
-            FetchPlaceRequest.newInstance(placeId, listOf(Place.Field.LAT_LNG))
+            FetchPlaceRequest.newInstance(placeId, listOf(Place.Field.LOCATION))
         ).addOnSuccessListener {
-            continuation.resume(it.place.latLng)
+            continuation.resume(it.place.location)
         }.addOnFailureListener {
             Log.e(this.toString(), it.stackTraceToString())
             continuation.resume(null)
