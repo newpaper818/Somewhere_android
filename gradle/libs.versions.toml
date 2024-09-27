@@ -23,6 +23,7 @@ splashscreen = "1.0.1"
 datastore = "1.1.1"
 qrCode = "1.0.1"
 easyQrScan = "0.1.5"
+gemini = "0.9.0"
 
 
 agp = "8.5.2"
@@ -127,6 +128,8 @@ play-services-ads =         { group = "com.google.android.gms", name = "play-ser
 maps-compose =              { group = "com.google.maps.android", name = "maps-compose", version.ref = "mapsAndroid" }
 places =                    { group = "com.google.android.libraries.places", name = "places", version.ref = "places" }
 
+# gemini ai
+gemini = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "gemini" }
 
 # image
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
