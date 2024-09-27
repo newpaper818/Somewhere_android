@@ -27,6 +27,7 @@ android {
         }
 
         buildConfigField("String", "GOOGLE_MAPS_API_KEY", getApiKey("GOOGLE_MAPS_API_KEY"))
+        buildConfigField("String", "GEMINI_AI_API_KEY", getApiKey("GEMINI_AI_API_KEY"))
     }
 
     sourceSets {

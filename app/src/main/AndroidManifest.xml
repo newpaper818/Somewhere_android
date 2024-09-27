@@ -45,6 +45,9 @@
         </activity>
 
         <meta-data
+            android:name="com.google.ai.client.generativeai.API_KEY"
+            android:value="${GEMINI_AI_API_KEY}"/>
+        <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${GOOGLE_MAPS_API_KEY}"/>
 <!--        <meta-data-->

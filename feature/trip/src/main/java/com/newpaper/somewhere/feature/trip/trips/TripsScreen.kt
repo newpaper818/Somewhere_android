@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.trip.trips
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.google.ai.client.generativeai.GenerativeModel
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
@@ -313,6 +315,25 @@ private fun TripsScreen(
     val itemModifier = Modifier.widthIn(max = itemMaxWidth)
 
     val firstItemVisible by remember { derivedStateOf { lazyListState.firstVisibleItemIndex == 0 } }
+
+
+    val coroutineScope = rememberCoroutineScope()
+
+    val generativeModel =
+        GenerativeModel(
+            // Specify a Gemini model appropriate for your use case
+            modelName = "gemini-1.5-flash",
+            // Access your API key as a Build Configuration variable (see "Set up your API key" above)
+            apiKey = BuildConfig.GEMINI_AI_API_KEY
+        )
+
+    val prompt = "Create a trip plans for 5 days in Seoul Korea. answer in Korean"
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            val response = generativeModel.generateContent(prompt)
+            Log.d("gemini", "${response.text}")
+        }
+    }
 
 
     MyScaffold(
