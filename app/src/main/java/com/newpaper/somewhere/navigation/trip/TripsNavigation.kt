@@ -46,6 +46,7 @@ fun NavGraphBuilder.tripsScreen(
     lazyListState: LazyListState,
 
     navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
+    navigateToTripAi: () -> Unit,
     navigateToGlanceSpot: (glance: Glance) -> Unit,
 ) {
     composable(
@@ -99,6 +100,7 @@ fun NavGraphBuilder.tripsScreen(
                 lazyListState = lazyListState,
 
                 navigateToTrip = navigateToTrip,
+                navigateToTripAi = navigateToTripAi,
                 navigateToGlanceSpot = navigateToGlanceSpot
             )
         }

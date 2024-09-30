@@ -121,6 +121,8 @@
     <string name="date">Date</string>
     <string name="time">Time</string>
     <string name="to">To</string>
+    <string name="manual">Manual</string>
+    <string name="ai">AI</string>
     <string name="switch_to_keyboard_input">Switch to keyboard input</string>
     <string name="switch_to_touch_input">Switch to touch input</string>
     <string name="category">Category</string>

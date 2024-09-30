@@ -48,8 +48,10 @@ import com.newpaper.somewhere.navigation.trip.navigateToDate
 import com.newpaper.somewhere.navigation.trip.navigateToInviteFriend
 import com.newpaper.somewhere.navigation.trip.navigateToSpot
 import com.newpaper.somewhere.navigation.trip.navigateToTrip
+import com.newpaper.somewhere.navigation.trip.navigateToTripAi
 import com.newpaper.somewhere.navigation.trip.navigateToTrips
 import com.newpaper.somewhere.navigation.trip.spotScreen
+import com.newpaper.somewhere.navigation.trip.tripAiScreen
 import com.newpaper.somewhere.navigation.trip.tripMapScreen
 import com.newpaper.somewhere.navigation.trip.tripScreen
 import com.newpaper.somewhere.navigation.trip.tripsScreen
@@ -263,6 +265,11 @@ fun SomewhereNavHost(
                             navOptions = navOptions { launchSingleTop = true }
                         )
                 },
+                navigateToTripAi = {
+                    mainNavController.navigateToTripAi(
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
+                },
                 navigateToGlanceSpot = { glance ->
                     if (glance.trip != null)
                         commonTripViewModel.setTrip(glance.trip)
@@ -427,6 +434,16 @@ fun SomewhereNavHost(
 
 
             //trip =================================================================================
+            tripAiScreen(
+                appViewModel = appViewModel,
+                externalState = externalState,
+                commonTripViewModel = commonTripViewModel,
+                navigateTo = {
+                    //TODO
+                },
+                navigateUp = navigateUp
+            )
+
             tripScreen(
                 appViewModel = appViewModel,
                 externalState = externalState,

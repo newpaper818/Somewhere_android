@@ -24,7 +24,7 @@ datastore = "1.1.1"
 qrCode = "1.0.1"
 easyQrScan = "0.1.5"
 gemini = "0.9.0"
-
+serialization = "1.7.1"
 
 agp = "8.5.2"
 kotlin = "1.9.23"
@@ -149,6 +149,9 @@ datastore-preferences = { group = "androidx.datastore", name = "datastore-prefer
 # qr code
 qr-code-compose = { group = "com.lightspark", name = "compose-qr-code", version.ref = "qrCode" }
 easy-qr-scan = { group = "io.github.kalinjul.easyqrscan", name = "scanner", version.ref = "easyQrScan" }
+
+# serialization
+serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 
 
 junit =                     { group = "junit", name = "junit", version.ref = "junit" }

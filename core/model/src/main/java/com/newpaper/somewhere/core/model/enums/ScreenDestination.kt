@@ -19,6 +19,7 @@ enum class ScreenDestination(
     ABOUT("about"),
     OPEN_SOURCE_LICENSE("openSourceLicense"),
 
+    TRIP_AI("tripAi"),
     TRIP("trip"),
     DATE("date"),
     SPOT("spot"),

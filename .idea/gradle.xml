@@ -19,6 +19,7 @@
             <option value="$PROJECT_DIR$/core/data/firebase-firestore" />
             <option value="$PROJECT_DIR$/core/data/firebase-functions" />
             <option value="$PROJECT_DIR$/core/data/firebase-storage" />
+            <option value="$PROJECT_DIR$/core/data/gemini-ai" />
             <option value="$PROJECT_DIR$/core/data/google-map-places" />
             <option value="$PROJECT_DIR$/core/data/local-image-file" />
             <option value="$PROJECT_DIR$/core/model" />
