@@ -30,6 +30,10 @@
     <string name="no_name">이름 없음</string>
     <string name="no_email">이메일 없음</string>
 
+    <!--TripCreationOptionsDialog.kt-->
+    <string name="enter_your_own">직접 입력하기</string>
+    <string name="create_with_AI">AI로 만들기</string>
+
     <!--SelectDateDialog.kt-->
     <string name="move_date">날짜 이동</string>
 

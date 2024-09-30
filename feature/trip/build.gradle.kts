@@ -1,10 +1,9 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.hilt)
     alias(libs.plugins.googleDevToolsKsp)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -13,9 +12,6 @@ android {
 
     defaultConfig {
         minSdk = 26
-
-        buildConfigField("String", "GEMINI_AI_API_KEY", getApiKey("GEMINI_AI_API_KEY"))
-
     }
 
     buildFeatures {
@@ -28,10 +24,6 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-}
-
-fun getApiKey(propertyKey: String): String {
-    return gradleLocalProperties(rootDir, providers).getProperty(propertyKey)
 }
 
 dependencies {
@@ -56,7 +48,9 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
 
     //lifecycle viewmodel
-//    implementation(libs.lifecycle.viewmodel.compose)
+//    implementation(libs.lifecycle.common)
+    implementation(libs.lifecycle.runtime.ktx)
+
 
     //google ad
     implementation(libs.play.services.ads)
@@ -80,10 +74,6 @@ dependencies {
 
     //qr scan
     implementation(libs.easy.qr.scan)
-
-    //gemini
-    implementation(libs.gemini)
-    
 
 
     //test

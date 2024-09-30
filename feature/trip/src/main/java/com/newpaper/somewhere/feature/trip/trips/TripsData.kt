@@ -38,15 +38,19 @@ internal data class TripsData(
 
 internal data class TripsDialog(
     val isShowingDialog: Boolean = false,
+    val showTripCreationOptionsDialog: Boolean = false,
     val showExitDialog: Boolean = false,
     val showDeleteDialog: Boolean = false,
 
+    private val _setShowTripCreationOptionsDialog: (Boolean) -> Unit = {},
     private val _showExitDialogToFalse: () -> Unit = {},
     private val _setShowDeleteDialog: (Boolean) -> Unit = {},
 
     val selectedTrip: Trip? = null,
     private val _setSelectedTrip: (Trip?) -> Unit = {}
 ){
+    fun setShowTripCreationOptionsDialog(showTripCreationOptionsDialog: Boolean){
+        _setShowTripCreationOptionsDialog(showTripCreationOptionsDialog) }
     fun showExitDialogToFalse(){
         _showExitDialogToFalse() }
     fun setShowDeleteDialog(showDeleteDialog: Boolean){
@@ -84,12 +88,15 @@ internal data class TripsEdit(
 internal data class TripsNavigate(
     private val _onClickBackButton: () -> Unit = {},
     private val _navigateToTrip: (isNewTrip: Boolean, trip: Trip?) -> Unit = { _, _ ->},
+    private val _navigateToTripAi: () -> Unit = {},
     private val _navigateToGlanceSpot: () -> Unit = {},
 ){
     fun onClickBackButton(){
         _onClickBackButton() }
     fun navigateToTrip(isNewTrip: Boolean, trip: Trip?){
         _navigateToTrip(isNewTrip, trip) }
+    fun navigateToTripAi(){
+        _navigateToTripAi() }
     fun navigateToGlanceSpot(){
         _navigateToGlanceSpot() }
 }

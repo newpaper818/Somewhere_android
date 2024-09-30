@@ -30,6 +30,10 @@
     <string name="no_name">No name</string>
     <string name="no_email">No email</string>
 
+    <!--TripCreationOptionsDialog.kt-->
+    <string name="enter_your_own">Enter your own</string>
+    <string name="create_with_AI">Create with AI</string>
+
     <!--SelectDateDialog.kt-->
     <string name="move_date">Move date</string>
 
