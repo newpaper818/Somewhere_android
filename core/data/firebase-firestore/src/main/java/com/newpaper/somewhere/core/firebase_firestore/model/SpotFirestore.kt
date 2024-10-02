@@ -10,6 +10,7 @@ import java.time.LocalDate
 
 internal data class SpotFirestore(
     val id: Int = 0,
+    val googleMapPlacesId: String? = null,
     var index: Int = 0,
     var iconText: Int = 0,
 
@@ -33,6 +34,7 @@ internal data class SpotFirestore(
     fun toSpot(): Spot {
         return Spot(
             id = id,
+            googleMapPlacesId = googleMapPlacesId,
             index = index,
             iconText = iconText,
             spotType = stringToSpotType(spotType),
@@ -53,6 +55,7 @@ internal data class SpotFirestore(
 internal fun Spot.toSpotFirestore(): SpotFirestore =
     SpotFirestore(
         id = id,
+        googleMapPlacesId = googleMapPlacesId,
         index = index,
         iconText = iconText,
         spotType = spotType.toString(),

@@ -8,5 +8,5 @@ interface AiRemoteDataSource {
 
     suspend fun  getTripPlan(
         places: List<Place>
-    ): Trip?
+    ): String?
 }
