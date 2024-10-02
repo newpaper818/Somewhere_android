@@ -31,7 +31,7 @@ class GeminiAiApi @Inject constructor(
             )
 
         val prompt = """
-            get trip places (5 places) using this JSON schema:
+            get trip places (20 places) using this JSON schema:
             return: Array<String> (each String should not be sentence. like [N Seoul tower, Empire state building, Central park])
         
             [trip info]
@@ -81,16 +81,18 @@ class GeminiAiApi @Inject constructor(
             
             [format - follow this rule]
             language: Korean
-            time format: HH:MM (24h)
-            date format: yyyy-mm-dd
+            time format: HH:MM (24h, do not add additional data)
+            date format: yyyy-mm-dd (do not add additional data)
             
             [places]
             ${placesToString(places)}
             
             [other request]
             Consider transportation time.
-            potList's item is order by time.
-            Do not change spot's location.
+            spotList's item is order by time.
+            googleMapsPlacesId should be same with given [places]'s id.
+            spot's titleText is place's name (only allow translation).
+            You don't have to follow [places] order.
             
             [spot type list- select spotType from below]
             ${enumValues<SpotType>().map { it }}
@@ -130,8 +132,9 @@ class GeminiAiApi @Inject constructor(
     ): String {
         val stringList = listOf(
             "name: " + place.displayName,
-            "location(lat/lng): (" + place.location?.latitude + "," + place.location?.latitude + ")",
-            "place types: " + place.placeTypes
+            "id: " + place.id,
+//            "location(lat/lng): (" + place.location?.latitude + "," + place.location?.latitude + ")",
+            "placeTypes: " + place.placeTypes
         )
 
         return stringList.joinToString(", ", "{", "}")
@@ -178,17 +181,6 @@ class GeminiAiApi @Inject constructor(
                             "date": {
                               "type": "string"
                             },
-                            "location": {
-                              "type": "object",
-                              "properties": {
-                                "lat": {
-                                  "type": "number"
-                                },
-                                "lng": {
-                                  "type": "number"
-                                }
-                              }
-                            },
                             "startTime": {
                               "type": "string"
                             },
@@ -200,13 +192,17 @@ class GeminiAiApi @Inject constructor(
                             },
                             "spotType": {
                               "type": "string"
+                            },
+                            "googleMapsPlacesId": {
+                              "type": "string"
                             }
                           },
                           "required": [
                             "titleText",
                             "date",
                             "startTime",
-                            "endTime"
+                            "endTime",
+                            "googleMapsPlacesId"
                           ]
                         }
                       }
