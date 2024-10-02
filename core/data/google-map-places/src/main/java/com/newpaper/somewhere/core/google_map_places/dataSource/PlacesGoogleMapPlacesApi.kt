@@ -5,9 +5,11 @@ import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.model.kotlin.place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.android.libraries.places.api.net.SearchByTextRequest
 import com.newpaper.somewhere.core.data.google_map_places.BuildConfig
 import com.newpaper.somewhere.core.model.data.LocationInfo
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -56,9 +58,7 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
 
             }
             .addOnFailureListener {
-                it.printStackTrace()
-                println(it.cause)
-                println(it.message)
+                Log.e(this.toString(), it.stackTraceToString())
                 locationList.complete(null)
             }
 
@@ -81,9 +81,54 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
         }
     }
 
+    override suspend fun getPlacesInfo(
+        places: List<String>
+    ): List<Place>? {
+        checkPlacesClientAndInit()
 
+        val placeInfoList = places.mapNotNull {
+            searchPlace(it)
+        }
 
+        placeInfoList.forEach{ place ->
+            Log.d("gemini", "name: ${place.displayName}, location: ${place.location}")
+        }
 
+        return placeInfoList.ifEmpty { null }
+    }
+
+    private suspend fun searchPlace(
+        query: String
+    ): Place?{
+        val placeInfo = CompletableDeferred<Place?>()
+
+        val placeFields: List<Place.Field> = arrayListOf(
+            Place.Field.ID,
+            Place.Field.DISPLAY_NAME,
+            Place.Field.FORMATTED_ADDRESS,
+            Place.Field.LOCATION,
+            Place.Field.GOOGLE_MAPS_URI,
+            Place.Field.WEBSITE_URI,
+            Place.Field.TYPES,
+            Place.Field.RATING,
+            Place.Field.OPENING_HOURS
+        )
+
+        val request = SearchByTextRequest.builder(query, placeFields)
+            .setMaxResultCount(3)
+            .build()
+
+        placesClient.searchByText(request)
+            .addOnSuccessListener { response ->
+                placeInfo.complete(response.places.firstOrNull())
+            }
+            .addOnFailureListener {
+                Log.e(this.toString(), it.stackTraceToString())
+                placeInfo.complete(null)
+            }
+
+        return placeInfo.await()
+    }
 
 
 
@@ -91,7 +136,7 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
     private fun checkPlacesClientAndInit() {
         if (!Places.isInitialized()
 //            || !::placesClient.isInitialized
-            ) {
+        ) {
             Places.initialize(context, BuildConfig.GOOGLE_MAPS_API_KEY)
             placesClient = Places.createClient(context)
         }

@@ -52,6 +52,9 @@ dependencies {
     //serialization
     implementation(libs.serialization)
 
+    //google map places
+    implementation(libs.places)
+
     //test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
