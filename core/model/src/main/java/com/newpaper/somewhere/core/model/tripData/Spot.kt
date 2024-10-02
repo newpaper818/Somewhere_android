@@ -9,7 +9,7 @@ import java.time.LocalTime
 
 data class Spot(
     val id: Int,
-    val googleMapPlacesId: String? = null,
+    val googleMapsPlacesId: String? = null,
     var index: Int = 0,
     var iconText: Int = 0,
 
@@ -39,7 +39,7 @@ data class Spot(
     public override fun clone(): Spot {
         return Spot(
             id = id,
-            googleMapPlacesId = googleMapPlacesId,
+            googleMapsPlacesId = googleMapsPlacesId,
             index = index,
             iconText = iconText,
             spotType = spotType,
