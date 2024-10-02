@@ -28,7 +28,7 @@ class TripAiViewModel @Inject constructor(
     val tripAiUiState = _tripAiUiState.asStateFlow()
 
     fun setAiCreatedTrip(
-        trip: String
+        trip: String?
     ){
         _tripAiUiState.update {
             it.copy(trip = trip)

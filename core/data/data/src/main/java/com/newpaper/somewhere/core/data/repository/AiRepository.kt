@@ -11,7 +11,7 @@ class AiRepository @Inject constructor(
 ) {
     suspend fun getAiCreatedTrip(
 
-    ): String {
+    ): String? {
         //get places from ai
         val list = aiRemoteDataSource.getRecommendSpots()
 //        return list.toString()
@@ -22,13 +22,11 @@ class AiRepository @Inject constructor(
 
             //get trip plans from ai
             if (places != null){
-                aiRemoteDataSource.getTripPlan(places)
-                return "null"
-
+                return aiRemoteDataSource.getTripPlan(places)
             }
-            else return "null"
+            else return null
 
         }
-        else return "null"
+        else return null
     }
 }

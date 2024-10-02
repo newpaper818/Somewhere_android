@@ -57,7 +57,7 @@ class GeminiAiApi @Inject constructor(
 
     override suspend fun getTripPlan(
         places: List<Place>
-    ): Trip? {
+    ): String? {
         val generativeModel =
             GenerativeModel(
                 // Specify a Gemini model appropriate for your use case
@@ -73,30 +73,46 @@ class GeminiAiApi @Inject constructor(
             Make trip plan.
             When you make trip plan, use [places].
             
-            [trip info] 
+            [trip info]
             city: Seoul, Korea
-            trip with(solo, partner, friend, family): friend 
+            trip date: 2024-10-01 ~ 2024-10-03
+            trip with(solo, partner, friend, family): friend
             trip type: activity
-            trip date: 2024-09-30 ~ 2024-10-05
+            
+            [format - follow this rule]
+            language: Korean
+            time format: HH:MM (24h)
+            date format: yyyy-mm-dd
             
             [places]
             ${placesToString(places)}
             
-            [spot type list]
+            [other request]
+            Consider transportation time.
+            potList's item is order by time.
+            Do not change spot's location.
+            
+            [spot type list- select spotType from below]
             ${enumValues<SpotType>().map { it }}
+            
+            [return: JSON type]
+            ${jsonTypeString()}
         """.trimIndent()
 
         val response = generativeModel.generateContent(prompt)
 
-        if (response.text != null) {
-            val trip = Json.decodeFromString<Trip>(response.text!!)
+        Log.d(GEMINI_AI_TAG, response.text.toString())
+        return response.text
 
-            Log.d(GEMINI_AI_TAG, trip.toString())
-
-            return trip
-        }
-        else
-            return null
+//        if (response.text != null) {
+//            val trip = Json.decodeFromString<Trip>(response.text!!)
+//
+//            Log.d(GEMINI_AI_TAG, trip.toString())
+//
+//            return trip
+//        }
+//        else
+//            return null
     }
 
     private fun placesToString(
@@ -119,5 +135,96 @@ class GeminiAiApi @Inject constructor(
         )
 
         return stringList.joinToString(", ", "{", "}")
+    }
+
+    private fun jsonTypeString(
+
+    ): String{
+        return """
+            {
+              "type": "object",
+              "properties": {
+                "titleText": {
+                  "type": "string"
+                },
+                "startDate": {
+                  "type": "string"
+                },
+                "endDate": {
+                  "type": "string"
+                },
+                "memoText": {
+                  "type": "string"
+                },
+                "dateList": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "titleText": {
+                        "type": "string"
+                      },
+                      "memoText": {
+                        "type": "string"
+                      },
+                      "spotList": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "titleText": {
+                              "type": "string"
+                            },
+                            "date": {
+                              "type": "string"
+                            },
+                            "location": {
+                              "type": "object",
+                              "properties": {
+                                "lat": {
+                                  "type": "number"
+                                },
+                                "lng": {
+                                  "type": "number"
+                                }
+                              }
+                            },
+                            "startTime": {
+                              "type": "string"
+                            },
+                            "endTime": {
+                              "type": "string"
+                            },
+                            "memoText": {
+                              "type": "string"
+                            },
+                            "spotType": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "titleText",
+                            "date",
+                            "startTime",
+                            "endTime"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "titleText",
+                      "spotList"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "titleText",
+                "startDate",
+                "endDate",
+                "dateList"
+              ]
+            }
+        """.trimIndent()
     }
 }
