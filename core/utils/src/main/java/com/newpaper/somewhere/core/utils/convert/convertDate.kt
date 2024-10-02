@@ -139,7 +139,7 @@ fun Date.setMemoText(
         else newMemoText
 
     val newDateList = showingTrip.dateList.toMutableList()
-    newDateList[index] = newDateList[index].copy(memo = memoText)
+    newDateList[index] = newDateList[index].copy(memoText = memoText)
     updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))
 }
 
