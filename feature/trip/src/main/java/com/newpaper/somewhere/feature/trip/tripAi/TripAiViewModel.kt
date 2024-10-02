@@ -40,6 +40,10 @@ class TripAiViewModel @Inject constructor(
     ){
         viewModelScope.launch{
             val aiCreatedTrip = aiRepository.getAiCreatedTrip()
+
+            //convert JSON -> Trip
+
+
             setAiCreatedTrip(aiCreatedTrip)
         }
     }
