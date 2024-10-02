@@ -363,7 +363,7 @@ fun Spot.setMemoText(
         else newMemoText
 
     val newSpotList = showingTrip.dateList[currentDateIndex].spotList.toMutableList()
-    newSpotList[index] = newSpotList[index].copy(memo = memoText)
+    newSpotList[index] = newSpotList[index].copy(memoText = memoText)
     val newDateList = showingTrip.dateList.toMutableList()
     newDateList[currentDateIndex] = newDateList[currentDateIndex].copy(spotList = newSpotList.toList())
     updateTripState(true, showingTrip.copy(dateList = newDateList.toList()))

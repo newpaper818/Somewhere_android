@@ -28,7 +28,7 @@ internal data class SpotFirestore(
 
     val budget: Float = 0.0f,
     val travelDistance: Float = 0.0f,
-    val memo: String? = null
+    val memoText: String? = null
 ){
     fun toSpot(): Spot {
         return Spot(
@@ -45,7 +45,7 @@ internal data class SpotFirestore(
             endTime = stringToLocalTime(endTime),
             budget = budget,
             travelDistance = travelDistance,
-            memo = memo
+            memoText = memoText
         )
     }
 }
@@ -65,7 +65,7 @@ internal fun Spot.toSpotFirestore(): SpotFirestore =
         endTime = localTimeToString(endTime),
         budget = budget,
         travelDistance = travelDistance,
-        memo = memo
+        memoText = memoText
     )
 
 

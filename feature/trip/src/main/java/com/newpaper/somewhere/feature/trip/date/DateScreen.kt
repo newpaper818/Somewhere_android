@@ -508,7 +508,7 @@ private fun DateScreen(
 
         if (dateDialog.showMemoDialog && currentDate != null){
             MemoDialog(
-                memoText = currentDate.memo ?: "",
+                memoText = currentDate.memoText ?: "",
                 onDismissRequest = { dateDialog.setShowMemoDialog(false) }
             )
         }
@@ -782,7 +782,7 @@ private fun DatePage(
             MemoCard(
                 modifier = Modifier.padding(startSpacerValue, 0.dp, endSpacerValue, 0.dp),
                 isEditMode = isEditMode,
-                memoText = currentDate.memo,
+                memoText = currentDate.memoText,
                 onMemoChanged = { newMemoText ->
                     currentDate.setMemoText(showingTrip, updateTripState, newMemoText)
                 },

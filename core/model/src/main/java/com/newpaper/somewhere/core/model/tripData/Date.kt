@@ -15,7 +15,7 @@ data class Date(
     val titleText: String? = null,
 
     val spotList: List<Spot> = listOf(),
-    val memo: String? = null
+    val memoText: String? = null
 ): Cloneable {
     public override fun clone(): Date {
         return Date(
@@ -26,7 +26,7 @@ data class Date(
             date = date,
             titleText = titleText,
             spotList = spotList.map{ it.clone() },
-            memo = memo
+            memoText = memoText
         )
     }
 }

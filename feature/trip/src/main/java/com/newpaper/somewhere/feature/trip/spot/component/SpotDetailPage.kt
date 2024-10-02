@@ -142,7 +142,7 @@ internal fun SpotDetailPage(
             //memo card
             MemoCard(
                 isEditMode = spotUiInfo.isEditMode,
-                memoText = currentSpot.memo,
+                memoText = currentSpot.memoText,
                 onMemoChanged = { newMemoText ->
                     currentSpot.setMemoText(
                         showingTrip,
