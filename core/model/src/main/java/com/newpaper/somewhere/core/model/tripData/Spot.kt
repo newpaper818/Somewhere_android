@@ -33,7 +33,7 @@ data class Spot(
 
     val budget: Float = 0.0f,
     val travelDistance: Float = 0.0f,
-    val memo: String? = null
+    val memoText: String? = null
 ): Cloneable {
     public override fun clone(): Spot {
         return Spot(
@@ -53,7 +53,7 @@ data class Spot(
             endTime = endTime,
             budget = budget,
             travelDistance = travelDistance,
-            memo = memo
+            memoText = memoText
         )
     }
 }

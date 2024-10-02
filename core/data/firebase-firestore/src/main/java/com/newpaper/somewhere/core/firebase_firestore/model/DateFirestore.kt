@@ -13,7 +13,7 @@ internal data class DateFirestore(
     var date: String = LocalDate.now().toString(),
     val titleText: String? = null,
     val spotList: List<SpotFirestore> = listOf(),
-    val memo: String? = null
+    val memoText: String? = null
 ){
     fun toDate(): Date{
 
@@ -31,7 +31,7 @@ internal data class DateFirestore(
             date = LocalDate.parse(date),
             titleText = titleText,
             spotList = newSpotList,
-            memo = memo
+            memoText = memoText
         )
     }
 }
@@ -50,6 +50,6 @@ internal fun Date.toDateFirestore(): DateFirestore {
         date = date.toString(),
         titleText = titleText,
         spotList = spotListFirestore,
-        memo = memo
+        memoText = memoText
     )
 }

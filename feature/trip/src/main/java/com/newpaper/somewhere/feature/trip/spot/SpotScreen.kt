@@ -641,7 +641,7 @@ private fun SpotScreen(
 
         if (spotDialog.showMemoDialog){
             MemoDialog(
-                memoText = currentSpot?.memo ?: "",
+                memoText = currentSpot?.memoText ?: "",
                 onDismissRequest = { spotDialog.setShowMemoDialog(false) }
             )
         }
