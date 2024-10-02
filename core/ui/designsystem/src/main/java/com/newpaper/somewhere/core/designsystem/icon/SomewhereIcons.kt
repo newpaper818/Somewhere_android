@@ -198,7 +198,7 @@ object MyIcons {
     val rightArrowToSmall = MyIcon(Icons.Rounded.East,  18.dp, true, null, R.string.to)
 
     //trip creation options dialog
-    val manual = MyIcon(Icons.Outlined.Edit,    26.dp, false, null, R.string.manual)
+    val manual = MyIcon(Icons.Rounded.Edit,    26.dp, false, null, R.string.manual)
     val ai = MyIcon(Icons.Rounded.Bolt,         26.dp, false, null, R.string.ai)
 
     //set time dialog

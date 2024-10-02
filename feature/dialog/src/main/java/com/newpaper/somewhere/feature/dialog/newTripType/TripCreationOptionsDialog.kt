@@ -2,7 +2,10 @@ package com.newpaper.somewhere.feature.dialog.newTripType
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
@@ -35,12 +38,12 @@ fun TripCreationOptionsDialog(
     onDismissRequest: () -> Unit,
     onClick: (onClickManual: Boolean) -> Unit
 ){
-    Dialog(onDismissRequest = { /*TODO*/ }) {
-        
-    }
+//    Dialog(onDismissRequest = { /*TODO*/ }) {
+//
+//    }
     BasicAlertDialog(
         modifier = Modifier
-            .width(420.dp)
+            .width(IntrinsicSize.Min)
 //            .layout{ measurable, constraints ->
 //                val placeable = measurable.measure(constraints);
 //                layout(constraints.maxWidth, constraints.maxHeight){
@@ -55,27 +58,27 @@ fun TripCreationOptionsDialog(
             shape = MaterialTheme.shapes.extraLarge,
             color = MaterialTheme.colorScheme.surface
         ) {
-            Row(
+            Column(
                 modifier = Modifier
-                    .width(500.dp)
+//                    .width(500.dp)
                     .padding(16.dp),
-//                horizontalAlignment = Alignment.CenterHorizontally,
-//                verticalArrangement = Arrangement.SpaceBetween
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
                 TripCreationTypeButton(
                     icon = MyIcons.manual,
                     text = stringResource(id = R.string.enter_your_own),
                     onClick = { onClick(true) },
-                    modifier = Modifier.weight(1f)
+//                    modifier = Modifier.weight(1f)
                 )
 
-                MySpacerRow(width = 16.dp)
+                MySpacerColumn(height = 16.dp)
 
                 TripCreationTypeButton(
                     icon = MyIcons.ai,
                     text = stringResource(id = R.string.create_with_AI),
                     onClick = { onClick(false) },
-                    modifier = Modifier.weight(1f)
+//                    modifier = Modifier.weight(1f)
                 )
             }
         }
@@ -92,18 +95,18 @@ private fun TripCreationTypeButton(
     modifier: Modifier = Modifier
 ){
     ClickableBox(
-        modifier = modifier,
+        modifier = modifier.height(76.dp).fillMaxWidth(),
         containerColor = MaterialTheme.colorScheme.surfaceBright,
         contentAlignment = Alignment.Center,
         onClick = onClick
     ) {
-        Column(
+        Row(
             modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            verticalAlignment = Alignment.CenterVertically
         ) {
             DisplayIcon(icon = icon)
 
-            MySpacerColumn(height = 8.dp)
+            MySpacerRow(width = 8.dp)
 
             Text(
                 text = text,
