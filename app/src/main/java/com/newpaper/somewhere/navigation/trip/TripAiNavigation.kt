@@ -50,7 +50,10 @@ fun NavGraphBuilder.tripAiScreen(
         val appUiState by appViewModel.appUiState.collectAsState()
 
         if (appUiState.appUserData != null) {
-            TripAiRoute()
+            TripAiRoute(
+                appUserId = appUiState.appUserData!!.userId,
+                commonTripViewModel = commonTripViewModel
+            )
         }
         else{
             ErrorScreen()

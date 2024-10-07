@@ -18,17 +18,53 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
+import com.newpaper.somewhere.feature.trip.CommonTripViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun TripAiRoute(
+    appUserId: String,
+    commonTripViewModel: CommonTripViewModel,
     tripAiViewModel: TripAiViewModel = hiltViewModel()
 ){
     val tripAiUiState by tripAiViewModel.tripAiUiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
     TripAiScreen(
-        aiText = tripAiUiState.trip ?: "no trip",
-        onClickButton = tripAiViewModel::getAiCreatedTrip
+        aiText = tripAiUiState.trip.toString(),
+        onClickButton = {
+            tripAiViewModel.viewModelScope.launch {
+                //get ai created raw trip
+                val aiCreatedRawTrip = tripAiViewModel.getAiCreatedRawTrip()
+
+                if (aiCreatedRawTrip != null) {
+
+                    //add id time in ai created raw trip
+                    var newOrderId = 0
+                    val lastTrip = commonTripViewModel.commonTripUiState.value.tripInfo.trips?.lastOrNull()
+                    if (lastTrip != null) { newOrderId = lastTrip.orderId + 1 }
+
+                    val aiCreatedTrip = tripAiViewModel.addIdTimeInAiCreatedRawTrip(
+                        aiCreatedRawTrip = aiCreatedRawTrip,
+                        tripManagerId = appUserId,
+                        newOrderId = newOrderId
+                    )
+
+                    //save trip
+//                    val beforeTempTripDateListLastIndex =
+//                        commonTripViewModel.saveTrip(
+//                            appUserId = appUserId,
+//                            deleteNotEnabledDate = true
+//                        )
+
+                    //save to firestore
+                    commonTripViewModel.saveTripAndAllDates(
+                        trip = aiCreatedTrip
+                    )
+                }
+            }
+        }
     )
 }
 

@@ -6,6 +6,7 @@ import com.newpaper.somewhere.core.data.repository.trip.TripsRepository
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
+import com.newpaper.somewhere.core.utils.getTripId
 import com.newpaper.somewhere.feature.trip.CommonTripUiStateRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -411,7 +412,7 @@ class TripsViewModel @Inject constructor(
         val lastTrip = commonTripUiState.value.tripInfo.trips?.lastOrNull()
         if (lastTrip != null) { newOrderId = lastTrip.orderId + 1 }
 
-        val newId = getHashCodeFromUidTime(
+        val newId = getTripId(
             managerId = appUserId,
             firstCreatedTripTime = nowTime
         )
@@ -596,9 +597,3 @@ class TripsViewModel @Inject constructor(
     }
 }
 
-fun getHashCodeFromUidTime(
-    managerId: String,
-    firstCreatedTripTime: ZonedDateTime
-): Int {
-    return managerId.hashCode() * 31 + firstCreatedTripTime.toInstant().toEpochMilli().hashCode()
-}

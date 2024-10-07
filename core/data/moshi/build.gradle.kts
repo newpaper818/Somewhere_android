@@ -2,10 +2,11 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.googleDevToolsKsp)
+    alias(libs.plugins.hilt)
 }
 
 android {
-    namespace = "com.newpaper.somewhere.core.data.data"
+    namespace = "com.newpaper.somewhere.core.data.moshi"
     compileSdk = 34
 
     defaultConfig {
@@ -22,33 +23,19 @@ android {
 }
 
 dependencies {
-
-    //module
     implementation(project(":core:model"))
-    implementation(project(":core:data:datastore"))
-    implementation(project(":core:data:firebase-authentication"))
-    implementation(project(":core:data:firebase-firestore"))
-    implementation(project(":core:data:firebase-storage"))
-    implementation(project(":core:data:google-map-places"))
-    implementation(project(":core:data:local-image-file"))
-    implementation(project(":core:data:gemini-ai"))
-    implementation(project(":core:data:moshi"))
 
-    //
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.activity.compose)
     implementation(libs.material)
-
-    //firebaseUser
-    implementation(libs.firebase.auth.ktx)
 
     //hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
-    //LatLng
-    implementation(libs.play.services.maps)
+    //moshi
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
 
     //test
     testImplementation(libs.junit)

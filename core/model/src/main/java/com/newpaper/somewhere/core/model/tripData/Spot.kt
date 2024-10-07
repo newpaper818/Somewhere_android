@@ -8,7 +8,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 data class Spot(
-    val id: Int,
+    var id: Int = 777,
     val googleMapsPlacesId: String? = null,
     var index: Int = 0,
     var iconText: Int = 0,
