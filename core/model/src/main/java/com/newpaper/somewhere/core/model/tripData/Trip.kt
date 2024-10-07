@@ -1,14 +1,16 @@
 package com.newpaper.somewhere.core.model.tripData
 
 import com.newpaper.somewhere.core.model.enums.CurrencyType
+import com.squareup.moshi.JsonClass
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
+@JsonClass(generateAdapter = true)
 data class Trip(
-    val id: Int,
+    val id: Int = 777,
     var orderId: Int = 0,
 
-    val managerId: String,
+    val managerId: String = "",
     val editable: Boolean = false,
 
     val unitOfCurrencyType: CurrencyType = CurrencyType.USD,

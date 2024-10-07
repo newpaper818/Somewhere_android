@@ -20,7 +20,6 @@ interface TripRemoteDataSource {
      * Save [Trip] (include all dateList, spotList) to remote db.
      * Use when click save button on TripScreen, DateScreen.
      *
-     * @param userId unique user ID (from Firebase Authentication uid). If null, don't save.
      * @param trip [Trip] that will saved to remote
      * @param tempTripDateListLastIndex temp [Trip] dateList's last index. use to delete un enabled [Date]s
      */

@@ -25,6 +25,9 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.places)
 
+    //moshi
+    implementation(libs.moshi)
+
     //test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

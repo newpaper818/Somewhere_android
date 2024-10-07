@@ -4,9 +4,18 @@ import com.google.android.libraries.places.api.model.Place
 import com.newpaper.somewhere.core.model.tripData.Trip
 
 interface AiRemoteDataSource {
-    suspend fun getRecommendSpots(): List<String>?
+    suspend fun getRecommendSpots(
+        city: String,
+        tripWith: String,
+        tripType: String
+    ): List<String>?
 
     suspend fun  getTripPlan(
-        places: List<Place>
+        places: List<Place>,
+        city: String,
+        tripDate: String,
+        tripWith: String,
+        tripType: String,
+        language: String
     ): String?
 }

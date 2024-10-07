@@ -43,7 +43,7 @@ hilt = "2.49"
 androidxHiltNavigationCompose = "1.2.0"
 animationCoreAndroid = "1.7.0"
 foundationAndroid = "1.7.0"
-
+moshi = "1.15.1"
 
 
 
@@ -152,6 +152,10 @@ easy-qr-scan = { group = "io.github.kalinjul.easyqrscan", name = "scanner", vers
 
 # serialization
 serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
+
+# moshi
+moshi = { group = "com.squareup.moshi", name = "moshi", version.ref = "moshi" }
+moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshi" }
 
 
 junit =                     { group = "junit", name = "junit", version.ref = "junit" }

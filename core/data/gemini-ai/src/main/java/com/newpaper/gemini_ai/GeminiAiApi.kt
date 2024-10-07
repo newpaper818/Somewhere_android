@@ -17,7 +17,9 @@ class GeminiAiApi @Inject constructor(
 
 ): AiRemoteDataSource{
     override suspend fun getRecommendSpots(
-
+        city: String,
+        tripWith: String,
+        tripType: String
     ): List<String>? {
         val generativeModel =
             GenerativeModel(
@@ -31,13 +33,13 @@ class GeminiAiApi @Inject constructor(
             )
 
         val prompt = """
-            get trip places (20 places) using this JSON schema:
+            get trip places (40 places) using this JSON schema:
             return: Array<String> (each String should not be sentence. like [N Seoul tower, Empire state building, Central park])
         
             [trip info]
-            city: Seoul, Korea
-            trip with(solo, partner, friend, family): friend
-            trip type: activity
+            city: $city
+            trip with(solo, partner, friend, family): $tripWith
+            trip type: $tripType
         """.trimIndent()
 
         val response = generativeModel.generateContent(prompt)
@@ -56,7 +58,12 @@ class GeminiAiApi @Inject constructor(
     }
 
     override suspend fun getTripPlan(
-        places: List<Place>
+        places: List<Place>,
+        city: String,
+        tripDate: String,
+        tripWith: String,
+        tripType: String,
+        language: String
     ): String? {
         val generativeModel =
             GenerativeModel(
@@ -74,13 +81,13 @@ class GeminiAiApi @Inject constructor(
             When you make trip plan, use [places].
             
             [trip info]
-            city: Seoul, Korea
-            trip date: 2024-10-01 ~ 2024-10-03
-            trip with(solo, partner, friend, family): friend
-            trip type: activity
+            city: $city
+            trip date: $tripDate
+            trip with(solo, partner, friend, family): $tripWith
+            trip type: $tripType
             
-            [format - follow this rule]
-            language: Korean
+            [format] - follow this rule
+            language: $language
             time format: HH:MM (24h, do not add additional data)
             date format: yyyy-mm-dd (do not add additional data)
             
@@ -91,10 +98,13 @@ class GeminiAiApi @Inject constructor(
             Consider transportation time.
             spotList's item is order by time.
             googleMapsPlacesId should be same with given [places]'s id.
-            spot's titleText is place's name (only allow translation).
+            spot's titleText is place's name.
             You don't have to follow [places] order.
+            From [places]'s placeTypes, set spotType from [spot type list] (Do not use [places]'s placeTypes)
+            Only use [spot type list]'s item for spotType.
+            Include breakfast, lunch, dinner 
             
-            [spot type list- select spotType from below]
+            [spot type list] - select spotType from below
             ${enumValues<SpotType>().map { it }}
             
             [return: JSON type]
@@ -105,16 +115,6 @@ class GeminiAiApi @Inject constructor(
 
         Log.d(GEMINI_AI_TAG, response.text.toString())
         return response.text
-
-//        if (response.text != null) {
-//            val trip = Json.decodeFromString<Trip>(response.text!!)
-//
-//            Log.d(GEMINI_AI_TAG, trip.toString())
-//
-//            return trip
-//        }
-//        else
-//            return null
     }
 
     private fun placesToString(
@@ -133,7 +133,6 @@ class GeminiAiApi @Inject constructor(
         val stringList = listOf(
             "name: " + place.displayName,
             "id: " + place.id,
-//            "location(lat/lng): (" + place.location?.latitude + "," + place.location?.latitude + ")",
             "placeTypes: " + place.placeTypes
         )
 
@@ -164,6 +163,9 @@ class GeminiAiApi @Inject constructor(
                   "items": {
                     "type": "object",
                     "properties": {
+                      "date": {
+                        "type": "string"
+                      },
                       "titleText": {
                         "type": "string"
                       },
