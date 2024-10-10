@@ -43,6 +43,7 @@ import java.time.LocalDate
 @Composable
 fun TripAiRoute(
     appUserId: String,
+    internetEnabled: Boolean,
     dateTimeFormat: DateTimeFormat,
     commonTripViewModel: CommonTripViewModel,
     navigateUp: () -> Unit,
@@ -102,6 +103,7 @@ fun TripAiRoute(
 
 
     TripAiScreen(
+        internetEnabled = internetEnabled,
         dateTimeFormat = dateTimeFormat,
         tripAiUiState = tripAiUiState,
 
@@ -118,6 +120,7 @@ fun TripAiRoute(
 
 @Composable
 fun TripAiScreen(
+    internetEnabled: Boolean,
     dateTimeFormat: DateTimeFormat,
     tripAiUiState: TripAiUiState,
 
@@ -227,6 +230,7 @@ fun TripAiScreen(
 
                         Phase.TRIP_TYPE -> {
                             SelectTripTypePage(
+                                internetEnabled = internetEnabled,
                                 selectedTripTypes = tripAiUiState.tripTypes,
                                 onClick = onClickTripType
                             )
@@ -264,7 +268,7 @@ fun TripAiScreen(
                                 tripAiUiState.tripWith != null
 
                             Phase.TRIP_TYPE ->
-                                tripAiUiState.tripTypes.isNotEmpty()
+                                tripAiUiState.tripTypes.isNotEmpty() && internetEnabled
 
                             Phase.CREATE_TRIP -> true
                         },
