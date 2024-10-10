@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.newpaper.somewhere.core.data.repository.AiRepository
 import com.newpaper.somewhere.core.data.repository.SerializationRepository
+import com.newpaper.somewhere.core.model.enums.TripType
+import com.newpaper.somewhere.core.model.enums.TripWith
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
@@ -13,14 +15,27 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.util.Locale
 import javax.inject.Inject
 
+enum class Phase{
+    TRIP_TO, TRIP_DATE, TRIP_WITH, TRIP_TYPE, CREATE_TRIP
+}
 
 data class TripAiUiState(
-    val test: Boolean = false,
-    val trip: Trip? = null
+//    val aiCreatedTripDone: Boolean = false,
+
+    val phase: Phase = Phase.TRIP_TO,
+
+    val tripTo: String? = null,
+    val startDate: LocalDate? = null,
+    val endDate: LocalDate? = null,
+    val tripWith: TripWith? = null,
+    val tripTypes: Set<TripType> = setOf(),
+
+    val showExitDialog: Boolean = false
 )
 
 @HiltViewModel
@@ -35,25 +50,91 @@ class TripAiViewModel @Inject constructor(
 
     val tripAiUiState = _tripAiUiState.asStateFlow()
 
-    fun setAiCreatedTrip(
-        trip: Trip?
-    ){
+//    fun setAiCreatedTripDone(aiCreatedTripDone: Boolean){
+//        _tripAiUiState.update {
+//            it.copy(aiCreatedTripDone = aiCreatedTripDone)
+//        }
+//    }
+
+    fun setPhase(phase: Phase){
         _tripAiUiState.update {
-            it.copy(trip = trip)
+            it.copy(phase = phase)
         }
     }
+
+    fun setTripTo(tripTo: String?){
+        _tripAiUiState.update {
+            it.copy(tripTo = tripTo)
+        }
+    }
+
+    fun setStartDate(startDate: LocalDate?){
+        _tripAiUiState.update {
+            it.copy(startDate = startDate)
+        }
+    }
+
+    fun setEndDate(endDate: LocalDate?){
+        _tripAiUiState.update {
+            it.copy(endDate = endDate)
+        }
+    }
+
+    fun setTripWith(tripWith: TripWith?){
+        _tripAiUiState.update {
+            it.copy(tripWith = tripWith)
+        }
+    }
+
+    fun setTripTypes(tripTypes: Set<TripType>){
+        _tripAiUiState.update {
+            it.copy(tripTypes = tripTypes)
+        }
+    }
+
+    fun setShowExitDialog(showExitDialog: Boolean){
+        _tripAiUiState.update {
+            it.copy(showExitDialog = showExitDialog)
+        }
+    }
+
+    fun onClickTripType(
+        tripType: TripType
+    ){
+        val mutableSet = tripAiUiState.value.tripTypes.toMutableSet()
+
+        if (tripAiUiState.value.tripTypes.contains(tripType))
+            mutableSet.remove(tripType)
+        else
+            mutableSet.add(tripType)
+
+        setTripTypes(mutableSet)
+    }
+
+
+
 
     suspend fun getAiCreatedRawTrip(
 
     ): Trip? {
+        if (
+            tripAiUiState.value.tripTo == null
+            || tripAiUiState.value.startDate == null
+            || tripAiUiState.value.endDate == null
+            || tripAiUiState.value.tripWith == null
+            || tripAiUiState.value.tripTypes.isEmpty()
+        ){
+            return null
+        }
+
         val aiCreatedTrip = CompletableDeferred<Trip?>()
 
         val aiCreatedTripJson = aiRepository.getAiCreatedTrip(
-            city = "Seoul, Korea",
-            tripDate = "2024-10-29 ~ 2024-11-02",
-            tripWith = "friend",
-            tripType = "none",
-            language = Locale.getDefault().language
+            city = tripAiUiState.value.tripTo!!,
+            tripDate = tripAiUiState.value.startDate.toString() + " ~ " + tripAiUiState.value.endDate.toString(),
+            tripWith = tripAiUiState.value.tripWith.toString(),
+            tripType = tripAiUiState.value.tripTypes.toString(),
+            language = Locale.getDefault().displayLanguage
         )
 
         //convert JSON -> Trip

@@ -82,6 +82,41 @@ fun MyQrCodeButton(
 }
 
 @Composable
+fun PrevButton(
+    onClick: () -> Unit
+){
+    MyTextButton(
+        text = stringResource(id = R.string.previous),
+        onClick = onClick,
+        containerColor = Color.Transparent
+    )
+}
+
+@Composable
+fun NextButton(
+    onClick: () -> Unit,
+    enabled: Boolean
+){
+    MyTextButton(
+        text = stringResource(id = R.string.next),
+        onClick = onClick,
+        enabled = enabled
+    )
+}
+
+@Composable
+fun CreateTripButton(
+    onClick: () -> Unit,
+    enabled: Boolean
+){
+    MyTextButton(
+        text = stringResource(id = R.string.create_trip),
+        onClick = onClick,
+        enabled = enabled
+    )
+}
+
+@Composable
 fun UpdateButton(
     onClick: () -> Unit
 ){

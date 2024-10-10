@@ -20,6 +20,9 @@
     <!-- buttons.kt -->
     <string name="privacy_policy">Privacy policy</string>
     <string name="my_qr_code">My QR code</string>
+    <string name="previous">Previous</string>
+    <string name="next">Next</string>
+    <string name="create_trip">Create trip</string>
     <string name="update">Update</string>
     <string name="new_trip">New trip</string>
     <string name="invite">Invite</string>

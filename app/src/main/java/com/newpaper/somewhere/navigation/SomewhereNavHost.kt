@@ -438,8 +438,21 @@ fun SomewhereNavHost(
                 appViewModel = appViewModel,
                 externalState = externalState,
                 commonTripViewModel = commonTripViewModel,
-                navigateTo = {
-                    //TODO
+                navigateToAiCreatedTrip = { aiCreatedTrip ->
+                    commonTripViewModel.setTrip(aiCreatedTrip)
+                    commonTripViewModel.setIsEditMode(false)
+                    commonTripViewModel.setIsNewTrip(false)
+
+                    mainNavController.popBackStack()
+
+                    if (externalState.windowSizeClass.use2Panes)
+                        mainNavController.navigateToDate(
+                            navOptions = navOptions { launchSingleTop = true }
+                        )
+                    else
+                        mainNavController.navigateToTrip(
+                            navOptions = navOptions { launchSingleTop = true }
+                        )
                 },
                 navigateUp = navigateUp
             )
