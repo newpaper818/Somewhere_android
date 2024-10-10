@@ -68,6 +68,8 @@ fun TripAiRoute(
 
     //create trip with ai when in CREATE_TRIP phase
     LaunchedEffect(tripAiUiState.phase) {
+        //when internet fail while creating trip TODO
+
         if (tripAiUiState.phase == Phase.CREATE_TRIP) {
             tripAiViewModel.viewModelScope.launch {
                 //get ai created raw trip
