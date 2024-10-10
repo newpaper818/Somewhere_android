@@ -31,7 +31,7 @@ fun getSpotTypeList(
             SpotType.TOUR,
             SpotType.TOURIST_ATTRACTION, SpotType.HISTORIC_SITE, SpotType.ARCHITECTURAL_BUILDING, SpotType.LANDMARK, SpotType.RELIGIOUS_SITE, SpotType.MONUMENT_STATUE,
             SpotType.ACTIVITY, SpotType.LEISURE, SpotType.SPORT, SpotType.OUTDOOR, SpotType.ADVENTURE,
-            SpotType.ENTERTAINMENT, SpotType.FESTIVAL, SpotType.ART, SpotType.MUSIC, SpotType.MOVIE,
+            SpotType.ENTERTAINMENT, SpotType.AMUSEMENT_PARK,SpotType.FESTIVAL, SpotType.ART, SpotType.MUSIC, SpotType.MOVIE,
             SpotType.MUSEUM, SpotType.EXHIBITION,
             SpotType.PARK, SpotType.GARDEN, SpotType.BEACH,
             SpotType.SHOPPING, SpotType.STREET_MARKET, SpotType.GIFT_SHOP
@@ -146,6 +146,7 @@ enum class SpotType(
     ADVENTURE("🧭", R.string.adventure, SpotTypeGroup.TOUR),
 
     ENTERTAINMENT("🎮", R.string.entertainment, SpotTypeGroup.TOUR),
+    AMUSEMENT_PARK("🎡", R.string.entertainment, SpotTypeGroup.TOUR),
     FESTIVAL("🎉", R.string.festival, SpotTypeGroup.TOUR),
     ART("🎨", R.string.art, SpotTypeGroup.TOUR),
     MUSIC("🎧", R.string.music, SpotTypeGroup.TOUR),
