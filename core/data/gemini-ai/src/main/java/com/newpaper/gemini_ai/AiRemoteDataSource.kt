@@ -6,6 +6,7 @@ import com.newpaper.somewhere.core.model.tripData.Trip
 interface AiRemoteDataSource {
     suspend fun getRecommendSpots(
         city: String,
+        tripDays: Int,
         tripWith: String,
         tripType: String
     ): List<String>?

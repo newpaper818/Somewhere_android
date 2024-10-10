@@ -25,8 +25,6 @@ enum class Phase{
 }
 
 data class TripAiUiState(
-//    val aiCreatedTripDone: Boolean = false,
-
     val phase: Phase = Phase.TRIP_TO,
 
     val tripTo: String? = null,
@@ -49,12 +47,6 @@ class TripAiViewModel @Inject constructor(
         )
 
     val tripAiUiState = _tripAiUiState.asStateFlow()
-
-//    fun setAiCreatedTripDone(aiCreatedTripDone: Boolean){
-//        _tripAiUiState.update {
-//            it.copy(aiCreatedTripDone = aiCreatedTripDone)
-//        }
-//    }
 
     fun setPhase(phase: Phase){
         _tripAiUiState.update {
@@ -131,7 +123,8 @@ class TripAiViewModel @Inject constructor(
 
         val aiCreatedTripJson = aiRepository.getAiCreatedTrip(
             city = tripAiUiState.value.tripTo!!,
-            tripDate = tripAiUiState.value.startDate.toString() + " ~ " + tripAiUiState.value.endDate.toString(),
+            startDate = tripAiUiState.value.startDate!!,
+            endDate = tripAiUiState.value.endDate!!,
             tripWith = tripAiUiState.value.tripWith.toString(),
             tripType = tripAiUiState.value.tripTypes.toString(),
             language = Locale.getDefault().displayLanguage

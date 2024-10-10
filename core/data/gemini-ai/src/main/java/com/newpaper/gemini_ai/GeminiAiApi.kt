@@ -18,6 +18,7 @@ class GeminiAiApi @Inject constructor(
 ): AiRemoteDataSource{
     override suspend fun getRecommendSpots(
         city: String,
+        tripDays: Int,
         tripWith: String,
         tripType: String
     ): List<String>? {
@@ -33,7 +34,7 @@ class GeminiAiApi @Inject constructor(
             )
 
         val prompt = """
-            get trip places (40 places) using this JSON schema:
+            get trip places (${tripDays * 5} places) using this JSON schema:
             return: Array<String> (each String should not be sentence. like [N Seoul tower, Empire state building, Central park])
         
             [trip info]
