@@ -26,14 +26,22 @@ fun MyTextField(
     keyboardOptions: KeyboardOptions,
     keyboardActions: KeyboardActions,
     modifier: Modifier = Modifier,
-    textFieldModifier: Modifier = Modifier
+    textFieldModifier: Modifier = Modifier,
+    textSizeLimit: Int? = null,
 ){
     Box(modifier = modifier) {
         //text field
         BasicTextField(
             value = inputText ?: "" ,
             textStyle = inputTextStyle.copy(MaterialTheme.colorScheme.onSurface),
-            onValueChange = onValueChange,
+            onValueChange = { text ->
+                if (textSizeLimit != null) {
+                    val subStringText = text.substring(0, text.length.coerceAtMost(textSizeLimit))
+                    onValueChange(subStringText)
+                }
+                else
+                    onValueChange(text)
+            },
             singleLine = singleLine,
             modifier = textFieldModifier.fillMaxWidth(),
             keyboardOptions = keyboardOptions,

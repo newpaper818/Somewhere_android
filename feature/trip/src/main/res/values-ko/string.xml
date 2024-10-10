@@ -67,6 +67,27 @@
     <string name="set_trip_duration">여행 기간 설정</string>
     <string name="dates_no_plan">계획 없음</string>
 
+    <!--tripAi/ ================================================================================-->
+    <string name="are_you_sure_to_exit">정말로 나가시겠습니까?</string>
+    <string name="exit">나가기</string>
+
+    <string name="where_are_you_going">어디로 여행하나요?</string>
+    <string name="type_a_destination">목적지를 입력하세요</string>
+    <string name="type_city_or_country_name">도시 또는 나라 이름을 입력하세요</string>
+
+    <string name="when_are_you_going">언제 가나요?</string>
+    <string name="starts">시작일</string>
+    <string name="ends">종료일</string>
+    <string name="date_range">%s - %s</string>
+    <string name="choose_a_date_range">날짜 범위를 선택하세요 (최대 15일)</string>
+    <string name="date_range_error">여행 일수는 16일보다 작아야 합니다</string>
+
+    <string name="who_are_you_traveling_with">누구와 여행하나요?</string>
+    <string name="select_one">하나 선택하세요</string>
+
+    <string name="whats_your_trip_type">여행 유형은 무엇인가요?</string>
+    <string name="select_multiple">여러개 선택하세요</string>
+
     <!--tripMap/ ================================================================================-->
     <string name="snackbar_no_location_to_show">위치 없음</string>
 

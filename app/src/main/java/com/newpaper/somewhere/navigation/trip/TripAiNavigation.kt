@@ -9,6 +9,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
+import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.ui.ErrorScreen
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.tripAi.TripAiRoute
@@ -30,7 +31,7 @@ fun NavGraphBuilder.tripAiScreen(
     externalState: ExternalState,
     commonTripViewModel: CommonTripViewModel,
 
-    navigateTo: (ScreenDestination) -> Unit,
+    navigateToAiCreatedTrip: (Trip) -> Unit,
     navigateUp: () -> Unit,
 ){
     composable(
@@ -52,7 +53,10 @@ fun NavGraphBuilder.tripAiScreen(
         if (appUiState.appUserData != null) {
             TripAiRoute(
                 appUserId = appUiState.appUserData!!.userId,
-                commonTripViewModel = commonTripViewModel
+                dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
+                commonTripViewModel = commonTripViewModel,
+                navigateUp = navigateUp,
+                navigateToAiCreatedTrip = navigateToAiCreatedTrip
             )
         }
         else{

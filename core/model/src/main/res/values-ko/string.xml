@@ -63,7 +63,7 @@
     <string name="landmark">랜드마크</string>
     <string name="religious_site">종교적 장소</string>
     <string name="monument_statue">기념물 / 동상</string>
-    <string name="activity">활동</string>
+    <string name="activity">액티비티</string>
     <string name="leisure">레저</string>
     <string name="sport">스포츠</string>
     <string name="outdoor">아웃도어</string>
@@ -102,5 +102,17 @@
     <string name="theme_dark">다크 테마</string>
     <string name="theme_auto">시스템 기본값</string>
     <string name="map_theme_auto">앱 테마와 동일</string>
+
+    <!--TripType.kt-->
+    <string name="trip_type_cultural_experiences">문화 체험</string>
+    <string name="trip_type_activity">액티비티</string>
+    <string name="trip_type_great_food">맛집 탐방</string>
+    <string name="trip_type_shopping">쇼핑</string>
+
+    <!--TripWith.kt-->
+    <string name="trip_with_solo">혼자</string>
+    <string name="trip_with_partner">연인</string>
+    <string name="trip_with_friends">친구</string>
+    <string name="trip_with_family">가족</string>
 
 </resources>

@@ -67,6 +67,27 @@
     <string name="set_trip_duration">Set Trip Duration</string>
     <string name="dates_no_plan">No Plan</string>
 
+    <!--tripAi/ ================================================================================-->
+    <string name="are_you_sure_to_exit">Are you sure to exit?</string>
+    <string name="exit">Exit</string>
+
+    <string name="where_are_you_going">Where are you going?</string>
+    <string name="type_a_destination">Type a destination</string>
+    <string name="type_city_or_country_name">Type city or country name</string>
+
+    <string name="when_are_you_going">When are you going?</string>
+    <string name="starts">Starts</string>
+    <string name="ends">Ends</string>
+    <string name="date_range">%s - %s</string>
+    <string name="choose_a_date_range">Choose a date range (Up to 15 days)</string>
+    <string name="date_range_error">Date range should be less than 16 days</string>
+
+    <string name="who_are_you_traveling_with">Who are you traveling with?</string>
+    <string name="select_one">Select one</string>
+
+    <string name="whats_your_trip_type">What\'s your trip type?</string>
+    <string name="select_multiple">Select multiple</string>
+
     <!--tripMap/ ================================================================================-->
     <string name="snackbar_no_location_to_show">No location to show</string>
 
