@@ -87,6 +87,7 @@
 
     <string name="whats_your_trip_type">What\'s your trip type?</string>
     <string name="select_multiple">Select multiple</string>
+    <string name="internet_unavailable">Internet unavailable</string>
 
     <!--tripMap/ ================================================================================-->
     <string name="snackbar_no_location_to_show">No location to show</string>

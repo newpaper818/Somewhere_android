@@ -87,6 +87,7 @@
 
     <string name="whats_your_trip_type">여행 유형은 무엇인가요?</string>
     <string name="select_multiple">여러개 선택하세요</string>
+    <string name="internet_unavailable">인터넷 연결 없음</string>
 
     <!--tripMap/ ================================================================================-->
     <string name="snackbar_no_location_to_show">위치 없음</string>
