@@ -89,6 +89,9 @@
     <string name="select_multiple">Select multiple</string>
     <string name="internet_unavailable">Internet unavailable</string>
 
+    <string name="creating_trip_with_ai">Creating a trip with AI…</string>
+    <string name="it_mat_took_a_while">It may took a while</string>
+
     <!--tripMap/ ================================================================================-->
     <string name="snackbar_no_location_to_show">No location to show</string>
 
