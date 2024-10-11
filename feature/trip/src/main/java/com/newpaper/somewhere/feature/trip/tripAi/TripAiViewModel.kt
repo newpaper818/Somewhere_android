@@ -1,9 +1,9 @@
 package com.newpaper.somewhere.feature.trip.tripAi
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.newpaper.somewhere.core.data.repository.AiRepository
 import com.newpaper.somewhere.core.data.repository.SerializationRepository
+import com.newpaper.somewhere.core.model.enums.SpotTypeGroup
 import com.newpaper.somewhere.core.model.enums.TripType
 import com.newpaper.somewhere.core.model.enums.TripWith
 import com.newpaper.somewhere.core.model.tripData.Date
@@ -134,8 +134,6 @@ class TripAiViewModel @Inject constructor(
         if (aiCreatedTripJson != null) {
             val trip = serializationRepository.jsonToTrip(aiCreatedTripJson)
 
-            Log.d("gemini", "$trip")
-
             aiCreatedTrip.complete(trip)
         }
         else aiCreatedTrip.complete(null)
@@ -158,13 +156,16 @@ class TripAiViewModel @Inject constructor(
         val newDateList = mutableListOf<Date>()
         aiCreatedRawTrip.dateList.forEachIndexed { dateIndex, date ->
 
+            var iconTextNum = 1
             val newSpotList = mutableListOf<Spot>()
+
             date.spotList.forEachIndexed { spotIndex, spot ->
 
                 val newSpot = spot.copy(
-                    id = spotIndex,
+                    id = ZonedDateTime.now().hashCode() * 31 + dateIndex * 17 + spotIndex,
                     index = spotIndex,
-                    iconText = spotIndex + 1,
+                    iconText = if (spot.spotType.group != SpotTypeGroup.MOVE) iconTextNum++
+                                else iconTextNum,
                     memoText = if (spot.memoText == "") null else spot.memoText
                 )
                 newSpotList.add(newSpot)
