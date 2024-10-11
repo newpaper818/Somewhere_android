@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.trip.tripAi
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.displayCutoutPadding
@@ -50,6 +51,10 @@ fun TripAiRoute(
     navigateToAiCreatedTrip: (Trip) -> Unit,
     tripAiViewModel: TripAiViewModel = hiltViewModel()
 ){
+    BackHandler {
+        tripAiViewModel.setShowExitDialog(true)
+    }
+
     val tripAiUiState by tripAiViewModel.tripAiUiState.collectAsState()
 
     if (tripAiUiState.showExitDialog){
