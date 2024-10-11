@@ -60,34 +60,34 @@ class UserRepository @Inject constructor(
     ): FirebaseUser? {
         val user = CompletableDeferred<FirebaseUser?>()
 
-        val provider = OAuthProvider.newBuilder(ProviderId.APPLE.id)
-        val language = Locale.getDefault().language
-        provider.addCustomParameter("locale", language)
-
-        val auth = FirebaseAuth.getInstance()
-        val pending = auth.pendingAuthResult
-
-        if (pending != null) {
-            updateIsSigningInToFalse()
-            user.complete(null)
-        }
-        else {
-            auth.startActivityForSignInWithProvider(activity, provider.build())
-                .addOnSuccessListener { authResult ->
-                    // Sign-in successful!
-                    user.complete(authResult.user)
-                }
-                .addOnFailureListener { e ->
-                    if ("canceled by the user" !in e.toString()){
-                        Log.d(USER_REPOSITORY_TAG, "not cancel by user")
-                        showErrorSnackbar()
-                    }
-
-                    updateIsSigningInToFalse()
-                    Log.w(USER_REPOSITORY_TAG, "activitySignIn:onFailure", e)
-                    user.complete(null)
-                }
-        }
+//        val provider = OAuthProvider.newBuilder(ProviderId.APPLE.id)
+//        val language = Locale.getDefault().language
+//        provider.addCustomParameter("locale", language)
+//
+//        val auth = FirebaseAuth.getInstance()
+//        val pending = auth.pendingAuthResult
+//
+//        if (pending != null) {
+//            updateIsSigningInToFalse()
+//            user.complete(null)
+//        }
+//        else {
+//            auth.startActivityForSignInWithProvider(activity, provider.build())
+//                .addOnSuccessListener { authResult ->
+//                    // Sign-in successful!
+//                    user.complete(authResult.user)
+//                }
+//                .addOnFailureListener { e ->
+//                    if ("canceled by the user" !in e.toString()){
+//                        Log.d(USER_REPOSITORY_TAG, "not cancel by user")
+//                        showErrorSnackbar()
+//                    }
+//
+//                    updateIsSigningInToFalse()
+//                    Log.w(USER_REPOSITORY_TAG, "activitySignIn:onFailure", e)
+//                    user.complete(null)
+//                }
+//        }
 
         return user.await()
     }

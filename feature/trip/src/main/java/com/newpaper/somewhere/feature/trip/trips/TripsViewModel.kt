@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.trip.trips
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.newpaper.somewhere.core.data.repository.image.CommonImageRepository
 import com.newpaper.somewhere.core.data.repository.trip.TripsRepository
@@ -115,7 +116,7 @@ class TripsViewModel @Inject constructor(
         }
     }
 
-    private fun initGlanceInfo(
+    fun initGlanceInfo(
 
     ){
         _tripsUiState.update {
@@ -196,16 +197,16 @@ class TripsViewModel @Inject constructor(
     fun findCurrentDateTripAndUpdateGlanceTrip(
 
     ): Trip? {
+        Log.d("aaaa", "aaaa")
+
+        initGlanceInfo()
+
         //get current date time
         val currentDateTime = LocalDateTime.now()
         val currentDate = currentDateTime.toLocalDate()
 
         val tripList: List<Trip> = (commonTripUiState.value.tripInfo.trips ?: listOf()) +
                 (commonTripUiState.value.tripInfo.sharedTrips ?: listOf())
-
-        if (tripList.isEmpty()) {
-            initGlanceInfo()
-        }
 
         //find trip that include current date
         for (trip in tripList) {
