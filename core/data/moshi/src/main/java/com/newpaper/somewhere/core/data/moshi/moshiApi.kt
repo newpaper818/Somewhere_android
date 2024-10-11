@@ -28,8 +28,5 @@ class MoshiApi @Inject constructor(
 
         val adaptor: JsonAdapter<Trip> = moshi.adapter(Trip::class.java)
         return adaptor.fromJson(json)
-
-
-//        return Trip(id = 1, managerId = "")
     }
 }
