@@ -48,7 +48,7 @@ internal fun MapButtons(
                 .background(MaterialTheme.colorScheme.surface.copy(0.85f)),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomIn.descriptionTextId)) {
+            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomIn.descriptionTextId!!)) {
                 IconButton(
                     enabled = cameraPositionState.position.zoom < MAX_ZOOM_LEVEL,
                     onClick = {
@@ -63,7 +63,7 @@ internal fun MapButtons(
                 }
             }
 
-            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomOut.descriptionTextId)) {
+            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomOut.descriptionTextId!!)) {
                 IconButton(
                     enabled = cameraPositionState.position.zoom > MIN_ZOOM_LEVEL,
                     onClick = {

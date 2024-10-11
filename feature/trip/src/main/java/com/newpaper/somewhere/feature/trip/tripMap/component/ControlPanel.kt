@@ -239,7 +239,7 @@ internal fun ControlButtonsRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         //back button
-        MyPlainTooltipBox(tooltipText = stringResource(id = TopAppBarIcon.back.descriptionTextId)) {
+        MyPlainTooltipBox(tooltipText = stringResource(id = TopAppBarIcon.back.descriptionTextId!!)) {
             IconButton(onClick = onBackButtonClicked) {
                 DisplayIcon(icon = TopAppBarIcon.back)
             }
@@ -278,7 +278,7 @@ internal fun ControlButtonsRow(
                     .background(MaterialTheme.colorScheme.surfaceBright),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.prevDate.descriptionTextId)) {
+                MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.prevDate.descriptionTextId!!)) {
                     IconButton(
                         onClick = onClickPreviousDate
                     ) {
@@ -308,7 +308,7 @@ internal fun ControlButtonsRow(
                     }
                 }
 
-                MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.nextDate.descriptionTextId)) {
+                MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.nextDate.descriptionTextId!!)) {
                     IconButton(
                         onClick = onClickNextDate
                     ) {
@@ -345,7 +345,7 @@ internal fun FocusOnToSpotButton(
     }
 
     if (focusOnToTargetEnabled){
-        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.focusOnToTarget.descriptionTextId)) {
+        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.focusOnToTarget.descriptionTextId!!)) {
             IconButton(
                 onClick = {
                     focusOnToSpot(
@@ -362,7 +362,7 @@ internal fun FocusOnToSpotButton(
         }
     }
     else{
-        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.disabledFocusOnToTarget.descriptionTextId)) {
+        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.disabledFocusOnToTarget.descriptionTextId!!)) {
             IconButton(
                 onClick = {
                     showSnackBar(snackBarText, null, SnackbarDuration.Short)

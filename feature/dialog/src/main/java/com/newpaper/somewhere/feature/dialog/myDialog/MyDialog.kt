@@ -105,7 +105,7 @@ fun MyDialog(
                                 modifier.fillMaxWidth(),
                                 contentAlignment = Alignment.CenterEnd
                             ) {
-                                MyPlainTooltipBox(tooltipText = stringResource(id = TopAppBarIcon.close.descriptionTextId)) {
+                                MyPlainTooltipBox(tooltipText = stringResource(id = TopAppBarIcon.close.descriptionTextId!!)) {
                                     IconButton(onClick = onDismissRequest) {
                                         DisplayIcon(icon = TopAppBarIcon.close)
                                     }

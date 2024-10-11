@@ -75,7 +75,7 @@ internal fun SharingWithFriendsCard(
 
                     //invite friend button
                     if (userIsManager && trip.sharingTo.size < MAX_FRIEND_CNT && internetEnabled) {
-                        MyPlainTooltipBox(tooltipText = stringResource(id = MyIcons.inviteFriend.descriptionTextId)) {
+                        MyPlainTooltipBox(tooltipText = stringResource(id = MyIcons.inviteFriend.descriptionTextId!!)) {
                             ClickableBox(
                                 modifier = Modifier.size(40.dp),
                                 shape = MaterialTheme.shapes.small,

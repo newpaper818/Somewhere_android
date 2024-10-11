@@ -263,8 +263,8 @@ private fun OneTimeRow(
                     MySpacerRow(width = 8.dp)
 
                     MyPlainTooltipBox(
-                        tooltipText = if (isStart) stringResource(id = MyIcons.deleteStartTime.descriptionTextId)
-                                        else stringResource(id = MyIcons.deleteEndTime.descriptionTextId)
+                        tooltipText = if (isStart) stringResource(id = MyIcons.deleteStartTime.descriptionTextId!!)
+                                        else stringResource(id = MyIcons.deleteEndTime.descriptionTextId!!)
                     ) {
                         IconButton(
                             onClick = onClickDeleteTime,
