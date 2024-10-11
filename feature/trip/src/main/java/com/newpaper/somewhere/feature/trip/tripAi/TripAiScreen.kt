@@ -25,8 +25,8 @@ import androidx.lifecycle.viewModelScope
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
-import com.newpaper.somewhere.core.model.enums.TripType
-import com.newpaper.somewhere.core.model.enums.TripWith
+import com.newpaper.somewhere.feature.trip.tripAi.model.TripType
+import com.newpaper.somewhere.feature.trip.tripAi.model.TripWith
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel

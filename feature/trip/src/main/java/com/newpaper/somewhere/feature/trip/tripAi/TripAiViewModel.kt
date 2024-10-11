@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import com.newpaper.somewhere.core.data.repository.AiRepository
 import com.newpaper.somewhere.core.data.repository.SerializationRepository
 import com.newpaper.somewhere.core.model.enums.SpotTypeGroup
-import com.newpaper.somewhere.core.model.enums.TripType
-import com.newpaper.somewhere.core.model.enums.TripWith
+import com.newpaper.somewhere.feature.trip.tripAi.model.TripType
+import com.newpaper.somewhere.feature.trip.tripAi.model.TripWith
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip

@@ -105,7 +105,9 @@
 
     <!--TripType.kt-->
     <string name="trip_type_cultural_experiences">문화 체험</string>
-    <string name="trip_type_activity">액티비티</string>
+    <string name="trip_type_historical_sites">역사 유적지</string>
+    <string name="trip_type_exhibitions_museums">전시 &amp; 박물관</string>
+    <string name="trip_type_sports_activity">스포츠 &amp; 액티비티</string>
     <string name="trip_type_great_food">맛집 탐방</string>
     <string name="trip_type_shopping">쇼핑</string>
 
