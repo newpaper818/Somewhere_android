@@ -74,15 +74,15 @@ class DeleteAccountViewModel @Inject constructor(
                         showErrorSnackbar = showReAuthErrorSnackbar
                     )
                 }
-                ProviderId.APPLE -> {
-                    userRepository.reAuthenticateAppleUser(
-                        activity = activity,
-                        setIsAuthing = { setIsAuthing(it) },
-                        setIsAuthDone = { setIsAuthDone(it) },
-                        showReAuthErrorSnackbar = showReAuthErrorSnackbar,
-                        showReAuthErrorUserNotMatchSnackbar = showReAuthErrorUserNotMatchSnackbar
-                    )
-                }
+//                ProviderId.APPLE -> {
+//                    userRepository.reAuthenticateAppleUser(
+//                        activity = activity,
+//                        setIsAuthing = { setIsAuthing(it) },
+//                        setIsAuthDone = { setIsAuthDone(it) },
+//                        showReAuthErrorSnackbar = showReAuthErrorSnackbar,
+//                        showReAuthErrorUserNotMatchSnackbar = showReAuthErrorUserNotMatchSnackbar
+//                    )
+//                }
             }
         }
 

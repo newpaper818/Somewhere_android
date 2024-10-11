@@ -157,36 +157,36 @@ fun SignInRoute(
                         )
                     }
                 }
-                ProviderId.APPLE -> {
-                    coroutineScope.launch {
-                        val firebaseUserData = signInViewModel.signInWithApple(
-                            activity = context as Activity,
-                            showErrorSnackbar = { signInErrorSnackbar() }
-                        )
-
-                        val userData = if (firebaseUserData == null) null
-                                        else {
-                                            UserData(
-                                                userId = firebaseUserData.uid,
-                                                userName = firebaseUserData.displayName,
-                                                email = firebaseUserData.email,
-                                                profileImagePath = firebaseUserData.photoUrl?.toString(),
-                                                providerIds = firebaseUserData.providerData.mapNotNull {
-                                                                    getProviderIdFromString(it.providerId)
-                                                                }
-                                            )
-                                        }
-
-                        signInViewModel.updateUserDataFromRemote(
-                            userData = userData,
-                            onDone = { userData1 ->
-                                updateUserData(userData1)
-                                navigateToMain()
-                            },
-                            showErrorSnackbar = { signInErrorSnackbar() }
-                        )
-                    }
-                }
+//                ProviderId.APPLE -> {
+//                    coroutineScope.launch {
+//                        val firebaseUserData = signInViewModel.signInWithApple(
+//                            activity = context as Activity,
+//                            showErrorSnackbar = { signInErrorSnackbar() }
+//                        )
+//
+//                        val userData = if (firebaseUserData == null) null
+//                                        else {
+//                                            UserData(
+//                                                userId = firebaseUserData.uid,
+//                                                userName = firebaseUserData.displayName,
+//                                                email = firebaseUserData.email,
+//                                                profileImagePath = firebaseUserData.photoUrl?.toString(),
+//                                                providerIds = firebaseUserData.providerData.mapNotNull {
+//                                                                    getProviderIdFromString(it.providerId)
+//                                                                }
+//                                            )
+//                                        }
+//
+//                        signInViewModel.updateUserDataFromRemote(
+//                            userData = userData,
+//                            onDone = { userData1 ->
+//                                updateUserData(userData1)
+//                                navigateToMain()
+//                            },
+//                            showErrorSnackbar = { signInErrorSnackbar() }
+//                        )
+//                    }
+//                }
             }
         },
         onClickPrivacyPolicy = {

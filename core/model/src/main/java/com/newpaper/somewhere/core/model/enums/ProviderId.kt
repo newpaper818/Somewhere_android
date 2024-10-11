@@ -5,7 +5,7 @@ enum class ProviderId(
     val providerName: String
 ) {
     GOOGLE("google.com", "Google"),
-    APPLE("apple.com", "Apple"),
+//    APPLE("apple.com", "Apple"),
 }
 
 fun getProviderIdFromString(value: String): ProviderId?{
@@ -13,8 +13,8 @@ fun getProviderIdFromString(value: String): ProviderId?{
         ProviderId.GOOGLE.id -> ProviderId.GOOGLE
         ProviderId.GOOGLE.providerName -> ProviderId.GOOGLE
 
-        ProviderId.APPLE.id -> ProviderId.APPLE
-        ProviderId.APPLE.providerName -> ProviderId.APPLE
+//        ProviderId.APPLE.id -> ProviderId.APPLE
+//        ProviderId.APPLE.providerName -> ProviderId.APPLE
 
         else -> null
     }

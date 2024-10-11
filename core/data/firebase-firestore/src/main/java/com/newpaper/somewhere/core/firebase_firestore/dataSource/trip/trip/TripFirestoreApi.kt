@@ -44,6 +44,7 @@ class TripFirestoreApi @Inject constructor(
         firestoreDb.collection(USERS).document(tripManagerId)
             .collection(TRIPS).document("${TRIP}${tripId}")
             .collection(DATE_LIST)
+            .orderBy("index")
             .get(source)
             .addOnSuccessListener {dates ->
                 val newDateList = dates.map { it.toObject<DateFirestore>().toDate() }
