@@ -247,8 +247,8 @@ private fun FlashLightButton(
         modifier = modifier
     ) {
         MyPlainTooltipBox(
-            tooltipText = if (isFlashLightTurnedOn) stringResource(id = MyIcons.flashOn.descriptionTextId)
-            else stringResource(id = MyIcons.flashOff.descriptionTextId)
+            tooltipText = if (isFlashLightTurnedOn) stringResource(id = MyIcons.flashOn.descriptionTextId!!)
+            else stringResource(id = MyIcons.flashOff.descriptionTextId!!)
         ) {
             IconButton(
                 onClick = onClick

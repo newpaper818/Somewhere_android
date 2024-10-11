@@ -409,7 +409,7 @@ private fun Icons(
         enter = scaleIn(tween(300)),
         exit = scaleOut(tween(400)) + fadeOut(tween(300))
     ) {
-        MyPlainTooltipBox(tooltipText = stringResource(id = MyIcons.deleteSpot.descriptionTextId)) {
+        MyPlainTooltipBox(tooltipText = stringResource(id = MyIcons.deleteSpot.descriptionTextId!!)) {
             IconButton(onClick = onClickDelete) {
                 DisplayIcon(
                     icon = MyIcons.deleteSpot
@@ -443,8 +443,8 @@ private fun Icons(
     ) {
         if (!expandedTextIsNull) {
             MyPlainTooltipBox(
-                tooltipText = if (!isExpanded) stringResource(id = MyIcons.expand.descriptionTextId)
-                                else stringResource(id = MyIcons.collapse.descriptionTextId)
+                tooltipText = if (!isExpanded) stringResource(id = MyIcons.expand.descriptionTextId!!)
+                                else stringResource(id = MyIcons.collapse.descriptionTextId!!)
             ) {
                 IconButton(onClick = onClickExpanded) {
                     if (!isExpanded)

@@ -236,7 +236,7 @@ fun UserLocationAndFullScreenButtons(
 
         //fullscreen map
         if (showFullScreenButton) {
-            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.fullscreen.descriptionTextId)) {
+            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.fullscreen.descriptionTextId!!)) {
                 IconButton(onClick = onFullScreenClicked) {
                     DisplayIcon(icon = MapButtonIcon.fullscreen)
                 }
@@ -255,7 +255,7 @@ fun EditAndDeleteLocationButtons(
 ){
     MapButtonsRow {
         //edit location
-        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.editLocation.descriptionTextId)) {
+        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.editLocation.descriptionTextId!!)) {
             IconButton(
                 enabled = editEnabled,
                 onClick = toggleIsEditLocation
@@ -268,7 +268,7 @@ fun EditAndDeleteLocationButtons(
         }
 
         //delete location
-        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.deleteLocation.descriptionTextId)) {
+        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.deleteLocation.descriptionTextId!!)) {
             IconButton(
                 enabled = deleteEnabled,
                 onClick = deleteLocation
@@ -298,7 +298,7 @@ fun SpotNavigateWithFocusOnToSpotButtons(
 ){
     MapButtonsRow {
         //to prev spot
-        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.prevSpot.descriptionTextId)) {
+        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.prevSpot.descriptionTextId!!)) {
             IconButton(
                 enabled = toPrevSpotEnabled,
                 onClick = toPrevSpot
@@ -315,7 +315,7 @@ fun SpotNavigateWithFocusOnToSpotButtons(
 
 
         //to next spot
-        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.nextSpot.descriptionTextId)) {
+        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.nextSpot.descriptionTextId!!)) {
             IconButton(
                 enabled = toNextSpotEnabled,
                 onClick = toNextSpot

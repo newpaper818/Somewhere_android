@@ -30,8 +30,8 @@ fun FocusOnToSpotButtonUi(
     onClickDisabled: () -> Unit
 ){
     MyPlainTooltipBox(
-        tooltipText = if (focusOnToSpotEnabled) stringResource(id = MapButtonIcon.focusOnToTarget.descriptionTextId)
-            else stringResource(id = MapButtonIcon.disabledFocusOnToTarget.descriptionTextId)
+        tooltipText = if (focusOnToSpotEnabled) stringResource(id = MapButtonIcon.focusOnToTarget.descriptionTextId!!)
+            else stringResource(id = MapButtonIcon.disabledFocusOnToTarget.descriptionTextId!!)
     ) {
         IconButton(
             onClick = {
@@ -57,8 +57,8 @@ fun UserLocationButtonUi(
     onClickLocationPermissionNotGranted: () -> Unit
 ){
     MyPlainTooltipBox(
-        tooltipText = if (userLocationPermissionGranted) stringResource(id = MapButtonIcon.myLocation.descriptionTextId)
-                        else stringResource(id = MapButtonIcon.disabledMyLocation.descriptionTextId)
+        tooltipText = if (userLocationPermissionGranted) stringResource(id = MapButtonIcon.myLocation.descriptionTextId!!)
+                        else stringResource(id = MapButtonIcon.disabledMyLocation.descriptionTextId!!)
     ) {
         IconButton(
             onClick = {
@@ -87,13 +87,13 @@ fun ZoomButtonsUi(
         shape = MaterialTheme.shapes.extraLarge
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomOut.descriptionTextId)) {
+            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomOut.descriptionTextId!!)) {
                 IconButton(onClick = onClickZoomOut) {
                     DisplayIcon(icon = MapButtonIcon.zoomOut)
                 }
             }
 
-            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomOutLess.descriptionTextId)) {
+            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomOutLess.descriptionTextId!!)) {
                 IconButton(onClick = onClickZoomOutLess) {
                     DisplayIcon(icon = MapButtonIcon.zoomOutLess)
                 }
@@ -105,13 +105,13 @@ fun ZoomButtonsUi(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.width(50.dp)
             )
-            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomInLess.descriptionTextId)) {
+            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomInLess.descriptionTextId!!)) {
                 IconButton(onClick = onClickZoomInLess) {
                     DisplayIcon(icon = MapButtonIcon.zoomInLess)
                 }
             }
 
-            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomIn.descriptionTextId)) {
+            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomIn.descriptionTextId!!)) {
                 IconButton(onClick = onClickZoomIn) {
                     DisplayIcon(icon = MapButtonIcon.zoomIn)
                 }

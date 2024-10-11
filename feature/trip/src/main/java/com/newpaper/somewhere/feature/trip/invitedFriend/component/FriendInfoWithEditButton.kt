@@ -53,8 +53,8 @@ internal fun FriendInfoWithEditButton(
         if (showEditDeleteButton) {
             //allow edit / view only button
             MyPlainTooltipBox(
-                tooltipText = if (friendData.allowEdit) stringResource(id = MyIcons.allowEdit.descriptionTextId)
-                                else stringResource(id = MyIcons.viewOnly.descriptionTextId)
+                tooltipText = if (friendData.allowEdit) stringResource(id = MyIcons.allowEdit.descriptionTextId!!)
+                                else stringResource(id = MyIcons.viewOnly.descriptionTextId!!)
             ) {
                 IconButton(
                     enabled = internetEnabled,
@@ -73,7 +73,7 @@ internal fun FriendInfoWithEditButton(
                 enter = expandHorizontally(tween(400)) + fadeIn(tween(400, 150)),
                 exit = shrinkHorizontally(tween(400, 150)) + fadeOut(tween(400))
             ) {
-                MyPlainTooltipBox(tooltipText = stringResource(id = MyIcons.deleteFriend.descriptionTextId)) {
+                MyPlainTooltipBox(tooltipText = stringResource(id = MyIcons.deleteFriend.descriptionTextId!!)) {
                     IconButton(
                         onClick = { onClickDeleteFriend(friendData) }
                     ) {
@@ -88,7 +88,7 @@ internal fun FriendInfoWithEditButton(
             enter = fadeIn(tween(300)),
             exit = fadeOut(tween(300))
         ) {
-            MyPlainTooltipBox(tooltipText = stringResource(id = MyIcons.leaveTrip.descriptionTextId)) {
+            MyPlainTooltipBox(tooltipText = stringResource(id = MyIcons.leaveTrip.descriptionTextId!!)) {
                 IconButton(
                     onClick = { onClickGetOut() }
                 ) {

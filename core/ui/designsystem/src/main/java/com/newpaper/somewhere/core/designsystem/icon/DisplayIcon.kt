@@ -19,8 +19,10 @@ fun DisplayIcon(
     contentDescriptionIsNull: Boolean = false
 ){
     val imageVector = icon.imageVector
-    val contentDescription = if (!contentDescriptionIsNull) stringResource(id = icon.descriptionTextId)
-                                else null
+    val contentDescription =
+        if (icon.descriptionTextId == null) null
+        else if (!contentDescriptionIsNull) stringResource(id = icon.descriptionTextId)
+        else null
 
 
     val modifier = Modifier.size(icon.size)

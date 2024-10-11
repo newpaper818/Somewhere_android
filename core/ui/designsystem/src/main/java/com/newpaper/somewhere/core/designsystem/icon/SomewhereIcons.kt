@@ -3,15 +3,16 @@ package com.newpaper.somewhere.core.designsystem.icon
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.DirectionsRun
 import androidx.compose.material.icons.automirrored.rounded.Login
 import androidx.compose.material.icons.automirrored.rounded.NavigateNext
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Keyboard
 import androidx.compose.material.icons.outlined.Luggage
 import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.rounded.AccessTime
+import androidx.compose.material.icons.rounded.AccountBalance
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material.icons.rounded.Bookmarks
@@ -28,10 +29,13 @@ import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.material.icons.rounded.ExpandMore
+import androidx.compose.material.icons.rounded.FamilyRestroom
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FileDownload
 import androidx.compose.material.icons.rounded.FlashOff
 import androidx.compose.material.icons.rounded.FlashOn
 import androidx.compose.material.icons.rounded.Fullscreen
+import androidx.compose.material.icons.rounded.Group
 import androidx.compose.material.icons.rounded.Image
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
@@ -40,6 +44,7 @@ import androidx.compose.material.icons.rounded.LocationOff
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.Logout
 import androidx.compose.material.icons.rounded.Luggage
+import androidx.compose.material.icons.rounded.LunchDining
 import androidx.compose.material.icons.rounded.ManageAccounts
 import androidx.compose.material.icons.rounded.Map
 import androidx.compose.material.icons.rounded.MoreHoriz
@@ -57,6 +62,8 @@ import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material.icons.rounded.Route
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.ShoppingBag
+import androidx.compose.material.icons.rounded.TravelExplore
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -70,7 +77,7 @@ data class MyIcon(
     val size: Dp = 22.dp,
     val isGray: Boolean = false,
     val color: Color? = null,  /**if null, set [color] to Material.colors.onSurface, onBackground...*/
-    @StringRes val descriptionTextId: Int = 0
+    @StringRes val descriptionTextId: Int? = null
 )
 
 
@@ -133,6 +140,22 @@ object MapButtonIcon {
 object SelectSwitchIcon {
     val viewOnly = MyIcon(Icons.Rounded.Visibility,     24.dp, false, null, R.string.view_only)
     val allowEdit = MyIcon(Icons.Rounded.Edit,          24.dp, false, null, R.string.allow_edit)
+}
+
+object TripWithIcon {
+    val solo = MyIcon(Icons.Rounded.Person,             22.dp, false, null, null)
+    val partner = MyIcon(Icons.Rounded.Favorite,        22.dp, false, null, null)
+    val friends = MyIcon(Icons.Rounded.Group,           22.dp, false, null, null)
+    val family = MyIcon(Icons.Rounded.FamilyRestroom,   22.dp, false, null, null)
+}
+
+object TripTypeIcon {
+    val culturalExperiences = MyIcon(Icons.Rounded.TravelExplore,   22.dp, false, null, null)
+    val historicalSites = MyIcon(Icons.Rounded.AccountBalance,  22.dp, false, null, null)
+    val exhibitionsMuseums = MyIcon(Icons.Rounded.Image,        22.dp, false, null, null)
+    val sportsActivity = MyIcon(Icons.AutoMirrored.Rounded.DirectionsRun,   22.dp, false, null, null)
+    val greatFood = MyIcon(Icons.Rounded.LunchDining,           22.dp, false, null, null)
+    val shopping = MyIcon(Icons.Rounded.ShoppingBag,            22.dp, false, null, null)
 }
 
 object MyIcons {

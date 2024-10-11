@@ -89,8 +89,8 @@ fun SetTimeDialog(
                 //switch to touch/text input icon button
                 if (screenHeightLong) {
                     MyPlainTooltipBox(
-                        tooltipText = if (isTouchInput) stringResource(id = MyIcons.switchToTextInput.descriptionTextId)
-                                        else stringResource(id = MyIcons.switchToTouchInput.descriptionTextId)
+                        tooltipText = if (isTouchInput) stringResource(id = MyIcons.switchToTextInput.descriptionTextId!!)
+                                        else stringResource(id = MyIcons.switchToTouchInput.descriptionTextId!!)
                     ) {
                         IconButton(onClick = { isTouchInput = !isTouchInput }) {
                             if (isTouchInput) DisplayIcon(icon = MyIcons.switchToTextInput)

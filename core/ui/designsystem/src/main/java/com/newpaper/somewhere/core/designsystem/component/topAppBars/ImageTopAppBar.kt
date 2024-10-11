@@ -53,7 +53,7 @@ fun ImageTopAppBar(
                 )
             },
             navigationIcon = {
-                MyPlainTooltipBox(tooltipText = stringResource(id = TopAppBarIcon.closeImageScreen.descriptionTextId)) {
+                MyPlainTooltipBox(tooltipText = stringResource(id = TopAppBarIcon.closeImageScreen.descriptionTextId!!)) {
                     IconButton(onClick = navigationIconOnClick) {
                         DisplayIcon(icon = TopAppBarIcon.closeImageScreen)
                     }
@@ -61,7 +61,7 @@ fun ImageTopAppBar(
 
             },
             actions = {
-                MyPlainTooltipBox(tooltipText = stringResource(id = TopAppBarIcon.downloadImage.descriptionTextId)) {
+                MyPlainTooltipBox(tooltipText = stringResource(id = TopAppBarIcon.downloadImage.descriptionTextId!!)) {
                     IconButton(onClick = actionIcon1Onclick) {
                         DisplayIcon(icon = TopAppBarIcon.downloadImage)
                     }

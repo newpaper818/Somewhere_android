@@ -2,11 +2,9 @@ package com.newpaper.somewhere.core.designsystem.component.topAppBars
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -136,7 +134,7 @@ fun SomewhereTopAppBar(
         navigationIcon = {
             if (navigationIcon != null) {
                 MyPlainTooltipBox(
-                    tooltipText = stringResource(id = navigationIcon.descriptionTextId)
+                    tooltipText = stringResource(id = navigationIcon.descriptionTextId!!)
                 ) {
                     IconButton(onClick = onClickNavigationIcon) {
                         DisplayIcon(icon = navigationIcon)
@@ -153,7 +151,7 @@ fun SomewhereTopAppBar(
             ) {
                 if (actionIcon1 != null) {
                     MyPlainTooltipBox(
-                        tooltipText = stringResource(id = actionIcon1.descriptionTextId)
+                        tooltipText = stringResource(id = actionIcon1.descriptionTextId!!)
                     ) {
                         IconButton(onClick = actionIcon1Onclick) {
                             DisplayIcon(icon = actionIcon1)
@@ -170,7 +168,7 @@ fun SomewhereTopAppBar(
             ) {
                 if (actionIcon2 != null) {
                     MyPlainTooltipBox(
-                        tooltipText = stringResource(id = actionIcon2.descriptionTextId)
+                        tooltipText = stringResource(id = actionIcon2.descriptionTextId!!)
                     ) {
                         IconButton(onClick = actionIcon2Onclick) {
                             DisplayIcon(icon = actionIcon2)
