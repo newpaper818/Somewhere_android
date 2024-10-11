@@ -105,7 +105,9 @@
 
     <!--TripType.kt-->
     <string name="trip_type_cultural_experiences">Cultural experiences</string>
-    <string name="trip_type_activity">Activity</string>
+    <string name="trip_type_historical_sites">Historical sites</string>
+    <string name="trip_type_exhibitions_museums">Exhibitions &amp; Museums</string>
+    <string name="trip_type_sports_activity">Sports &amp; Activity</string>
     <string name="trip_type_great_food">Great food</string>
     <string name="trip_type_shopping">Shopping</string>
 

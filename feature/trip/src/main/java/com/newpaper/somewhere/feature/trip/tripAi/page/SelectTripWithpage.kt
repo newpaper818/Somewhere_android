@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
-import com.newpaper.somewhere.core.model.enums.TripWith
+import com.newpaper.somewhere.feature.trip.tripAi.model.TripWith
 import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.tripAi.component.SelectButton
 
@@ -47,6 +47,7 @@ private fun TripWithList(
 
     tripWithList.forEach { tripWithItem ->
         SelectButton(
+            icon = tripWithItem.icon,
             text = stringResource(id = tripWithItem.textId),
             isSelected = tripWithItem == selectedTripWith,
             onClick = {
