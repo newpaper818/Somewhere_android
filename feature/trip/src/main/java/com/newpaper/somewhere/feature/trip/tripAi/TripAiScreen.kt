@@ -67,10 +67,10 @@ fun TripAiRoute(
     }
 
     //create trip with ai when in CREATE_TRIP phase
-    LaunchedEffect(tripAiUiState.phase) {
+    LaunchedEffect(tripAiUiState.tripAiPhase) {
         //when internet fail while creating trip TODO
 
-        if (tripAiUiState.phase == Phase.CREATE_TRIP) {
+        if (tripAiUiState.tripAiPhase == TripAiPhase.CREATE_TRIP) {
             tripAiViewModel.viewModelScope.launch {
                 //get ai created raw trip
                 val aiCreatedRawTrip = tripAiViewModel.getAiCreatedRawTrip()
@@ -126,7 +126,7 @@ fun TripAiScreen(
     dateTimeFormat: DateTimeFormat,
     tripAiUiState: TripAiUiState,
 
-    setPhase: (Phase) -> Unit,
+    setPhase: (TripAiPhase) -> Unit,
     tripToTextChanged: (String) -> Unit,
     setStartDate: (LocalDate?) -> Unit,
     setEndDate: (LocalDate?) -> Unit,
@@ -137,9 +137,9 @@ fun TripAiScreen(
 ){
     val coroutineScope = rememberCoroutineScope()
 
-    val phaseList = enumValues<Phase>()
+    val tripAiPhaseList = enumValues<TripAiPhase>()
     val pagerState = rememberPagerState(
-        pageCount = { phaseList.size }
+        pageCount = { tripAiPhaseList.size }
     )
 
     val focusManager = LocalFocusManager.current
@@ -147,13 +147,13 @@ fun TripAiScreen(
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             pagerState.animateScrollToPage(
-                tripAiUiState.phase.ordinal
+                tripAiUiState.tripAiPhase.ordinal
             )
         }
     }
 
     LaunchedEffect(pagerState.currentPage) {
-        setPhase(phaseList[pagerState.currentPage])
+        setPhase(tripAiPhaseList[pagerState.currentPage])
     }
 
     Scaffold (
@@ -194,9 +194,9 @@ fun TripAiScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.TopCenter
                 ) {
-                    val phase = phaseList[pageIndex]
+                    val phase = tripAiPhaseList[pageIndex]
                     when (phase) {
-                        Phase.TRIP_TO -> {
+                        TripAiPhase.TRIP_TO -> {
 
                             EnterTripCityPage(
                                 searchText = tripAiUiState.tripTo ?: "",
@@ -213,7 +213,7 @@ fun TripAiScreen(
                             )
                         }
 
-                        Phase.TRIP_DATE -> {
+                        TripAiPhase.TRIP_DATE -> {
                             EnterTripDurationPage(
                                 dateTimeFormat = dateTimeFormat,
                                 initialStartDate = tripAiUiState.startDate,
@@ -223,14 +223,14 @@ fun TripAiScreen(
                             )
                         }
 
-                        Phase.TRIP_WITH -> {
+                        TripAiPhase.TRIP_WITH -> {
                             SelectTripWithPage(
                                 selectedTripWith = tripAiUiState.tripWith,
                                 setTripWith = setTripWith
                             )
                         }
 
-                        Phase.TRIP_TYPE -> {
+                        TripAiPhase.TRIP_TYPE -> {
                             SelectTripTypePage(
                                 internetEnabled = internetEnabled,
                                 selectedTripTypes = tripAiUiState.tripTypes,
@@ -238,14 +238,14 @@ fun TripAiScreen(
                             )
                         }
 
-                        Phase.CREATE_TRIP -> {
+                        TripAiPhase.CREATE_TRIP -> {
                             CreateTripPage()
                         }
                     }
                 }
             }
 
-            if (tripAiUiState.phase != Phase.CREATE_TRIP) {
+            if (tripAiUiState.tripAiPhase != TripAiPhase.CREATE_TRIP) {
                 PrevNextButtons(
                     prevButtonVisible = pagerState.currentPage != 0,
                     onClickPrev = {
@@ -255,24 +255,24 @@ fun TripAiScreen(
                             )
                         }
                     },
-                    nextIsCreateTrip = tripAiUiState.phase == Phase.TRIP_TYPE,
+                    nextIsCreateTrip = tripAiUiState.tripAiPhase == TripAiPhase.TRIP_TYPE,
                     nextButtonEnabled =
-                        when (tripAiUiState.phase) {
-                            Phase.TRIP_TO ->
+                        when (tripAiUiState.tripAiPhase) {
+                            TripAiPhase.TRIP_TO ->
                                 tripAiUiState.tripTo != null && tripAiUiState.tripTo != ""
 
-                            Phase.TRIP_DATE ->
+                            TripAiPhase.TRIP_DATE ->
                                 tripAiUiState.startDate != null
                                         && tripAiUiState.endDate != null
                                         && tripAiUiState.startDate.plusDays(15) > tripAiUiState.endDate
 
-                            Phase.TRIP_WITH ->
+                            TripAiPhase.TRIP_WITH ->
                                 tripAiUiState.tripWith != null
 
-                            Phase.TRIP_TYPE ->
+                            TripAiPhase.TRIP_TYPE ->
                                 tripAiUiState.tripTypes.isNotEmpty() && internetEnabled
 
-                            Phase.CREATE_TRIP -> true
+                            TripAiPhase.CREATE_TRIP -> true
                         },
                     onClickNext = {
                         focusManager.clearFocus()

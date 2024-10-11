@@ -20,12 +20,12 @@ import java.time.ZonedDateTime
 import java.util.Locale
 import javax.inject.Inject
 
-enum class Phase{
+enum class TripAiPhase{
     TRIP_TO, TRIP_DATE, TRIP_WITH, TRIP_TYPE, CREATE_TRIP
 }
 
 data class TripAiUiState(
-    val phase: Phase = Phase.TRIP_TO,
+    val tripAiPhase: TripAiPhase = TripAiPhase.TRIP_TO,
 
     val tripTo: String? = null,
     val startDate: LocalDate? = null,
@@ -48,9 +48,9 @@ class TripAiViewModel @Inject constructor(
 
     val tripAiUiState = _tripAiUiState.asStateFlow()
 
-    fun setPhase(phase: Phase){
+    fun setPhase(tripAiPhase: TripAiPhase){
         _tripAiUiState.update {
-            it.copy(phase = phase)
+            it.copy(tripAiPhase = tripAiPhase)
         }
     }
 
