@@ -33,6 +33,7 @@
     <!--TripCreationOptionsDialog.kt-->
     <string name="enter_your_own">Enter your own</string>
     <string name="create_with_AI">Create with AI</string>
+    <string name="beta">BETA</string>
 
     <!--SelectDateDialog.kt-->
     <string name="move_date">Move date</string>
