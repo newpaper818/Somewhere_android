@@ -116,6 +116,34 @@ fun TripsRoute(
         commonTripViewModel.initDateSpotIndex()
     }
 
+    LaunchedEffect(isEditMode) {
+        if (isEditMode){
+            delay(400)
+            tripsViewModel.initGlanceInfo()
+        }
+        else {
+            if (!firstLaunch) {
+                //update glance
+                val glanceTripWithEmptyDateList =
+                    tripsViewModel.findCurrentDateTripAndUpdateGlanceTrip()
+
+                if (glanceTripWithEmptyDateList != null) {
+
+                    val glanceTrip = commonTripViewModel.updateTrip(
+                        internetEnabled = internetEnabled,
+                        appUserId = appUserId,
+                        tripWithEmptyDateList = glanceTripWithEmptyDateList
+                    )
+
+                    tripsViewModel.updateGlanceSpotInfo(
+                        //update trip info (only at empty date list - load once)
+                        glanceTrip = glanceTrip
+                    )
+                }
+            }
+        }
+    }
+
     //get trips
     LaunchedEffect(Unit) {
         tripsViewModel.setLoadingTrips(true)
@@ -351,7 +379,7 @@ private fun TripsScreen(
         },
         glanceSpot = {
             GlanceSpot(
-                visible = glance.visible && !isEditMode,
+                visible = glance.visible && !isEditMode && !loadingTrips,
                 dateTimeFormat = dateTimeFormat,
                 trip = glance.trip ?: Trip(id = 0, managerId = ""), //if glanceVisible is true, glanceTrip, Date, Spot is not null
                 date = glance.date ?: Date(date = LocalDate.now()),
