@@ -394,7 +394,6 @@ private fun AuthButtonsWithText(
             )
 
             //auth button
-
             AuthButtons(
                 providerIds = userData.providerIds,
                 enabled = internetEnabled

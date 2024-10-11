@@ -56,22 +56,22 @@ fun SignInWithButton(
                 modifier = modifier
             )
         }
-        ProviderId.APPLE ->{
-            SignInAuthButton(
-                iconDrawable = R.drawable.apple_logo,
-                text = stringResource(id = R.string.sign_in_with_apple),
-
-                containerColor = Color.Black,
-                textColor = Color.White,
-                useBorder = isDarkAppTheme,
-
-                buttonEnabled = buttonEnabled,
-                onClick = onClick,
-
-                isSignIn = true,
-                modifier = modifier
-            )
-        }
+//        ProviderId.APPLE ->{
+//            SignInAuthButton(
+//                iconDrawable = R.drawable.apple_logo,
+//                text = stringResource(id = R.string.sign_in_with_apple),
+//
+//                containerColor = Color.Black,
+//                textColor = Color.White,
+//                useBorder = isDarkAppTheme,
+//
+//                buttonEnabled = buttonEnabled,
+//                onClick = onClick,
+//
+//                isSignIn = true,
+//                modifier = modifier
+//            )
+//        }
     }
 }
 
@@ -101,22 +101,22 @@ fun AuthWithButton(
                 isSignIn = false
             )
         }
-        ProviderId.APPLE ->{
-            SignInAuthButton(
-                iconDrawable = R.drawable.apple_logo,
-                text = if (authingWithThis && isAuthDone) stringResource(id = R.string.authentication_complete)
-                    else if (authingWithThis) stringResource(id = R.string.authenticating)
-                    else stringResource(id = R.string.authentication_with_apple),
-                containerColor = Color.Black,
-                textColor = Color.White,
-                useBorder = isDarkAppTheme,
-
-                buttonEnabled = enabled,
-                onClick = onClick,
-
-                isSignIn = false
-            )
-        }
+//        ProviderId.APPLE ->{
+//            SignInAuthButton(
+//                iconDrawable = R.drawable.apple_logo,
+//                text = if (authingWithThis && isAuthDone) stringResource(id = R.string.authentication_complete)
+//                    else if (authingWithThis) stringResource(id = R.string.authenticating)
+//                    else stringResource(id = R.string.authentication_with_apple),
+//                containerColor = Color.Black,
+//                textColor = Color.White,
+//                useBorder = isDarkAppTheme,
+//
+//                buttonEnabled = enabled,
+//                onClick = onClick,
+//
+//                isSignIn = false
+//            )
+//        }
     }
 }
 
@@ -228,12 +228,12 @@ private fun SignInButtonsPreview(){
 
             MySpacerColumn(height = 16.dp)
 
-            SignInWithButton(
-                providerId = ProviderId.APPLE,
-                onClick = {  },
-                buttonEnabled = true,
-                isDarkAppTheme = isSystemInDarkTheme()
-            )
+//            SignInWithButton(
+//                providerId = ProviderId.APPLE,
+//                onClick = {  },
+//                buttonEnabled = true,
+//                isDarkAppTheme = isSystemInDarkTheme()
+//            )
         }
     }
 }
@@ -257,12 +257,12 @@ private fun SignInDisabledPreview(){
 
             MySpacerColumn(height = 16.dp)
 
-            SignInWithButton(
-                providerId = ProviderId.APPLE,
-                onClick = {  },
-                buttonEnabled = false,
-                isDarkAppTheme = isSystemInDarkTheme()
-            )
+//            SignInWithButton(
+//                providerId = ProviderId.APPLE,
+//                onClick = {  },
+//                buttonEnabled = false,
+//                isDarkAppTheme = isSystemInDarkTheme()
+//            )
         }
     }
 }
@@ -288,14 +288,14 @@ private fun AuthButtonsPreview(){
 
             MySpacerColumn(height = 16.dp)
             
-            AuthWithButton(
-                providerId = ProviderId.APPLE,
-                authingWithThis = false,
-                onClick = { },
-                enabled = true,
-                isDarkAppTheme = isSystemInDarkTheme(),
-                isAuthDone = false
-            )
+//            AuthWithButton(
+//                providerId = ProviderId.APPLE,
+//                authingWithThis = false,
+//                onClick = { },
+//                enabled = true,
+//                isDarkAppTheme = isSystemInDarkTheme(),
+//                isAuthDone = false
+//            )
         }
     }
 }
@@ -324,14 +324,14 @@ private fun AuthDisabledPreview(){
 
             MySpacerColumn(height = 16.dp)
 
-            AuthWithButton(
-                providerId = ProviderId.APPLE,
-                authingWithThis = false,
-                onClick = { },
-                enabled = false,
-                isDarkAppTheme = isSystemInDarkTheme(),
-                isAuthDone = false
-            )
+//            AuthWithButton(
+//                providerId = ProviderId.APPLE,
+//                authingWithThis = false,
+//                onClick = { },
+//                enabled = false,
+//                isDarkAppTheme = isSystemInDarkTheme(),
+//                isAuthDone = false
+//            )
         }
     }
 }
@@ -357,14 +357,14 @@ private fun AuthingPreview(){
 
             MySpacerColumn(height = 16.dp)
 
-            AuthWithButton(
-                providerId = ProviderId.APPLE,
-                authingWithThis = false,
-                onClick = { },
-                enabled = false,
-                isDarkAppTheme = isSystemInDarkTheme(),
-                isAuthDone = false
-            )
+//            AuthWithButton(
+//                providerId = ProviderId.APPLE,
+//                authingWithThis = false,
+//                onClick = { },
+//                enabled = false,
+//                isDarkAppTheme = isSystemInDarkTheme(),
+//                isAuthDone = false
+//            )
         }
     }
 }
@@ -390,14 +390,14 @@ private fun AuthCompletePreview(){
 
             MySpacerColumn(height = 16.dp)
 
-            AuthWithButton(
-                providerId = ProviderId.APPLE,
-                authingWithThis = false,
-                onClick = { },
-                enabled = false,
-                isDarkAppTheme = isSystemInDarkTheme(),
-                isAuthDone = true
-            )
+//            AuthWithButton(
+//                providerId = ProviderId.APPLE,
+//                authingWithThis = false,
+//                onClick = { },
+//                enabled = false,
+//                isDarkAppTheme = isSystemInDarkTheme(),
+//                isAuthDone = true
+//            )
         }
     }
 }

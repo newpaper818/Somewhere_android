@@ -84,34 +84,34 @@ class UserAuthenticationApi @Inject constructor(
     ): FirebaseUser?{
         val user = CompletableDeferred<FirebaseUser?>()
 
-        val provider = OAuthProvider.newBuilder(ProviderId.APPLE.id)
-        val language = Locale.getDefault().language
-        provider.addCustomParameter("locale", language)
-
-        val auth = FirebaseAuth.getInstance()
-        val pending = auth.pendingAuthResult
-
-        if (pending != null) {
-            updateIsSigningInToFalse()
-            user.complete(null)
-        }
-        else {
-            auth.startActivityForSignInWithProvider(activity, provider.build())
-                .addOnSuccessListener { authResult ->
-                    // Sign-in successful!
-                    user.complete(authResult.user)
-                }
-                .addOnFailureListener { e ->
-                    if ("canceled by the user" !in e.toString()){
-                        Log.d(FIREBASE_AUTHENTICATION_TAG, "sign in with Apple fail - not cancel by user")
-                        showErrorSnackbar()
-                    }
-
-                    updateIsSigningInToFalse()
-                    Log.w(FIREBASE_AUTHENTICATION_TAG, "sign in with Apple fail - activitySignIn:onFailure", e)
-                    user.complete(null)
-                }
-        }
+//        val provider = OAuthProvider.newBuilder(ProviderId.APPLE.id)
+//        val language = Locale.getDefault().language
+//        provider.addCustomParameter("locale", language)
+//
+//        val auth = FirebaseAuth.getInstance()
+//        val pending = auth.pendingAuthResult
+//
+//        if (pending != null) {
+//            updateIsSigningInToFalse()
+//            user.complete(null)
+//        }
+//        else {
+//            auth.startActivityForSignInWithProvider(activity, provider.build())
+//                .addOnSuccessListener { authResult ->
+//                    // Sign-in successful!
+//                    user.complete(authResult.user)
+//                }
+//                .addOnFailureListener { e ->
+//                    if ("canceled by the user" !in e.toString()){
+//                        Log.d(FIREBASE_AUTHENTICATION_TAG, "sign in with Apple fail - not cancel by user")
+//                        showErrorSnackbar()
+//                    }
+//
+//                    updateIsSigningInToFalse()
+//                    Log.w(FIREBASE_AUTHENTICATION_TAG, "sign in with Apple fail - activitySignIn:onFailure", e)
+//                    user.complete(null)
+//                }
+//        }
 
         return user.await()
     }
@@ -168,26 +168,26 @@ class UserAuthenticationApi @Inject constructor(
         onSuccess: () -> Unit,
         onFail: (exception: Exception) -> Unit
     ){
-        val user = auth.currentUser
-        val provider = OAuthProvider.newBuilder(ProviderId.APPLE.id)
-        val language = Locale.getDefault().language
-        provider.addCustomParameter("locale", language)
-
-        if (user != null) {
-            user.startActivityForReauthenticateWithProvider(activity, provider.build())
-                .addOnSuccessListener {
-                    onSuccess()
-                    // User is re-authenticated with fresh tokens and
-                    // should be able to perform sensitive operations
-                    // like account deletion and email or password
-                    // update.
-                }
-                .addOnFailureListener { e ->
-                    Log.e(FIREBASE_AUTHENTICATION_TAG, "re authenticate Apple user fail - ", e)
-                    onFail(e)
-                    // Handle failure.
-                }
-        }
+//        val user = auth.currentUser
+//        val provider = OAuthProvider.newBuilder(ProviderId.APPLE.id)
+//        val language = Locale.getDefault().language
+//        provider.addCustomParameter("locale", language)
+//
+//        if (user != null) {
+//            user.startActivityForReauthenticateWithProvider(activity, provider.build())
+//                .addOnSuccessListener {
+//                    onSuccess()
+//                    // User is re-authenticated with fresh tokens and
+//                    // should be able to perform sensitive operations
+//                    // like account deletion and email or password
+//                    // update.
+//                }
+//                .addOnFailureListener { e ->
+//                    Log.e(FIREBASE_AUTHENTICATION_TAG, "re authenticate Apple user fail - ", e)
+//                    onFail(e)
+//                    // Handle failure.
+//                }
+//        }
 
     }
 
