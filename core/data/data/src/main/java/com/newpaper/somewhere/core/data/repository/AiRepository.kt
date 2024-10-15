@@ -1,6 +1,5 @@
 package com.newpaper.somewhere.core.data.repository
 
-import android.util.Log
 import com.newpaper.gemini_ai.AiRemoteDataSource
 import com.newpaper.somewhere.core.google_map_places.dataSource.PlacesRemoteDataSource
 import java.time.Duration

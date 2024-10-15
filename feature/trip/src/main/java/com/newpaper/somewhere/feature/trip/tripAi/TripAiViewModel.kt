@@ -4,12 +4,12 @@ import androidx.lifecycle.ViewModel
 import com.newpaper.somewhere.core.data.repository.AiRepository
 import com.newpaper.somewhere.core.data.repository.SerializationRepository
 import com.newpaper.somewhere.core.model.enums.SpotTypeGroup
-import com.newpaper.somewhere.feature.trip.tripAi.model.TripType
-import com.newpaper.somewhere.feature.trip.tripAi.model.TripWith
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.utils.getTripId
+import com.newpaper.somewhere.feature.trip.tripAi.model.TripType
+import com.newpaper.somewhere.feature.trip.tripAi.model.TripWith
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.MutableStateFlow

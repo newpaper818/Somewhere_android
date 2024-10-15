@@ -1,6 +1,5 @@
 package com.newpaper.somewhere.feature.signin.signIn
 
-import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -53,7 +52,6 @@ import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.designsystem.theme.suite
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ProviderId
-import com.newpaper.somewhere.core.model.enums.getProviderIdFromString
 import com.newpaper.somewhere.core.ui.InternetUnavailableIconWithText
 import com.newpaper.somewhere.core.ui.card.AppIconWithAppNameCard
 import com.newpaper.somewhere.core.utils.PRIVACY_POLICY_URL

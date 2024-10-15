@@ -6,7 +6,6 @@ import com.google.ai.client.generativeai.type.generationConfig
 import com.google.android.libraries.places.api.model.Place
 import com.newpaper.somewhere.core.data.gemini_ai.BuildConfig
 import com.newpaper.somewhere.core.model.enums.SpotType
-import com.newpaper.somewhere.core.model.tripData.Trip
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 

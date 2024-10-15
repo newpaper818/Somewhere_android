@@ -5,7 +5,6 @@ import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.model.kotlin.place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
