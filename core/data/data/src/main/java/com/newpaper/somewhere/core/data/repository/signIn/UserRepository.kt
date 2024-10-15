@@ -6,10 +6,8 @@ import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.OAuthProvider
 import com.newpaper.somewhere.core.firebase_authentication.dataSource.UserRemoteDataSource
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.common.CommonRemoteDataSource
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.signIn.SignInRemoteDataSource
@@ -17,7 +15,6 @@ import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ProviderId
 import com.newpaper.somewhere.core.model.enums.getProviderIdFromString
 import kotlinx.coroutines.CompletableDeferred
-import java.util.Locale
 import javax.inject.Inject
 
 private const val USER_REPOSITORY_TAG = "User-Repository"

@@ -9,14 +9,12 @@ import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.OAuthProvider
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ProviderId
 import com.newpaper.somewhere.core.model.enums.getProviderIdFromString
 import com.newpaper.somewhere.core.utils.OAUTH_WEB_CLIENT_ID
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.tasks.await
-import java.util.Locale
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
 

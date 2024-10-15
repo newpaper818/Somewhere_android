@@ -9,9 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
-import com.newpaper.somewhere.feature.trip.tripAi.model.TripWith
 import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.tripAi.component.SelectButton
+import com.newpaper.somewhere.feature.trip.tripAi.model.TripWith
 
 @Composable
 internal fun SelectTripWithPage(
