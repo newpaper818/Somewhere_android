@@ -49,6 +49,7 @@ dependencies {
 
     //LatLng
     implementation(libs.play.services.maps)
+    implementation(libs.places)
 
     //test
     testImplementation(libs.junit)
