@@ -91,6 +91,7 @@
 
     <string name="creating_trip_with_ai">Creating a trip with AI…</string>
     <string name="it_mat_took_a_while">It may took a while</string>
+    <string name="something_went_wrong">Something went wrong…</string>
 
     <!--tripMap/ ================================================================================-->
     <string name="snackbar_no_location_to_show">No location to show</string>

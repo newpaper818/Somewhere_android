@@ -33,7 +33,10 @@ data class TripAiUiState(
     val tripWith: TripWith? = null,
     val tripTypes: Set<TripType> = setOf(),
 
-    val showExitDialog: Boolean = false
+    val showExitDialog: Boolean = false,
+
+    val creatingTrip: Boolean = false,
+    val createTripError: Boolean = false
 )
 
 @HiltViewModel
@@ -87,6 +90,18 @@ class TripAiViewModel @Inject constructor(
     fun setShowExitDialog(showExitDialog: Boolean){
         _tripAiUiState.update {
             it.copy(showExitDialog = showExitDialog)
+        }
+    }
+
+    fun setCreatingTrip(creatingTrip: Boolean){
+        _tripAiUiState.update {
+            it.copy(creatingTrip = creatingTrip)
+        }
+    }
+
+    fun setCreateTripError(createTripError: Boolean){
+        _tripAiUiState.update {
+            it.copy(createTripError = createTripError)
         }
     }
 
