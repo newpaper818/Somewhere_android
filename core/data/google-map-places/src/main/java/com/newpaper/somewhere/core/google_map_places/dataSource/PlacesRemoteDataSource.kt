@@ -14,6 +14,6 @@ interface PlacesRemoteDataSource {
     ): LatLng?
 
     suspend fun getPlacesInfo(
-        places: List<String>
-    ): List<Place>?
+        places: Set<String>
+    ): Set<Place>?
 }

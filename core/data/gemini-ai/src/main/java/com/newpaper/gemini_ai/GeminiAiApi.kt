@@ -20,7 +20,7 @@ class GeminiAiApi @Inject constructor(
         tripDays: Int,
         tripWith: String,
         tripType: String
-    ): List<String>? {
+    ): Set<String>? {
         val generativeModel =
             GenerativeModel(
                 // Specify a Gemini model appropriate for your use case
@@ -45,20 +45,20 @@ class GeminiAiApi @Inject constructor(
         val response = generativeModel.generateContent(prompt)
 
         if (response.text != null) {
-            val list = Json.decodeFromString<List<String>>(response.text!!)
+            val placeSet = Json.decodeFromString<Set<String>>(response.text!!)
 
-            list.forEach {
+            placeSet.forEach {
                 Log.d(GEMINI_AI_TAG, it)
             }
 
-            return list
+            return placeSet
         }
         else
             return null
     }
 
     override suspend fun getTripPlan(
-        places: List<Place>,
+        places: Set<Place>,
         city: String,
         tripDate: String,
         tripWith: String,
@@ -118,7 +118,7 @@ class GeminiAiApi @Inject constructor(
     }
 
     private fun placesToString(
-        places: List<Place>
+        places: Set<Place>
     ): String{
         val placeList = places.map { place ->
             placeToString(place)

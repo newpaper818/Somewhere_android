@@ -26,18 +26,18 @@ class AiRepository @Inject constructor(
         language: String
     ): Trip? {
         //get places from ai / return: [N seoul tower, lotte tower ...]
-        val list = aiRemoteDataSource.getRecommendSpots(
+        val recommendPlaceSet = aiRemoteDataSource.getRecommendSpots(
             city = city,
             tripDays = Duration.between(startDate.atStartOfDay(), endDate.atStartOfDay()).toDays().toInt() + 1,
             tripWith = tripWith,
             tripType = tripType
         )
 
-        if (list == null)
+        if (recommendPlaceSet == null)
             return null
 
         //get places info from Google places
-        val places = placesRemoteDataSource.getPlacesInfo(list)
+        val places = placesRemoteDataSource.getPlacesInfo(recommendPlaceSet)
 
         if (places == null)
             return null
@@ -72,7 +72,7 @@ class AiRepository @Inject constructor(
 
     private fun addLocation(
         trip: Trip,
-        places: List<Place>
+        places: Set<Place>
     ): Trip {
         val dateList = trip.dateList
 
@@ -107,7 +107,7 @@ class AiRepository @Inject constructor(
 
     private fun getLatLngFromPlaceId(
         placeId: String?,
-        places: List<Place>
+        places: Set<Place>
     ): LatLng? {
         val place = places.find {
             it.id == placeId
