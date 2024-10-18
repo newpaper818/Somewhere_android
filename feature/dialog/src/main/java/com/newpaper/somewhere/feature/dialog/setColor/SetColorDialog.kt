@@ -28,53 +28,11 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
-import com.newpaper.somewhere.core.designsystem.theme.blackInt
+import com.newpaper.somewhere.core.designsystem.theme.dateColorList
 import com.newpaper.somewhere.core.model.data.MyColor
 import com.newpaper.somewhere.feature.dialog.R
 import com.newpaper.somewhere.feature.dialog.myDialog.DialogButton
 import com.newpaper.somewhere.feature.dialog.myDialog.MyDialog
-
-private val dateColorList = listOf(
-    MyColor(0xFF493cfa.toInt()),
-    MyColor(0xFF7168e8.toInt()),
-    MyColor(0xFF000000.toInt()),
-    MyColor(0xFFffffff.toInt(), blackInt),
-
-    MyColor(0xFF7f7f7f.toInt(), blackInt),
-    MyColor(0xFFc3c3c3.toInt(), blackInt),
-    MyColor(0xFF880015.toInt()),
-    MyColor(0xFFb97a57.toInt()),
-
-    MyColor(0xFFed1c24.toInt()),
-    MyColor(0xFFffaec9.toInt(), blackInt),
-    MyColor(0xFFff7f27.toInt(), blackInt),
-    MyColor(0xFFffc90e.toInt(), blackInt),
-
-    MyColor(0xFFfff200.toInt(), blackInt),
-    MyColor(0xFFefe4b0.toInt(), blackInt),
-    MyColor(0xFF22b14c.toInt(), blackInt),
-    MyColor(0xFFb5e61d.toInt(), blackInt),
-
-    MyColor(0xFF00a2e8.toInt(), blackInt),
-    MyColor(0xFF99d9ea.toInt(), blackInt),
-    MyColor(0xFF3f48cc.toInt()),
-    MyColor(0xFF7092be.toInt(), blackInt),
-
-    MyColor(0xFFa349a4.toInt()),
-    MyColor(0xFFc8bfe7.toInt(), blackInt),
-    MyColor(0xFF732bf5.toInt()),
-    MyColor(0xFF3a083e.toInt()),
-
-    MyColor(0xFF75fa8d.toInt(), blackInt),
-    MyColor(0xFF73fbfd.toInt(), blackInt),
-    MyColor(0xFF3a0603.toInt()),
-    MyColor(0xFF183e0c.toInt()),
-
-    MyColor(0xFF817f26.toInt()),
-    MyColor(0xFF0023f5.toInt()),
-    MyColor(0xFF75163f.toInt()),
-    MyColor(0xFF7f82bb.toInt(), blackInt),
-)
 
 @Composable
 fun SetColorDialog(
