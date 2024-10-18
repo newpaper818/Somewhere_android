@@ -93,6 +93,8 @@
     <string name="delete_location">Delete location</string>
     <string name="previous_spot">Previous spot</string>
     <string name="next_spot">Next spot</string>
+    <string name="open_in_google_map">Open in Google maps</string>
+
 
     <!--SelectSwitchIcon-->
     <string name="view_only">View only</string>
