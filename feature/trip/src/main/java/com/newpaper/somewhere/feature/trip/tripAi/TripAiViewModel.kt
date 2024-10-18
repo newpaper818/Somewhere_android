@@ -2,6 +2,7 @@ package com.newpaper.somewhere.feature.trip.tripAi
 
 import androidx.lifecycle.ViewModel
 import com.newpaper.somewhere.core.data.repository.AiRepository
+import com.newpaper.somewhere.core.designsystem.theme.dateColorList
 import com.newpaper.somewhere.core.model.enums.SpotTypeGroup
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
@@ -143,7 +144,7 @@ class TripAiViewModel @Inject constructor(
         return trip
     }
 
-    fun addIdTimeInAiCreatedRawTrip(
+    fun addAdditionalDataToAiCreatedRawTrip(
         aiCreatedRawTrip: Trip,
         tripManagerId: String,
         newOrderId: Int
@@ -176,6 +177,7 @@ class TripAiViewModel @Inject constructor(
             val newDate = date.copy(
                 id = dateIndex,
                 index = dateIndex,
+                color = dateColorList.getOrElse(dateIndex) { dateColorList[0] },
                 memoText = if (date.memoText == "") null else date.memoText,
                 spotList = newSpotList
             )

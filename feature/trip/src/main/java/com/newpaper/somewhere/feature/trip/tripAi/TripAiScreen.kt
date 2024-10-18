@@ -95,7 +95,7 @@ fun TripAiRoute(
                         newOrderId = lastTrip.orderId + 1
                     }
 
-                    val aiCreatedTrip = tripAiViewModel.addIdTimeInAiCreatedRawTrip(
+                    val aiCreatedTrip = tripAiViewModel.addAdditionalDataToAiCreatedRawTrip(
                         aiCreatedRawTrip = aiCreatedRawTrip,
                         tripManagerId = appUserId,
                         newOrderId = newOrderId
