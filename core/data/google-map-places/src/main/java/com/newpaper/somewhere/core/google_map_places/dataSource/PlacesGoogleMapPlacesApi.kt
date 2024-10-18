@@ -81,8 +81,8 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
     }
 
     override suspend fun getPlacesInfo(
-        places: List<String>
-    ): List<Place>? {
+        places: Set<String>
+    ): Set<Place>? {
         checkPlacesClientAndInit()
 
         val placeInfoList = places.mapNotNull {
@@ -93,7 +93,10 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
             Log.d("gemini", "name: ${place.displayName}, id: ${place.id}")
         }
 
-        return placeInfoList.ifEmpty { null }
+        return if (placeInfoList.isEmpty())
+            null
+        else
+            placeInfoList.toSet()
     }
 
     private suspend fun searchPlace(

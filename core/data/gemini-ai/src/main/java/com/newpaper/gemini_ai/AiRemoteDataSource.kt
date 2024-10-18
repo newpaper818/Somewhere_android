@@ -8,10 +8,10 @@ interface AiRemoteDataSource {
         tripDays: Int,
         tripWith: String,
         tripType: String
-    ): List<String>?
+    ): Set<String>?
 
     suspend fun  getTripPlan(
-        places: List<Place>,
+        places: Set<Place>,
         city: String,
         tripDate: String,
         tripWith: String,
