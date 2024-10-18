@@ -492,9 +492,10 @@ fun Spot.setLocationAndUpdateTravelDistance(
 
     newLocation: LatLng?,
     newZoomLevel: Float?,
+    newGoogleMapsPlacesId: String?
 ) {
     val newSpotList = showingTrip.dateList[currentDateIndex].spotList.toMutableList()
-    newSpotList[index] = newSpotList[index].copy(location = newLocation, zoomLevel = newZoomLevel)
+    newSpotList[index] = newSpotList[index].copy(location = newLocation, zoomLevel = newZoomLevel, googleMapsPlacesId = newGoogleMapsPlacesId)
     val newDateList = showingTrip.dateList.toMutableList()
     newDateList[currentDateIndex] = newDateList[currentDateIndex].copy(spotList = newSpotList.toList())
     var newTrip = showingTrip.copy(dateList = newDateList.toList())

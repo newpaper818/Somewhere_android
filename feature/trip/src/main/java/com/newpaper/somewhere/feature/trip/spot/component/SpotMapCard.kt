@@ -64,6 +64,9 @@ fun SpotMapCard(
     deleteLocation: () -> Unit,
     setMapSize: (IntSize) -> Unit,
 
+    openInGoogleMapEnabled: Boolean,
+    onClickOpenInGoogleMap: () -> Unit,
+
     modifier: Modifier = Modifier,
 
     showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
@@ -136,6 +139,10 @@ fun SpotMapCard(
                 onFullScreenClicked = onFullScreenClicked,
                 toggleIsEditLocation = toggleIsEditLocation,
                 deleteLocation = deleteLocation,
+
+                openInGoogleMapEnabled = openInGoogleMapEnabled,
+                onClickOpenInGoogleMap = onClickOpenInGoogleMap,
+
                 showSnackBar = showSnackBar
             )
 
@@ -145,7 +152,7 @@ fun SpotMapCard(
 }
 
 @Composable
-fun MapSpotMapButtons(
+private fun MapSpotMapButtons(
     isEditMode: Boolean,
 
     spot: Spot?,
@@ -166,6 +173,10 @@ fun MapSpotMapButtons(
     onFullScreenClicked: () -> Unit,
     toggleIsEditLocation: () -> Unit,
     deleteLocation: () -> Unit,
+
+    openInGoogleMapEnabled: Boolean,
+    onClickOpenInGoogleMap: () -> Unit,
+
     showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
 ){
     val focusOnToSpotEnabled =
@@ -217,12 +228,19 @@ fun MapSpotMapButtons(
             spotList = spotList,
             showSnackBar = showSnackBar
         )
+
+        MySpacerRow(width = 16.dp)
+
+        ToGoogleMapButton(
+            enabled = openInGoogleMapEnabled,
+            onClick = onClickOpenInGoogleMap
+        )
     }
 }
 
 //user location / full screen buttons
 @Composable
-fun UserLocationAndFullScreenButtons(
+private fun UserLocationAndFullScreenButtons(
     fusedLocationClient: FusedLocationProviderClient,
     cameraPositionState: CameraPositionState,
     setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
@@ -247,7 +265,7 @@ fun UserLocationAndFullScreenButtons(
 
 // edit location / delete location buttons
 @Composable
-fun EditAndDeleteLocationButtons(
+private fun EditAndDeleteLocationButtons(
     editEnabled: Boolean,
     deleteEnabled: Boolean,
     toggleIsEditLocation: () -> Unit,
@@ -284,7 +302,7 @@ fun EditAndDeleteLocationButtons(
 
 // < spot >
 @Composable
-fun SpotNavigateWithFocusOnToSpotButtons(
+private fun SpotNavigateWithFocusOnToSpotButtons(
     toPrevSpotEnabled: Boolean,
     toNextSpotEnabled: Boolean,
     toPrevSpot: () -> Unit,
@@ -330,7 +348,27 @@ fun SpotNavigateWithFocusOnToSpotButtons(
 }
 
 @Composable
-fun MapButtonsRow(
+private fun ToGoogleMapButton(
+    enabled: Boolean,
+    onClick: () -> Unit,
+){
+    MapButtonsRow {
+        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.openInGoogleMap.descriptionTextId!!)) {
+            IconButton(
+                enabled = enabled,
+                onClick = onClick
+            ) {
+                DisplayIcon(
+                    icon = MapButtonIcon.openInGoogleMap,
+                    enabled = enabled
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun MapButtonsRow(
     buttonsContent: @Composable () -> Unit
 ){
     Row(

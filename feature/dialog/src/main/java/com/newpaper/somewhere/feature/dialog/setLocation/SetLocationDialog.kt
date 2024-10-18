@@ -315,10 +315,12 @@ fun SetLocationDialog(
                                     setLocationViewModel.setIsLoadingSearchPlaces(false)
                                 }
                             }
+                            setLocationViewModel.setGoogleMapsPlacesId(null)
                         },
                         onClearClicked = {
                             setLocationViewModel.setSearchText("")
                             setLocationViewModel.clearSearchLocationList()
+                            setLocationViewModel.setGoogleMapsPlacesId(null)
                         },
                         onSearchClicked = {
                             if (setLocationUiState.searchLocation.searchText != "") {
@@ -341,6 +343,7 @@ fun SetLocationDialog(
                                 setLocationViewModel.setUserTexting(false)
                                 setLocationViewModel.clearSearchLocationList()
                             }
+                            setLocationViewModel.setGoogleMapsPlacesId(null)
                         }
                     )
 
@@ -361,29 +364,31 @@ fun SetLocationDialog(
                         visible = setLocationUiState.searchLocation.searchText.isNotEmpty()
                                 && setLocationUiState.searchLocation.searchLocationList.isNotEmpty(),
                         locationAutoFillList = setLocationUiState.searchLocation.searchLocationList,
-                        onClickItem = {
+                        selectedPlaceId = setLocationUiState.googleMapsPlacesId,
+                        onClickItem = { placeInfo ->
                             //get one location from touched item
                             focusManager.clearFocus()
                             setLocationViewModel.setUserTexting(false)
 
-                            if (it.location != null) {
+                            if (placeInfo.location != null) {
                                 mapAnimateToLatLng(
-                                    listOf(it),
+                                    listOf(placeInfo),
                                     cameraPositionState,
                                     mapSize,
                                     coroutineScope
                                 )
                             } else {
                                 coroutineScope.launch {
-                                    setLocationViewModel.updateOneLatLng(it)
+                                    setLocationViewModel.updateOneLatLng(placeInfo)
                                     mapAnimateToLatLng(
-                                        listOf(it),
+                                        listOf(placeInfo),
                                         cameraPositionState,
                                         mapSize,
                                         coroutineScope
                                     )
                                 }
                             }
+                            setLocationViewModel.setGoogleMapsPlacesId(placeInfo.placeId)
                         },
                         onSearchListSizeChanged = {
                             searchListSize = it
@@ -482,7 +487,8 @@ fun SetLocationDialog(
                                 dateIndex,
                                 updateTripState,
                                 cameraPositionState.position.target,
-                                cameraPositionState.position.zoom
+                                cameraPositionState.position.zoom,
+                                setLocationUiState.googleMapsPlacesId
                             )
 
                             setShowSetLocationDialogToFalse()
@@ -585,6 +591,7 @@ private fun MapSearchBox(
 private fun MapSearchList(
     visible: Boolean,
     locationAutoFillList: List<LocationInfo>,
+    selectedPlaceId: String?,
     onClickItem: (LocationInfo) -> Unit,
     onSearchListSizeChanged: (IntSize) -> Unit
 ){
@@ -623,11 +630,16 @@ private fun MapSearchList(
             }
 
             items(locationAutoFillList) {
+                val itemColor = if (selectedPlaceId == it.placeId) MaterialTheme.colorScheme.primaryContainer
+                                else Color.Transparent
+
                 Column {
                     ClickableBox(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(itemHeight),
+                        containerColor = itemColor,
+                        shape = RoundedCornerShape(25.dp),
                         onClick = { onClickItem(it) }
                     ) {
                         Column(
