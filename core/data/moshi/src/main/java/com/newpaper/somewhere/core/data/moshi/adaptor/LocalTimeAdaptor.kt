@@ -6,9 +6,12 @@ import java.time.LocalTime
 
 internal class LocalTimeAdaptor {
     @FromJson
-    fun fromJson(json: String): LocalTime {
+    fun fromJson(json: String): LocalTime? {
         //13:30 -> LocalTime
-        return LocalTime.parse(json)
+        return if (json == "")
+            null
+        else
+            LocalTime.parse(json)
     }
 
     @ToJson
