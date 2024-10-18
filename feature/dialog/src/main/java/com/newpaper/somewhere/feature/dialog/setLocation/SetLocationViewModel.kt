@@ -24,6 +24,8 @@ data class SearchLocation(
 data class SetLocationUiState(
     val searchLocation: SearchLocation = SearchLocation(),
 
+    val googleMapsPlacesId: String? = null,
+
     val userTexting: Boolean = false,
     val clickedSearch: Boolean = false,
 
@@ -93,6 +95,14 @@ class SetLocationViewModel @Inject constructor(
                     searchLocationList = listOf()
                 )
             )
+        }
+    }
+
+    fun setGoogleMapsPlacesId(
+        googleMapsPlacesId: String?
+    ){
+        _setLocationUiState.update {
+            it.copy(googleMapsPlacesId = googleMapsPlacesId)
         }
     }
 

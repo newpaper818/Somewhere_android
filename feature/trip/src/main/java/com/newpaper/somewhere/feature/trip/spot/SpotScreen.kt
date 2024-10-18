@@ -48,6 +48,7 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
@@ -450,7 +451,6 @@ fun SpotRoute(
 
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SpotScreen(
     spotUiInfo: SpotUiInfo,
@@ -552,7 +552,7 @@ private fun SpotScreen(
     }
 
     val snackbarModifier =
-        if (!spotUiInfo.use2Panes)Modifier
+        if (!spotUiInfo.use2Panes) Modifier
             .width(500.dp)
             .padding(bottom = bottomSnackBarPadding.dp)
             .imePadding()
@@ -841,7 +841,6 @@ private fun SpotScreen(
 
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun Spot1Pane(
     spotUiInfo: SpotUiInfo,
@@ -878,6 +877,7 @@ private fun Spot1Pane(
     val currentSpot = currentDate.spotList.getOrNull(currentSpotIndex)
 
     val coroutineScope = rememberCoroutineScope()
+    val uriHandler = LocalUriHandler.current
 
     //map + spot page
     LazyColumn(
@@ -947,11 +947,19 @@ private fun Spot1Pane(
                 },
                 deleteLocation = {
                     currentSpot?.setLocationAndUpdateTravelDistance(
-                        showingTrip, currentDateIndex, updateTripState, null, null
+                        showingTrip, currentDateIndex, updateTripState, null, null, null
                     )
                 },
                 setMapSize = {
                     spotMap.setMapSize(it)
+                },
+                openInGoogleMapEnabled = currentSpot?.googleMapsPlacesId != null,
+                onClickOpenInGoogleMap = {
+                    //open in google map
+                    if (currentSpot?.googleMapsPlacesId != null){
+                        val url = "https://www.google.com/maps/search/?api=1&query=<address>&query_place_id=${currentSpot.googleMapsPlacesId}"
+                        uriHandler.openUri(url)
+                    }
                 },
                 showSnackBar = { text, actionLabel, duration, onActionClick ->
                     coroutineScope.launch {
@@ -1011,7 +1019,6 @@ private fun Spot1Pane(
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun Spot2Panes(
     spotUiInfo: SpotUiInfo,
@@ -1048,6 +1055,7 @@ private fun Spot2Panes(
     val currentSpot = currentDate.spotList.getOrNull(currentSpotIndex)
 
     val coroutineScope = rememberCoroutineScope()
+    val uriHandler = LocalUriHandler.current
 
     Row {
         MyCard(
@@ -1107,11 +1115,19 @@ private fun Spot2Panes(
                 },
                 deleteLocation = {
                     currentSpot?.setLocationAndUpdateTravelDistance(
-                        showingTrip, currentDateIndex, updateTripState, null, null
+                        showingTrip, currentDateIndex, updateTripState, null, null, null
                     )
                 },
                 setMapSize = {
                     spotMap.setMapSize(it)
+                },
+                openInGoogleMapEnabled = currentSpot?.googleMapsPlacesId != null,
+                onClickOpenInGoogleMap = {
+                    //open in google map
+                    if (currentSpot?.googleMapsPlacesId != null){
+                        val url = "https://www.google.com/maps/search/?api=1&query=<address>&query_place_id=${currentSpot.googleMapsPlacesId}"
+                        uriHandler.openUri(url)
+                    }
                 },
                 showSnackBar = { text, actionLabel, duration, onActionClick ->
                     coroutineScope.launch {
