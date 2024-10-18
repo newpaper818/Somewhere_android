@@ -134,9 +134,7 @@ class TripAiViewModel @Inject constructor(
             return null
         }
 
-        val aiCreatedTrip = CompletableDeferred<Trip?>()
-
-        val aiCreatedTripJson = aiRepository.getAiCreatedTrip(
+        val trip = aiRepository.getAiCreatedTrip(
             city = tripAiUiState.value.tripTo!!,
             startDate = tripAiUiState.value.startDate!!,
             endDate = tripAiUiState.value.endDate!!,
@@ -145,15 +143,7 @@ class TripAiViewModel @Inject constructor(
             language = Locale.getDefault().displayLanguage
         )
 
-        //convert JSON -> Trip
-        if (aiCreatedTripJson != null) {
-            val trip = serializationRepository.jsonToTrip(aiCreatedTripJson)
-
-            aiCreatedTrip.complete(trip)
-        }
-        else aiCreatedTrip.complete(null)
-
-        return aiCreatedTrip.await()
+        return trip
     }
 
     fun addIdTimeInAiCreatedRawTrip(
