@@ -82,6 +82,18 @@ fun MyQrCodeButton(
 }
 
 @Composable
+fun TryAgainButton(
+    onClick: () -> Unit,
+    enabled: Boolean
+){
+    MyTextButton(
+        text = stringResource(id = R.string.try_again),
+        onClick = onClick,
+        enabled = enabled
+    )
+}
+
+@Composable
 fun PrevButton(
     onClick: () -> Unit
 ){

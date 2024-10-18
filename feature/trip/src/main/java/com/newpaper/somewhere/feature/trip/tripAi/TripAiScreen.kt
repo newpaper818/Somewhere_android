@@ -72,10 +72,15 @@ fun TripAiRoute(
     }
 
     //create trip with ai when in CREATE_TRIP phase
-    LaunchedEffect(tripAiUiState.tripAiPhase) {
+    LaunchedEffect(tripAiUiState.tripAiPhase, tripAiUiState.createTripError) {
         //when internet fail while creating trip TODO
 
-        if (tripAiUiState.tripAiPhase == TripAiPhase.CREATE_TRIP) {
+        if (
+            tripAiUiState.tripAiPhase == TripAiPhase.CREATE_TRIP
+            && !tripAiUiState.createTripError
+            && !tripAiUiState.creatingTrip
+        ) {
+            tripAiViewModel.setCreatingTrip(true)
             tripAiViewModel.viewModelScope.launch {
                 //get ai created raw trip
                 val aiCreatedRawTrip = tripAiViewModel.getAiCreatedRawTrip()
@@ -104,6 +109,10 @@ fun TripAiRoute(
                     //navigate to trip
                     navigateToAiCreatedTrip(aiCreatedTrip)
                 }
+                else {
+                    tripAiViewModel.setCreateTripError(true)
+                }
+                tripAiViewModel.setCreatingTrip(false)
             }
         }
     }
@@ -115,11 +124,14 @@ fun TripAiRoute(
         tripAiUiState = tripAiUiState,
 
         setPhase = tripAiViewModel::setPhase,
+
         tripToTextChanged = tripAiViewModel::setTripTo,
         setStartDate = tripAiViewModel::setStartDate,
         setEndDate = tripAiViewModel::setEndDate,
         setTripWith = tripAiViewModel::setTripWith,
         onClickTripType = tripAiViewModel::onClickTripType,
+
+        setCreateTripError = tripAiViewModel::setCreateTripError,
 
         setShowExitDialog = tripAiViewModel::setShowExitDialog
     )
@@ -132,11 +144,14 @@ fun TripAiScreen(
     tripAiUiState: TripAiUiState,
 
     setPhase: (TripAiPhase) -> Unit,
+
     tripToTextChanged: (String) -> Unit,
     setStartDate: (LocalDate?) -> Unit,
     setEndDate: (LocalDate?) -> Unit,
     setTripWith: (TripWith) -> Unit,
     onClickTripType: (TripType) -> Unit,
+
+    setCreateTripError: (Boolean) -> Unit,
 
     setShowExitDialog: (Boolean) -> Unit
 ){
@@ -244,7 +259,11 @@ fun TripAiScreen(
                         }
 
                         TripAiPhase.CREATE_TRIP -> {
-                            CreateTripPage()
+                            CreateTripPage(
+                                internetEnabled = internetEnabled,
+                                createTripError = tripAiUiState.createTripError,
+                                onClickTryAgain = { setCreateTripError(false) }
+                            )
                         }
                     }
                 }

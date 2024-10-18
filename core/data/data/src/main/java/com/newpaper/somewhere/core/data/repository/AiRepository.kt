@@ -25,7 +25,6 @@ class AiRepository @Inject constructor(
             tripWith = tripWith,
             tripType = tripType
         )
-//        return list.toString()
 
         //get places info from Google places
         return if (list != null) {
