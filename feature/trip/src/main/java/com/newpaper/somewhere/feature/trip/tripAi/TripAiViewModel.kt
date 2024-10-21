@@ -33,6 +33,7 @@ data class TripAiUiState(
     val tripTypes: Set<TripType> = setOf(),
 
     val showExitDialog: Boolean = false,
+    val showCautionDialog: Boolean = false,
 
     val creatingTrip: Boolean = false,
     val createTripError: Boolean = false
@@ -88,6 +89,12 @@ class TripAiViewModel @Inject constructor(
     fun setShowExitDialog(showExitDialog: Boolean){
         _tripAiUiState.update {
             it.copy(showExitDialog = showExitDialog)
+        }
+    }
+
+    fun setShowCautionDialog(showCautionDialog: Boolean){
+        _tripAiUiState.update {
+            it.copy(showCautionDialog = showCautionDialog)
         }
     }
 

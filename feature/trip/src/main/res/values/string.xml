@@ -71,6 +71,10 @@
     <string name="are_you_sure_to_exit">Are you sure to exit?</string>
     <string name="exit">Exit</string>
 
+    <string name="caution">Caution</string>
+    <string name="it_could_contain_incorrect_information">It could contain incorrect information</string>
+    <string name="i_understand">I understand</string>
+
     <string name="where_are_you_going">Where are you going?</string>
     <string name="type_a_destination">Type a destination</string>
     <string name="type_city_or_country_name">Type city or country name</string>
@@ -91,7 +95,7 @@
 
     <string name="creating_trip_with_ai">Creating a trip with AI…</string>
     <string name="it_may_took_a_while">It may took a while</string>
-    <string name="it_may_contain_wrong_information">It may contain wrong information</string>
+    <string name="it_may_contain_incorrect_information">It may contain incorrect information</string>
     <string name="something_went_wrong">Something went wrong…</string>
 
     <!--tripMap/ ================================================================================-->
