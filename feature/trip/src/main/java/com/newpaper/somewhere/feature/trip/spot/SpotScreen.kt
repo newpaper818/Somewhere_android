@@ -953,7 +953,7 @@ private fun Spot1Pane(
                 setMapSize = {
                     spotMap.setMapSize(it)
                 },
-                openInGoogleMapEnabled = currentSpot?.googleMapsPlacesId != null,
+                openInGoogleMapEnabled = currentSpot?.googleMapsPlacesId != null && currentSpot.googleMapsPlacesId != "",
                 onClickOpenInGoogleMap = {
                     //open in google map
                     if (currentSpot?.googleMapsPlacesId != null){
@@ -1121,7 +1121,7 @@ private fun Spot2Panes(
                 setMapSize = {
                     spotMap.setMapSize(it)
                 },
-                openInGoogleMapEnabled = currentSpot?.googleMapsPlacesId != null,
+                openInGoogleMapEnabled = currentSpot?.googleMapsPlacesId != null && currentSpot.googleMapsPlacesId != "",
                 onClickOpenInGoogleMap = {
                     //open in google map
                     if (currentSpot?.googleMapsPlacesId != null){
