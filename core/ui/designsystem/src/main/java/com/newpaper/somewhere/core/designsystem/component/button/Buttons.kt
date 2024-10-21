@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -219,12 +220,14 @@ fun DeleteAccountButton(
 @Composable
 fun NewItemButton(
     text: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ){
     IconTextButton(
         icon = IconTextButtonIcon.add,
         text = text,
-        onClick = onClick
+        onClick = onClick,
+        modifier = modifier
     )
 }
 
@@ -292,7 +295,8 @@ fun ToPrevDateButton(
 ){
     Button(
         contentPadding = PaddingValues(8.dp, 0.dp, 20.dp, 0.dp),
-        onClick = onClick
+        onClick = onClick,
+        modifier = Modifier.offset(1.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -315,7 +319,8 @@ fun ToNextDateButton(
 ){
     Button(
         contentPadding = PaddingValues(20.dp, 0.dp, 8.dp, 0.dp),
-        onClick = onClick
+        onClick = onClick,
+        modifier = Modifier.offset((-1).dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -373,6 +378,7 @@ private fun IconTextButton(
     icon: MyIcon,
     text: String,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     enabled: Boolean = true,
     containerColor: Color = MaterialTheme.colorScheme.primary,
     textStyle: TextStyle = MaterialTheme.typography.labelLarge
@@ -384,7 +390,8 @@ private fun IconTextButton(
         ),
         contentPadding = PaddingValues(16.dp, 0.dp, 20.dp, 0.dp),
         enabled = enabled,
-        onClick = onClick
+        onClick = onClick,
+        modifier = modifier
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
