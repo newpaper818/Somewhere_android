@@ -4,19 +4,16 @@ import androidx.annotation.ColorInt
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -64,7 +61,7 @@ import com.newpaper.somewhere.core.ui.card.trip.MAX_TITLE_LENGTH
 import com.newpaper.somewhere.core.ui.ui.R
 
 val DUMMY_SPACE_HEIGHT: Dp = 10.dp
-val MIN_CARD_HEIGHT: Dp = 40.dp
+val MIN_CARD_HEIGHT: Dp = 48.dp
 val ADDITIONAL_HEIGHT: Dp = 22.dp
 val POINT_CIRCLE_SIZE: Dp = 24.dp
 val LINE_WIDTH: Dp = 7.dp
@@ -159,7 +156,7 @@ fun GraphListItem(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(IntrinsicSize.Min)
+                        .height(MIN_CARD_HEIGHT)
                         .padding(0.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
