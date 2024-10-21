@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
@@ -59,7 +60,7 @@ import com.newpaper.somewhere.core.utils.convert.getPrevSpot
 import com.newpaper.somewhere.core.utils.convert.getStartTimeText
 import java.time.LocalDate
 
-val PROGRESS_BAR_HEIGHT = 85.dp
+val PROGRESS_BAR_HEIGHT = 104.dp
 
 private enum class Shape{
     DEFAULT_POINT_NUM,
@@ -394,7 +395,7 @@ fun OneProgressBar(
         mutableIntStateOf(
             if (isHighlight && showPoint) {
                 if (useLargeItemWidth)    220
-                else                170
+                else                180
             }
             else             130
         )
@@ -410,7 +411,7 @@ fun OneProgressBar(
     itemWidth =
         if (isHighlight && showPoint) {
             if (useLargeItemWidth)    220
-            else                170
+            else                180
         }
         else             130
 
@@ -422,8 +423,7 @@ fun OneProgressBar(
         onClick = onClickItem
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             //upper text
@@ -474,11 +474,11 @@ fun OneProgressBar(
             Text(
                 text = titleText1,
                 style = animationTitleTextStyle,
-                maxLines = 1,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .padding(horizontal = 5.dp)
-                    .height(30.dp)
+                    .padding(horizontal = 8.dp)
             )
         }
     }

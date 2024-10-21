@@ -16,6 +16,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -158,7 +159,7 @@ fun GraphListItem(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(MIN_CARD_HEIGHT)
+                        .height(IntrinsicSize.Min)
                         .padding(0.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -361,7 +362,7 @@ private fun MainText(
         Text(
             text = mainText1,
             style = mainTextStyle,
-            maxLines = 1,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
     } else {
@@ -383,7 +384,7 @@ private fun MainText(
 
                 onTextChange(it)
             },
-            singleLine = true,
+            singleLine = false,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
