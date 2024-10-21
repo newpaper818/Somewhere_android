@@ -96,9 +96,9 @@
     <string name="vnd_name">베트남 동</string>
 
     <!---->
-    <string name="dialog_body_are_you_sure_to_exit">정말로 나가시겠습니까?\n저장하지 않은 데이터는 삭제됩니다</string>
-    <string name="dialog_body_delete_spot">이 장소를 삭제하시겠습니까?</string>
-    <string name="dialog_body_sign_out">로그아웃 하시겠습니까?</string>
+    <string name="dialog_body_are_you_sure_to_exit">정말로 나갈까요?\n저장하지 않은 데이터는 삭제돼요</string>
+    <string name="dialog_body_delete_spot">이 장소를 삭제할까요?</string>
+    <string name="dialog_body_sign_out">로그아웃 할까요?</string>
 
     <string name="dialog_button_delete">삭제</string>
     <string name="dialog_button_exit">나가기</string>
@@ -123,7 +123,7 @@
 
 
     <!--ErrorScreen.kt-->
-    <string name="error_occurred">오류가 발생했습니다...</string>
+    <string name="error_occurred">오류가 발생했어요...</string>
     <string name="turning_the_app_off_and_on">앱을 껐다 켜보세요</string>
 
     <!--FriendInfo.kt-->
