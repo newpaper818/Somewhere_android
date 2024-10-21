@@ -40,6 +40,7 @@ fun DeleteOrNotDialog(
                 //cancel button
                 DialogButton(
                     text = stringResource(id = R.string.button_cancel),
+                    textColor = MaterialTheme.colorScheme.onSurface,
                     onClick = onDismissRequest
                 )
 
@@ -49,7 +50,6 @@ fun DeleteOrNotDialog(
                 DialogButton(
                     text = deleteButtonText,
                     textColor = MaterialTheme.colorScheme.error,
-                    errorRipple = true,
                     onClick = onClickDelete
                 )
             }
@@ -98,6 +98,7 @@ fun DeleteOrLeaveTripDialog(
                 //cancel button
                 DialogButton(
                     text = stringResource(id = R.string.button_cancel),
+                    textColor = MaterialTheme.colorScheme.onSurface,
                     onClick = onDismissRequest
                 )
 
@@ -107,7 +108,6 @@ fun DeleteOrLeaveTripDialog(
                 DialogButton(
                     text = deleteText,
                     textColor = MaterialTheme.colorScheme.error,
-                    errorRipple = true,
                     onClick = onClickDelete,
                     enabled = internetEnabled
                 )

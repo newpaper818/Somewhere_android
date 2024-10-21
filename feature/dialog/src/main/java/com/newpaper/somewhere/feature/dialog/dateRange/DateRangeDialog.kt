@@ -108,6 +108,7 @@ fun DateRangeDialog(
                 //cancel button
                 DialogButton(
                     text = stringResource(id = R.string.button_cancel),
+                    textColor = MaterialTheme.colorScheme.onSurface,
                     onClick = onDismissRequest
                 )
 
