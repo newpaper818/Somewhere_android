@@ -90,7 +90,8 @@
     <string name="internet_unavailable">Internet unavailable</string>
 
     <string name="creating_trip_with_ai">Creating a trip with AI…</string>
-    <string name="it_mat_took_a_while">It may took a while</string>
+    <string name="it_may_took_a_while">It may took a while</string>
+    <string name="it_may_contain_wrong_information">It may contain wrong information</string>
     <string name="something_went_wrong">Something went wrong…</string>
 
     <!--tripMap/ ================================================================================-->

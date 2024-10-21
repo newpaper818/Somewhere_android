@@ -1,19 +1,31 @@
 package com.newpaper.somewhere.feature.trip.tripAi.page
 
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.button.TryAgainButton
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
+import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
+import com.newpaper.somewhere.core.designsystem.icon.createTripIcons
+import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.feature.trip.R
+import kotlinx.coroutines.delay
 
 @Composable
 internal fun CreateTripPage(
@@ -47,6 +59,43 @@ internal fun CreateTripPage(
 private fun CreatingTrip(
 
 ){
+    val iconPagerState = rememberPagerState(
+        pageCount = { createTripIcons.size }
+    )
+
+    LaunchedEffect(Unit) {
+        delay(500)
+        while(true) {
+            val to = (iconPagerState.currentPage + 1) % createTripIcons.size
+
+            if (to == 0) {
+                delay(500)
+                iconPagerState.scrollToPage(
+                    page = to
+                )
+            }
+            else {
+                if (to == 1)    delay(500)
+                else            delay(1000)
+
+                iconPagerState.animateScrollToPage(
+                    page = to,
+                    animationSpec = spring()
+                )
+            }
+        }
+    }
+
+    HorizontalPager(
+        state = iconPagerState,
+        userScrollEnabled = false,
+        modifier = Modifier.size(40.dp)
+    ) {
+        DisplayIcon(icon = createTripIcons[it])
+    }
+
+    MySpacerColumn(height = 16.dp)
+    
     Text(
         text = stringResource(id = R.string.creating_trip_with_ai),
         style = MaterialTheme.typography.displayLarge.copy(
@@ -54,10 +103,17 @@ private fun CreatingTrip(
         )
     )
 
-    MySpacerColumn(height = 8.dp)
+    MySpacerColumn(height = 12.dp)
 
     Text(
-        text = stringResource(id = R.string.it_mat_took_a_while),
+        text = stringResource(id = R.string.it_may_took_a_while),
+        style = MaterialTheme.typography.bodyMedium
+    )
+
+    MySpacerColumn(height = 4.dp)
+
+    Text(
+        text = stringResource(id = R.string.it_may_contain_wrong_information),
         style = MaterialTheme.typography.bodyMedium
     )
 }
@@ -78,4 +134,23 @@ private fun Error(
         enabled = internetEnabled,
         onClick = onClickTryAgain
     )
+}
+
+@Composable
+@PreviewLightDark
+private fun CreateTripPagePreview() {
+    SomewhereTheme {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp)
+        ) {
+            CreateTripPage(
+                internetEnabled = true,
+                createTripError = false,
+                onClickTryAgain = {}
+            )
+        }
+    }
 }
