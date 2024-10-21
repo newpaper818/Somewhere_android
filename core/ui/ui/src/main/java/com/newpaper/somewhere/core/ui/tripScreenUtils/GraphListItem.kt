@@ -16,6 +16,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -158,7 +159,7 @@ fun GraphListItem(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(MIN_CARD_HEIGHT)
+                        .height(IntrinsicSize.Min)
                         .padding(0.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -361,7 +362,7 @@ private fun MainText(
         Text(
             text = mainText1,
             style = mainTextStyle,
-            maxLines = 1,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
     } else {
@@ -383,7 +384,7 @@ private fun MainText(
 
                 onTextChange(it)
             },
-            singleLine = true,
+            singleLine = false,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
@@ -403,54 +404,60 @@ private fun Icons(
     onClickDelete: () -> Unit,
     onClickExpanded: () -> Unit
 ){
-    //delete icon
-    AnimatedVisibility(
-        visible = isEditMode && deleteEnabled,
-        enter = scaleIn(tween(300)),
-        exit = scaleOut(tween(400)) + fadeOut(tween(300))
+    Box(
+        contentAlignment = Alignment.TopEnd
     ) {
-        MyPlainTooltipBox(tooltipText = stringResource(id = MyIcons.deleteSpot.descriptionTextId!!)) {
-            IconButton(onClick = onClickDelete) {
-                DisplayIcon(
-                    icon = MyIcons.deleteSpot
-                )
+        Row {
+            //delete icon
+            AnimatedVisibility(
+                visible = isEditMode && deleteEnabled,
+                enter = scaleIn(tween(300)),
+                exit = scaleOut(tween(400)) + fadeOut(tween(300))
+            ) {
+                MyPlainTooltipBox(tooltipText = stringResource(id = MyIcons.deleteSpot.descriptionTextId!!)) {
+                    IconButton(onClick = onClickDelete) {
+                        DisplayIcon(
+                            icon = MyIcons.deleteSpot
+                        )
+                    }
+                }
+            }
+
+            //drag handle
+            AnimatedVisibility(
+                visible = isEditMode && dragEnabled,
+                enter = scaleIn(tween(300)),
+                exit = scaleOut(tween(400)) + fadeOut(tween(300))
+            ) {
+                IconButton(
+                    modifier = dragHandleModifier,
+
+                    //disable touch ripple effect
+                    enabled = false,
+                    onClick = { }
+                ) {
+                    DisplayIcon(MyIcons.dragHandle)
+                }
             }
         }
-    }
 
-    //drag handle
-    AnimatedVisibility(
-        visible = isEditMode && dragEnabled,
-        enter = scaleIn(tween(300)),
-        exit = scaleOut(tween(400)) + fadeOut(tween(300))
-    ) {
-        IconButton(
-            modifier = dragHandleModifier,
-
-            //disable touch ripple effect
-            enabled = false,
-            onClick = {  }
+        //expand / collapse icon
+        AnimatedVisibility(
+            visible = !isEditMode,
+            enter = scaleIn(tween(300)),
+            exit = scaleOut(tween(400)) + fadeOut(tween(300))
         ) {
-            DisplayIcon(MyIcons.dragHandle)
-        }
-    }
-
-    //expand / collapse icon
-    AnimatedVisibility(
-        visible = !isEditMode,
-        enter = expandHorizontally(tween(400)),
-        exit = shrinkHorizontally(tween(300))
-    ) {
-        if (!expandedTextIsNull) {
-            MyPlainTooltipBox(
-                tooltipText = if (!isExpanded) stringResource(id = MyIcons.expand.descriptionTextId!!)
-                                else stringResource(id = MyIcons.collapse.descriptionTextId!!)
-            ) {
-                IconButton(onClick = onClickExpanded) {
-                    if (!isExpanded)
-                        DisplayIcon(icon = MyIcons.expand)
-                    else
-                        DisplayIcon(icon = MyIcons.collapse)
+            if (!expandedTextIsNull) {
+                MyPlainTooltipBox(
+                    tooltipText = if (!isExpanded) stringResource(id = MyIcons.expand.descriptionTextId!!)
+                    else stringResource(id = MyIcons.collapse.descriptionTextId!!)
+                ) {
+                    IconButton(onClick = onClickExpanded) {
+                        if (!isExpanded)
+                            DisplayIcon(icon = MyIcons.expand)
+                        else
+                            DisplayIcon(icon = MyIcons.collapse)
+                    }
                 }
             }
         }
