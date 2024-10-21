@@ -28,6 +28,7 @@ import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
+import com.newpaper.somewhere.feature.dialog.simpleDialog.SimpleDialog
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.tripAi.component.PrevNextButtons
@@ -38,7 +39,6 @@ import com.newpaper.somewhere.feature.trip.tripAi.page.EnterTripCityPage
 import com.newpaper.somewhere.feature.trip.tripAi.page.EnterTripDurationPage
 import com.newpaper.somewhere.feature.trip.tripAi.page.SelectTripTypePage
 import com.newpaper.somewhere.feature.trip.tripAi.page.SelectTripWithPage
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -58,7 +58,7 @@ fun TripAiRoute(
 
     val tripAiUiState by tripAiViewModel.tripAiUiState.collectAsState()
 
-    if (tripAiUiState.showExitDialog){
+    if (tripAiUiState.showExitDialog) {
         DeleteOrNotDialog(
             bodyText = stringResource(id = R.string.are_you_sure_to_exit),
             deleteButtonText = stringResource(id = R.string.exit),
@@ -134,7 +134,8 @@ fun TripAiRoute(
 
         setCreateTripError = tripAiViewModel::setCreateTripError,
 
-        setShowExitDialog = tripAiViewModel::setShowExitDialog
+        setShowExitDialog = tripAiViewModel::setShowExitDialog,
+        setShowCautionDialog = tripAiViewModel::setShowCautionDialog,
     )
 }
 
@@ -154,7 +155,8 @@ fun TripAiScreen(
 
     setCreateTripError: (Boolean) -> Unit,
 
-    setShowExitDialog: (Boolean) -> Unit
+    setShowExitDialog: (Boolean) -> Unit,
+    setShowCautionDialog: (Boolean) -> Unit
 ){
     val coroutineScope = rememberCoroutineScope()
 
@@ -175,6 +177,25 @@ fun TripAiScreen(
 
     LaunchedEffect(pagerState.currentPage) {
         setPhase(tripAiPhaseList[pagerState.currentPage])
+    }
+
+    if (tripAiUiState.showCautionDialog){
+        SimpleDialog(
+            titleText = stringResource(id = R.string.caution),
+            bodyText = stringResource(id = R.string.it_could_contain_incorrect_information),
+            positiveButtonText = stringResource(id = R.string.i_understand),
+            onDismissRequest = {
+                setShowCautionDialog(false)
+            },
+            onClickPositive = {
+                setShowCautionDialog(false)
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(
+                        pagerState.currentPage + 1
+                    )
+                }
+            }
+        )
     }
 
     Scaffold (
@@ -297,14 +318,19 @@ fun TripAiScreen(
                             TripAiPhase.TRIP_TYPE ->
                                 tripAiUiState.tripTypes.isNotEmpty() && internetEnabled
 
-                            TripAiPhase.CREATE_TRIP -> true
+                            TripAiPhase.CREATE_TRIP -> false
                         },
                     onClickNext = {
-                        focusManager.clearFocus()
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(
-                                pagerState.currentPage + 1
-                            )
+                        if (tripAiUiState.tripAiPhase == TripAiPhase.TRIP_TYPE){
+                            setShowCautionDialog(true)
+                        }
+                        else{
+                            focusManager.clearFocus()
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(
+                                    pagerState.currentPage + 1
+                                )
+                            }
                         }
                     }
                 )

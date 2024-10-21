@@ -113,7 +113,7 @@ private fun CreatingTrip(
     MySpacerColumn(height = 4.dp)
 
     Text(
-        text = stringResource(id = R.string.it_may_contain_wrong_information),
+        text = stringResource(id = R.string.it_may_contain_incorrect_information),
         style = MaterialTheme.typography.bodyMedium
     )
 }
