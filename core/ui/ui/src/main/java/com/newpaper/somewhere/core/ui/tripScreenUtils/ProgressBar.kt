@@ -6,12 +6,12 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -45,6 +45,7 @@ import com.newpaper.somewhere.core.designsystem.component.button.NewItemButton
 import com.newpaper.somewhere.core.designsystem.component.button.ToNextDateButton
 import com.newpaper.somewhere.core.designsystem.component.button.ToPrevDateButton
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
+import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.ProgressBarColor
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
@@ -163,10 +164,11 @@ fun SpotListProgressBar(
                 MySpacerRow(width = spacerValue)
 
                 Column(
-                    modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
-                    verticalArrangement = Arrangement.Center
+                    modifier = Modifier.height(PROGRESS_BAR_HEIGHT)
                 ) {
-                    ToPrevDateButton(
+                    MySpacerColumn(height = 18.5.dp)
+
+                    ToPrevDateButton( //height: 40.dp
                         text = dateList[dateIndex - 1].getDateText(dateTimeFormat, false),
                         onClick = { onPrevDateClick(dateIndex - 1) }
                     )
@@ -182,9 +184,10 @@ fun SpotListProgressBar(
                     spotList[0].getPrevSpot(dateList, dateIndex)?.spotType?.isMove() ?: false
 
                 Column(
-                    modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
-                    verticalArrangement = Arrangement.Center
+                    modifier = Modifier.height(PROGRESS_BAR_HEIGHT)
                 ) {
+                    MySpacerColumn(height = 30.dp)
+
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
@@ -240,9 +243,10 @@ fun SpotListProgressBar(
                 val nextSpotSpotTypeIsMove = spotList[lastSpotIdx].getNextSpot(dateList, dateIndex)?.spotType?.isMove() ?: false
 
                 Column(
-                    modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
-                    verticalArrangement = Arrangement.Center
+                    modifier = Modifier.height(PROGRESS_BAR_HEIGHT)
                 ) {
+                    MySpacerColumn(height = 30.dp)
+
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
@@ -266,13 +270,15 @@ fun SpotListProgressBar(
                     MySpacerRow(width = 32.dp)
 
                 Column(
-                    modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
-                    verticalArrangement = Arrangement.Center
+                    modifier = Modifier.height(PROGRESS_BAR_HEIGHT)
                 ) {
+                    MySpacerColumn(height = 18.5.dp)
 
-                    NewItemButton(text = stringResource(id = R.string.new_spot), onClick = {
-                        addNewSpot()
-                    })
+                    NewItemButton(
+                        text = stringResource(id = R.string.new_spot),
+                        onClick = { addNewSpot() },
+                        modifier = Modifier.offset((-1).dp)
+                    )
                 }
 
                 MySpacerRow(width = spacerValue)
@@ -286,9 +292,10 @@ fun SpotListProgressBar(
                     MySpacerRow(width = 32.dp)
 
                 Column(
-                    modifier = Modifier.height(PROGRESS_BAR_HEIGHT),
-                    verticalArrangement = Arrangement.Center
+                    modifier = Modifier.height(PROGRESS_BAR_HEIGHT)
                 ) {
+                    MySpacerColumn(height = 18.5.dp)
+
                     ToNextDateButton(
                         text = dateList[dateIndex + 1].getDateText(dateTimeFormat, false),
                         onClick = { onNextDateClick(dateIndex + 1) }
