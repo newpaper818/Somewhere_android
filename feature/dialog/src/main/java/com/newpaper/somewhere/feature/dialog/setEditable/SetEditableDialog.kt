@@ -2,6 +2,7 @@ package com.newpaper.somewhere.feature.dialog.setEditable
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -62,6 +63,7 @@ fun SetEditableDialog(
                 //cancel button
                 DialogButton(
                     text = stringResource(id = R.string.button_cancel),
+                    textColor = MaterialTheme.colorScheme.onSurface,
                     onClick = onDismissRequest
                 )
 

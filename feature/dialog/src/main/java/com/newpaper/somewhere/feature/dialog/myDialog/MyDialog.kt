@@ -185,36 +185,18 @@ internal fun DialogButton(
     onClick: () -> Unit,
 
     modifier: Modifier = Modifier,
-    textColor: Color? = null,
-    errorRipple: Boolean = false,
+    textColor: Color = MaterialTheme.colorScheme.primary,
     enabled: Boolean = true
 ){
-    val textStyle = if (enabled){
-        if (textColor != null) MaterialTheme.typography.labelMedium.copy(color = textColor, fontWeight = FontWeight.Bold)
-        else                    MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
-    }
-    else                        MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
+    val textStyle =
+        if (enabled) MaterialTheme.typography.labelLarge.copy(color = textColor, fontWeight = FontWeight.Bold)
+        else MaterialTheme.typography.labelLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
 
-    val redRippleConfiguration = RippleConfiguration(
-        color = MaterialTheme.colorScheme.error
+    val rippleConfiguration = RippleConfiguration(
+        color = textColor
     )
 
-    if (errorRipple) {
-        CompositionLocalProvider(LocalRippleConfiguration provides redRippleConfiguration) {
-            TextButton(
-                onClick = onClick,
-                enabled = enabled,
-                modifier = modifier.widthIn(min = 120.dp),
-            ) {
-                Text(
-                    text = text,
-                    style = textStyle,
-                    modifier = Modifier.padding(10.dp, 0.dp)
-                )
-            }
-        }
-    }
-    else {
+    CompositionLocalProvider(LocalRippleConfiguration provides rippleConfiguration) {
         TextButton(
             onClick = onClick,
             enabled = enabled,
@@ -274,7 +256,8 @@ private fun MyDialogPreview(){
                     Row {
                         //cancel button
                         DialogButton(
-                            text = "cancel",
+                            text = "Cancel",
+                            textColor = MaterialTheme.colorScheme.onSurface,
                             onClick = {}
                         )
 

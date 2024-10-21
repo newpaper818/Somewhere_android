@@ -1,6 +1,7 @@
 package com.newpaper.somewhere.feature.dialog.simpleDialog
 
 import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -36,6 +37,7 @@ fun SimpleDialog(
                 //cancel button
                 DialogButton(
                     text = stringResource(id = R.string.button_cancel),
+                    textColor = MaterialTheme.colorScheme.onSurface,
                     onClick = onDismissRequest
                 )
 
