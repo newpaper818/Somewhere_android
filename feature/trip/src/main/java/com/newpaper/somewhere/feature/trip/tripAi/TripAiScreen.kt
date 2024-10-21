@@ -38,6 +38,7 @@ import com.newpaper.somewhere.feature.trip.tripAi.page.EnterTripCityPage
 import com.newpaper.somewhere.feature.trip.tripAi.page.EnterTripDurationPage
 import com.newpaper.somewhere.feature.trip.tripAi.page.SelectTripTypePage
 import com.newpaper.somewhere.feature.trip.tripAi.page.SelectTripWithPage
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 

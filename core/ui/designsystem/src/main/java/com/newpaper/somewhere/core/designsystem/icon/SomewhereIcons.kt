@@ -14,6 +14,7 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.rounded.AccessTime
 import androidx.compose.material.icons.rounded.AccountBalance
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.BeachAccess
 import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material.icons.rounded.Bookmarks
 import androidx.compose.material.icons.rounded.CalendarMonth
@@ -34,8 +35,11 @@ import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FileDownload
 import androidx.compose.material.icons.rounded.FlashOff
 import androidx.compose.material.icons.rounded.FlashOn
+import androidx.compose.material.icons.rounded.Flight
 import androidx.compose.material.icons.rounded.Fullscreen
 import androidx.compose.material.icons.rounded.Group
+import androidx.compose.material.icons.rounded.Hiking
+import androidx.compose.material.icons.rounded.Hotel
 import androidx.compose.material.icons.rounded.Image
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
@@ -56,6 +60,7 @@ import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material.icons.rounded.People
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.PersonAdd
+import androidx.compose.material.icons.rounded.Public
 import androidx.compose.material.icons.rounded.QrCode
 import androidx.compose.material.icons.rounded.QrCodeScanner
 import androidx.compose.material.icons.rounded.Remove
@@ -63,6 +68,7 @@ import androidx.compose.material.icons.rounded.Route
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.ShoppingBag
+import androidx.compose.material.icons.rounded.Train
 import androidx.compose.material.icons.rounded.TravelExplore
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.ui.graphics.Color
@@ -159,6 +165,21 @@ object TripTypeIcon {
     val greatFood = MyIcon(Icons.Rounded.LunchDining,           22.dp, false, null, null)
     val shopping = MyIcon(Icons.Rounded.ShoppingBag,            22.dp, false, null, null)
 }
+
+val createTripIcons = listOf(
+    MyIcon(Icons.Rounded.Luggage,       40.dp, false, null, null),
+    MyIcon(Icons.Rounded.Flight,        40.dp, false, null, null),
+    MyIcon(Icons.Rounded.Public,        40.dp, false, null, null),
+    MyIcon(Icons.Rounded.Hotel,         40.dp, false, null, null),
+    MyIcon(Icons.Rounded.BeachAccess,   40.dp, false, null, null),
+    MyIcon(Icons.Rounded.Hiking,        40.dp, false, null, null),
+    MyIcon(Icons.Rounded.Train,         40.dp, false, null, null),
+    MyIcon(Icons.Rounded.Map,           40.dp, false, null, null),
+    MyIcon(Icons.Rounded.LunchDining,   40.dp, false, null, null),
+
+    MyIcon(Icons.Rounded.Luggage,       40.dp, false, null, null),
+)
+
 
 object MyIcons {
 
