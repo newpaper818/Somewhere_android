@@ -174,7 +174,7 @@ class MainActivity : ComponentActivity() {
     private fun initializeFirebase(){
         //firebase
         Log.d(MAIN_ACTIVITY_TAG, "+init firebase start")
-        FirebaseApp.initializeApp(applicationContext)
+
         Firebase.initialize(applicationContext)
 //        Log.d(MAIN_ACTIVITY_TAG, "                              init firebase done")
 
@@ -184,8 +184,11 @@ class MainActivity : ComponentActivity() {
             if (BuildConfig.DEBUG || "a" in BuildConfig.VERSION_NAME)
                 DebugAppCheckProviderFactory.getInstance()
             else
-                PlayIntegrityAppCheckProviderFactory.getInstance(),
+                PlayIntegrityAppCheckProviderFactory.getInstance()
         )
+
+        FirebaseApp.initializeApp(applicationContext)
+
         Log.d(MAIN_ACTIVITY_TAG, "                              +init firebase app check done")
     }
 
