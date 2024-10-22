@@ -52,11 +52,22 @@ fun TripAiRoute(
     navigateToAiCreatedTrip: (Trip) -> Unit,
     tripAiViewModel: TripAiViewModel = hiltViewModel()
 ){
-    BackHandler {
-        tripAiViewModel.setShowExitDialog(true)
+    val tripAiUiState by tripAiViewModel.tripAiUiState.collectAsState()
+
+    val onClickBack = {
+        //if user enter nothing, navigate back
+        if (tripAiUiState.tripAiPhase == TripAiPhase.TRIP_TO
+            && tripAiUiState.tripTo == null
+            || tripAiUiState.tripTo == "")
+            navigateUp()
+        //else, ask to exit
+        else
+            tripAiViewModel.setShowExitDialog(true)
     }
 
-    val tripAiUiState by tripAiViewModel.tripAiUiState.collectAsState()
+    BackHandler {
+        onClickBack()
+    }
 
     if (tripAiUiState.showExitDialog) {
         DeleteOrNotDialog(
@@ -123,6 +134,7 @@ fun TripAiRoute(
         internetEnabled = internetEnabled,
         dateTimeFormat = dateTimeFormat,
         tripAiUiState = tripAiUiState,
+        onClickBack = onClickBack,
 
         setPhase = tripAiViewModel::setPhase,
 
@@ -134,7 +146,6 @@ fun TripAiRoute(
 
         setCreateTripError = tripAiViewModel::setCreateTripError,
 
-        setShowExitDialog = tripAiViewModel::setShowExitDialog,
         setShowCautionDialog = tripAiViewModel::setShowCautionDialog,
     )
 }
@@ -144,6 +155,7 @@ fun TripAiScreen(
     internetEnabled: Boolean,
     dateTimeFormat: DateTimeFormat,
     tripAiUiState: TripAiUiState,
+    onClickBack: () -> Unit,
 
     setPhase: (TripAiPhase) -> Unit,
 
@@ -155,7 +167,6 @@ fun TripAiScreen(
 
     setCreateTripError: (Boolean) -> Unit,
 
-    setShowExitDialog: (Boolean) -> Unit,
     setShowCautionDialog: (Boolean) -> Unit
 ){
     val coroutineScope = rememberCoroutineScope()
@@ -200,12 +211,7 @@ fun TripAiScreen(
             SomewhereTopAppBar(
                 title = "",
                 navigationIcon = TopAppBarIcon.close,
-                onClickNavigationIcon = {
-                    //are you sure? dialog
-                    setShowExitDialog(true)
-
-                    //navigate up
-                }
+                onClickNavigationIcon = { onClickBack() }
             )
         }
     ) { paddingValues ->
