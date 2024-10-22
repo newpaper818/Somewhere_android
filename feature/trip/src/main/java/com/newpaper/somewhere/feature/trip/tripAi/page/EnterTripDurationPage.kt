@@ -63,12 +63,20 @@ internal fun EnterTripDurationPage(
         else null
 
     //set start, end date
-    LaunchedEffect(startDate) {
-        setStartDate(startDate)
+    LaunchedEffect(dateRangePickerState.selectedStartDateMillis) {
+        setStartDate(
+            if (dateRangePickerState.selectedStartDateMillis != null)
+                millisToLocalDate(dateRangePickerState.selectedStartDateMillis!!)
+            else null
+        )
     }
 
-    LaunchedEffect(endDate) {
-        setEndDate(endDate)
+    LaunchedEffect(dateRangePickerState.selectedEndDateMillis) {
+        setEndDate(
+            if (dateRangePickerState.selectedEndDateMillis != null)
+                millisToLocalDate(dateRangePickerState.selectedEndDateMillis!!)
+            else null
+        )
     }
 
     TripAiPage(
@@ -90,9 +98,9 @@ internal fun EnterTripDurationPage(
 
                 ErrorMessage(
                     visible =
-                    startDate != null
-                            && endDate != null
-                            && startDate.plusDays(15) <= endDate,
+                        startDate != null
+                        && endDate != null
+                        && startDate.plusDays(15) <= endDate,
                     text = stringResource(id = R.string.date_range_error),
                 )
             }
