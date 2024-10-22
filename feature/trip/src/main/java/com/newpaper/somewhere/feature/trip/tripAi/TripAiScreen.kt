@@ -162,18 +162,11 @@ fun TripAiScreen(
 
     val tripAiPhaseList = enumValues<TripAiPhase>()
     val pagerState = rememberPagerState(
+        initialPage = tripAiUiState.tripAiPhase.ordinal,
         pageCount = { tripAiPhaseList.size }
     )
 
     val focusManager = LocalFocusManager.current
-
-    LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            pagerState.animateScrollToPage(
-                tripAiUiState.tripAiPhase.ordinal
-            )
-        }
-    }
 
     LaunchedEffect(pagerState.currentPage) {
         setPhase(tripAiPhaseList[pagerState.currentPage])
