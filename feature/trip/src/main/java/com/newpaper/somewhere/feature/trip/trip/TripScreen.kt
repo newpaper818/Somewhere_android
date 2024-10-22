@@ -34,6 +34,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -356,7 +357,13 @@ private fun TripScreen(
         else tripData.originalTrip
 
     val enabledDateList = showingTrip.dateList.filter { it.enabled }
-    val isFirstLoading by rememberSaveable { mutableStateOf(enabledDateList.isEmpty()) }
+    var enabledDateListIsEmpty by rememberSaveable { mutableStateOf(true) }
+
+    LaunchedEffect(enabledDateList.isEmpty()) {
+        delay(100)
+        enabledDateListIsEmpty = enabledDateList.isEmpty()
+    }
+
     val focusManager = LocalFocusManager.current
     val scrollState = rememberLazyListState()
     val snackBarHostState = remember { SnackbarHostState() }
@@ -729,7 +736,7 @@ private fun TripScreen(
                         val slideState = slideStates[date.id] ?: SlideState.NONE
 
                         AnimatedVisibility(
-                            visible = !loadingTrip || !isFirstLoading,
+                            visible = !loadingTrip || !enabledDateListIsEmpty,
                             enter =  expandVertically(tween(500)),
                             exit = shrinkVertically(tween(500))
                         ) {
