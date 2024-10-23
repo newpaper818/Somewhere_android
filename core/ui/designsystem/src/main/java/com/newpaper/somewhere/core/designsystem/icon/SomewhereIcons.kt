@@ -146,8 +146,8 @@ object MapButtonIcon {
 }
 
 object SelectSwitchIcon {
-    val viewOnly = MyIcon(Icons.Rounded.Visibility,     24.dp, false, null, R.string.view_only)
-    val allowEdit = MyIcon(Icons.Rounded.Edit,          24.dp, false, null, R.string.allow_edit)
+    val viewOnly = MyIcon(Icons.Rounded.Visibility,     24.dp, false, null, null)
+    val allowEdit = MyIcon(Icons.Rounded.Edit,          24.dp, false, null, null)
 }
 
 object TripWithIcon {
