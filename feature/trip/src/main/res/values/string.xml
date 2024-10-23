@@ -70,6 +70,9 @@
     <!--tripAi/ ================================================================================-->
     <string name="are_you_sure_to_exit">Are you sure to exit?</string>
     <string name="exit">Exit</string>
+    <string name="select">Select</string>
+    <string name="selected">Selected</string>
+    <string name="unselected">Unselected</string>
 
     <string name="caution">Caution</string>
     <string name="it_could_contain_incorrect_information">It could contain incorrect information</string>
