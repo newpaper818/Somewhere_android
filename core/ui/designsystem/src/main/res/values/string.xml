@@ -53,7 +53,7 @@
 
     <!--component/utils/ ========================================================================-->
     <!-- MySegmentedButtons.kt -->
-    <string name="select">Select</string>
+    <string name="select">select</string>
     <string name="selected">Selected</string>
     <string name="unselected">Unselected</string>
 
