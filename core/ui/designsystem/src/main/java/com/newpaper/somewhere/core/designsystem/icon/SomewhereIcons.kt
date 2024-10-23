@@ -110,7 +110,7 @@ object TopAppBarIcon {
 }
 
 object IconTextButtonIcon {
-    val qrCode = MyIcon(Icons.Rounded.QrCode,                 24.dp, false, null, R.string.qr_code)
+    val qrCode = MyIcon(Icons.Rounded.QrCode,                 24.dp, false, null, null)
     val add = MyIcon(Icons.Rounded.Add,                       24.dp, false, null, R.string.add)
     val delete = MyIcon(Icons.Rounded.Delete,                 24.dp, false, null, R.string.delete)
     val leftArrow = MyIcon(Icons.Rounded.KeyboardArrowLeft,   30.dp, false, null, R.string.previous_date)
@@ -197,8 +197,8 @@ object MyIcons {
     val noSpot = MyIcon(Icons.Rounded.LocationOff,    40.dp, true, null, R.string.no_spot)
 
     //edit profile
-    val changeProfileImage = MyIcon(Icons.Rounded.Image,    24.dp, false, null, R.string.change_profile_image)
-    val deleteProfileImage = MyIcon(Icons.Rounded.Delete,   24.dp, false, null, R.string.delete_profile_image)
+    val changeProfileImage = MyIcon(Icons.Rounded.Image,    24.dp, false, null, null)
+    val deleteProfileImage = MyIcon(Icons.Rounded.Delete,   24.dp, false, null, null)
 
     //image card
     val deleteImage = MyIcon(Icons.Rounded.Close,       16.dp, false, null, R.string.delete_image)
@@ -232,7 +232,7 @@ object MyIcons {
     val allowEdit = MyIcon(Icons.Rounded.Edit,          24.dp, true, null, R.string.allow_edit)
 
     //invite friend
-    val qrCode = MyIcon(Icons.Rounded.QrCodeScanner,    40.dp, false, null, R.string.qr_code)
+    val qrCode = MyIcon(Icons.Rounded.QrCodeScanner,    40.dp, false, null, null)
     val flashOn = MyIcon(Icons.Rounded.FlashOn,         22.dp, false, null, R.string.flash_on)
     val flashOff = MyIcon(Icons.Rounded.FlashOff,       22.dp, false, null, R.string.flash_off)
 
@@ -244,8 +244,8 @@ object MyIcons {
     val rightArrowToSmall = MyIcon(Icons.Rounded.East,  18.dp, true, null, R.string.to)
 
     //trip creation options dialog
-    val manual = MyIcon(Icons.Rounded.Edit,    26.dp, false, null, R.string.manual)
-    val ai = MyIcon(Icons.Rounded.Bolt,         26.dp, false, null, R.string.ai)
+    val manual = MyIcon(Icons.Rounded.Edit,    26.dp, false, null, null)
+    val ai = MyIcon(Icons.Rounded.Bolt,         26.dp, false, null, null)
 
     //set time dialog
     val switchToTextInput = MyIcon(Icons.Outlined.Keyboard,   22.dp, true, null, R.string.switch_to_keyboard_input)

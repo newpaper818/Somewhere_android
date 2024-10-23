@@ -105,8 +105,6 @@
     <string name="no_trips">여행 없음</string>
     <string name="no_plan">계획 없음</string>
     <string name="no_spot">장소 없음</string>
-    <string name="change_profile_image">프로필 사진 변경</string>
-    <string name="delete_profile_image">프로필 사진 삭제</string>
     <string name="delete_image">사진 삭제</string>
     <string name="search_location">위치 검색</string>
     <string name="search_friend">친구 검색</string>
@@ -120,14 +118,11 @@
     <string name="clickable_item">메뉴</string>
     <string name="set_color">색 설정</string>
     <string name="selected_color">선택된 색</string>
-    <string name="qr_code">QR 코드</string>
     <string name="flash_on">플래시 켜짐</string>
     <string name="flash_off">플래시 꺼짐</string>
     <string name="date">날짜</string>
     <string name="time">시간</string>
     <string name="to">으로</string>
-    <string name="manual">수기 입력</string>
-    <string name="ai">AI</string>
     <string name="switch_to_keyboard_input">키보드 입력으로 변경</string>
     <string name="switch_to_touch_input">터치 입력으로 변경</string>
     <string name="category">종류</string>
