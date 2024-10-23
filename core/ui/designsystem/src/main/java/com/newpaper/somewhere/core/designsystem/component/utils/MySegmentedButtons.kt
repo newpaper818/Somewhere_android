@@ -37,6 +37,9 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -44,6 +47,7 @@ import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcon
 import com.newpaper.somewhere.core.designsystem.icon.SelectSwitchIcon
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
+import com.newpaper.somewhere.core.ui.designsystem.R
 
 data class SegmentedButtonItem(
     val icon: MyIcon? = null,
@@ -146,11 +150,19 @@ private fun MySegmentedButtonItem(
 
     val haptic = LocalHapticFeedback.current
 
+    val selected = stringResource(id = R.string.selected)
+    val unselected = stringResource(id = R.string.unselected)
+
     CompositionLocalProvider(LocalRippleConfiguration provides noRippleConfiguration) {
         Box(
             modifier = modifier
                 .clip(RoundedCornerShape(10.dp))
-                .clickable {
+                .semantics {
+                    stateDescription = if (isSelected) selected else unselected
+                }
+                .clickable(
+                    onClickLabel = stringResource(id = R.string.select)
+                ) {
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     segmentedButtonItem.onClick()
                 }

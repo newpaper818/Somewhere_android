@@ -51,6 +51,13 @@
     <string name="internet_unavailable">Internet unavailable</string>
 
 
+    <!--component/utils/ ========================================================================-->
+    <!-- MySegmentedButtons.kt -->
+    <string name="select">Select</string>
+    <string name="selected">Selected</string>
+    <string name="unselected">Unselected</string>
+
+
     <!--component/ ==============================================================================-->
     <!-- Image.kt -->
     <string name="image_loading_error">Image loading error</string>
