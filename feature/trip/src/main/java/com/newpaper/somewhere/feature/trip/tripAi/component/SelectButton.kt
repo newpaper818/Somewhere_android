@@ -15,10 +15,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcon
+import com.newpaper.somewhere.feature.trip.R
 
 @Composable
 internal fun SelectButton(
@@ -27,6 +32,9 @@ internal fun SelectButton(
     isSelected: Boolean,
     onClick: () -> Unit
 ){
+    val selected = stringResource(id = R.string.selected)
+    val unSelected = stringResource(id = R.string.unselected)
+
     val buttonModifier = Modifier
         .widthIn(min = 260.dp)
         .clip(CircleShape)
@@ -41,7 +49,13 @@ internal fun SelectButton(
             else Color.Transparent,
             shape = CircleShape
         )
-        .clickable { onClick() }
+        .semantics {
+            stateDescription = if (isSelected) selected
+                                else unSelected
+        }
+        .clickable(
+            onClickLabel = stringResource(id = R.string.select),
+        ) { onClick() }
 
     Box(
         modifier = buttonModifier
