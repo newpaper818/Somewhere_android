@@ -5,7 +5,7 @@ import com.google.android.gms.maps.model.LatLng
 
 //value.kt
 
-const val PRIVACY_POLICY_URL = "https://newpaper818.github.io/Somewhere_privacy_policy/"
+const val PRIVACY_POLICY_URL = "https://lily-trouser-5da.notion.site/Somewhere-12808d9ba98480c8b668cbd398631ae7?pvs=4"
 
 const val FEEDBACK_URL = "https://forms.gle/2UqNgmLqPdECiSb17"
 const val BUG_REPORT_URL = "https://forms.gle/5XZSxD6xPuLAeXah7"
