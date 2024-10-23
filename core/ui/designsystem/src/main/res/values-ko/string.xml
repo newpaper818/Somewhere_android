@@ -51,6 +51,13 @@
     <string name="internet_unavailable">인터넷 연결 없음</string>
 
 
+    <!--component/utils/ ========================================================================-->
+    <!-- MySegmentedButtons.kt -->
+    <string name="select">선택</string>
+    <string name="selected">선택됨</string>
+    <string name="unselected">선택되지 않음</string>
+
+
     <!--component/ ==============================================================================-->
     <!-- Image.kt -->
     <string name="image_loading_error">이미지 로딩 에러</string>
