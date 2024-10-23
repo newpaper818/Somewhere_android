@@ -19,10 +19,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
+import com.newpaper.somewhere.core.ui.ui.R
 import com.newpaper.somewhere.core.utils.listItemHeight
 
 @Composable
@@ -32,6 +40,9 @@ fun ItemWithSwitch(
     onCheckedChange: (checked: Boolean) -> Unit
 ){
     val haptic = LocalHapticFeedback.current
+    val toggle = stringResource(id = R.string.toggle)
+    val on = stringResource(id = R.string.on)
+    val off = stringResource(id = R.string.off)
 
     ClickableBox(
         onClick = {
@@ -41,6 +52,17 @@ fun ItemWithSwitch(
         modifier = Modifier
             .fillMaxWidth()
             .height(listItemHeight)
+            .semantics {
+                role = Role.Switch
+                stateDescription = if (checked) on else off
+                onClick(
+                    label = toggle,
+                    action = {
+                        onCheckedChange(!checked)
+                        true
+                    }
+                )
+            }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -60,7 +82,8 @@ fun ItemWithSwitch(
                 onCheckedChange = {
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     onCheckedChange(it)
-                }
+                },
+                modifier = Modifier.clearAndSetSemantics {  }
             )
         }
     }
@@ -70,8 +93,10 @@ fun ItemWithSwitch(
 private fun MySwitch(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Switch(
+        modifier = modifier,
         checked = checked,
         onCheckedChange = onCheckedChange,
         colors = SwitchDefaults.colors(
