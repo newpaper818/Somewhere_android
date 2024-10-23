@@ -105,6 +105,11 @@
 
 
     <!--item/ ===================================================================================-->
+    <!--ItemWithRadioButton.kt-->
+    <string name="selected">Selected</string>
+    <string name="not_selected">Not selected</string>
+    <string name="select">select</string>
+
     <!--ItemWithSwitch.kt-->
     <string name="on">On</string>
     <string name="off">Off</string>

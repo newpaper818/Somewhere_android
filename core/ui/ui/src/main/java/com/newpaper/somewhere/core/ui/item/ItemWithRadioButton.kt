@@ -15,11 +15,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
+import com.newpaper.somewhere.core.ui.ui.R
 import com.newpaper.somewhere.core.utils.listItemHeight
 
 @Composable
@@ -28,11 +36,26 @@ fun ItemWithRadioButton(
     text: String,
     onItemClick: () -> Unit
 ){
+    val select = stringResource(id = R.string.select)
+    val selected = stringResource(id = R.string.selected)
+    val notSelected = stringResource(id = R.string.not_selected)
+
     ClickableBox(
         onClick = { onItemClick() },
         modifier = Modifier
             .fillMaxWidth()
             .height(listItemHeight)
+            .semantics {
+                role = Role.RadioButton
+                stateDescription = if (isSelected) selected else notSelected
+                onClick(
+                    label = select,
+                    action = {
+                        onItemClick()
+                        true
+                    }
+                )
+            }
     ){
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -42,7 +65,8 @@ fun ItemWithRadioButton(
         ) {
             MyRadioButton(
                 selected = isSelected,
-                onClick = onItemClick
+                onClick = onItemClick,
+                modifier = Modifier.clearAndSetSemantics {  }
             )
 
             MySpacerRow(width = 2.dp)
@@ -58,9 +82,11 @@ fun ItemWithRadioButton(
 @Composable
 private fun MyRadioButton(
     selected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     RadioButton(
+        modifier = modifier,
         selected = selected,
         onClick = onClick,
         colors = RadioButtonDefaults.colors(
