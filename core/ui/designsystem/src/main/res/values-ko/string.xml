@@ -79,7 +79,7 @@
     <string name="invite_friend">친구 초대</string>
 
     <!--IconTextButtonIcon-->
-    <string name="add">추가</string>
+    <string name="add">여행 추가</string>
     <string name="delete">삭제</string>
     <string name="previous_date">이전 날짜</string>
     <string name="next_date">다음 날짜</string>
