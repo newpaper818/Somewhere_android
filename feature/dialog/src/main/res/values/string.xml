@@ -55,6 +55,12 @@
     <string name="set_editable">Set permission</string>
 
     <!--SetLocationDialog.kt-->
+    <string name="select">select</string>
+    <string name="selected">Selected</string>
+    <string name="not_selected">Unselected</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="toggle">switch</string>
     <string name="save">Save</string>
     <string name="set_location">Set Location</string>
     <string name="search_location">Search location</string>
