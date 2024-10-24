@@ -54,7 +54,7 @@ import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ProviderId
 import com.newpaper.somewhere.core.ui.InternetUnavailableIconWithText
 import com.newpaper.somewhere.core.ui.card.AppIconWithAppNameCard
-import com.newpaper.somewhere.core.utils.PRIVACY_POLICY_URL
+import com.newpaper.somewhere.core.utils.onClickPrivacyPolicy
 import com.newpaper.somewhere.feature.signin.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -187,9 +187,7 @@ fun SignInRoute(
 //                }
             }
         },
-        onClickPrivacyPolicy = {
-            uriHandler.openUri(PRIVACY_POLICY_URL)
-        },
+        onClickPrivacyPolicy = { onClickPrivacyPolicy(uriHandler) },
         setSignInButtonEnabled = signInViewModel::setSignInButtonEnabled,
         snackBarHostState = snackBarHostState
     )

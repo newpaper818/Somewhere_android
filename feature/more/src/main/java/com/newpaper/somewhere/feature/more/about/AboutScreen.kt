@@ -41,8 +41,8 @@ import com.newpaper.somewhere.core.ui.item.ItemDivider
 import com.newpaper.somewhere.core.ui.item.ItemWithText
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
 import com.newpaper.somewhere.core.utils.PLAY_STORE_URL
-import com.newpaper.somewhere.core.utils.PRIVACY_POLICY_URL
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
+import com.newpaper.somewhere.core.utils.onClickPrivacyPolicy
 import com.newpaper.somewhere.feature.more.R
 
 @Composable
@@ -188,7 +188,7 @@ private fun AboutScreen(
                     ItemWithText(
                         text = stringResource(id = R.string.privacy_policy),
                         isOpenInNew = true,
-                        onItemClick = { uriHandler.openUri(PRIVACY_POLICY_URL) }
+                        onItemClick = { onClickPrivacyPolicy(uriHandler)}
                     )
 
                     ItemDivider()
