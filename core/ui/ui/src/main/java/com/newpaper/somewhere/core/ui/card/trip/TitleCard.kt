@@ -37,6 +37,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -171,6 +172,7 @@ private fun TitleCardUi(
             .onSizeChanged {
                 getCardHeight(it.height)
             }
+            .semantics(mergeDescendants = true) { }
     ) {
         Column(
             Modifier.padding(16.dp, 14.dp)
