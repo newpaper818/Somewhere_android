@@ -72,7 +72,7 @@
     <string name="exit">Exit</string>
     <string name="select">select</string>
     <string name="selected">Selected</string>
-    <string name="unselected">Unselected</string>
+    <string name="not_selected">Unselected</string>
 
     <string name="caution">Caution</string>
     <string name="it_could_contain_incorrect_information">It could contain incorrect information</string>
