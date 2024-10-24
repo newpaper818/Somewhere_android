@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
@@ -23,7 +24,7 @@ fun DeveloperCard(
     modifier: Modifier = Modifier
 ){
     MyCard(
-        modifier = modifier
+        modifier = modifier.semantics(mergeDescendants = true) { }
     ) {
         Column(
             Modifier.fillMaxWidth().padding(16.dp, 14.dp)
