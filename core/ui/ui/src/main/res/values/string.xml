@@ -15,6 +15,7 @@
     <string name="scan_this_qr_code">Scan this QR code to share Somewhere app</string>
 
     <!-- UserProfileCard.kt -->
+    <string name="user_info">User information</string>
     <string name="no_name">No name</string>
     <string name="no_email">No email</string>
     <string name="connected_with">Connected with</string>
