@@ -34,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.HyperlinkedText
+import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.theme.CustomColor
@@ -65,24 +66,20 @@ fun MemoCard(
     val viewMemoText = memoText ?: stringResource(id = R.string.memo_card_body_no_memo)
 
     //memo card
-    MyCard(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 0.dp,
-            disabledElevation = 0.dp
-        ),
+    ClickableBox(
+        containerColor = MaterialTheme.colorScheme.surfaceBright,
+        shape = MaterialTheme.shapes.medium,
         modifier = modifier
             .fillMaxWidth()
             .heightIn(max = 360.dp)
             .border(1.dp, borderColor, RoundedCornerShape(16.dp)),
         enabled = !isEditMode && memoText != null,
-        onClick =
+        onClick = {
             if (!isEditMode && memoText != null) {
                 //show dialog
-                { showMemoDialog() }
+                showMemoDialog()
             }
-            else {
-                null
-            }
+        }
     ) {
         Column(
             Modifier.padding(16.dp, 14.dp)
