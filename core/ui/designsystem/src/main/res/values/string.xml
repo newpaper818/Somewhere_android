@@ -79,7 +79,7 @@
     <string name="invite_friend">Invite friend</string>
 
     <!--IconTextButtonIcon-->
-    <string name="add">Add</string>
+    <string name="add">Add trip</string>
     <string name="delete">Delete</string>
     <string name="previous_date">Previous date</string>
     <string name="next_date">Next date</string>
