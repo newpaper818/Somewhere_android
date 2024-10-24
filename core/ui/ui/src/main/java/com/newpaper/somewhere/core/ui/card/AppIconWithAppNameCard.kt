@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -31,11 +33,12 @@ fun AppIconWithAppNameCard(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
+            .semantics(mergeDescendants = true) { }
     ) {
         ImageFromDrawable(
             imageDrawable = R.drawable.app_icon_fit,
             contentDescription = stringResource(id = R.string.somewhere_app_icon),
-            modifier = Modifier.size(80.dp)
+            modifier = Modifier.size(80.dp).clearAndSetSemantics {  }
         )
 
         MySpacerRow(width = 20.dp)
