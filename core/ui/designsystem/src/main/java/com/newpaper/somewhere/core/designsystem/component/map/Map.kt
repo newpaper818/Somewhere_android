@@ -274,7 +274,7 @@ fun MapForSetLocation(
     }
 
     GoogleMap(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().clearAndSetSemantics { },
         googleMapOptionsFactory = { GoogleMapOptions().mapId(mapId) },
         cameraPositionState = cameraPositionState,
         properties = properties,
