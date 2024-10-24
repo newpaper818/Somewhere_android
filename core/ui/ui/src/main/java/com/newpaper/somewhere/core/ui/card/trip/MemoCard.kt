@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.HyperlinkedText
@@ -72,7 +73,8 @@ fun MemoCard(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(max = 360.dp)
-            .border(1.dp, borderColor, RoundedCornerShape(16.dp)),
+            .border(1.dp, borderColor, RoundedCornerShape(16.dp))
+            .semantics(mergeDescendants = true) { },
         enabled = !isEditMode && memoText != null,
         onClick = {
             if (!isEditMode && memoText != null) {
