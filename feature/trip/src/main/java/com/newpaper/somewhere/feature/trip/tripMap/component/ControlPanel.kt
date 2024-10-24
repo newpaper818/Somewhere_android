@@ -38,6 +38,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -438,12 +441,26 @@ internal fun DateItem(
     isShown: Boolean,
     onItemClicked: (Date) -> Unit
 ){
+    val shown = stringResource(id = R.string.shown)
+    val hidden = stringResource(id = R.string.hidden)
+    val toggle = stringResource(id = R.string.toggle)
+
     ClickableBox(
         shape = RectangleShape,
         containerColor = MaterialTheme.colorScheme.surfaceBright,
         modifier = Modifier
             .height(50.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .semantics {
+                stateDescription = if (isShown) shown else hidden
+                onClick(
+                    label = toggle,
+                    action = {
+                        onItemClicked(date)
+                        true
+                    }
+                )
+            },
         onClick = { onItemClicked(date) },
     ) {
         Row(
