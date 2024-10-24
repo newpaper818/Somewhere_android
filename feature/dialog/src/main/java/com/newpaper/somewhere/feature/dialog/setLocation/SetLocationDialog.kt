@@ -71,6 +71,10 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.IntSize
@@ -181,7 +185,7 @@ fun SetLocationDialog(
                     .width(500.dp)
                     .padding(
                         bottom = if (LocalConfiguration.current.screenWidthDp > 670) 90.dp
-                            else 150.dp
+                        else 150.dp
                     )
                     .imePadding(),
                 snackbar = {
@@ -279,6 +283,7 @@ fun SetLocationDialog(
                     modifier = Modifier
                         .padding(mapPaddingValues)
                         .fillMaxSize()
+                        .clearAndSetSemantics { }
                 ) {
                     CenterMarker(
                         color = if (setLocationUiState.showOtherDateSpotMarkers) Color(dateList[dateIndex].color.color)
@@ -432,7 +437,8 @@ fun SetLocationDialog(
             FlowRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(enabled = false) { },
+//                    .clickable(enabled = false) { }
+                ,
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalArrangement = Arrangement.Bottom
             ) {
@@ -598,6 +604,10 @@ private fun MapSearchList(
     val itemHeight = 62.dp
     val horizontalPadding = 20.dp
 
+    val selected = stringResource(id = R.string.selected)
+    val notSelected = stringResource(id = R.string.not_selected)
+    val select = stringResource(id = R.string.select)
+
     AnimatedVisibility(
         visible = visible,
         enter = expandVertically(
@@ -637,7 +647,18 @@ private fun MapSearchList(
                     ClickableBox(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(itemHeight),
+                            .height(itemHeight)
+                            .semantics {
+                                stateDescription =
+                                    if (selectedPlaceId == it.placeId) selected else notSelected
+                                onClick(
+                                    label = select,
+                                    action = {
+                                        onClickItem(it)
+                                        true
+                                    }
+                                )
+                            },
                         containerColor = itemColor,
                         shape = RoundedCornerShape(25.dp),
                         onClick = { onClickItem(it) }
@@ -733,8 +754,20 @@ private fun ShowOtherDateSpotMarkersCheckBox(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit
 ){
+    val on = stringResource(id = R.string.on)
+    val off = stringResource(id = R.string.off)
+    val toggle = stringResource(id = R.string.toggle)
+
     Row(
-        modifier = Modifier.clickable { onCheckedChange(!checked) },
+        modifier = Modifier
+            .clickable { onCheckedChange(!checked) }
+            .semantics(mergeDescendants = true) {
+                stateDescription = if (checked) on else off
+                onClick(
+                    label = toggle,
+                    action = null
+                )
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
