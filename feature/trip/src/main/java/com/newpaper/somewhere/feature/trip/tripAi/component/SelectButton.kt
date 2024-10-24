@@ -32,7 +32,7 @@ internal fun SelectButton(
     onClick: () -> Unit
 ){
     val selected = stringResource(id = R.string.selected)
-    val unSelected = stringResource(id = R.string.unselected)
+    val unSelected = stringResource(id = R.string.not_selected)
 
     val buttonModifier = Modifier
         .widthIn(min = 260.dp)
