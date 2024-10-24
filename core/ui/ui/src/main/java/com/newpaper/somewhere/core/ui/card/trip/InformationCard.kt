@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
@@ -115,7 +116,8 @@ fun IconTextRow(
             shape = MaterialTheme.shapes.small,
             modifier = Modifier
                 .heightIn(min = 48.dp, max = 100.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .semantics(mergeDescendants = true) { },
             enabled = isClickable,
             onClick = informationItem.onClick ?: { }
         ) {
