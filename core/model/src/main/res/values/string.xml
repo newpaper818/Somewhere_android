@@ -19,9 +19,9 @@
     <string name="vnd_name">Vietnam dong</string>
 
     <!--DateTime.kt-->
-    <string name="ymd">YMD</string>
-    <string name="dmy">DMY</string>
-    <string name="mdy">MDY</string>
+    <string name="ymd">Y M D</string>
+    <string name="dmy">D M Y</string>
+    <string name="mdy">M D Y</string>
     <string name="_24h">24h</string>
     <string name="_12h">12h</string>
 
