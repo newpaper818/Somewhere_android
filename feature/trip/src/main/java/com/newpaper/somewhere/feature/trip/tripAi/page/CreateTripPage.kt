@@ -16,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -105,17 +106,22 @@ private fun CreatingTrip(
 
     MySpacerColumn(height = 12.dp)
 
-    Text(
-        text = stringResource(id = R.string.it_may_took_a_while),
-        style = MaterialTheme.typography.bodyMedium
-    )
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.semantics(mergeDescendants = true) { }
+    ) {
+        Text(
+            text = stringResource(id = R.string.it_may_took_a_while),
+            style = MaterialTheme.typography.bodyMedium
+        )
 
-    MySpacerColumn(height = 4.dp)
+        MySpacerColumn(height = 4.dp)
 
-    Text(
-        text = stringResource(id = R.string.it_may_contain_incorrect_information),
-        style = MaterialTheme.typography.bodyMedium
-    )
+        Text(
+            text = stringResource(id = R.string.it_may_contain_incorrect_information),
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
 }
 
 @Composable
