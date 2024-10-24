@@ -20,6 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -70,6 +73,15 @@ fun MyQrCodeDialog(
                     userId = userData.userId,
                     modifier = Modifier.size(230.dp)
                 )
+
+                MySpacerColumn(height = 16.dp)
+
+                Text(
+                    text = stringResource(id = R.string.scan_this_qr_code_to_invited),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }
@@ -85,14 +97,15 @@ private fun UserInfo(
 ){
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
+        modifier = modifier.semantics(mergeDescendants = true) { }
     ) {
         ProfileImage(
             profileUserId = userData.userId,
             internetEnabled = internetEnabled,
             profileImagePath = userData.profileImagePath,
             downloadImage = downloadImage,
-            size = 44.dp
+            size = 44.dp,
+            modifier = Modifier.clearAndSetSemantics { }
         )
 
         MySpacerRow(width = 12.dp)
@@ -161,7 +174,7 @@ private fun UserQrCode(
         ) {
             ImageFromDrawable(
                 imageDrawable = com.newpaper.somewhere.core.ui.ui.R.drawable.app_icon_fit,
-                contentDescription = stringResource(id = com.newpaper.somewhere.core.ui.ui.R.string.somewhere_app_icon),
+                contentDescription = null,
                 modifier = Modifier
                     .padding(6.dp)
                     .fillMaxSize()
