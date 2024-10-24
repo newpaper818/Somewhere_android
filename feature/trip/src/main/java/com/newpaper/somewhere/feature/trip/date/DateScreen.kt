@@ -364,7 +364,6 @@ fun DateRoute(
 
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun DateScreen(
     dateUiInfo: DateUiInfo,

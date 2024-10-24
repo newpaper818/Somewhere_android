@@ -151,7 +151,7 @@ private fun MySegmentedButtonItem(
     val haptic = LocalHapticFeedback.current
 
     val selected = stringResource(id = R.string.selected)
-    val unselected = stringResource(id = R.string.unselected)
+    val unselected = stringResource(id = R.string.not_selected)
 
     CompositionLocalProvider(LocalRippleConfiguration provides noRippleConfiguration) {
         Box(
