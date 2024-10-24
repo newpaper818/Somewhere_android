@@ -41,6 +41,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
@@ -136,7 +138,11 @@ fun GraphListItem(
 
 
 
-    Box(modifier.background(itemColor)) {
+    Box(
+        modifier
+            .background(itemColor)
+            .semantics(mergeDescendants = true) { }
+    ) {
         ClickableBox(
             containerColor = clickableBoxColor,
             shape = MaterialTheme.shapes.medium,
@@ -295,7 +301,8 @@ private fun PointWithLine(
         shape = MaterialTheme.shapes.small,
         modifier = Modifier
             .width(40.dp)
-            .fillMaxHeight(),
+            .fillMaxHeight()
+            .clearAndSetSemantics { },
         contentAlignment = Alignment.Center,
         enabled = onClick != null,
         onClick = onClick ?: {}
