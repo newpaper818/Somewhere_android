@@ -7,9 +7,11 @@
     <string name="new_spot">New Spot</string>
     <string name="no_plan">No Plan…\nLet\'s create a new spot!</string>
 
+
     <!--image/ ==================================================================================-->
     <string name="toast_download_complete">Download complete</string>
     <string name="toast_download_error">Download error</string>
+
 
     <!--invitedFriend/ ==========================================================================-->
     <string name="friends">friends</string>
@@ -17,6 +19,7 @@
     <string name="unknown">Unknown</string>
     <string name="snackbar_delete_friend_error">Delete friend error</string>
     <string name="snackbar_set_editable_error">Set permission error</string>
+
 
     <!--inviteFriend/ ===========================================================================-->
     <string name="invite_friend">Invite friend</string>
@@ -38,6 +41,7 @@
     <string name="snackbar_invite_friend_error">Invite friend error</string>
     <string name="snackbar_search_friend_error">Search friend error</string>
 
+
     <!--setLocation/ ============================================================================-->
 
 
@@ -47,6 +51,7 @@
     <string name="delete_spot">Delete spot</string>
     <string name="no_spot">No spot</string>
     <string name="dialog_body_delete_spot">Delete this Spot?</string>
+
 
     <!--trip/ ===================================================================================-->
     <!--SharingWithFriendsCard.kt-->
@@ -66,6 +71,7 @@
     <string name="dates">Dates</string>
     <string name="set_trip_duration">Set Trip Duration</string>
     <string name="dates_no_plan">No Plan</string>
+
 
     <!--tripAi/ ================================================================================-->
     <string name="are_you_sure_to_exit">Are you sure to exit?</string>
@@ -101,8 +107,17 @@
     <string name="it_may_contain_incorrect_information">It may contain incorrect information</string>
     <string name="something_went_wrong">Something went wrong…</string>
 
+
     <!--tripMap/ ================================================================================-->
     <string name="snackbar_no_location_to_show">No location to show</string>
+
+
+    <!--tripMap/component/ ======================================================================-->
+    <!--ControlPanel.kt-->
+    <string name="shown">Shown</string>
+    <string name="hidden">Hidden</string>
+    <string name="toggle">toggle</string>
+
 
     <!--trips/ ==================================================================================-->
     <string name="trips">Trips</string>
