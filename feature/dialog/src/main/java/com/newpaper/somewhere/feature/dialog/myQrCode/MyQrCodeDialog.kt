@@ -20,7 +20,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -46,6 +49,8 @@ fun MyQrCodeDialog(
     downloadImage: (imagePath: String, profileUserId: String, (Boolean) -> Unit) -> Unit,
     onDismissRequest: () -> Unit
 ){
+    val close = stringResource(id = R.string.close)
+
     BasicAlertDialog(
         onDismissRequest = onDismissRequest,
         modifier = Modifier,
@@ -81,6 +86,20 @@ fun MyQrCodeDialog(
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
+                )
+
+                Box(
+                    modifier = Modifier
+                        .semantics {
+                            role = Role.Button
+                            onClick(
+                                label = close,
+                                action = {
+                                    onDismissRequest()
+                                    true
+                                }
+                            )
+                        }
                 )
             }
         }
