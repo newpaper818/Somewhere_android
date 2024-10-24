@@ -12,6 +12,7 @@
 
     <!-- ShareAppCard.kt -->
     <string name="or">또는</string>
+    <string name="scan_this_qr_code">이 QR코드를 스캔해서 Somewhere 앱을 공유하세요</string>
 
     <!-- UserProfileCard.kt -->
     <string name="no_name">이름 없음</string>

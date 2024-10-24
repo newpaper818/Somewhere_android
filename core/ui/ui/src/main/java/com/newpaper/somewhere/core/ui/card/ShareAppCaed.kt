@@ -22,6 +22,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.lightspark.composeqr.DotShape
@@ -54,7 +57,8 @@ fun ShareAppCard(
             //or
             Text(
                 text = stringResource(id = R.string.or),
-                style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                modifier = Modifier.clearAndSetSemantics {  }
             )
 
             MySpacerColumn(height = 14.dp)
@@ -76,6 +80,8 @@ private fun AppQrCode(
         mutableIntStateOf(240)
     }
 
+    val scanThisQrCodeToShare = stringResource(id = R.string.scan_this_qr_code)
+
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(16.dp))
@@ -83,6 +89,9 @@ private fun AppQrCode(
             .size(width = 240.dp, height = width.dp)
             .onSizeChanged {
                 with(density) { width = it.width.toDp().value.toInt() }
+            }
+            .semantics {
+                contentDescription = scanThisQrCodeToShare
             },
     ) {
         QrCodeView(
@@ -99,7 +108,7 @@ private fun AppQrCode(
             ) {
                 ImageFromDrawable(
                     imageDrawable = R.drawable.app_icon_fit,
-                    contentDescription = stringResource(id = R.string.somewhere_app_icon),
+                    contentDescription = null,
                     modifier = Modifier
                         .padding(6.dp)
                         .fillMaxSize()
