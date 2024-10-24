@@ -23,6 +23,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -237,6 +238,7 @@ private fun UpperDateTimeExampleBox(
         modifier = modifier
             .height(120.dp)
             .padding(16.dp, 0.dp)
+            .semantics(mergeDescendants = true) { }
     ) {
         FlowRow(
             verticalArrangement = Arrangement.Center,
