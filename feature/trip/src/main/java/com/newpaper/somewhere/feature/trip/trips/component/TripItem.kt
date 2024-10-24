@@ -39,6 +39,8 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntOffset
@@ -247,6 +249,7 @@ private fun TripItemUi(
 
     Box(
         modifier = modifier
+            .semantics(mergeDescendants = true) { }
     ) {
         MyCard(
             modifier = cardModifier
@@ -272,7 +275,9 @@ private fun TripItemUi(
                             imagePath = imagePath,
                             contentDescription = stringResource(id = R.string.image),
                             downloadImage = downloadImage,
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clearAndSetSemantics { },
                         )
                     }
 
