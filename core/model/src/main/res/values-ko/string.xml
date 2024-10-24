@@ -19,9 +19,9 @@
     <string name="vnd_name">베트남 동</string>
 
     <!--DateTime.kt-->
-    <string name="ymd">년월일</string>
-    <string name="dmy">일월년</string>
-    <string name="mdy">월일년</string>
+    <string name="ymd">년 월 일</string>
+    <string name="dmy">일 월 년</string>
+    <string name="mdy">월 일 년</string>
     <string name="_24h">24시간</string>
     <string name="_12h">12시간</string>
 
