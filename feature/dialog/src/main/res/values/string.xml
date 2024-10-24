@@ -29,6 +29,7 @@
     <!--MyQrCodeDialog.kt-->
     <string name="no_name">No name</string>
     <string name="no_email">No email</string>
+    <string name="scan_this_qr_code_to_invited">Scan this QR code to be invited\n to join a friend\'s trip</string>
 
     <!--TripCreationOptionsDialog.kt-->
     <string name="enter_your_own">Enter your own</string>
