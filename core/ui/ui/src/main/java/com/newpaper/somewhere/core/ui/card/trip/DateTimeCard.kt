@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
@@ -152,7 +153,9 @@ private fun TwoTimesRow(
 
     FlowRow(
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier.onSizeChanged { rowHeight = with(density){it.height.toDp()}.value.toInt() }
+        modifier = Modifier
+            .onSizeChanged { rowHeight = with(density){it.height.toDp()}.value.toInt() }
+            .semantics(mergeDescendants = true) { }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

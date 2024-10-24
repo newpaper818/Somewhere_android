@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.maps.GoogleMapOptions
@@ -188,7 +189,7 @@ fun MapForSpot(
 
 
     GoogleMap(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().clearAndSetSemantics { },
         googleMapOptionsFactory = { GoogleMapOptions().mapId(mapId) },
         cameraPositionState = cameraPositionState,
         properties = properties,
