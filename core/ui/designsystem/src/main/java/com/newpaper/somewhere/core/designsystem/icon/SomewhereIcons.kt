@@ -100,7 +100,7 @@ object NavigationBarIcon {
 }
 
 object TopAppBarIcon {
-    val back = MyIcon(Icons.AutoMirrored.Rounded.ArrowBack,     22.dp, false, null, R.string.navigate_up)
+    val back = MyIcon(Icons.AutoMirrored.Rounded.ArrowBack,     22.dp, false, null, R.string.back)
     val edit = MyIcon(Icons.Rounded.Edit,                       22.dp, false, null, R.string.edit)
     val close = MyIcon(Icons.Rounded.Close,                     22.dp, false, null, R.string.close)
     val more = MyIcon(Icons.Rounded.MoreVert,                   22.dp, false, null, R.string.more_options)
