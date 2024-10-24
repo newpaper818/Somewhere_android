@@ -47,7 +47,7 @@ import java.io.File
 @Composable
 fun ImageFromDrawable(
     @DrawableRes imageDrawable: Int,
-    contentDescription: String,
+    contentDescription: String?,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Fit,
 ){
