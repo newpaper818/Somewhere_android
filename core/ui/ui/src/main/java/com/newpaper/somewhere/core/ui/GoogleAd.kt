@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.android.gms.ads.AdView
@@ -28,7 +31,7 @@ fun GoogleBannerAd(
     ) {
         //banner ad
         AndroidView(
-            modifier = Modifier,
+            modifier = Modifier.clearAndSetSemantics { },
             factory = { adView },
         )
     }
@@ -45,7 +48,7 @@ fun GoogleMediumRectangleAd(
     ) {
         //banner ad
         AndroidView(
-            modifier = Modifier,
+            modifier = Modifier.clearAndSetSemantics { },
             factory = { adView },
         )
     }
