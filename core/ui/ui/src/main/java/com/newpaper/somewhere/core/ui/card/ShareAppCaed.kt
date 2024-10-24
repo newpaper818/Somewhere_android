@@ -80,7 +80,7 @@ private fun AppQrCode(
         mutableIntStateOf(240)
     }
 
-    val scanThisQrCodeToShare = stringResource(id = R.string.scan_this_qr_code)
+    val scanThisQrCodeToShare = stringResource(id = R.string.scan_this_qr_code_to_share)
 
     Box(
         modifier = Modifier
