@@ -45,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -367,26 +368,31 @@ private fun AccountInfo(
     userData: UserData,
     textStyle: TextStyle = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
 ){
-    Text(
-        text = userData.email ?: "no email",
-        style = textStyle
-    )
-    
-    MySpacerColumn(height = 6.dp)
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.semantics(mergeDescendants = true) { }
+    ) {
+        Text(
+            text = userData.email ?: "no email",
+            style = textStyle
+        )
 
-    var connectedWithInfoText = stringResource(id = R.string.connected_with) + " "
+        MySpacerColumn(height = 6.dp)
 
-    userData.providerIds.forEachIndexed { index, providerId ->
-        if (index != 0) {
-            connectedWithInfoText += ", "
+        var connectedWithInfoText = stringResource(id = R.string.connected_with) + " "
+
+        userData.providerIds.forEachIndexed { index, providerId ->
+            if (index != 0) {
+                connectedWithInfoText += ", "
+            }
+            connectedWithInfoText += providerId.providerName
         }
-        connectedWithInfoText += providerId.providerName
-    }
 
-    Text(
-        text = connectedWithInfoText,
-        style = textStyle
-    )
+        Text(
+            text = connectedWithInfoText,
+            style = textStyle
+        )
+    }
 }
 
 @Composable
