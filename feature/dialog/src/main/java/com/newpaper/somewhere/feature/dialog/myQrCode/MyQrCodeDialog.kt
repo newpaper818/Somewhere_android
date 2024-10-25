@@ -81,13 +81,9 @@ fun MyQrCodeDialog(
 
                 MySpacerColumn(height = 16.dp)
 
-                Text(
-                    text = stringResource(id = R.string.scan_this_qr_code_to_invited),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
-                )
+                ScanThisQrCodeText()
 
+                //hidden button - for talk back
                 Box(
                     modifier = Modifier
                         .semantics {
@@ -146,12 +142,13 @@ private fun UserName(
 ){
     val nameText = userData.userName ?: stringResource(id = R.string.no_name)
 
-    val textStyle = if (userData.userName != null) MaterialTheme.typography.bodyLarge.copy(color = Color.Black)
-        else MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+    val textColor = if (userData.userName != null) Color.Black
+                    else MaterialTheme.colorScheme.onSurfaceVariant
 
     Text(
         text = nameText,
-        style = textStyle,
+        style = MaterialTheme.typography.bodyLarge,
+        color = textColor,
         maxLines = 2,
         overflow = TextOverflow.Ellipsis
     )
@@ -163,14 +160,24 @@ private fun UserEmail(
 ){
     val emailText = userData.email ?: stringResource(id = R.string.no_email)
 
-    val textStyle = if (userData.userName != null) MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
-        else MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
-
     Text(
         text = emailText,
-        style = textStyle,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
         maxLines = 2,
         overflow = TextOverflow.Ellipsis
+    )
+}
+
+@Composable
+private fun ScanThisQrCodeText(
+
+){
+    Text(
+        text = stringResource(id = R.string.scan_this_qr_code_to_invited),
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        textAlign = TextAlign.Center
     )
 }
 
