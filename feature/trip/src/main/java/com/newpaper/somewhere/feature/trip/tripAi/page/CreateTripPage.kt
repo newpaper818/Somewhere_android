@@ -112,14 +112,16 @@ private fun CreatingTrip(
     ) {
         Text(
             text = stringResource(id = R.string.it_may_took_a_while),
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         MySpacerColumn(height = 4.dp)
 
         Text(
             text = stringResource(id = R.string.it_may_contain_incorrect_information),
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
