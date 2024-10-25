@@ -33,11 +33,11 @@ class GeminiAiApi @Inject constructor(
             )
 
         val prompt = """
-            get trip places (${tripDays * 5} places) using this JSON schema:
-            return: Array<String> (each String should not be sentence. like [N Seoul tower, Empire state building, Central park])
+            Get trip places (${tripDays * 5} places) using this JSON schema:
+            Return: Array<String> (Each String should not be sentence. Like [N Seoul tower, Empire state building, Central park])
         
             [trip info]
-            city: $city
+            city(or country): $city
             trip with(solo, partner, friend, family): $tripWith
             trip type: $tripType
         """.trimIndent()
@@ -81,7 +81,7 @@ class GeminiAiApi @Inject constructor(
             When you make trip plan, use [places].
             
             [trip info]
-            city: $city
+            city(or country): $city
             trip date: $tripDate
             trip with(solo, partner, friend, family): $tripWith
             trip type: $tripType
@@ -100,9 +100,10 @@ class GeminiAiApi @Inject constructor(
             googleMapsPlacesId should be same with given [places]'s id.
             spot's titleText is place's name.
             You don't have to follow [places] order.
-            From [places]'s placeTypes, set spotType from [spot type list] (Do not use [places]'s placeTypes)
+            From [places]'s placeTypes, set spotType from [spot type list] (Do not use [places]'s placeTypes.
             Only use [spot type list]'s item for spotType.
-            Include breakfast, lunch, dinner 
+            Include breakfast, lunch, dinner.
+            Lodging should be close to [places].
             
             [spot type list] - select spotType from below
             ${enumValues<SpotType>().map { it }}
