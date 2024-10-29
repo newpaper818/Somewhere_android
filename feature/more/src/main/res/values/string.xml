@@ -7,6 +7,7 @@
 
     <!--account==================================================================================-->
     <string name="edit_profile">Edit profile</string>
+    <string name="subscription">Subscription</string>
     <string name="sign_out">Sign out</string>
     <string name="delete_account">Delete account</string>
     <string name="dialog_body_sign_out">Do you want to sign out?</string>

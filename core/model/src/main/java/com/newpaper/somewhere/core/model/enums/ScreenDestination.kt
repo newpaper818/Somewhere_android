@@ -15,6 +15,7 @@ enum class ScreenDestination(
     SET_THEME("setTheme"),
     ACCOUNT("account"),
     EDIT_PROFILE("editProfile"),
+    SUBSCRIPTION("subscription"),
     DELETE_ACCOUNT("deleteAccount"),
     ABOUT("about"),
     OPEN_SOURCE_LICENSE("openSourceLicense"),
