@@ -51,6 +51,10 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation(libs.places)
 
+    //billing
+    implementation(libs.billing)
+    implementation(libs.billing.ktx)
+
     //test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

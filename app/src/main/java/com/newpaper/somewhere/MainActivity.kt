@@ -181,7 +181,7 @@ class MainActivity : ComponentActivity() {
         //firebase app check
 //        Log.d(MAIN_ACTIVITY_TAG, "init firebase app check start")
         Firebase.appCheck.installAppCheckProviderFactory(
-            if (BuildConfig.DEBUG || "a" in BuildConfig.VERSION_NAME)
+            if (BuildConfig.DEBUG || "alpha" in BuildConfig.VERSION_NAME)
                 DebugAppCheckProviderFactory.getInstance()
             else
                 PlayIntegrityAppCheckProviderFactory.getInstance()
