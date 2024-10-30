@@ -5,6 +5,7 @@
     <string name="app_name_big" translatable="false">SOMEWHERE</string>
     <string name="somewhere_app_icon">Somewhere app icon</string>
     <string name="trip_planner_app">Trip Planner App</string>
+    <string name="pro" translatable="false">PRO</string>
 
     <!-- DeveloperCard.kt -->
     <string name="developer">Developer</string>

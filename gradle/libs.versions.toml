@@ -44,7 +44,7 @@ androidxHiltNavigationCompose = "1.2.0"
 animationCoreAndroid = "1.7.0"
 foundationAndroid = "1.7.0"
 moshi = "1.15.1"
-
+billing = "7.1.1"
 
 
 
@@ -156,6 +156,10 @@ serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization
 # moshi
 moshi = { group = "com.squareup.moshi", name = "moshi", version.ref = "moshi" }
 moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshi" }
+
+#google billing
+billing = { group = "com.android.billingclient", name = "billing", version.ref = "billing" }
+billing-ktx = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billing" }
 
 
 junit =                     { group = "junit", name = "junit", version.ref = "junit" }

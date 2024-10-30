@@ -1,4 +1,4 @@
-package com.newpaper.somewhere.navigation.more
+package com.newpaper.somewhere.navigation.profile
 
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -12,6 +12,7 @@ import androidx.navigation.navDeepLink
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.core.ui.ErrorScreen
 import com.newpaper.somewhere.feature.more.deleteAccount.DeleteAccountRoute
+import com.newpaper.somewhere.feature.more.subscription.SubscriptionRoute
 import com.newpaper.somewhere.navigation.enterTransition
 import com.newpaper.somewhere.navigation.exitTransition
 import com.newpaper.somewhere.navigation.popEnterTransition
@@ -20,23 +21,21 @@ import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
 
 private const val DEEP_LINK_URI_PATTERN =
-    "https://www.somewhere.newpaper.com/more/account/deleteAccount"
+    "https://www.somewhere.newpaper.com/more/account/subscription"
 
-fun NavController.navigateToDeleteAccount(navOptions: NavOptions? = null) =
-    navigate(ScreenDestination.DELETE_ACCOUNT.route, navOptions)
+fun NavController.navigateToSubscription(navOptions: NavOptions? = null) =
+    navigate(ScreenDestination.SUBSCRIPTION.route, navOptions)
 
-fun NavGraphBuilder.deleteAccountScreen(
+fun NavGraphBuilder.subscriptionScreen(
     appViewModel: AppViewModel,
     externalState: ExternalState,
-    isDarkAppTheme: Boolean,
 
-    navigateToSignIn: () -> Unit,
     navigateUp: () -> Unit,
 
     modifier: Modifier = Modifier,
 ) {
     composable(
-        route = ScreenDestination.DELETE_ACCOUNT.route,
+        route = ScreenDestination.SUBSCRIPTION.route,
         deepLinks = listOf(
             navDeepLink { uriPattern = DEEP_LINK_URI_PATTERN }
         ),
@@ -46,20 +45,18 @@ fun NavGraphBuilder.deleteAccountScreen(
         popExitTransition = { popExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.updateCurrentScreenDestination(ScreenDestination.DELETE_ACCOUNT)
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.SUBSCRIPTION)
         }
 
         val appUiState by appViewModel.appUiState.collectAsState()
 
         if (appUiState.appUserData != null) {
-            DeleteAccountRoute(
-                isDarkAppTheme = isDarkAppTheme,
-                userData = appUiState.appUserData!!,
-                internetEnabled = externalState.internetEnabled,
+            SubscriptionRoute(
+                use2Panes = externalState.windowSizeClass.use2Panes,
                 spacerValue = externalState.windowSizeClass.spacerValue,
+                internetEnabled = externalState.internetEnabled,
                 navigateUp = navigateUp,
-                onDeleteAccountDone = navigateToSignIn,
-                modifier = modifier,
+                modifier = modifier
             )
         }
         else {

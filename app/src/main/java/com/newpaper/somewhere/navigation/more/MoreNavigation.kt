@@ -56,8 +56,9 @@ fun NavGraphBuilder.moreScreen(
     lazyListState: LazyListState,
     navigateTo: (ScreenDestination) -> Unit,
 
-    navigateToDeleteAccount: () -> Unit,
     navigateToEditAccount: () -> Unit,
+    navigateToSubscription: () -> Unit,
+    navigateToDeleteAccount: () -> Unit,
     navigateToOpenSourceLicense: () -> Unit,
     onSignOutDone: () -> Unit,
 
@@ -161,8 +162,9 @@ fun NavGraphBuilder.moreScreen(
                             appViewModel = appViewModel,
                             moreNavController = moreNavController,
                             startDestination = appUiState.screenDestination.moreDetailStartScreenDestination,
-                            navigateToDeleteAccount = navigateToDeleteAccount,
                             navigateToEditAccount = navigateToEditAccount,
+                            navigateToSubscription = navigateToSubscription,
+                            navigateToDeleteAccount = navigateToDeleteAccount,
                             navigateToOpenSourceLicense = navigateToOpenSourceLicense,
                             onSignOutDone = onSignOutDone
                         )
@@ -181,8 +183,9 @@ private fun MoreDetailPane(
     moreNavController: NavHostController,
     startDestination: ScreenDestination,
 
-    navigateToDeleteAccount: () -> Unit,
     navigateToEditAccount: () -> Unit,
+    navigateToSubscription: () -> Unit,
+    navigateToDeleteAccount: () -> Unit,
     navigateToOpenSourceLicense: () -> Unit,
     onSignOutDone: () -> Unit,
 
@@ -207,12 +210,12 @@ private fun MoreDetailPane(
         accountScreen(
             appViewModel = appViewModel,
             externalState = externalState,
-            navigateToDeleteAccount = navigateToDeleteAccount,
             navigateToEditAccount = navigateToEditAccount,
+            navigateToSubscription = navigateToSubscription,
+            navigateToDeleteAccount = navigateToDeleteAccount,
             navigateUp = { },
             onSignOutDone = onSignOutDone,
             modifier = modifier
-
         )
 
         aboutScreen(

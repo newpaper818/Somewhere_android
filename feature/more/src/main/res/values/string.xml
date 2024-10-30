@@ -7,6 +7,7 @@
 
     <!--account==================================================================================-->
     <string name="edit_profile">Edit profile</string>
+    <string name="subscription">Subscription</string>
     <string name="sign_out">Sign out</string>
     <string name="delete_account">Delete account</string>
     <string name="dialog_body_sign_out">Do you want to sign out?</string>
@@ -17,7 +18,6 @@
     <string name="re_auth_error">Authentication error. Do it later.</string>
     <string name="re_auth_match_user">Authenticate with the currently signed in account.</string>
     <string name="delete_account_error">Delete account error. Do it later.</string>
-
     <string name="authenticating">Authenticating…</string>
     <string name="authentication_with_google">Authenticate with Google</string>
     <string name="authentication_with_apple">Authenticate with Apple</string>
@@ -55,5 +55,21 @@
     <!--setTheme=================================================================================-->
     <string name="app_theme">App theme</string>
     <string name="map_theme">Map theme</string>
+
+    <!--subscription=============================================================================-->
+    <string name="free" translatable="false">FREE</string>
+    <string name="pro" translatable="false">PRO</string>
+    <string name="ads">Ads</string>
+    <string name="trips">Trips</string>
+    <string name="invite_friends">Invite\nfriends</string>
+
+    <string name="upgrade_to_somewhere_pro">Upgrade to Somewhere Pro\n%s/month</string>
+    <string name="you_are_already_using_somewhere_pro">You\'re already using Somewhere Pro</string>
+    <string name="restore_purchases">Restore purchases</string>
+    <string name="cancle_subcription">Cancel subscription</string>
+
+    <string name="you_can_cancel_on_google_play">• You can cancel on Google Play.</string>
+    <string name="pro_features_can_be_change">• Pro features can be change later.</string>
+
 
 </resources>

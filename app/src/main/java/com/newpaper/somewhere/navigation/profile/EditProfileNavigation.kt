@@ -1,4 +1,4 @@
-package com.newpaper.somewhere.navigation.more
+package com.newpaper.somewhere.navigation.profile
 
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -11,7 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.core.ui.ErrorScreen
-import com.newpaper.somewhere.feature.more.account.AccountRoute
+import com.newpaper.somewhere.feature.more.editProfile.EditProfileRoute
 import com.newpaper.somewhere.navigation.enterTransition
 import com.newpaper.somewhere.navigation.exitTransition
 import com.newpaper.somewhere.navigation.popEnterTransition
@@ -20,25 +20,21 @@ import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
 
 private const val DEEP_LINK_URI_PATTERN =
-    "https://www.somewhere.newpaper.com/more/account"
+    "https://www.somewhere.newpaper.com/more/account/editProfile"
 
-fun NavController.navigateToAccount(navOptions: NavOptions? = null) =
-    navigate(ScreenDestination.ACCOUNT.route, navOptions)
+fun NavController.navigateToEditProfile(navOptions: NavOptions? = null) =
+    navigate(ScreenDestination.EDIT_PROFILE.route, navOptions)
 
-fun NavGraphBuilder.accountScreen(
+fun NavGraphBuilder.editProfileScreen(
     appViewModel: AppViewModel,
     externalState: ExternalState,
 
-    navigateToEditAccount: () -> Unit,
-    navigateToSubscription: () -> Unit,
-    navigateToDeleteAccount: () -> Unit,
     navigateUp: () -> Unit,
-    onSignOutDone: () -> Unit,
 
     modifier: Modifier = Modifier,
 ) {
     composable(
-        route = ScreenDestination.ACCOUNT.route,
+        route = ScreenDestination.EDIT_PROFILE.route,
         deepLinks = listOf(
             navDeepLink { uriPattern = DEEP_LINK_URI_PATTERN }
         ),
@@ -48,24 +44,18 @@ fun NavGraphBuilder.accountScreen(
         popExitTransition = { popExitTransition }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.updateCurrentScreenDestination(ScreenDestination.ACCOUNT)
-            if (!externalState.windowSizeClass.use2Panes)
-                appViewModel.updateMoreDetailCurrentScreenDestination(ScreenDestination.ACCOUNT)
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.EDIT_PROFILE)
         }
 
         val appUiState by appViewModel.appUiState.collectAsState()
 
         if (appUiState.appUserData != null) {
-            AccountRoute(
-                use2Panes = externalState.windowSizeClass.use2Panes,
+            EditProfileRoute(
                 userData = appUiState.appUserData!!,
                 internetEnabled = externalState.internetEnabled,
                 spacerValue = externalState.windowSizeClass.spacerValue,
-                navigateToEditAccount = navigateToEditAccount,
-                navigateToSubscription = navigateToSubscription,
-                navigateToDeleteAccount = navigateToDeleteAccount,
+                updateUserState = appViewModel::updateUserData,
                 navigateUp = navigateUp,
-                onSignOutDone = onSignOutDone,
                 modifier = modifier
             )
         }

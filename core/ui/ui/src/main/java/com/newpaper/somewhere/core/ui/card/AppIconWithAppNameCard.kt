@@ -63,7 +63,42 @@ fun AppIconWithAppNameCard(
     }
 }
 
+@Composable
+fun AppIconWithAppNameProCard(
+    modifier: Modifier = Modifier
+){
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .semantics(mergeDescendants = true) { }
+    ) {
+        ImageFromDrawable(
+            imageDrawable = R.drawable.app_icon_fit,
+            contentDescription = stringResource(id = R.string.somewhere_app_icon),
+            modifier = Modifier.size(80.dp).clearAndSetSemantics {  }
+        )
 
+        MySpacerRow(width = 20.dp)
+
+        Column {
+            Text(
+                text = stringResource(id = R.string.app_name_big),
+                fontSize = 24.sp,
+                fontFamily = suite,
+                fontWeight = FontWeight.ExtraBold,
+                maxLines = 1
+            )
+            MySpacerColumn(height = 8.dp)
+            Text(
+                text = stringResource(id = R.string.pro),
+                fontSize = 20.sp,
+                fontFamily = suite,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1
+            )
+        }
+    }
+}
 
 
 
