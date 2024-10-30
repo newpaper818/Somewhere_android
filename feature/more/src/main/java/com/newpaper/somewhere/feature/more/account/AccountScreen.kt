@@ -47,8 +47,9 @@ fun AccountRoute(
     internetEnabled: Boolean,
     spacerValue: Dp,
 
-    navigateToDeleteAccount: () -> Unit,
     navigateToEditAccount: () -> Unit,
+    navigateToSubscription: () -> Unit,
+    navigateToDeleteAccount: () -> Unit,
     navigateUp: () -> Unit,
     onSignOutDone: () -> Unit,
 
@@ -85,8 +86,9 @@ fun AccountRoute(
                 )
             }
         },
-        navigateToDeleteAccount = navigateToDeleteAccount,
         navigateToEditAccount = navigateToEditAccount,
+        navigateToSubscription = navigateToSubscription,
+        navigateToDeleteAccount = navigateToDeleteAccount,
         internetEnabled = internetEnabled,
         startSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
         endSpacerValue = spacerValue,
@@ -104,8 +106,9 @@ private fun AccountScreen(
     userData: UserData,
 
     onSignOut: () -> Unit,
-    navigateToDeleteAccount: () -> Unit,
     navigateToEditAccount: () -> Unit,
+    navigateToSubscription: () -> Unit,
+    navigateToDeleteAccount: () -> Unit,
 
     internetEnabled: Boolean,
     startSpacerValue: Dp,
@@ -191,6 +194,17 @@ private fun AccountScreen(
                     ItemWithText(
                         text = stringResource(id = R.string.edit_profile),
                         onItemClick = navigateToEditAccount
+                    )
+                }
+            }
+
+            item {
+                ListGroupCard(
+                    modifier = itemModifier
+                ) {
+                    ItemWithText(
+                        text = stringResource(id = R.string.subscription),
+                        onItemClick = navigateToSubscription
                     )
                 }
             }

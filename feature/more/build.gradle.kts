@@ -61,6 +61,9 @@ dependencies {
     //google ad
     implementation(libs.play.services.ads)
 
+    //billing
+    implementation(libs.billing.ktx)
+
     //test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

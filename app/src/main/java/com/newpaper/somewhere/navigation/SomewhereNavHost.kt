@@ -28,16 +28,18 @@ import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.trips.TripsViewModel
 import com.newpaper.somewhere.navigation.more.aboutScreen
 import com.newpaper.somewhere.navigation.more.accountScreen
-import com.newpaper.somewhere.navigation.more.deleteAccountScreen
-import com.newpaper.somewhere.navigation.more.editProfileScreen
 import com.newpaper.somewhere.navigation.more.moreScreen
-import com.newpaper.somewhere.navigation.more.navigateToDeleteAccount
-import com.newpaper.somewhere.navigation.more.navigateToEditProfile
 import com.newpaper.somewhere.navigation.more.navigateToOpenSourceLicense
 import com.newpaper.somewhere.navigation.more.openSourceLicenseScreen
 import com.newpaper.somewhere.navigation.more.setDateTimeFormatScreen
 import com.newpaper.somewhere.navigation.more.setThemeScreen
+import com.newpaper.somewhere.navigation.profile.deleteAccountScreen
+import com.newpaper.somewhere.navigation.profile.editProfileScreen
+import com.newpaper.somewhere.navigation.profile.navigateToDeleteAccount
+import com.newpaper.somewhere.navigation.profile.navigateToEditProfile
+import com.newpaper.somewhere.navigation.profile.navigateToSubscription
 import com.newpaper.somewhere.navigation.profile.profileScreen
+import com.newpaper.somewhere.navigation.profile.subscriptionScreen
 import com.newpaper.somewhere.navigation.signIn.navigateToSignIn
 import com.newpaper.somewhere.navigation.signIn.signInScreen
 import com.newpaper.somewhere.navigation.trip.dateScreen
@@ -330,10 +332,13 @@ fun SomewhereNavHost(
                         navOptions = navOptions { launchSingleTop = true }
                     )
                 },
-                navigateToDeleteAccount = { mainNavController.navigateToDeleteAccount(
+                navigateToEditAccount = { mainNavController.navigateToEditProfile(
                     navOptions = navOptions { launchSingleTop = true }
                 ) },
-                navigateToEditAccount = { mainNavController.navigateToEditProfile(
+                navigateToSubscription = { mainNavController.navigateToSubscription(
+                        navOptions = navOptions { launchSingleTop = true }
+                ) },
+                navigateToDeleteAccount = { mainNavController.navigateToDeleteAccount(
                     navOptions = navOptions { launchSingleTop = true }
                 ) },
                 navigateToOpenSourceLicense = { mainNavController.navigateToOpenSourceLicense(
@@ -372,16 +377,16 @@ fun SomewhereNavHost(
             accountScreen(
                 appViewModel = appViewModel,
                 externalState = externalState,
-                navigateToDeleteAccount = {
-                    mainNavController.navigateToDeleteAccount(
+                navigateToEditAccount = { mainNavController.navigateToEditProfile(
                         navOptions = navOptions { launchSingleTop = true }
-                    )
-                },
-                navigateToEditAccount = {
-                    mainNavController.navigateToEditProfile(
+                    ) },
+                navigateToSubscription = { mainNavController.navigateToSubscription(
                         navOptions = navOptions { launchSingleTop = true }
-                    )
-                },
+                    ) },
+                navigateToDeleteAccount = { mainNavController.navigateToDeleteAccount(
+                        navOptions = navOptions { launchSingleTop = true }
+                    ) },
+
                 navigateUp = navigateUp,
                 onSignOutDone = onSignOutDone,
                 modifier = modifier
@@ -389,6 +394,13 @@ fun SomewhereNavHost(
             )
 
             editProfileScreen(
+                appViewModel = appViewModel,
+                externalState = externalState,
+                navigateUp = navigateUp,
+                modifier = modifier
+            )
+
+            subscriptionScreen(
                 appViewModel = appViewModel,
                 externalState = externalState,
                 navigateUp = navigateUp,
