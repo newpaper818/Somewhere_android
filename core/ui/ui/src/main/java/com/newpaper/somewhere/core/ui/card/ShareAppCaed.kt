@@ -35,7 +35,7 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.ui.R
-import com.newpaper.somewhere.core.utils.PLAY_STORE_URL
+import com.newpaper.somewhere.core.utils.SOMEWHERE_PLAY_STORE_URL
 
 @Composable
 fun ShareAppCard(
@@ -95,7 +95,7 @@ private fun AppQrCode(
             },
     ) {
         QrCodeView(
-            data = PLAY_STORE_URL,
+            data = SOMEWHERE_PLAY_STORE_URL,
             modifier = Modifier.padding(12.dp),
             dotShape = DotShape.Circle
         ) {

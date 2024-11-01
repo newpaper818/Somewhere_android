@@ -10,5 +10,7 @@ data class UserData(
 
     val providerIds: List<ProviderId>,
 
+    val isUsingSomewherePro: Boolean = false,
+
     val allowEdit: Boolean = false
 )

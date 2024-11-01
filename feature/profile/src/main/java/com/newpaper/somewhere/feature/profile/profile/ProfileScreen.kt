@@ -34,6 +34,7 @@ import com.newpaper.somewhere.core.ui.GoogleMediumRectangleAd
 import com.newpaper.somewhere.core.ui.card.UserProfileCard
 import com.newpaper.somewhere.core.utils.AD_UNIT_ID
 import com.newpaper.somewhere.core.utils.AD_UNIT_ID_TEST
+import com.newpaper.somewhere.core.utils.convert.getContainAds
 import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.dialog.myQrCode.MyQrCodeDialog
 import com.newpaper.somewhere.feature.profile.R
@@ -139,10 +140,12 @@ fun ProfileScreen(
                 )
             }
 
-            item{
-                MySpacerColumn(height = 32.dp)
+            if (getContainAds(userData.isUsingSomewherePro)) {
+                item {
+                    MySpacerColumn(height = 32.dp)
 
-                GoogleMediumRectangleAd(adView)
+                    GoogleMediumRectangleAd(adView)
+                }
             }
         }
     }
@@ -191,7 +194,7 @@ private fun ProfileScreenPreview(){
                     userName = "user name",
                     email = "somewhere@gmail.com",
                     profileImagePath = null,
-                    providerIds = listOf()
+                    providerIds = listOf(),
                 ),
                 onProfileClick = { },
                 downloadImage = { _,_,_ ->},

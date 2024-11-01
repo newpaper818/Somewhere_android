@@ -85,7 +85,7 @@ class InviteFriendFirestoreApi @Inject constructor(
                                     userName = userName,
                                     email = email,
                                     profileImagePath = profileImagePath,
-                                    providerIds = listOf()
+                                    providerIds = listOf(),
                                 ),
                                 true
                             )
@@ -123,7 +123,7 @@ class InviteFriendFirestoreApi @Inject constructor(
                                 userName = userName,
                                 email = email,
                                 profileImagePath = profileImagePath,
-                                providerIds = listOf()
+                                providerIds = listOf(),
                             ),
                             true
                         )
@@ -267,7 +267,7 @@ class InviteFriendFirestoreApi @Inject constructor(
                         email = document.getString(EMAIL),
                         profileImagePath = document.getString(PROFILE_IMAGE_URL),
                         providerIds = listOf(),
-                        allowEdit = editable
+                        allowEdit = editable,
                     ))
                 }
                 .addOnFailureListener {
@@ -278,7 +278,7 @@ class InviteFriendFirestoreApi @Inject constructor(
                             email = null,
                             profileImagePath = null,
                             providerIds = listOf(),
-                            allowEdit = editable
+                            allowEdit = editable,
                         )
                     )
                 }

@@ -40,7 +40,7 @@ import com.newpaper.somewhere.core.ui.card.VersionCard
 import com.newpaper.somewhere.core.ui.item.ItemDivider
 import com.newpaper.somewhere.core.ui.item.ItemWithText
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
-import com.newpaper.somewhere.core.utils.PLAY_STORE_URL
+import com.newpaper.somewhere.core.utils.SOMEWHERE_PLAY_STORE_URL
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.core.utils.onClickPrivacyPolicy
 import com.newpaper.somewhere.feature.more.R
@@ -71,7 +71,7 @@ fun AboutRoute(
 
     val sendIntent: Intent = Intent().apply {
         action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, PLAY_STORE_URL)
+        putExtra(Intent.EXTRA_TEXT, SOMEWHERE_PLAY_STORE_URL)
         type = "text/plain"
     }
     val shareIntent = Intent.createChooser(sendIntent, null)
@@ -168,7 +168,7 @@ private fun AboutScreen(
                 VersionCard(
                     currentAppVersionName = currentAppVersionName,
                     isLatestAppVersion = isLatestAppVersion,
-                    onClickUpdate = { uriHandler.openUri(PLAY_STORE_URL) },
+                    onClickUpdate = { uriHandler.openUri(SOMEWHERE_PLAY_STORE_URL) },
                     modifier = itemModifier
                 )
             }

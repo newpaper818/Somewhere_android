@@ -3,7 +3,9 @@ package com.newpaper.somewhere.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.billingclient.api.PurchasesUpdatedListener
 import com.newpaper.somewhere.core.data.repository.PreferencesRepository
+import com.newpaper.somewhere.core.data.repository.more.SubscriptionRepository
 import com.newpaper.somewhere.core.data.repository.signIn.UserRepository
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.data.Theme
@@ -11,6 +13,7 @@ import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.navigationUi.TopLevelDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -48,6 +51,7 @@ data class AppUiState(
 class AppViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val userRepository: UserRepository,
+    private val subscriptionRepository: SubscriptionRepository
 ): ViewModel() {
     private val _appUiState = MutableStateFlow(AppUiState())
     val appUiState = _appUiState.asStateFlow()
@@ -137,7 +141,13 @@ class AppViewModel @Inject constructor(
 
         viewModelScope.launch {
 //            val time = measureNanoTime {
-            val userData = userRepository.getSignedInUser()
+            var userData = userRepository.getSignedInUser()
+
+            //get user is using somewhere pro
+            if (userData != null) {
+                val isUsingSomewherePro = getIsUsingSomewherePro()
+                userData = userData.copy(isUsingSomewherePro = isUsingSomewherePro)
+            }
 
             _appUiState.update {
                 it.copy(appUserData = userData)
@@ -148,6 +158,28 @@ class AppViewModel @Inject constructor(
 //            }
 //            Log.d("MainActivity1", "[2] ${time*0.000000001} - initSignedInUser")
         }
+    }
+
+    private suspend fun getIsUsingSomewherePro(
+
+    ): Boolean {
+        val purchasedResult = CompletableDeferred<Boolean>()
+
+        val purchasesUpdatedListener =
+            PurchasesUpdatedListener { _, _ -> }
+
+        subscriptionRepository.billingClientStartConnection(
+            purchasesUpdatedListener = purchasesUpdatedListener,
+            onPurchased = { purchased ->
+                purchasedResult.complete(purchased ?: false)
+            },
+            onFormattedPrice = { },
+            onError = {
+                purchasedResult.complete(false)
+            }
+        )
+
+        return purchasedResult.await()
     }
 
 

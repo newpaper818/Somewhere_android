@@ -36,6 +36,7 @@ import com.newpaper.somewhere.core.utils.AD_UNIT_ID
 import com.newpaper.somewhere.core.utils.AD_UNIT_ID_TEST
 import com.newpaper.somewhere.core.utils.BUG_REPORT_URL
 import com.newpaper.somewhere.core.utils.FEEDBACK_URL
+import com.newpaper.somewhere.core.utils.convert.getContainAds
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.more.R
 import com.newpaper.somewhere.feature.trip.BuildConfig
@@ -44,6 +45,7 @@ import com.newpaper.somewhere.feature.trip.BuildConfig
 fun MoreRoute(
     isDebugMode: Boolean,
     userDataIsNull: Boolean,
+    isUsingSomewherePro: Boolean,
 
     use2Panes: Boolean,
     spacerValue: Dp,
@@ -66,6 +68,8 @@ fun MoreRoute(
     MoreScreen(
         isDebugMode = isDebugMode,
         userDataIsNull = userDataIsNull,
+        isUsingSomewherePro = isUsingSomewherePro,
+
         startSpacerValue = spacerValue,
         endSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
         lazyListState = lazyListState,
@@ -80,6 +84,7 @@ fun MoreRoute(
 private fun MoreScreen(
     isDebugMode: Boolean,
     userDataIsNull: Boolean,
+    isUsingSomewherePro: Boolean,
 
     startSpacerValue: Dp,
     endSpacerValue: Dp,
@@ -202,10 +207,12 @@ private fun MoreScreen(
                     )
                 }
 
-            item {
-                MySpacerColumn(height = 32.dp)
+            if (getContainAds(isUsingSomewherePro)) {
+                item {
+                    MySpacerColumn(height = 32.dp)
 
-                GoogleMediumRectangleAd(adView)
+                    GoogleMediumRectangleAd(adView)
+                }
             }
         }
     }
@@ -250,6 +257,7 @@ private fun MoreScreenPreview(){
         MoreScreen(
             isDebugMode = false,
             userDataIsNull = false,
+            isUsingSomewherePro = false,
             startSpacerValue = 16.dp,
             endSpacerValue = 16.dp,
             lazyListState = LazyListState(),
@@ -267,6 +275,7 @@ private fun MoreScreenPreview_Debug(){
         MoreScreen(
             isDebugMode = true,
             userDataIsNull = false,
+            isUsingSomewherePro = false,
             startSpacerValue = 16.dp,
             endSpacerValue = 16.dp,
             lazyListState = LazyListState(),

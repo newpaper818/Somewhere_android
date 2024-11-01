@@ -55,6 +55,12 @@ fun NavGraphBuilder.subscriptionScreen(
                 use2Panes = externalState.windowSizeClass.use2Panes,
                 spacerValue = externalState.windowSizeClass.spacerValue,
                 internetEnabled = externalState.internetEnabled,
+                updateIsUsingSomewherePro = { isUsingSomewherePro ->
+                    val newUserData = appUiState.appUserData!!.copy(
+                        isUsingSomewherePro = isUsingSomewherePro
+                    )
+                    appViewModel.updateUserData(newUserData)
+                },
                 navigateUp = navigateUp,
                 modifier = modifier
             )

@@ -50,6 +50,7 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
+import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
@@ -58,6 +59,8 @@ import com.newpaper.somewhere.core.utils.AD_UNIT_ID
 import com.newpaper.somewhere.core.utils.AD_UNIT_ID_TEST
 import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.convert.getAllImagesPath
+import com.newpaper.somewhere.core.utils.convert.getContainAds
+import com.newpaper.somewhere.core.utils.convert.getMaxTrips
 import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrLeaveTripDialog
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
@@ -83,7 +86,7 @@ fun TripsRoute(
 
     use2Panes: Boolean,
     spacerValue: Dp,
-    appUserId: String,
+    appUserData: UserData,
     dateTimeFormat: DateTimeFormat,
     internetEnabled: Boolean,
 
@@ -133,7 +136,7 @@ fun TripsRoute(
 
                     val glanceTrip = commonTripViewModel.updateTrip(
                         internetEnabled = internetEnabled,
-                        appUserId = appUserId,
+                        appUserId = appUserData.userId,
                         tripWithEmptyDateList = glanceTripWithEmptyDateList
                     )
 
@@ -153,7 +156,7 @@ fun TripsRoute(
         //update trips
         tripsViewModel.updateTrips(
             internetEnabled = internetEnabled,
-            appUserId = appUserId
+            appUserId = appUserData.userId
         )
         tripsViewModel.setLoadingTrips(false)
 
@@ -164,7 +167,7 @@ fun TripsRoute(
 
             val glanceTrip = commonTripViewModel.updateTrip(
                 internetEnabled = internetEnabled,
-                appUserId = appUserId,
+                appUserId = appUserData.userId,
                 tripWithEmptyDateList = glanceTripWithEmptyDateList
             )
 
@@ -217,7 +220,7 @@ fun TripsRoute(
 
 
     TripsScreen(
-        appUserId = appUserId,
+        appUserData = appUserData,
         tripsUiInfo = TripsUiInfo(
             use2Panes = use2Panes,
             spacerValue = spacerValue,
@@ -251,7 +254,7 @@ fun TripsRoute(
             _downloadImage = commonTripViewModel::getImage,
             _addDeletedImages = { commonTripViewModel.addDeletedImages(it) },
             _organizeAddedDeletedImages = { commonTripViewModel.organizeAddedDeletedImages(
-                tripManagerId = appUserId,
+                tripManagerId = appUserData.userId,
                 isClickSave = it,
                 isInTripsScreen = true
             ) }
@@ -260,7 +263,7 @@ fun TripsRoute(
             _saveTrips = {
                 coroutineScope.launch {
                     tripsViewModel.saveTrips(
-                        appUserId = appUserId
+                        appUserId = appUserData.userId
                     )
                 }
             },
@@ -268,7 +271,7 @@ fun TripsRoute(
             _onDeleteTrip = {
                 tripsViewModel.deleteTrip(
                     trip = it,
-                    appUserId = appUserId
+                    appUserId = appUserData.userId
                 )
             }
         ),
@@ -276,7 +279,7 @@ fun TripsRoute(
             _onClickBackButton = onClickBackButton,
             _navigateToTrip = { isNewTrip, trip ->
                 if (isNewTrip && trip == null) {
-                    val newTrip = tripsViewModel.addAndGetNewTrip(appUserId)
+                    val newTrip = tripsViewModel.addAndGetNewTrip(appUserData.userId)
                     navigateToTrip(true, newTrip)
                 }
                 else
@@ -305,7 +308,7 @@ fun TripsRoute(
 
 @Composable
 private fun TripsScreen(
-    appUserId: String,
+    appUserData: UserData,
 
     tripsUiInfo: TripsUiInfo,
     tripsData: TripsData,
@@ -375,7 +378,8 @@ private fun TripsScreen(
         //fab
         floatingActionButton = {
             NewTripExtendedFAB(
-                visible = !loadingTrips && !isEditMode && showingTrips.size < 50,
+                visible = !loadingTrips && !isEditMode
+                        && showingTrips.size < getMaxTrips(appUserData.isUsingSomewherePro),
                 onClick = {
                     //to trip creation options dialog
                     dialog.setShowTripCreationOptionsDialog(true)
@@ -448,7 +452,7 @@ private fun TripsScreen(
         }
 
         if (dialog.showDeleteDialog && dialog.selectedTrip != null) {
-            val isSharedTrip = dialog.selectedTrip.managerId != appUserId
+            val isSharedTrip = dialog.selectedTrip.managerId != appUserData.userId
 
             DeleteOrLeaveTripDialog(
                 deleteTrip = !isSharedTrip,
@@ -500,13 +504,15 @@ private fun TripsScreen(
                         }
                     }
             ) {
-                item {
-                    GoogleBannerAd(
-                        adView = adView,
-                        useFullBanner = tripsUiInfo.use2Panes
-                    )
+                if (getContainAds(appUserData.isUsingSomewherePro)) {
+                    item {
+                        GoogleBannerAd(
+                            adView = adView,
+                            useFullBanner = tripsUiInfo.use2Panes
+                        )
 
-                    MySpacerColumn(height = 8.dp)
+                        MySpacerColumn(height = 8.dp)
+                    }
                 }
 
 
@@ -637,6 +643,8 @@ private fun TripsScreen(
 
             LoadingTripsItem(
                 shown = loadingTrips && firstLaunch,
+                showAds = getContainAds(appUserData.isUsingSomewherePro),
+                use2Panes = tripsUiInfo.use2Panes,
                 modifier = Modifier
                     .padding(spacerValue, 16.dp, spacerValue, 0.dp)
                     .padding(paddingValues)
@@ -692,7 +700,7 @@ private fun TripsScreenPreview_Default(){
         val context = LocalContext.current
 
         TripsScreen(
-            appUserId = "",
+            appUserData = UserData("", "", "", "", listOf(), false),
             tripsUiInfo = TripsUiInfo(
                 firstLaunch = false,
             ),
@@ -735,7 +743,7 @@ private fun TripsScreenPreview_Edit(){
     SomewhereTheme {
         val context = LocalContext.current
         TripsScreen(
-            appUserId = "",
+            appUserData = UserData("", "", "", "", listOf(), false),
             tripsUiInfo = TripsUiInfo(
                 firstLaunch = false,
                 isEditMode = true
@@ -779,7 +787,7 @@ private fun TripsScreenPreview_OnClickCancel(){
     SomewhereTheme {
         val context = LocalContext.current
         TripsScreen(
-            appUserId = "",
+            appUserData = UserData("", "", "", "", listOf(), false),
             tripsUiInfo = TripsUiInfo(
                 firstLaunch = false,
                 isEditMode = true

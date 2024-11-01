@@ -36,7 +36,7 @@ import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.tripData.Trip
-import com.newpaper.somewhere.core.utils.MAX_FRIEND_CNT
+import com.newpaper.somewhere.core.utils.convert.getMaxInviteFriends
 import com.newpaper.somewhere.core.utils.convert.setSharingTo
 import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteFriendDialog
@@ -292,7 +292,10 @@ private fun InvitedFriendsScreen(
                 navigationIcon = TopAppBarIcon.back,
                 onClickNavigationIcon = { navigateUp() },
 
-                actionIcon1 = if (appUserIsTripManager && friendList.size < MAX_FRIEND_CNT && internetEnabled) TopAppBarIcon.inviteFriend else null,
+                actionIcon1 = if (appUserIsTripManager && internetEnabled
+                    && friendList.size < getMaxInviteFriends(appUserData.isUsingSomewherePro))
+                    TopAppBarIcon.inviteFriend
+                else null,
                 actionIcon1Onclick = navigateToInviteFriend
             )
         },

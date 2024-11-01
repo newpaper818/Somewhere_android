@@ -29,12 +29,12 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.model.tripData.Trip
-import com.newpaper.somewhere.core.utils.MAX_FRIEND_CNT
 import com.newpaper.somewhere.feature.trip.R
 
 @Composable
 internal fun SharingWithFriendsCard(
     trip: Trip,
+    maxInviteFriends: Int,
     userIsManager: Boolean,
     internetEnabled: Boolean,
     isEditMode: Boolean,
@@ -74,7 +74,7 @@ internal fun SharingWithFriendsCard(
                     Spacer(modifier = Modifier.weight(1f))
 
                     //invite friend button
-                    if (userIsManager && trip.sharingTo.size < MAX_FRIEND_CNT && internetEnabled) {
+                    if (userIsManager && trip.sharingTo.size < maxInviteFriends && internetEnabled) {
                         MyPlainTooltipBox(tooltipText = stringResource(id = MyIcons.inviteFriend.descriptionTextId!!)) {
                             ClickableBox(
                                 modifier = Modifier.size(40.dp),

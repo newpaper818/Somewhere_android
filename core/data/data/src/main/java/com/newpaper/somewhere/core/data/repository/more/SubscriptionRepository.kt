@@ -37,6 +37,7 @@ class SubscriptionRepository @Inject constructor(
         onError: () -> Unit
     ) {
         Log.d(SUBSCRIPTION_TAG, "initBillingClient")
+
         val pendingPurchasesParams = PendingPurchasesParams.newBuilder()
             .enableOneTimeProducts()
             .build()
@@ -113,6 +114,7 @@ class SubscriptionRepository @Inject constructor(
                     if (productDetailsList.isNotEmpty()) {
                         Log.d(SUBSCRIPTION_TAG, "queryProducts - add to productDetailList: $productDetailsList")
                         productDetailList.addAll(productDetailsList)
+                        //FIXME free trial - coast/month
                         val formattedPrice = productDetailList[0].subscriptionOfferDetails?.get(0)?.pricingPhases?.pricingPhaseList?.get(0)?.formattedPrice
                         if (formattedPrice != null)
                             onFormattedPrice(formattedPrice)
@@ -204,7 +206,7 @@ class SubscriptionRepository @Inject constructor(
                         BillingClient.BillingResponseCode.OK -> {
                             //purchase acknowledged
                             //TODO save purchase to firestore
-                            Log.d(SUBSCRIPTION_TAG, "acknowledgePurchase - save to firestore")
+                            Log.d(SUBSCRIPTION_TAG, "acknowledgePurchase - save to firestore?")
                             purchasedResult(true)
                         }
                         else -> {

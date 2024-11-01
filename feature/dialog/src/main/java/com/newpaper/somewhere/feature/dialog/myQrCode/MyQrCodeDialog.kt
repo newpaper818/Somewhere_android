@@ -221,7 +221,7 @@ fun UserQrCodePreview(){
                     email = "useremail@gmail.com",
                     profileImagePath = "",
                     providerIds = listOf(),
-                    allowEdit = false
+                    allowEdit = false,
                 ),
                 internetEnabled = true,
                 downloadImage = { _, _, _ ->},

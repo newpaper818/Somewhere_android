@@ -77,7 +77,7 @@ fun NavGraphBuilder.dateScreen(
                         TripRoute(
                             use2Panes = externalState.windowSizeClass.use2Panes,
                             spacerValue = externalState.windowSizeClass.spacerValue,
-                            appUserId = appUiState.appUserData!!.userId,
+                            appUserData = appUiState.appUserData!!,
                             dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
                             internetEnabled = externalState.internetEnabled,
                             commonTripViewModel = commonTripViewModel,

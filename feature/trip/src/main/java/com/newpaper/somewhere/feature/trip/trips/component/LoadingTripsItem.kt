@@ -22,8 +22,14 @@ import com.newpaper.somewhere.feature.trip.trips.tripCardHeightDp
 @Composable
 internal fun LoadingTripsItem(
     shown: Boolean,
+    showAds: Boolean,
+    use2Panes: Boolean,
     modifier: Modifier = Modifier
 ){
+    var spacerValue = 64.dp
+    if (showAds) spacerValue += 50.dp
+    if (showAds && use2Panes) spacerValue += 10.dp
+
     AnimatedVisibility(
         visible = shown,
         enter = fadeIn(animationSpec = tween(300)),
@@ -32,7 +38,7 @@ internal fun LoadingTripsItem(
 
         Column(modifier = modifier.widthIn(max = itemMaxWidth)) {
 
-            MySpacerColumn(height = 124.dp)
+            MySpacerColumn(height = spacerValue)
 
             repeat(3) {
                 Box(

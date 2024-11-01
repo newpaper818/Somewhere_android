@@ -27,6 +27,7 @@ import com.newpaper.somewhere.BuildConfig
 import com.newpaper.somewhere.core.designsystem.component.NAVIGATION_DRAWER_BAR_WIDTH
 import com.newpaper.somewhere.core.designsystem.component.NAVIGATION_RAIL_BAR_WIDTH
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
+import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.feature.more.more.MoreRoute
 import com.newpaper.somewhere.navigation.TopEnterTransition
@@ -52,7 +53,7 @@ fun NavGraphBuilder.moreScreen(
     moreNavController: NavHostController,
     moreNavKey: UUID,
 
-    userDataIsNull: Boolean,
+    userData: UserData?,
     lazyListState: LazyListState,
     navigateTo: (ScreenDestination) -> Unit,
 
@@ -123,7 +124,9 @@ fun NavGraphBuilder.moreScreen(
 
                 MoreRoute(
                     isDebugMode = BuildConfig.DEBUG,
-                    userDataIsNull = userDataIsNull,
+                    userDataIsNull = userData == null,
+                    isUsingSomewherePro = userData?.isUsingSomewherePro ?: false,
+
                     spacerValue = externalState.windowSizeClass.spacerValue,
                     lazyListState = lazyListState,
                     navigateTo = {
