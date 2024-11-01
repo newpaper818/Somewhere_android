@@ -212,7 +212,7 @@ private fun UserProfileCardPreview(){
                     userName = "user name",
                     email = "somewhere@gmail.com",
                     profileImagePath = "https://lh3.googleusercontent.com/a/ACg8ocIr4TMfwXVpUC1Bk-VuEgNqPo9A7D0ljwsahznS82iJ-40=s96-c",
-                    providerIds = listOf()
+                    providerIds = listOf(),
                 ),
                 internetEnabled = true,
                 downloadImage = {_,_,_-> }

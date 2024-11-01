@@ -156,6 +156,9 @@ dependencies {
     //system ui controller
     implementation(libs.accompanist.systemuicontroller)
 
+    //billing
+    implementation(libs.billing.ktx)
+
     //
     implementation(libs.androidx.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)

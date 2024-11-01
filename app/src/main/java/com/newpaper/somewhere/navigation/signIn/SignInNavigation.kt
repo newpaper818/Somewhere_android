@@ -51,8 +51,8 @@ fun NavGraphBuilder.signInScreen(
             useVerticalLayout = externalState.windowSizeClass.isVertical
                     || externalState.windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact,
             appVersionName = BuildConfig.VERSION_NAME,
-            updateUserData = {usrData ->
-                appViewModel.updateUserData(userData = usrData)
+            updateUserData = {userData ->
+                appViewModel.updateUserData(userData = userData)
             },
             navigateToMain = navigateToMain
         )

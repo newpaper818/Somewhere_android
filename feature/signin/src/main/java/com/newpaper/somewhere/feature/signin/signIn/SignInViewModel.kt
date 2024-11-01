@@ -6,13 +6,16 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.ViewModel
+import com.android.billingclient.api.PurchasesUpdatedListener
 import com.google.firebase.auth.FirebaseUser
 import com.newpaper.somewhere.core.data.repository.image.CommonImageRepository
+import com.newpaper.somewhere.core.data.repository.more.SubscriptionRepository
 import com.newpaper.somewhere.core.data.repository.signIn.UserRepository
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.feature.trip.CommonTripUiState
 import com.newpaper.somewhere.feature.trip.CommonTripUiStateRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -29,7 +32,8 @@ data class SignInUiState(
 class SignInViewModel @Inject constructor(
     private val commonTripUiStateRepository: CommonTripUiStateRepository,
     private val userRepository: UserRepository,
-    private val commonImageRepository: CommonImageRepository
+    private val commonImageRepository: CommonImageRepository,
+    private val subscriptionRepository: SubscriptionRepository
 ): ViewModel() {
     private val _signInUiState: MutableStateFlow<SignInUiState> =
         MutableStateFlow(SignInUiState())
@@ -96,9 +100,16 @@ class SignInViewModel @Inject constructor(
             }
 
             //get signInResult from remote(firebase)
-            val userData = userRepository.signInWithGoogleIntent(
+            var userData = userRepository.signInWithGoogleIntent(
                 intent = result.data!!
             )
+
+            //get user is using somewhere pro
+            if (userData != null) {
+                val isUsingSomewherePro = getIsUsingSomewherePro()
+                userData = userData.copy(isUsingSomewherePro = isUsingSomewherePro)
+            }
+
 
             Log.d(SIGN_IN_VIEWMODEL_TAG, "signInWithGoogleResult - userData : $userData")
 
@@ -134,7 +145,7 @@ class SignInViewModel @Inject constructor(
 
 
     //==============================================================================================
-    suspend fun updateUserDataFromRemote(
+    private suspend fun updateUserDataFromRemote(
         userData: UserData?,
         onDone: (userData: UserData) -> Unit,
         showErrorSnackbar: () -> Unit
@@ -158,5 +169,27 @@ class SignInViewModel @Inject constructor(
 
     fun deleteAllLocalImages(){
         commonImageRepository.deleteAllImagesFromInternalStorage()
+    }
+
+    private suspend fun getIsUsingSomewherePro(
+
+    ): Boolean {
+        val purchasedResult = CompletableDeferred<Boolean>()
+
+        val purchasesUpdatedListener =
+            PurchasesUpdatedListener { _, _ -> }
+
+        subscriptionRepository.billingClientStartConnection(
+            purchasesUpdatedListener = purchasesUpdatedListener,
+            onPurchased = { purchased ->
+                purchasedResult.complete(purchased ?: false)
+            },
+            onFormattedPrice = { },
+            onError = {
+                purchasedResult.complete(false)
+            }
+        )
+
+        return purchasedResult.await()
     }
 }

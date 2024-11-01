@@ -204,7 +204,8 @@ class UserRepository @Inject constructor(
             if (userExitInRemote == true){
                 newUserData = commonRemoteDataSource.getUserInfo(
                     userId = userData.userId,
-                    providerIds = userData.providerIds
+                    providerIds = userData.providerIds,
+                    isUsingSomewherePro = userData.isUsingSomewherePro
                 )
             }
             //if not exit -> register user to firestore
@@ -243,7 +244,8 @@ class UserRepository @Inject constructor(
             Log.d(USER_REPOSITORY_TAG, "getSignedInUser - userId: ${firebaseUser.uid}")
             return commonRemoteDataSource.getUserInfo(
                 userId = firebaseUser.uid,
-                providerIds = firebaseUser.providerData.mapNotNull { getProviderIdFromString(it.providerId) }
+                providerIds = firebaseUser.providerData.mapNotNull { getProviderIdFromString(it.providerId)},
+                isUsingSomewherePro = false
             )
         }
     }
@@ -263,7 +265,8 @@ class UserRepository @Inject constructor(
     ): UserData? {
         return commonRemoteDataSource.getUserInfo(
             userId = userId,
-            providerIds = providerIds
+            providerIds = providerIds,
+            isUsingSomewherePro = false
         )
     }
 

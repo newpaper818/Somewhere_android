@@ -324,7 +324,7 @@ fun SomewhereNavHost(
                 appViewModel = appViewModel,
                 moreNavController = moreNavController,
                 moreNavKey = moreNavKey,
-                userDataIsNull = appUiState.appUserData == null,
+                userData = appUiState.appUserData,
                 lazyListState = moreLazyListState,
                 navigateTo = {
                     mainNavController.navigate(

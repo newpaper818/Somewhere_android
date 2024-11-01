@@ -60,16 +60,22 @@
     <string name="free" translatable="false">FREE</string>
     <string name="pro" translatable="false">PRO</string>
     <string name="ads">Ads</string>
-    <string name="trips">Trips</string>
-    <string name="invite_friends">Invite\nfriends</string>
+    <string name="trips_up_to">Trips up to</string>
+    <string name="invite_friends_up_to">Invite friends\n up to</string>
+    <string name="o" translatable="false">O</string>
+    <string name="x" translatable="false">X</string>
 
     <string name="upgrade_to_somewhere_pro">Upgrade to Somewhere Pro\n%s/month</string>
-    <string name="you_are_already_using_somewhere_pro">You\'re already using Somewhere Pro</string>
+    <string name="you_are_subscribed_to_somewhere_pro">You\'re subscribed to\nSomewhere Pro</string>
     <string name="restore_purchases">Restore purchases</string>
-    <string name="cancle_subcription">Cancel subscription</string>
+    <string name="manage_subscription">Manage subscription</string>
 
-    <string name="you_can_cancel_on_google_play">• You can cancel on Google Play.</string>
-    <string name="pro_features_can_be_change">• Pro features can be change later.</string>
+    <string name="dot" translatable="false">•</string>
+    <string name="you_can_manage_and_cancel_on_google_play_store">You can manage and cancel subscription on Google Play Store. (Google Play Store> Profile > Payments &amp; subscriptions > Subscriptions)</string>
+    <string name="somewhere_pro_features_and_pricing_may_change_later">Somewhere Pro features and pricing may change later.</string>
+
+    <string name="snackbar_error_do_it_later">Error. Do it later.</string>
+    <string name="snackbar_purchases_not_found_on_this_account">Purchases not found on this account</string>
 
 
 </resources>

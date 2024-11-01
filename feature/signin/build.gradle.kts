@@ -52,6 +52,9 @@ dependencies {
     //firebaseUser
     implementation(libs.firebase.auth.ktx)
 
+    //billing
+    implementation(libs.billing.ktx)
+
 
     //
     implementation(libs.androidx.core.ktx)

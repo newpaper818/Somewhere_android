@@ -47,6 +47,7 @@ import com.newpaper.somewhere.core.designsystem.component.button.SeeOnMapExtende
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
+import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.ui.card.trip.ImageCard
 import com.newpaper.somewhere.core.ui.card.trip.InformationCard
@@ -60,6 +61,7 @@ import com.newpaper.somewhere.core.utils.convert.getDurationText
 import com.newpaper.somewhere.core.utils.convert.getEndDateText
 import com.newpaper.somewhere.core.utils.convert.getFirstLocation
 import com.newpaper.somewhere.core.utils.convert.getLastEnabledDate
+import com.newpaper.somewhere.core.utils.convert.getMaxInviteFriends
 import com.newpaper.somewhere.core.utils.convert.getStartDateText
 import com.newpaper.somewhere.core.utils.convert.getTotalBudgetText
 import com.newpaper.somewhere.core.utils.convert.getTotalTravelDistanceText
@@ -88,7 +90,7 @@ import java.time.LocalDate
 
 @Composable
 fun TripRoute(
-    appUserId: String,
+    appUserData: UserData,
     use2Panes: Boolean,
     spacerValue: Dp,
     dateTimeFormat: DateTimeFormat,
@@ -137,7 +139,7 @@ fun TripRoute(
             coroutineScope.launch(Dispatchers.IO) {
                 commonTripViewModel.updateTrip(
                     internetEnabled = internetEnabled,
-                    appUserId = appUserId,
+                    appUserId = appUserData.userId,
                     tripWithEmptyDateList = originalTrip
                 )
                 delay(150)
@@ -177,7 +179,8 @@ fun TripRoute(
         }
 
     TripScreen(
-        appUserId = appUserId,
+        appUserId = appUserData.userId,
+        isUsingSomewherePro = appUserData.isUsingSomewherePro,
         tripUiInfo = TripUiInfo(
             use2Panes = use2Panes,
             spacerValue = spacerValue,
@@ -272,7 +275,7 @@ fun TripRoute(
                     //save tripUiState tripList
                     val beforeTempTripDateListLastIndex =
                         commonTripViewModel.saveTrip(
-                            appUserId = appUserId,
+                            appUserId = appUserData.userId,
                             deleteNotEnabledDate = true
                         )
 
@@ -322,6 +325,7 @@ fun TripRoute(
 @Composable
 private fun TripScreen(
     appUserId: String,
+    isUsingSomewherePro: Boolean,
     tripUiInfo: TripUiInfo,
     tripData: TripData,
     tripErrorCount: TripErrorCount,
@@ -565,6 +569,7 @@ private fun TripScreen(
                 item {
                     SharingWithFriendsCard(
                         trip = showingTrip,
+                        maxInviteFriends = getMaxInviteFriends(isUsingSomewherePro),
                         userIsManager = appUserId == showingTrip.managerId,
                         internetEnabled = internetEnabled,
                         isEditMode = isEditMode,

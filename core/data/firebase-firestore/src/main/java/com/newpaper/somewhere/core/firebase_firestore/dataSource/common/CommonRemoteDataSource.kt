@@ -38,6 +38,7 @@ interface CommonRemoteDataSource {
      */
     suspend fun getUserInfo(
         userId: String,
-        providerIds: List<ProviderId>
+        providerIds: List<ProviderId>,
+        isUsingSomewherePro: Boolean
     ): UserData?
 }

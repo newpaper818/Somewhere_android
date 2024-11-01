@@ -14,8 +14,10 @@ import androidx.navigation.navDeepLink
 import com.newpaper.somewhere.core.designsystem.component.NAVIGATION_DRAWER_BAR_WIDTH
 import com.newpaper.somewhere.core.designsystem.component.NAVIGATION_RAIL_BAR_WIDTH
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
+import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.core.model.tripData.Trip
+import com.newpaper.somewhere.core.ui.ErrorScreen
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.trips.Glance
 import com.newpaper.somewhere.feature.trip.trips.TripsRoute
@@ -83,26 +85,31 @@ fun NavGraphBuilder.tripsScreen(
                 MySpacerRow(width = NAVIGATION_DRAWER_BAR_WIDTH)
             }
 
-            TripsRoute(
-                commonTripViewModel = commonTripViewModel,
-                tripsViewModel = tripsViewModel,
+            if (appUiState.appUserData != null) {
+                TripsRoute(
+                    commonTripViewModel = commonTripViewModel,
+                    tripsViewModel = tripsViewModel,
 
-                use2Panes = externalState.windowSizeClass.use2Panes,
-                spacerValue = externalState.windowSizeClass.spacerValue,
-                appUserId = appUiState.appUserData?.userId ?: "",
-                dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
-                internetEnabled = externalState.internetEnabled,
+                    use2Panes = externalState.windowSizeClass.use2Panes,
+                    spacerValue = externalState.windowSizeClass.spacerValue,
+                    appUserData = appUiState.appUserData!!,
+                    dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
+                    internetEnabled = externalState.internetEnabled,
 
-                useBottomNavBar = externalState.windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact,
-                firstLaunch = appUiState.firstLaunch,
-                firstLaunchToFalse = appViewModel::firstLaunchToFalse,
+                    useBottomNavBar = externalState.windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact,
+                    firstLaunch = appUiState.firstLaunch,
+                    firstLaunchToFalse = appViewModel::firstLaunchToFalse,
 
-                lazyListState = lazyListState,
+                    lazyListState = lazyListState,
 
-                navigateToTrip = navigateToTrip,
-                navigateToTripAi = navigateToTripAi,
-                navigateToGlanceSpot = navigateToGlanceSpot
-            )
+                    navigateToTrip = navigateToTrip,
+                    navigateToTripAi = navigateToTripAi,
+                    navigateToGlanceSpot = navigateToGlanceSpot
+                )
+            }
+            else {
+                ErrorScreen()
+            }
         }
     }
 }

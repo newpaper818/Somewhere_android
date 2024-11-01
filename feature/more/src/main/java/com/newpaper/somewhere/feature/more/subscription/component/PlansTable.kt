@@ -44,14 +44,18 @@ internal fun PlansTable(
                     proValue = stringResource(id = R.string.pro),
                     isTop = true
                 )
-                PlansRow(name = stringResource(id = R.string.ads), freeValue = "O", proValue = "X")
                 PlansRow(
-                    name = stringResource(id = R.string.trips),
+                    name = stringResource(id = R.string.ads),
+                    freeValue = stringResource(id = R.string.o),
+                    proValue = stringResource(id = R.string.x)
+                )
+                PlansRow(
+                    name = stringResource(id = R.string.trips_up_to),
                     freeValue = freeTrips.toString(),
                     proValue = proTrips.toString()
                 )
                 PlansRow(
-                    name = stringResource(id = R.string.invite_friends),
+                    name = stringResource(id = R.string.invite_friends_up_to),
                     freeValue = freeInviteFriends.toString(),
                     proValue = proInviteFriends.toString()
                 )
@@ -72,7 +76,7 @@ private fun PlansRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
-            modifier = Modifier.width(100.dp),
+            modifier = Modifier.width(130.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(

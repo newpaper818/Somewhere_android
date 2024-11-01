@@ -11,9 +11,8 @@ const val PRIVACY_POLICY_ENG_URL = "http://lily-trouser-5da.notion.site"
 const val FEEDBACK_URL = "https://forms.gle/2UqNgmLqPdECiSb17"
 const val BUG_REPORT_URL = "https://forms.gle/5XZSxD6xPuLAeXah7"
 
-const val PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.newpaper.somewhere"
-
-
+const val SOMEWHERE_PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.newpaper.somewhere"
+const val PLAY_STORE_SUBSCRIPTIONS_URL = "http://play.google.com/store/account/subscriptions"
 
 
 
@@ -30,8 +29,16 @@ val itemMaxWidth = 700.dp
 val itemMaxWidthSmall = 500.dp
 val listItemHeight = 56.dp
 
-const val MAX_FRIEND_CNT = 35
 
+// Free / Pro
+const val FREE_CONTAINS_ADS = true
+const val PRO_CONTAINS_ADS = false
+
+const val FREE_MAX_TRIPS = 10
+const val PRO_MAX_TRIPS = 200
+
+const val FREE_MAX_INVITE_FRIENDS = 5
+const val PRO_MAX_INVITE_FRIENDS = 50
 
 
 
