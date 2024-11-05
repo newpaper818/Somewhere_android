@@ -21,6 +21,7 @@ data class SubscriptionUiState(
     val billingClientInitialized: Boolean = false,
     val isUsingSomewherePro: Boolean = false,
     val formattedPrice: String = "",
+    val oneFreeWeekEnabled: Boolean = false,
 
     val buttonEnabled: Boolean = true,
 
@@ -104,6 +105,12 @@ class SubscriptionViewModel @Inject constructor(
         }
     }
 
+    fun setOneFreeWeekEnabled(oneFreeWeekEnabled: Boolean){
+        _subscriptionUiState.update {
+            it.copy(oneFreeWeekEnabled = oneFreeWeekEnabled)
+        }
+    }
+
     fun setIsUsingSomewherePro(isUsingSomewherePro: Boolean){
         _subscriptionUiState.update {
             it.copy(isUsingSomewherePro = isUsingSomewherePro)
@@ -148,9 +155,9 @@ class SubscriptionViewModel @Inject constructor(
                         if (purchased != null)
                             setIsUsingSomewherePro(purchased)
                     },
-                    onFormattedPrice = { formattedPrice ->
-                        if (formattedPrice != null)
-                            setFormattedPrice(formattedPrice)
+                    onFormattedPrice = { formattedPrice, oneFreeWeekEnable ->
+                        setFormattedPrice(formattedPrice)
+                        setOneFreeWeekEnabled(oneFreeWeekEnable)
                     },
                     onError = {
                         setShowErrorScreen(true)

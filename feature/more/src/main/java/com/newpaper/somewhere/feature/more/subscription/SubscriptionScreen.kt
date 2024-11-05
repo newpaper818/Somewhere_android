@@ -55,6 +55,7 @@ import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.more.R
 import com.newpaper.somewhere.feature.more.subscription.component.ManageSubscriptionButton
 import com.newpaper.somewhere.feature.more.subscription.component.NoticeText
+import com.newpaper.somewhere.feature.more.subscription.component.OneFreeWeekText
 import com.newpaper.somewhere.feature.more.subscription.component.PlansTable
 import com.newpaper.somewhere.feature.more.subscription.component.RestorePurchasesButton
 import com.newpaper.somewhere.feature.more.subscription.component.SubscribeButton
@@ -110,6 +111,7 @@ fun SubscriptionRoute(
         buttonEnabled = subscriptionUiState.buttonEnabled,
         isUsingSomewherePro = subscriptionUiState.isUsingSomewherePro,
         formattedPrice = subscriptionUiState.formattedPrice,
+        oneFreeWeekEnabled = subscriptionUiState.oneFreeWeekEnabled,
         onClickSubscription = {
             subscriptionViewModel.launchBillingFlow(
                 activity = activity,
@@ -159,6 +161,7 @@ private fun SubscriptionScreen(
     buttonEnabled: Boolean,
     isUsingSomewherePro: Boolean,
     formattedPrice: String?,
+    oneFreeWeekEnabled: Boolean,
 
     onClickSubscription: () -> Unit,
     onClickRestorePurchases: () -> Unit,
@@ -208,19 +211,20 @@ private fun SubscriptionScreen(
                 .padding(paddingValues)
         ) {
             item {
-//                if (showErrorPage){
-//                    ErrorPage()
-//                }
-//                else {
+                if (showErrorPage){
+                    ErrorPage()
+                }
+                else {
                     SubscriptionPage(
                         internetEnabled = internetEnabled,
                         buttonEnabled = buttonEnabled && internetEnabled,
                         isUsingSomewherePro = isUsingSomewherePro,
                         formattedPrice = formattedPrice,
+                        oneFreeWeekEnabled = oneFreeWeekEnabled,
                         onClickSubscription = onClickSubscription,
                         onClickRestorePurchases = onClickRestorePurchases
                     )
-//                }
+                }
             }
         }
     }
@@ -244,11 +248,10 @@ private fun SubscriptionPage(
     buttonEnabled: Boolean,
     isUsingSomewherePro: Boolean,
     formattedPrice: String?,
+    oneFreeWeekEnabled: Boolean,
     onClickSubscription: () -> Unit,
     onClickRestorePurchases: () -> Unit,
 ){
-    val itemModifier = Modifier.widthIn(max = itemMaxWidthSmall)
-
     AppIconWithAppNameProCard()
 
     MySpacerColumn(height = 24.dp)
@@ -273,7 +276,11 @@ private fun SubscriptionPage(
         }
     }
 
-    //TODO 1 week free text
+    if (oneFreeWeekEnabled && !isUsingSomewherePro){
+        OneFreeWeekText()
+        MySpacerColumn(height = 12.dp)
+    }
+
     SubscribeButton(
         formattedPrice = formattedPrice ?: "",
         onClick = onClickSubscription,

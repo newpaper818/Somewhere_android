@@ -173,7 +173,7 @@ class AppViewModel @Inject constructor(
             onPurchased = { purchased ->
                 purchasedResult.complete(purchased ?: false)
             },
-            onFormattedPrice = { },
+            onFormattedPrice = {_,_ -> },
             onError = {
                 purchasedResult.complete(false)
             }

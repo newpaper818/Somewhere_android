@@ -33,7 +33,7 @@ class SubscriptionRepository @Inject constructor(
     fun billingClientStartConnection(
         purchasesUpdatedListener: PurchasesUpdatedListener,
         onPurchased: (Boolean?) -> Unit,
-        onFormattedPrice: (String?) -> Unit,
+        onFormattedPrice: (formattedPrice: String, oneFreeWeekEnable: Boolean) -> Unit,
         onError: () -> Unit
     ) {
         Log.d(SUBSCRIPTION_TAG, "initBillingClient")
@@ -56,7 +56,7 @@ class SubscriptionRepository @Inject constructor(
 
     private fun startConnection(
         onPurchased: (Boolean?) -> Unit,
-        onFormattedPrice: (String?) -> Unit,
+        onFormattedPrice: (formattedPrice: String, oneFreeWeekEnable: Boolean) -> Unit,
         onError: () -> Unit
     ) {
         billingClient.startConnection(object : BillingClientStateListener {
@@ -89,7 +89,7 @@ class SubscriptionRepository @Inject constructor(
     }
 
     private fun queryProducts(
-        onFormattedPrice: (String) -> Unit,
+        onFormattedPrice: (formattedPrice: String, oneFreeWeekEnable: Boolean) -> Unit,
         onError: () -> Unit
     ){
         Log.d(SUBSCRIPTION_TAG, "queryProducts")
@@ -113,13 +113,23 @@ class SubscriptionRepository @Inject constructor(
                 BillingClient.BillingResponseCode.OK -> {
                     if (productDetailsList.isNotEmpty()) {
                         Log.d(SUBSCRIPTION_TAG, "queryProducts - add to productDetailList: $productDetailsList")
-                        productDetailList.addAll(productDetailsList)
-                        //FIXME free trial - coast/month
-                        val formattedPrice = productDetailList[0].subscriptionOfferDetails?.get(0)?.pricingPhases?.pricingPhaseList?.get(0)?.formattedPrice
-                        if (formattedPrice != null)
-                            onFormattedPrice(formattedPrice)
-                        else
+                        productDetailList = productDetailsList
+
+                        val pricingPhasesList = productDetailsList.firstOrNull()?.subscriptionOfferDetails?.firstOrNull()?.pricingPhases?.pricingPhaseList
+                        val prisingListSize = pricingPhasesList?.size
+
+                        val firstPrice = pricingPhasesList?.getOrNull(0)?.formattedPrice
+                        val secondPrice = pricingPhasesList?.getOrNull(1)?.formattedPrice
+
+                        if (prisingListSize == 1 && firstPrice != null){
+                            onFormattedPrice(firstPrice, false)
+                        }
+                        else if (prisingListSize == 2 && firstPrice != null && secondPrice != null) {
+                            onFormattedPrice(secondPrice, true)
+                        }
+                        else {
                             onError()
+                        }
                     }
                     else {
                         //no such product
