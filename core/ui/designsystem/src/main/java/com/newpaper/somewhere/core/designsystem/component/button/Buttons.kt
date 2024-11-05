@@ -72,6 +72,17 @@ fun PrivacyPolicyButton(
 }
 
 @Composable
+fun RemoveAdsButton(
+    onClick: () -> Unit,
+) {
+    MyTextRippleButton(
+        text = stringResource(id = R.string.remove_ads),
+        textColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        onClick = onClick
+    )
+}
+
+@Composable
 fun MyQrCodeButton(
     onClick: () -> Unit
 ){
@@ -364,6 +375,38 @@ private fun MyTextButton(
             onClick = onClick,
             modifier = modifier,
             colors = ButtonDefaults.buttonColors(containerColor = containerColor)
+        ) {
+            Text(
+                text = text,
+                style = textStyle
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun MyTextRippleButton(
+    text: String,
+    onClick: () -> Unit,
+
+    modifier: Modifier = Modifier,
+    textColor: Color = MaterialTheme.colorScheme.primary,
+    enabled: Boolean = true
+){
+    val textStyle =
+        if (enabled) MaterialTheme.typography.labelLarge.copy(color = textColor)
+        else MaterialTheme.typography.labelLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+
+    val rippleConfiguration = RippleConfiguration(
+        color = textColor
+    )
+
+    CompositionLocalProvider(LocalRippleConfiguration provides rippleConfiguration) {
+        TextButton(
+            onClick = onClick,
+            enabled = enabled,
+            modifier = modifier
         ) {
             Text(
                 text = text,
