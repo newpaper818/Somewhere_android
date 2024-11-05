@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -77,6 +78,7 @@ fun RemoveAdsButton(
 ) {
     MyTextRippleButton(
         text = stringResource(id = R.string.remove_ads),
+        textStyle = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
         textColor = MaterialTheme.colorScheme.onSurfaceVariant,
         onClick = onClick
     )
@@ -391,6 +393,7 @@ internal fun MyTextRippleButton(
     onClick: () -> Unit,
 
     modifier: Modifier = Modifier,
+    textStyle: TextStyle = MaterialTheme.typography.labelLarge,
     textColor: Color = MaterialTheme.colorScheme.primary,
     enabled: Boolean = true
 ){
