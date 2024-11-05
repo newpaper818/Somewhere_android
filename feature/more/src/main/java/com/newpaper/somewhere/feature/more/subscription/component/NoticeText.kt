@@ -27,6 +27,8 @@ internal fun NoticeText(
         Description(text = stringResource(id = R.string.you_can_manage_and_cancel_on_google_play_store))
         MySpacerColumn(height = 8.dp)
         Description(text = stringResource(id = R.string.somewhere_pro_features_and_pricing_may_change_later))
+        MySpacerColumn(height = 8.dp)
+        Description(text = stringResource(id = R.string.one_week_free_trial_is_only_available_for_first_subscription))
     }
 }
 
