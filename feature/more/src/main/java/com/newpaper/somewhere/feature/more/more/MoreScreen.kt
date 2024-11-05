@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
@@ -35,8 +34,6 @@ import com.newpaper.somewhere.core.ui.item.ItemWithText
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
-import com.newpaper.somewhere.core.utils.BUG_REPORT_URL
-import com.newpaper.somewhere.core.utils.FEEDBACK_URL
 import com.newpaper.somewhere.core.utils.convert.getContainAds
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.more.R
@@ -171,32 +168,6 @@ private fun MoreScreen(
                             else
                                 navigateTo(ScreenDestination.SIGN_IN)
                         }
-                    )
-                }
-            }
-
-            //feedback and bug report
-            item {
-                val uriHandler = LocalUriHandler.current
-
-                ListGroupCard(
-                    title = stringResource(id = R.string.feedback),
-                    modifier = itemModifier
-                ) {
-                    //send feedback - open web browser to google form
-                    ItemWithText(
-                        text = stringResource(id = R.string.send_feedback),
-                        onItemClick = { uriHandler.openUri(FEEDBACK_URL) },
-                        isOpenInNew = true
-                    )
-
-                    ItemDivider()
-
-                    //bug report - open web browser to google form
-                    ItemWithText(
-                        text = stringResource(id = R.string.bug_report),
-                        onItemClick = { uriHandler.openUri(BUG_REPORT_URL) },
-                        isOpenInNew = true
                     )
                 }
             }

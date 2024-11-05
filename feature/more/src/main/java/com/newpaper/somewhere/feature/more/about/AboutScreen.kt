@@ -40,6 +40,8 @@ import com.newpaper.somewhere.core.ui.card.VersionCard
 import com.newpaper.somewhere.core.ui.item.ItemDivider
 import com.newpaper.somewhere.core.ui.item.ItemWithText
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
+import com.newpaper.somewhere.core.utils.BUG_REPORT_URL
+import com.newpaper.somewhere.core.utils.FEEDBACK_URL
 import com.newpaper.somewhere.core.utils.SOMEWHERE_PLAY_STORE_URL
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.core.utils.onClickPrivacyPolicy
@@ -178,6 +180,29 @@ private fun AboutScreen(
                 DeveloperCard(
                     modifier = itemModifier
                 )
+            }
+
+            //feedback and bug report
+            item {
+                ListGroupCard(
+                    modifier = itemModifier
+                ) {
+                    //send feedback - open web browser to google form
+                    ItemWithText(
+                        text = stringResource(id = R.string.send_feedback),
+                        onItemClick = { uriHandler.openUri(FEEDBACK_URL) },
+                        isOpenInNew = true
+                    )
+
+                    ItemDivider()
+
+                    //bug report - open web browser to google form
+                    ItemWithText(
+                        text = stringResource(id = R.string.bug_report),
+                        onItemClick = { uriHandler.openUri(BUG_REPORT_URL) },
+                        isOpenInNew = true
+                    )
+                }
             }
 
             item{
