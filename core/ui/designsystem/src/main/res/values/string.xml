@@ -19,6 +19,7 @@
 
     <!-- buttons.kt -->
     <string name="privacy_policy">Privacy policy</string>
+    <string name="remove_ads">Remove Ads</string>
     <string name="my_qr_code">My QR code</string>
     <string name="try_again">Try again</string>
     <string name="previous">Previous</string>
