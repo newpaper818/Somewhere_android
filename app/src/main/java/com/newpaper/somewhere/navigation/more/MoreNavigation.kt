@@ -124,14 +124,14 @@ fun NavGraphBuilder.moreScreen(
 
                 MoreRoute(
                     isDebugMode = BuildConfig.DEBUG,
-                    userDataIsNull = userData == null,
+                    appUserData = userData,
                     isUsingSomewherePro = userData?.isUsingSomewherePro ?: false,
 
                     spacerValue = externalState.windowSizeClass.spacerValue,
                     lazyListState = lazyListState,
                     navigateTo = {
                         if (it != appUiState.screenDestination.currentScreenDestination) {
-                            if (!externalState.windowSizeClass.use2Panes)
+                            if (!externalState.windowSizeClass.use2Panes || it == ScreenDestination.SUBSCRIPTION)
                                 navigateTo(it)
                             else {
                                 moreNavController.navigate(

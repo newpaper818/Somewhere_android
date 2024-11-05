@@ -204,6 +204,8 @@ private fun AccountScreen(
                 ) {
                     ItemWithText(
                         text = stringResource(id = R.string.subscription),
+                        subText = if(userData.isUsingSomewherePro) stringResource(id = R.string.pro)
+                                    else stringResource(id = R.string.free),
                         onItemClick = navigateToSubscription
                     )
                 }

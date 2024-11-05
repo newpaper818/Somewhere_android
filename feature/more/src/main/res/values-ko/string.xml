@@ -37,6 +37,7 @@
     <!--more=====================================================================================-->
     <string name="more">더 보기</string>
 
+
     <string name="settings">설정</string>
     <string name="date_time_format">날짜 및 시간</string>
     <string name="theme">테마</string>
