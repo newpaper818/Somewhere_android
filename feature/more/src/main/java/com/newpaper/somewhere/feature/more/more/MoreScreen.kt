@@ -27,6 +27,7 @@ import com.google.android.gms.ads.AdView
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
+import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.core.ui.GoogleMediumRectangleAd
 import com.newpaper.somewhere.core.ui.item.ItemDivider
@@ -44,7 +45,7 @@ import com.newpaper.somewhere.feature.trip.BuildConfig
 @Composable
 fun MoreRoute(
     isDebugMode: Boolean,
-    userDataIsNull: Boolean,
+    appUserData: UserData?,
     isUsingSomewherePro: Boolean,
 
     use2Panes: Boolean,
@@ -67,7 +68,7 @@ fun MoreRoute(
 
     MoreScreen(
         isDebugMode = isDebugMode,
-        userDataIsNull = userDataIsNull,
+        appUserData = appUserData,
         isUsingSomewherePro = isUsingSomewherePro,
 
         startSpacerValue = spacerValue,
@@ -83,7 +84,7 @@ fun MoreRoute(
 @Composable
 private fun MoreScreen(
     isDebugMode: Boolean,
-    userDataIsNull: Boolean,
+    appUserData: UserData?,
     isUsingSomewherePro: Boolean,
 
     startSpacerValue: Dp,
@@ -121,6 +122,20 @@ private fun MoreScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            //somewhere pro
+            if (appUserData != null && !appUserData.isUsingSomewherePro) {
+                item {
+                    ListGroupCard(
+                        modifier = itemModifier
+                    ) {
+                        ItemWithText(
+                            text = stringResource(id = R.string.somewhere_pro),
+                            onItemClick = { navigateTo(ScreenDestination.SUBSCRIPTION) }
+                        )
+                    }
+                }
+            }
+
             //setting
             item {
                 ListGroupCard(
@@ -151,7 +166,7 @@ private fun MoreScreen(
                                 || currentScreenRoute == ScreenDestination.SIGN_IN.route,
                         text = stringResource(id = R.string.account),
                         onItemClick = {
-                            if (!userDataIsNull)
+                            if (appUserData != null)
                                 navigateTo(ScreenDestination.ACCOUNT)
                             else
                                 navigateTo(ScreenDestination.SIGN_IN)
@@ -256,7 +271,7 @@ private fun MoreScreenPreview(){
         val context = LocalContext.current
         MoreScreen(
             isDebugMode = false,
-            userDataIsNull = false,
+            appUserData = UserData("", "", "", "", listOf()),
             isUsingSomewherePro = false,
             startSpacerValue = 16.dp,
             endSpacerValue = 16.dp,
@@ -274,7 +289,7 @@ private fun MoreScreenPreview_Debug(){
         val context = LocalContext.current
         MoreScreen(
             isDebugMode = true,
-            userDataIsNull = false,
+            appUserData = UserData("", "", "", "", listOf()),
             isUsingSomewherePro = false,
             startSpacerValue = 16.dp,
             endSpacerValue = 16.dp,
