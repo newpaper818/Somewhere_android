@@ -397,9 +397,9 @@ internal fun MyTextRippleButton(
     textColor: Color = MaterialTheme.colorScheme.primary,
     enabled: Boolean = true
 ){
-    val textStyle =
-        if (enabled) MaterialTheme.typography.labelLarge.copy(color = textColor)
-        else MaterialTheme.typography.labelLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+    val textStyle1 =
+        if (enabled) textStyle.copy(color = textColor)
+        else textStyle.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
 
     val rippleConfiguration = RippleConfiguration(
         color = textColor
@@ -413,7 +413,7 @@ internal fun MyTextRippleButton(
         ) {
             Text(
                 text = text,
-                style = textStyle
+                style = textStyle1
             )
         }
     }
