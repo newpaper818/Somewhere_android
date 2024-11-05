@@ -36,7 +36,9 @@ data class TripAiUiState(
     val showCautionDialog: Boolean = false,
 
     val creatingTrip: Boolean = false,
-    val createTripError: Boolean = false
+    val createTripError: Boolean = false,
+
+    val userGetReward: Boolean = false
 )
 
 @HiltViewModel
@@ -107,6 +109,12 @@ class TripAiViewModel @Inject constructor(
     fun setCreateTripError(createTripError: Boolean){
         _tripAiUiState.update {
             it.copy(createTripError = createTripError)
+        }
+    }
+
+    fun setUserGetReward(userGetReward: Boolean){
+        _tripAiUiState.update {
+            it.copy(userGetReward = userGetReward)
         }
     }
 

@@ -80,10 +80,6 @@
     <string name="selected">Selected</string>
     <string name="not_selected">Unselected</string>
 
-    <string name="caution">Caution</string>
-    <string name="it_could_contain_incorrect_information">It could contain incorrect information</string>
-    <string name="i_understand">I understand</string>
-
     <string name="where_are_you_going">Where are you going?</string>
     <string name="type_a_destination">Type a destination</string>
     <string name="type_city_or_country_name">Type city or country name</string>

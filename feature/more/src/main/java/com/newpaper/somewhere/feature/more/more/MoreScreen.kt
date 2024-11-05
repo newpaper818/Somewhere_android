@@ -32,8 +32,8 @@ import com.newpaper.somewhere.core.ui.GoogleMediumRectangleAd
 import com.newpaper.somewhere.core.ui.item.ItemDivider
 import com.newpaper.somewhere.core.ui.item.ItemWithText
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
-import com.newpaper.somewhere.core.utils.AD_UNIT_ID
-import com.newpaper.somewhere.core.utils.AD_UNIT_ID_TEST
+import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID
+import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
 import com.newpaper.somewhere.core.utils.BUG_REPORT_URL
 import com.newpaper.somewhere.core.utils.FEEDBACK_URL
 import com.newpaper.somewhere.core.utils.convert.getContainAds
@@ -59,8 +59,8 @@ fun MoreRoute(
 
     val adView = AdView(context).apply {
         setAdSize(AdSize.MEDIUM_RECTANGLE)
-        adUnitId = if (BuildConfig.DEBUG) AD_UNIT_ID_TEST
-            else AD_UNIT_ID
+        adUnitId = if (BuildConfig.DEBUG) BANNER_AD_UNIT_ID_TEST
+            else BANNER_AD_UNIT_ID
 
         loadAd(AdRequest.Builder().build())
     }

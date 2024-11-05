@@ -1,5 +1,7 @@
 package com.newpaper.somewhere.feature.trip.tripAi
 
+import android.app.Activity
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,16 +21,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
+import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.tripData.Trip
+import com.newpaper.somewhere.core.ui.loadAndShowRewardedAd
+import com.newpaper.somewhere.core.ui.loadRewardedAd
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
-import com.newpaper.somewhere.feature.dialog.simpleDialog.SimpleDialog
+import com.newpaper.somewhere.feature.dialog.tripAiDialog.CautionDialog
+import com.newpaper.somewhere.feature.dialog.tripAiDialog.CautionFreePlanDialog
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.tripAi.component.PrevNextButtons
@@ -42,9 +52,11 @@ import com.newpaper.somewhere.feature.trip.tripAi.page.SelectTripWithPage
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
+private var rewardedInterstitialAd: RewardedInterstitialAd? = null
+
 @Composable
 fun TripAiRoute(
-    appUserId: String,
+    appUserData: UserData,
     internetEnabled: Boolean,
     dateTimeFormat: DateTimeFormat,
     commonTripViewModel: CommonTripViewModel,
@@ -52,6 +64,8 @@ fun TripAiRoute(
     navigateToAiCreatedTrip: (Trip) -> Unit,
     tripAiViewModel: TripAiViewModel = hiltViewModel()
 ){
+    val context = LocalContext.current
+
     val tripAiUiState by tripAiViewModel.tripAiUiState.collectAsState()
 
     val onClickBack = {
@@ -69,6 +83,36 @@ fun TripAiRoute(
         onClickBack()
     }
 
+    rewardedInterstitialAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
+        override fun onAdClicked() {
+            // Called when a click is recorded for an ad.
+            Log.d("Google-Ad", "Ad was clicked.")
+        }
+
+        override fun onAdDismissedFullScreenContent() {
+            // Called when ad is dismissed.
+            // Set the ad reference to null so you don't show the ad a second time.
+            Log.d("Google-Ad", "Ad dismissed fullscreen content.")
+            rewardedInterstitialAd = null
+        }
+
+        override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+            //Called when ad fails to show.
+            Log.e("Google-Ad", "Ad failed to show fullscreen content.")
+            rewardedInterstitialAd = null
+        }
+
+        override fun onAdImpression() {
+            // Called when an impression is recorded for an ad.
+            Log.d("Google-Ad", "Ad recorded an impression.")
+        }
+
+        override fun onAdShowedFullScreenContent() {
+            // Called when ad is shown.
+            Log.d("Google-Ad", "Ad showed fullscreen content.")
+        }
+    }
+
     if (tripAiUiState.showExitDialog) {
         DeleteOrNotDialog(
             bodyText = stringResource(id = R.string.are_you_sure_to_exit),
@@ -83,14 +127,35 @@ fun TripAiRoute(
         )
     }
 
-    //create trip with ai when in CREATE_TRIP phase
-    LaunchedEffect(tripAiUiState.tripAiPhase, tripAiUiState.createTripError) {
-        //when internet fail while creating trip TODO
+    //load ad
+    LaunchedEffect(tripAiUiState.tripAiPhase) {
+        if (
+            !appUserData.isUsingSomewherePro
+            && tripAiUiState.tripAiPhase == TripAiPhase.TRIP_WITH
+            && rewardedInterstitialAd == null
+        ){
+            loadRewardedAd(
+                context = context,
+                onAdLoaded = { ad ->
+                    rewardedInterstitialAd = ad
+                }
+            )
+        }
+    }
 
+
+    //create trip with ai when in CREATE_TRIP phase
+    LaunchedEffect(
+        tripAiUiState.tripAiPhase,
+        tripAiUiState.createTripError,
+        tripAiUiState.userGetReward
+    ) {
+        //when internet fail while creating trip TODO
         if (
             tripAiUiState.tripAiPhase == TripAiPhase.CREATE_TRIP
             && !tripAiUiState.createTripError
             && !tripAiUiState.creatingTrip
+            && tripAiUiState.userGetReward
         ) {
             tripAiViewModel.setCreatingTrip(true)
             tripAiViewModel.viewModelScope.launch {
@@ -109,7 +174,7 @@ fun TripAiRoute(
 
                     val aiCreatedTrip = tripAiViewModel.addAdditionalDataToAiCreatedRawTrip(
                         aiCreatedRawTrip = aiCreatedRawTrip,
-                        tripManagerId = appUserId,
+                        tripManagerId = appUserData.userId,
                         newOrderId = newOrderId
                     )
 
@@ -131,6 +196,7 @@ fun TripAiRoute(
 
 
     TripAiScreen(
+        isUsingSomewherePro = appUserData.isUsingSomewherePro,
         internetEnabled = internetEnabled,
         dateTimeFormat = dateTimeFormat,
         tripAiUiState = tripAiUiState,
@@ -145,6 +211,7 @@ fun TripAiRoute(
         onClickTripType = tripAiViewModel::onClickTripType,
 
         setCreateTripError = tripAiViewModel::setCreateTripError,
+        setUserGetReward = tripAiViewModel::setUserGetReward,
 
         setShowCautionDialog = tripAiViewModel::setShowCautionDialog,
     )
@@ -152,6 +219,7 @@ fun TripAiRoute(
 
 @Composable
 fun TripAiScreen(
+    isUsingSomewherePro: Boolean,
     internetEnabled: Boolean,
     dateTimeFormat: DateTimeFormat,
     tripAiUiState: TripAiUiState,
@@ -166,10 +234,14 @@ fun TripAiScreen(
     onClickTripType: (TripType) -> Unit,
 
     setCreateTripError: (Boolean) -> Unit,
+    setUserGetReward: (Boolean) -> Unit,
 
     setShowCautionDialog: (Boolean) -> Unit
 ){
     val coroutineScope = rememberCoroutineScope()
+
+    val context = LocalContext.current
+    val activity = context as Activity
 
     val tripAiPhaseList = enumValues<TripAiPhase>()
     val pagerState = rememberPagerState(
@@ -184,22 +256,53 @@ fun TripAiScreen(
     }
 
     if (tripAiUiState.showCautionDialog){
-        SimpleDialog(
-            titleText = stringResource(id = R.string.caution),
-            bodyText = stringResource(id = R.string.it_could_contain_incorrect_information),
-            positiveButtonText = stringResource(id = R.string.i_understand),
-            onDismissRequest = {
-                setShowCautionDialog(false)
-            },
-            onClickPositive = {
-                setShowCautionDialog(false)
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(
-                        pagerState.currentPage + 1
+        if (isUsingSomewherePro){
+            CautionDialog(
+                onDismissRequest = {
+                    setShowCautionDialog(false)
+                },
+                onClickPositive = {
+                    setShowCautionDialog(false)
+
+                    setUserGetReward(true)
+
+                    //to next page
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(
+                            pagerState.currentPage + 1
+                        )
+                    }
+                }
+            )
+        }
+        else {
+            CautionFreePlanDialog(
+                onDismissRequest = {
+                    setShowCautionDialog(false)
+                },
+                onClickPositive = {
+
+                    setShowCautionDialog(false)
+
+                    //show ad
+                    loadAndShowRewardedAd(
+                        ad = rewardedInterstitialAd,
+                        context = context,
+                        activity = activity,
+                        onUserEarnedReward = {
+                            setUserGetReward(true)
+
+                            //to next page
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(
+                                    pagerState.currentPage + 1
+                                )
+                            }
+                        }
                     )
                 }
-            }
-        )
+            )
+        }
     }
 
     Scaffold (
@@ -238,7 +341,6 @@ fun TripAiScreen(
                     val phase = tripAiPhaseList[pageIndex]
                     when (phase) {
                         TripAiPhase.TRIP_TO -> {
-
                             EnterTripCityPage(
                                 searchText = tripAiUiState.tripTo ?: "",
                                 onTextChanged = tripToTextChanged,
@@ -335,53 +437,5 @@ fun TripAiScreen(
                 )
             }
         }
-
-
-
-
-
-
-
-//        Box(
-//            modifier = Modifier
-//                .padding(paddingValues)
-//                .fillMaxSize(),
-//            contentAlignment = Alignment.BottomCenter
-//        ){
-//
-//
-//
-//
-//            LazyColumn(
-//                state = scrollState,
-//                horizontalAlignment = Alignment.CenterHorizontally,
-////                contentPadding = PaddingValues(
-////                    spacerValue, 16.dp, spacerValue, 200.dp
-////                ),
-//                modifier = Modifier.fillMaxSize()
-//            ) {
-//                item {
-//                    EnterTripCityPage(
-//                        searchText = "",
-//                        onTextChanged = {},
-//                        onClearClicked = { },
-//                        onKeyboardActionClicked = { }
-//                    )
-//
-////                    EnterTripDurationPage(dateTimeFormat = dateTimeFormat)
-//
-////                    SelectTripWithPage()
-//
-////                    SelectTripTypePage()
-//                }
-//            }
-//
-//            PrevNextButtons(
-//                showPrevButton = true,
-//                nextIsCreateTrip = false,
-//                onClickPrev = { /*TODO*/ },
-//                onClickNext = { /*TODO*/ }
-//            )
-//        }
     }
 }
