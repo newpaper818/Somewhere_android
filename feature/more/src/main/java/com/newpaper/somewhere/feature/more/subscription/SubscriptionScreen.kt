@@ -59,6 +59,7 @@ import com.newpaper.somewhere.feature.more.subscription.component.OneFreeWeekTex
 import com.newpaper.somewhere.feature.more.subscription.component.PlansTable
 import com.newpaper.somewhere.feature.more.subscription.component.RestorePurchasesButton
 import com.newpaper.somewhere.feature.more.subscription.component.SubscribeButton
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -75,16 +76,24 @@ fun SubscriptionRoute(
 ){
     val context = LocalContext.current
     val activity = context as Activity
-
-    subscriptionViewModel.billingClientStartConnection()
+    val coroutineScope = rememberCoroutineScope()
 
     val subscriptionUiState by subscriptionViewModel.subscriptionUiState.collectAsState()
-    val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
 
     val snackbarTextError = stringResource(id = R.string.snackbar_error_do_it_later)
     val snackbarTextPurchasesNotFound = stringResource(id = R.string.snackbar_purchases_not_found_on_this_account)
 
+
+    subscriptionViewModel.billingClientStartConnection(
+        showSnackError = {
+            coroutineScope.launch {
+                snackBarHostState.showSnackbar(
+                    message = snackbarTextError
+                )
+            }
+        }
+    )
 
     LaunchedEffect(subscriptionUiState.showErrorSnackbar) {
         if (subscriptionUiState.showErrorSnackbar){
@@ -107,7 +116,6 @@ fun SubscriptionRoute(
         internetEnabled = internetEnabled,
 
         snackBarHostState = snackBarHostState,
-        showErrorPage = subscriptionUiState.showErrorPage,
         buttonEnabled = subscriptionUiState.buttonEnabled,
         isUsingSomewherePro = subscriptionUiState.isUsingSomewherePro,
         formattedPrice = subscriptionUiState.formattedPrice,
@@ -125,23 +133,27 @@ fun SubscriptionRoute(
             )
         },
         onClickRestorePurchases = {
-            subscriptionViewModel.billingClientStartConnection(
-                onClickRestorePurchases = true,
-                showSnackBarNotPurchased = {
-                    coroutineScope.launch {
-                        snackBarHostState.showSnackbar(
-                            message = snackbarTextPurchasesNotFound
-                        )
+            coroutineScope.launch {
+                subscriptionViewModel.billingClientStartConnection(
+                    onClickRestorePurchases = true,
+                    showSnackBarNotPurchased = {
+                        coroutineScope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = snackbarTextPurchasesNotFound
+                            )
+                        }
+                    },
+                    showSnackError = {
+                        coroutineScope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = snackbarTextError
+                            )
+                        }
                     }
-                },
-                showSnackError = {
-                    coroutineScope.launch {
-                        snackBarHostState.showSnackbar(
-                            message = snackbarTextError
-                        )
-                    }
-                }
-            )
+                )
+                delay(2000)
+                subscriptionViewModel.setButtonEnabled(true)
+            }
         },
 
         navigateUp = navigateUp,
@@ -157,7 +169,6 @@ private fun SubscriptionScreen(
     internetEnabled: Boolean,
     snackBarHostState: SnackbarHostState,
 
-    showErrorPage: Boolean,
     buttonEnabled: Boolean,
     isUsingSomewherePro: Boolean,
     formattedPrice: String?,
@@ -168,8 +179,6 @@ private fun SubscriptionScreen(
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val coroutineScope = rememberCoroutineScope()
-
     val scaffoldModifier = if (use2Panes) modifier
         else modifier.navigationBarsPadding()
 
@@ -204,113 +213,78 @@ private fun SubscriptionScreen(
 
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
             contentPadding = PaddingValues(startSpacerValue, 16.dp, endSpacerValue, 200.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
             item {
-                if (showErrorPage){
-                    ErrorPage()
+                AppIconWithAppNameProCard()
+            }
+
+            item {
+                PlansTable(
+                    freeTrips = FREE_MAX_TRIPS,
+                    proTrips = PRO_MAX_TRIPS,
+                    freeInviteFriends = FREE_MAX_INVITE_FRIENDS,
+                    proInviteFriends = PRO_MAX_INVITE_FRIENDS
+                )
+            }
+
+            item {
+                //internet unavailable
+                AnimatedVisibility(
+                    visible = !internetEnabled,
+                    enter = expandVertically(tween(500)) + fadeIn(tween(500, 200)),
+                    exit = shrinkVertically(tween(500, 200)) + fadeOut(tween(500))
+                ) {
+                    Column {
+                        InternetUnavailableText()
+                        MySpacerColumn(height = 16.dp)
+                    }
+                }
+
+                //1 week free
+                if (oneFreeWeekEnabled && !isUsingSomewherePro){
+                    OneFreeWeekText()
+                    MySpacerColumn(height = 12.dp)
+                }
+
+                //subscription button
+                SubscribeButton(
+                    formattedPrice = formattedPrice ?: "",
+                    onClick = onClickSubscription,
+                    enabled = buttonEnabled && internetEnabled,
+                    isUsingSomewherePro = isUsingSomewherePro
+                )
+            }
+
+            item {
+                if (!isUsingSomewherePro) {
+                    RestorePurchasesButton(
+                        onClick = onClickRestorePurchases,
+                        enabled = buttonEnabled && internetEnabled
+                    )
                 }
                 else {
-                    SubscriptionPage(
-                        internetEnabled = internetEnabled,
-                        buttonEnabled = buttonEnabled && internetEnabled,
-                        isUsingSomewherePro = isUsingSomewherePro,
-                        formattedPrice = formattedPrice,
-                        oneFreeWeekEnabled = oneFreeWeekEnabled,
-                        onClickSubscription = onClickSubscription,
-                        onClickRestorePurchases = onClickRestorePurchases
+                    val uriHandler = LocalUriHandler.current
+
+                    ManageSubscriptionButton(
+                        //open google play subscriptions
+                        onClick = {
+                            uriHandler.openUri(PLAY_STORE_SUBSCRIPTIONS_URL)
+                        },
+                        enabled = buttonEnabled && internetEnabled
                     )
                 }
             }
+
+            item {
+                //cancel on Google play
+                //can be change pro features
+                NoticeText()
+            }
         }
     }
-}
-
-@Composable
-private fun ErrorPage(
-
-){
-    Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center
-    ){
-        Text(text = "error")
-    }
-}
-
-@Composable
-private fun SubscriptionPage(
-    internetEnabled: Boolean,
-    buttonEnabled: Boolean,
-    isUsingSomewherePro: Boolean,
-    formattedPrice: String?,
-    oneFreeWeekEnabled: Boolean,
-    onClickSubscription: () -> Unit,
-    onClickRestorePurchases: () -> Unit,
-){
-    AppIconWithAppNameProCard()
-
-    MySpacerColumn(height = 24.dp)
-
-    PlansTable(
-        freeTrips = FREE_MAX_TRIPS,
-        proTrips = PRO_MAX_TRIPS,
-        freeInviteFriends = FREE_MAX_INVITE_FRIENDS,
-        proInviteFriends = PRO_MAX_INVITE_FRIENDS
-    )
-
-    MySpacerColumn(height = 24.dp)
-
-    AnimatedVisibility(
-        visible = !internetEnabled,
-        enter = expandVertically(tween(500)) + fadeIn(tween(500, 200)),
-        exit = shrinkVertically(tween(500, 200)) + fadeOut(tween(500))
-    ) {
-        Column {
-            InternetUnavailableText()
-            MySpacerColumn(height = 16.dp)
-        }
-    }
-
-    if (oneFreeWeekEnabled && !isUsingSomewherePro){
-        OneFreeWeekText()
-        MySpacerColumn(height = 12.dp)
-    }
-
-    SubscribeButton(
-        formattedPrice = formattedPrice ?: "",
-        onClick = onClickSubscription,
-        enabled = buttonEnabled,
-        isUsingSomewherePro = isUsingSomewherePro
-    )
-
-    MySpacerColumn(height = 24.dp)
-
-    if (!isUsingSomewherePro) {
-        RestorePurchasesButton(
-            onClick = onClickRestorePurchases,
-            enabled = buttonEnabled
-        )
-    }
-    else {
-        val uriHandler = LocalUriHandler.current
-
-        ManageSubscriptionButton(
-            //open google play subscriptions
-            onClick = {
-                uriHandler.openUri(PLAY_STORE_SUBSCRIPTIONS_URL)
-            },
-            enabled = buttonEnabled
-        )
-    }
-
-    MySpacerColumn(height = 24.dp)
-
-    //cancel on Google play
-    //can be change pro features
-    NoticeText()
 }

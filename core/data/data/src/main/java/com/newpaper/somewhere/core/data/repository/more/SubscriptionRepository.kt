@@ -215,8 +215,6 @@ class SubscriptionRepository @Inject constructor(
                     when (val responseCode = billingResult.responseCode) {
                         BillingClient.BillingResponseCode.OK -> {
                             //purchase acknowledged
-                            //TODO save purchase to firestore
-                            Log.d(SUBSCRIPTION_TAG, "acknowledgePurchase - save to firestore?")
                             purchasedResult(true)
                         }
                         else -> {
