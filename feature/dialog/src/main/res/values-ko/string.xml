@@ -73,6 +73,12 @@
     <string name="set_start_time">시작 시간 설정</string>
     <string name="set_end_time">종료 시간 설정</string>
 
+    <!--tripAiDialog.kt-->
+    <string name="caution">경고</string>
+    <string name="it_could_contain_incorrect_information">잘못된 정보가 포함되어 있을 수 있어요</string>
+    <string name="i_understand">이해했어요</string>
+    <string name="watch_ad_and_create_trip">광고 보고 여행 생성하기</string>
+
     <!---->
     <string name="button_get_out">나가기</string>
     <string name="button_cancel">취소</string>

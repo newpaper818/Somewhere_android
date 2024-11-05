@@ -55,8 +55,8 @@ import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.ui.GoogleBannerAd
-import com.newpaper.somewhere.core.utils.AD_UNIT_ID
-import com.newpaper.somewhere.core.utils.AD_UNIT_ID_TEST
+import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID
+import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
 import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.convert.getAllImagesPath
 import com.newpaper.somewhere.core.utils.convert.getContainAds
@@ -190,8 +190,8 @@ fun TripsRoute(
 
     val adView = AdView(context).apply {
         setAdSize(adSize)
-        adUnitId = if (BuildConfig.DEBUG) AD_UNIT_ID_TEST
-                    else AD_UNIT_ID
+        adUnitId = if (BuildConfig.DEBUG) BANNER_AD_UNIT_ID_TEST
+                    else BANNER_AD_UNIT_ID
 
         loadAd(AdRequest.Builder().build())
     }
@@ -352,8 +352,6 @@ private fun TripsScreen(
 
     val firstItemVisible by remember { derivedStateOf { lazyListState.firstVisibleItemIndex == 0 } }
 
-
-    val coroutineScope = rememberCoroutineScope()
 
     MyScaffold(
         modifier = modifier

@@ -32,8 +32,8 @@ import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.ui.GoogleMediumRectangleAd
 import com.newpaper.somewhere.core.ui.card.UserProfileCard
-import com.newpaper.somewhere.core.utils.AD_UNIT_ID
-import com.newpaper.somewhere.core.utils.AD_UNIT_ID_TEST
+import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID
+import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
 import com.newpaper.somewhere.core.utils.convert.getContainAds
 import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.dialog.myQrCode.MyQrCodeDialog
@@ -57,8 +57,8 @@ fun ProfileRoute(
 
     val adView = AdView(context).apply {
         setAdSize(AdSize.MEDIUM_RECTANGLE)
-        adUnitId = if (BuildConfig.DEBUG) AD_UNIT_ID_TEST
-            else AD_UNIT_ID
+        adUnitId = if (BuildConfig.DEBUG) BANNER_AD_UNIT_ID_TEST
+            else BANNER_AD_UNIT_ID
 
         loadAd(AdRequest.Builder().build())
     }

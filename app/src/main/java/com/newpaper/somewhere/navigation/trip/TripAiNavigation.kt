@@ -52,7 +52,7 @@ fun NavGraphBuilder.tripAiScreen(
 
         if (appUiState.appUserData != null) {
             TripAiRoute(
-                appUserId = appUiState.appUserData!!.userId,
+                appUserData = appUiState.appUserData!!,
                 internetEnabled = externalState.internetEnabled,
                 dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
                 commonTripViewModel = commonTripViewModel,
