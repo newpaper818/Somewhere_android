@@ -25,7 +25,6 @@ data class SubscriptionUiState(
 
     val buttonEnabled: Boolean = true,
 
-    val showErrorPage: Boolean = false,
     val showErrorSnackbar: Boolean = false
 )
 
@@ -48,7 +47,6 @@ class SubscriptionViewModel @Inject constructor(
                                 purchase = purchase,
                                 purchasedResult = { purchasedResult ->
                                     Log.d(SUBSCRIPTION_VIEWMODEL_TAG, "purchasesUpdatedListener - after purchased result: $purchasedResult")
-                                    Log.d(SUBSCRIPTION_VIEWMODEL_TAG, "purchasesUpdatedListener - purchase token: ${purchase.purchaseToken}")
                                     if (purchasedResult != null)
                                         setIsUsingSomewherePro(purchasedResult)
                                         //update app viewmodel app user data
@@ -79,11 +77,11 @@ class SubscriptionViewModel @Inject constructor(
                 else -> {
                     //error
                     Log.d(SUBSCRIPTION_VIEWMODEL_TAG, "purchasesUpdatedListener - ${billingResult.responseCode}")
-//                    viewModelScope.launch {
-//                        setShowErrorSnackbar(true)
-//                        delay(4500)
-//                        setShowErrorSnackbar(false)
-//                    }
+                    viewModelScope.launch {
+                        setShowErrorSnackbar(true)
+                        delay(4500)
+                        setShowErrorSnackbar(false)
+                    }
                 }
             }
         }
@@ -93,25 +91,25 @@ class SubscriptionViewModel @Inject constructor(
 
 
 
-    fun setBillingClientInitialized(billingClientInitialized: Boolean){
+    private fun setBillingClientInitialized(billingClientInitialized: Boolean){
         _subscriptionUiState.update {
             it.copy(billingClientInitialized = billingClientInitialized)
         }
     }
 
-    fun setFormattedPrice(formattedPrice: String){
+    private fun setFormattedPrice(formattedPrice: String){
         _subscriptionUiState.update {
             it.copy(formattedPrice = formattedPrice)
         }
     }
 
-    fun setOneFreeWeekEnabled(oneFreeWeekEnabled: Boolean){
+    private fun setOneFreeWeekEnabled(oneFreeWeekEnabled: Boolean){
         _subscriptionUiState.update {
             it.copy(oneFreeWeekEnabled = oneFreeWeekEnabled)
         }
     }
 
-    fun setIsUsingSomewherePro(isUsingSomewherePro: Boolean){
+    private fun setIsUsingSomewherePro(isUsingSomewherePro: Boolean){
         _subscriptionUiState.update {
             it.copy(isUsingSomewherePro = isUsingSomewherePro)
         }
@@ -123,13 +121,7 @@ class SubscriptionViewModel @Inject constructor(
         }
     }
 
-    fun setShowErrorScreen(showErrorPage: Boolean){
-        _subscriptionUiState.update {
-            it.copy(showErrorPage = showErrorPage)
-        }
-    }
-
-    fun setShowErrorSnackbar(showErrorSnackbar: Boolean){
+    private fun setShowErrorSnackbar(showErrorSnackbar: Boolean){
         _subscriptionUiState.update {
             it.copy(showErrorSnackbar = showErrorSnackbar)
         }
@@ -160,12 +152,10 @@ class SubscriptionViewModel @Inject constructor(
                         setOneFreeWeekEnabled(oneFreeWeekEnable)
                     },
                     onError = {
-                        setShowErrorScreen(true)
+                        setButtonEnabled(false)
                         showSnackError()
                     }
                 )
-                delay(2000)
-                setButtonEnabled(true)
             }
         }
     }
