@@ -119,20 +119,6 @@ private fun MoreScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            //somewhere pro
-            if (appUserData != null && !appUserData.isUsingSomewherePro) {
-                item {
-                    ListGroupCard(
-                        modifier = itemModifier
-                    ) {
-                        ItemWithText(
-                            text = stringResource(id = R.string.somewhere_pro),
-                            onItemClick = { navigateTo(ScreenDestination.SUBSCRIPTION) }
-                        )
-                    }
-                }
-            }
-
             //setting
             item {
                 ListGroupCard(
@@ -172,16 +158,27 @@ private fun MoreScreen(
                 }
             }
 
-            //about
             item {
                 ListGroupCard(
                     modifier = itemModifier
                 ) {
+                    //somewhere pro
+                    if (appUserData != null && !appUserData.isUsingSomewherePro) {
+                        ItemWithText(
+                            text = stringResource(id = R.string.somewhere_pro),
+                            onItemClick = { navigateTo(ScreenDestination.SUBSCRIPTION) }
+                        )
+
+                        ItemDivider()
+                    }
+
+                    //about
                     ItemWithText(
                         isSelected = currentScreenRoute == ScreenDestination.ABOUT.route,
                         text = stringResource(id = R.string.about),
                         onItemClick = { navigateTo(ScreenDestination.ABOUT) }
                     )
+
                 }
             }
 
