@@ -7,6 +7,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,7 +44,9 @@ internal fun FriendInfoWithInviteCard(
             animationSpec = tween(500),
             targetOffsetY = { (it * 2.5f).toInt() })
     ) {
-        MyCard {
+        MyCard(
+            shape = MaterialTheme.shapes.extraLarge
+        ) {
             Column(
                 modifier = Modifier
                     .widthIn(max = 340.dp)
@@ -56,10 +59,10 @@ internal fun FriendInfoWithInviteCard(
                     userData = friendUserData,
                     isManager = false,
                     downloadImage = downloadImage,
-                    modifier = Modifier.widthIn(min = 330.dp).padding(start = 8.dp)
+                    modifier = Modifier.widthIn(min = 330.dp).padding(8.dp)
                 )
 
-                MySpacerColumn(height = 16.dp)
+                MySpacerColumn(height = 8.dp)
 
                 //set permission (allow edit / view only)
                 AllowEditViewSegmentedButtons(
