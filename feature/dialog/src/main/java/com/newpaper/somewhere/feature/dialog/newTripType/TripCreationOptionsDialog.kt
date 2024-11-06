@@ -50,7 +50,7 @@ fun TripCreationOptionsDialog(
         ) {
             Column(
                 modifier = Modifier
-                    .padding(16.dp),
+                    .padding(12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
@@ -60,7 +60,7 @@ fun TripCreationOptionsDialog(
                     onClick = { onClick(true) },
                 )
 
-                MySpacerColumn(height = 16.dp)
+                MySpacerColumn(height = 12.dp)
 
                 TripCreationTypeButton(
                     icon = MyIcons.ai,

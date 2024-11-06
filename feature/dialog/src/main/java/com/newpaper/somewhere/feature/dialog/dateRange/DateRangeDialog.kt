@@ -31,9 +31,10 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.utils.getDateText
+import com.newpaper.somewhere.feature.dialog.CancelDialogButton
+import com.newpaper.somewhere.feature.dialog.OkDialogButton
 import com.newpaper.somewhere.feature.dialog.R
 import com.newpaper.somewhere.feature.dialog.myDialog.DIALOG_DEFAULT_MAX_HEIGHT
-import com.newpaper.somewhere.feature.dialog.myDialog.DialogButton
 import java.time.LocalDate
 import java.time.ZoneOffset
 
@@ -106,25 +107,22 @@ fun DateRangeDialog(
         buttonContent = {
             Row {
                 //cancel button
-                DialogButton(
-                    text = stringResource(id = R.string.button_cancel),
-                    textColor = MaterialTheme.colorScheme.onSurface,
+                CancelDialogButton(
                     onClick = onDismissRequest
                 )
 
-                MySpacerRow(width = 16.dp)
+                MySpacerRow(width = 12.dp)
 
                 //ok button
-                DialogButton(
-                    text = stringResource(id = R.string.button_ok),
-                    enabled = (dateRangePickerState.selectedStartDateMillis != null &&
-                            dateRangePickerState.selectedEndDateMillis != null),
+                OkDialogButton(
                     onClick = {
                         onConfirm(
                             dateRangePickerState.selectedStartDateMillis,
                             dateRangePickerState.selectedEndDateMillis
                         )
-                    }
+                    },
+                    enabled = (dateRangePickerState.selectedStartDateMillis != null &&
+                            dateRangePickerState.selectedEndDateMillis != null)
                 )
             }
         }

@@ -2,7 +2,6 @@ package com.newpaper.somewhere.feature.dialog.setEditable
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,8 +18,9 @@ import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.ui.UserInfo
 import com.newpaper.somewhere.core.ui.segmentedButtons.AllowEditViewSegmentedButtons
+import com.newpaper.somewhere.feature.dialog.CancelDialogButton
+import com.newpaper.somewhere.feature.dialog.OkDialogButton
 import com.newpaper.somewhere.feature.dialog.R
-import com.newpaper.somewhere.feature.dialog.myDialog.DialogButton
 import com.newpaper.somewhere.feature.dialog.myDialog.MyDialog
 
 @Composable
@@ -61,20 +61,17 @@ fun SetEditableDialog(
         buttonContent = {
             Row {
                 //cancel button
-                DialogButton(
-                    text = stringResource(id = R.string.button_cancel),
-                    textColor = MaterialTheme.colorScheme.onSurface,
-                    onClick = onDismissRequest
+                CancelDialogButton(
+                    onClick = onDismissRequest,
+                    modifier = Modifier.weight(1f)
                 )
 
-                MySpacerRow(width = 16.dp)
+                MySpacerRow(width = 12.dp)
 
                 //ok button
-                DialogButton(
-                    text = stringResource(id = R.string.button_ok),
-                    onClick = {
-                        onClickOk(newEditable)
-                    }
+                OkDialogButton(
+                    onClick = { onClickOk(newEditable) },
+                    modifier = Modifier.weight(1f)
                 )
             }
         }

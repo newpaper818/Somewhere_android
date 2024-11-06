@@ -27,9 +27,10 @@ import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.enums.TimeFormat
+import com.newpaper.somewhere.feature.dialog.CancelDialogButton
+import com.newpaper.somewhere.feature.dialog.OkDialogButton
 import com.newpaper.somewhere.feature.dialog.R
 import com.newpaper.somewhere.feature.dialog.myDialog.DIALOG_DEFAULT_WIDTH
-import com.newpaper.somewhere.feature.dialog.myDialog.DialogButton
 import com.newpaper.somewhere.feature.dialog.myDialog.MyDialog
 import java.time.LocalTime
 
@@ -102,17 +103,14 @@ fun SetTimeDialog(
                 }
 
                 //cancel button
-                DialogButton(
-                    text = stringResource(id = R.string.button_cancel),
-                    textColor = MaterialTheme.colorScheme.onSurface,
+                CancelDialogButton(
                     onClick = onDismissRequest
                 )
 
-                MySpacerRow(width = 16.dp)
+                MySpacerRow(width = 12.dp)
 
                 //ok button
-                DialogButton(
-                    text = stringResource(id = R.string.button_ok),
+                OkDialogButton(
                     onClick = {
                         onConfirm(
                             LocalTime.of(

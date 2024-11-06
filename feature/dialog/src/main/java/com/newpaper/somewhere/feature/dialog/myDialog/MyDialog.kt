@@ -9,23 +9,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
@@ -39,6 +32,8 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
+import com.newpaper.somewhere.feature.dialog.CancelDialogButton
+import com.newpaper.somewhere.feature.dialog.OkDialogButton
 
 internal val DIALOG_DEFAULT_WIDTH = 360.dp
 internal val DIALOG_DEFAULT_MAX_HEIGHT = 570.dp
@@ -64,8 +59,8 @@ fun MyDialog(
     var columnModifier =
         if (width != null) modifier
             .width(width)
-            .padding(16.dp)
-        else               modifier.padding(16.dp)
+            .padding(12.dp, 16.dp, 12.dp, 12.dp)
+        else               modifier.padding(12.dp, 16.dp, 12.dp, 12.dp)
 
     columnModifier =
         if (setMaxHeight) columnModifier.heightIn(max = maxHeight)
@@ -178,38 +173,7 @@ fun MyDialog(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-internal fun DialogButton(
-    text: String,
-    onClick: () -> Unit,
 
-    modifier: Modifier = Modifier,
-    textColor: Color = MaterialTheme.colorScheme.primary,
-    enabled: Boolean = true
-){
-    val textStyle =
-        if (enabled) MaterialTheme.typography.labelLarge.copy(color = textColor, fontWeight = FontWeight.Bold)
-        else MaterialTheme.typography.labelLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
-
-    val rippleConfiguration = RippleConfiguration(
-        color = textColor
-    )
-
-    CompositionLocalProvider(LocalRippleConfiguration provides rippleConfiguration) {
-        TextButton(
-            onClick = onClick,
-            enabled = enabled,
-            modifier = modifier.widthIn(min = 120.dp),
-        ) {
-            Text(
-                text = text,
-                style = textStyle,
-                modifier = Modifier.padding(10.dp, 0.dp)
-            )
-        }
-    }
-}
 
 
 
@@ -255,19 +219,12 @@ private fun MyDialogPreview(){
                 buttonContent = {
                     Row {
                         //cancel button
-                        DialogButton(
-                            text = "Cancel",
-                            textColor = MaterialTheme.colorScheme.onSurface,
-                            onClick = {}
-                        )
+                        CancelDialogButton(onClick = { })
 
                         MySpacerRow(width = 16.dp)
 
                         //delete button
-                        DialogButton(
-                            text = "OK",
-                            onClick = {}
-                        )
+                        OkDialogButton(onClick = { })
                     }
                 },
                 onDismissRequest = {}

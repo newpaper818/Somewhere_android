@@ -45,7 +45,9 @@ internal fun FriendInfoWithInviteCard(
     ) {
         MyCard {
             Column(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier
+                    .widthIn(max = 340.dp)
+                    .padding(12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 //friend info

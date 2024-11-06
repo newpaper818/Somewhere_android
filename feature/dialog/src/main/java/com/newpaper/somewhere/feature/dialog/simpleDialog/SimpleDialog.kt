@@ -1,15 +1,13 @@
 package com.newpaper.somewhere.feature.dialog.simpleDialog
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
-import com.newpaper.somewhere.feature.dialog.R
+import com.newpaper.somewhere.feature.dialog.CancelDialogButton
+import com.newpaper.somewhere.feature.dialog.PositiveDialogButton
 import com.newpaper.somewhere.feature.dialog.myDialog.DIALOG_DEFAULT_WIDTH
-import com.newpaper.somewhere.feature.dialog.myDialog.DialogButton
 import com.newpaper.somewhere.feature.dialog.myDialog.MyDialog
 
 @Composable
@@ -35,16 +33,14 @@ fun SimpleDialog(
         buttonContent = {
             Row{
                 //cancel button
-                DialogButton(
-                    text = stringResource(id = R.string.button_cancel),
-                    textColor = MaterialTheme.colorScheme.onSurface,
+                CancelDialogButton(
                     onClick = onDismissRequest
                 )
 
-                MySpacerRow(width = 16.dp)
+                MySpacerRow(width = 12.dp)
 
                 //positive button
-                DialogButton(
+                PositiveDialogButton(
                     text = positiveButtonText,
                     onClick = onClickPositive
                 )

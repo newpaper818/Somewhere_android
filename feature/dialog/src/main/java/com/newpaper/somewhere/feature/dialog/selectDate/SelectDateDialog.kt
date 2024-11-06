@@ -26,9 +26,10 @@ import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.ui.tripScreenUtils.GraphListItem
 import com.newpaper.somewhere.core.utils.convert.getDateText
+import com.newpaper.somewhere.feature.dialog.CancelDialogButton
+import com.newpaper.somewhere.feature.dialog.OkDialogButton
 import com.newpaper.somewhere.feature.dialog.R
 import com.newpaper.somewhere.feature.dialog.myDialog.DIALOG_DEFAULT_MAX_HEIGHT
-import com.newpaper.somewhere.feature.dialog.myDialog.DialogButton
 import com.newpaper.somewhere.feature.dialog.myDialog.MyDialog
 import java.time.LocalDate
 
@@ -87,20 +88,17 @@ fun SelectDateDialog(
         buttonContent = {
             Row {
                 //cancel button
-                DialogButton(
-                    text = stringResource(id = R.string.button_cancel),
-                    textColor = MaterialTheme.colorScheme.onSurface,
-                    onClick = onDismissRequest
+                CancelDialogButton(
+                    onClick = onDismissRequest,
+                    modifier = Modifier.weight(1f)
                 )
 
-                MySpacerRow(width = 16.dp)
+                MySpacerRow(width = 12.dp)
 
                 //ok button
-                DialogButton(
-                    text = stringResource(id = R.string.button_ok),
-                    onClick = {
-                        onOkClick(currentDateIndex)
-                    }
+                OkDialogButton(
+                    onClick = { onOkClick(currentDateIndex) },
+                    modifier = Modifier.weight(1f)
                 )
             }
         }
