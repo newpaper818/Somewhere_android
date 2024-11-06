@@ -109,7 +109,7 @@ class SubscriptionViewModel @Inject constructor(
         }
     }
 
-    private fun setIsUsingSomewherePro(isUsingSomewherePro: Boolean){
+    fun setIsUsingSomewherePro(isUsingSomewherePro: Boolean){
         _subscriptionUiState.update {
             it.copy(isUsingSomewherePro = isUsingSomewherePro)
         }
