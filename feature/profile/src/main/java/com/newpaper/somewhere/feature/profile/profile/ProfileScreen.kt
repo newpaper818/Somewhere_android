@@ -49,6 +49,7 @@ fun ProfileRoute(
     use2Panes: Boolean,
     userData: UserData,
     navigateToAccount: () -> Unit,
+    navigateToSubscription: () -> Unit,
 
     modifier: Modifier = Modifier,
     imageViewModel: ImageViewModel = hiltViewModel()
@@ -69,6 +70,7 @@ fun ProfileRoute(
         lazyListState = lazyListState,
         userData = userData,
         onProfileClick = navigateToAccount,
+        onClickRemoveAds = navigateToSubscription,
         downloadImage = imageViewModel::getImage,
         adView = adView,
         modifier = modifier
@@ -82,6 +84,7 @@ fun ProfileScreen(
     lazyListState: LazyListState,
     userData: UserData,
     onProfileClick: () -> Unit,
+    onClickRemoveAds: () -> Unit,
     downloadImage: (imagePath: String, tripManagerId: String, (Boolean) -> Unit) -> Unit,
     adView: AdView,
 
@@ -144,7 +147,10 @@ fun ProfileScreen(
                 item {
                     MySpacerColumn(height = 32.dp)
 
-                    GoogleMediumRectangleAd(adView)
+                    GoogleMediumRectangleAd(
+                        adView = adView,
+                        onClickRemoveAds = onClickRemoveAds
+                    )
                 }
             }
         }
@@ -197,6 +203,7 @@ private fun ProfileScreenPreview(){
                     providerIds = listOf(),
                 ),
                 onProfileClick = { },
+                onClickRemoveAds = { },
                 downloadImage = { _,_,_ ->},
                 adView = AdView(context).apply {}
             )
