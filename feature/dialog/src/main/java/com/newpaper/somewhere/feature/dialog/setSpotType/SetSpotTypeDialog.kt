@@ -26,6 +26,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -85,6 +89,10 @@ internal fun SetSpotTypeDialog(
 
     val spotTypeList = getSpotTypeList(currentSpotTypeGroup)
 
+    val select = stringResource(id = R.string.select)
+    val selected = stringResource(id = R.string.selected)
+    val notSelected = stringResource(id = R.string.not_selected)
+
     MyDialog(
         onDismissRequest = onDismissRequest,
         setMaxHeight = true,
@@ -116,7 +124,18 @@ internal fun SetSpotTypeDialog(
                     ClickableBox(
                         shape = MaterialTheme.shapes.small,
                         containerColor = cardColor,
-                        modifier = Modifier.height(36.dp),
+                        modifier = Modifier.height(36.dp)
+                            .semantics {
+                                stateDescription =
+                                    if (it == currentSpotTypeGroup) selected else notSelected
+                                onClick(
+                                    label = select,
+                                    action = {
+                                        onChangeSpotTypeGroup(it)
+                                        true
+                                    }
+                                )
+                            },
                         onClick = {
                             onChangeSpotTypeGroup(it)
                         }
@@ -166,7 +185,19 @@ internal fun SetSpotTypeDialog(
                             shape = MaterialTheme.shapes.small,
                             modifier = Modifier
                                 .height(46.dp)
-                                .fillMaxWidth(),
+                                .fillMaxWidth()
+                                .semantics {
+                                    stateDescription =
+                                        if (it == currentSpotType) selected else notSelected
+                                    onClick(
+                                        label = select,
+                                        action = {
+                                            onChangeSpotType(it)
+                                            true
+                                        }
+                                    )
+                                }
+                            ,
                             onClick = {
                                 onChangeSpotType(it)
                             }
@@ -179,7 +210,8 @@ internal fun SetSpotTypeDialog(
                             ) {
                                 Text(
                                     text = it.iconText,
-                                    style = MaterialTheme.typography.bodyLarge
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier.clearAndSetSemantics {  }
                                 )
                                 
                                 MySpacerRow(width = 8.dp)
