@@ -5,9 +5,11 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
@@ -19,6 +21,8 @@ import com.google.android.gms.ads.OnUserEarnedRewardListener
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
 import com.lightspark.composeqr.BuildConfig
+import com.newpaper.somewhere.core.designsystem.component.button.RemoveAdsButton
+import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.utils.REWARDED_AD_UNIT_ID
 import com.newpaper.somewhere.core.utils.REWARDED_AD_UNIT_ID_TEST
 
@@ -30,7 +34,7 @@ fun GoogleBannerAd(
     useFullBanner: Boolean
 ){
     val modifier =
-        if (!useFullBanner)Modifier
+        if (!useFullBanner) Modifier
             .size(320.dp, 50.dp) //BANNER
             .background(MaterialTheme.colorScheme.surfaceDim)
         else Modifier
@@ -50,17 +54,28 @@ fun GoogleBannerAd(
 
 @Composable
 fun GoogleMediumRectangleAd(
-    adView: AdView
+    adView: AdView,
+    onClickRemoveAds: () -> Unit
 ){
-    Box(
-        modifier = Modifier
-            .size(300.dp, 250.dp)
-            .background(MaterialTheme.colorScheme.surfaceDim)
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        //banner ad
-        AndroidView(
-            modifier = Modifier.clearAndSetSemantics { },
-            factory = { adView },
+        Box(
+            modifier = Modifier
+                .size(300.dp, 250.dp)
+                .background(MaterialTheme.colorScheme.surfaceDim)
+        ) {
+            //banner ad
+            AndroidView(
+                modifier = Modifier.clearAndSetSemantics { },
+                factory = { adView },
+            )
+        }
+
+        MySpacerColumn(height = 4.dp)
+
+        RemoveAdsButton(
+            onClick = onClickRemoveAds
         )
     }
 }

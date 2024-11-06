@@ -316,6 +316,12 @@ fun SomewhereNavHost(
                             navOptions = navOptions { launchSingleTop = true }
                         )
                 },
+                navigateToSubscription = {
+                    mainNavController.navigate(
+                        route = ScreenDestination.SUBSCRIPTION.route,
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
+                },
                 navigateUp = navigateUp
             )
 

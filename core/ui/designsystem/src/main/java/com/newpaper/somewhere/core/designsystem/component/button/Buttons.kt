@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -69,6 +70,18 @@ fun PrivacyPolicyButton(
             )
         }
     }
+}
+
+@Composable
+fun RemoveAdsButton(
+    onClick: () -> Unit,
+) {
+    MyTextRippleButton(
+        text = stringResource(id = R.string.remove_ads),
+        textStyle = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+        textColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        onClick = onClick
+    )
 }
 
 @Composable
@@ -368,6 +381,39 @@ private fun MyTextButton(
             Text(
                 text = text,
                 style = textStyle
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun MyTextRippleButton(
+    text: String,
+    onClick: () -> Unit,
+
+    modifier: Modifier = Modifier,
+    textStyle: TextStyle = MaterialTheme.typography.labelLarge,
+    textColor: Color = MaterialTheme.colorScheme.primary,
+    enabled: Boolean = true
+){
+    val textStyle1 =
+        if (enabled) textStyle.copy(color = textColor)
+        else textStyle.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+
+    val rippleConfiguration = RippleConfiguration(
+        color = textColor
+    )
+
+    CompositionLocalProvider(LocalRippleConfiguration provides rippleConfiguration) {
+        TextButton(
+            onClick = onClick,
+            enabled = enabled,
+            modifier = modifier
+        ) {
+            Text(
+                text = text,
+                style = textStyle1
             )
         }
     }

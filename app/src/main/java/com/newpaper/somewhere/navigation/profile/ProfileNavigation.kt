@@ -40,6 +40,7 @@ fun NavGraphBuilder.profileScreen(
 
     lazyListState: LazyListState,
     navigateToAccount: () -> Unit,
+    navigateToSubscription: () -> Unit,
     navigateUp: () -> Unit
 ) {
     composable(
@@ -84,6 +85,7 @@ fun NavGraphBuilder.profileScreen(
                     use2Panes = externalState.windowSizeClass.use2Panes,
                     userData = appUiState.appUserData!!,
                     navigateToAccount = navigateToAccount,
+                    navigateToSubscription = navigateToSubscription
                 )
             }
         }

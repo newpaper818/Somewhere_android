@@ -197,7 +197,12 @@ private fun MoreScreen(
                 item {
                     MySpacerColumn(height = 32.dp)
 
-                    GoogleMediumRectangleAd(adView)
+                    GoogleMediumRectangleAd(
+                        adView = adView,
+                        onClickRemoveAds = {
+                            navigateTo(ScreenDestination.SUBSCRIPTION)
+                        }
+                    )
                 }
             }
         }
