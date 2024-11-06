@@ -8,22 +8,21 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
+import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.ui.InternetUnavailableText
 import com.newpaper.somewhere.core.ui.card.AppIconWithAppNameProCard
@@ -49,9 +49,7 @@ import com.newpaper.somewhere.core.utils.FREE_MAX_TRIPS
 import com.newpaper.somewhere.core.utils.PLAY_STORE_SUBSCRIPTIONS_URL
 import com.newpaper.somewhere.core.utils.PRO_MAX_INVITE_FRIENDS
 import com.newpaper.somewhere.core.utils.PRO_MAX_TRIPS
-import com.newpaper.somewhere.core.utils.convert.getMaxInviteFriends
-import com.newpaper.somewhere.core.utils.convert.getMaxTrips
-import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
+import com.newpaper.somewhere.feature.more.BuildConfig
 import com.newpaper.somewhere.feature.more.R
 import com.newpaper.somewhere.feature.more.subscription.component.ManageSubscriptionButton
 import com.newpaper.somewhere.feature.more.subscription.component.NoticeText
@@ -157,6 +155,10 @@ fun SubscriptionRoute(
         },
 
         navigateUp = navigateUp,
+        setIsUsingSomewhereProDebug = {
+            subscriptionViewModel.setIsUsingSomewherePro(it)
+            updateIsUsingSomewherePro(it)
+        },
         modifier = modifier,
     )
 }
@@ -177,6 +179,9 @@ private fun SubscriptionScreen(
     onClickSubscription: () -> Unit,
     onClickRestorePurchases: () -> Unit,
     navigateUp: () -> Unit,
+
+    setIsUsingSomewhereProDebug: (isUsingSomewherePro: Boolean) -> Unit,
+
     modifier: Modifier = Modifier,
 ) {
     val scaffoldModifier = if (use2Panes) modifier
@@ -284,6 +289,38 @@ private fun SubscriptionScreen(
                 //cancel on Google play
                 //can be change pro features
                 NoticeText()
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            if(BuildConfig.DEBUG){
+                item {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(text = "using Somewhere Pro (debug)")
+
+                        MySpacerRow(width = 12.dp)
+
+                        Switch(
+                            checked = isUsingSomewherePro,
+                            onCheckedChange = {
+                                setIsUsingSomewhereProDebug(!isUsingSomewherePro)
+                            }
+                        )
+                    }
+                }
             }
         }
     }
