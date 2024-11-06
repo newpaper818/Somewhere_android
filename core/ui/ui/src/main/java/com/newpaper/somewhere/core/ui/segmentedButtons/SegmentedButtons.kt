@@ -19,7 +19,7 @@ fun AllowEditViewSegmentedButtons(
     modifier: Modifier = Modifier
 ){
     MySegmentedButtons(
-        modifier = modifier.widthIn(max = 330.dp),
+        modifier = modifier.widthIn(max = 340.dp),
         initSelectedItemIndex = if (isEditable) 0 else 1,
         itemList = listOf(
             //allow edit

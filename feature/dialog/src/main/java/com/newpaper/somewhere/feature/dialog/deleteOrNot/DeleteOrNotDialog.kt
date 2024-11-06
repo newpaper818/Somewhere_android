@@ -1,8 +1,8 @@
 package com.newpaper.somewhere.feature.dialog.deleteOrNot
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
@@ -10,9 +10,10 @@ import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
+import com.newpaper.somewhere.feature.dialog.CancelDialogButton
+import com.newpaper.somewhere.feature.dialog.NegativeDialogButton
 import com.newpaper.somewhere.feature.dialog.R
 import com.newpaper.somewhere.feature.dialog.myDialog.DIALOG_DEFAULT_WIDTH
-import com.newpaper.somewhere.feature.dialog.myDialog.DialogButton
 import com.newpaper.somewhere.feature.dialog.myDialog.MyDialog
 
 @Composable
@@ -38,19 +39,17 @@ fun DeleteOrNotDialog(
         buttonContent = {
             Row{
                 //cancel button
-                DialogButton(
-                    text = stringResource(id = R.string.button_cancel),
-                    textColor = MaterialTheme.colorScheme.onSurface,
-                    onClick = onDismissRequest
+                CancelDialogButton(
+                    onClick = onDismissRequest,
+                    modifier = Modifier.weight(1f)
                 )
 
-                MySpacerRow(width = 16.dp)
+                MySpacerRow(width = 12.dp)
 
                 //delete button
-                DialogButton(
+                NegativeDialogButton(
                     text = deleteButtonText,
-                    textColor = MaterialTheme.colorScheme.error,
-                    onClick = onClickDelete
+                    onClick = onClickDelete,
                 )
             }
         }
@@ -96,18 +95,15 @@ fun DeleteOrLeaveTripDialog(
         buttonContent = {
             Row{
                 //cancel button
-                DialogButton(
-                    text = stringResource(id = R.string.button_cancel),
-                    textColor = MaterialTheme.colorScheme.onSurface,
+                CancelDialogButton(
                     onClick = onDismissRequest
                 )
 
                 MySpacerRow(width = 16.dp)
 
                 //delete button
-                DialogButton(
+                NegativeDialogButton(
                     text = deleteText,
-                    textColor = MaterialTheme.colorScheme.error,
                     onClick = onClickDelete,
                     enabled = internetEnabled
                 )

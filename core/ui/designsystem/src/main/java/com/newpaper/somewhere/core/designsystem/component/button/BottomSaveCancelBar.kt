@@ -97,7 +97,7 @@ fun NegativePositiveButtons(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
-            modifier = Modifier.widthIn(max = 310.dp)
+            modifier = Modifier.widthIn(max = 330.dp)
         ) {
             BigNegativeButton(
                 text = negativeButtonText,
@@ -105,7 +105,7 @@ fun NegativePositiveButtons(
                 modifier = Modifier.weight(1f)
             )
 
-            Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.width(12.dp))
 
             BigPositiveButton(
                 text = positiveButtonText,
