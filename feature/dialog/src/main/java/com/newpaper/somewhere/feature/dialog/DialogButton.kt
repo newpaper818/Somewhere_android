@@ -44,7 +44,7 @@ private fun DialogButton(
     val contentColor = textColor ?: MaterialTheme.colorScheme.contentColorFor(containerColor)
 
     val rippleConfiguration = RippleConfiguration(
-        color = containerColor
+        color = contentColor
     )
 
     CompositionLocalProvider(LocalRippleConfiguration provides rippleConfiguration) {
