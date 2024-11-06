@@ -98,9 +98,9 @@
     <string name="home">집</string>
 
     <!--Theme.kt-->
-    <string name="theme_light">라이트 테마</string>
-    <string name="theme_dark">다크 테마</string>
-    <string name="theme_auto">시스템 기본값</string>
+    <string name="theme_light">밝은 테마</string>
+    <string name="theme_dark">어두운 테마</string>
+    <string name="theme_auto">기기 테마와 동일</string>
     <string name="map_theme_auto">앱 테마와 동일</string>
 
     <!--TripType.kt-->
