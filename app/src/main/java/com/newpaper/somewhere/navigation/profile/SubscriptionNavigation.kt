@@ -11,7 +11,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.core.ui.ErrorScreen
-import com.newpaper.somewhere.feature.more.deleteAccount.DeleteAccountRoute
 import com.newpaper.somewhere.feature.more.subscription.SubscriptionRoute
 import com.newpaper.somewhere.navigation.enterTransition
 import com.newpaper.somewhere.navigation.exitTransition

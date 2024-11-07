@@ -115,15 +115,18 @@ class SubscriptionRepository @Inject constructor(
                         Log.d(SUBSCRIPTION_TAG, "queryProducts - add to productDetailList: $productDetailsList")
                         productDetailList = productDetailsList
 
+                        // [1week-free, 1400won] or [1400won]
                         val pricingPhasesList = productDetailsList.firstOrNull()?.subscriptionOfferDetails?.firstOrNull()?.pricingPhases?.pricingPhaseList
                         val prisingListSize = pricingPhasesList?.size
 
                         val firstPrice = pricingPhasesList?.getOrNull(0)?.formattedPrice
                         val secondPrice = pricingPhasesList?.getOrNull(1)?.formattedPrice
 
+                        //[1400won]
                         if (prisingListSize == 1 && firstPrice != null){
                             onFormattedPrice(firstPrice, false)
                         }
+                        //[1week-free, 1400won]
                         else if (prisingListSize == 2 && firstPrice != null && secondPrice != null) {
                             onFormattedPrice(secondPrice, true)
                         }

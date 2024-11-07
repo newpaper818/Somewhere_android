@@ -14,7 +14,6 @@ import androidx.navigation.navDeepLink
 import com.newpaper.somewhere.core.designsystem.component.NAVIGATION_DRAWER_BAR_WIDTH
 import com.newpaper.somewhere.core.designsystem.component.NAVIGATION_RAIL_BAR_WIDTH
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
-import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.ui.ErrorScreen
