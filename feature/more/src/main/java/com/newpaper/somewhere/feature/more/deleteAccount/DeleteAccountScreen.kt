@@ -58,6 +58,7 @@ import com.newpaper.somewhere.core.model.enums.ProviderId
 import com.newpaper.somewhere.core.ui.InternetUnavailableText
 import com.newpaper.somewhere.core.ui.card.UserProfileCard
 import com.newpaper.somewhere.core.utils.itemMaxWidth
+import com.newpaper.somewhere.feature.dialog.ButtonLayout
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
 import com.newpaper.somewhere.feature.dialog.deletingAccount.DeletingAccountDialog
 import com.newpaper.somewhere.feature.more.R
@@ -154,6 +155,7 @@ fun DeleteAccountRoute(
         DeleteOrNotDialog(
             bodyText = stringResource(id = R.string.dialog_delete_account),
             deleteButtonText = stringResource(id = R.string.delete_account),
+            buttonLayout = ButtonLayout.AUTO,
             onDismissRequest = {
                 showDeleteAccountDialog = false
             },

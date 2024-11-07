@@ -41,7 +41,7 @@ import com.newpaper.somewhere.core.utils.convert.setSharingTo
 import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteFriendDialog
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.GetOutSharedTripDialog
-import com.newpaper.somewhere.feature.dialog.setEditable.SetEditableDialog
+import com.newpaper.somewhere.feature.dialog.setPermission.SetPermissionDialog
 import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.invitedFriend.component.AppUserCard
 import com.newpaper.somewhere.feature.trip.invitedFriend.component.FriendList
@@ -149,7 +149,7 @@ fun InvitedFriendsRoute(
 
     if (invitedFriendUiState.showSetEditableDialog){
         if (invitedFriendUiState.selectedFriendUserData != null) {
-            SetEditableDialog(
+            SetPermissionDialog(
                 internetEnabled = internetEnabled,
                 friendData = invitedFriendUiState.selectedFriendUserData!!,
                 downloadImage = invitedFriendViewModel::getImage,

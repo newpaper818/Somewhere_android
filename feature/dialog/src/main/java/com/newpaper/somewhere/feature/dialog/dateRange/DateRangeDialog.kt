@@ -31,7 +31,9 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.utils.getDateText
+import com.newpaper.somewhere.feature.dialog.ButtonLayout
 import com.newpaper.somewhere.feature.dialog.CancelDialogButton
+import com.newpaper.somewhere.feature.dialog.DialogButtons
 import com.newpaper.somewhere.feature.dialog.OkDialogButton
 import com.newpaper.somewhere.feature.dialog.R
 import com.newpaper.somewhere.feature.dialog.myDialog.DIALOG_DEFAULT_MAX_HEIGHT
@@ -105,26 +107,30 @@ fun DateRangeDialog(
             }
         },
         buttonContent = {
-            Row {
-                //cancel button
-                CancelDialogButton(
-                    onClick = onDismissRequest
-                )
-
-                MySpacerRow(width = 12.dp)
-
-                //ok button
-                OkDialogButton(
-                    onClick = {
-                        onConfirm(
-                            dateRangePickerState.selectedStartDateMillis,
-                            dateRangePickerState.selectedEndDateMillis
-                        )
-                    },
-                    enabled = (dateRangePickerState.selectedStartDateMillis != null &&
-                            dateRangePickerState.selectedEndDateMillis != null)
-                )
-            }
+            DialogButtons(
+                buttonLayout = ButtonLayout.HORIZONTAL,
+                negativeButtonContent = {
+                    //cancel button
+                    CancelDialogButton(
+                        onClick = onDismissRequest,
+                        modifier = Modifier.padding(start = 12.dp)
+                    )
+                },
+                positiveButtonContent = {
+                    //ok button
+                    OkDialogButton(
+                        onClick = {
+                            onConfirm(
+                                dateRangePickerState.selectedStartDateMillis,
+                                dateRangePickerState.selectedEndDateMillis
+                            )
+                        },
+                        enabled = (dateRangePickerState.selectedStartDateMillis != null &&
+                                dateRangePickerState.selectedEndDateMillis != null),
+                        modifier = Modifier.padding(end = 12.dp)
+                    )
+                }
+            )
         }
     )
 }

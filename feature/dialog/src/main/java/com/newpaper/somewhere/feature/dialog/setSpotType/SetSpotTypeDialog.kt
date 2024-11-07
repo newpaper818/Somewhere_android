@@ -44,7 +44,9 @@ import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.enums.SpotType
 import com.newpaper.somewhere.core.model.enums.SpotTypeGroup
 import com.newpaper.somewhere.core.model.enums.getSpotTypeList
+import com.newpaper.somewhere.feature.dialog.ButtonLayout
 import com.newpaper.somewhere.feature.dialog.CancelDialogButton
+import com.newpaper.somewhere.feature.dialog.DialogButtons
 import com.newpaper.somewhere.feature.dialog.OkDialogButton
 import com.newpaper.somewhere.feature.dialog.R
 import com.newpaper.somewhere.feature.dialog.myDialog.MyDialog
@@ -227,22 +229,24 @@ internal fun SetSpotTypeDialog(
             }
         },
         buttonContent = {
-            Row {
-                //cancel button
-                CancelDialogButton(
-                    onClick = onDismissRequest,
-                    modifier = Modifier.weight(1f)
-                )
+            DialogButtons(
+                buttonLayout = ButtonLayout.HORIZONTAL,
+                negativeButtonContent = {
+                    //cancel button
+                    CancelDialogButton(
+                        onClick = onDismissRequest,
+                        modifier = it
+                    )
+                },
+                positiveButtonContent = {
+                    //ok button
+                    OkDialogButton(
+                        onClick = { onClickOk(currentSpotType) },
+                        modifier = it
 
-                MySpacerRow(width = 12.dp)
-
-                //ok button
-                OkDialogButton(
-                    onClick = { onClickOk(currentSpotType) },
-                    modifier = Modifier.weight(1f)
-
-                )
-            }
+                    )
+                }
+            )
         }
     )
 }
