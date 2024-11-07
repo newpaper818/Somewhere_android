@@ -10,6 +10,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.feature.dialog.CancelDialogButton
+import com.newpaper.somewhere.feature.dialog.DialogButtonLoading
 import com.newpaper.somewhere.feature.dialog.PositiveDialogButton
 import com.newpaper.somewhere.feature.dialog.R
 import com.newpaper.somewhere.feature.dialog.myDialog.DIALOG_DEFAULT_WIDTH
@@ -32,6 +34,10 @@ fun CautionFreePlanDialog(
     cautionFreePlanViewModel: CautionFreePlanViewModel = hiltViewModel()
 ){
     val cautionFreePlanUiState by cautionFreePlanViewModel.cautionFreePlanUiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        cautionFreePlanViewModel.setShowLoading(false)
+    }
 
     MyDialog(
         onDismissRequest = onDismissRequest,
@@ -72,12 +78,26 @@ fun CautionFreePlanDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 //positive button
-                PositiveDialogButton(
-                    text = stringResource(id = R.string.watch_ad_and_create_trip),
-                    onClick = onClickPositive,
-                    enabled = cautionFreePlanUiState.isCheckedIUnderstand,
-                    modifier = Modifier.fillMaxWidth().height(50.dp)
-                )
+                if (cautionFreePlanUiState.showLoading){
+                    DialogButtonLoading(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp)
+                    )
+                }
+                else {
+                    PositiveDialogButton(
+                        text = stringResource(id = R.string.watch_ad_and_create_trip),
+                        onClick = {
+                            cautionFreePlanViewModel.setShowLoading(true)
+                            onClickPositive()
+                        },
+                        enabled = cautionFreePlanUiState.isCheckedIUnderstand,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp)
+                    )
+                }
 
                 MySpacerColumn(height = 12.dp)
 

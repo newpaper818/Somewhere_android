@@ -25,6 +25,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.newpaper.somewhere.core.designsystem.component.utils.CircularLoadingIndicatorSmall
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,7 +71,40 @@ private fun DialogButton(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DialogButtonLoading(
+    modifier: Modifier = Modifier,
+    buttonColor: Color = MaterialTheme.colorScheme.primary,
+){
+    val contentColor = MaterialTheme.colorScheme.contentColorFor(buttonColor)
 
+    val rippleConfiguration = RippleConfiguration(
+        color = contentColor
+    )
+
+    CompositionLocalProvider(LocalRippleConfiguration provides rippleConfiguration) {
+        Button(
+            onClick = { },
+            enabled = false,
+            shape = MaterialTheme.shapes.medium,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = buttonColor,
+                contentColor = contentColor,
+                disabledContainerColor = buttonColor,
+                disabledContentColor = contentColor
+            ),
+            modifier = modifier
+                .widthIn(min = 140.dp)
+                .heightIn(min = 46.dp)
+            ,
+        ) {
+            CircularLoadingIndicatorSmall(
+                color = contentColor
+            )
+        }
+    }
+}
 
 
 

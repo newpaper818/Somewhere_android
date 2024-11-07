@@ -8,7 +8,8 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 data class CautionFreePlanUiState(
-    val isCheckedIUnderstand: Boolean = false
+    val isCheckedIUnderstand: Boolean = false,
+    val showLoading: Boolean = false
 )
 
 @HiltViewModel
@@ -26,6 +27,14 @@ class CautionFreePlanViewModel @Inject constructor(
         _cautionFreePlanUiState.update {
             it.copy(
                 isCheckedIUnderstand = !it.isCheckedIUnderstand
+            )
+        }
+    }
+
+    fun setShowLoading(showLoading: Boolean) {
+        _cautionFreePlanUiState.update {
+            it.copy(
+                showLoading = showLoading
             )
         }
     }

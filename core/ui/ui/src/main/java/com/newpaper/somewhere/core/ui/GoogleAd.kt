@@ -105,30 +105,7 @@ fun loadRewardedAd(
     )
 }
 
-fun loadAndShowRewardedAd(
-    ad: RewardedInterstitialAd?,
-    context: Context,
-    activity: Activity,
-    onUserEarnedReward: () -> Unit
-) {
-    if (ad == null) {
-        loadRewardedAd(
-            context = context,
-            onAdLoaded = { loadedAd ->
-                if (loadedAd != null){
-                    showRewardedAd(loadedAd, activity, onUserEarnedReward)
-                }
-                else {
-                    onUserEarnedReward()
-                }
-            }
-        )
-    } else {
-        showRewardedAd(ad, activity, onUserEarnedReward)
-    }
-}
-
-private fun showRewardedAd(
+fun showRewardedAd(
     ad: RewardedInterstitialAd,
     activity: Activity,
     onUserEarnedReward: () -> Unit
