@@ -43,6 +43,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -324,41 +325,74 @@ private fun EditableProfileImage(
         MySpacerColumn(height = 6.dp)
 
         MyCard {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
+            AutoLayoutTwoContents(
+                content1 = {
+                    ProfileImage(
+                        profileUserId = userId,
+                        internetEnabled = internetEnabled,
+                        profileImagePath = profileImage,
+                        downloadImage = downloadImage
+                    )
+                },
+                content2 = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        //edit button
+                        ChangeProfileImageButton(
+                            onClick = onClickEditImage,
+                            modifier = Modifier
+                                .weight(1f)
+                                .heightIn(min = 88.dp)
+                        )
 
-                ProfileImage(
-                    profileUserId = userId,
-                    internetEnabled = internetEnabled,
-                    profileImagePath = profileImage,
-                    downloadImage = downloadImage
-                )
+                        MySpacerRow(8.dp)
 
-                MySpacerRow(12.dp)
+                        //delete button
+                        DeleteProfileImageButton(
+                            onClick = onClickDeleteImage,
+                            enabled = profileImage != null,
+                            modifier = Modifier
+                                .weight(1f)
+                                .heightIn(min = 88.dp)
+                        )
+                    }
+                }
+            )
+        }
+    }
+}
 
-                //edit button
-                ChangeProfileImageButton(
-                    onClick = onClickEditImage,
-                    modifier = Modifier
-                        .weight(1f)
-                        .heightIn(min = 88.dp)
-                )
+@Composable
+private fun AutoLayoutTwoContents(
+    content1: @Composable () -> Unit,
+    content2: @Composable () -> Unit,
+){
+    val configuration = LocalConfiguration.current
+    val isNarrowWidth = configuration.screenWidthDp.dp < 340.dp
 
-                MySpacerRow(8.dp)
-
-                //delete button
-                DeleteProfileImageButton(
-                    onClick = onClickDeleteImage,
-                    enabled = profileImage != null,
-                    modifier = Modifier
-                        .weight(1f)
-                        .heightIn(min = 88.dp)
-                )
-            }
+    if (isNarrowWidth){
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            content1()
+            MySpacerColumn(height = 12.dp)
+            content2()
+        }
+    }
+    else {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            content1()
+            MySpacerRow(width = 12.dp)
+            content2()
         }
     }
 }
