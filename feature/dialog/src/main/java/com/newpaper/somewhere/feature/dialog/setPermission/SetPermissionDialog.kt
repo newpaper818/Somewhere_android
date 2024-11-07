@@ -1,6 +1,5 @@
-package com.newpaper.somewhere.feature.dialog.setEditable
+package com.newpaper.somewhere.feature.dialog.setPermission
 
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,18 +12,19 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
-import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.ui.UserInfo
 import com.newpaper.somewhere.core.ui.segmentedButtons.AllowEditViewSegmentedButtons
+import com.newpaper.somewhere.feature.dialog.ButtonLayout
 import com.newpaper.somewhere.feature.dialog.CancelDialogButton
+import com.newpaper.somewhere.feature.dialog.DialogButtons
 import com.newpaper.somewhere.feature.dialog.OkDialogButton
 import com.newpaper.somewhere.feature.dialog.R
 import com.newpaper.somewhere.feature.dialog.myDialog.MyDialog
 
 @Composable
-fun SetEditableDialog(
+fun SetPermissionDialog(
     internetEnabled: Boolean,
     friendData: UserData,
     downloadImage: (imagePath: String, profileUserId: String, (Boolean) -> Unit) -> Unit,
@@ -59,21 +59,23 @@ fun SetEditableDialog(
             )
         },
         buttonContent = {
-            Row {
-                //cancel button
-                CancelDialogButton(
-                    onClick = onDismissRequest,
-                    modifier = Modifier.weight(1f)
-                )
-
-                MySpacerRow(width = 12.dp)
-
-                //ok button
-                OkDialogButton(
-                    onClick = { onClickOk(newEditable) },
-                    modifier = Modifier.weight(1f)
-                )
-            }
+            DialogButtons(
+                buttonLayout = ButtonLayout.HORIZONTAL,
+                negativeButtonContent = {
+                    //cancel button
+                    CancelDialogButton(
+                        onClick = onDismissRequest,
+                        modifier = it
+                    )
+                },
+                positiveButtonContent = {
+                    //ok button
+                    OkDialogButton(
+                        onClick = { onClickOk(newEditable) },
+                        modifier = it
+                    )
+                }
+            )
         }
     )
 }
@@ -109,7 +111,7 @@ fun SetEditableDialog(
 private fun SetEditableDialogPreview(){
     SomewhereTheme {
         MyScaffold {
-            SetEditableDialog(
+            SetPermissionDialog(
                 internetEnabled = true,
                 friendData = UserData(
                     userId = "",

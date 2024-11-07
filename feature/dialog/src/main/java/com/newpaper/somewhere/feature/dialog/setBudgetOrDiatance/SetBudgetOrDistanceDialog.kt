@@ -38,7 +38,9 @@ import com.newpaper.somewhere.core.designsystem.theme.CustomColor
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.enums.CurrencyType
 import com.newpaper.somewhere.core.ui.MyTextField
+import com.newpaper.somewhere.feature.dialog.ButtonLayout
 import com.newpaper.somewhere.feature.dialog.CancelDialogButton
+import com.newpaper.somewhere.feature.dialog.DialogButtons
 import com.newpaper.somewhere.feature.dialog.OkDialogButton
 import com.newpaper.somewhere.feature.dialog.R
 import com.newpaper.somewhere.feature.dialog.myDialog.MyDialog
@@ -159,29 +161,31 @@ fun SetBudgetOrDistanceDialog(
 
         },
         buttonContent = {
-            Row {
-                //cancel button
-                CancelDialogButton(
-                    onClick = onDismissRequest,
-                    modifier = Modifier.weight(1f)
-                )
+            DialogButtons(
+                buttonLayout = ButtonLayout.HORIZONTAL,
+                negativeButtonContent = {
+                    //cancel button
+                    CancelDialogButton(
+                        onClick = onDismissRequest,
+                        modifier = it
+                    )
+                },
+                positiveButtonContent = {
+                    //ok button
+                    OkDialogButton(
+                        onClick = {
+                            if (!isInvalidText) {
+                                val text = if (textFieldValue.value.text == "") "0"
+                                else textFieldValue.value.text
 
-                MySpacerRow(width = 12.dp)
-
-                //ok button
-                OkDialogButton(
-                    onClick = {
-                        if (!isInvalidText) {
-                            val text = if (textFieldValue.value.text == "") "0"
-                            else textFieldValue.value.text
-
-                            onSaveClick(text.toFloat())
-                        }
-                    },
-                    enabled = !isInvalidText,
-                    modifier = Modifier.weight(1f)
-                )
-            }
+                                onSaveClick(text.toFloat())
+                            }
+                        },
+                        enabled = !isInvalidText,
+                        modifier = it
+                    )
+                }
+            )
         }
     )
 }

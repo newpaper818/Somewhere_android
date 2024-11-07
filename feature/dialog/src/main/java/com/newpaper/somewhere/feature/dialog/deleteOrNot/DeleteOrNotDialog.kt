@@ -1,19 +1,15 @@
 package com.newpaper.somewhere.feature.dialog.deleteOrNot
 
-import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
-import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
+import com.newpaper.somewhere.feature.dialog.ButtonLayout
 import com.newpaper.somewhere.feature.dialog.CancelDialogButton
+import com.newpaper.somewhere.feature.dialog.DialogButtons
 import com.newpaper.somewhere.feature.dialog.NegativeDialogButton
 import com.newpaper.somewhere.feature.dialog.R
-import com.newpaper.somewhere.feature.dialog.myDialog.DIALOG_DEFAULT_WIDTH
 import com.newpaper.somewhere.feature.dialog.myDialog.MyDialog
 
 @Composable
@@ -25,33 +21,33 @@ fun DeleteOrNotDialog(
     titleText: String? = null,
     bodyText: String? = null,
     subBodyText: String? = null,
+    buttonLayout: ButtonLayout = ButtonLayout.AUTO
 
-    width: Dp? = DIALOG_DEFAULT_WIDTH,
-    bodyContent: @Composable() (() -> Unit)? = null,
+//    bodyContent: @Composable() (() -> Unit)? = null,
 ){
     MyDialog(
         onDismissRequest = onDismissRequest,
-        width = width,
         titleText = titleText,
         bodyText = bodyText,
         subBodyText = subBodyText,
-        bodyContent = bodyContent,
+        bodyContent = null,
         buttonContent = {
-            Row{
-                //cancel button
-                CancelDialogButton(
-                    onClick = onDismissRequest,
-                    modifier = Modifier.weight(1f)
-                )
-
-                MySpacerRow(width = 12.dp)
-
-                //delete button
-                NegativeDialogButton(
-                    text = deleteButtonText,
-                    onClick = onClickDelete,
-                )
-            }
+            DialogButtons(
+                negativeButtonContent = {
+                    CancelDialogButton(
+                        onClick = onDismissRequest,
+                        modifier = it
+                    )
+                },
+                positiveButtonContent = {
+                    NegativeDialogButton(
+                        text = deleteButtonText,
+                        onClick = onClickDelete,
+                        modifier = it
+                    )
+                },
+                buttonLayout = buttonLayout
+            )
         }
     )
 }
@@ -93,21 +89,22 @@ fun DeleteOrLeaveTripDialog(
         subBodyText = subBodyText,
         bodyContent = bodyContent,
         buttonContent = {
-            Row{
-                //cancel button
-                CancelDialogButton(
-                    onClick = onDismissRequest
-                )
-
-                MySpacerRow(width = 16.dp)
-
-                //delete button
-                NegativeDialogButton(
-                    text = deleteText,
-                    onClick = onClickDelete,
-                    enabled = internetEnabled
-                )
-            }
+            DialogButtons(
+                negativeButtonContent = {
+                    CancelDialogButton(
+                        onClick = onDismissRequest,
+                        modifier = it
+                    )
+                },
+                positiveButtonContent = {
+                    NegativeDialogButton(
+                        text = deleteText,
+                        onClick = onClickDelete,
+                        enabled = internetEnabled,
+                        modifier = it
+                    )
+                }
+            )
         }
     )
 }

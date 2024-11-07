@@ -1,7 +1,6 @@
 package com.newpaper.somewhere.feature.dialog.selectDate
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,13 +19,14 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
-import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.ui.tripScreenUtils.GraphListItem
 import com.newpaper.somewhere.core.utils.convert.getDateText
+import com.newpaper.somewhere.feature.dialog.ButtonLayout
 import com.newpaper.somewhere.feature.dialog.CancelDialogButton
+import com.newpaper.somewhere.feature.dialog.DialogButtons
 import com.newpaper.somewhere.feature.dialog.OkDialogButton
 import com.newpaper.somewhere.feature.dialog.R
 import com.newpaper.somewhere.feature.dialog.myDialog.DIALOG_DEFAULT_MAX_HEIGHT
@@ -86,21 +86,23 @@ fun SelectDateDialog(
             }
         },
         buttonContent = {
-            Row {
-                //cancel button
-                CancelDialogButton(
-                    onClick = onDismissRequest,
-                    modifier = Modifier.weight(1f)
-                )
-
-                MySpacerRow(width = 12.dp)
-
-                //ok button
-                OkDialogButton(
-                    onClick = { onOkClick(currentDateIndex) },
-                    modifier = Modifier.weight(1f)
-                )
-            }
+            DialogButtons(
+                buttonLayout = ButtonLayout.HORIZONTAL,
+                negativeButtonContent = {
+                    //cancel button
+                    CancelDialogButton(
+                        onClick = onDismissRequest,
+                        modifier = it
+                    )
+                },
+                positiveButtonContent = {
+                    //ok button
+                    OkDialogButton(
+                        onClick = { onOkClick(currentDateIndex) },
+                        modifier = it
+                    )
+                }
+            )
         }
     )
 }
