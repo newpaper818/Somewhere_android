@@ -3,6 +3,7 @@ package com.newpaper.somewhere.core.designsystem.component.utils
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -28,7 +29,18 @@ fun CircularLoadingIndicator(
     )
 }
 
-
+@Composable
+fun CircularLoadingIndicatorSmall(
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.primary
+){
+    CircularProgressIndicator(
+        modifier = modifier.size(20.dp),
+        color = color,
+        strokeWidth = 2.dp,
+        strokeCap = StrokeCap.Round
+    )
+}
 
 
 

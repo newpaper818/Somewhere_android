@@ -34,8 +34,8 @@ import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.tripData.Trip
-import com.newpaper.somewhere.core.ui.loadAndShowRewardedAd
 import com.newpaper.somewhere.core.ui.loadRewardedAd
+import com.newpaper.somewhere.core.ui.showRewardedAd
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
 import com.newpaper.somewhere.feature.dialog.tripAiDialog.CautionDialog
 import com.newpaper.somewhere.feature.dialog.tripAiDialog.CautionFreePlanDialog
@@ -131,7 +131,7 @@ fun TripAiRoute(
     LaunchedEffect(tripAiUiState.tripAiPhase) {
         if (
             !appUserData.isUsingSomewherePro
-            && tripAiUiState.tripAiPhase == TripAiPhase.TRIP_WITH
+            && tripAiUiState.tripAiPhase == TripAiPhase.TRIP_TYPE
             && rewardedInterstitialAd == null
         ){
             loadRewardedAd(
@@ -281,25 +281,51 @@ fun TripAiScreen(
                     setShowCautionDialog(false)
                 },
                 onClickPositive = {
+                    if (rewardedInterstitialAd == null) {
+                        //load ad
+                        loadRewardedAd(
+                            context = context,
+                            onAdLoaded = { ad ->
+                                rewardedInterstitialAd = ad
+                                setShowCautionDialog(false)
 
-                    setShowCautionDialog(false)
+                                //show ad
+                                showRewardedAd(
+                                    ad = rewardedInterstitialAd!!,
+                                    activity = activity,
+                                    onUserEarnedReward = {
+                                        setUserGetReward(true)
 
-                    //show ad
-                    loadAndShowRewardedAd(
-                        ad = rewardedInterstitialAd,
-                        context = context,
-                        activity = activity,
-                        onUserEarnedReward = {
-                            setUserGetReward(true)
-
-                            //to next page
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(
-                                    pagerState.currentPage + 1
+                                        //to next page
+                                        coroutineScope.launch {
+                                            pagerState.animateScrollToPage(
+                                                pagerState.currentPage + 1
+                                            )
+                                        }
+                                    }
                                 )
                             }
-                        }
-                    )
+                        )
+                    }
+                    else {
+                        setShowCautionDialog(false)
+
+                        //show ad
+                        showRewardedAd(
+                            ad = rewardedInterstitialAd!!,
+                            activity = activity,
+                            onUserEarnedReward = {
+                                setUserGetReward(true)
+
+                                //to next page
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(
+                                        pagerState.currentPage + 1
+                                    )
+                                }
+                            }
+                        )
+                    }
                 }
             )
         }
