@@ -27,6 +27,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
@@ -36,9 +39,12 @@ import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.ui.loadRewardedAd
 import com.newpaper.somewhere.core.ui.showRewardedAd
+import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID
+import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
 import com.newpaper.somewhere.feature.dialog.tripAiDialog.CautionDialog
 import com.newpaper.somewhere.feature.dialog.tripAiDialog.CautionFreePlanDialog
+import com.newpaper.somewhere.feature.trip.BuildConfig
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.tripAi.component.PrevNextButtons
@@ -112,6 +118,18 @@ fun TripAiRoute(
             Log.d("Google-Ad", "Ad showed fullscreen content.")
         }
     }
+
+    val adView =
+        if (!appUserData.isUsingSomewherePro) {
+            AdView(context).apply {
+                setAdSize(AdSize.MEDIUM_RECTANGLE)
+                adUnitId = if (BuildConfig.DEBUG) BANNER_AD_UNIT_ID_TEST
+                            else BANNER_AD_UNIT_ID
+
+                loadAd(AdRequest.Builder().build())
+            }
+        }
+        else null
 
     if (tripAiUiState.showExitDialog) {
         DeleteOrNotDialog(
@@ -200,6 +218,8 @@ fun TripAiRoute(
         internetEnabled = internetEnabled,
         dateTimeFormat = dateTimeFormat,
         tripAiUiState = tripAiUiState,
+        adView = adView,
+
         onClickBack = onClickBack,
 
         setPhase = tripAiViewModel::setPhase,
@@ -223,6 +243,8 @@ fun TripAiScreen(
     internetEnabled: Boolean,
     dateTimeFormat: DateTimeFormat,
     tripAiUiState: TripAiUiState,
+    adView: AdView?,
+
     onClickBack: () -> Unit,
 
     setPhase: (TripAiPhase) -> Unit,
@@ -410,6 +432,7 @@ fun TripAiScreen(
                         TripAiPhase.CREATE_TRIP -> {
                             CreateTripPage(
                                 internetEnabled = internetEnabled,
+                                adView = adView,
                                 createTripError = tripAiUiState.createTripError,
                                 onClickTryAgain = { setCreateTripError(false) }
                             )

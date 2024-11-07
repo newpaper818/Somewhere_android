@@ -55,7 +55,8 @@ fun GoogleBannerAd(
 @Composable
 fun GoogleMediumRectangleAd(
     adView: AdView,
-    onClickRemoveAds: () -> Unit
+    showRemoveAdsButton: Boolean = true,
+    onClickRemoveAds: () -> Unit = { }
 ){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -72,11 +73,13 @@ fun GoogleMediumRectangleAd(
             )
         }
 
-        MySpacerColumn(height = 4.dp)
+        if (showRemoveAdsButton) {
+            MySpacerColumn(height = 4.dp)
 
-        RemoveAdsButton(
-            onClick = onClickRemoveAds
-        )
+            RemoveAdsButton(
+                onClick = onClickRemoveAds
+            )
+        }
     }
 }
 

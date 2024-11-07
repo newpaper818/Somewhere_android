@@ -34,7 +34,6 @@ import com.newpaper.somewhere.core.ui.GoogleMediumRectangleAd
 import com.newpaper.somewhere.core.ui.card.UserProfileCard
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
-import com.newpaper.somewhere.core.utils.convert.getContainAds
 import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.dialog.myQrCode.MyQrCodeDialog
 import com.newpaper.somewhere.feature.profile.R
@@ -56,13 +55,17 @@ fun ProfileRoute(
 ) {
     val context = LocalContext.current
 
-    val adView = AdView(context).apply {
-        setAdSize(AdSize.MEDIUM_RECTANGLE)
-        adUnitId = if (BuildConfig.DEBUG) BANNER_AD_UNIT_ID_TEST
-            else BANNER_AD_UNIT_ID
+    val adView =
+        if (!userData.isUsingSomewherePro) {
+            AdView(context).apply {
+                setAdSize(AdSize.MEDIUM_RECTANGLE)
+                adUnitId = if (BuildConfig.DEBUG) BANNER_AD_UNIT_ID_TEST
+                            else BANNER_AD_UNIT_ID
 
-        loadAd(AdRequest.Builder().build())
-    }
+                loadAd(AdRequest.Builder().build())
+            }
+        }
+        else null
 
     ProfileScreen(
         internetEnabled = internetEnabled,
@@ -86,7 +89,7 @@ fun ProfileScreen(
     onProfileClick: () -> Unit,
     onClickRemoveAds: () -> Unit,
     downloadImage: (imagePath: String, tripManagerId: String, (Boolean) -> Unit) -> Unit,
-    adView: AdView,
+    adView: AdView?,
 
     modifier: Modifier = Modifier
 ) {
@@ -143,7 +146,7 @@ fun ProfileScreen(
                 )
             }
 
-            if (getContainAds(userData.isUsingSomewherePro)) {
+            if (adView != null) {
                 item {
                     MySpacerColumn(height = 32.dp)
 
