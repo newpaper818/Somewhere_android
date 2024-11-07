@@ -165,14 +165,17 @@ private fun MoreScreen(
                     modifier = itemModifier
                 ) {
                     //somewhere pro
-                    if (appUserData != null && !appUserData.isUsingSomewherePro) {
-                        ItemWithText(
-                            text = stringResource(id = R.string.somewhere_pro),
-                            onItemClick = { navigateTo(ScreenDestination.SUBSCRIPTION) }
-                        )
+                    ItemWithText(
+                        text = stringResource(id = R.string.somewhere_pro),
+                        onItemClick = {
+                            if (appUserData != null)
+                                navigateTo(ScreenDestination.SUBSCRIPTION)
+                            else
+                                navigateTo(ScreenDestination.SIGN_IN)
+                        }
+                    )
 
-                        ItemDivider()
-                    }
+                    ItemDivider()
 
                     //about
                     ItemWithText(
