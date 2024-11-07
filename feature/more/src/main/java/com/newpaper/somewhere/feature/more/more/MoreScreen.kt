@@ -34,7 +34,6 @@ import com.newpaper.somewhere.core.ui.item.ItemWithText
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
-import com.newpaper.somewhere.core.utils.convert.getContainAds
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.more.R
 import com.newpaper.somewhere.feature.trip.BuildConfig
@@ -55,18 +54,22 @@ fun MoreRoute(
 ) {
     val context = LocalContext.current
 
-    val adView = AdView(context).apply {
-        setAdSize(AdSize.MEDIUM_RECTANGLE)
-        adUnitId = if (BuildConfig.DEBUG) BANNER_AD_UNIT_ID_TEST
-            else BANNER_AD_UNIT_ID
 
-        loadAd(AdRequest.Builder().build())
-    }
+    val adView =
+        if (!isUsingSomewherePro) {
+            AdView(context).apply {
+                setAdSize(AdSize.MEDIUM_RECTANGLE)
+                adUnitId = if (BuildConfig.DEBUG) BANNER_AD_UNIT_ID_TEST
+                            else BANNER_AD_UNIT_ID
+
+                loadAd(AdRequest.Builder().build())
+            }
+        }
+        else null
 
     MoreScreen(
         isDebugMode = isDebugMode,
         appUserData = appUserData,
-        isUsingSomewherePro = isUsingSomewherePro,
 
         startSpacerValue = spacerValue,
         endSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
@@ -82,13 +85,12 @@ fun MoreRoute(
 private fun MoreScreen(
     isDebugMode: Boolean,
     appUserData: UserData?,
-    isUsingSomewherePro: Boolean,
 
     startSpacerValue: Dp,
     endSpacerValue: Dp,
     lazyListState: LazyListState,
     navigateTo: (ScreenDestination) -> Unit,
-    adView: AdView,
+    adView: AdView?,
 
     modifier: Modifier = Modifier,
     currentScreenRoute: String? = null
@@ -190,7 +192,7 @@ private fun MoreScreen(
                     )
                 }
 
-            if (getContainAds(isUsingSomewherePro)) {
+            if (adView != null) {
                 item {
                     MySpacerColumn(height = 32.dp)
 
@@ -245,7 +247,6 @@ private fun MoreScreenPreview(){
         MoreScreen(
             isDebugMode = false,
             appUserData = UserData("", "", "", "", listOf()),
-            isUsingSomewherePro = false,
             startSpacerValue = 16.dp,
             endSpacerValue = 16.dp,
             lazyListState = LazyListState(),
@@ -263,7 +264,6 @@ private fun MoreScreenPreview_Debug(){
         MoreScreen(
             isDebugMode = true,
             appUserData = UserData("", "", "", "", listOf()),
-            isUsingSomewherePro = false,
             startSpacerValue = 16.dp,
             endSpacerValue = 16.dp,
             lazyListState = LazyListState(),

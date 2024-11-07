@@ -59,7 +59,6 @@ import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
 import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.convert.getAllImagesPath
-import com.newpaper.somewhere.core.utils.convert.getContainAds
 import com.newpaper.somewhere.core.utils.convert.getMaxTrips
 import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrLeaveTripDialog
@@ -188,13 +187,19 @@ fun TripsRoute(
     val adSize = if (!use2Panes) AdSize.BANNER
                     else AdSize.FULL_BANNER
 
-    val adView = AdView(context).apply {
-        setAdSize(adSize)
-        adUnitId = if (BuildConfig.DEBUG) BANNER_AD_UNIT_ID_TEST
-                    else BANNER_AD_UNIT_ID
+    val adView =
+        if (!appUserData.isUsingSomewherePro) {
+            AdView(context).apply {
+                setAdSize(adSize)
+                adUnitId = if (BuildConfig.DEBUG) BANNER_AD_UNIT_ID_TEST
+                            else BANNER_AD_UNIT_ID
 
-        loadAd(AdRequest.Builder().build())
-    }
+                loadAd(AdRequest.Builder().build())
+            }
+        }
+        else null
+
+
 
     val showingTrips =
         if (isEditMode) tempTrips
@@ -318,7 +323,7 @@ private fun TripsScreen(
     navigate: TripsNavigate,
 
     lazyListState: LazyListState,
-    adView: AdView,
+    adView: AdView?,
     updateTripItemOrder: (isSharedTrips: Boolean, currentIndex: Int, destinationIndex: Int) -> Unit,
 
     modifier: Modifier = Modifier
@@ -502,7 +507,7 @@ private fun TripsScreen(
                         }
                     }
             ) {
-                if (getContainAds(appUserData.isUsingSomewherePro)) {
+                if (adView != null) {
                     item {
                         GoogleBannerAd(
                             adView = adView,
@@ -641,7 +646,7 @@ private fun TripsScreen(
 
             LoadingTripsItem(
                 shown = loadingTrips && firstLaunch,
-                showAds = getContainAds(appUserData.isUsingSomewherePro),
+                showAds = adView != null,
                 use2Panes = tripsUiInfo.use2Panes,
                 modifier = Modifier
                     .padding(spacerValue, 16.dp, spacerValue, 0.dp)

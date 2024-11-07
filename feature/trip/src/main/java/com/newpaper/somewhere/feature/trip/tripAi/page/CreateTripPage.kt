@@ -20,17 +20,20 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.google.android.gms.ads.AdView
 import com.newpaper.somewhere.core.designsystem.component.button.TryAgainButton
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.createTripIcons
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
+import com.newpaper.somewhere.core.ui.GoogleMediumRectangleAd
 import com.newpaper.somewhere.feature.trip.R
 import kotlinx.coroutines.delay
 
 @Composable
 internal fun CreateTripPage(
     internetEnabled: Boolean,
+    adView: AdView?,
     createTripError: Boolean,
     onClickTryAgain: () -> Unit
 ){
@@ -43,6 +46,15 @@ internal fun CreateTripPage(
         ) {
             if (!createTripError) {
                 CreatingTrip()
+
+                if (adView != null) {
+                    MySpacerColumn(height = 64.dp)
+
+                    GoogleMediumRectangleAd(
+                        adView = adView,
+                        showRemoveAdsButton = false
+                    )
+                }
             }
             else {
                 Error(
@@ -144,6 +156,15 @@ private fun Error(
     )
 }
 
+
+
+
+
+
+
+
+
+
 @Composable
 @PreviewLightDark
 private fun CreateTripPagePreview() {
@@ -156,6 +177,7 @@ private fun CreateTripPagePreview() {
         ) {
             CreateTripPage(
                 internetEnabled = true,
+                adView = null,
                 createTripError = false,
                 onClickTryAgain = {}
             )
