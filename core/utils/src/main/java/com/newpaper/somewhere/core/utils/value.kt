@@ -46,7 +46,7 @@ const val FREE_CONTAINS_ADS = true
 const val PRO_CONTAINS_ADS = false
 
 const val FREE_MAX_TRIPS = 10
-const val PRO_MAX_TRIPS = 200
+const val PRO_MAX_TRIPS = 300
 
 const val FREE_MAX_INVITE_FRIENDS = 5
 const val PRO_MAX_INVITE_FRIENDS = 50
