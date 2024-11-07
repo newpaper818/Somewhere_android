@@ -18,8 +18,8 @@ android {
         applicationId = "com.newpaper.somewhere"
         minSdk = 26
         targetSdk = 34
-        versionCode = 43
-        versionName = "1.9.2(43)-alpha-ads"
+        versionCode = 44
+        versionName = "1.10.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
