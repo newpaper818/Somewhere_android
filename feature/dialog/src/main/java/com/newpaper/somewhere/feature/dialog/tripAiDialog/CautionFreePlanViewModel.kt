@@ -24,10 +24,12 @@ class CautionFreePlanViewModel @Inject constructor(
     val cautionFreePlanUiState = _cautionFreePlanUiState.asStateFlow()
 
     fun toggleCheckedIUnderstand(){
-        _cautionFreePlanUiState.update {
-            it.copy(
-                isCheckedIUnderstand = !it.isCheckedIUnderstand
-            )
+        if (!_cautionFreePlanUiState.value.showLoading) {
+            _cautionFreePlanUiState.update {
+                it.copy(
+                    isCheckedIUnderstand = !it.isCheckedIUnderstand
+                )
+            }
         }
     }
 
