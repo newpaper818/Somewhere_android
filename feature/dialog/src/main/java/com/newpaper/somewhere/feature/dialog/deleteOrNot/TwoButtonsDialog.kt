@@ -8,20 +8,22 @@ import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.feature.dialog.ButtonLayout
 import com.newpaper.somewhere.feature.dialog.CancelDialogButton
 import com.newpaper.somewhere.feature.dialog.DialogButtons
-import com.newpaper.somewhere.feature.dialog.NegativeDialogButton
+import com.newpaper.somewhere.feature.dialog.DangerDialogButton
+import com.newpaper.somewhere.feature.dialog.PositiveDialogButton
 import com.newpaper.somewhere.feature.dialog.R
 import com.newpaper.somewhere.feature.dialog.myDialog.MyDialog
 
 @Composable
-fun DeleteOrNotDialog(
-    deleteButtonText: String,
+fun TwoButtonsDialog(
+    positiveButtonText: String,
     onDismissRequest: () -> Unit,
-    onClickDelete: () -> Unit,
+    onClickPositive: () -> Unit,
 
     titleText: String? = null,
     bodyText: String? = null,
     subBodyText: String? = null,
-    buttonLayout: ButtonLayout = ButtonLayout.AUTO
+    buttonLayout: ButtonLayout = ButtonLayout.AUTO,
+    positiveIsDangerButton: Boolean = true
 
 //    bodyContent: @Composable() (() -> Unit)? = null,
 ){
@@ -40,11 +42,20 @@ fun DeleteOrNotDialog(
                     )
                 },
                 positiveButtonContent = {
-                    NegativeDialogButton(
-                        text = deleteButtonText,
-                        onClick = onClickDelete,
-                        modifier = it
-                    )
+                    if (positiveIsDangerButton) {
+                        DangerDialogButton(
+                            text = positiveButtonText,
+                            onClick = onClickPositive,
+                            modifier = it
+                        )
+                    }
+                    else {
+                        PositiveDialogButton(
+                            text = positiveButtonText,
+                            onClick = onClickPositive,
+                            modifier = it
+                        )
+                    }
                 },
                 buttonLayout = buttonLayout
             )
@@ -97,7 +108,7 @@ fun DeleteOrLeaveTripDialog(
                     )
                 },
                 positiveButtonContent = {
-                    NegativeDialogButton(
+                    DangerDialogButton(
                         text = deleteText,
                         onClick = onClickDelete,
                         enabled = internetEnabled,
@@ -114,11 +125,11 @@ fun DeleteFriendDialog(
     onDismissRequest: () -> Unit,
     onClickDelete: () -> Unit
 ){
-    DeleteOrNotDialog(
+    TwoButtonsDialog(
         bodyText = stringResource(id = R.string.dialog_delete_friend),
-        deleteButtonText = stringResource(id = R.string.button_delete),
+        positiveButtonText = stringResource(id = R.string.button_delete),
         onDismissRequest = onDismissRequest,
-        onClickDelete = onClickDelete
+        onClickPositive = onClickDelete
     )
 }
 
@@ -127,11 +138,11 @@ fun GetOutSharedTripDialog(
     onDismissRequest: () -> Unit,
     onClickGetOut: () -> Unit
 ){
-    DeleteOrNotDialog(
+    TwoButtonsDialog(
         bodyText = stringResource(id = R.string.leave_shared_trip),
-        deleteButtonText = stringResource(id = R.string.button_get_out),
+        positiveButtonText = stringResource(id = R.string.button_get_out),
         onDismissRequest = onDismissRequest,
-        onClickDelete = onClickGetOut
+        onClickPositive = onClickGetOut
     )
 }
 
@@ -163,11 +174,11 @@ fun GetOutSharedTripDialog(
 private fun DeleteOrNotDialogPreview(){
     SomewhereTheme {
         MyScaffold {
-            DeleteOrNotDialog(
+            TwoButtonsDialog(
                 bodyText = "Delete item??????????????? ????????????\n?????????????????????????",
-                deleteButtonText = "Delete",
+                positiveButtonText = "Delete",
                 onDismissRequest = {},
-                onClickDelete = {}
+                onClickPositive = {}
             )
         }
     }

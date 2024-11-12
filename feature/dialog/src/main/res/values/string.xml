@@ -2,6 +2,12 @@
 <resources>
 
     <!--dialog/ =================================================================================-->
+    <!--CheckSubscriptionDialog.kt-->
+    <string name="check_subscription">Check subscription</string>
+    <string name="cancel_subscription_before_delete_account">I believe you\'ve subscribed to Somewhere Pro. Unsubscribe before deleting your account.</string>
+    <string name="this_dialog_may_be_displayed">This dialog may be displayed even if you\'ve cancelled your subscription. If you are cancelling the subscription, please press \'Continue\'.</string>
+    <string name="dialog_continue">Continue</string>
+
     <!--DateRangeDialog.kt-->
     <string name="set_date_range">Set date range</string>
     <string name="starts">Starts</string>

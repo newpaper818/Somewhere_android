@@ -36,7 +36,7 @@ import com.newpaper.somewhere.core.ui.item.ItemDivider
 import com.newpaper.somewhere.core.ui.item.ItemWithText
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
-import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
+import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.more.R
 import kotlinx.coroutines.launch
 
@@ -125,13 +125,13 @@ private fun AccountScreen(
     var showSignOutDialog by rememberSaveable { mutableStateOf(false) }
 
     if (showSignOutDialog) {
-        DeleteOrNotDialog(
+        TwoButtonsDialog(
             bodyText = stringResource(id = R.string.dialog_body_sign_out),
-            deleteButtonText = stringResource(id = R.string.sign_out),
+            positiveButtonText = stringResource(id = R.string.sign_out),
             onDismissRequest = {
                 showSignOutDialog = false
             },
-            onClickDelete = {
+            onClickPositive = {
                 showSignOutDialog = false
                 onSignOut()
             }

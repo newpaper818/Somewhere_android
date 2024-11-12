@@ -2,6 +2,12 @@
 <resources>
 
     <!--dialog/ =================================================================================-->
+    <!--CheckSubscriptionDialog.kt-->
+    <string name="check_subscription">구독 확인</string>
+    <string name="cancel_subscription_before_delete_account">Somewhere Pro를 구독 중인 거 같아요. 계정을 삭제하기 전에 구독을 취소해 주세요.</string>
+    <string name="this_dialog_may_be_displayed">이 메시지는 구독을 취소해도 보일 수 있어요. 구독을 취소했다면 \'계속 진행\'을 눌러주세요.</string>
+    <string name="dialog_continue">계속 진행</string>
+
     <!--DateRangeDialog.kt-->
     <string name="set_date_range">여행 기간 설정</string>
     <string name="starts">시작일</string>

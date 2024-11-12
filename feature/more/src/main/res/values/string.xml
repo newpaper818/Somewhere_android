@@ -67,10 +67,6 @@
     <string name="x" translatable="false">X</string>
 
     <string name="one_week_free_trial_included">1 week free trial included</string>
-    <string name="upgrade_to_somewhere_pro">Upgrade to Somewhere Pro\n%s/month</string>
-    <string name="you_are_subscribed_to_somewhere_pro">You\'re subscribed to\nSomewhere Pro</string>
-    <string name="restore_purchases">Restore purchases</string>
-    <string name="manage_subscription">Manage subscription</string>
 
     <string name="dot" translatable="false">•</string>
     <string name="you_can_manage_and_cancel_on_google_play_store">You can manage and cancel subscription on Google Play Store. (Google Play Store> Profile > Payments &amp; subscriptions > Subscriptions)</string>

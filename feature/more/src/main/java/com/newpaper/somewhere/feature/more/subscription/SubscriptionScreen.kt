@@ -38,6 +38,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.newpaper.somewhere.core.designsystem.component.button.ManageSubscriptionButton
+import com.newpaper.somewhere.core.designsystem.component.button.RestorePurchasesButton
+import com.newpaper.somewhere.core.designsystem.component.button.SubscribeButton
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
@@ -51,12 +54,9 @@ import com.newpaper.somewhere.core.utils.PRO_MAX_INVITE_FRIENDS
 import com.newpaper.somewhere.core.utils.PRO_MAX_TRIPS
 import com.newpaper.somewhere.feature.more.BuildConfig
 import com.newpaper.somewhere.feature.more.R
-import com.newpaper.somewhere.feature.more.subscription.component.ManageSubscriptionButton
 import com.newpaper.somewhere.feature.more.subscription.component.NoticeText
 import com.newpaper.somewhere.feature.more.subscription.component.OneFreeWeekText
 import com.newpaper.somewhere.feature.more.subscription.component.PlansTable
-import com.newpaper.somewhere.feature.more.subscription.component.RestorePurchasesButton
-import com.newpaper.somewhere.feature.more.subscription.component.SubscribeButton
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -224,6 +224,30 @@ private fun SubscriptionScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            if(BuildConfig.DEBUG){
+                item {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(text = "using Somewhere Pro (debug)")
+
+                        MySpacerRow(width = 12.dp)
+
+                        Switch(
+                            checked = isUsingSomewherePro,
+                            onCheckedChange = {
+                                setIsUsingSomewhereProDebug(!isUsingSomewherePro)
+                            }
+                        )
+                    }
+                }
+            }
+
+
+
+
+
+
             item {
                 AppIconWithAppNameProCard()
             }
@@ -290,38 +314,6 @@ private fun SubscriptionScreen(
                 //can be change pro features
                 NoticeText()
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//            if(BuildConfig.DEBUG){
-//                item {
-//                    Row(
-//                        verticalAlignment = Alignment.CenterVertically,
-//                    ) {
-//                        Text(text = "using Somewhere Pro (debug)")
-//
-//                        MySpacerRow(width = 12.dp)
-//
-//                        Switch(
-//                            checked = isUsingSomewherePro,
-//                            onCheckedChange = {
-//                                setIsUsingSomewhereProDebug(!isUsingSomewherePro)
-//                            }
-//                        )
-//                    }
-//                }
-//            }
         }
     }
 }

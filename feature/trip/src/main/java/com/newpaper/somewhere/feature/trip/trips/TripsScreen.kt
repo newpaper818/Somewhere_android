@@ -62,7 +62,7 @@ import com.newpaper.somewhere.core.utils.convert.getAllImagesPath
 import com.newpaper.somewhere.core.utils.convert.getMaxTrips
 import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrLeaveTripDialog
-import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
+import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.dialog.newTripType.TripCreationOptionsDialog
 import com.newpaper.somewhere.feature.trip.BuildConfig
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
@@ -441,11 +441,11 @@ private fun TripsScreen(
         }
 
         if (dialog.showExitDialog){
-            DeleteOrNotDialog(
+            TwoButtonsDialog(
                 bodyText = stringResource(id = R.string.dialog_body_are_you_sure_to_exit),
-                deleteButtonText = stringResource(id = R.string.dialog_button_exit),
+                positiveButtonText = stringResource(id = R.string.dialog_button_exit),
                 onDismissRequest = { dialog.showExitDialogToFalse() },
-                onClickDelete = {
+                onClickPositive = {
                     dialog.showExitDialogToFalse()
                     tripsUiInfo.setIsEditMode(false)
                     tripsEdit.unSaveTempTrips()
