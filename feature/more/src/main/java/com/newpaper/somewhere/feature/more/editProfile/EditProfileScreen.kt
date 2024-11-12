@@ -70,7 +70,7 @@ import com.newpaper.somewhere.core.ui.InternetUnavailableText
 import com.newpaper.somewhere.core.ui.MyTextField
 import com.newpaper.somewhere.core.ui.card.ProfileImage
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
-import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
+import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.more.R
 import kotlinx.coroutines.launch
 
@@ -234,11 +234,11 @@ private fun EditProfileScreen(
 
         //dialog
         if (showExitDialog){
-            DeleteOrNotDialog(
+            TwoButtonsDialog(
                 bodyText = stringResource(id = R.string.dialog_body_are_you_sure_to_exit),
-                deleteButtonText = stringResource(id = R.string.dialog_button_exit),
+                positiveButtonText = stringResource(id = R.string.dialog_button_exit),
                 onDismissRequest = { setShowExitDialog(false) },
-                onClickDelete = {
+                onClickPositive = {
                     setShowExitDialog(false)
                     navigateUp()
                 }

@@ -67,10 +67,6 @@
 
 
     <string name="one_week_free_trial_included">1주일 무료 체험 포함</string>
-    <string name="upgrade_to_somewhere_pro">Somewhere Pro 업그레이드\n%s/월</string>
-    <string name="you_are_subscribed_to_somewhere_pro">Somewhere Pro 구독 중</string>
-    <string name="restore_purchases">구매 복원</string>
-    <string name="manage_subscription">구독 관리</string>
 
 
     <string name="you_can_manage_and_cancel_on_google_play_store">Google Play 스토어에서 구독을 관리하고 취소할 수 있습니다. (Google Play 스토어 > 프로필 > 결제 및 정기 결제 > 정기 결제)</string>

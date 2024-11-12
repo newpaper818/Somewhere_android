@@ -59,7 +59,8 @@ import com.newpaper.somewhere.core.ui.InternetUnavailableText
 import com.newpaper.somewhere.core.ui.card.UserProfileCard
 import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.dialog.ButtonLayout
-import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
+import com.newpaper.somewhere.feature.dialog.checkSubscription.CheckSubscriptionDialog
+import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.dialog.deletingAccount.DeletingAccountDialog
 import com.newpaper.somewhere.feature.more.R
 import kotlinx.coroutines.delay
@@ -149,17 +150,35 @@ fun DeleteAccountRoute(
         }
     )
 
+    var showCheckSubscriptionDialog by rememberSaveable { mutableStateOf(false) }
     var showDeleteAccountDialog by rememberSaveable { mutableStateOf(false) }
 
+    LaunchedEffect(userData.isUsingSomewherePro) {
+        showCheckSubscriptionDialog = userData.isUsingSomewherePro
+    }
+
+    if (showCheckSubscriptionDialog) {
+        CheckSubscriptionDialog(
+            onDismissRequest = {
+                showCheckSubscriptionDialog = false
+                navigateUp()
+            },
+            onClickPositive = {
+                //close dialog
+                showCheckSubscriptionDialog = false
+            }
+        )
+    }
+
     if (showDeleteAccountDialog) {
-        DeleteOrNotDialog(
+        TwoButtonsDialog(
             bodyText = stringResource(id = R.string.dialog_delete_account),
-            deleteButtonText = stringResource(id = R.string.delete_account),
+            positiveButtonText = stringResource(id = R.string.delete_account),
             buttonLayout = ButtonLayout.AUTO,
             onDismissRequest = {
                 showDeleteAccountDialog = false
             },
-            onClickDelete = {
+            onClickPositive = {
                 showDeleteAccountDialog = false
                 deleteAccountViewModel.deleteAccount(
                     appUserId = userData.userId,

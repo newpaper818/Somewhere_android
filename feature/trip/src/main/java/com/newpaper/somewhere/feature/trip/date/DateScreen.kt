@@ -94,7 +94,7 @@ import com.newpaper.somewhere.core.utils.convert.setMemoText
 import com.newpaper.somewhere.core.utils.convert.setSpotType
 import com.newpaper.somewhere.core.utils.convert.setStartTime
 import com.newpaper.somewhere.core.utils.convert.setTitleText
-import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
+import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.dialog.memo.MemoDialog
 import com.newpaper.somewhere.feature.dialog.setColor.SetColorDialog
 import com.newpaper.somewhere.feature.dialog.setSpotType.SetSpotTypeDialog
@@ -491,11 +491,11 @@ private fun DateScreen(
 
         //dialogs
         if(dateDialog.showExitDialog){
-            DeleteOrNotDialog(
+            TwoButtonsDialog(
                 bodyText = stringResource(id = R.string.dialog_body_are_you_sure_to_exit),
-                deleteButtonText = stringResource(id = R.string.dialog_button_exit),
+                positiveButtonText = stringResource(id = R.string.dialog_button_exit),
                 onDismissRequest = { dateDialog.setShowExitDialog(false) },
-                onClickDelete = {
+                onClickPositive = {
                     dateDialog.setShowExitDialog(false)
                     dateUiInfo.setIsEditMode(false)
                     updateTripState(true, dateData.originalTrip)

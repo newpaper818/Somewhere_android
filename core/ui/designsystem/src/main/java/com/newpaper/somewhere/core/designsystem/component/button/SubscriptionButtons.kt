@@ -1,9 +1,10 @@
-package com.newpaper.somewhere.feature.more.subscription.component
+package com.newpaper.somewhere.core.designsystem.component.button
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalRippleConfiguration
@@ -16,20 +17,23 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.newpaper.somewhere.feature.more.R
+import com.newpaper.somewhere.core.ui.designsystem.R
 
 @Composable
-internal fun SubscribeButton(
+fun SubscribeButton(
     formattedPrice: String,
     onClick: () -> Unit,
     enabled: Boolean,
     isUsingSomewherePro: Boolean
 ){
-    val buttonModifier = Modifier.width(260.dp).height(70.dp)
+    val buttonModifier = Modifier
+        .width(260.dp)
+        .height(70.dp)
 
     if (isUsingSomewherePro){
         Box(
@@ -63,7 +67,7 @@ internal fun SubscribeButton(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun RestorePurchasesButton(
+fun RestorePurchasesButton(
     onClick: () -> Unit,
     enabled: Boolean
 ) {
@@ -88,18 +92,36 @@ internal fun RestorePurchasesButton(
 }
 
 @Composable
-internal fun ManageSubscriptionButton(
+fun ManageSubscriptionButton(
     onClick: () -> Unit,
-    enabled: Boolean
+    enabled: Boolean,
+    useTextButton: Boolean = false
 ) {
-    Button(
-        onClick = onClick,
-        enabled = enabled
-    ) {
-        Text(
-            text = stringResource(id = R.string.manage_subscription),
-            style = MaterialTheme.typography.labelMedium
+    val buttonModifier = Modifier.widthIn(min = 140.dp)
 
-        )
+    if (useTextButton){
+        TextButton(
+            onClick = onClick,
+            enabled = enabled,
+            modifier = buttonModifier
+        ) {
+            Text(
+                text = stringResource(id = R.string.manage_subscription),
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+    else {
+        Button(
+            onClick = onClick,
+            enabled = enabled,
+            modifier = buttonModifier
+        ) {
+            Text(
+                text = stringResource(id = R.string.manage_subscription),
+                style = MaterialTheme.typography.labelMedium
+            )
+        }
     }
 }

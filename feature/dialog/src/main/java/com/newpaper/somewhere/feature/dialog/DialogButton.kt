@@ -219,7 +219,7 @@ internal fun PositiveDialogButton(
 }
 
 @Composable
-internal fun NegativeDialogButton(
+internal fun DangerDialogButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -316,7 +316,7 @@ private fun NegativeDialogButton_Preview(
                 .background(MaterialTheme.colorScheme.surfaceBright),
             contentAlignment = Alignment.Center
         ) {
-            NegativeDialogButton(
+            DangerDialogButton(
                 text = "Negative",
                 onClick = { }
             )
@@ -336,7 +336,7 @@ private fun NegativeDialogButton_Disabled_Preview(
                 .background(MaterialTheme.colorScheme.surfaceBright),
             contentAlignment = Alignment.Center
         ) {
-            NegativeDialogButton(
+            DangerDialogButton(
                 text = "Negative",
                 onClick = { },
                 enabled = false

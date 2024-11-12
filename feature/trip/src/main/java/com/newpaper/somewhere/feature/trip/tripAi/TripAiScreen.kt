@@ -41,7 +41,7 @@ import com.newpaper.somewhere.core.ui.loadRewardedAd
 import com.newpaper.somewhere.core.ui.showRewardedAd
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
-import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
+import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.dialog.tripAiDialog.CautionDialog
 import com.newpaper.somewhere.feature.dialog.tripAiDialog.CautionFreePlanDialog
 import com.newpaper.somewhere.feature.trip.BuildConfig
@@ -132,13 +132,13 @@ fun TripAiRoute(
         else null
 
     if (tripAiUiState.showExitDialog) {
-        DeleteOrNotDialog(
+        TwoButtonsDialog(
             bodyText = stringResource(id = R.string.are_you_sure_to_exit),
-            deleteButtonText = stringResource(id = R.string.exit),
+            positiveButtonText = stringResource(id = R.string.exit),
             onDismissRequest = {
                 tripAiViewModel.setShowExitDialog(false)
             },
-            onClickDelete = {
+            onClickPositive = {
                 tripAiViewModel.setShowExitDialog(false)
                 navigateUp()
             }

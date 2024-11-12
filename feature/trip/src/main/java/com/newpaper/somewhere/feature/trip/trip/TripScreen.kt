@@ -72,7 +72,7 @@ import com.newpaper.somewhere.core.utils.convert.setMemoText
 import com.newpaper.somewhere.core.utils.convert.setTitleText
 import com.newpaper.somewhere.core.utils.millisToLocalDate
 import com.newpaper.somewhere.feature.dialog.dateRange.DateRangeDialog
-import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrNotDialog
+import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.dialog.memo.MemoDialog
 import com.newpaper.somewhere.feature.dialog.setColor.SetColorDialog
 import com.newpaper.somewhere.feature.dialog.setCurrencyType.SetCurrencyTypeDialog
@@ -475,11 +475,11 @@ private fun TripScreen(
 
         //dialogs
         if (tripDialog.showExitDialog) {
-            DeleteOrNotDialog(
+            TwoButtonsDialog(
                 bodyText = stringResource(id = R.string.dialog_body_are_you_sure_to_exit),
-                deleteButtonText = stringResource(id = R.string.dialog_button_exit),
+                positiveButtonText = stringResource(id = R.string.dialog_button_exit),
                 onDismissRequest = { tripDialog.setShowExitDialog(false) },
-                onClickDelete = {
+                onClickPositive = {
                     tripDialog.setShowExitDialog(false)
                     tripUiInfo.setIsEditMode(false)
                     updateTripState(true, tripData.originalTrip)
