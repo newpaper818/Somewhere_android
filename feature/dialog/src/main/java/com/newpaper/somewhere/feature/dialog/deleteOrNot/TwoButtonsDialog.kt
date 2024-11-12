@@ -7,8 +7,8 @@ import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.feature.dialog.ButtonLayout
 import com.newpaper.somewhere.feature.dialog.CancelDialogButton
-import com.newpaper.somewhere.feature.dialog.DialogButtons
 import com.newpaper.somewhere.feature.dialog.DangerDialogButton
+import com.newpaper.somewhere.feature.dialog.DialogButtons
 import com.newpaper.somewhere.feature.dialog.PositiveDialogButton
 import com.newpaper.somewhere.feature.dialog.R
 import com.newpaper.somewhere.feature.dialog.myDialog.MyDialog

@@ -294,7 +294,7 @@ private fun InternetUnavailableBox(
             MySpacerColumn(height = 12.dp)
 
             Text(
-                text = stringResource(id = R.string.internet_unavailable_),
+                text = stringResource(id = R.string.internet_unavailable),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, color = Color.White)
             )

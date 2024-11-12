@@ -27,10 +27,10 @@
     <string name="friend_email">Friend Email</string>
     <string name="or">or</string>
     <string name="invite">Invite</string>
-    <string name="scan_friends_qr">Scan friend\'s QR code to invite\n(Profile > My QR code)</string>
+    <string name="scan_friends_qr">Scan friend\'s QR code to invite.\n(Profile > My QR code)</string>
     <string name="camera_permission_denied">Camera permissions denied</string>
-    <string name="please_allow_camera_permissions">Please allow camera permissions in settings (Settings > Permissions > Camera > While using the app or Ask every time)</string>
-    <string name="internet_unavailable_">Internet unavailable</string>
+    <string name="please_allow_camera_permissions">Please allow camera permissions in settings. (Settings > Permissions > Camera > While using the app or Ask every time)</string>
+    <string name="internet_unavailable">Internet unavailable</string>
     <string name="check_internet_connection">Check internet connection</string>
 
     <string name="snackbar_invite_friend_success">Invite friend success!</string>
@@ -81,26 +81,25 @@
     <string name="not_selected">Unselected</string>
 
     <string name="where_are_you_going">Where are you going?</string>
-    <string name="type_a_destination">Type a destination</string>
-    <string name="type_city_or_country_name">Type city or country name</string>
+    <string name="type_a_destination">Type a destination.</string>
+    <string name="type_city_or_country_name">Type city or country name.</string>
 
     <string name="when_are_you_going">When are you going?</string>
     <string name="starts">Starts</string>
     <string name="ends">Ends</string>
     <string name="date_range">%s - %s</string>
-    <string name="choose_a_date_range">Choose a date range (Up to 15 days)</string>
-    <string name="date_range_error">Date range should be less than 16 days</string>
+    <string name="choose_a_date_range">Choose a date range. (Up to 15 days)</string>
+    <string name="date_range_error">Date range should be less than 16 days.</string>
 
     <string name="who_are_you_traveling_with">Who are you traveling with?</string>
-    <string name="select_one">Select one</string>
+    <string name="select_one">Select one.</string>
 
     <string name="whats_your_trip_type">What\'s your trip type?</string>
-    <string name="select_multiple">Select multiple</string>
-    <string name="internet_unavailable">Internet unavailable</string>
+    <string name="select_multiple">Select multiple.</string>
 
     <string name="creating_trip_with_ai">Creating a trip with AI…</string>
-    <string name="it_may_took_a_while">It may took a while</string>
-    <string name="it_may_contain_incorrect_information">It may contain incorrect information</string>
+    <string name="it_may_took_a_while">It may took a while.</string>
+    <string name="it_may_contain_incorrect_information">It may contain incorrect information.</string>
     <string name="something_went_wrong">Something went wrong…</string>
 
 
@@ -125,7 +124,7 @@
     <string name="my_trips">My trips</string>
     <string name="shared_trips">Shared trips</string>
 
-    <string name="dialog_body_are_you_sure_to_exit">Are you sure to exit?\nUnsaved data will be delete</string>
+    <string name="dialog_body_are_you_sure_to_exit">Are you sure to exit?\nUnsaved data will be delete.</string>
     <string name="dialog_button_exit">Exit</string>
     <string name="dialog_button_delete">Delete</string>
 
