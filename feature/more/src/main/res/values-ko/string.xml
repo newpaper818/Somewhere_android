@@ -31,7 +31,7 @@
     <string name="snackbar_fail_update_profile">프로필 업데이트 에러. 나중에 다시 시도하세요.</string>
     <string name="snackbar_no_changed">변경사항 없음</string>
     <string name="connected_with">연결된 계정</string>
-    <string name="dialog_body_are_you_sure_to_exit">정말로 나갈까요?\n저장하지 않은 데이터는 삭제돼요</string>
+    <string name="dialog_body_are_you_sure_to_exit">정말로 나갈까요?\n저장하지 않은 데이터는 삭제돼요.</string>
     <string name="dialog_button_exit">나가기</string>
 
     <!--more=====================================================================================-->
@@ -74,7 +74,7 @@
     <string name="one_week_free_trial_is_only_available_for_first_subscription">1주일 무료 체험은 첫 구독 시에만 제공됩니다.</string>
 
     <string name="snackbar_error_do_it_later">에러. 나중에 다시 시도하세요.</string>
-    <string name="snackbar_purchases_not_found_on_this_account">이 계정에 구매 기록이 없습니다</string>
+    <string name="snackbar_purchases_not_found_on_this_account">이 계정에 구매 기록이 없습니다.</string>
 
 
 </resources>

@@ -13,7 +13,7 @@
 
     <!-- ShareAppCard.kt -->
     <string name="or">or</string>
-    <string name="scan_this_qr_code_to_share">Scan this QR code to share Somewhere app</string>
+    <string name="scan_this_qr_code_to_share">Scan this QR code to share Somewhere app.</string>
 
     <!-- UserProfileCard.kt -->
     <string name="user_info">User information</string>
@@ -99,7 +99,7 @@
     <string name="vnd_name">Vietnam dong</string>
 
     <!---->
-    <string name="dialog_body_are_you_sure_to_exit">Are you sure to exit?\nUnsaved data will be delete</string>
+    <string name="dialog_body_are_you_sure_to_exit">Are you sure to exit?\nUnsaved data will be delete.</string>
     <string name="dialog_body_delete_spot">Delete this Spot?</string>
     <string name="dialog_body_sign_out">Do you want to sign out?</string>
 
@@ -135,13 +135,13 @@
 
     <!--ErrorScreen.kt-->
     <string name="error_occurred">Error occurred...</string>
-    <string name="turning_the_app_off_and_on">Try turning the app off and on</string>
+    <string name="turning_the_app_off_and_on">Try turning the app off and on.</string>
 
     <!--FriendInfo.kt-->
     <string name="unknown">Unknown</string>
 
     <!--InternetUnavailable.kt-->
-    <string name="internet_unavailable_check_connection">Internet unavailable\nCheck internet connection</string>
+    <string name="internet_unavailable_check_connection">Internet unavailable.\nCheck internet connection.</string>
 
     <!--MapButtons.kt-->
     <string name="snackbar_no_location_to_show">No location to show</string>

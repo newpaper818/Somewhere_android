@@ -19,12 +19,12 @@
     <string name="leave_shared_trip">공유받은 여행에서 나갈까요?</string>
 
     <string name="dialog_title_delete_trip">여행 삭제</string>
-    <string name="dialog_sub_body_delete_trip">공유받은 친구도 이 여행을 볼 수 없게 돼요</string>
+    <string name="dialog_sub_body_delete_trip">공유받은 친구도 이 여행을 볼 수 없게 돼요.</string>
     <string name="dialog_title_leave_shared_trip">공유받은 여행 나가기</string>
     <string name="dialog_button_leave">나가기</string>
     <string name="dialog_button_delete">삭제</string>
-    <string name="connect_internet_to_delete_trip">여행을 삭제하려면 인터넷에 연결하세요</string>
-    <string name="connect_internet_to_leave_trip">공유받은 여행에서 나가려면 인터넷에 연결하세요</string>
+    <string name="connect_internet_to_delete_trip">여행을 삭제하려면 인터넷에 연결하세요.</string>
+    <string name="connect_internet_to_leave_trip">공유받은 여행에서 나가려면 인터넷에 연결하세요.</string>
 
     <!--DeletingAccountDialog.kt-->
     <string name="deleting_account">계정 삭제하는 중…</string>
@@ -35,7 +35,7 @@
     <!--MyQrCodeDialog.kt-->
     <string name="no_name">이름 없음</string>
     <string name="no_email">이메일 없음</string>
-    <string name="scan_this_qr_code_to_invited">이 QR 코드를 스캔해서\n친구의 여행에 초대받으세요</string>
+    <string name="scan_this_qr_code_to_invited">이 QR 코드를 스캔해서\n친구의 여행에 초대받으세요.</string>
     <string name="close">닫기</string>
 
     <!--TripCreationOptionsDialog.kt-->
@@ -81,7 +81,7 @@
 
     <!--tripAiDialog.kt-->
     <string name="caution">경고</string>
-    <string name="it_could_contain_incorrect_information">잘못된 정보가 포함되어 있을 수 있어요</string>
+    <string name="it_could_contain_incorrect_information">잘못된 정보가 포함되어 있을 수 있어요.</string>
     <string name="i_understand">이해했어요</string>
     <string name="watch_ad_and_create_trip">광고 보고 여행 생성하기</string>
 

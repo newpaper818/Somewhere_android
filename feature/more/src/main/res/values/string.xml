@@ -31,7 +31,7 @@
     <string name="snackbar_fail_update_profile">Update profile error. Do it later.</string>
     <string name="snackbar_no_changed">No changed</string>
     <string name="connected_with">Connected with</string>
-    <string name="dialog_body_are_you_sure_to_exit">Are you sure to exit?\nUnsaved data will be delete</string>
+    <string name="dialog_body_are_you_sure_to_exit">Are you sure to exit?\nUnsaved data will be delete.</string>
     <string name="dialog_button_exit">Exit</string>
 
     <!--more=====================================================================================-->
@@ -74,7 +74,7 @@
     <string name="one_week_free_trial_is_only_available_for_first_subscription">1 week free trial is only available for first subscription</string>
 
     <string name="snackbar_error_do_it_later">Error. Do it later.</string>
-    <string name="snackbar_purchases_not_found_on_this_account">Purchases not found on this account</string>
+    <string name="snackbar_purchases_not_found_on_this_account">Purchases not found on this account.</string>
 
 
 </resources>

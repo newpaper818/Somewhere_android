@@ -13,7 +13,7 @@
 
     <!-- ShareAppCard.kt -->
     <string name="or">또는</string>
-    <string name="scan_this_qr_code_to_share">이 QR코드를 스캔해서 Somewhere 앱을 공유하세요</string>
+    <string name="scan_this_qr_code_to_share">이 QR코드를 스캔해서 Somewhere 앱을 공유하세요.</string>
 
     <!-- UserProfileCard.kt -->
     <string name="user_info">사용자 정보</string>
@@ -99,7 +99,7 @@
     <string name="vnd_name">베트남 동</string>
 
     <!---->
-    <string name="dialog_body_are_you_sure_to_exit">정말로 나갈까요?\n저장하지 않은 데이터는 삭제돼요</string>
+    <string name="dialog_body_are_you_sure_to_exit">정말로 나갈까요?\n저장하지 않은 데이터는 삭제돼요.</string>
     <string name="dialog_body_delete_spot">이 장소를 삭제할까요?</string>
     <string name="dialog_body_sign_out">로그아웃 할까요?</string>
 
@@ -135,13 +135,13 @@
 
     <!--ErrorScreen.kt-->
     <string name="error_occurred">오류가 발생했어요...</string>
-    <string name="turning_the_app_off_and_on">앱을 껐다 켜보세요</string>
+    <string name="turning_the_app_off_and_on">앱을 껐다 켜보세요.</string>
 
     <!--FriendInfo.kt-->
     <string name="unknown">알 수 없음</string>
 
     <!--InternetUnavailable.kt-->
-    <string name="internet_unavailable_check_connection">인터넷 연결 없음\n인터넷 연결을 확인하세요</string>
+    <string name="internet_unavailable_check_connection">인터넷 연결 없음\n인터넷 연결을 확인하세요.</string>
 
     <!--MapButtons.kt-->
     <string name="snackbar_no_location_to_show">위치 없음</string>
