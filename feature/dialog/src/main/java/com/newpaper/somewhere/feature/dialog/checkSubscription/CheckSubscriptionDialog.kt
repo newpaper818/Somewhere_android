@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.dialog.checkSubscription
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,13 +29,13 @@ fun CheckSubscriptionDialog(
     MyDialog(
         onDismissRequest = onDismissRequest,
         titleText = stringResource(id = R.string.check_subscription),
-        bodyText = stringResource(id = R.string.cancel_subscription_before_delete_account),
+        bodyText = stringResource(id = R.string.unsubscribe_before_deleting_account),
         bodyContent = {
             Text(
-                text = stringResource(id = R.string.this_dialog_may_be_displayed),
+                text = stringResource(id = R.string.if_you_are_canceling_the_subscription),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.outline,
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = Modifier.padding(horizontal = 8.dp).fillMaxWidth()
             )
         },
         buttonContent = {
