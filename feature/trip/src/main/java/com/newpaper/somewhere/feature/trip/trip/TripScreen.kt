@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -39,12 +40,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.button.SeeOnMapExtendedFAB
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
+import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.data.UserData
@@ -70,6 +73,8 @@ import com.newpaper.somewhere.core.utils.convert.setCurrencyType
 import com.newpaper.somewhere.core.utils.convert.setImage
 import com.newpaper.somewhere.core.utils.convert.setMemoText
 import com.newpaper.somewhere.core.utils.convert.setTitleText
+import com.newpaper.somewhere.core.utils.getDateText
+import com.newpaper.somewhere.core.utils.getTimeText
 import com.newpaper.somewhere.core.utils.millisToLocalDate
 import com.newpaper.somewhere.feature.dialog.dateRange.DateRangeDialog
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
@@ -797,6 +802,31 @@ private fun TripScreen(
 
                 item {
                     StartEndDummySpaceWithRoundedCorner(isFirst = false, isLast = true)
+                }
+
+                if (appUserId == tripData.originalTrip.managerId) {
+                    item {
+                        MySpacerColumn(height = 64.dp)
+
+                        val firstCreatedTime = tripData.originalTrip.firstCreatedTime
+
+                        val dateText = getDateText(
+                            date = firstCreatedTime.toLocalDate(),
+                            dateTimeFormat = dateTimeFormat,
+                        )
+
+                        val timeText = getTimeText(
+                            time = firstCreatedTime.toLocalTime(),
+                            timeFormat = dateTimeFormat.timeFormat
+                        )
+
+                        Text(
+                            text = "${stringResource(id = R.string.trip_created_time)}\n$dateText, $timeText",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
         }

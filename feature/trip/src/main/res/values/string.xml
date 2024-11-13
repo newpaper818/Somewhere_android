@@ -71,6 +71,7 @@
     <string name="dates">Dates</string>
     <string name="set_trip_duration">Set Trip Duration</string>
     <string name="dates_no_plan">No Plan</string>
+    <string name="trip_created_time">Trip created time:</string>
 
 
     <!--tripAi/ ================================================================================-->
