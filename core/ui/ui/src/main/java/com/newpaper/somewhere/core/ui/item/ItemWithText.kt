@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
+import com.newpaper.somewhere.core.designsystem.icon.MyIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.utils.listItemHeight
@@ -28,6 +29,7 @@ import com.newpaper.somewhere.core.utils.listItemHeight
 @Composable
 fun ItemWithText(
     isSelected: Boolean = false,
+    icon: MyIcon? = null,
     text: String?= null,
     subText: String? = null,
 
@@ -54,16 +56,22 @@ fun ItemWithText(
                     .height(listItemHeight)
                     .padding(16.dp, 0.dp)
             ) {
+                if (icon != null) {
+                    DisplayIcon(icon = icon)
+
+                    MySpacerRow(width = 10.dp)
+                }
+
                 if (text != null) {
                     Text(
                         text = text,
                         style = textStyle
                     )
+
+                    MySpacerRow(width = 8.dp)
                 }
 
                 if (isOpenInNew) {
-                    MySpacerRow(width = 8.dp)
-
                     DisplayIcon(icon = MyIcons.openInNew)
                 }
 
