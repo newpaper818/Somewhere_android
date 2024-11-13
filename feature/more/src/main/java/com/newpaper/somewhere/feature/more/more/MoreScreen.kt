@@ -142,9 +142,13 @@ private fun MoreScreen(
                         text = stringResource(id = R.string.theme),
                         onItemClick = { navigateTo(ScreenDestination.SET_THEME) }
                     )
+                }
+            }
 
-                    ItemDivider()
-
+            item {
+                ListGroupCard(
+                    modifier = itemModifier
+                ) {
                     //account
                     ItemWithText(
                         isSelected = currentScreenRoute == ScreenDestination.ACCOUNT.route
