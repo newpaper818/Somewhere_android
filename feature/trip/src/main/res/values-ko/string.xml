@@ -71,6 +71,7 @@
     <string name="dates">일정</string>
     <string name="set_trip_duration">여행 기간 설정</string>
     <string name="dates_no_plan">계획 없음</string>
+    <string name="trip_created_time">여행 생성 시간:</string>
 
 
     <!--tripAi/ ================================================================================-->
