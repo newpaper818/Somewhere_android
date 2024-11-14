@@ -78,7 +78,7 @@ fun RemoveAdsButton(
 ) {
     MyTextRippleButton(
         text = stringResource(id = R.string.remove_ads),
-        textStyle = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+        textStyle = MaterialTheme.typography.labelLarge,
         textColor = MaterialTheme.colorScheme.onSurfaceVariant,
         onClick = onClick
     )
@@ -150,19 +150,6 @@ fun UpdateButton(
         modifier = Modifier.widthIn(min = 75.dp),
         text = stringResource(id = R.string.update),
         onClick = onClick
-    )
-}
-
-@Composable
-fun InviteButton(
-    onClick: () -> Unit,
-    enabled: Boolean
-){
-    MyTextButton(
-        modifier = Modifier.widthIn(min = 120.dp),
-        text = stringResource(id = R.string.invite),
-        onClick = onClick,
-        enabled = enabled
     )
 }
 
@@ -319,7 +306,8 @@ fun ToPrevDateButton(
 
             Text(
                 text = text,
-                style = MaterialTheme.typography.labelLarge
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold
             )
         }
     }
@@ -341,7 +329,8 @@ fun ToNextDateButton(
         ) {
             Text(
                 text = text,
-                style = MaterialTheme.typography.labelLarge
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold
             )
 
             DisplayIcon(icon = IconTextButtonIcon.rightArrow)
@@ -367,7 +356,8 @@ private fun MyTextButton(
         ) {
             Text(
                 text = text,
-                style = textStyle
+                style = textStyle,
+                fontWeight = FontWeight.SemiBold
             )
         }
     }
@@ -380,7 +370,8 @@ private fun MyTextButton(
         ) {
             Text(
                 text = text,
-                style = textStyle
+                style = textStyle,
+                fontWeight = FontWeight.SemiBold
             )
         }
     }
@@ -413,7 +404,8 @@ internal fun MyTextRippleButton(
         ) {
             Text(
                 text = text,
-                style = textStyle1
+                style = textStyle1,
+                fontWeight = FontWeight.SemiBold
             )
         }
     }
@@ -451,7 +443,8 @@ private fun IconTextButton(
 
             Text(
                 text = text,
-                style = textStyle
+                style = textStyle,
+                fontWeight = FontWeight.SemiBold
             )
         }
     }
@@ -492,7 +485,8 @@ private fun IconTextButtonColumn(
                 text = text,
                 style = if (enabled) textStyle
                         else textStyle.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.SemiBold
             )
         }
     }
@@ -550,44 +544,6 @@ private fun UpdatePreview(){
         ){
             UpdateButton(
                 onClick = {}
-            )
-        }
-    }
-}
-
-@Composable
-@PreviewLightDark
-private fun InviteButtonPreview(){
-    SomewhereTheme {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(16.dp)
-                .width(190.dp)
-        ) {
-            InviteButton(
-                onClick = { },
-                enabled = true
-            )
-        }
-    }
-}
-
-@Composable
-@PreviewLightDark
-private fun InviteButtonDisabledPreview(){
-    SomewhereTheme {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(16.dp)
-                .width(190.dp)
-        ) {
-            InviteButton(
-                onClick = { },
-                enabled = false
             )
         }
     }
