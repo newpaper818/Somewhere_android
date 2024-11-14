@@ -7,13 +7,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.button.UpdateButton
@@ -30,20 +33,13 @@ fun VersionCard(
     onClickUpdate: () -> Unit,
     modifier: Modifier = Modifier
 ){
-
-    val text =
-        when (isLatestAppVersion){
-            true -> currentAppVersionName + " " + stringResource(id = R.string.latest)
-            false -> currentAppVersionName + " " + stringResource(id = R.string.old_version)
-            else -> currentAppVersionName
-        }
-
-
     MyCard(
         modifier = modifier.semantics(mergeDescendants = true) { }
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp, 14.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp, 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
@@ -54,9 +50,9 @@ fun VersionCard(
 
                 MySpacerColumn(height = 8.dp)
 
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.bodyLarge
+                VersionText(
+                    currentAppVersionName = currentAppVersionName,
+                    isLatestAppVersion = isLatestAppVersion
                 )
             }
 
@@ -70,6 +66,43 @@ fun VersionCard(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun VersionText(
+    currentAppVersionName: String,
+    isLatestAppVersion: Boolean?,
+){
+    val latestText =
+        when (isLatestAppVersion){
+            true -> stringResource(id = R.string.latest)
+            false -> stringResource(id = R.string.old_version)
+            else -> ""
+        }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.semantics {
+            contentDescription = "$currentAppVersionName $latestText"
+        }
+    ) {
+        currentAppVersionName.forEach {
+            Text(
+                text = it.toString(),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                modifier = if (it.toString() == ".") Modifier
+                            else Modifier.width(10.4.dp)
+            )
+        }
+
+        MySpacerRow(width = 4.dp)
+
+        Text(
+            text = latestText,
+            style = MaterialTheme.typography.bodyLarge
+        )
     }
 }
 
