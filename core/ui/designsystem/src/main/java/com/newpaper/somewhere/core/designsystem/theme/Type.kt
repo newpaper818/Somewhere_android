@@ -15,104 +15,110 @@ val suite = FontFamily(
     Font(R.font.suite_bold, FontWeight.Bold)
 )
 
+val pretendard = FontFamily(
+    Font(R.font.pretendard_bold, FontWeight.Bold),
+    Font(R.font.pretendard_semi_bold, FontWeight.SemiBold),
+    Font(R.font.pretendard_regular, FontWeight.Normal)
+)
+
 // Set of Material typography styles to start with
 val Typography = Typography(
     displayLarge = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = pretendard,
         fontWeight = FontWeight.Bold,
         fontSize = 23.sp,
-        lineHeight = 23.sp * 1.3
+        lineHeight = 23.sp * 1.4
     ),
     displayMedium = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = pretendard,
         fontWeight = FontWeight.Normal,
         fontSize = 21.sp,
-        lineHeight = 21.sp * 1.3
+        lineHeight = 21.sp * 1.4
     ),
     displaySmall = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = pretendard,
         fontWeight = FontWeight.Normal,
         fontSize = 19.sp,
-        lineHeight = 19.sp * 1.3
+        lineHeight = 19.sp * 1.4
     ),
 
     //headline bold
     headlineLarge = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = pretendard,
         fontWeight = FontWeight.Bold,
         fontSize = 23.sp,
-        lineHeight = 23.sp * 1.3
+        lineHeight = 23.sp * 1.4
     ),
     headlineMedium = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = pretendard,
         fontWeight = FontWeight.Bold,
         fontSize = 21.sp,
-        lineHeight = 21.sp * 1.3
+        lineHeight = 21.sp * 1.4
     ),
     headlineSmall = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = pretendard,
         fontWeight = FontWeight.Bold,
         fontSize = 19.sp,
-        lineHeight = 19.sp * 1.3
+        lineHeight = 19.sp * 1.4
     ),
 
     //title bold    app bar title
     titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = pretendard,
         fontWeight = FontWeight.Bold,
         fontSize = 23.sp,
-        lineHeight = 23.sp * 1.3
+        lineHeight = 23.sp * 1.4
     ),
     titleMedium = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = pretendard,
         fontWeight = FontWeight.Bold,
         fontSize = 21.sp,
-        lineHeight = 21.sp * 1.3
+        lineHeight = 21.sp * 1.4
     ),
     titleSmall = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = pretendard,
         fontWeight = FontWeight.Bold,
         fontSize = 19.sp,
-        lineHeight = 19.sp * 1.3
+        lineHeight = 19.sp * 1.4
     ),
 
     //body not bold
     bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = pretendard,
         fontWeight = FontWeight.Normal,
         fontSize = 17.sp,
-        lineHeight = 18.sp * 1.3
+        lineHeight = 17.sp * 1.4
     ),
     bodyMedium = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = pretendard,
         fontWeight = FontWeight.Normal,
         fontSize = 15.sp,
-        lineHeight = 15.sp * 1.3
+        lineHeight = 15.sp * 1.4
     ),
     bodySmall = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = pretendard,
         fontWeight = FontWeight.Normal,
         fontSize = 13.sp,
-        lineHeight = 13.sp * 1.3
+        lineHeight = 13.sp * 1.4
     ),
 
     //label not bold    button, icon text
     labelLarge = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = pretendard,
         fontWeight = FontWeight.Normal,
         fontSize = 15.sp,
-        lineHeight = 15.sp * 1.3
+        lineHeight = 15.sp * 1.4
     ),
     labelMedium = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = pretendard,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
-        lineHeight = 14.sp * 1.3
+        lineHeight = 14.sp * 1.4
     ),
     labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = pretendard,
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
-        lineHeight = 12.sp * 1.3
+        lineHeight = 12.sp * 1.4
     )
 )
