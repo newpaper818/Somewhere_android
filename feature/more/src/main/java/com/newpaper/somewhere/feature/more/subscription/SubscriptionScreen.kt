@@ -224,24 +224,24 @@ private fun SubscriptionScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if(BuildConfig.DEBUG){
-                item {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(text = "using Somewhere Pro (debug)")
-
-                        MySpacerRow(width = 12.dp)
-
-                        Switch(
-                            checked = isUsingSomewherePro,
-                            onCheckedChange = {
-                                setIsUsingSomewhereProDebug(!isUsingSomewherePro)
-                            }
-                        )
-                    }
-                }
-            }
+//            if(BuildConfig.DEBUG){
+//                item {
+//                    Row(
+//                        verticalAlignment = Alignment.CenterVertically,
+//                    ) {
+//                        Text(text = "using Somewhere Pro (debug)")
+//
+//                        MySpacerRow(width = 12.dp)
+//
+//                        Switch(
+//                            checked = isUsingSomewherePro,
+//                            onCheckedChange = {
+//                                setIsUsingSomewhereProDebug(!isUsingSomewherePro)
+//                            }
+//                        )
+//                    }
+//                }
+//            }
 
 
 
