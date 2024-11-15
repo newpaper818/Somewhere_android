@@ -42,7 +42,8 @@
     <string name="zoom_card_zoom_level">Zoom Level</string>
 
     <!-- SubscriptionButtons.kt -->
-    <string name="upgrade_to_somewhere_pro">Upgrade to Somewhere Pro\n%s/month</string>
+    <string name="upgrade_to_somewhere_pro">Upgrade to Somewhere Pro</string>
+    <string name="per_month">%s/month</string>
     <string name="you_are_subscribed_to_somewhere_pro">You\'re subscribed to\nSomewhere Pro</string>
     <string name="restore_purchases">Restore purchases</string>
     <string name="manage_subscription">Manage subscription</string>
