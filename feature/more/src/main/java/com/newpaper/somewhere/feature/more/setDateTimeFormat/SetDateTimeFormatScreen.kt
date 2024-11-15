@@ -27,6 +27,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
@@ -267,7 +268,8 @@ private fun UpperDateTimeExampleBox(
                     text = timeText,
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.widthIn(min = 100.dp),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    letterSpacing = 0.7.sp
                 )
             }
         }

@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
@@ -195,7 +196,8 @@ internal fun GlanceSpot(
                                         text = startTimeText,
                                         style = dateTimeStyle,
                                         maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
+                                        overflow = TextOverflow.Ellipsis,
+                                        letterSpacing = 0.7.sp
                                     )
                                 }
 
@@ -210,7 +212,8 @@ internal fun GlanceSpot(
                                         text = endTimeText,
                                         style = dateTimeStyle,
                                         maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
+                                        overflow = TextOverflow.Ellipsis,
+                                        letterSpacing = 0.7.sp
                                     )
                                 }
                             }
