@@ -1,6 +1,7 @@
 package com.newpaper.somewhere.core.designsystem.component.button
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -12,6 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -83,6 +86,9 @@ fun ZoomButtonsUi(
     onClickZoomInLess: () -> Unit,
     onClickZoomIn: () -> Unit,
 ){
+
+    val zoomLevelText = DecimalFormat("0.0").format(zoomLevel)
+
     MyCard(
         shape = MaterialTheme.shapes.extraLarge
     ) {
@@ -99,12 +105,26 @@ fun ZoomButtonsUi(
                 }
             }
 
-            Text(
-                text = DecimalFormat("0.0").format(zoomLevel),
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.width(50.dp)
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .width(50.dp)
+                    .semantics {
+                        contentDescription = zoomLevelText
+                    }
+            ) {
+                zoomLevelText.forEach {
+                    Text(
+                        text = it.toString(),
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.Center,
+                        modifier = if (it.toString() == ".") Modifier
+                                    else Modifier.width(10.4.dp)
+                    )
+                }
+            }
+
             MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomInLess.descriptionTextId!!)) {
                 IconButton(onClick = onClickZoomInLess) {
                     DisplayIcon(icon = MapButtonIcon.zoomInLess)
