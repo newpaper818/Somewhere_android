@@ -519,7 +519,9 @@ private fun AppVersionTextWithPrivacyPolicy(
 
         Text(
             text = "v $appVersionName",
-            style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            letterSpacing = 1.sp
         )
     }
 }
