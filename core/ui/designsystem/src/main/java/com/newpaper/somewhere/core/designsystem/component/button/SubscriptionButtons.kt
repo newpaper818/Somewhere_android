@@ -2,6 +2,7 @@ package com.newpaper.somewhere.core.designsystem.component.button
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.ui.designsystem.R
 
 @Composable
@@ -56,11 +58,20 @@ fun SubscribeButton(
             modifier = buttonModifier,
             shape = MaterialTheme.shapes.large
         ) {
-            Text(
-                text = stringResource(R.string.upgrade_to_somewhere_pro, formattedPrice),
-                textAlign = TextAlign.Center,
-                lineHeight = 16.sp * 1.3
-            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(R.string.upgrade_to_somewhere_pro),
+                )
+
+                MySpacerColumn(height = 2.dp)
+
+                Text(
+                    text = stringResource(R.string.per_month, formattedPrice),
+                    letterSpacing = 0.3.sp
+                )
+            }
         }
     }
 }
