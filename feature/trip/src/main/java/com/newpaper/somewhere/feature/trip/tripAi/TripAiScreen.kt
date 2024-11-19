@@ -284,8 +284,8 @@ fun TripAiScreen(
                     setShowCautionDialog(false)
                 },
                 onClickPositive = {
-                    setUserGetReward(true)
                     setShowCautionDialog(false)
+                    setUserGetReward(true)
 
                     //to next page
                     coroutineScope.launch {
@@ -306,9 +306,12 @@ fun TripAiScreen(
                         context = context,
                         ad = rewardedInterstitialAd,
                         activity = activity,
-                        onUserEarnedReward = {
-                            setUserGetReward(true)
+                        onAdLoaded = {
                             setShowCautionDialog(false)
+                        },
+                        onUserEarnedReward = {
+                            setShowCautionDialog(false)
+                            setUserGetReward(true)
 
                             //to next page
                             coroutineScope.launch {
