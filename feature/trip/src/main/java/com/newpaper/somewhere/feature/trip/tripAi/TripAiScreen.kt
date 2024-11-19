@@ -37,8 +37,8 @@ import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.tripData.Trip
+import com.newpaper.somewhere.core.ui.loadAndShowRewardedAd
 import com.newpaper.somewhere.core.ui.loadRewardedAd
-import com.newpaper.somewhere.core.ui.showRewardedAd
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
@@ -284,9 +284,8 @@ fun TripAiScreen(
                     setShowCautionDialog(false)
                 },
                 onClickPositive = {
-                    setShowCautionDialog(false)
-
                     setUserGetReward(true)
+                    setShowCautionDialog(false)
 
                     //to next page
                     coroutineScope.launch {
@@ -303,51 +302,22 @@ fun TripAiScreen(
                     setShowCautionDialog(false)
                 },
                 onClickPositive = {
-                    if (rewardedInterstitialAd == null) {
-                        //load ad
-                        loadRewardedAd(
-                            context = context,
-                            onAdLoaded = { ad ->
-                                rewardedInterstitialAd = ad
-                                setShowCautionDialog(false)
+                    loadAndShowRewardedAd(
+                        context = context,
+                        ad = rewardedInterstitialAd,
+                        activity = activity,
+                        onUserEarnedReward = {
+                            setUserGetReward(true)
+                            setShowCautionDialog(false)
 
-                                //show ad
-                                showRewardedAd(
-                                    ad = rewardedInterstitialAd!!,
-                                    activity = activity,
-                                    onUserEarnedReward = {
-                                        setUserGetReward(true)
-
-                                        //to next page
-                                        coroutineScope.launch {
-                                            pagerState.animateScrollToPage(
-                                                pagerState.currentPage + 1
-                                            )
-                                        }
-                                    }
+                            //to next page
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(
+                                    pagerState.currentPage + 1
                                 )
                             }
-                        )
-                    }
-                    else {
-                        setShowCautionDialog(false)
-
-                        //show ad
-                        showRewardedAd(
-                            ad = rewardedInterstitialAd!!,
-                            activity = activity,
-                            onUserEarnedReward = {
-                                setUserGetReward(true)
-
-                                //to next page
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(
-                                        pagerState.currentPage + 1
-                                    )
-                                }
-                            }
-                        )
-                    }
+                        }
+                    )
                 }
             )
         }
