@@ -6,6 +6,7 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.DirectionsRun
 import androidx.compose.material.icons.automirrored.rounded.Login
 import androidx.compose.material.icons.automirrored.rounded.NavigateNext
+import androidx.compose.material.icons.automirrored.rounded.Send
 import androidx.compose.material.icons.outlined.Keyboard
 import androidx.compose.material.icons.outlined.Luggage
 import androidx.compose.material.icons.outlined.MoreHoriz
@@ -258,6 +259,7 @@ object MyIcons {
 
     //setting
     val openInNew = MyIcon(Icons.Rounded.OpenInNew,     22.dp, true, null, R.string.open_in_new)
+    val sendEmail = MyIcon(Icons.AutoMirrored.Rounded.Send,     22.dp, true, null, R.string.send_email)
 
     //share trip
     val deleteFriend = MyIcon(Icons.Rounded.Close,      24.dp, true, null, R.string.delete_friend)

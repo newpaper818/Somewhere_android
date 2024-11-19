@@ -34,6 +34,7 @@ import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTo
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.ui.card.AppIconWithAppNameCard
+import com.newpaper.somewhere.core.ui.card.ContactCard
 import com.newpaper.somewhere.core.ui.card.DeveloperCard
 import com.newpaper.somewhere.core.ui.card.ShareAppCard
 import com.newpaper.somewhere.core.ui.card.VersionCard
@@ -178,6 +179,13 @@ private fun AboutScreen(
             item{
                 //developer info
                 DeveloperCard(
+                    modifier = itemModifier
+                )
+            }
+
+            item{
+                //contact
+                ContactCard(
                     modifier = itemModifier
                 )
             }

@@ -71,10 +71,6 @@ fun ItemWithText(
                     MySpacerRow(width = 8.dp)
                 }
 
-                if (isOpenInNew) {
-                    DisplayIcon(icon = MyIcons.openInNew)
-                }
-
                 if (subText != null) {
                     Spacer(modifier = Modifier.weight(1f))
 
@@ -84,6 +80,12 @@ fun ItemWithText(
                         textAlign = TextAlign.End,
                         modifier = Modifier.padding(6.dp, 0.dp, 0.dp, 0.dp)
                     )
+                }
+
+                if (isOpenInNew) {
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    DisplayIcon(icon = MyIcons.openInNew)
                 }
             }
         }

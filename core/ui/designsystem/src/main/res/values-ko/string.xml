@@ -144,6 +144,7 @@
     <string name="budget">예산</string>
     <string name="travel_distance">이동 거리</string>
     <string name="open_in_new">새 창에서 열기</string>
+    <string name="send_email">이메일 보내기</string>
     <string name="delete_friend">친구 삭제</string>
     <string name="number_of_trip_mates">여행 친구 수</string>
     <string name="manager">관리자</string>
