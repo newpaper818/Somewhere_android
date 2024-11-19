@@ -83,6 +83,8 @@ fun GoogleMediumRectangleAd(
     }
 }
 
+
+
 //rewarded interstitial ad
 fun loadRewardedAd(
     context: Context,
@@ -121,4 +123,39 @@ fun showRewardedAd(
             onUserEarnedReward()
         }
     )
+}
+
+fun loadAndShowRewardedAd(
+    context: Context,
+    ad: RewardedInterstitialAd?,
+    activity: Activity,
+    onUserEarnedReward: () -> Unit
+){
+    if (ad != null) {
+        //show ad
+        showRewardedAd(
+            ad = ad,
+            activity = activity,
+            onUserEarnedReward = onUserEarnedReward
+        )
+    }
+    else {
+        //load ad
+        loadRewardedAd(
+            context = context,
+            onAdLoaded = { loadedAd ->
+                if (loadedAd != null){
+                    //show ad
+                    showRewardedAd(
+                        ad = loadedAd,
+                        activity = activity,
+                        onUserEarnedReward = onUserEarnedReward
+                    )
+                }
+                else {
+                    onUserEarnedReward()
+                }
+            }
+        )
+    }
 }
