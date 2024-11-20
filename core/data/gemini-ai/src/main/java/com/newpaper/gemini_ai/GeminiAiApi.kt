@@ -42,19 +42,25 @@ class GeminiAiApi @Inject constructor(
             trip type: $tripType
         """.trimIndent()
 
-        val response = generativeModel.generateContent(prompt)
 
-        if (response.text != null) {
-            val placeSet = Json.decodeFromString<Set<String>>(response.text!!)
 
-            placeSet.forEach {
-                Log.d(GEMINI_AI_TAG, it)
+        try {
+            val response = generativeModel.generateContent(prompt)
+
+            if (response.text != null) {
+                val placeSet = Json.decodeFromString<Set<String>>(response.text!!)
+
+                Log.d(GEMINI_AI_TAG, placeSet.toString())
+
+                return placeSet
             }
-
-            return placeSet
+            else
+                return null
         }
-        else
+        catch (e: Exception){
+            Log.e(GEMINI_AI_TAG, "getRecommendSpots error - $e")
             return null
+        }
     }
 
     override suspend fun getTripPlan(
@@ -112,10 +118,16 @@ class GeminiAiApi @Inject constructor(
             ${jsonTypeString()}
         """.trimIndent()
 
-        val response = generativeModel.generateContent(prompt)
+        try {
+            val response = generativeModel.generateContent(prompt)
 
-        Log.d(GEMINI_AI_TAG, response.text.toString())
-        return response.text
+            Log.d(GEMINI_AI_TAG, response.text.toString())
+            return response.text
+        }
+        catch (e: Exception){
+            Log.e(GEMINI_AI_TAG, "getTripPlan error - $e")
+            return null
+        }
     }
 
     private fun placesToString(
