@@ -32,8 +32,6 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
-import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
-import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.tripData.Trip
@@ -330,14 +328,7 @@ fun TripAiScreen(
         modifier = Modifier
             .navigationBarsPadding()
             .displayCutoutPadding()
-            .imePadding(),
-        topBar = {
-            SomewhereTopAppBar(
-                title = "",
-                navigationIcon = TopAppBarIcon.close,
-                onClickNavigationIcon = { onClickBack() }
-            )
-        }
+            .imePadding()
     ) { paddingValues ->
 
 
@@ -363,6 +354,7 @@ fun TripAiScreen(
                     when (phase) {
                         TripAiPhase.TRIP_TO -> {
                             EnterTripCityPage(
+                                onClickClose = onClickBack,
                                 searchText = tripAiUiState.tripTo ?: "",
                                 onTextChanged = tripToTextChanged,
                                 onClearClicked = { tripToTextChanged("") },
@@ -379,6 +371,7 @@ fun TripAiScreen(
 
                         TripAiPhase.TRIP_DATE -> {
                             EnterTripDurationPage(
+                                onClickClose = onClickBack,
                                 dateTimeFormat = dateTimeFormat,
                                 initialStartDate = tripAiUiState.startDate,
                                 initialEndDate = tripAiUiState.endDate,
@@ -389,6 +382,7 @@ fun TripAiScreen(
 
                         TripAiPhase.TRIP_WITH -> {
                             SelectTripWithPage(
+                                onClickClose = onClickBack,
                                 selectedTripWith = tripAiUiState.tripWith,
                                 setTripWith = setTripWith
                             )
@@ -396,6 +390,7 @@ fun TripAiScreen(
 
                         TripAiPhase.TRIP_TYPE -> {
                             SelectTripTypePage(
+                                onClickClose = onClickBack,
                                 internetEnabled = internetEnabled,
                                 selectedTripTypes = tripAiUiState.tripTypes,
                                 onClick = onClickTripType

@@ -35,6 +35,7 @@ import java.time.ZoneOffset
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EnterTripDurationPage(
+    onClickClose: () -> Unit,
     dateTimeFormat: DateTimeFormat,
     initialStartDate: LocalDate?,
     initialEndDate: LocalDate?,
@@ -82,6 +83,7 @@ internal fun EnterTripDurationPage(
     TripAiPage(
         title = stringResource(id = R.string.when_are_you_going),
         subTitle = stringResource(id = R.string.choose_a_date_range),
+        onClickClose = onClickClose,
         content = {
             Column(
                 modifier = Modifier.heightIn(max = 600.dp)

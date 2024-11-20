@@ -1,9 +1,12 @@
 package com.newpaper.somewhere.feature.trip.tripAi.page
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,24 +27,34 @@ import com.newpaper.somewhere.feature.trip.R
 
 @Composable
 internal fun EnterTripCityPage(
+    onClickClose: () -> Unit,
     searchText: String,
     onTextChanged: (String) -> Unit,
     onClearClicked: () -> Unit,
     onKeyboardActionClicked: () -> Unit
 ){
-    TripAiPage(
-        title = stringResource(id = R.string.where_are_you_going),
-        subTitle = stringResource(id = R.string.type_a_destination),
-        content = {
-            //search box
-            SearchBox(
-                searchText = searchText,
-                onTextChanged = onTextChanged,
-                onClearClicked = onClearClicked,
-                onKeyboardActionClicked = onKeyboardActionClicked
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        contentPadding = PaddingValues(bottom = 100.dp)
+    ) {
+        item {
+            TripAiPage(
+                title = stringResource(id = R.string.where_are_you_going),
+                subTitle = stringResource(id = R.string.type_a_destination),
+                onClickClose = onClickClose,
+                content = {
+                    //search box
+                    SearchBox(
+                        searchText = searchText,
+                        onTextChanged = onTextChanged,
+                        onClearClicked = onClearClicked,
+                        onKeyboardActionClicked = onKeyboardActionClicked
+                    )
+                }
             )
         }
-    )
+    }
 }
 
 @Composable
@@ -53,7 +66,7 @@ private fun SearchBox(
 ){
     val boxModifier = Modifier
         .height(50.dp)
-        .widthIn(max = 450.dp)
+        .widthIn(max = 500.dp)
         .clip(CircleShape)
         .background(MaterialTheme.colorScheme.surfaceBright)
 

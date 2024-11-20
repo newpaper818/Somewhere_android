@@ -36,8 +36,11 @@ const val OAUTH_WEB_CLIENT_ID = "141125479046-n0dciq6m90m841sq88coqkct8qdm3pk1.a
 
 
 //size
+/**700.dp*/
 val itemMaxWidth = 700.dp
+/**500.dp*/
 val itemMaxWidthSmall = 500.dp
+/**56.dp*/
 val listItemHeight = 56.dp
 
 
@@ -45,10 +48,14 @@ val listItemHeight = 56.dp
 const val FREE_CONTAINS_ADS = true
 const val PRO_CONTAINS_ADS = false
 
+/**10*/
 const val FREE_MAX_TRIPS = 10
+/**30*/
 const val PRO_MAX_TRIPS = 300
 
+/**5*/
 const val FREE_MAX_INVITE_FRIENDS = 5
+/**50*/
 const val PRO_MAX_INVITE_FRIENDS = 50
 
 
