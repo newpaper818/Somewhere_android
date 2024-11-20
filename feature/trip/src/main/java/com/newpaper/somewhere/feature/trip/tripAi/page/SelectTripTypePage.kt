@@ -3,6 +3,7 @@ package com.newpaper.somewhere.feature.trip.tripAi.page
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -47,10 +48,9 @@ internal fun SelectTripTypePage(
 
         ErrorMessage(
             visible = !internetEnabled,
-            text = stringResource(id = R.string.internet_unavailable)
+            text = stringResource(id = R.string.internet_unavailable),
+            modifier = Modifier.padding(bottom = 16.dp)
         )
-
-        MySpacerColumn(height = 16.dp)
     }
 }
 

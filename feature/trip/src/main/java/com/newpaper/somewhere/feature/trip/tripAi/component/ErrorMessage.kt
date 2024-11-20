@@ -26,10 +26,9 @@ internal fun ErrorMessage(
         visible = visible,
         enter = expandVertically(tween(500)) + fadeIn(tween(500, 200)),
         exit = shrinkVertically(tween(500, 200)) + fadeOut(tween(500)),
-        modifier = modifier
     ) {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .height(32.dp),
             contentAlignment = Alignment.BottomCenter

@@ -43,14 +43,12 @@ internal fun EnterTripDurationPage(
     setEndDate: (LocalDate?) -> Unit
 ){
     val configuration = LocalConfiguration.current
-    val screenHeightLong = configuration.screenHeightDp > 600
 
     val dateRangePickerState = rememberDateRangePickerState(
         initialSelectedStartDateMillis = initialStartDate?.atStartOfDay()
             ?.toInstant(ZoneOffset.UTC)?.toEpochMilli(),
         initialSelectedEndDateMillis = initialEndDate?.atStartOfDay()
-            ?.toInstant(ZoneOffset.UTC)?.toEpochMilli(),
-        initialDisplayMode = if (screenHeightLong) DisplayMode.Picker else DisplayMode.Input,
+            ?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
     )
 
     val startDate =
@@ -91,7 +89,6 @@ internal fun EnterTripDurationPage(
                 MyDateRangePicker(
                     dateTimeFormat = dateTimeFormat,
                     dateRangePickerState = dateRangePickerState,
-                    screenHeightLong = screenHeightLong,
                     modifier =
                         if (dateRangePickerState.displayMode == DisplayMode.Picker)
                             Modifier.weight(1f)
@@ -142,7 +139,6 @@ private fun DateRangeText(
 private fun MyDateRangePicker(
     dateTimeFormat: DateTimeFormat,
     dateRangePickerState: DateRangePickerState,
-    screenHeightLong: Boolean,
     modifier: Modifier = Modifier
 ){
     Box(
@@ -159,7 +155,7 @@ private fun MyDateRangePicker(
                     dateRangePickerState = dateRangePickerState
                 )
             },
-            showModeToggle = screenHeightLong,
+            showModeToggle = true,
             colors = DatePickerDefaults.colors(
                 containerColor = Color.Transparent,
                 headlineContentColor = MaterialTheme.colorScheme.onSurface,
