@@ -495,7 +495,7 @@ private fun CloseButton(
             modifier = modifier
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceDim)
+                .background(MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.8f))
                 .clickable { onClick() }
         ) {
             DisplayIcon(icon = TopAppBarIcon.close)

@@ -91,7 +91,7 @@ internal fun EnterTripDurationPage(
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        contentPadding = PaddingValues(bottom = 100.dp)
+        contentPadding = PaddingValues(bottom = 35.dp),
     ) {
         item {
             TripAiPage(
