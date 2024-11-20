@@ -17,6 +17,7 @@ import com.newpaper.somewhere.feature.trip.tripAi.model.TripType
 
 @Composable
 internal fun SelectTripTypePage(
+    onClickClose: () -> Unit,
     internetEnabled: Boolean,
     selectedTripTypes: Set<TripType>,
     onClick: (TripType) -> Unit
@@ -33,6 +34,7 @@ internal fun SelectTripTypePage(
                 TripAiPage(
                     title = stringResource(id = R.string.whats_your_trip_type),
                     subTitle = stringResource(id = R.string.select_multiple),
+                    onClickClose = onClickClose,
                     content = {
                         TripTypeList(
                             selectedTripTypes = selectedTripTypes,
