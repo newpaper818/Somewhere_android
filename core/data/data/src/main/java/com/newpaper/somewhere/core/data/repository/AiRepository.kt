@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.core.data.repository
 
+import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.Place
 import com.newpaper.gemini_ai.AiRemoteDataSource
@@ -55,8 +56,16 @@ class AiRepository @Inject constructor(
         if (aiCreatedTripJson == null)
             return null
 
+        var aiCreatedTrip: Trip? = null
+
         //convert JSON -> Trip
-        val aiCreatedTrip = serializationDataSource.jsonToTrip(aiCreatedTripJson)
+        try {
+            aiCreatedTrip = serializationDataSource.jsonToTrip(aiCreatedTripJson)
+        }
+        catch (e: Exception){
+            Log.e("TripAiViewModel", "getAiCreatedTrip error - $e")
+            return null
+        }
 
         if (aiCreatedTrip == null)
             return null
