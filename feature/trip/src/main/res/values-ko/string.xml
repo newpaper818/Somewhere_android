@@ -85,7 +85,7 @@
     <string name="type_a_destination">목적지를 입력하세요.</string>
     <string name="type_city_or_country_name">도시 또는 나라 이름을 입력하세요.</string>
 
-    <string name="when_are_you_going">언제 가나요?</string>
+    <string name="when_are_you_going">언제 여행 가나요?</string>
     <string name="starts">시작일</string>
     <string name="ends">종료일</string>
     <string name="date_range">%s - %s</string>
