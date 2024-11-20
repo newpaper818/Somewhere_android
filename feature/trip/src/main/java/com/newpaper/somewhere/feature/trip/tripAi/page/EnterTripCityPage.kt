@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -16,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -27,12 +29,14 @@ import com.newpaper.somewhere.feature.trip.R
 
 @Composable
 internal fun EnterTripCityPage(
-    onClickClose: () -> Unit,
     searchText: String,
     onTextChanged: (String) -> Unit,
     onClearClicked: () -> Unit,
     onKeyboardActionClicked: () -> Unit
 ){
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -40,9 +44,9 @@ internal fun EnterTripCityPage(
     ) {
         item {
             TripAiPage(
+                modifier = Modifier.padding(top = (screenHeight/5).dp),
                 title = stringResource(id = R.string.where_are_you_going),
                 subTitle = stringResource(id = R.string.type_a_destination),
-                onClickClose = onClickClose,
                 content = {
                     //search box
                     SearchBox(

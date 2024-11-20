@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DateRangePicker
@@ -26,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.utils.getDateText
+import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.core.utils.millisToLocalDate
 import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.tripAi.component.ErrorMessage
@@ -35,7 +37,6 @@ import java.time.ZoneOffset
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EnterTripDurationPage(
-    onClickClose: () -> Unit,
     dateTimeFormat: DateTimeFormat,
     initialStartDate: LocalDate?,
     initialEndDate: LocalDate?,
@@ -81,10 +82,11 @@ internal fun EnterTripDurationPage(
     TripAiPage(
         title = stringResource(id = R.string.when_are_you_going),
         subTitle = stringResource(id = R.string.choose_a_date_range),
-        onClickClose = onClickClose,
         content = {
             Column(
-                modifier = Modifier.heightIn(max = 600.dp)
+                modifier = Modifier
+                    .heightIn(max = 600.dp)
+                    .widthIn(max = itemMaxWidth)
             ) {
                 MyDateRangePicker(
                     dateTimeFormat = dateTimeFormat,
