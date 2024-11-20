@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
@@ -18,11 +19,13 @@ import com.newpaper.somewhere.feature.trip.tripAi.model.TripType
 
 @Composable
 internal fun SelectTripTypePage(
-    onClickClose: () -> Unit,
     internetEnabled: Boolean,
     selectedTripTypes: Set<TripType>,
     onClick: (TripType) -> Unit
 ){
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp
+
     Column {
         LazyColumn(
             modifier = Modifier
@@ -33,9 +36,9 @@ internal fun SelectTripTypePage(
         ) {
             item {
                 TripAiPage(
+                    modifier = Modifier.padding(top = (screenHeight/5).dp),
                     title = stringResource(id = R.string.whats_your_trip_type),
                     subTitle = stringResource(id = R.string.select_multiple),
-                    onClickClose = onClickClose,
                     content = {
                         TripTypeList(
                             selectedTripTypes = selectedTripTypes,

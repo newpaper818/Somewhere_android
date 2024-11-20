@@ -3,6 +3,8 @@ package com.newpaper.somewhere.feature.trip.tripAi
 import android.app.Activity
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.displayCutoutPadding
@@ -11,8 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,9 +26,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.ads.AdError
@@ -32,6 +39,8 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
+import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
+import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.tripData.Trip
@@ -331,96 +340,92 @@ fun TripAiScreen(
             .imePadding()
     ) { paddingValues ->
 
-
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            HorizontalPager(
-                state = pagerState,
-                userScrollEnabled = false,
+        Box {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) { pageIndex ->
+                    .padding(paddingValues)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                HorizontalPager(
+                    state = pagerState,
+                    userScrollEnabled = false,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) { pageIndex ->
 
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.TopCenter
-                ) {
-                    val phase = tripAiPhaseList[pageIndex]
-                    when (phase) {
-                        TripAiPhase.TRIP_TO -> {
-                            EnterTripCityPage(
-                                onClickClose = onClickBack,
-                                searchText = tripAiUiState.tripTo ?: "",
-                                onTextChanged = tripToTextChanged,
-                                onClearClicked = { tripToTextChanged("") },
-                                onKeyboardActionClicked = {
-                                    focusManager.clearFocus()
-                                    coroutineScope.launch {
-                                        pagerState.animateScrollToPage(
-                                            pagerState.currentPage + 1
-                                        )
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.TopCenter
+                    ) {
+                        val phase = tripAiPhaseList[pageIndex]
+                        when (phase) {
+                            TripAiPhase.TRIP_TO -> {
+                                EnterTripCityPage(
+                                    searchText = tripAiUiState.tripTo ?: "",
+                                    onTextChanged = tripToTextChanged,
+                                    onClearClicked = { tripToTextChanged("") },
+                                    onKeyboardActionClicked = {
+                                        focusManager.clearFocus()
+                                        coroutineScope.launch {
+                                            pagerState.animateScrollToPage(
+                                                pagerState.currentPage + 1
+                                            )
+                                        }
                                     }
-                                }
-                            )
-                        }
+                                )
+                            }
 
-                        TripAiPhase.TRIP_DATE -> {
-                            EnterTripDurationPage(
-                                onClickClose = onClickBack,
-                                dateTimeFormat = dateTimeFormat,
-                                initialStartDate = tripAiUiState.startDate,
-                                initialEndDate = tripAiUiState.endDate,
-                                setStartDate = setStartDate,
-                                setEndDate = setEndDate
-                            )
-                        }
+                            TripAiPhase.TRIP_DATE -> {
+                                EnterTripDurationPage(
+                                    dateTimeFormat = dateTimeFormat,
+                                    initialStartDate = tripAiUiState.startDate,
+                                    initialEndDate = tripAiUiState.endDate,
+                                    setStartDate = setStartDate,
+                                    setEndDate = setEndDate
+                                )
+                            }
 
-                        TripAiPhase.TRIP_WITH -> {
-                            SelectTripWithPage(
-                                onClickClose = onClickBack,
-                                selectedTripWith = tripAiUiState.tripWith,
-                                setTripWith = setTripWith
-                            )
-                        }
+                            TripAiPhase.TRIP_WITH -> {
+                                SelectTripWithPage(
+                                    selectedTripWith = tripAiUiState.tripWith,
+                                    setTripWith = setTripWith
+                                )
+                            }
 
-                        TripAiPhase.TRIP_TYPE -> {
-                            SelectTripTypePage(
-                                onClickClose = onClickBack,
-                                internetEnabled = internetEnabled,
-                                selectedTripTypes = tripAiUiState.tripTypes,
-                                onClick = onClickTripType
-                            )
-                        }
+                            TripAiPhase.TRIP_TYPE -> {
+                                SelectTripTypePage(
+                                    internetEnabled = internetEnabled,
+                                    selectedTripTypes = tripAiUiState.tripTypes,
+                                    onClick = onClickTripType
+                                )
+                            }
 
-                        TripAiPhase.CREATE_TRIP -> {
-                            CreateTripPage(
-                                internetEnabled = internetEnabled,
-                                adView = adView,
-                                createTripError = tripAiUiState.createTripError,
-                                onClickTryAgain = { setCreateTripError(false) }
-                            )
+                            TripAiPhase.CREATE_TRIP -> {
+                                CreateTripPage(
+                                    internetEnabled = internetEnabled,
+                                    adView = adView,
+                                    createTripError = tripAiUiState.createTripError,
+                                    onClickTryAgain = { setCreateTripError(false) }
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            if (tripAiUiState.tripAiPhase != TripAiPhase.CREATE_TRIP) {
-                PrevNextButtons(
-                    prevButtonVisible = pagerState.currentPage != 0,
-                    onClickPrev = {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(
-                                pagerState.currentPage - 1
-                            )
-                        }
-                    },
-                    nextIsCreateTrip = tripAiUiState.tripAiPhase == TripAiPhase.TRIP_TYPE,
-                    nextButtonEnabled =
+                if (tripAiUiState.tripAiPhase != TripAiPhase.CREATE_TRIP) {
+                    PrevNextButtons(
+                        prevButtonVisible = pagerState.currentPage != 0,
+                        onClickPrev = {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(
+                                    pagerState.currentPage - 1
+                                )
+                            }
+                        },
+                        nextIsCreateTrip = tripAiUiState.tripAiPhase == TripAiPhase.TRIP_TYPE,
+                        nextButtonEnabled =
                         when (tripAiUiState.tripAiPhase) {
                             TripAiPhase.TRIP_TO ->
                                 tripAiUiState.tripTo != null && tripAiUiState.tripTo != ""
@@ -438,21 +443,45 @@ fun TripAiScreen(
 
                             TripAiPhase.CREATE_TRIP -> false
                         },
-                    onClickNext = {
-                        if (tripAiUiState.tripAiPhase == TripAiPhase.TRIP_TYPE){
-                            setShowCautionDialog(true)
-                        }
-                        else{
-                            focusManager.clearFocus()
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(
-                                    pagerState.currentPage + 1
-                                )
+                        onClickNext = {
+                            if (tripAiUiState.tripAiPhase == TripAiPhase.TRIP_TYPE) {
+                                setShowCautionDialog(true)
+                            } else {
+                                focusManager.clearFocus()
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(
+                                        pagerState.currentPage + 1
+                                    )
+                                }
                             }
                         }
-                    }
-                )
+                    )
+                }
             }
+
+            CloseButton(
+                onClick = onClickBack,
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .padding(16.dp)
+            )
         }
+    }
+}
+
+@Composable
+private fun CloseButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .size(40.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.surfaceDim)
+            .clickable { onClick() }
+    ) {
+        DisplayIcon(icon = TopAppBarIcon.close)
     }
 }
