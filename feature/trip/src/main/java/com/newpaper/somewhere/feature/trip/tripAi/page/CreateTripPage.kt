@@ -118,9 +118,7 @@ private fun CreatingTrip(
     
     Text(
         text = stringResource(id = R.string.creating_trip_with_ai),
-        style = MaterialTheme.typography.displayLarge.copy(
-            fontWeight = FontWeight.Normal
-        )
+        style = MaterialTheme.typography.titleLarge
     )
 
     MySpacerColumn(height = 12.dp)
