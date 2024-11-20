@@ -1,6 +1,12 @@
 package com.newpaper.somewhere.feature.trip.tripAi.page
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +33,7 @@ import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.createTripIcons
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.GoogleMediumRectangleAd
+import com.newpaper.somewhere.core.ui.InternetUnavailableText
 import com.newpaper.somewhere.feature.trip.R
 import kotlinx.coroutines.delay
 
@@ -145,10 +152,21 @@ private fun Error(
 ){
     Text(
         text = stringResource(id = R.string.something_went_wrong),
-        style = MaterialTheme.typography.bodyLarge
+        style = MaterialTheme.typography.titleLarge
     )
 
     MySpacerColumn(height = 16.dp)
+
+    AnimatedVisibility(
+        visible = !internetEnabled,
+        enter = expandVertically(tween(500)) + fadeIn(tween(500, 200)),
+        exit = shrinkVertically(tween(500, 200)) + fadeOut(tween(500))
+    ) {
+        Column {
+            InternetUnavailableText()
+            MySpacerColumn(height = 16.dp)
+        }
+    }
 
     TryAgainButton(
         enabled = internetEnabled,
