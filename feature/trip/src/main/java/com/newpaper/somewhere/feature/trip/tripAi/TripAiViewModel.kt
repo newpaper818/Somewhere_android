@@ -147,7 +147,7 @@ class TripAiViewModel @Inject constructor(
             return null
         }
 
-        val trip = aiRepository.getAiCreatedTrip(
+        var trip = aiRepository.getAiCreatedTrip(
             city = tripAiUiState.value.tripTo!!,
             startDate = tripAiUiState.value.startDate!!,
             endDate = tripAiUiState.value.endDate!!,
@@ -155,6 +155,18 @@ class TripAiViewModel @Inject constructor(
             tripType = tripAiUiState.value.tripTypes.toString(),
             language = Locale.getDefault().displayLanguage
         )
+
+        //if error once again
+        if (trip == null){
+            trip = aiRepository.getAiCreatedTrip(
+                city = tripAiUiState.value.tripTo!!,
+                startDate = tripAiUiState.value.startDate!!,
+                endDate = tripAiUiState.value.endDate!!,
+                tripWith = tripAiUiState.value.tripWith.toString(),
+                tripType = tripAiUiState.value.tripTypes.toString(),
+                language = Locale.getDefault().displayLanguage
+            )
+        }
 
         return trip
     }
