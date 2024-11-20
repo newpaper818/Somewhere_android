@@ -3,10 +3,13 @@ package com.newpaper.somewhere.feature.trip.tripAi.page
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DateRangePicker
@@ -22,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
@@ -30,7 +32,6 @@ import com.newpaper.somewhere.core.utils.getDateText
 import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.core.utils.millisToLocalDate
 import com.newpaper.somewhere.feature.trip.R
-import com.newpaper.somewhere.feature.trip.tripAi.component.ErrorMessage
 import java.time.LocalDate
 import java.time.ZoneOffset
 
@@ -41,10 +42,9 @@ internal fun EnterTripDurationPage(
     initialStartDate: LocalDate?,
     initialEndDate: LocalDate?,
     setStartDate: (LocalDate?) -> Unit,
-    setEndDate: (LocalDate?) -> Unit
+    setEndDate: (LocalDate?) -> Unit,
+    onErrorTextVisible: (Boolean) -> Unit
 ){
-    val configuration = LocalConfiguration.current
-
     val dateRangePickerState = rememberDateRangePickerState(
         initialSelectedStartDateMillis = initialStartDate?.atStartOfDay()
             ?.toInstant(ZoneOffset.UTC)?.toEpochMilli(),
@@ -61,6 +61,15 @@ internal fun EnterTripDurationPage(
         if (dateRangePickerState.selectedEndDateMillis != null)
             millisToLocalDate(dateRangePickerState.selectedEndDateMillis!!)
         else null
+
+    val errorTextVisible =
+        startDate != null
+        && endDate != null
+        && startDate.plusDays(15) <= endDate
+
+    LaunchedEffect(errorTextVisible) {
+        onErrorTextVisible(errorTextVisible)
+    }
 
     //set start, end date
     LaunchedEffect(dateRangePickerState.selectedStartDateMillis) {
@@ -79,34 +88,34 @@ internal fun EnterTripDurationPage(
         )
     }
 
-    TripAiPage(
-        title = stringResource(id = R.string.when_are_you_going),
-        subTitle = stringResource(id = R.string.choose_a_date_range),
-        content = {
-            Column(
-                modifier = Modifier
-                    .heightIn(max = 600.dp)
-                    .widthIn(max = itemMaxWidth)
-            ) {
-                MyDateRangePicker(
-                    dateTimeFormat = dateTimeFormat,
-                    dateRangePickerState = dateRangePickerState,
-                    modifier =
-                        if (dateRangePickerState.displayMode == DisplayMode.Picker)
-                            Modifier.weight(1f)
-                        else Modifier
-                )
-
-                ErrorMessage(
-                    visible =
-                        startDate != null
-                        && endDate != null
-                        && startDate.plusDays(15) <= endDate,
-                    text = stringResource(id = R.string.date_range_error),
-                )
-            }
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        contentPadding = PaddingValues(bottom = 100.dp)
+    ) {
+        item {
+            TripAiPage(
+                title = stringResource(id = R.string.when_are_you_going),
+                subTitle = stringResource(id = R.string.choose_a_date_range),
+                content = {
+                    Column(
+                        modifier = Modifier
+                            .heightIn(max = 600.dp)
+                            .widthIn(max = itemMaxWidth)
+                    ) {
+                        MyDateRangePicker(
+                            dateTimeFormat = dateTimeFormat,
+                            dateRangePickerState = dateRangePickerState,
+                            modifier =
+                            if (dateRangePickerState.displayMode == DisplayMode.Picker)
+                                Modifier.weight(1f)
+                            else Modifier
+                        )
+                    }
+                }
+            )
         }
-    )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

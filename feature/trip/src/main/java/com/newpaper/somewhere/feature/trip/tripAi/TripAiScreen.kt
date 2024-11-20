@@ -6,7 +6,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,7 +22,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -280,6 +282,10 @@ fun TripAiScreen(
 
     val focusManager = LocalFocusManager.current
 
+    var showDateErrorText by rememberSaveable {
+        mutableStateOf(false)
+    }
+
     LaunchedEffect(pagerState.currentPage) {
         setPhase(tripAiPhaseList[pagerState.currentPage])
     }
@@ -340,82 +346,92 @@ fun TripAiScreen(
             .imePadding()
     ) { paddingValues ->
 
-        Box {
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                HorizontalPager(
-                    state = pagerState,
-                    userScrollEnabled = false,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) { pageIndex ->
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize(),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            HorizontalPager(
+                state = pagerState,
+                userScrollEnabled = false,
+                modifier = Modifier.fillMaxWidth()
+            ) { pageIndex ->
 
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.TopCenter
-                    ) {
-                        val phase = tripAiPhaseList[pageIndex]
-                        when (phase) {
-                            TripAiPhase.TRIP_TO -> {
-                                EnterTripCityPage(
-                                    searchText = tripAiUiState.tripTo ?: "",
-                                    onTextChanged = tripToTextChanged,
-                                    onClearClicked = { tripToTextChanged("") },
-                                    onKeyboardActionClicked = {
-                                        focusManager.clearFocus()
-                                        coroutineScope.launch {
-                                            pagerState.animateScrollToPage(
-                                                pagerState.currentPage + 1
-                                            )
-                                        }
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.TopCenter
+                ) {
+                    val phase = tripAiPhaseList[pageIndex]
+                    when (phase) {
+                        TripAiPhase.TRIP_TO -> {
+                            EnterTripCityPage(
+                                searchText = tripAiUiState.tripTo ?: "",
+                                onTextChanged = tripToTextChanged,
+                                onClearClicked = { tripToTextChanged("") },
+                                onKeyboardActionClicked = {
+                                    focusManager.clearFocus()
+                                    coroutineScope.launch {
+                                        pagerState.animateScrollToPage(
+                                            pagerState.currentPage + 1
+                                        )
                                     }
-                                )
-                            }
+                                }
+                            )
+                        }
 
-                            TripAiPhase.TRIP_DATE -> {
-                                EnterTripDurationPage(
-                                    dateTimeFormat = dateTimeFormat,
-                                    initialStartDate = tripAiUiState.startDate,
-                                    initialEndDate = tripAiUiState.endDate,
-                                    setStartDate = setStartDate,
-                                    setEndDate = setEndDate
-                                )
-                            }
+                        TripAiPhase.TRIP_DATE -> {
+                            EnterTripDurationPage(
+                                dateTimeFormat = dateTimeFormat,
+                                initialStartDate = tripAiUiState.startDate,
+                                initialEndDate = tripAiUiState.endDate,
+                                setStartDate = setStartDate,
+                                setEndDate = setEndDate,
+                                onErrorTextVisible = { showDateErrorText = it }
+                            )
+                        }
 
-                            TripAiPhase.TRIP_WITH -> {
-                                SelectTripWithPage(
-                                    selectedTripWith = tripAiUiState.tripWith,
-                                    setTripWith = setTripWith
-                                )
-                            }
+                        TripAiPhase.TRIP_WITH -> {
+                            SelectTripWithPage(
+                                selectedTripWith = tripAiUiState.tripWith,
+                                setTripWith = setTripWith
+                            )
+                        }
 
-                            TripAiPhase.TRIP_TYPE -> {
-                                SelectTripTypePage(
-                                    internetEnabled = internetEnabled,
-                                    selectedTripTypes = tripAiUiState.tripTypes,
-                                    onClick = onClickTripType
-                                )
-                            }
+                        TripAiPhase.TRIP_TYPE -> {
+                            SelectTripTypePage(
+                                selectedTripTypes = tripAiUiState.tripTypes,
+                                onClick = onClickTripType
+                            )
+                        }
 
-                            TripAiPhase.CREATE_TRIP -> {
-                                CreateTripPage(
-                                    internetEnabled = internetEnabled,
-                                    adView = adView,
-                                    createTripError = tripAiUiState.createTripError,
-                                    onClickTryAgain = { setCreateTripError(false) }
-                                )
-                            }
+                        TripAiPhase.CREATE_TRIP -> {
+                            CreateTripPage(
+                                internetEnabled = internetEnabled,
+                                adView = adView,
+                                createTripError = tripAiUiState.createTripError,
+                                onClickTryAgain = { setCreateTripError(false) }
+                            )
                         }
                     }
                 }
+            }
 
-                if (tripAiUiState.tripAiPhase != TripAiPhase.CREATE_TRIP) {
+            if (tripAiUiState.tripAiPhase != TripAiPhase.CREATE_TRIP) {
                     PrevNextButtons(
+                        errorVisible =
+                            when(tripAiUiState.tripAiPhase) {
+                                TripAiPhase.TRIP_DATE -> showDateErrorText
+                                TripAiPhase.TRIP_TYPE -> !internetEnabled
+                                else -> false
+                            },
+                        errorText =
+                            when(tripAiUiState.tripAiPhase) {
+                                TripAiPhase.TRIP_DATE -> stringResource(id = R.string.date_range_error)
+                                TripAiPhase.TRIP_TYPE -> stringResource(id = R.string.internet_unavailable)
+                                else -> ""
+                            },
+
                         prevButtonVisible = pagerState.currentPage != 0,
                         onClickPrev = {
                             coroutineScope.launch {
@@ -457,13 +473,10 @@ fun TripAiScreen(
                         }
                     )
                 }
-            }
 
             CloseButton(
                 onClick = onClickBack,
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .padding(16.dp)
+                modifier = Modifier.padding(16.dp)
             )
         }
     }
@@ -475,13 +488,17 @@ private fun CloseButton(
     modifier: Modifier = Modifier
 ){
     Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-            .size(40.dp)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surfaceDim)
-            .clickable { onClick() }
+        modifier = Modifier.fillMaxSize()
     ) {
-        DisplayIcon(icon = TopAppBarIcon.close)
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceDim)
+                .clickable { onClick() }
+        ) {
+            DisplayIcon(icon = TopAppBarIcon.close)
+        }
     }
 }
