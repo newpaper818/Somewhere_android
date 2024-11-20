@@ -81,11 +81,11 @@
     <string name="selected">Selected</string>
     <string name="not_selected">Unselected</string>
 
-    <string name="where_are_you_going">Where are you going?</string>
+    <string name="where_are_you_going">Where are you traveling?</string>
     <string name="type_a_destination">Type a destination.</string>
     <string name="type_city_or_country_name">Type city or country name.</string>
 
-    <string name="when_are_you_going">When are you going?</string>
+    <string name="when_are_you_going">When are you traveling?</string>
     <string name="starts">Starts</string>
     <string name="ends">Ends</string>
     <string name="date_range">%s - %s</string>
