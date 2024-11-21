@@ -16,12 +16,14 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun MyPlainTooltipBox(
     tooltipText: String,
-    content: @Composable () -> Unit
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
 ){
     val tooltipState = rememberTooltipState()
     val tooltipPosition = TooltipDefaults.rememberPlainTooltipPositionProvider()
 
     TooltipBox(
+        modifier = modifier,
         state = tooltipState,
         positionProvider = tooltipPosition,
         tooltip = {
