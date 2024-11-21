@@ -33,8 +33,11 @@ class GeminiAiApi @Inject constructor(
             )
 
         val prompt = """
-            Get trip places (${tripDays * 5} places) using this JSON schema:
+            Get trip places using this JSON schema:
             Return: Array<String> (Each String should not be sentence. Like [N Seoul tower, Empire state building, Central park])
+            
+            [other request]
+            You should get at least ${tripDays * 6} places on each trip type.
         
             [trip info]
             city(or country): $city
@@ -106,7 +109,7 @@ class GeminiAiApi @Inject constructor(
             googleMapsPlacesId should be same with given [places]'s id.
             spot's titleText is place's name.
             You don't have to follow [places] order.
-            From [places]'s placeTypes, set spotType from [spot type list] (Do not use [places]'s placeTypes.
+            From [places]'s placeTypes, set spotType from [spot type list] (Do not use [places]'s placeTypes.)
             Only use [spot type list]'s item for spotType.
             Include breakfast, lunch, dinner.
             Lodging should be close to [places].
