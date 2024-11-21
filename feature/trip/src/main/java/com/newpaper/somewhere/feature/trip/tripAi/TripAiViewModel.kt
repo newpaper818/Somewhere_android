@@ -11,6 +11,7 @@ import com.newpaper.somewhere.core.utils.getTripId
 import com.newpaper.somewhere.feature.trip.tripAi.model.TripType
 import com.newpaper.somewhere.feature.trip.tripAi.model.TripWith
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -158,6 +159,7 @@ class TripAiViewModel @Inject constructor(
 
         //if error once again
         if (trip == null){
+            delay(1000)
             trip = aiRepository.getAiCreatedTrip(
                 city = tripAiUiState.value.tripTo!!,
                 startDate = tripAiUiState.value.startDate!!,
