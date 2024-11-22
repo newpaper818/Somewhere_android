@@ -461,15 +461,19 @@ fun SomewhereNavHost(
                     commonTripViewModel.setIsEditMode(false)
                     commonTripViewModel.setIsNewTrip(false)
 
-                    mainNavController.popBackStack()
-
                     if (externalState.windowSizeClass.use2Panes)
                         mainNavController.navigateToDate(
-                            navOptions = navOptions { launchSingleTop = true }
+                            navOptions = navOptions {
+                                popUpTo(ScreenDestination.TRIPS.route) { inclusive = false }
+                                launchSingleTop = true
+                            }
                         )
                     else
                         mainNavController.navigateToTrip(
-                            navOptions = navOptions { launchSingleTop = true }
+                            navOptions = navOptions {
+                                popUpTo(ScreenDestination.TRIPS.route) { inclusive = false }
+                                launchSingleTop = true
+                            }
                         )
                 },
                 navigateUp = navigateUp
