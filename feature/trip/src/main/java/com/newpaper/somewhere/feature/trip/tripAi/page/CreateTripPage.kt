@@ -10,9 +10,11 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
@@ -21,9 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.ads.AdView
@@ -48,40 +50,30 @@ internal fun CreateTripPage(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ){
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if (!createTripError) {
-                CreatingTrip()
-
-                if (adView != null) {
-                    MySpacerColumn(height = 64.dp)
-
-                    GoogleMediumRectangleAd(
-                        adView = adView,
-                        showRemoveAdsButton = false
-                    )
-                }
-            }
-            else {
-                Error(
-                    internetEnabled = internetEnabled,
-                    onClickTryAgain = onClickTryAgain
-                )
-            }
-
-            MySpacerColumn(height = 40.dp)
+        if (!createTripError) {
+            CreatingTrip(
+                adView = adView
+            )
+        }
+        else {
+            Error(
+                internetEnabled = internetEnabled,
+                onClickTryAgain = onClickTryAgain
+            )
         }
     }
 }
 
 @Composable
 private fun CreatingTrip(
-
+    adView: AdView?
 ){
     val iconPagerState = rememberPagerState(
         pageCount = { createTripIcons.size }
     )
+
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp
 
     LaunchedEffect(Unit) {
         delay(500)
@@ -106,40 +98,65 @@ private fun CreatingTrip(
         }
     }
 
-    HorizontalPager(
-        state = iconPagerState,
-        userScrollEnabled = false,
-        modifier = Modifier.size(40.dp)
-    ) {
-        DisplayIcon(icon = createTripIcons[it])
-    }
-
-    MySpacerColumn(height = 16.dp)
-    
-    Text(
-        text = stringResource(id = R.string.creating_trip_with_ai),
-        style = MaterialTheme.typography.titleLarge
-    )
-
-    MySpacerColumn(height = 12.dp)
-
-    Column(
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.semantics(mergeDescendants = true) { }
+        contentPadding = PaddingValues(bottom = 40.dp)
     ) {
-        Text(
-            text = stringResource(id = R.string.it_may_took_a_while),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        item {
+            MySpacerColumn(height = (screenHeight/5).dp)
 
-        MySpacerColumn(height = 4.dp)
+            HorizontalPager(
+                state = iconPagerState,
+                userScrollEnabled = false,
+                modifier = Modifier.size(40.dp)
+            ) {
+                DisplayIcon(icon = createTripIcons[it])
+            }
 
-        Text(
-            text = stringResource(id = R.string.it_may_contain_incorrect_information),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+            MySpacerColumn(height = 16.dp)
+        }
+
+        item {
+            Text(
+                text = stringResource(id = R.string.creating_trip_with_ai),
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            MySpacerColumn(height = 12.dp)
+        }
+
+        item {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.semantics(mergeDescendants = true) { }
+            ) {
+                Text(
+                    text = stringResource(id = R.string.it_may_took_a_while),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                MySpacerColumn(height = 4.dp)
+
+                Text(
+                    text = stringResource(id = R.string.it_may_contain_incorrect_information),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+
+        if (adView != null) {
+            item {
+                MySpacerColumn(height = 64.dp)
+
+                GoogleMediumRectangleAd(
+                    adView = adView,
+                    showRemoveAdsButton = false
+                )
+            }
+        }
     }
 }
 
@@ -148,28 +165,34 @@ private fun Error(
     internetEnabled: Boolean,
     onClickTryAgain: () -> Unit
 ){
-    Text(
-        text = stringResource(id = R.string.something_went_wrong),
-        style = MaterialTheme.typography.titleLarge
-    )
-
-    MySpacerColumn(height = 16.dp)
-
-    AnimatedVisibility(
-        visible = !internetEnabled,
-        enter = expandVertically(tween(500)) + fadeIn(tween(500, 200)),
-        exit = shrinkVertically(tween(500, 200)) + fadeOut(tween(500))
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column {
-            InternetUnavailableText()
-            MySpacerColumn(height = 16.dp)
-        }
-    }
+        Text(
+            text = stringResource(id = R.string.something_went_wrong),
+            style = MaterialTheme.typography.titleLarge
+        )
 
-    TryAgainButton(
-        enabled = internetEnabled,
-        onClick = onClickTryAgain
-    )
+        MySpacerColumn(height = 16.dp)
+
+        AnimatedVisibility(
+            visible = !internetEnabled,
+            enter = expandVertically(tween(500)) + fadeIn(tween(500, 200)),
+            exit = shrinkVertically(tween(500, 200)) + fadeOut(tween(500))
+        ) {
+            Column {
+                InternetUnavailableText()
+                MySpacerColumn(height = 16.dp)
+            }
+        }
+
+        TryAgainButton(
+            enabled = internetEnabled,
+            onClick = onClickTryAgain
+        )
+
+        MySpacerColumn(height = 40.dp)
+    }
 }
 
 
