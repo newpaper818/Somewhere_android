@@ -24,7 +24,7 @@ class GeminiAiApi @Inject constructor(
         val generativeModel =
             GenerativeModel(
                 // Specify a Gemini model appropriate for your use case
-                modelName = "gemini-1.5-flash",
+                modelName = "gemini-2.0-flash",
                 // Access your API key as a Build Configuration variable (see "Set up your API key" above)
                 apiKey = BuildConfig.GEMINI_AI_API_KEY,
                 generationConfig = generationConfig {
