@@ -43,7 +43,7 @@ fun SelectDateDialog(
 ){
     var currentDateIndex by rememberSaveable { mutableIntStateOf(initialDate.index) }
 
-    val maxHeight = 26.dp + 16.dp + 60.dp * dateList.size + 12.dp + 48.dp
+    val maxHeight = 26.dp + 16.dp + 66.dp * dateList.size + 12.dp + 48.dp + 4.dp
 
 
     MyDialog(
