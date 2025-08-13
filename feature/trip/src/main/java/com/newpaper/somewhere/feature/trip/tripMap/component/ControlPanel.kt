@@ -202,8 +202,7 @@ internal fun ControlPanel(
             animationSpec = tween(durationMillis = 400),
             shrinkTowards = Alignment.Top
         )
-    )
-    {
+    ) {
         DateList(
             dateTimeFormat = dateTimeFormat,
             dateListState = dateListState,

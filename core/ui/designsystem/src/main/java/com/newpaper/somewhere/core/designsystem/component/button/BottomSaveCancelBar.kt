@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -54,7 +55,7 @@ fun AnimatedBottomSaveCancelButtons(
                 Spacer(modifier = Modifier.weight(1f))
 
             Column(modifier = Modifier.weight(1f)) {
-                //gradation
+                //gradiant
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -133,7 +134,7 @@ private fun BigNegativeButton(
             disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
             disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
-        shape = MaterialTheme.shapes.medium,
+        shape = CircleShape,
         enabled = enabled,
         onClick = onClick
     ) {
@@ -154,11 +155,11 @@ private fun BigPositiveButton(
 ){
     Button(
         modifier = modifier.height(48.dp), //max width: 150.dp
-        shape = MaterialTheme.shapes.medium,
         colors = ButtonDefaults.buttonColors(
             disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
             disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
+        shape = CircleShape,
         enabled = enabled,
         onClick = onClick
     ) {

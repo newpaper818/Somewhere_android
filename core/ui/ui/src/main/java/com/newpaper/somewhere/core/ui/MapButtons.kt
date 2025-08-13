@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
@@ -206,7 +207,7 @@ fun ZoomButtonsForSetLocation(
 
         //user location button
         MyCard(
-            shape = MaterialTheme.shapes.extraLarge
+            shape = CircleShape
         ) {
             UserLocationButton(
                 fusedLocationClient,

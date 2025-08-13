@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -75,6 +76,7 @@ fun MySegmentedButtons(
 
     MyCard(
         modifier = modifier,
+        shape = CircleShape,
         colors = CardDefaults.cardColors(
             containerColor = containerColor
         )
@@ -87,7 +89,7 @@ fun MySegmentedButtons(
                 modifier = modifier
                     .offset(selectedItemOffset.value.dp)
                     .padding(6.dp)
-                    .clip(RoundedCornerShape(10.dp))
+                    .clip(CircleShape)
 
                     .width(width.dp / itemList.size)
                     .fillMaxHeight()
@@ -156,7 +158,7 @@ private fun MySegmentedButtonItem(
     CompositionLocalProvider(LocalRippleConfiguration provides noRippleConfiguration) {
         Box(
             modifier = modifier
-                .clip(RoundedCornerShape(10.dp))
+                .clip(CircleShape)
                 .semantics {
                     stateDescription = if (isSelected) selected else unselected
                 }
@@ -169,7 +171,7 @@ private fun MySegmentedButtonItem(
         ) {
             MyCard(
                 modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.small,
+                shape = CircleShape,
                 colors = CardDefaults.cardColors(
                     containerColor = containerColor,
                     contentColor = contentColor.value
