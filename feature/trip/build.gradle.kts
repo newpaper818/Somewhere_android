@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -12,6 +14,8 @@ android {
 
     defaultConfig {
         minSdk = 26
+
+        buildConfigField("String", "FACEBOOK_APP_ID", getApiKey("FACEBOOK_APP_ID"))
     }
 
     buildFeatures {
@@ -24,6 +28,10 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+}
+
+fun getApiKey(propertyKey: String): String {
+    return gradleLocalProperties(rootDir, providers).getProperty(propertyKey)
 }
 
 dependencies {

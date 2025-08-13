@@ -60,6 +60,9 @@ fun NavGraphBuilder.tripScreen(
                 commonTripViewModel = commonTripViewModel,
 
                 navigateUp = navigateUp,
+                navigateToShareTrip = {
+                    navigateTo(ScreenDestination.SHARE_TRIP)
+                },
                 navigateUpAndDeleteNewTrip = { deleteTrip ->
                     navigateUp()
                     commonTripViewModel.deleteTempTrip(deleteTrip)

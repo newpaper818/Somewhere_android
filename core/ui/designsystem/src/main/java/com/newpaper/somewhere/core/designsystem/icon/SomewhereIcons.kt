@@ -68,7 +68,9 @@ import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material.icons.rounded.Route
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.ShoppingBag
+import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.Train
 import androidx.compose.material.icons.rounded.TravelExplore
 import androidx.compose.material.icons.rounded.Visibility
@@ -108,6 +110,7 @@ object TopAppBarIcon {
     val closeImageScreen = MyIcon(Icons.Rounded.Close,          22.dp, false, CustomColor.white, R.string.close)
     val downloadImage = MyIcon(Icons.Rounded.FileDownload,      22.dp, false, CustomColor.white, R.string.download_image)
     val inviteFriend = MyIcon(Icons.Rounded.PersonAdd,          22.dp, false, null, R.string.invite_friend)
+    val shareTrip = MyIcon(Icons.Rounded.Share,                 22.dp, false, null, R.string.share_trip)
 }
 
 object IconTextButtonIcon {
@@ -200,6 +203,11 @@ object MyIcons {
     //edit profile
     val changeProfileImage = MyIcon(Icons.Rounded.Image,    24.dp, false, null, null)
     val deleteProfileImage = MyIcon(Icons.Rounded.Delete,   24.dp, false, null, null)
+
+    //share
+    val shareToInstagram = MyIcon(Icons.Rounded.Star,       24.dp, false, null, null)
+    val saveAsImage = MyIcon(Icons.Rounded.Image,    24.dp, false, null, null)
+    val shareMore = MyIcon(Icons.Rounded.MoreHoriz,         24.dp, false, null, null)
 
     //image card
     val deleteImage = MyIcon(Icons.Rounded.Close,       16.dp, false, null, R.string.delete_image)
