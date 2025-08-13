@@ -88,6 +88,7 @@ private fun TripCreationTypeButton(
             .height(76.dp)
             .fillMaxWidth(),
         containerColor = MaterialTheme.colorScheme.surfaceBright,
+        shape = MaterialTheme.shapes.large,
         contentAlignment = Alignment.Center,
         onClick = onClick
     ) {
@@ -105,7 +106,7 @@ private fun TripCreationTypeButton(
             )
 
             if (showBetaLabel){
-                MySpacerRow(width = 4.dp)
+                MySpacerRow(width = 6.dp)
                 BetaLabel()
             }
         }

@@ -162,6 +162,7 @@ private fun SetDateTimeFormatScreen(
             item {
                 ListGroupCard(
                     title = stringResource(id = R.string.time_format),
+                    isTransparentCard = true,
                     modifier = itemModifier
                 ) {
                     TimeFormatSegmentedButtons(

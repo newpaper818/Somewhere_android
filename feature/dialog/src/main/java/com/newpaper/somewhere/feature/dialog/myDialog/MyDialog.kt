@@ -59,8 +59,8 @@ fun MyDialog(
     var columnModifier =
         if (width != null) modifier
             .width(width)
-            .padding(12.dp, 16.dp, 12.dp, 12.dp)
-        else               modifier.padding(12.dp, 16.dp, 12.dp, 12.dp)
+            .padding(12.dp, 20.dp, 12.dp, 12.dp)
+        else               modifier.padding(12.dp, 20.dp, 12.dp, 12.dp)
 
     columnModifier =
         if (setMaxHeight) columnModifier.heightIn(max = maxHeight)
@@ -120,7 +120,7 @@ fun MyDialog(
                         text = bodyText,
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier
-                            .padding(horizontal = 8.dp)
+                            .padding(horizontal = 12.dp)
                             .fillMaxWidth()
                     )
                     MySpacerColumn(height = 16.dp)

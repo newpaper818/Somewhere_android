@@ -11,7 +11,7 @@ val Shapes = Shapes(
     extraSmall =    RoundedCornerShape( 4.dp),  //textField, snackBar
     small =         RoundedCornerShape( 8.dp),  //inner card, chips, rich tooltip
     medium =        RoundedCornerShape(16.dp),  //card, small FAB
-    large =         RoundedCornerShape(20.dp),  //FAB, extended FAB
-    extraLarge =    RoundedCornerShape(28.dp)   //dialog
+    large =         RoundedCornerShape(23.dp),  //FAB, extended FAB, dialog button
+    extraLarge =    RoundedCornerShape(35.dp)   //dialog
     //full: button
 )

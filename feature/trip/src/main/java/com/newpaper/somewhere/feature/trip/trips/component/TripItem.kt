@@ -228,7 +228,7 @@ private fun TripItemUi(
     dragHandleModifier: Modifier = Modifier
 ){
     var cardModifier = Modifier
-        .clip(RoundedCornerShape(16.dp))
+        .clip(MaterialTheme.shapes.large)
         .alpha(alpha)
 
     if (onClick != null && onLongClick != null)
@@ -267,7 +267,7 @@ private fun TripItemUi(
                     Box(
                         modifier = Modifier
                             .size(98.dp)
-                            .clip(MaterialTheme.shapes.small),
+                            .clip(RoundedCornerShape(11.dp)),
                     ) {
                         ImageFromFile(
                             internetEnabled = internetEnabled,

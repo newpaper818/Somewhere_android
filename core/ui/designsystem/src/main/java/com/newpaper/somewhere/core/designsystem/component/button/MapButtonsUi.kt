@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -90,7 +91,7 @@ fun ZoomButtonsUi(
     val zoomLevelText = DecimalFormat("0.0").format(zoomLevel)
 
     MyCard(
-        shape = MaterialTheme.shapes.extraLarge
+        shape = CircleShape
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomOut.descriptionTextId!!)) {
@@ -176,7 +177,7 @@ private fun FocusOnToSpotButtonPreview(){
                 .width(300.dp)
         ) {
             MyCard(
-                shape = MaterialTheme.shapes.extraLarge
+                shape = CircleShape
             ) {
                 FocusOnToSpotButtonUi(
                     focusOnToSpotEnabled = true,
@@ -188,7 +189,7 @@ private fun FocusOnToSpotButtonPreview(){
             MySpacerRow(width = 16.dp)
 
             MyCard(
-                shape = MaterialTheme.shapes.extraLarge
+                shape = CircleShape
             ) {
                 FocusOnToSpotButtonUi(
                     focusOnToSpotEnabled = false,
@@ -211,7 +212,7 @@ private fun UserLocationButtonPreview(){
                 .width(300.dp)
         ) {
             MyCard(
-                shape = MaterialTheme.shapes.extraLarge
+                shape = CircleShape
             ) {
                 UserLocationButtonUi(
                     userLocationPermissionGranted = true,
@@ -223,7 +224,7 @@ private fun UserLocationButtonPreview(){
             MySpacerRow(width = 16.dp)
 
             MyCard(
-                shape = MaterialTheme.shapes.extraLarge
+                shape = CircleShape
             ) {
                 UserLocationButtonUi(
                     userLocationPermissionGranted = false,
@@ -247,7 +248,7 @@ private fun ZoomButtonsPreview(){
                 .width(300.dp)
         ) {
             MyCard(
-                shape = MaterialTheme.shapes.extraLarge
+                shape = CircleShape
             ) {
                 ZoomButtonsUi(
                     zoomLevel = 10.5f,
