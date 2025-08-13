@@ -465,7 +465,11 @@ private fun DateScreen(
 
                 actionIcon1 = TopAppBarIcon.edit,
                 actionIcon1Onclick = { dateUiInfo.setIsEditMode(true) },
-                actionIcon1Visible = !dateUiInfo.isEditMode && showingTrip.editable
+                actionIcon1Visible = !dateUiInfo.isEditMode && showingTrip.editable,
+
+                actionIcon2 = TopAppBarIcon.shareTrip,
+                actionIcon2Onclick = { /*open dialog and share to instagram*/ },
+                actionIcon2Visible = !dateUiInfo.isEditMode
             )
         },
 

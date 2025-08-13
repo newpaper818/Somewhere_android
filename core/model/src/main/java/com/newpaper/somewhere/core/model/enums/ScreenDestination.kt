@@ -25,6 +25,8 @@ enum class ScreenDestination(
     DATE("date"),
     SPOT("spot"),
 
+    SHARE_TRIP("shareTrip"),
+
     INVITE_FRIEND("inviteFriend"),
     INVITED_FRIENDS("invitedFriends"),
 

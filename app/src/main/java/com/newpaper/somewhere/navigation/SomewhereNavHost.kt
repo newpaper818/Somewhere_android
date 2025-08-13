@@ -52,6 +52,7 @@ import com.newpaper.somewhere.navigation.trip.navigateToSpot
 import com.newpaper.somewhere.navigation.trip.navigateToTrip
 import com.newpaper.somewhere.navigation.trip.navigateToTripAi
 import com.newpaper.somewhere.navigation.trip.navigateToTrips
+import com.newpaper.somewhere.navigation.trip.shareTripScreen
 import com.newpaper.somewhere.navigation.trip.spotScreen
 import com.newpaper.somewhere.navigation.trip.tripAiScreen
 import com.newpaper.somewhere.navigation.trip.tripMapScreen
@@ -578,6 +579,14 @@ fun SomewhereNavHost(
             )
 
             inviteFriendScreen(
+                externalState = externalState,
+                appViewModel = appViewModel,
+                commonTripViewModel = commonTripViewModel,
+                navigateUp = navigateUp,
+                modifier = modifier
+            )
+
+            shareTripScreen(
                 externalState = externalState,
                 appViewModel = appViewModel,
                 commonTripViewModel = commonTripViewModel,

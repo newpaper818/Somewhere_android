@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.core.designsystem.component
 
+import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -59,6 +60,9 @@ fun ImageFromDrawable(
     )
 }
 
+/**
+ * @param imageUrl "https://..."
+ */
 @Composable
 fun ImageFromUrl(
     imageUrl: String,
@@ -101,6 +105,53 @@ fun ImageFromUrl(
     )
 }
 
+
+@Composable
+fun ImageFromUri(
+    imageUri: Uri,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Crop
+){
+    val context = LocalContext.current
+    var isLoading by rememberSaveable { mutableStateOf(false) }
+    var isError by rememberSaveable { mutableStateOf(false) }
+
+    if (isLoading){
+        OnLoadingImage()
+    }
+
+    if (isError){
+        OnErrorImage()
+    }
+
+    AsyncImage(
+        model = ImageRequest.Builder(context)
+            .data(imageUri)
+            .crossfade(true)
+            .crossfade(300)
+            .build(),
+        contentDescription = contentDescription,
+        contentScale = contentScale,
+        modifier = modifier,
+        onLoading = {
+            isLoading = true
+        },
+        onSuccess = {
+            isLoading = false
+            isError = false
+        },
+        onError = {
+            isLoading = false
+            isError = true
+        }
+    )
+}
+
+
+/**
+ * @param imagePath "001_231011_103012157_0.jpg"
+ */
 @Composable
 fun ImageFromFile(
     internetEnabled: Boolean,

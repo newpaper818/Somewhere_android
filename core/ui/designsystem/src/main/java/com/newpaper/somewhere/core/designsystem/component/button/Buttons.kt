@@ -15,8 +15,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,6 +34,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -339,6 +345,65 @@ fun ToNextDateButton(
 }
 
 @Composable
+fun ShareToInstagramStoryButton(
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier
+){
+    IconCircleButtonWithText(
+        icon = MyIcons.shareToInstagram,
+        text = stringResource(id = R.string.share_to_ig_story),
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun SaveAsImageButton(
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier
+){
+    IconCircleButtonWithText(
+        icon = MyIcons.saveAsImage,
+        text = stringResource(id = R.string.save_as_image),
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun ShareMoreButton(
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier
+){
+    IconCircleButtonWithText(
+        icon = MyIcons.shareMore,
+        text = stringResource(id = R.string.more),
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier
+    )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@Composable
 private fun MyTextButton(
     text: String,
     onClick: () -> Unit,
@@ -492,7 +557,52 @@ private fun IconTextButtonColumn(
     }
 }
 
+@Composable
+private fun IconCircleButtonWithText(
+    icon: MyIcon,
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceDim,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
+    textStyle: TextStyle = MaterialTheme.typography.labelMedium
+){
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .semantics(mergeDescendants = true) {
+                role = Role.Button
+            }
+    ) {
+        Button(
+            colors = ButtonDefaults.buttonColors(
+                containerColor = containerColor,
+                contentColor = contentColor,
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
+                disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+            ),
+            shape = CircleShape,
+            contentPadding = PaddingValues(8.dp),
+            enabled = enabled,
+            onClick = onClick,
+            modifier = modifier.size(56.dp).clearAndSetSemantics { }
+        ){
+            DisplayIcon(icon = icon)
+        }
 
+        MySpacerColumn(6.dp)
+
+        Text(
+            text = text,
+            style = if (enabled) textStyle
+                    else textStyle.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.SemiBold
+        )
+    }
+
+}
 
 
 

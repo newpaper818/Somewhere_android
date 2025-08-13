@@ -143,23 +143,6 @@ fun SomewhereTopAppBar(
             }
         },
         actions = {
-            //action1
-            AnimatedVisibility(
-                visible = actionIcon1Visible,
-                enter = fadeIn(tween(350)),
-                exit = fadeOut(tween(350))
-            ) {
-                if (actionIcon1 != null) {
-                    MyPlainTooltipBox(
-                        tooltipText = stringResource(id = actionIcon1.descriptionTextId!!)
-                    ) {
-                        IconButton(onClick = actionIcon1Onclick) {
-                            DisplayIcon(icon = actionIcon1)
-                        }
-                    }
-                }
-            }
-
             //action2
             AnimatedVisibility(
                 visible = actionIcon2Visible,
@@ -172,6 +155,23 @@ fun SomewhereTopAppBar(
                     ) {
                         IconButton(onClick = actionIcon2Onclick) {
                             DisplayIcon(icon = actionIcon2)
+                        }
+                    }
+                }
+            }
+
+            //action1
+            AnimatedVisibility(
+                visible = actionIcon1Visible,
+                enter = fadeIn(tween(350)),
+                exit = fadeOut(tween(350))
+            ) {
+                if (actionIcon1 != null) {
+                    MyPlainTooltipBox(
+                        tooltipText = stringResource(id = actionIcon1.descriptionTextId!!)
+                    ) {
+                        IconButton(onClick = actionIcon1Onclick) {
+                            DisplayIcon(icon = actionIcon1)
                         }
                     }
                 }

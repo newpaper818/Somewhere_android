@@ -46,7 +46,7 @@ class ImageLocalApi @Inject constructor(
         val newBitmap = compressBitmap(isProfileImage, bitmap, uri)
 
         //make file name : tripId date time index
-        val fileName = getImageFileName(isProfileImage, tripId, index)
+        val fileName = getImageFileName(isProfileImage, tripId, index) + "jpg"
 
         //save
         return try{
@@ -82,7 +82,7 @@ class ImageLocalApi @Inject constructor(
             else MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 
         val contentValues = ContentValues().apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, "${imageFileName.substringAfter("_")}.jpg")
+            put(MediaStore.Images.Media.DISPLAY_NAME, imageFileName.substringAfter("_"))
             put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
             put(MediaStore.Images.Media.RELATIVE_PATH, "DCIM/Somewhere")
             put(MediaStore.Images.Media.WIDTH, bitmap.width)
@@ -102,6 +102,51 @@ class ImageLocalApi @Inject constructor(
         catch (e:IOException){
             e.printStackTrace()
             false
+        }
+    }
+
+    override fun saveUriToExternalStorage(
+        uri: Uri
+    ): Boolean {
+        return try {
+            // 1. Uri → Bitmap 변환
+            val bitmap = context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                BitmapFactory.decodeStream(inputStream)
+            } ?: throw IOException("Couldn't decode bitmap from Uri")
+
+            // 2. 저장 경로 지정 (Android Q 이상과 이하 분리)
+            val imageCollection =
+                if (Build.VERSION.SDK_INT >= 29) {
+                    MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+                } else {
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                }
+
+            // 3. 저장할 파일명
+            val fileName = getImageFileName(false, 0, 0).substringAfter("_") + ".png"
+
+            // 4. MediaStore에 메타데이터 설정
+            val contentValues = ContentValues().apply {
+                put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
+                put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+                put(MediaStore.Images.Media.RELATIVE_PATH, "DCIM/Somewhere")
+                put(MediaStore.Images.Media.WIDTH, bitmap.width)
+                put(MediaStore.Images.Media.HEIGHT, bitmap.height)
+            }
+
+            // 5. 저장 시도
+            context.contentResolver.insert(imageCollection, contentValues)?.also { savedUri ->
+                context.contentResolver.openOutputStream(savedUri).use { outputStream ->
+                    if (outputStream == null || !bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)) {
+                        throw IOException("Couldn't save PNG bitmap")
+                    }
+                }
+            } ?: throw IOException("Couldn't create Media store entry")
+
+            true // 성공
+        } catch (e: IOException) {
+            e.printStackTrace()
+            false // 실패
         }
     }
 
@@ -274,6 +319,12 @@ class ImageLocalApi @Inject constructor(
         return fileSize.toFloat() / 1024 / 1024
     }
 
+    /**
+     * return
+     * "001_231011_103012157_0" or
+     *
+     * "profile_231011_103012157"
+     */
     private fun getImageFileName(
         isProfileImage: Boolean,
         tripId: Int,
@@ -282,11 +333,8 @@ class ImageLocalApi @Inject constructor(
         val df = DecimalFormat("000")
         val now = ZonedDateTime.now(ZoneId.of("UTC"))
         val dateTime = now.format(DateTimeFormatter.ofPattern("yyMMdd_HHmmssSSS"))
-        return if (isProfileImage) "profile_${dateTime}.jpg"
-        else "${df.format(tripId)}_${dateTime}_${index}.jpg"
-
-        //001_231011_103012157_0.jpg
-        //profile_231011_103012157.jpg
+        return if (isProfileImage) "profile_${dateTime}"
+                else "${df.format(tripId)}_${dateTime}_${index}"
     }
 
     private fun deleteFileFromInternalStorage(

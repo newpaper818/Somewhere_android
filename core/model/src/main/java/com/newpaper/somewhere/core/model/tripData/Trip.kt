@@ -5,6 +5,10 @@ import com.squareup.moshi.JsonClass
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
+/**
+ *
+ * @property imagePathList List<"001_231011_103012157_0.jpg">
+ */
 @JsonClass(generateAdapter = true)
 data class Trip(
     val id: Int = 777,

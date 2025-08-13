@@ -105,6 +105,7 @@ fun TripRoute(
 
     //navigate
     navigateUp: () -> Unit,
+    navigateToShareTrip: () -> Unit,
     navigateUpAndDeleteNewTrip: (deleteTrip: Trip) -> Unit,
     navigateToInviteFriend: () -> Unit,
     navigateToInvitedFriends: () -> Unit,
@@ -236,6 +237,7 @@ fun TripRoute(
                 if (!isEditMode) navigateUp()
                 else onClickBackButton()
             },
+            _navigateToShareTrip = navigateToShareTrip,
             _navigateToInviteFriend = navigateToInviteFriend,
             _navigateToInvitedFriends = navigateToInvitedFriends,
             _navigateToImage = navigateToImage,
@@ -451,9 +453,14 @@ private fun TripScreen(
                 internetEnabled = internetEnabled,
                 navigationIcon = if(!isEditMode) TopAppBarIcon.back else null,
                 onClickNavigationIcon = { tripNavigate.navigateUp() },
+
                 actionIcon1 = TopAppBarIcon.edit,
                 actionIcon1Onclick = { tripUiInfo.setIsEditMode(true) },
-                actionIcon1Visible = !loadingTrip && !isEditMode && !use2Panes && showingTrip.editable
+                actionIcon1Visible = !loadingTrip && !isEditMode && !use2Panes && showingTrip.editable,
+
+                actionIcon2 = TopAppBarIcon.shareTrip,
+                actionIcon2Onclick = { tripNavigate.navigateToShareTrip() },
+                actionIcon2Visible = !loadingTrip && !isEditMode
             )
         },
 

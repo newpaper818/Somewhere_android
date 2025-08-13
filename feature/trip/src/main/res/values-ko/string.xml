@@ -41,6 +41,9 @@
     <string name="snackbar_invite_friend_error">친구 초대 에러</string>
     <string name="snackbar_search_friend_error">친구 검색 에러</string>
 
+    <!--shareTrip/ ==============================================================================-->
+    <string name="share_trip">여행 공유</string>
+
 
     <!--setLocation/ ============================================================================-->
 
