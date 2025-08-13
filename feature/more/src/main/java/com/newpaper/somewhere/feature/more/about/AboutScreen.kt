@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -119,7 +120,7 @@ private fun AboutScreen(
     val uriHandler = LocalUriHandler.current
 
     val scaffoldModifier = if (use2Panes) modifier
-                    else modifier.navigationBarsPadding()
+                    else modifier.navigationBarsPadding().displayCutoutPadding()
 
     Scaffold(
         modifier = scaffoldModifier,
