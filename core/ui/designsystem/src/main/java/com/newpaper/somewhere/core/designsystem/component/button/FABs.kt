@@ -57,11 +57,11 @@ fun NewTripExtendedFAB(
     use2Panes: Boolean
 ){
     val bottomNavBarPadding = if (useBottomNavBar) 80.dp else 0.dp
-    val glanceSpotPadding = if (glanceSpotShown && !use2Panes) 70.dp else 0.dp
-    val padding = if (glanceSpotShown && !use2Panes) 16.dp else 0.dp
+    val glanceSpotPadding = if (glanceSpotShown && useBottomNavBar) 70.dp else 0.dp
+    val padding = if (glanceSpotShown && useBottomNavBar) 16.dp else 0.dp
 
     val modifier =
-        if (glanceSpotShown && use2Panes) Modifier
+        if (glanceSpotShown && !useBottomNavBar) Modifier
             .padding(bottom = bottomNavBarPadding + glanceSpotPadding + padding)
             .height(70.dp)
         else Modifier.padding(bottom = bottomNavBarPadding + glanceSpotPadding + padding)

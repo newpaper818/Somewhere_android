@@ -51,8 +51,10 @@ private val MIN_CARD_HEIGHT: Dp = 40.dp
 private val ADDITIONAL_HEIGHT: Dp = 22.dp
 private val POINT_CIRCLE_SIZE: Dp = 24.dp
 private val LINE_WIDTH: Dp = 7.dp
+
 @Composable
 internal fun GlanceSpot(
+    useBottomNavBar: Boolean,
     visible: Boolean,
     dateTimeFormat: DateTimeFormat,
     trip: Trip,
@@ -110,7 +112,7 @@ internal fun GlanceSpot(
             shape = MaterialTheme.shapes.large,
             modifier = modifier
                 .height(70.dp)
-                .widthIn(max = 420.dp)
+                .widthIn(max = if (useBottomNavBar) 600.dp else 400.dp)
                 .padding(horizontal = 16.dp)
                 .shadow(6.dp, MaterialTheme.shapes.large)
         ) {

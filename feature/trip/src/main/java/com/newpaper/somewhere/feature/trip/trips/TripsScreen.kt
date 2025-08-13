@@ -395,6 +395,7 @@ private fun TripsScreen(
         },
         glanceSpot = {
             GlanceSpot(
+                useBottomNavBar = useBottomNavBar,
                 visible = glance.visible && !isEditMode && !loadingTrips,
                 dateTimeFormat = dateTimeFormat,
                 trip = glance.trip ?: Trip(id = 0, managerId = ""), //if glanceVisible is true, glanceTrip, Date, Spot is not null
