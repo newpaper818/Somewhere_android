@@ -31,7 +31,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -233,8 +233,7 @@ fun ImageCard(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                 ) {
-                                    items(imagePathList) { imagePath ->
-
+                                    itemsIndexed(imagePathList) { index, imagePath ->
                                         key(imagePathList) {
                                             val slideState =
                                                 slideStates[imagePath] ?: SlideState.NONE
@@ -244,6 +243,7 @@ fun ImageCard(
                                                 internetEnabled = internetEnabled,
                                                 imagePath = imagePath,
                                                 imagePathList = imagePathList,
+                                                onClickImage = { onClickImage(index) },
                                                 onDeleteClick = {
                                                     deleteImage(imagePath)
                                                     if (imagePathList.size - 1 <= IMAGE_MAX_COUNT && isImageCountLimit) {
@@ -288,8 +288,7 @@ fun ImageCard(
                             val pageState = rememberPagerState { imagePathList.size }
 
                             ClickableBox(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth(),
                                 onClick = {
                                     onClickImage(pageState.currentPage)
                                 }
@@ -332,6 +331,7 @@ private fun ImageWithDeleteIcon(
     internetEnabled: Boolean,
     imagePath: String,
     imagePathList: List<String>,
+    onClickImage: () -> Unit,
     onDeleteClick: () -> Unit,
     downloadImage: (imagePath: String, imageUserId: String, result: (Boolean) -> Unit) -> Unit,
 
@@ -378,6 +378,7 @@ private fun ImageWithDeleteIcon(
 
     MyCard(
         shape = MaterialTheme.shapes.medium,
+        onClick = onClickImage,
         modifier = dragModifier
             .size(cardWidthDp)
             .dragAndDropHorizontal(
