@@ -33,7 +33,7 @@ import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MapButtonIcon
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
-import com.newpaper.somewhere.core.ui.FocusOnToSpotButton
+import com.newpaper.somewhere.core.ui.FitBoundsToMarkersButton
 import com.newpaper.somewhere.core.ui.UserLocationButton
 import com.newpaper.somewhere.core.utils.convert.nextSpotOrDateIsExist
 import com.newpaper.somewhere.core.utils.convert.prevSpotOrDateIsExist
@@ -179,7 +179,7 @@ private fun MapSpotMapButtons(
 
     showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
 ){
-    val focusOnToSpotEnabled =
+    val fitBoundsToMarkersEnabled =
         if (spot == null) false
         else
             spot.spotType.isMove() && spotFrom?.location != null && spotTo?.location != null
@@ -217,13 +217,13 @@ private fun MapSpotMapButtons(
 
         MySpacerRow(width = 16.dp)
 
-        SpotNavigateWithFocusOnToSpotButtons(
+        SpotNavigateWithFitBoundsToMarkersButtons(
             toPrevSpotEnabled = toPrevSpotEnabled,
             toNextSpotEnabled = toNextSpotEnabled,
             toPrevSpot = toPrevSpot,
             toNextSpot = toNextSpot,
             mapSize = mapSize,
-            focusOnToSpotEnabled = focusOnToSpotEnabled,
+            fitBoundsToMarkersEnabled = fitBoundsToMarkersEnabled,
             cameraPositionState = cameraPositionState,
             spotList = spotList,
             showSnackBar = showSnackBar
@@ -302,14 +302,14 @@ private fun EditAndDeleteLocationButtons(
 
 // < spot >
 @Composable
-private fun SpotNavigateWithFocusOnToSpotButtons(
+private fun SpotNavigateWithFitBoundsToMarkersButtons(
     toPrevSpotEnabled: Boolean,
     toNextSpotEnabled: Boolean,
     toPrevSpot: () -> Unit,
     toNextSpot: () -> Unit,
 
     mapSize: IntSize,
-    focusOnToSpotEnabled: Boolean,
+    fitBoundsToMarkersEnabled: Boolean,
     cameraPositionState: CameraPositionState,
     spotList: List<Spot>,
     showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
@@ -329,7 +329,7 @@ private fun SpotNavigateWithFocusOnToSpotButtons(
         }
 
         //focus on to spot
-        FocusOnToSpotButton(mapSize, focusOnToSpotEnabled, cameraPositionState, spotList, showSnackBar)
+        FitBoundsToMarkersButton(mapSize, fitBoundsToMarkersEnabled, cameraPositionState, spotList, showSnackBar)
 
 
         //to next spot

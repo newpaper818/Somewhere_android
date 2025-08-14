@@ -15,7 +15,7 @@ data class TripMapUiState(
     val currentDateIndex: Int = 0,
     val oneDateShown: Boolean = false,
 
-    val focusOnToSpotEnabled: Boolean = true,
+    val fitBoundsToMarkersEnabled: Boolean = true,
 
     val dateWithShownMarkerList: List<DateWithBoolean> = listOf(),
     val spotTypeGroupWithShownMarkerList: List<SpotTypeGroupWithBoolean> = listOf()
@@ -69,7 +69,7 @@ class TripMapViewModel @Inject constructor(
 
 
 
-    private fun checkFocusOnToSpotEnabled() {
+    private fun checkFitBoundsToMarkersEnabled() {
         val dateWithShownMarkerList = tripMapUiState.value.dateWithShownMarkerList
         val spotTypeGroupWithShownMarkerList = tripMapUiState.value.spotTypeGroupWithShownMarkerList
 
@@ -80,7 +80,7 @@ class TripMapViewModel @Inject constructor(
                         spot.location != null){
 
                         _tripMapUiState.update {
-                            it.copy(focusOnToSpotEnabled = true)
+                            it.copy(fitBoundsToMarkersEnabled = true)
                         }
                         return
                     }
@@ -89,7 +89,7 @@ class TripMapViewModel @Inject constructor(
         }
 
         _tripMapUiState.update {
-            it.copy(focusOnToSpotEnabled = false)
+            it.copy(fitBoundsToMarkersEnabled = false)
         }
     }
 
@@ -142,7 +142,7 @@ class TripMapViewModel @Inject constructor(
             }
         }
 
-        checkFocusOnToSpotEnabled()
+        checkFitBoundsToMarkersEnabled()
         checkOnlyOneCurrentDateShown()
     }
 
@@ -158,7 +158,7 @@ class TripMapViewModel @Inject constructor(
             it.copy(spotTypeGroupWithShownMarkerList = newList.toList())
         }
 
-        checkFocusOnToSpotEnabled()
+        checkFitBoundsToMarkersEnabled()
     }
 
     fun updateDateWithShownMarkerListToCurrentDate(): List<DateWithBoolean> {
@@ -175,7 +175,7 @@ class TripMapViewModel @Inject constructor(
             it.copy(dateWithShownMarkerList = newList.toList())
         }
 
-        checkFocusOnToSpotEnabled()
+        checkFitBoundsToMarkersEnabled()
         checkOnlyOneCurrentDateShown()
 
         return newList

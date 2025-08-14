@@ -98,8 +98,8 @@
     <string name="map">Map</string>
 
     <!--MapButtonIcon-->
-    <string name="focus_on_to_target">Focus on to target</string>
-    <string name="disabled_focus_on_to_target">Focus on to target disabled</string>
+    <string name="fit_bounds_to_markers">Fit bounds to markers</string>
+    <string name="disabled_fit_bounds_to_markers">Fit bounds to markers disabled</string>
     <string name="fullscreen_map">Fullscreen map</string>
     <string name="my_location">My location</string>
     <string name="disabled_my_location">My location disabled</string>
