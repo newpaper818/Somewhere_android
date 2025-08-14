@@ -33,6 +33,7 @@
     <string name="invite_friend_with_email">Invite friend with email</string>
     <string name="invite_friend_with_qr_code">Invite friend with QR code</string>
     <string name="delete_account">Delete account</string>
+    <string name="invite_friend">Invite friend</string>
     <string name="change_image">Change image</string>
     <string name="share_to_ig_story">Share to\nIG story</string>
     <string name="save_as_image">Save as\nimage</string>
@@ -85,7 +86,6 @@
     <string name="close">Close</string>
     <string name="more_options">More options</string>
     <string name="download_image">Download image</string>
-    <string name="invite_friend">Invite friend</string>
     <string name="share_trip">Share trip</string>
 
     <!--IconTextButtonIcon-->
