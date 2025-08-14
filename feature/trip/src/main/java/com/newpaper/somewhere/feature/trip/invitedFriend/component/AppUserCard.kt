@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
@@ -35,7 +36,9 @@ internal fun AppUserCard(
         exit = fadeOut(tween(500))
     ) {
         Column(
-            modifier = Modifier.widthIn(max = itemMaxWidth)
+            modifier = Modifier
+                .widthIn(max = itemMaxWidth)
+                .semantics(mergeDescendants = true) { }
         ) {
             Text(
                 text = stringResource(id = R.string.me),
