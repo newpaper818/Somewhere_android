@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -26,6 +27,7 @@ import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -46,7 +48,7 @@ fun SomewhereNavigationBottomBar(
     content: @Composable RowScope.() -> Unit,
 ) {
     NavigationBar(
-        modifier = modifier,
+        modifier = modifier.clip(RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp)),
         containerColor = MaterialTheme.colorScheme.surfaceDim,
         content = content
     )
@@ -77,8 +79,10 @@ fun RowScope.SomewhereNavigationBottomBarItem(
             selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
             selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
             selectedIndicatorColor = MaterialTheme.colorScheme.primaryContainer,
+
             unselectedIconColor = MaterialTheme.colorScheme.inverseSurface,
             unselectedTextColor = MaterialTheme.colorScheme.inverseSurface,
+
             disabledIconColor = Color.Unspecified,
             disabledTextColor = Color.Unspecified
         )
@@ -95,6 +99,7 @@ fun SomewhereNavigationRailBar(
 ){
     NavigationRail(
 //        modifier = modifier.width(NAVIGATION_RAIL_BAR_WIDTH),
+        modifier = Modifier.clip(RoundedCornerShape(0.dp, 24.dp, 24.dp, 0.dp)),
         header = {
             //FAB
         },
@@ -137,8 +142,10 @@ fun SomewhereNavigationRailBarItem(
             selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
             selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
             selectedIndicatorColor = MaterialTheme.colorScheme.primaryContainer,
+
             unselectedIconColor = MaterialTheme.colorScheme.inverseSurface,
             unselectedTextColor = MaterialTheme.colorScheme.inverseSurface,
+
             disabledIconColor = Color.Unspecified,
             disabledTextColor = Color.Unspecified
         )
@@ -154,6 +161,7 @@ fun SomewhereNavigationDrawer(
 ){
     Box(
         modifier = modifier
+            .clip(RoundedCornerShape(0.dp, 24.dp, 24.dp, 0.dp))
             .width(NAVIGATION_DRAWER_BAR_WIDTH)
             .background(MaterialTheme.colorScheme.surfaceDim)
     ) {
@@ -197,6 +205,10 @@ fun SomewhereNavigationDrawerItem(
             )
         },
         colors = NavigationDrawerItemDefaults.colors(
+            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+
             unselectedContainerColor = Color.Transparent,
             unselectedIconColor = MaterialTheme.colorScheme.inverseSurface,
             unselectedTextColor = MaterialTheme.colorScheme.inverseSurface,
