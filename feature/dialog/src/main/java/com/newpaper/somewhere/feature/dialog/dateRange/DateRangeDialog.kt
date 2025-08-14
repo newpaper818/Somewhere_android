@@ -101,7 +101,8 @@ fun DateRangeDialog(
                     colors = DatePickerDefaults.colors(
                         containerColor = Color.Transparent,
                         headlineContentColor = MaterialTheme.colorScheme.onSurface,
-                        subheadContentColor = MaterialTheme.colorScheme.onSurface
+                        subheadContentColor = MaterialTheme.colorScheme.onSurface,
+                        dayInSelectionRangeContainerColor = MaterialTheme.colorScheme.primaryContainer,
                     )
                 )
             }
