@@ -201,7 +201,7 @@ private fun TripMapScreenVertical(
     val spotTypeGroupWithShownMarkerList = tripMapUiState.spotTypeGroupWithShownMarkerList
     val currentDateIndex = tripMapUiState.currentDateIndex
     val oneDateShown = tripMapUiState.oneDateShown
-    val focusOnToSpotEnabled = tripMapUiState.focusOnToSpotEnabled
+    val fitBoundsToMarkersEnabled = tripMapUiState.fitBoundsToMarkersEnabled
 
     val bottomSheetState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(initialValue = SheetValue.Expanded)
@@ -269,7 +269,7 @@ private fun TripMapScreenVertical(
                         coroutineScope,
                         cameraPositionState,
                         mapSize,
-                        focusOnToSpotEnabled,
+                        fitBoundsToMarkersEnabled,
                         oneDateShown,
                         dateTimeFormat,
                         currentDateIndex,
@@ -302,8 +302,8 @@ private fun TripMapScreenVertical(
                     dateList = currentTrip.dateList,
                     dateListWithShownMarkerList = dateWithShownMarkerList,
                     spotTypeGroupWithShownMarkerList = spotTypeGroupWithShownMarkerList,
-                    firstFocusOnToSpot = {
-                        focusOnToSpot(
+                    firstFitBoundsToMarkers = {
+                        fitBoundsToMarkers(
                             mapSize,
                             coroutineScope,
                             dateWithShownMarkerList,
@@ -363,7 +363,7 @@ private fun TripMapScreenHorizontal(
     val spotTypeGroupWithShownMarkerList = tripMapUiState.spotTypeGroupWithShownMarkerList
     val currentDateIndex = tripMapUiState.currentDateIndex
     val oneDateShown = tripMapUiState.oneDateShown
-    val focusOnToSpotEnabled = tripMapUiState.focusOnToSpotEnabled
+    val fitBoundsToMarkersEnabled = tripMapUiState.fitBoundsToMarkersEnabled
 
     val density = LocalDensity.current.density
     val coroutineScope = rememberCoroutineScope()
@@ -418,8 +418,8 @@ private fun TripMapScreenHorizontal(
                     dateList = currentTrip.dateList,
                     dateListWithShownMarkerList = dateWithShownMarkerList,
                     spotTypeGroupWithShownMarkerList = spotTypeGroupWithShownMarkerList,
-                    firstFocusOnToSpot = {
-                        focusOnToSpot(
+                    firstFitBoundsToMarkers = {
+                        fitBoundsToMarkers(
                             mapSize,
                             coroutineScope,
                             dateWithShownMarkerList,
@@ -467,7 +467,7 @@ private fun TripMapScreenHorizontal(
                         coroutineScope,
                         cameraPositionState,
                         mapSize,
-                        focusOnToSpotEnabled,
+                        fitBoundsToMarkersEnabled,
                         oneDateShown,
                         dateTimeFormat,
                         currentDateIndex,

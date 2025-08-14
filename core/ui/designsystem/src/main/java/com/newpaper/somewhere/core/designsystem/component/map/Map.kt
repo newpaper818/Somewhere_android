@@ -40,7 +40,7 @@ import com.newpaper.somewhere.core.utils.convert.getPrevSpot
  * @param dateList
  * @param dateListWithShownMarkerList
  * @param spotTypeGroupWithShownMarkerList
- * @param firstFocusOnToSpot
+ * @param firstFitBoundsToMarkers
  */
 @Composable
 fun MapForTripMap(
@@ -51,7 +51,7 @@ fun MapForTripMap(
     dateList: List<Date>,
     dateListWithShownMarkerList: List<DateWithBoolean>,
     spotTypeGroupWithShownMarkerList: List<SpotTypeGroupWithBoolean>,
-    firstFocusOnToSpot: () -> Unit
+    firstFitBoundsToMarkers: () -> Unit
 ){
     val uiSettings = remember {
         MapUiSettings(myLocationButtonEnabled = false, zoomControlsEnabled = false)
@@ -77,7 +77,7 @@ fun MapForTripMap(
         properties = properties,
         uiSettings = uiSettings,
         onMapLoaded = {
-            firstFocusOnToSpot()
+            firstFitBoundsToMarkers()
         },
         contentPadding = mapPadding
     ) {

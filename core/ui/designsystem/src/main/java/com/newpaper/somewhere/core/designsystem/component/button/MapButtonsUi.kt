@@ -28,18 +28,18 @@ import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import java.text.DecimalFormat
 
 @Composable
-fun FocusOnToSpotButtonUi(
-    focusOnToSpotEnabled: Boolean,
+fun FitBoundsToMarkersButtonUi(
+    fitBoundsToMarkersEnabled: Boolean,
     onClickEnabled: () -> Unit,
     onClickDisabled: () -> Unit
 ){
     MyPlainTooltipBox(
-        tooltipText = if (focusOnToSpotEnabled) stringResource(id = MapButtonIcon.focusOnToTarget.descriptionTextId!!)
-            else stringResource(id = MapButtonIcon.disabledFocusOnToTarget.descriptionTextId!!)
+        tooltipText = if (fitBoundsToMarkersEnabled) stringResource(id = MapButtonIcon.fitBoundsToMarkers.descriptionTextId!!)
+            else stringResource(id = MapButtonIcon.disabledFitBoundsToMarkers.descriptionTextId!!)
     ) {
         IconButton(
             onClick = {
-                if (focusOnToSpotEnabled)
+                if (fitBoundsToMarkersEnabled)
                     onClickEnabled()
                 else
                     onClickDisabled()
@@ -47,8 +47,8 @@ fun FocusOnToSpotButtonUi(
         ) {
             DisplayIcon(
                 icon =
-                if (focusOnToSpotEnabled) MapButtonIcon.focusOnToTarget
-                else MapButtonIcon.disabledFocusOnToTarget
+                if (fitBoundsToMarkersEnabled) MapButtonIcon.fitBoundsToMarkers
+                else MapButtonIcon.disabledFitBoundsToMarkers
             )
         }
     }
@@ -168,7 +168,7 @@ fun ZoomButtonsUi(
 
 @Composable
 @PreviewLightDark
-private fun FocusOnToSpotButtonPreview(){
+private fun FitBoundsToMarkersButtonPreview(){
     SomewhereTheme {
         Row(
             modifier = Modifier
@@ -179,8 +179,8 @@ private fun FocusOnToSpotButtonPreview(){
             MyCard(
                 shape = CircleShape
             ) {
-                FocusOnToSpotButtonUi(
-                    focusOnToSpotEnabled = true,
+                FitBoundsToMarkersButtonUi(
+                    fitBoundsToMarkersEnabled = true,
                     onClickEnabled = { },
                     onClickDisabled = { }
                 )
@@ -191,8 +191,8 @@ private fun FocusOnToSpotButtonPreview(){
             MyCard(
                 shape = CircleShape
             ) {
-                FocusOnToSpotButtonUi(
-                    focusOnToSpotEnabled = false,
+                FitBoundsToMarkersButtonUi(
+                    fitBoundsToMarkersEnabled = false,
                     onClickEnabled = { },
                     onClickDisabled = { }
                 )

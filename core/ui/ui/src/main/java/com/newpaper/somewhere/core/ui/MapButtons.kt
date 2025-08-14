@@ -33,7 +33,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
-import com.newpaper.somewhere.core.designsystem.component.button.FocusOnToSpotButtonUi
+import com.newpaper.somewhere.core.designsystem.component.button.FitBoundsToMarkersButtonUi
 import com.newpaper.somewhere.core.designsystem.component.button.UserLocationButtonUi
 import com.newpaper.somewhere.core.designsystem.component.button.ZoomButtonsUi
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
@@ -43,15 +43,15 @@ import com.newpaper.somewhere.core.ui.ui.R
 import com.newpaper.somewhere.core.utils.ANIMATION_DURATION_MS
 import com.newpaper.somewhere.core.utils.USER_LOCATION_PERMISSION_ARRAY
 import com.newpaper.somewhere.core.utils.checkUserLocationPermission
-import com.newpaper.somewhere.core.utils.focusOnToSpots
+import com.newpaper.somewhere.core.utils.fitBoundsToMarkers
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 //map button =======================================================================================
 @Composable
-fun FocusOnToSpotButton(
+fun FitBoundsToMarkersButton(
     mapSize: IntSize,
-    focusOnToSpotEnabled: Boolean,
+    fitBoundsToMarkersEnabled: Boolean,
     cameraPositionState: CameraPositionState,
     spotList: List<Spot>,
     showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
@@ -60,11 +60,11 @@ fun FocusOnToSpotButton(
     val density = LocalDensity.current.density
     val snackBarText = stringResource(id = R.string.snackbar_no_location_to_show)
 
-    FocusOnToSpotButtonUi(
-        focusOnToSpotEnabled = focusOnToSpotEnabled,
+    FitBoundsToMarkersButtonUi(
+        fitBoundsToMarkersEnabled = fitBoundsToMarkersEnabled,
         onClickEnabled = {
             coroutineScope.launch {
-                focusOnToSpots(cameraPositionState, mapSize, spotList, density)
+                fitBoundsToMarkers(cameraPositionState, mapSize, spotList, density)
             }
         },
         onClickDisabled = {

@@ -47,7 +47,6 @@ import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.LocationDisabled
 import androidx.compose.material.icons.rounded.LocationOff
-import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.Logout
 import androidx.compose.material.icons.rounded.Luggage
 import androidx.compose.material.icons.rounded.LunchDining
@@ -129,8 +128,8 @@ object FabIcon {
 }
 
 object MapButtonIcon {
-    val focusOnToTarget = MyIcon(Icons.Rounded.LocationOn,          24.dp, false, null, R.string.focus_on_to_target)
-    val disabledFocusOnToTarget = MyIcon(Icons.Rounded.LocationOn,  24.dp, true, null, R.string.disabled_focus_on_to_target)
+    val fitBoundsToMarkers = MyIcon(R.drawable.fit_bounds_to_markers,           24.dp, false, null, R.string.fit_bounds_to_markers)
+    val disabledFitBoundsToMarkers = MyIcon(R.drawable.fit_bounds_to_markers,   24.dp, true, null, R.string.disabled_fit_bounds_to_markers)
     val fullscreen = MyIcon(Icons.Rounded.Fullscreen,               24.dp, false, null, R.string.fullscreen_map)
     val myLocation = MyIcon(Icons.Rounded.MyLocation,               24.dp, false, null, R.string.my_location)
     val disabledMyLocation = MyIcon(Icons.Rounded.LocationDisabled, 24.dp, true, null, R.string.disabled_my_location)

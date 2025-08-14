@@ -81,7 +81,7 @@ import com.newpaper.somewhere.core.utils.convert.setLocationAndUpdateTravelDista
 import com.newpaper.somewhere.core.utils.convert.setSpotType
 import com.newpaper.somewhere.core.utils.convert.setStartTime
 import com.newpaper.somewhere.core.utils.convert.setTravelDistance
-import com.newpaper.somewhere.core.utils.focusOnToSpots
+import com.newpaper.somewhere.core.utils.fitBoundsToMarkers
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.dialog.memo.MemoDialog
 import com.newpaper.somewhere.feature.dialog.selectDate.SelectDateDialog
@@ -1230,13 +1230,13 @@ private fun mapAnimateToSpot(
         //if spot is move
         if (currentSpot.spotType.isMove() && spotFrom?.location != null && spotTo?.location != null) {
             coroutineScope.launch {
-                focusOnToSpots(cameraPositionState, mapSize, listOf(spotFrom, spotTo), density)
+                fitBoundsToMarkers(cameraPositionState, mapSize, listOf(spotFrom, spotTo), density)
             }
         }
         //if spot is not move
         else if (currentSpot.spotType.isNotMove() && currentSpot.location != null) {
             coroutineScope.launch {
-                focusOnToSpots(cameraPositionState, mapSize, listOf(currentSpot))
+                fitBoundsToMarkers(cameraPositionState, mapSize, listOf(currentSpot))
             }
         }
     }
