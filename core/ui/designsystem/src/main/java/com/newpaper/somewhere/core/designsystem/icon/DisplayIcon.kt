@@ -7,7 +7,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 
 //draw icon
 @Composable
@@ -18,7 +20,13 @@ fun DisplayIcon(
     color: Color? = null,
     contentDescriptionIsNull: Boolean = false
 ){
-    val imageVector = icon.imageVector
+
+    val imageVector = when(icon.iconResource){
+        is ImageVector -> icon.iconResource
+        is Int -> ImageVector.vectorResource(id = icon.iconResource)
+        else -> return
+    }
+
     val contentDescription =
         if (icon.descriptionTextId == null) null
         else if (!contentDescriptionIsNull) stringResource(id = icon.descriptionTextId)
