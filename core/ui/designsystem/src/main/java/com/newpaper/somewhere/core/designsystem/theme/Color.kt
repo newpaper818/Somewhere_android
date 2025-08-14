@@ -21,23 +21,23 @@ import com.newpaper.somewhere.core.model.data.MyColor
 
 //Color.kt
 
-//primary Hue Chroma Tone 280 47 40
-val p0 = Color(0xFF000000)
-val p10 = Color(0xFF000e5f)
-val p20 = Color(0xFF192778)
-val p25 = Color(0xFF263384)
-val p30 = Color(0xFF323f90)
-val p35 = Color(0xFF3f4b9c)
-val p40 = Color(0xFF4b57a9)
-val p50 = Color(0xFF6471c4)
-val p60 = Color(0xFF7e8ae0)
-val p70 = Color(0xFF99a5fd)
-val p80 = Color(0xFFbbc3ff)
-val p90 = Color(0xFFdfe0ff)
-val p95 = Color(0xFFf0efff)
-val p98 = Color(0xFFfbf8ff)
-val p99 = Color(0xFFfffbff)
-val p100 = Color(0xFFffffff)
+//primary Hue Chroma Tone 266 100 xx
+val p0 = Color(0xFFFFFFFF)  //
+val p10 = Color(0xFF001A42) //
+val p20 = Color(0xFF002E6A) //
+val p25 = Color(0xFF00387F) //
+val p30 = Color(0xFF004395) //
+val p35 = Color(0xFF004FAC) //
+val p40 = Color(0xFF005AC3) //
+val p50 = Color(0xFF0072F3) //
+val p60 = Color(0xFF4E8EFF) //
+val p70 = Color(0xFF81AAFF) //
+val p80 = Color(0xFFAEC6FF) //
+val p90 = Color(0xFFD8E2FF) //
+val p95 = Color(0xFFEDF0FF) //
+val p98 = Color(0xFFF9F9FF) //
+val p99 = Color(0xFFFEFBFF) //
+val p100 = Color(0xFFffffff) //
 
 //secondary 290 16 60
 val s0 = Color(0xFF000000)

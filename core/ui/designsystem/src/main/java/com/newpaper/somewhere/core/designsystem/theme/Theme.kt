@@ -16,11 +16,11 @@ import androidx.core.view.WindowCompat
 
 private val AppLightColorScheme = lightColorScheme(
     //primary
-    primary = p40,
+    primary = p50,
     onPrimary = p100,
     primaryContainer = p90,
     onPrimaryContainer = p10,
-    inversePrimary = p80,
+    inversePrimary = p50,
 
     //secondary
     secondary = s40,
@@ -35,7 +35,7 @@ private val AppLightColorScheme = lightColorScheme(
     onTertiaryContainer = t10,
 
     //error
-    error = Color(0xFFB3261E),
+    error = Color(0xFFEE2121),
     onError = Color(0xFFffffff),
     errorContainer = Color(0xFFF9DEDC),
     onErrorContainer = Color(0xFF410E0B),
@@ -74,11 +74,11 @@ private val AppLightColorScheme = lightColorScheme(
 )
 private val AppDarkColorScheme = darkColorScheme(
     //primary
-    primary = p80,
-    onPrimary = p20,
-    primaryContainer = p30,
-    onPrimaryContainer = p90,
-    inversePrimary = p40,
+    primary = p50,
+    onPrimary = p100,
+    primaryContainer = p25,
+    onPrimaryContainer = p99,
+    inversePrimary = p50,
 
     //secondary
     secondary = s80,
@@ -93,7 +93,7 @@ private val AppDarkColorScheme = darkColorScheme(
     onTertiaryContainer = t90,
 
     //error
-    error = Color(0xFFAC3731),
+    error = Color(0xFFD00606),
     onError = Color(0xFFFFFFFF),
     errorContainer = Color(0xFF601410),
     onErrorContainer = Color(0xFFF9DEDC),
