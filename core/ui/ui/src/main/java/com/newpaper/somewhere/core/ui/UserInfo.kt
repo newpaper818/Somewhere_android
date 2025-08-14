@@ -8,6 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
@@ -28,14 +30,15 @@ fun UserInfo(
 ){
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
+        modifier = modifier.semantics(mergeDescendants = true) { }
     ) {
         ProfileImage(
             profileUserId = userData.userId,
             internetEnabled = internetEnabled,
             profileImagePath = userData.profileImagePath,
             downloadImage = downloadImage,
-            size = 44.dp
+            size = 44.dp,
+            modifier = Modifier.clearAndSetSemantics {  }
         )
 
         MySpacerRow(width = 12.dp)
