@@ -4,8 +4,8 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
@@ -529,8 +529,8 @@ private fun SpotScreen(
     //set location dialog(full screen dialog)
     AnimatedVisibility(
         visible = spotDialog.showSetLocationDialog,
-        enter = slideInHorizontally(animationSpec = tween(300), initialOffsetX = { it }),
-        exit = slideOutHorizontally(animationSpec = tween(300), targetOffsetX = { it }),
+        enter = slideInVertically(animationSpec = tween(300), initialOffsetY = { it }),
+        exit = slideOutVertically(animationSpec = tween(300), targetOffsetY = { it }),
         modifier = Modifier.zIndex(1f)
     ) {
         SetLocationDialog(
