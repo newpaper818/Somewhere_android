@@ -55,6 +55,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -107,8 +108,10 @@ fun ImageCard(
     val borderColor = if (isImageCountLimit) CustomColor.outlineError
                         else Color.Transparent
 
-    val addImageTextStyle = if (!isImageCountLimit && imagePathList.size < IMAGE_MAX_COUNT) MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.primary)
-                            else MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+    val addImageTextStyle = if (!isImageCountLimit && imagePathList.size < IMAGE_MAX_COUNT)
+                                MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                            else
+                                MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
 
     val modifier1 = if (isEditMode) modifier.sizeIn(maxHeight = 390.dp)
                     else modifier.sizeIn(maxWidth = 650.dp, maxHeight = 390.dp)
@@ -173,8 +176,8 @@ fun ImageCard(
 
                             Column(modifier = Modifier.fillMaxWidth()) {
                                 Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
+                                    verticalAlignment = Alignment.Bottom,
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
 
                                     //Images text
@@ -195,14 +198,17 @@ fun ImageCard(
                                         text = stringResource(id = R.string.image_card_subtitle_add_images),
                                         style = addImageTextStyle,
                                         modifier = Modifier
+                                            .clip(CircleShape)
                                             .clickable(
                                                 enabled = !isImageCountLimit && imagePathList.size < IMAGE_MAX_COUNT,
                                                 onClick = {
                                                     galleryLauncher.launch("image/*")
                                                 }
                                             )
-                                            .padding(16.dp, 14.dp, 16.dp, 8.dp)
+                                            .padding(16.dp, 8.dp, 16.dp, 8.dp)
                                     )
+
+                                    MySpacerRow(6.dp)
                                 }
 
                                 val slideStates = remember {
@@ -371,7 +377,7 @@ private fun ImageWithDeleteIcon(
         .zIndex(zIndex)
 
     MyCard(
-        shape = MaterialTheme.shapes.small,
+        shape = MaterialTheme.shapes.medium,
         modifier = dragModifier
             .size(cardWidthDp)
             .dragAndDropHorizontal(

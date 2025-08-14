@@ -48,7 +48,7 @@ fun UserProfileCard(
 ) {
     val boxModifier =
         if (enabled) modifier
-            .clip(MaterialTheme.shapes.medium)
+            .clip(CircleShape)
             .background(MaterialTheme.colorScheme.surfaceBright)
             .clickable { onProfileClick() }
         else modifier
@@ -63,7 +63,7 @@ fun UserProfileCard(
             }
     ){
         Row(
-            modifier = Modifier.padding(12.dp, 16.dp, 16.dp, 16.dp),
+            modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             //profile image

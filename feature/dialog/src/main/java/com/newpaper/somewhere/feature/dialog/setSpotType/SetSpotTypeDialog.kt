@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -107,7 +108,7 @@ internal fun SetSpotTypeDialog(
                 state = lazyRowState,
                 modifier = Modifier
                     //.height(400.dp)
-                    .clip(RoundedCornerShape(16.dp))
+                    .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.surfaceBright)
                     .padding(0.dp, 8.dp)
             ) {
@@ -120,11 +121,11 @@ internal fun SetSpotTypeDialog(
                     val cardColor = if (it == currentSpotTypeGroup) MaterialTheme.colorScheme.primaryContainer
                                     else Color.Transparent
 
-                    val cardTextStyle = if (it == currentSpotTypeGroup) MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                    val cardTextStyle = if (it == currentSpotTypeGroup) MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onPrimaryContainer, fontWeight = FontWeight.Bold)
                                         else MaterialTheme.typography.bodyMedium
 
                     ClickableBox(
-                        shape = MaterialTheme.shapes.small,
+                        shape = CircleShape,
                         containerColor = cardColor,
                         modifier = Modifier.height(36.dp)
                             .semantics {
@@ -168,7 +169,7 @@ internal fun SetSpotTypeDialog(
             Column(
                 modifier = Modifier
                     .heightIn(min = 0.dp)
-                    .clip(RoundedCornerShape(16.dp))
+                    .clip(RoundedCornerShape(31.dp))
                     .background(MaterialTheme.colorScheme.surfaceBright)
             ) {
                 LazyColumn(
@@ -179,12 +180,12 @@ internal fun SetSpotTypeDialog(
                         val cardColor = if (it == currentSpotType) MaterialTheme.colorScheme.primaryContainer
                                         else Color.Transparent
 
-                        val cardTextStyle = if (it == currentSpotType) MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                        val cardTextStyle = if (it == currentSpotType) MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onPrimaryContainer, fontWeight = FontWeight.Bold)
                                             else MaterialTheme.typography.bodyMedium
 
                         ClickableBox(
                             containerColor = cardColor,
-                            shape = MaterialTheme.shapes.small,
+                            shape = CircleShape,
                             modifier = Modifier
                                 .height(46.dp)
                                 .fillMaxWidth()
@@ -210,6 +211,8 @@ internal fun SetSpotTypeDialog(
                                     .fillMaxSize()
                                     .padding(8.dp, 0.dp)
                             ) {
+                                MySpacerRow(width = 4.dp)
+
                                 Text(
                                     text = it.iconText,
                                     style = MaterialTheme.typography.bodyLarge,
