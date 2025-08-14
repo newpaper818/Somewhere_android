@@ -109,13 +109,13 @@ object TopAppBarIcon {
     val more = MyIcon(Icons.Rounded.MoreVert,                   22.dp, false, null, R.string.more_options)
     val closeImageScreen = MyIcon(Icons.Rounded.Close,          22.dp, false, CustomColor.white, R.string.close)
     val downloadImage = MyIcon(Icons.Rounded.FileDownload,      22.dp, false, CustomColor.white, R.string.download_image)
-    val inviteFriend = MyIcon(Icons.Rounded.PersonAdd,          22.dp, false, null, R.string.invite_friend)
 }
 
 object IconTextButtonIcon {
     val qrCode = MyIcon(Icons.Rounded.QrCode,                 24.dp, false, null, null)
-    val add = MyIcon(Icons.Rounded.Add,                       24.dp, false, null, R.string.add)
-    val delete = MyIcon(Icons.Rounded.Delete,                 24.dp, false, null, R.string.delete)
+    val add = MyIcon(Icons.Rounded.Add,                       24.dp, false, null, null)
+    val inviteFriend = MyIcon(Icons.Rounded.PersonAdd,        24.dp, false, null, null)
+    val delete = MyIcon(Icons.Rounded.Delete,                 24.dp, false, null, null)
     val leftArrow = MyIcon(Icons.Rounded.KeyboardArrowLeft,   30.dp, false, null, R.string.previous_date)
     val rightArrow = MyIcon(Icons.Rounded.KeyboardArrowRight, 30.dp, false, null, R.string.next_date)
 }

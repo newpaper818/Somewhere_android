@@ -238,6 +238,19 @@ fun NewItemButton(
 }
 
 @Composable
+fun AddFriendButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    IconTextButton(
+        icon = IconTextButtonIcon.inviteFriend,
+        text = stringResource(id = R.string.invite_friend),
+        onClick = onClick,
+        modifier = modifier.height(48.dp)
+    )
+}
+
+@Composable
 fun DeleteItemButton(
     visible: Boolean,
     text: String,

@@ -1,5 +1,9 @@
 package com.newpaper.somewhere.feature.trip.invitedFriend
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.newpaper.somewhere.core.designsystem.component.button.AddFriendButton
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
@@ -290,13 +295,7 @@ private fun InvitedFriendsScreen(
                 internetEnabled = internetEnabled,
                 title = stringResource(id = R.string.trip_mates),
                 navigationIcon = TopAppBarIcon.back,
-                onClickNavigationIcon = { navigateUp() },
-
-                actionIcon1 = if (appUserIsTripManager && internetEnabled
-                    && friendList.size < getMaxInviteFriends(appUserData.isUsingSomewherePro))
-                    TopAppBarIcon.inviteFriend
-                else null,
-                actionIcon1Onclick = navigateToInviteFriend
+                onClickNavigationIcon = { navigateUp() }
             )
         },
         snackbarHost = {
@@ -312,69 +311,90 @@ private fun InvitedFriendsScreen(
             )
         }
     ) { paddingValues ->
-
-        LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(spacerValue, 8.dp, spacerValue, 200.dp),
+        Box(
+            contentAlignment = Alignment.BottomCenter,
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            item {
-                //trip image, title, date
-                TripItem(
-                    trip = trip,
-                    internetEnabled = internetEnabled,
-                    dateTimeFormat = dateTimeFormat,
-                    downloadImage = downloadImage,
-                    modifier = Modifier.widthIn(max = itemMaxWidth)
-                )
-            }
-
-            item{
-                Box{
-                    //loading screen
-                    LoadingCard(
-                        isLoading = loading
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(spacerValue, 8.dp, spacerValue, 200.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                item {
+                    //trip image, title, date
+                    TripItem(
+                        trip = trip,
+                        internetEnabled = internetEnabled,
+                        dateTimeFormat = dateTimeFormat,
+                        downloadImage = downloadImage,
+                        modifier = Modifier.widthIn(max = itemMaxWidth)
                     )
+                }
 
-                    Column {
-                        MySpacerColumn(height = 16.dp)
+                item {
+                    Box {
+                        //loading screen
+                        LoadingCard(isLoading = loading)
 
-                        //me
-                        AppUserCard(
-                            isLoading = loading,
-                            appUserData = appUserData,
-                            isManager = appUserIsTripManager,
-                            internetEnabled = internetEnabled,
-                            downloadImage = downloadImage,
-                            onClickGetOut = {
-                                setShowGetOutSharedTripDialog(true)
-                            }
-                        )
+                        Column {
+                            MySpacerColumn(height = 16.dp)
 
-                        MySpacerColumn(height = 16.dp)
 
-                        //friends
-                        FriendList(
-                            isLoading = loading,
-                            managerId = trip.managerId,
-                            friendList = friendList,
-                            showEditButton = appUserIsTripManager,
-                            internetEnabled = internetEnabled,
-                            downloadImage = downloadImage,
-                            onClickEditable = {
-                                setShowSetEditableDialog(true)
-                                setSelectedFriendUserData(it)
-                            },
-                            onClickDeleteFriend = {
-                                setShowDeleteFriendDialog(true)
-                                setSelectedFriendUserData(it)
-                            }
-                        )
+                            //me
+                            AppUserCard(
+                                isLoading = loading,
+                                appUserData = appUserData,
+                                isManager = appUserIsTripManager,
+                                internetEnabled = internetEnabled,
+                                downloadImage = downloadImage,
+                                onClickGetOut = {
+                                    setShowGetOutSharedTripDialog(true)
+                                }
+                            )
+
+                            MySpacerColumn(height = 16.dp)
+
+                            //friends
+                            FriendList(
+                                isLoading = loading,
+                                managerId = trip.managerId,
+                                friendList = friendList,
+                                showEditButton = appUserIsTripManager,
+                                internetEnabled = internetEnabled,
+                                downloadImage = downloadImage,
+                                onClickEditable = {
+                                    setShowSetEditableDialog(true)
+                                    setSelectedFriendUserData(it)
+                                },
+                                onClickDeleteFriend = {
+                                    setShowDeleteFriendDialog(true)
+                                    setSelectedFriendUserData(it)
+                                }
+                            )
+                        }
                     }
                 }
+            }
+
+
+            //add friend button
+            Column {
+                AnimatedVisibility(
+                    visible = appUserIsTripManager && internetEnabled && friendList.size < getMaxInviteFriends(appUserData.isUsingSomewherePro),
+                    enter = slideInVertically(
+                        animationSpec = tween(500),
+                        initialOffsetY = { (it * 2.5f).toInt() }),
+                    exit = slideOutVertically(
+                        animationSpec = tween(500),
+                        targetOffsetY = { (it * 2.5f).toInt() })
+                ) {
+                    AddFriendButton(onClick = navigateToInviteFriend)
+                }
+
+                MySpacerColumn(32.dp)
             }
         }
     }
