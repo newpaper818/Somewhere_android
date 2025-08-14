@@ -86,7 +86,7 @@ import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.trip.component.DateListEmptyTextCard
 import com.newpaper.somewhere.feature.trip.trip.component.DateListItem
 import com.newpaper.somewhere.feature.trip.trip.component.DateListTopTitleCard
-import com.newpaper.somewhere.feature.trip.trip.component.SharingWithFriendsCard
+import com.newpaper.somewhere.feature.trip.trip.component.ShareTripCards
 import com.newpaper.somewhere.feature.trip.trip.component.TripDurationCard
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -457,10 +457,6 @@ private fun TripScreen(
                 actionIcon1 = TopAppBarIcon.edit,
                 actionIcon1Onclick = { tripUiInfo.setIsEditMode(true) },
                 actionIcon1Visible = !loadingTrip && !isEditMode && !use2Panes && showingTrip.editable,
-
-                actionIcon2 = TopAppBarIcon.shareTrip,
-                actionIcon2Onclick = { tripNavigate.navigateToShareTrip() },
-                actionIcon2Visible = !loadingTrip && !isEditMode
             )
         },
 
@@ -578,15 +574,17 @@ private fun TripScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
 
+                //share trip (trip mate / share)
                 item {
-                    SharingWithFriendsCard(
+                    ShareTripCards(
                         trip = showingTrip,
                         maxInviteFriends = getMaxInviteFriends(isUsingSomewherePro),
                         userIsManager = appUserId == showingTrip.managerId,
                         internetEnabled = internetEnabled,
                         isEditMode = isEditMode,
                         onClickInvitedFriends = tripNavigate::navigateToInvitedFriends,
-                        onClickShareTrip = tripNavigate::navigateToInviteFriend
+                        onClickAddFriend = tripNavigate::navigateToInviteFriend,
+                        onClickShareTrip = { tripNavigate.navigateToShareTrip() }
                     )
                 }
 

@@ -110,7 +110,6 @@ object TopAppBarIcon {
     val closeImageScreen = MyIcon(Icons.Rounded.Close,          22.dp, false, CustomColor.white, R.string.close)
     val downloadImage = MyIcon(Icons.Rounded.FileDownload,      22.dp, false, CustomColor.white, R.string.download_image)
     val inviteFriend = MyIcon(Icons.Rounded.PersonAdd,          22.dp, false, null, R.string.invite_friend)
-    val shareTrip = MyIcon(Icons.Rounded.Share,                 22.dp, false, null, R.string.share_trip)
 }
 
 object IconTextButtonIcon {
@@ -205,8 +204,9 @@ object MyIcons {
     val deleteProfileImage = MyIcon(Icons.Rounded.Delete,   24.dp, false, null, null)
 
     //share
+    val shareTrip = MyIcon(Icons.Rounded.Share,             22.dp, false, null, null)
     val shareToInstagram = MyIcon(Icons.Rounded.Star,       24.dp, false, null, null)
-    val saveAsImage = MyIcon(Icons.Rounded.Image,    24.dp, false, null, null)
+    val saveAsImage = MyIcon(Icons.Rounded.Image,           24.dp, false, null, null)
     val shareMore = MyIcon(Icons.Rounded.MoreHoriz,         24.dp, false, null, null)
 
     //image card
@@ -269,10 +269,10 @@ object MyIcons {
     val openInNew = MyIcon(Icons.Rounded.OpenInNew,     22.dp, true, null, R.string.open_in_new)
     val sendEmail = MyIcon(Icons.AutoMirrored.Rounded.Send,     22.dp, true, null, R.string.send_email)
 
-    //share trip
+    //share trip invite friend
     val deleteFriend = MyIcon(Icons.Rounded.Close,      24.dp, true, null, R.string.delete_friend)
-    val friends = MyIcon(Icons.Rounded.People,          22.dp, true, null, R.string.number_of_trip_mates)
+    val friends = MyIcon(Icons.Rounded.People,          22.dp, false, null, null)
     val inviteFriend = MyIcon(Icons.Rounded.PersonAdd,  22.dp, false, null, R.string.invite_friend)
     val manager = MyIcon(Icons.Rounded.ManageAccounts,  22.dp, true, null, R.string.manager)
-    val leaveTrip = MyIcon(Icons.Rounded.Logout,           24.dp, true, null, R.string.leave_trip)
+    val leaveTrip = MyIcon(Icons.Rounded.Logout,        24.dp, true, null, R.string.leave_trip)
 }

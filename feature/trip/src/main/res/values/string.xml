@@ -41,10 +41,6 @@
     <string name="snackbar_invite_friend_error">Invite friend error</string>
     <string name="snackbar_search_friend_error">Search friend error</string>
 
-    <!--shareTrip/ ==============================================================================-->
-    <string name="share_trip">Share trip</string>
-
-
     <!--setLocation/ ============================================================================-->
 
 
@@ -57,9 +53,10 @@
 
 
     <!--trip/ ===================================================================================-->
-    <!--SharingWithFriendsCard.kt-->
+    <!--ShareTripCard.kt-->
     <string name="me">Me</string>
     <string name="trip_mates">Trip mates</string>
+    <string name="share_trip">Share trip</string>
 
     <!--TripDurationCard.kt-->
     <string name="trip_duration_card_title">Trip Duration</string>
