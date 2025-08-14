@@ -21,6 +21,7 @@ import androidx.compose.material.icons.rounded.Bookmarks
 import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.CloudOff
+import androidx.compose.material.icons.rounded.CropOriginal
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.DragHandle
@@ -70,19 +71,21 @@ import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.ShoppingBag
-import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.Train
 import androidx.compose.material.icons.rounded.TravelExplore
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.theme.CustomColor
 import com.newpaper.somewhere.core.ui.designsystem.R
 
+/**
+ *
+ * @property iconResource ImageVector or Int(drawable id)
+ */
 data class MyIcon(
-    val imageVector: ImageVector,
+    val iconResource: Any,
     val size: Dp = 22.dp,
     val isGray: Boolean = false,
     val color: Color? = null,  /**if null, set [color] to Material.colors.onSurface, onBackground...*/
@@ -205,8 +208,8 @@ object MyIcons {
 
     //share
     val shareTrip = MyIcon(Icons.Rounded.Share,             22.dp, false, null, null)
-    val shareToInstagram = MyIcon(Icons.Rounded.Star,       24.dp, false, null, null)
-    val saveAsImage = MyIcon(Icons.Rounded.Image,           24.dp, false, null, null)
+    val shareToInstagram = MyIcon(R.drawable.instagram_logo,       24.dp, false, null, null)
+    val saveAsImage = MyIcon(Icons.Rounded.CropOriginal,           24.dp, false, null, null)
     val shareMore = MyIcon(Icons.Rounded.MoreHoriz,         24.dp, false, null, null)
 
     //image card
