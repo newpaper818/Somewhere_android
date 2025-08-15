@@ -84,9 +84,9 @@ class ShareTripViewModel @Inject constructor(
 
                 setBackgroundAssetUri(createBlurBackgroundUri(context, tripImageFile))
                 setStickerAssetUri(createStickerWithTextUri(context, tripImageFile, tripTitle, tripStartDate, tripEndDate))
-
-                //TODO: make no image asset
-
+            }
+            else{
+                setStickerAssetUri(createStickerOnlyTextUri(context, tripTitle, tripStartDate, tripEndDate))
             }
         }
     }
