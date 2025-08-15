@@ -112,7 +112,7 @@
     <string name="delete_location">위치 삭제</string>
     <string name="previous_spot">이전 장소</string>
     <string name="next_spot">다음 장소</string>
-    <string name="open_in_google_map">Google 지도로 열기</string>
+    <string name="open_in_google_maps">Google 지도로 열기</string>
 
     <!--SelectSwitchIcon-->
     <string name="view_only">보기 전용</string>
