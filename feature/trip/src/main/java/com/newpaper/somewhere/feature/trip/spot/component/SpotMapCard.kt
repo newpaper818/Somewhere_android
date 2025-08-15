@@ -353,13 +353,13 @@ private fun ToGoogleMapButton(
     onClick: () -> Unit,
 ){
     MapButtonsRow {
-        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.openInGoogleMap.descriptionTextId!!)) {
+        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.openInGoogleMaps.descriptionTextId!!)) {
             IconButton(
                 enabled = enabled,
                 onClick = onClick
             ) {
                 DisplayIcon(
-                    icon = MapButtonIcon.openInGoogleMap,
+                    icon = MapButtonIcon.openInGoogleMaps,
                     enabled = enabled
                 )
             }

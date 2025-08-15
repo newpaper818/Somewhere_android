@@ -147,7 +147,7 @@ object MapButtonIcon {
     val prevDate = MyIcon(Icons.Rounded.KeyboardArrowLeft,  30.dp, false, null, R.string.previous_date)
     val nextDate = MyIcon(Icons.Rounded.KeyboardArrowRight, 30.dp, false, null, R.string.next_date)
 
-    val openInGoogleMap = MyIcon(Icons.Rounded.Map, 24.dp, false, null, R.string.open_in_google_map)
+    val openInGoogleMaps = MyIcon(Icons.Rounded.Map, 24.dp, false, null, R.string.open_in_google_maps)
 }
 
 object SelectSwitchIcon {
