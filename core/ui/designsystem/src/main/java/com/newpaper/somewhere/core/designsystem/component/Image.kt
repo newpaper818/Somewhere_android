@@ -15,6 +15,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +28,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -117,44 +120,57 @@ fun ImageFromUrl(
 
 @Composable
 fun ImageFromUri(
-    imageUri: Uri,
+    imageUri: Uri?,
     contentDescription: String,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop
 ){
     val context = LocalContext.current
-    var isLoading by rememberSaveable { mutableStateOf(false) }
+    var isLoading by rememberSaveable { mutableStateOf(imageUri == null) }
     var isError by rememberSaveable { mutableStateOf(false) }
 
-    if (isLoading){
-        OnLoadingImage()
+
+    AnimatedVisibility(
+        visible = isLoading,
+        enter = fadeIn(tween(200)),
+        exit = fadeOut(tween(200))
+    ) {
+        OnLoadingImage(
+            modifier = Modifier
+                .size(300.dp, 400.dp)
+                .clip(MaterialTheme.shapes.medium)
+                .alpha(0.5f)
+        )
     }
+
 
     if (isError){
         OnErrorImage()
     }
 
-    AsyncImage(
-        model = ImageRequest.Builder(context)
-            .data(imageUri)
-            .crossfade(true)
-            .crossfade(300)
-            .build(),
-        contentDescription = contentDescription,
-        contentScale = contentScale,
-        modifier = modifier,
-        onLoading = {
-            isLoading = true
-        },
-        onSuccess = {
-            isLoading = false
-            isError = false
-        },
-        onError = {
-            isLoading = false
-            isError = true
-        }
-    )
+    if (imageUri != null) {
+        AsyncImage(
+            model = ImageRequest.Builder(context)
+                .data(imageUri)
+                .crossfade(true)
+                .crossfade(300)
+                .build(),
+            contentDescription = contentDescription,
+            contentScale = contentScale,
+            modifier = modifier,
+            onLoading = {
+                isLoading = true
+            },
+            onSuccess = {
+                isLoading = false
+                isError = false
+            },
+            onError = {
+                isLoading = false
+                isError = true
+            }
+        )
+    }
 }
 
 

@@ -159,14 +159,12 @@ private fun ShareTripScreen(
                 }
 
                 //sticker
-                if (stickerAssetUri != null) {
-                    ImageFromUri(
-                        imageUri = stickerAssetUri,
-                        contentDescription = "trip sticker image",
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier.fillMaxSize().padding(48.dp, 64.dp)
-                    )
-                }
+                ImageFromUri(
+                    imageUri = stickerAssetUri,
+                    contentDescription = "trip sticker image",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.fillMaxSize().padding(48.dp, 64.dp)
+                )
 
                 //gradient
                 Box(
@@ -202,6 +200,7 @@ private fun ShareTripScreen(
             //buttons
             // save to image / share to IG story / other
             ShareButtons(
+                enabled = stickerAssetUri != null,
                 onClickShareToInstagramStory,
                 onClickSaveAsImage,
                 onClickShareMore
@@ -217,6 +216,7 @@ private fun ShareTripScreen(
 
 @Composable
 private fun ShareButtons(
+    enabled: Boolean,
     onClickShareToInstagramStory: () -> Unit,
     onClickSaveAsImage: () -> Unit,
     onClickShareMore: () -> Unit
@@ -230,21 +230,30 @@ private fun ShareButtons(
             contentAlignment = Alignment.Center,
             modifier = Modifier.weight(1f)
         ){
-            ShareToInstagramStoryButton(onClick = onClickShareToInstagramStory)
+            ShareToInstagramStoryButton(
+                enabled = enabled,
+                onClick = onClickShareToInstagramStory
+            )
         }
 
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.weight(1f)
         ) {
-            SaveAsImageButton(onClick = onClickSaveAsImage)
+            SaveAsImageButton(
+                enabled = enabled,
+                onClick = onClickSaveAsImage
+            )
         }
 
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.weight(1f)
         ) {
-            ShareMoreButton(onClick = onClickShareMore)
+            ShareMoreButton(
+                enabled = enabled,
+                onClick = onClickShareMore
+            )
         }
 
         MySpacerRow(16.dp)
