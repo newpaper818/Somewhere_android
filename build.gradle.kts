@@ -7,4 +7,5 @@ plugins {
     alias(libs.plugins.googleDevToolsKsp) apply false
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.googleMapsPlatformGraglePlugin) apply false
+
 }
