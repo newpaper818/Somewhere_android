@@ -35,6 +35,7 @@ fun NavController.navigateToDate(navOptions: NavOptions? = null) =
     navigate(ScreenDestination.DATE.route, navOptions)
 
 fun NavGraphBuilder.dateScreen(
+    isDarkAppTheme: Boolean,
     appViewModel: AppViewModel,
     externalState: ExternalState,
     commonTripViewModel: CommonTripViewModel,
@@ -75,6 +76,7 @@ fun NavGraphBuilder.dateScreen(
                     if (appUiState.appUserData != null) {
                         //trip screen - if use 2 panes
                         TripRoute(
+                            isDarkAppTheme = isDarkAppTheme,
                             use2Panes = externalState.windowSizeClass.use2Panes,
                             spacerValue = externalState.windowSizeClass.spacerValue,
                             appUserData = appUiState.appUserData!!,
@@ -83,7 +85,8 @@ fun NavGraphBuilder.dateScreen(
                             commonTripViewModel = commonTripViewModel,
 
                             navigateUp = navigateUp,
-                            navigateToShareTrip = {
+                            navigateToShareTrip = { imageList, initialImageIndex ->
+                                commonTripViewModel.setImageListAndInitialImageIndex(imageList, initialImageIndex)
                                 navigateTo(ScreenDestination.SHARE_TRIP)
                             },
                             navigateUpAndDeleteNewTrip = { deleteTrip ->

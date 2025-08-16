@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -95,6 +96,7 @@ import java.time.LocalDate
 
 @Composable
 fun TripRoute(
+    isDarkAppTheme: Boolean,
     appUserData: UserData,
     use2Panes: Boolean,
     spacerValue: Dp,
@@ -105,7 +107,7 @@ fun TripRoute(
 
     //navigate
     navigateUp: () -> Unit,
-    navigateToShareTrip: () -> Unit,
+    navigateToShareTrip: (imageList: List<String>, initialImageIndex: Int) -> Unit,
     navigateUpAndDeleteNewTrip: (deleteTrip: Trip) -> Unit,
     navigateToInviteFriend: () -> Unit,
     navigateToInvitedFriends: () -> Unit,
@@ -185,6 +187,7 @@ fun TripRoute(
         }
 
     TripScreen(
+        isDarkAppTheme = isDarkAppTheme,
         appUserId = appUserData.userId,
         isUsingSomewherePro = appUserData.isUsingSomewherePro,
         tripUiInfo = TripUiInfo(
@@ -331,6 +334,7 @@ fun TripRoute(
 
 @Composable
 private fun TripScreen(
+    isDarkAppTheme: Boolean,
     appUserId: String,
     isUsingSomewherePro: Boolean,
     tripUiInfo: TripUiInfo,
@@ -383,6 +387,9 @@ private fun TripScreen(
     val slideStates = remember { mutableStateMapOf(
         *showingTrip.dateList.map { it.id to SlideState.NONE }.toTypedArray()
     ) }
+
+    //images pager state
+    val imagesPagerState = rememberPagerState { showingTrip.imagePathList.size }
 
 
     //set top bar title
@@ -584,7 +591,7 @@ private fun TripScreen(
                         isEditMode = isEditMode,
                         onClickInvitedFriends = tripNavigate::navigateToInvitedFriends,
                         onClickAddFriend = tripNavigate::navigateToInviteFriend,
-                        onClickShareTrip = { tripNavigate.navigateToShareTrip() }
+                        onClickShareTrip = { tripNavigate.navigateToShareTrip(showingTrip.imagePathList, imagesPagerState.currentPage) }
                     )
                 }
 
@@ -616,6 +623,7 @@ private fun TripScreen(
                 //image card
                 item {
                     ImageCard(
+                        isDarkAppTheme = isDarkAppTheme,
                         imageUserId = showingTrip.managerId,
                         internetEnabled = internetEnabled,
                         isEditMode = isEditMode,
@@ -645,7 +653,8 @@ private fun TripScreen(
                         },
                         reorderImageList = tripImage::reorderTripImageList,
                         downloadImage = tripImage::downloadImage,
-                        saveImageToInternalStorage = tripImage::saveImageToInternalStorage
+                        saveImageToInternalStorage = tripImage::saveImageToInternalStorage,
+                        pagerState = imagesPagerState
                     )
                 }
 

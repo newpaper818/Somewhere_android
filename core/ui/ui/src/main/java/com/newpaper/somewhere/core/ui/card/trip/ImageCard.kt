@@ -13,11 +13,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,7 +23,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,6 +30,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -62,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.newpaper.somewhere.core.designsystem.component.ImageFromFile
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
+import com.newpaper.somewhere.core.designsystem.component.utils.DotsIndicator
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
@@ -69,8 +68,6 @@ import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.theme.CustomColor
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
-import com.newpaper.somewhere.core.designsystem.theme.n70
-import com.newpaper.somewhere.core.designsystem.theme.n80
 import com.newpaper.somewhere.core.ui.ui.R
 import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.dragAndDropHorizontal
@@ -78,9 +75,9 @@ import kotlinx.coroutines.launch
 
 private const val IMAGE_MAX_COUNT = 6
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ImageCard(
+    isDarkAppTheme: Boolean,
     imageUserId: String,
     internetEnabled: Boolean,
     isEditMode: Boolean,
@@ -95,7 +92,9 @@ fun ImageCard(
     downloadImage: (imagePath: String, imageUserId: String, result: (Boolean) -> Unit) -> Unit,
     saveImageToInternalStorage: (index: Int, uri: Uri) -> String?,
 
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    /**images(not edit) PagerState*/
+    pagerState: PagerState? = null
 ){
     val coroutineScope = rememberCoroutineScope()
 
@@ -285,16 +284,16 @@ fun ImageCard(
                             enter = expandVertically(tween(500)),
                             exit = shrinkVertically(tween(500))
                         ) {
-                            val pageState = rememberPagerState { imagePathList.size }
+                            val imagesPagerState = pagerState ?: rememberPagerState { imagePathList.size }
 
                             ClickableBox(
                                 modifier = Modifier.fillMaxWidth(),
                                 onClick = {
-                                    onClickImage(pageState.currentPage)
+                                    onClickImage(imagesPagerState.currentPage)
                                 }
                             ) {
                                 HorizontalPager(
-                                    state = pageState,
+                                    state = imagesPagerState,
                                     beyondViewportPageCount = 3,
                                     pageContent = {
                                         ImageFromFile(
@@ -310,8 +309,9 @@ fun ImageCard(
 
                                 if (imagePathList.size != 1)
                                     ImageIndicateDots(
+                                        isDarkAppTheme = isDarkAppTheme,
                                         pageCount = imagePathList.size,
-                                        currentPage = pageState.currentPage
+                                        currentPage = imagesPagerState.currentPage
                                     )
                             }
 
@@ -440,6 +440,7 @@ private fun ImageWithDeleteIcon(
 
 @Composable
 private fun ImageIndicateDots(
+    isDarkAppTheme: Boolean,
     pageCount:Int,
     currentPage: Int
 ){
@@ -449,45 +450,7 @@ private fun ImageIndicateDots(
     ) {
         Spacer(modifier = Modifier.weight(1f))
 
-        Row(
-            modifier = Modifier
-                .height(20.dp)
-                .clip(CircleShape)
-                .background(n70.copy(alpha = 0.4f)),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            repeat(pageCount) {
-
-                //current image dot
-                if (currentPage == it){
-                    Box(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primary)
-                            .size(10.dp)
-                    )
-                }
-
-                //other dots
-                else{
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .size(10.dp)
-                    ){
-                        Box(
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .background(n80.copy(alpha = 0.7f))
-                                .size(8.dp)
-                        )
-                    }
-                }
-            }
-        }
+        DotsIndicator(isDarkAppTheme, pageCount, currentPage)
 
         MySpacerColumn(height = 8.dp)
     }
@@ -527,6 +490,7 @@ private fun ImageCardPreview(){
                 .padding(16.dp)
         ) {
             ImageCard(
+                isDarkAppTheme = false,
                 imageUserId = "",
                 internetEnabled = true,
                 isEditMode = false,
@@ -554,6 +518,7 @@ private fun ImageCardPreviewEdit(){
                 .padding(16.dp)
         ) {
             ImageCard(
+                isDarkAppTheme = false,
                 imageUserId = "",
                 internetEnabled = true,
                 isEditMode = true,
@@ -581,6 +546,7 @@ private fun ImageCardPreviewEdit1(){
                 .padding(16.dp)
         ) {
             ImageCard(
+                isDarkAppTheme = false,
                 imageUserId = "",
                 internetEnabled = true,
                 isEditMode = true,

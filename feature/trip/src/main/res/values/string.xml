@@ -44,6 +44,14 @@
     <!--setLocation/ ============================================================================-->
 
 
+    <!--shareTrip/ ==============================================================================-->
+    <string name="share_trip">Share trip</string>
+    <string name="background_image">Background image</string>
+    <string name="sticker_image">Sticker image</string>
+    <string name="loading_sticker_image">Loading sticker image</string>
+    <string name="use_background">Use background</string>
+
+
     <!--spot/ ===================================================================================-->
     <string name="edit_spot">Edit Spot</string>
     <string name="sub_title">%s - %s</string>
@@ -56,7 +64,6 @@
     <!--ShareTripCard.kt-->
     <string name="me">Me</string>
     <string name="trip_mates">Trip mates</string>
-    <string name="share_trip">Share trip</string>
 
     <!--TripDurationCard.kt-->
     <string name="trip_duration_card_title">Trip Duration</string>

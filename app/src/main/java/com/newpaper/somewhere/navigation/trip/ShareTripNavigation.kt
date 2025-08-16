@@ -29,6 +29,7 @@ fun NavController.navigateToShareTrip(navOptions: NavOptions? = null) =
 
 fun NavGraphBuilder.shareTripScreen(
     externalState: ExternalState,
+    isDarkAppTheme: Boolean,
     appViewModel: AppViewModel,
     commonTripViewModel: CommonTripViewModel,
 
@@ -57,9 +58,11 @@ fun NavGraphBuilder.shareTripScreen(
 
         if (currentTrip != null) {
             ShareTripRoute(
+                isDarkAppTheme = isDarkAppTheme,
                 spacerValue = externalState.windowSizeClass.spacerValue,
                 dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
                 trip = currentTrip,
+                imageIndex = commonTripUiState.initialImageIndex,
                 navigateUp = navigateUp,
                 modifier = modifier
             )

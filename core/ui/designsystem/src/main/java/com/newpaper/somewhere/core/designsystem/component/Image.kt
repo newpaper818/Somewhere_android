@@ -15,6 +15,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -118,6 +119,9 @@ fun ImageFromUrl(
 }
 
 
+/**
+ * for share trip screen
+ */
 @Composable
 fun ImageFromUri(
     imageUri: Uri?,
@@ -130,17 +134,26 @@ fun ImageFromUri(
     var isError by rememberSaveable { mutableStateOf(false) }
 
 
+    // on loading
     AnimatedVisibility(
         visible = isLoading,
-        enter = fadeIn(tween(200)),
-        exit = fadeOut(tween(200))
+        enter = fadeIn(tween(250)),
+        exit = fadeOut(tween(250))
     ) {
-        OnLoadingImage(
-            modifier = Modifier
-                .size(300.dp, 400.dp)
-                .clip(MaterialTheme.shapes.medium)
-                .alpha(0.5f)
-        )
+        Box(
+            Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(24.dp, 64.dp)
+                    .size(300.dp, 400.dp)
+                    .clip(MaterialTheme.shapes.medium)
+                    .alpha(0.5f)
+                    .shimmerEffect()
+
+            )
+        }
     }
 
 

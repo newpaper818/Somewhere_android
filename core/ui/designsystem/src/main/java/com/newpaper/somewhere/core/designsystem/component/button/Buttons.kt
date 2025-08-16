@@ -583,7 +583,7 @@ private fun IconCircleButtonWithText(
 ){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
+        modifier = modifier
             .semantics(mergeDescendants = true) {
                 role = Role.Button
             }
@@ -599,7 +599,7 @@ private fun IconCircleButtonWithText(
             contentPadding = PaddingValues(8.dp),
             enabled = enabled,
             onClick = onClick,
-            modifier = modifier.size(56.dp).clearAndSetSemantics { }
+            modifier = Modifier.size(56.dp).clearAndSetSemantics { }
         ){
             DisplayIcon(icon = icon)
         }

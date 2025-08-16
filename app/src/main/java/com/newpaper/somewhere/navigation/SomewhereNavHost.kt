@@ -481,6 +481,7 @@ fun SomewhereNavHost(
             )
 
             tripScreen(
+                isDarkAppTheme = isDarkAppTheme,
                 appViewModel = appViewModel,
                 externalState = externalState,
                 commonTripViewModel = commonTripViewModel,
@@ -501,6 +502,7 @@ fun SomewhereNavHost(
             )
 
             dateScreen(
+                isDarkAppTheme = isDarkAppTheme,
                 appViewModel = appViewModel,
                 externalState = externalState,
                 commonTripViewModel = commonTripViewModel,
@@ -522,6 +524,7 @@ fun SomewhereNavHost(
             )
 
             spotScreen(
+                isDarkAppTheme = isDarkAppTheme,
                 appViewModel = appViewModel,
                 externalState = externalState,
                 commonTripViewModel = commonTripViewModel,
@@ -588,6 +591,7 @@ fun SomewhereNavHost(
 
             shareTripScreen(
                 externalState = externalState,
+                isDarkAppTheme = isDarkAppTheme,
                 appViewModel = appViewModel,
                 commonTripViewModel = commonTripViewModel,
                 navigateUp = navigateUp,

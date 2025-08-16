@@ -420,6 +420,12 @@ fun createBlurBackgroundUri(
             blurred916Bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
         }
 
+        if (blurredBitmap != blurred916Bitmap) {
+            blurredBitmap.recycle()
+        }
+        blurred916Bitmap.recycle()
+        originalBitmap.recycle()
+
         // 4. Get a content URI for the new file using a FileProvider
         // The authority must match the one defined in your AndroidManifest.xml
         val authority = "${context.packageName}.fileprovider"
@@ -430,6 +436,33 @@ fun createBlurBackgroundUri(
         e.printStackTrace()
         return null
     }
+}
+
+fun createNotBlurBackgroundUri(
+    context: Context,
+    sourceFile: File,
+): Uri? {
+    // 1. 원본 이미지를 불러옵니다.
+    val originalBitmap = BitmapFactory.decodeFile(sourceFile.absolutePath) ?: return null
+
+    // 2. 9:16 비율로 크롭
+    val croppedBitmap = to916ratio(originalBitmap)
+
+    // 3. 임시 파일로 저장
+    val outputFile = File(context.cacheDir, "not_blur_${System.currentTimeMillis()}.png")
+    FileOutputStream(outputFile).use { out ->
+        croppedBitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+    }
+
+    // 4. 메모리 해제
+    if (originalBitmap != croppedBitmap) {
+        originalBitmap.recycle()
+    }
+    croppedBitmap.recycle()
+
+    // 5. URI 반환
+    val authority = "${context.packageName}.fileprovider"
+    return FileProvider.getUriForFile(context, authority, outputFile)
 }
 
 

@@ -43,6 +43,13 @@
 
     <!--setLocation/ ============================================================================-->
 
+    <!--shareTrip/ ==============================================================================-->
+    <string name="share_trip">여행 공유</string>
+    <string name="background_image">배경 이미지</string>
+    <string name="sticker_image">스티커 이미지</string>
+    <string name="loading_sticker_image">스티커 이미지 로딩 중</string>
+    <string name="use_background">배경 이미지 사용</string>
+
 
     <!--spot/ ===================================================================================-->
     <string name="edit_spot">장소 편집</string>
@@ -56,7 +63,6 @@
     <!--ShareTripCard.kt-->
     <string name="me">나</string>
     <string name="trip_mates">여행 친구</string>
-    <string name="share_trip">여행 공유</string>
 
     <!--TripDurationCard.kt-->
     <string name="trip_duration_card_title">여행 기간</string>

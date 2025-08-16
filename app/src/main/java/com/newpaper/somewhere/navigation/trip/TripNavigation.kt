@@ -26,6 +26,7 @@ fun NavController.navigateToTrip(navOptions: NavOptions? = null) =
     navigate(ScreenDestination.TRIP.route, navOptions)
 
 fun NavGraphBuilder.tripScreen(
+    isDarkAppTheme: Boolean,
     appViewModel: AppViewModel,
     externalState: ExternalState,
     commonTripViewModel: CommonTripViewModel,
@@ -52,6 +53,7 @@ fun NavGraphBuilder.tripScreen(
 
         if (appUiState.appUserData != null) {
             TripRoute(
+                isDarkAppTheme = isDarkAppTheme,
                 use2Panes = externalState.windowSizeClass.use2Panes,
                 spacerValue = externalState.windowSizeClass.spacerValue,
                 appUserData = appUiState.appUserData!!,
@@ -60,7 +62,8 @@ fun NavGraphBuilder.tripScreen(
                 commonTripViewModel = commonTripViewModel,
 
                 navigateUp = navigateUp,
-                navigateToShareTrip = {
+                navigateToShareTrip = { imageList, initialImageIndex ->
+                    commonTripViewModel.setImageListAndInitialImageIndex(imageList, initialImageIndex)
                     navigateTo(ScreenDestination.SHARE_TRIP)
                 },
                 navigateUpAndDeleteNewTrip = { deleteTrip ->

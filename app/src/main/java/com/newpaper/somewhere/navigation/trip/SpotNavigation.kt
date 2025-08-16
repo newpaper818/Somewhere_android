@@ -29,6 +29,7 @@ fun NavController.navigateToSpot(navOptions: NavOptions? = null) =
     navigate(ScreenDestination.SPOT.route, navOptions)
 
 fun NavGraphBuilder.spotScreen(
+    isDarkAppTheme: Boolean,
     appViewModel: AppViewModel,
     externalState: ExternalState,
     commonTripViewModel: CommonTripViewModel,
@@ -64,6 +65,7 @@ fun NavGraphBuilder.spotScreen(
 
         if (appUiState.appUserData != null) {
             SpotRoute(
+                isDarkAppTheme = isDarkAppTheme,
                 use2Panes = externalState.windowSizeClass.use2Panes,
                 spacerValue = externalState.windowSizeClass.spacerValue,
                 appUserId = appUiState.appUserData!!.userId,
