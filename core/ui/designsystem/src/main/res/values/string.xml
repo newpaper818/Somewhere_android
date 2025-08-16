@@ -35,7 +35,7 @@
     <string name="delete_account">Delete account</string>
     <string name="invite_friend">Invite friend</string>
     <string name="change_image">Change image</string>
-    <string name="share_to_ig_story">Share to\nIG story</string>
+    <string name="share_to_ig_story">Share to\nIG stories</string>
     <string name="save_as_image">Save as\nimage</string>
 
     <!-- FABs.kt -->

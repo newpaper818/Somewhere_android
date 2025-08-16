@@ -19,11 +19,19 @@ import java.io.File
 import javax.inject.Inject
 
 data class ShareTripUiState(
-    val backgroundAssetUri: Uri? = null,
-    val stickerAssetUri: Uri? = null,
+    /**
+     * 0: blur / 1: not blur
+     */
+    val backgroundAssetUris: List<Uri?> = listOf(null, null),
+    /**
+     * 0: sticker image and text / 1: sticker text
+     */
+    val stickerAssetUris: List<Uri?> = listOf(null, null),
+
+    val selectedBackgroundAssetUri: Uri? = null,
+    val selectedStickerAssetUri: Uri? = null,
 
     val useBackground: Boolean = true,
-    val useImage: Boolean = true
 )
 
 
@@ -43,15 +51,41 @@ class ShareTripViewModel @Inject constructor(
 
 
 
-    fun setBackgroundAssetUri(backgroundAssetUri: Uri?){
+    fun initStickerAsserUri(size: Int){
+        val newStickerAssetUris = List(size) { null as Uri? }
+
         _shareTripUiState.update {
-            it.copy(backgroundAssetUri = backgroundAssetUri)
+            it.copy(stickerAssetUris = newStickerAssetUris)
         }
     }
 
-    fun setStickerAssetUri(stickerAssetUri: Uri?) {
+    fun setBackgroundAssetUri(backgroundBlurredAssetUri: Uri, index: Int){
+        val newBackgroundAssetUris = _shareTripUiState.value.backgroundAssetUris.toMutableList()
+        newBackgroundAssetUris[index] = backgroundBlurredAssetUri
+
         _shareTripUiState.update {
-            it.copy(stickerAssetUri = stickerAssetUri)
+            it.copy(backgroundAssetUris = newBackgroundAssetUris)
+        }
+    }
+
+    fun setStickerAssetUri(stickerAssetUri: Uri, index: Int){
+        val newStickerAssetUris = _shareTripUiState.value.stickerAssetUris.toMutableList()
+        newStickerAssetUris[index] = stickerAssetUri
+
+        _shareTripUiState.update {
+            it.copy(stickerAssetUris = newStickerAssetUris)
+        }
+    }
+
+    fun setSelectedAssets(
+        backgroundAssetUri: Uri?,
+        stickerAssetUri: Uri?
+    ){
+        _shareTripUiState.update {
+            it.copy(
+                selectedBackgroundAssetUri = backgroundAssetUri,
+                selectedStickerAssetUri = stickerAssetUri
+            )
         }
     }
 
@@ -61,11 +95,6 @@ class ShareTripViewModel @Inject constructor(
         }
     }
 
-    fun setUseImage(useImage: Boolean){
-        _shareTripUiState.update {
-            it.copy(useImage = useImage)
-        }
-    }
 
 
 
@@ -80,13 +109,25 @@ class ShareTripViewModel @Inject constructor(
     ){
         withContext(Dispatchers.IO) {
             if (tripImagePath != null) {
+                initStickerAsserUri(2)
                 val tripImageFile = File(context.filesDir, tripImagePath)
 
-                setBackgroundAssetUri(createBlurBackgroundUri(context, tripImageFile))
-                setStickerAssetUri(createStickerWithTextUri(context, tripImageFile, tripTitle, tripStartDate, tripEndDate))
+                //stickers
+                setStickerAssetUri(createStickerWithTextUri(context, tripImageFile, tripTitle, tripStartDate, tripEndDate), 0)
+                setStickerAssetUri(createStickerOnlyTextUri(context, tripTitle, tripStartDate, tripEndDate), 1)
+
+                //background
+                val backgroundBlurred = createBlurBackgroundUri(context, tripImageFile)
+                if (backgroundBlurred != null)
+                    setBackgroundAssetUri(backgroundBlurred, 0)
+
+                val backgroundNotBlurred = createNotBlurBackgroundUri(context, tripImageFile)
+                if (backgroundNotBlurred != null)
+                    setBackgroundAssetUri(backgroundNotBlurred, 1)
             }
-            else{
-                setStickerAssetUri(createStickerOnlyTextUri(context, tripTitle, tripStartDate, tripEndDate))
+            else {
+                initStickerAsserUri(1)
+                setStickerAssetUri(createStickerOnlyTextUri(context, tripTitle, tripStartDate, tripEndDate), 0)
             }
         }
     }
@@ -96,6 +137,11 @@ class ShareTripViewModel @Inject constructor(
         context: Context,
         instagramLauncher: androidx.activity.result.ActivityResultLauncher<Intent>
     ){
+        val backgroundAssetUri = _shareTripUiState.value.selectedBackgroundAssetUri
+        val stickerAssetUri = _shareTripUiState.value.selectedStickerAssetUri
+//        val backgroundAssetUri = null
+//        val stickerAssetUri = null
+
         val instagramIntent = Intent("com.instagram.share.ADD_TO_STORY").apply {
             setDataAndType(null, "image/jpeg")
         }
@@ -113,15 +159,15 @@ class ShareTripViewModel @Inject constructor(
             putExtra("source_application", facebookAppId)
 
             //background
-            setDataAndType(_shareTripUiState.value.backgroundAssetUri, "image/jpeg")
+            setDataAndType(backgroundAssetUri, "image/jpeg")
 
             //stickers
-            putExtra("interactive_asset_uri", _shareTripUiState.value.stickerAssetUri)
+            putExtra("interactive_asset_uri", stickerAssetUri)
 
             flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
 
-            context.grantUriPermission("com.instagram.android", _shareTripUiState.value.backgroundAssetUri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            context.grantUriPermission("com.instagram.android", _shareTripUiState.value.stickerAssetUri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            context.grantUriPermission("com.instagram.android", backgroundAssetUri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            context.grantUriPermission("com.instagram.android", stickerAssetUri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
 
         // instagramLauncher launch
@@ -131,9 +177,18 @@ class ShareTripViewModel @Inject constructor(
     fun onClickSaveAsImage(
 
     ): Boolean {
-        val stickerUri = _shareTripUiState.value.stickerAssetUri
-        return if (stickerUri != null)
-            commonImageRepository.saveUriToExternalStorage(stickerUri)
+        val backgroundAssetUri = _shareTripUiState.value.selectedBackgroundAssetUri
+        val stickerAssetUri = _shareTripUiState.value.selectedStickerAssetUri
+
+        //back + sticker
+        return if (backgroundAssetUri != null && stickerAssetUri != null){
+            commonImageRepository.saveUriToExternalStorage(backgroundAssetUri) &&
+                commonImageRepository.saveUriToExternalStorage(stickerAssetUri)
+        }
+
+        //sticker
+        else if (stickerAssetUri != null)
+            commonImageRepository.saveUriToExternalStorage(stickerAssetUri)
         else
             false
     }
@@ -141,11 +196,12 @@ class ShareTripViewModel @Inject constructor(
     fun onClickShareMore(
         context: Context,
     ){
-        val stickerUri = _shareTripUiState.value.stickerAssetUri
-        if (stickerUri != null) {
+        val stickerAssetUri = _shareTripUiState.value.selectedStickerAssetUri
+
+        if (stickerAssetUri != null) {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "image/*" // MIME 타입
-                putExtra(Intent.EXTRA_STREAM, stickerUri)
+                putExtra(Intent.EXTRA_STREAM, stickerAssetUri)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
             context.startActivity(

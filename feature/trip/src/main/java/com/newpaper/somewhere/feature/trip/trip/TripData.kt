@@ -79,7 +79,7 @@ internal data class TripDialog(
 
 internal data class TripNavigate(
     private val _navigateUp: () -> Unit = {},
-    private val _navigateToShareTrip: () -> Unit = {},
+    private val _navigateToShareTrip: (imageList: List<String>, initialImageIndex: Int) -> Unit = { _, _ -> },
     private val _navigateToInviteFriend: () -> Unit = {},
     private val _navigateToInvitedFriends: () -> Unit = {},
     private val _navigateToImage: (imageList: List<String>, initialImageIndex: Int) -> Unit = { _, _ -> },
@@ -89,8 +89,8 @@ internal data class TripNavigate(
 ){
     fun navigateUp(){
         _navigateUp() }
-    fun navigateToShareTrip(){
-        _navigateToShareTrip() }
+    fun navigateToShareTrip(imageList: List<String>, initialImageIndex: Int){
+        _navigateToShareTrip(imageList, initialImageIndex) }
     fun navigateToInviteFriend(){
         _navigateToInviteFriend() }
     fun navigateToInvitedFriends(){

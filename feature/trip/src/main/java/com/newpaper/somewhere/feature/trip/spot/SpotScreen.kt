@@ -102,6 +102,7 @@ import java.time.LocalTime
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SpotRoute(
+    isDarkAppTheme: Boolean,
     use2Panes: Boolean,
     spacerValue: Dp,
     appUserId: String,
@@ -323,6 +324,7 @@ fun SpotRoute(
 
 
     SpotScreen(
+        isDarkAppTheme = isDarkAppTheme,
         spotUiInfo = SpotUiInfo(
             use2Panes = use2Panes,
             spacerValue = spacerValue,
@@ -453,6 +455,7 @@ fun SpotRoute(
 
 @Composable
 private fun SpotScreen(
+    isDarkAppTheme: Boolean,
     spotUiInfo: SpotUiInfo,
     spotData: SpotData,
     spotState: SpotState,
@@ -795,6 +798,7 @@ private fun SpotScreen(
 
                 if (!spotUiInfo.use2Panes){
                     Spot1Pane(
+                        isDarkAppTheme = isDarkAppTheme,
                         spotUiInfo = spotUiInfo,
                         spotData = spotData,
                         spotState = spotState,
@@ -815,6 +819,7 @@ private fun SpotScreen(
                 else{
                     MySpacerColumn(height = 8.dp)
                     Spot2Panes(
+                        isDarkAppTheme = isDarkAppTheme,
                         spotUiInfo = spotUiInfo,
                         spotData = spotData,
                         spotState = spotState,
@@ -843,6 +848,7 @@ private fun SpotScreen(
 
 @Composable
 private fun Spot1Pane(
+    isDarkAppTheme: Boolean,
     spotUiInfo: SpotUiInfo,
     spotData: SpotData,
     spotState: SpotState,
@@ -996,6 +1002,7 @@ private fun Spot1Pane(
 
                         //each page
                         SpotDetailPage(
+                            isDarkAppTheme = isDarkAppTheme,
                             spotUiInfo = spotUiInfo,
                             spotData = spotData.copy(currentSpotIndex = pageIndex),
                             errorCount = errorCount,
@@ -1021,6 +1028,7 @@ private fun Spot1Pane(
 
 @Composable
 private fun Spot2Panes(
+    isDarkAppTheme: Boolean,
     spotUiInfo: SpotUiInfo,
     spotData: SpotData,
     spotState: SpotState,
@@ -1187,6 +1195,7 @@ private fun Spot2Panes(
 
                             //each page
                             SpotDetailPage(
+                                isDarkAppTheme = isDarkAppTheme,
                                 spotUiInfo = spotUiInfo,
                                 spotData = spotData.copy(currentSpotIndex = pageIndex),
                                 errorCount = errorCount,
