@@ -93,6 +93,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.ZoneId
 
 @Composable
 fun TripRoute(
@@ -823,14 +824,16 @@ private fun TripScreen(
                         MySpacerColumn(height = 64.dp)
 
                         val firstCreatedTime = tripData.originalTrip.firstCreatedTime
+                        val localZoneId = ZoneId.systemDefault()
+                        val firstCreatedTimeZoned = firstCreatedTime.withZoneSameInstant(localZoneId)
 
                         val dateText = getDateText(
-                            date = firstCreatedTime.toLocalDate(),
+                            date = firstCreatedTimeZoned.toLocalDate(),
                             dateTimeFormat = dateTimeFormat,
                         )
 
                         val timeText = getTimeText(
-                            time = firstCreatedTime.toLocalTime(),
+                            time = firstCreatedTimeZoned.toLocalTime(),
                             timeFormat = dateTimeFormat.timeFormat
                         )
 
