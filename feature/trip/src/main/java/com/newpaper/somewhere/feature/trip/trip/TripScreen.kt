@@ -155,6 +155,9 @@ fun TripRoute(
                 tripViewModel.setLoadingTrip(false)
             }
         }
+        else {
+            tripViewModel.setLoadingTrip(false)
+        }
     }
 
     LaunchedEffect(isEditMode) {
