@@ -201,7 +201,7 @@ private fun MoreScreen(
 
             if (adView != null) {
                 item {
-                    MySpacerColumn(height = 32.dp)
+                    MySpacerColumn(height = 64.dp)
 
                     GoogleMediumRectangleAd(
                         adView = adView,

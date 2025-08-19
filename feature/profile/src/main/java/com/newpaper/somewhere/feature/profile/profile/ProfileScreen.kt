@@ -148,7 +148,7 @@ fun ProfileScreen(
 
             if (adView != null) {
                 item {
-                    MySpacerColumn(height = 32.dp)
+                    MySpacerColumn(height = 100.dp)
 
                     GoogleMediumRectangleAd(
                         adView = adView,

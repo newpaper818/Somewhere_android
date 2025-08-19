@@ -6,13 +6,30 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
@@ -21,8 +38,10 @@ import com.google.android.gms.ads.OnUserEarnedRewardListener
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
 import com.newpaper.somewhere.core.designsystem.component.button.RemoveAdsButton
-import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
+import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
+import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.ui.ui.BuildConfig
+import com.newpaper.somewhere.core.ui.ui.R
 import com.newpaper.somewhere.core.utils.REWARDED_AD_UNIT_ID
 import com.newpaper.somewhere.core.utils.REWARDED_AD_UNIT_ID_TEST
 
@@ -58,26 +77,56 @@ fun GoogleMediumRectangleAd(
     showRemoveAdsButton: Boolean = true,
     onClickRemoveAds: () -> Unit = { }
 ){
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+    var adSize by remember{
+        mutableStateOf(IntSize.Zero)
+    }
+
+    val adWidth = with(LocalDensity.current){
+        max(240.dp, adSize.width.toDp())
+    }
+
+    MyCard(
+        colors = CardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceDim,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            disabledContainerColor = MaterialTheme.colorScheme.surfaceBright,
+            disabledContentColor = MaterialTheme.colorScheme.onSurface
+        ),
+        modifier = Modifier.clearAndSetSemantics { },
     ) {
-        Box(
-            modifier = Modifier
-                .size(300.dp, 250.dp)
-                .background(MaterialTheme.colorScheme.surfaceDim)
-        ) {
-            //banner ad
+        Column {
+            Row(
+                modifier = Modifier
+                    .width(adWidth)
+                    .height(48.dp)
+                    .padding(16.dp, 0.dp, 6.dp, 0.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(R.string.ad_area),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                if (showRemoveAdsButton) {
+                    MySpacerRow(16.dp)
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    RemoveAdsButton(
+                        onClick = onClickRemoveAds
+                    )
+                }
+            }
+
+
+            //ad
             AndroidView(
-                modifier = Modifier.clearAndSetSemantics { },
+                modifier = Modifier
+                    .onSizeChanged { adSize = it }
+                    .padding(16.dp, 0.dp, 16.dp, 16.dp),
                 factory = { adView },
-            )
-        }
-
-        if (showRemoveAdsButton) {
-            MySpacerColumn(height = 4.dp)
-
-            RemoveAdsButton(
-                onClick = onClickRemoveAds
             )
         }
     }
