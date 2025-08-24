@@ -1,9 +1,6 @@
 package com.newpaper.somewhere.core.ui.card.trip
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -40,6 +37,8 @@ import com.newpaper.somewhere.core.designsystem.theme.CustomColor
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.MyTextField
 import com.newpaper.somewhere.core.ui.ui.R
+import com.newpaper.somewhere.core.utils.enterVertically
+import com.newpaper.somewhere.core.utils.exitVertically
 
 private const val MAX_MEMO_LENGTH = 3000
 
@@ -86,8 +85,8 @@ fun MemoCard(
         ) {
             AnimatedVisibility(
                 visible = isEditMode,
-                enter = expandVertically(tween(400)),
-                exit = shrinkVertically(tween(400))
+                enter = enterVertically,
+                exit = exitVertically
             ) {
                 Column {
                     Row {

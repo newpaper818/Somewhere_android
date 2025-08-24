@@ -94,6 +94,8 @@ import com.newpaper.somewhere.core.utils.convert.setMemoText
 import com.newpaper.somewhere.core.utils.convert.setSpotType
 import com.newpaper.somewhere.core.utils.convert.setStartTime
 import com.newpaper.somewhere.core.utils.convert.setTitleText
+import com.newpaper.somewhere.core.utils.enterVertically
+import com.newpaper.somewhere.core.utils.exitVertically
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.dialog.memo.MemoDialog
 import com.newpaper.somewhere.feature.dialog.setColor.SetColorDialog
@@ -843,20 +845,22 @@ private fun DatePage(
 
                 //spots title when edit mode
                 item {
-                    AnimatedVisibility(
-                        visible = isEditMode,
-                        enter = expandVertically(tween(400)),
-                        exit = shrinkVertically(tween(400))
+
+                    Box(
+                        modifier = Modifier
+                            .padding(startSpacerValue, 0.dp, endSpacerValue, 0.dp)
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surfaceBright)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .height(18.dp)
-                                .padding(startSpacerValue, 0.dp, endSpacerValue, 0.dp)
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.surfaceBright)
+                        AnimatedVisibility(
+                            visible = isEditMode,
+                            enter = enterVertically,
+                            exit = exitVertically
                         ) {
                             Row(
-                                modifier = Modifier.padding(16.dp, 0.dp)
+                                modifier = Modifier
+                                    .height(18.dp)
+                                    .padding(16.dp, 0.dp)
                             ) {
                                 Text(
                                     text = stringResource(id = R.string.spots),
@@ -864,18 +868,29 @@ private fun DatePage(
                                 )
 
                                 //up to 100 characters
-                                if (errorCount.spotTitleErrorCount > 0){
+                                if (errorCount.spotTitleErrorCount > 0) {
                                     Spacer(modifier = Modifier.weight(1f))
 
                                     Text(
-                                        text = stringResource(id = R.string.long_text, MAX_TITLE_LENGTH),
+                                        text = stringResource(
+                                            id = R.string.long_text,
+                                            MAX_TITLE_LENGTH
+                                        ),
                                         style = MaterialTheme.typography.bodySmall.copy(color = CustomColor.outlineError)
                                     )
                                 }
                             }
+                        }
 
-                            if(firstSpotShowUpperLine)
-                                DummySpaceWithLine(modifier = Modifier.fillMaxHeight())
+                        AnimatedVisibility(
+                            visible = isEditMode,
+                            enter = expandVertically(tween(350)),
+                            exit = shrinkVertically(tween(300, delayMillis = 100))
+                        ) {
+                            if (firstSpotShowUpperLine)
+                                Box(Modifier.height(18.dp)) {
+                                    DummySpaceWithLine(modifier = Modifier.fillMaxHeight())
+                                }
                         }
                     }
                 }
@@ -915,43 +930,43 @@ private fun DatePage(
                                     spotList[spot.index].setTitleText(showingTrip, dateIndex, updateTripState, spotTitleText)
                                 },
                                 isLongText = {
-                                    if (it) {
-                                        errorCount.increaseTotalErrorCount()
-                                        errorCount.increaseSpotTitleErrorCount()
-                                    } else {
-                                        errorCount.decreaseTotalErrorCount()
-                                        errorCount.decreaseSpotTitleErrorCount()
-                                    }
-                                },
+                                        if (it) {
+                                            errorCount.increaseTotalErrorCount()
+                                            errorCount.increaseSpotTitleErrorCount()
+                                        } else {
+                                            errorCount.decreaseTotalErrorCount()
+                                            errorCount.decreaseSpotTitleErrorCount()
+                                        }
+                                    },
                                 onClickItem =
-                                if (!isEditMode){
-                                    {
-                                        navigate.navigateToSpot(dateIndex, spotList.indexOf(spot))
+                                    if (!isEditMode){
+                                        {
+                                            navigate.navigateToSpot(dateIndex, spotList.indexOf(spot))
+                                        }
                                     }
-                                }
-                                else null,
+                                    else null,
                                 onClickDelete = {
-                                    //dialog: ask delete
-                                    deleteSpot(dateIndex, spot.index)
-                                    spotTypeWithShownList =
-                                        updateSpotTypeGroupWithShownList(currentDate, spotTypeWithShownList)
-                                },
+                                        //dialog: ask delete
+                                        deleteSpot(dateIndex, spot.index)
+                                        spotTypeWithShownList =
+                                            updateSpotTypeGroupWithShownList(currentDate, spotTypeWithShownList)
+                                    },
                                 onClickSideText =
-                                if (isEditMode){
-                                    {
-                                        dialog.setSelectedDate(spot)
-                                        dialog.setShowSetTimeDialog(true)
+                                    if (isEditMode){
+                                        {
+                                            dialog.setSelectedDate(spot)
+                                            dialog.setShowSetTimeDialog(true)
+                                        }
                                     }
-                                }
                                 else null,
                                 onClickPoint =
-                                if (isEditMode){
-                                    {
-                                        dialog.setSelectedDate(spot)
-                                        dialog.setShowSetSpotTypeDialog(true)
+                                    if (isEditMode){
+                                        {
+                                            dialog.setSelectedDate(spot)
+                                            dialog.setShowSetSpotTypeDialog(true)
+                                        }
                                     }
-                                }
-                                else null
+                                    else null
                             )
                         }
                     }
