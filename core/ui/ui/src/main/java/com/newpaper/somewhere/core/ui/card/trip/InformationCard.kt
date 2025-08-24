@@ -42,6 +42,8 @@ import com.newpaper.somewhere.core.designsystem.icon.MyIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.ui.R
+import com.newpaper.somewhere.core.utils.enterHorizontally
+import com.newpaper.somewhere.core.utils.exitHorizontally
 
 data class InformationCardItem(
     val icon: MyIcon,
@@ -148,7 +150,11 @@ fun IconTextRow(
                     )
                 }
 
-                if (isClickable) {
+                AnimatedVisibility(
+                    visible = isClickable,
+                    enter = enterHorizontally,
+                    exit = exitHorizontally
+                ) {
                     Row(
                         modifier = Modifier.height(30.dp),
                         horizontalArrangement = Arrangement.End,

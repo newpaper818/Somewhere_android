@@ -131,7 +131,7 @@ internal fun SpotListItem(
         isExpanded = isExpanded,
 
         iconText = if (spot.spotType.isNotMove()) spot.iconText.toString()
-        else null,
+            else null,
         iconTextColor = spot.spotType.group.color.onColor,
 
         sideTextPlaceHolderIcon = MyIcons.setTime,
