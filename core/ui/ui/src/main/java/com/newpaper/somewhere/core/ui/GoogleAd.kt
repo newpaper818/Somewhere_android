@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.MaterialTheme
@@ -82,7 +83,7 @@ fun GoogleMediumRectangleAd(
     }
 
     val adWidth = with(LocalDensity.current){
-        max(240.dp, adSize.width.toDp())
+        max(300.dp, adSize.width.toDp())
     }
 
     MyCard(
@@ -122,12 +123,16 @@ fun GoogleMediumRectangleAd(
 
 
             //ad
-            AndroidView(
-                modifier = Modifier
-                    .onSizeChanged { adSize = it }
-                    .padding(16.dp, 0.dp, 16.dp, 16.dp),
-                factory = { adView },
-            )
+            Box(
+                modifier = Modifier.sizeIn(minWidth = 300.dp, minHeight = 250.dp)
+            ) {
+                AndroidView(
+                    modifier = Modifier
+                        .onSizeChanged { adSize = it }
+                        .padding(16.dp, 0.dp, 16.dp, 16.dp),
+                    factory = { adView },
+                )
+            }
         }
     }
 }
