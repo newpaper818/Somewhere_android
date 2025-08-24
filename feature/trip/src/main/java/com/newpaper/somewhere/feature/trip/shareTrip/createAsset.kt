@@ -400,15 +400,15 @@ fun createBlurBackgroundUri(
             ?: throw IOException("Could not decode source file.")
 
         // 2. Apply the blur effect using the appropriate method for the Android version
-//        val blurredBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-//            // Use the modern, hardware-accelerated RenderEffect API for Android 12+
-//            applyRenderEffectBlur(originalBitmap, blurRadius)
-//        } else {
-//            // Use the legacy RenderScript library for older versions
-//            applyRenderScriptBlur(context, originalBitmap, blurRadius)
-//        }
+        val blurredBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // Use the modern, hardware-accelerated RenderEffect API for Android 12+
+            applyRenderEffectBlur(originalBitmap, blurRadius)
+        } else {
+            // Use the legacy RenderScript library for older versions
+            applyRenderScriptBlur(context, originalBitmap, blurRadius)
+        }
 
-        val blurredBitmap = applyRenderScriptBlur(context, originalBitmap, blurRadius)
+//        val blurredBitmap = applyRenderScriptBlur(context, originalBitmap, blurRadius)
         val blurred916Bitmap = to916ratio(blurredBitmap)
 
 
@@ -508,58 +508,70 @@ private fun applyRenderEffectBlur(
     var imageReader: ImageReader? = null
     var hardwareRenderer: HardwareRenderer? = null
     var renderNode: RenderNode? = null
-    var renderedImage: android.media.Image? = null
+    var image: android.media.Image? = null
     var hardwareBuffer: HardwareBuffer? = null
 
     try {
-        // 1. ImageReader 생성
+        val w = bitmap.width
+        val h = bitmap.height
+
+        // 1) ImageReader: GPU 출력 + 샘플링 가능
         imageReader = ImageReader.newInstance(
-            bitmap.width, bitmap.height,
-            PixelFormat.RGBA_8888, 2,
-            HardwareBuffer.USAGE_GPU_SAMPLED_IMAGE or HardwareBuffer.USAGE_GPU_COLOR_OUTPUT
+            w, h,
+            PixelFormat.RGBA_8888,
+            /*maxImages*/ 2,
+            HardwareBuffer.USAGE_GPU_COLOR_OUTPUT or HardwareBuffer.USAGE_GPU_SAMPLED_IMAGE
         )
 
-        // 2. RenderNode + HardwareRenderer 준비
-        renderNode = RenderNode("BlurEffect").apply {
-            setRenderEffect(
-                RenderEffect.createBlurEffect(radius, radius, Shader.TileMode.CLAMP)
-            )
+        // 2) RenderNode: 반드시 bounds 지정
+        renderNode = RenderNode("BlurNode").apply {
+            setPosition(0, 0, w, h)
+            setRenderEffect(RenderEffect.createBlurEffect(radius, radius, Shader.TileMode.CLAMP))
         }
 
+        // 3) 원본 비트맵 그리기(꽉 차게)
+        val canvas = renderNode.beginRecording(w, h)
+        val dst = android.graphics.Rect(0, 0, w, h)
+        canvas.drawBitmap(bitmap, null, dst, null)
+        renderNode.endRecording()
+
+        // 4) HardwareRenderer로 오프스크린 렌더
         hardwareRenderer = HardwareRenderer().apply {
             setSurface(imageReader.surface)
             setContentRoot(renderNode)
+            // 오프스크린에서는 present 대기 불필요
         }
 
-        // 3. RenderNode에 원본 비트맵 그리기
-        renderNode.beginRecording(bitmap.width, bitmap.height).apply {
-            drawBitmap(bitmap, 0f, 0f, null)
-        }.also {
-            renderNode.endRecording()
-        }
-
-        // 4. GPU 렌더링 요청 (완료 대기)
         hardwareRenderer.createRenderRequest()
-            .setWaitForPresent(true)
+            .setWaitForPresent(false)
             .syncAndDraw()
 
-        // 5. 렌더링 결과 획득
-        renderedImage = imageReader.acquireLatestImage()
-            ?: throw IllegalStateException("렌더링된 이미지를 가져오지 못했습니다.")
+        // 5) 결과 이미지 획득
+        var attempts = 0
+        while (image == null && attempts < 5) {
+            image = imageReader.acquireLatestImage()
+            if (image == null) { Thread.sleep(16) } // 한 프레임 (약 60fps) 대기
 
-        hardwareBuffer = renderedImage.hardwareBuffer
+            attempts++
+        }
+        if (image == null) throw IllegalStateException("렌더링 결과 이미지를 가져오지 못했습니다.")
+
+        hardwareBuffer = image.hardwareBuffer
             ?: throw IllegalStateException("HardwareBuffer를 가져오지 못했습니다.")
 
-        return Bitmap.wrapHardwareBuffer(hardwareBuffer, null)
-            ?: throw IllegalStateException("HardwareBuffer를 Bitmap으로 변환 실패.")
+        // ColorSpace를 명시적으로 전달(일부 기기 null 방지)
+        val colorSpace = bitmap.colorSpace
+        val out = Bitmap.wrapHardwareBuffer(hardwareBuffer, colorSpace)
+            ?: throw IllegalStateException("HardwareBuffer → Bitmap 변환 실패.")
 
+        return out
     } finally {
-        // ⚠️ 해제 순서 중요: GPU -> Image -> Buffer -> Renderer
-        hardwareBuffer?.close()
-        renderedImage?.close()
-        hardwareRenderer?.destroy()
-        renderNode?.discardDisplayList()
-        imageReader?.close()
+        // 해제 순서: Image → HBuffer → Renderer → Node → Reader
+        try { image?.close() } catch (_: Throwable) {}
+        try { hardwareBuffer?.close() } catch (_: Throwable) {}
+        try { hardwareRenderer?.destroy() } catch (_: Throwable) {}
+        try { renderNode?.discardDisplayList() } catch (_: Throwable) {}
+        try { imageReader?.close() } catch (_: Throwable) {}
     }
 }
 
