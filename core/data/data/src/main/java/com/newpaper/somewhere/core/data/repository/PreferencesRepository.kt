@@ -20,7 +20,11 @@ class PreferencesRepository @Inject constructor(
 
 
 
-
+    suspend fun saveUseBlurEffectPreference(
+        useBlurEffect: Boolean
+    ){
+        preferencesLocalDataSource.saveUseBlurEffectPreference(useBlurEffect = useBlurEffect)
+    }
 
     suspend fun saveAppThemePreference(
         appTheme: AppTheme

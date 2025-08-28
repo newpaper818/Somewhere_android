@@ -21,6 +21,7 @@ import com.newpaper.somewhere.core.model.data.Theme
 import com.newpaper.somewhere.core.model.enums.AppTheme
 import com.newpaper.somewhere.core.model.enums.MapTheme
 import com.newpaper.somewhere.core.ui.item.ItemWithRadioButton
+import com.newpaper.somewhere.core.ui.item.ItemWithSwitch
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.more.R
@@ -46,11 +47,11 @@ fun SetThemeRoute(
         startSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
         endSpacerValue = spacerValue,
         theme = theme,
-        saveUserPreferences = { appTheme, mapTheme ->
+        saveUserPreferences = { useBlurEffect, appTheme, mapTheme ->
             coroutineScope.launch {
                 //save to dataStore
                 setThemeViewModel.saveThemePreferences(
-                    appTheme, mapTheme
+                    useBlurEffect, appTheme, mapTheme
                 )
 
                 //update preferences at appViewModel
@@ -70,7 +71,7 @@ private fun SetThemeScreen(
     endSpacerValue: Dp,
     theme: Theme,
 
-    saveUserPreferences: (appTheme: AppTheme?, mapTheme: MapTheme?) -> Unit,
+    saveUserPreferences: (useBlurEffect: Boolean?, appTheme: AppTheme?, mapTheme: MapTheme?) -> Unit,
 
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier,
@@ -108,6 +109,19 @@ private fun SetThemeScreen(
                 .fillMaxSize()
                 .hazeSource(state = topAppBarHazeState)
         ) {
+            item {
+                ListGroupCard(
+                    modifier = itemModifier
+                ) {
+                    ItemWithSwitch(
+                        text = stringResource(id = R.string.blur_effect),
+                        checked = theme.useBlurEffect,
+                        onCheckedChange = { newUseBlurEffect ->
+                            saveUserPreferences(newUseBlurEffect , null, null)
+                        }
+                    )
+                }
+            }
 
             //setting app theme
             item {
@@ -121,7 +135,7 @@ private fun SetThemeScreen(
                             text = stringResource(id = oneAppTheme.textId),
                             onItemClick = {
                                 if (oneAppTheme != appTheme){
-                                    saveUserPreferences(oneAppTheme, null)
+                                    saveUserPreferences(null, oneAppTheme, null)
                                 }
                             }
                         )
@@ -141,7 +155,7 @@ private fun SetThemeScreen(
                             text = stringResource(id = oneMapTheme.textId),
                             onItemClick = {
                                 if (oneMapTheme != mapTheme){
-                                    saveUserPreferences(null, oneMapTheme)
+                                    saveUserPreferences(null, null, oneMapTheme)
                                 }
                             }
                         )
