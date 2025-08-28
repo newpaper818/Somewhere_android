@@ -36,11 +36,13 @@ import com.newpaper.somewhere.core.designsystem.icon.MyIcon
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.designsystem.R
+import dev.chrisbanes.haze.ExperimentalHazeApi
+import dev.chrisbanes.haze.HazeInputScale
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalHazeApi::class)
 @Composable
 fun SomewhereTopAppBar(
     title: String,
@@ -76,6 +78,7 @@ fun SomewhereTopAppBar(
                                 tints = listOf(
                                     HazeTint(topAppBarColor.copy(alpha = 0.7f))
                                 )
+                                inputScale = HazeInputScale.Fixed(0.5f)
                             }
 
 
