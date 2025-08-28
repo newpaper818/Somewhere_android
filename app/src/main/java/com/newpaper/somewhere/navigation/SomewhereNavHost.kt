@@ -93,6 +93,7 @@ fun SomewhereNavHost(
 
     val appUiState by appViewModel.appUiState.collectAsState()
 
+    val useBlurEffect = appUiState.appPreferences.theme.useBlurEffect
     val isDarkMapTheme = appUiState.appPreferences.theme.mapTheme == MapTheme.DARK
             || appUiState.appPreferences.theme.mapTheme == MapTheme.AUTO && isDarkAppTheme
 
@@ -156,7 +157,9 @@ fun SomewhereNavHost(
         beforeUse2Panes = externalState.windowSizeClass.use2Panes
     }
 
-    val hazeState = rememberHazeState()
+    val hazeState = if(useBlurEffect) rememberHazeState()
+                    else null
+
     val tripsLazyListState = rememberLazyListState()
     val profileLazyListState = rememberLazyListState()
     val moreLazyListState = rememberLazyListState()

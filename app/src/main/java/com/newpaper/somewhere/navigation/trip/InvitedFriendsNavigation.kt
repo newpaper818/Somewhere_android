@@ -62,6 +62,7 @@ fun NavGraphBuilder.invitedFriendsScreen(
         if (appUserData != null && currentTrip != null) {
             InvitedFriendsRoute(
                 spacerValue = externalState.windowSizeClass.spacerValue,
+                useBlurEffect = appUiState.appPreferences.theme.useBlurEffect,
                 appUserData = appUserData,
                 internetEnabled = externalState.internetEnabled,
                 dateTimeFormat = appUiState.appPreferences.dateTimeFormat,

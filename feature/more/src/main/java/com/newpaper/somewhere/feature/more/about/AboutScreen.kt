@@ -52,6 +52,7 @@ import dev.chrisbanes.haze.rememberHazeState
 fun AboutRoute(
     use2Panes: Boolean,
     spacerValue: Dp,
+    useBlurEffect: Boolean,
 
     currentAppVersionCode: Int,
     currentAppVersionName: String,
@@ -84,6 +85,8 @@ fun AboutRoute(
         use2Panes = use2Panes,
         startSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
         endSpacerValue = spacerValue,
+        useBlurEffect = useBlurEffect,
+
         currentAppVersionName = currentAppVersionName,
         isLatestAppVersion = aboutUiState.isLatestAppVersion,
         isDebugMode = isDebugMode,
@@ -102,6 +105,7 @@ private fun AboutScreen(
     use2Panes: Boolean,
     startSpacerValue: Dp,
     endSpacerValue: Dp,
+    useBlurEffect: Boolean,
 
     currentAppVersionName: String,
     isLatestAppVersion: Boolean?,
@@ -118,7 +122,7 @@ private fun AboutScreen(
 ){
     val uriHandler = LocalUriHandler.current
 
-    val topAppBarHazeState = rememberHazeState()
+    val topAppBarHazeState = if(useBlurEffect) rememberHazeState() else null
 
     Scaffold(
         modifier = modifier,
@@ -153,9 +157,9 @@ private fun AboutScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(startSpacerValue, 16.dp + paddingValues.calculateTopPadding(), endSpacerValue, 200.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .hazeSource(state = topAppBarHazeState)
+            modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
+                            .hazeSource(state = topAppBarHazeState)
+                        else Modifier.fillMaxSize()
         ) {
             item{
                 //app icon image

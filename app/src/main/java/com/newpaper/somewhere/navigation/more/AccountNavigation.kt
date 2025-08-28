@@ -61,6 +61,7 @@ fun NavGraphBuilder.accountScreen(
                 userData = appUiState.appUserData!!,
                 internetEnabled = externalState.internetEnabled,
                 spacerValue = externalState.windowSizeClass.spacerValue,
+                useBlurEffect = appUiState.appPreferences.theme.useBlurEffect,
                 navigateToEditAccount = navigateToEditAccount,
                 navigateToSubscription = navigateToSubscription,
                 navigateToDeleteAccount = navigateToDeleteAccount,

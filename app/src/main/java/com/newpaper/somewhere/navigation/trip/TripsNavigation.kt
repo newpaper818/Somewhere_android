@@ -51,7 +51,7 @@ fun NavGraphBuilder.tripsScreen(
     navigateToTripAi: () -> Unit,
     navigateToGlanceSpot: (glance: Glance) -> Unit,
 
-    hazeState: HazeState
+    hazeState: HazeState?
 ) {
     composable(
         route = TopLevelDestination.TRIPS.route,

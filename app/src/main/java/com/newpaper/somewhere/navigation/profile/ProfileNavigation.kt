@@ -44,7 +44,7 @@ fun NavGraphBuilder.profileScreen(
     navigateToSubscription: () -> Unit,
     navigateUp: () -> Unit,
 
-    hazeState: HazeState,
+    hazeState: HazeState?,
 ) {
     composable(
         route = TopLevelDestination.PROFILE.route,

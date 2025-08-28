@@ -72,6 +72,7 @@ fun DeleteAccountRoute(
     userData: UserData,
     internetEnabled: Boolean,
     spacerValue: Dp,
+    useBlurEffect: Boolean,
 
     navigateUp: () -> Unit,
     onDeleteAccountDone: () -> Unit,
@@ -251,6 +252,7 @@ fun DeleteAccountRoute(
         deleteAccountUiState = deleteAccountUiState,
         isDarkAppTheme = isDarkAppTheme,
         userData = userData,
+        useBlurEffect = useBlurEffect,
         internetEnabled = internetEnabled,
         spacerValue = spacerValue,
         snackBarHostState = snackBarHostState,
@@ -277,6 +279,8 @@ private fun DeleteAccountScreen(
     deleteAccountUiState: DeleteAccountUiState,
     isDarkAppTheme: Boolean,
     userData: UserData,
+    useBlurEffect: Boolean,
+
     internetEnabled: Boolean,
     spacerValue: Dp,
     snackBarHostState: SnackbarHostState,
@@ -289,7 +293,7 @@ private fun DeleteAccountScreen(
 
     modifier: Modifier = Modifier
 ){
-    val topAppBarHazeState = rememberHazeState()
+    val topAppBarHazeState = if(useBlurEffect) rememberHazeState() else null
 
     Scaffold(
         modifier = modifier.imePadding(),
@@ -324,9 +328,9 @@ private fun DeleteAccountScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(24.dp),
             contentPadding = PaddingValues(spacerValue, 8.dp+ paddingValues.calculateTopPadding(), spacerValue, 200.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .hazeSource(state = topAppBarHazeState)
+            modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
+                            .hazeSource(state = topAppBarHazeState)
+                        else Modifier.fillMaxSize()
         ) {
             //user profile
             item {

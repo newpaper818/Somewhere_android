@@ -33,13 +33,14 @@ import dev.chrisbanes.haze.rememberHazeState
 @Composable
 fun OpenSourceLicenseRoute(
     startSpacerValue: Dp,
+    useBlurEffect: Boolean,
     navigateUp: () -> Unit
 ){
     BackHandler {
         navigateUp()
     }
 
-    val topAppBarHazeState = rememberHazeState()
+    val topAppBarHazeState = if(useBlurEffect) rememberHazeState() else null
 
     Scaffold(
         modifier = Modifier.imePadding(),
@@ -60,9 +61,9 @@ fun OpenSourceLicenseRoute(
 
         Box {
             LibrariesContainer(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .hazeSource(state = topAppBarHazeState),
+                modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
+                                .hazeSource(state = topAppBarHazeState)
+                            else Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(top = paddingValues.calculateTopPadding(), bottom = 200.dp),
                 lazyListState = lazyListState,
                 showVersion = false,

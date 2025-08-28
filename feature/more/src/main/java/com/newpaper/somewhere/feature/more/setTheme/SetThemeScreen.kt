@@ -77,13 +77,14 @@ private fun SetThemeScreen(
     modifier: Modifier = Modifier,
     use2Panes: Boolean
 ){
+    val useBlurEffect = theme.useBlurEffect
     val appTheme = theme.appTheme
     val mapTheme = theme.mapTheme
 
     val appThemeList = enumValues<AppTheme>()
     val mapThemeList = enumValues<MapTheme>()
 
-    val topAppBarHazeState = rememberHazeState()
+    val topAppBarHazeState = if(useBlurEffect) rememberHazeState() else null
 
     Scaffold(
         modifier = modifier,
@@ -105,9 +106,9 @@ private fun SetThemeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(startSpacerValue, 16.dp + paddingValues.calculateTopPadding(), endSpacerValue, 200.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .hazeSource(state = topAppBarHazeState)
+            modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
+                            .hazeSource(state = topAppBarHazeState)
+                        else Modifier.fillMaxSize()
         ) {
             item {
                 ListGroupCard(
@@ -115,7 +116,7 @@ private fun SetThemeScreen(
                 ) {
                     ItemWithSwitch(
                         text = stringResource(id = R.string.blur_effect),
-                        checked = theme.useBlurEffect,
+                        checked = useBlurEffect,
                         onCheckedChange = { newUseBlurEffect ->
                             saveUserPreferences(newUseBlurEffect , null, null)
                         }

@@ -1,6 +1,8 @@
 package com.newpaper.somewhere.navigation.more
 
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -40,8 +42,11 @@ fun NavGraphBuilder.openSourceLicenseScreen(
             appViewModel.updateCurrentScreenDestination(ScreenDestination.OPEN_SOURCE_LICENSE)
         }
 
+        val appUiState by appViewModel.appUiState.collectAsState()
+
         OpenSourceLicenseRoute(
             startSpacerValue = externalState.windowSizeClass.spacerValue,
+            useBlurEffect = appUiState.appPreferences.theme.useBlurEffect,
             navigateUp = navigateUp
         )
     }

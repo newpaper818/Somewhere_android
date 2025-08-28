@@ -46,6 +46,7 @@ fun AccountRoute(
     userData: UserData,
     internetEnabled: Boolean,
     spacerValue: Dp,
+    useBlurEffect: Boolean,
 
     navigateToEditAccount: () -> Unit,
     navigateToSubscription: () -> Unit,
@@ -71,7 +72,9 @@ fun AccountRoute(
     }
 
     AccountScreen(
+        use2Panes = use2Panes,
         userData = userData,
+        useBlurEffect = useBlurEffect,
         onSignOut = {
             coroutineScope.launch {
                 accountViewModel.signOut(
@@ -96,7 +99,6 @@ fun AccountRoute(
         snackBarHostState = snackBarHostState,
         downloadImage = accountViewModel::getImage,
         modifier = modifier,
-        use2Panes = use2Panes
     )
 }
 
@@ -104,6 +106,7 @@ fun AccountRoute(
 private fun AccountScreen(
     use2Panes: Boolean,
     userData: UserData,
+    useBlurEffect: Boolean,
 
     onSignOut: () -> Unit,
     navigateToEditAccount: () -> Unit,
@@ -121,7 +124,7 @@ private fun AccountScreen(
 ) {
     var showSignOutDialog by rememberSaveable { mutableStateOf(false) }
 
-    val topAppBarHazeState = rememberHazeState()
+    val topAppBarHazeState = if(useBlurEffect) rememberHazeState() else null
 
     if (showSignOutDialog) {
         TwoButtonsDialog(
@@ -170,9 +173,9 @@ private fun AccountScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(startSpacerValue, 8.dp + paddingValues.calculateTopPadding(), endSpacerValue, 200.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .hazeSource(state = topAppBarHazeState)
+            modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
+                            .hazeSource(state = topAppBarHazeState)
+                        else Modifier.fillMaxSize()
         ) {
             //user profile
             item {

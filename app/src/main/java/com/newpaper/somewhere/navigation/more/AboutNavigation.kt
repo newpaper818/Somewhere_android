@@ -1,6 +1,8 @@
 package com.newpaper.somewhere.navigation.more
 
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -48,9 +50,12 @@ fun NavGraphBuilder.aboutScreen(
                 appViewModel.updateMoreDetailCurrentScreenDestination(ScreenDestination.ABOUT)
         }
 
+        val appUiState by appViewModel.appUiState.collectAsState()
+
         AboutRoute(
             use2Panes = externalState.windowSizeClass.use2Panes,
             spacerValue = externalState.windowSizeClass.spacerValue,
+            useBlurEffect = appUiState.appPreferences.theme.useBlurEffect,
             currentAppVersionCode = BuildConfig.VERSION_CODE,
             currentAppVersionName = BuildConfig.VERSION_NAME,
             isDebugMode = BuildConfig.DEBUG,

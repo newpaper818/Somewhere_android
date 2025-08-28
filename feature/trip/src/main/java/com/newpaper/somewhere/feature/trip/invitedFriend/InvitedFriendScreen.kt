@@ -56,6 +56,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun InvitedFriendsRoute(
     spacerValue: Dp,
+    useBlurEffect: Boolean,
     appUserData: UserData,
     internetEnabled: Boolean,
     dateTimeFormat: DateTimeFormat,
@@ -232,6 +233,7 @@ fun InvitedFriendsRoute(
 
     InvitedFriendsScreen(
         spacerValue = spacerValue,
+        useBlurEffect = useBlurEffect,
         snackBarHostState = snackBarHostState,
         appUserIsTripManager = appUserData.userId == trip.managerId,
         appUserData = appUserData,
@@ -256,6 +258,8 @@ fun InvitedFriendsRoute(
 @Composable
 private fun InvitedFriendsScreen(
     spacerValue: Dp,
+    useBlurEffect: Boolean,
+
     snackBarHostState: SnackbarHostState,
 
     appUserIsTripManager: Boolean,
@@ -280,7 +284,7 @@ private fun InvitedFriendsScreen(
 
     modifier: Modifier = Modifier
 ) {
-    val topAppBarHazeState = rememberHazeState()
+    val topAppBarHazeState = if(useBlurEffect) rememberHazeState() else null
 
     Scaffold(
         modifier = modifier.imePadding(),
@@ -317,9 +321,9 @@ private fun InvitedFriendsScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(spacerValue, 8.dp + paddingValues.calculateTopPadding(), spacerValue, 200.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .hazeSource(state = topAppBarHazeState)
+                modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
+                                .hazeSource(state = topAppBarHazeState)
+                            else Modifier.fillMaxSize()
             ) {
                 item {
                     //trip image, title, date
