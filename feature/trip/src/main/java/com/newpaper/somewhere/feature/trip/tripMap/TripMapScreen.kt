@@ -292,7 +292,7 @@ private fun TripMapScreenVertical(
             }
         ){ _ ->
 
-            val mapPadding = PaddingValues(0.dp, paddingValue.calculateTopPadding(), 66.dp, bottomPadding.dp)
+            val mapPadding = PaddingValues(0.dp, paddingValue.calculateTopPadding(), 0.dp, bottomPadding.dp)
 
             //map
             Box(
@@ -404,7 +404,7 @@ private fun TripMapScreenHorizontal(
         }
     ) { paddingValues ->
 
-        val mapPadding = PaddingValues(0.dp, paddingValues.calculateTopPadding(), cardWidth.dp + 66.dp, 0.dp)
+        val mapPadding = PaddingValues(0.dp, paddingValues.calculateTopPadding(), cardWidth.dp, 0.dp)
 
         Box(
             contentAlignment = Alignment.BottomEnd
