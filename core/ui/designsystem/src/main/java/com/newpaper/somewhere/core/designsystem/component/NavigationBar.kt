@@ -36,6 +36,8 @@ import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcon
 import com.newpaper.somewhere.core.designsystem.icon.NavigationBarIcon
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
+import dev.chrisbanes.haze.ExperimentalHazeApi
+import dev.chrisbanes.haze.HazeInputScale
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
@@ -47,6 +49,7 @@ val NAVIGATION_DRAWER_BAR_WIDTH = 180.dp
 
 
 //compact
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 fun SomewhereNavigationBottomBar(
     modifier: Modifier = Modifier,
@@ -66,6 +69,7 @@ fun SomewhereNavigationBottomBar(
                                         tints = listOf(
                                             HazeTint(topAppBarColor.copy(alpha = 0.9f))
                                         )
+                                        inputScale = HazeInputScale.Fixed(0.5f)
                                     }
 
     NavigationBar(

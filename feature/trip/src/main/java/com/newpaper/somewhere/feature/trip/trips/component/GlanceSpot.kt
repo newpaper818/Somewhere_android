@@ -46,6 +46,8 @@ import com.newpaper.somewhere.core.utils.convert.getStartTimeText
 import com.newpaper.somewhere.core.utils.convert.isFirstSpot
 import com.newpaper.somewhere.core.utils.convert.isLastSpot
 import com.newpaper.somewhere.feature.trip.R
+import dev.chrisbanes.haze.ExperimentalHazeApi
+import dev.chrisbanes.haze.HazeInputScale
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
@@ -56,6 +58,7 @@ private val ADDITIONAL_HEIGHT: Dp = 22.dp
 private val POINT_CIRCLE_SIZE: Dp = 24.dp
 private val LINE_WIDTH: Dp = 7.dp
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 internal fun GlanceSpot(
     useBottomNavBar: Boolean,
@@ -121,6 +124,7 @@ internal fun GlanceSpot(
                                 tints = listOf(
                                     HazeTint(glanceSpotColor.copy(alpha = 0.8f))
                                 )
+                                inputScale = HazeInputScale.Fixed(0.5f)
                             }
 
 
