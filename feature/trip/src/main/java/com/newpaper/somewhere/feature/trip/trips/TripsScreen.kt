@@ -100,7 +100,7 @@ fun TripsRoute(
     navigateToTripAi: () -> Unit,
     navigateToGlanceSpot: (glance: Glance) -> Unit,
 
-    hazeState: HazeState,
+    hazeState: HazeState?,
 
     modifier: Modifier = Modifier
 ){
@@ -330,7 +330,7 @@ private fun TripsScreen(
     adView: AdView?,
     updateTripItemOrder: (isSharedTrips: Boolean, currentIndex: Int, destinationIndex: Int) -> Unit,
 
-    hazeState: HazeState,
+    hazeState: HazeState?,
 
     modifier: Modifier = Modifier
 ){
@@ -500,20 +500,24 @@ private fun TripsScreen(
             contentAlignment = Alignment.TopCenter
         ) {
 
+            val lazyColumnModifier = modifier
+                .fillMaxSize()
+                .onSizeChanged {
+                    with(density) {
+                        lazyColumnHeightDp = it.height.toDp().value.toInt()
+                    }
+                }
+
+
+
             //display trips list (my trips + shared trips)
             LazyColumn(
                 state = lazyListState,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(spacerValue, 16.dp + paddingValues.calculateTopPadding(), spacerValue, 400.dp),
-                modifier = modifier
-                    .fillMaxSize()
-                    .onSizeChanged {
-                        with(density) {
-                            lazyColumnHeightDp = it.height.toDp().value.toInt()
-                        }
-                    }
-                    .hazeSource(state = hazeState)
+                modifier = if (hazeState != null) lazyColumnModifier.hazeSource(state = hazeState)
+                            else lazyColumnModifier
             ) {
                 if (adView != null) {
                     item {

@@ -50,7 +50,7 @@ fun MoreRoute(
     lazyListState: LazyListState,
     navigateTo: (ScreenDestination) -> Unit,
 
-    hazeState: HazeState,
+    hazeState: HazeState?,
 
     modifier: Modifier = Modifier,
     currentScreenRoute: String? = null
@@ -95,7 +95,7 @@ private fun MoreScreen(
     lazyListState: LazyListState,
     navigateTo: (ScreenDestination) -> Unit,
     adView: AdView?,
-    hazeState: HazeState,
+    hazeState: HazeState?,
 
     modifier: Modifier = Modifier,
     currentScreenRoute: String? = null
@@ -122,9 +122,10 @@ private fun MoreScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(startSpacerValue,
                 16.dp + paddingValues.calculateTopPadding(), endSpacerValue, 200.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .hazeSource(state = hazeState)
+            modifier = if(hazeState != null) Modifier
+                            .fillMaxSize()
+                            .hazeSource(state = hazeState)
+                        else Modifier.fillMaxSize()
         ) {
             //setting
             item {

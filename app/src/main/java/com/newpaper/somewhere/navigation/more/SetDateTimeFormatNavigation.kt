@@ -54,6 +54,7 @@ fun NavGraphBuilder.setDateTimeFormatScreen(
         SetDateTimeFormatRoute(
             use2Panes = externalState.windowSizeClass.use2Panes,
             spacerValue = externalState.windowSizeClass.spacerValue,
+            useBlurEffect = appUiState.appPreferences.theme.useBlurEffect,
             dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
             updatePreferencesValue = {
                 coroutineScope.launch{

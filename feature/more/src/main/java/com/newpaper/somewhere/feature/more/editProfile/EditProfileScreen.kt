@@ -79,6 +79,7 @@ fun EditProfileRoute(
     userData: UserData,
     internetEnabled: Boolean,
     spacerValue: Dp,
+    useBlurEffect: Boolean,
 
     updateUserState: (userData: UserData) -> Unit,
     navigateUp: () -> Unit,
@@ -132,6 +133,8 @@ fun EditProfileRoute(
         editProfileUiState = editProfileUiState,
         userData = userData,
         spacerValue = spacerValue,
+        useBlurEffect = useBlurEffect,
+
         internetEnabled = internetEnabled,
         showExitDialog = editProfileUiState.showExitDialog,
         setShowExitDialog = editProfileViewModel::setShowExitDialog,
@@ -176,6 +179,8 @@ private fun EditProfileScreen(
     editProfileUiState: EditProfileUiState,
     userData: UserData,
     spacerValue: Dp,
+    useBlurEffect: Boolean,
+
     internetEnabled: Boolean,
     showExitDialog: Boolean,
     setShowExitDialog: (Boolean) -> Unit,
@@ -193,7 +198,7 @@ private fun EditProfileScreen(
 
     modifier: Modifier = Modifier,
 ){
-    val topAppBarHazeState = rememberHazeState()
+    val topAppBarHazeState = if(useBlurEffect) rememberHazeState() else null
 
     MyScaffold(
         modifier = modifier.imePadding(),
@@ -249,9 +254,9 @@ private fun EditProfileScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(spacerValue, 8.dp + paddingValues.calculateTopPadding(), spacerValue, 200.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .hazeSource(state = topAppBarHazeState)
+            modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
+                            .hazeSource(state = topAppBarHazeState)
+                        else Modifier.fillMaxSize()
         ) {
             //profile image
             item {

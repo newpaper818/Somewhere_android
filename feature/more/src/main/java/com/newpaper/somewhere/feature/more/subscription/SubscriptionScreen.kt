@@ -61,6 +61,7 @@ import kotlinx.coroutines.launch
 fun SubscriptionRoute(
     use2Panes: Boolean,
     spacerValue: Dp,
+    useBlurEffect: Boolean,
     internetEnabled: Boolean,
 
     updateIsUsingSomewherePro: (isUsingSomewherePro: Boolean) -> Unit,
@@ -107,6 +108,7 @@ fun SubscriptionRoute(
         use2Panes = use2Panes,
         startSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
         endSpacerValue = spacerValue,
+        useBlurEffect = useBlurEffect,
         internetEnabled = internetEnabled,
 
         snackBarHostState = snackBarHostState,
@@ -164,6 +166,7 @@ private fun SubscriptionScreen(
     use2Panes: Boolean,
     startSpacerValue: Dp,
     endSpacerValue: Dp,
+    useBlurEffect: Boolean,
     internetEnabled: Boolean,
     snackBarHostState: SnackbarHostState,
 
@@ -181,7 +184,7 @@ private fun SubscriptionScreen(
     modifier: Modifier = Modifier,
 ) {
 
-    val topAppBarHazeState = rememberHazeState()
+    val topAppBarHazeState = if(useBlurEffect) rememberHazeState() else null
 
     Scaffold(
         modifier = modifier,
@@ -217,9 +220,9 @@ private fun SubscriptionScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(24.dp),
             contentPadding = PaddingValues(startSpacerValue, 16.dp + paddingValues.calculateTopPadding(), endSpacerValue, 200.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .hazeSource(state = topAppBarHazeState)
+            modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
+                            .hazeSource(state = topAppBarHazeState)
+                        else Modifier.fillMaxSize()
         ) {
 //            if(BuildConfig.DEBUG){
 //                item {

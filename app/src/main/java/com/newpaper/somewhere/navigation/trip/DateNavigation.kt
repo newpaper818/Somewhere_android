@@ -75,6 +75,7 @@ fun NavGraphBuilder.dateScreen(
                             isDarkAppTheme = isDarkAppTheme,
                             use2Panes = externalState.windowSizeClass.use2Panes,
                             spacerValue = externalState.windowSizeClass.spacerValue,
+                            useBlurEffect = appUiState.appPreferences.theme.useBlurEffect,
                             appUserData = appUiState.appUserData!!,
                             dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
                             internetEnabled = externalState.internetEnabled,

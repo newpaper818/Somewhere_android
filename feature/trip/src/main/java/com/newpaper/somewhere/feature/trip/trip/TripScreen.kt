@@ -101,6 +101,7 @@ fun TripRoute(
     appUserData: UserData,
     use2Panes: Boolean,
     spacerValue: Dp,
+    useBlurEffect: Boolean,
     dateTimeFormat: DateTimeFormat,
     internetEnabled: Boolean,
 
@@ -197,6 +198,7 @@ fun TripRoute(
         tripUiInfo = TripUiInfo(
             use2Panes = use2Panes,
             spacerValue = spacerValue,
+            useBlurEffect = useBlurEffect,
             loadingTrip = tripUiState.loadingTrip,
             dateTimeFormat = dateTimeFormat,
             internetEnabled = internetEnabled,
@@ -364,6 +366,7 @@ private fun TripScreen(
 
     val use2Panes = tripUiInfo.use2Panes
     val spacerValue = tripUiInfo.spacerValue
+    val useBlurEffect = tripUiInfo.useBlurEffect
 
     val loadingTrip = tripUiInfo.loadingTrip
     val dateTimeFormat = tripUiInfo.dateTimeFormat
@@ -427,7 +430,7 @@ private fun TripScreen(
         } else
             LocalDate.now().let { now -> now.plusDays(1)..now.plusDays(5) }
 
-    val topAppBarHazeState = rememberHazeState()
+    val topAppBarHazeState = if(useBlurEffect) rememberHazeState() else null
 
 
 
@@ -579,9 +582,9 @@ private fun TripScreen(
                 contentPadding = PaddingValues(
                     spacerValue, 16.dp + paddingValues.calculateTopPadding(), if (use2Panes) spacerValue / 2 else spacerValue, 200.dp
                 ),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .hazeSource(state = topAppBarHazeState)
+                modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
+                                .hazeSource(state = topAppBarHazeState)
+                            else Modifier.fillMaxSize()
             ) {
 
                 //share trip (trip mate / share)

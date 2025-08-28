@@ -54,6 +54,7 @@ fun NavGraphBuilder.editProfileScreen(
                 userData = appUiState.appUserData!!,
                 internetEnabled = externalState.internetEnabled,
                 spacerValue = externalState.windowSizeClass.spacerValue,
+                useBlurEffect = appUiState.appPreferences.theme.useBlurEffect,
                 updateUserState = appViewModel::updateUserData,
                 navigateUp = navigateUp,
                 modifier = modifier

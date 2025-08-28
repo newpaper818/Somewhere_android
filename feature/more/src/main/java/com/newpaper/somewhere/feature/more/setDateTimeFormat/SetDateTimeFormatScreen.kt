@@ -48,6 +48,7 @@ import kotlinx.coroutines.launch
 fun SetDateTimeFormatRoute(
     use2Panes: Boolean,
     spacerValue: Dp,
+    useBlurEffect: Boolean,
     dateTimeFormat: DateTimeFormat,
     updatePreferencesValue: () -> Unit,
 
@@ -67,6 +68,7 @@ fun SetDateTimeFormatRoute(
     SetDateTimeFormatScreen(
         startSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
         endSpacerValue = spacerValue,
+        useBlurEffect = useBlurEffect,
         dateTimeFormat = dateTimeFormat,
         dateExampleText = setDateTimeFormatUiState.dateExample,
         timeExampleText = setDateTimeFormatUiState.timeExample,
@@ -104,6 +106,7 @@ fun SetDateTimeFormatRoute(
 private fun SetDateTimeFormatScreen(
     startSpacerValue: Dp,
     endSpacerValue: Dp,
+    useBlurEffect: Boolean,
     dateTimeFormat: DateTimeFormat,
 
     dateExampleText: String,
@@ -123,7 +126,7 @@ private fun SetDateTimeFormatScreen(
 
     val dateFormatList = enumValues<DateFormat>()
 
-    val topAppBarHazeState = rememberHazeState()
+    val topAppBarHazeState = if(useBlurEffect) rememberHazeState() else null
 
     Scaffold(
         modifier = modifier,
@@ -146,9 +149,9 @@ private fun SetDateTimeFormatScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(startSpacerValue, 16.dp + paddingValues.calculateTopPadding(), endSpacerValue, 200.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .hazeSource(state = topAppBarHazeState)
+            modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
+                            .hazeSource(state = topAppBarHazeState)
+                        else Modifier.fillMaxSize()
         ) {
             //current date
             item {

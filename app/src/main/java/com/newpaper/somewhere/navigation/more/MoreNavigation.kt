@@ -61,7 +61,7 @@ fun NavGraphBuilder.moreScreen(
     navigateToDeleteAccount: () -> Unit,
     navigateToOpenSourceLicense: () -> Unit,
     onSignOutDone: () -> Unit,
-    hazeState: HazeState,
+    hazeState: HazeState?,
 
     modifier: Modifier = Modifier,
 ) {

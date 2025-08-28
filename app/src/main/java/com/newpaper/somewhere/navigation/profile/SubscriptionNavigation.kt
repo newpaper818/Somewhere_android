@@ -53,6 +53,7 @@ fun NavGraphBuilder.subscriptionScreen(
             SubscriptionRoute(
                 use2Panes = externalState.windowSizeClass.use2Panes,
                 spacerValue = externalState.windowSizeClass.spacerValue,
+                useBlurEffect = appUiState.appPreferences.theme.useBlurEffect,
                 internetEnabled = externalState.internetEnabled,
                 updateIsUsingSomewherePro = { isUsingSomewherePro ->
                     val newUserData = appUiState.appUserData!!.copy(

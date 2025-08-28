@@ -50,7 +50,7 @@ fun ProfileRoute(
     userData: UserData,
     navigateToAccount: () -> Unit,
     navigateToSubscription: () -> Unit,
-    hazeState: HazeState,
+    hazeState: HazeState?,
 
     modifier: Modifier = Modifier,
     imageViewModel: ImageViewModel = hiltViewModel()
@@ -93,7 +93,7 @@ fun ProfileScreen(
     onClickRemoveAds: () -> Unit,
     downloadImage: (imagePath: String, tripManagerId: String, (Boolean) -> Unit) -> Unit,
     adView: AdView?,
-    hazeState: HazeState,
+    hazeState: HazeState?,
 
     modifier: Modifier = Modifier
 ) {
@@ -127,10 +127,10 @@ fun ProfileScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             contentPadding = PaddingValues(spacerValue, 8.dp + paddingValues.calculateTopPadding(), spacerValue, 200.dp),
-            modifier = Modifier
-                .fillMaxSize()
-//                .navigationBarsPadding()
-                .hazeSource(state = hazeState)
+            modifier = if(hazeState != null) Modifier
+                            .fillMaxSize()
+                            .hazeSource(state = hazeState)
+                        else Modifier.fillMaxSize()
         ){
 
             item {

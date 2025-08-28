@@ -10,6 +10,7 @@ import com.newpaper.somewhere.core.model.tripData.Trip
 internal data class TripUiInfo(
     val use2Panes: Boolean = false,
     val spacerValue: Dp = 16.dp,
+    val useBlurEffect: Boolean = true,
     val loadingTrip: Boolean = false,
     val dateTimeFormat: DateTimeFormat = DateTimeFormat(),
     val internetEnabled: Boolean = true,

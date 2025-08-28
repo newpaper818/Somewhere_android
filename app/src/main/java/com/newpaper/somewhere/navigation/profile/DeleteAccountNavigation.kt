@@ -57,6 +57,7 @@ fun NavGraphBuilder.deleteAccountScreen(
                 userData = appUiState.appUserData!!,
                 internetEnabled = externalState.internetEnabled,
                 spacerValue = externalState.windowSizeClass.spacerValue,
+                useBlurEffect = appUiState.appPreferences.theme.useBlurEffect,
                 navigateUp = navigateUp,
                 onDeleteAccountDone = navigateToSignIn,
                 modifier = modifier,
