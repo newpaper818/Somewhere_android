@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -175,9 +174,7 @@ fun SetLocationDialog(
 
 
     MyScaffold(
-        modifier = Modifier
-            .navigationBarsPadding()
-            .displayCutoutPadding(),
+        modifier = Modifier,
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarHostState,
@@ -437,6 +434,7 @@ fun SetLocationDialog(
             FlowRow(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .navigationBarsPadding()
 //                    .clickable(enabled = false) { }
                 ,
                 horizontalArrangement = Arrangement.SpaceAround,
