@@ -24,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -102,7 +101,7 @@ internal fun GlanceSpot(
             )) Color.Transparent
         else MaterialTheme.colorScheme.outline
 
-    val containerColor = if (hazeState == null) MaterialTheme.colorScheme.surface
+    val containerColor = if (hazeState == null) MaterialTheme.colorScheme.surfaceBright
                         else Color.Transparent
 
     val glanceSpotColor = MaterialTheme.colorScheme.surfaceBright
