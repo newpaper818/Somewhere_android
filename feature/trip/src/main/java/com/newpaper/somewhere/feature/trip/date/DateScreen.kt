@@ -432,10 +432,7 @@ private fun DateScreen(
 
 
     MyScaffold(
-        modifier = modifier
-            .navigationBarsPadding()
-            .displayCutoutPadding()
-            .imePadding(),
+        modifier = modifier.imePadding(),
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarHostState,

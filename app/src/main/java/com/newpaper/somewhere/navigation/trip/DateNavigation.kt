@@ -2,8 +2,6 @@ package com.newpaper.somewhere.navigation.trip
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.displayCutoutPadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -66,8 +64,6 @@ fun NavGraphBuilder.dateScreen(
 
         Row(
             modifier = Modifier
-                .navigationBarsPadding()
-                .displayCutoutPadding()
         ) {
             if (externalState.windowSizeClass.use2Panes) {
                 Box(

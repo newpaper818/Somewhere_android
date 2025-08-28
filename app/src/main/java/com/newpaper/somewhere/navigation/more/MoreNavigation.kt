@@ -104,8 +104,7 @@ fun NavGraphBuilder.moreScreen(
 
         Row(
             modifier = Modifier
-                .navigationBarsPadding()
-                .displayCutoutPadding()
+//                .navigationBarsPadding()
         ) {
             Row(
                 modifier = Modifier.weight(1f)

@@ -88,7 +88,7 @@ internal fun BottomSheetHandel(
     MySpacerColumn(height = 14.dp)
 }
 
-/*
+/**
 have to Column()
 */
 @Composable
@@ -192,16 +192,14 @@ internal fun ControlPanel(
 
     AnimatedVisibility(
         visible = true,
-        enter =
-        expandVertically(
-            animationSpec = tween(durationMillis = 400),
-            expandFrom = Alignment.Top
-        ),
-        exit =
-        shrinkVertically(
-            animationSpec = tween(durationMillis = 400),
-            shrinkTowards = Alignment.Top
-        )
+        enter = expandVertically(
+                animationSpec = tween(durationMillis = 400),
+                expandFrom = Alignment.Top
+            ),
+        exit = shrinkVertically(
+                animationSpec = tween(durationMillis = 400),
+                shrinkTowards = Alignment.Top
+            )
     ) {
         DateList(
             dateTimeFormat = dateTimeFormat,

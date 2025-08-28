@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
@@ -41,9 +40,7 @@ fun OpenSourceLicenseRoute(
     val topAppBarHazeState = rememberHazeState()
 
     Scaffold(
-        modifier = Modifier
-            .imePadding()
-            .navigationBarsPadding(),
+        modifier = Modifier.imePadding(),
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {
