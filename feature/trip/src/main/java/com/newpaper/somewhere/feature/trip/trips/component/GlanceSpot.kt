@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -107,6 +108,7 @@ internal fun GlanceSpot(
     val glanceSpotColor = MaterialTheme.colorScheme.surfaceBright
 
     val glanceSpotModifier = modifier
+                                .navigationBarsPadding()
                                 .height(70.dp)
                                 .widthIn(max = if (useBottomNavBar) 600.dp else 400.dp)
                                 .padding(horizontal = 16.dp)
