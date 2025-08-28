@@ -13,10 +13,14 @@ class SetThemeViewModel @Inject constructor(
 ): ViewModel() {
 
     suspend fun saveThemePreferences(
+        useBlurEffect: Boolean?,
         appTheme: AppTheme?,
         mapTheme: MapTheme?
     ){
-        if (appTheme != null) {
+        if (useBlurEffect != null) {
+            preferencesRepository.saveUseBlurEffectPreference(useBlurEffect)
+        }
+        else if (appTheme != null) {
             preferencesRepository.saveAppThemePreference(appTheme)
         }
         else if (mapTheme != null) {

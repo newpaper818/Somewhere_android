@@ -54,6 +54,7 @@
     <string name="include_day_of_week">요일 포함</string>
 
     <!--setTheme=================================================================================-->
+    <string name="blur_effect">블러 효과</string>
     <string name="app_theme">앱 테마</string>
     <string name="map_theme">지도 테마</string>
 
