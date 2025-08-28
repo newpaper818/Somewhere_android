@@ -3,8 +3,6 @@ package com.newpaper.somewhere.feature.profile.profile
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -39,6 +37,9 @@ import com.newpaper.somewhere.feature.dialog.myQrCode.MyQrCodeDialog
 import com.newpaper.somewhere.feature.profile.R
 import com.newpaper.somewhere.feature.trip.BuildConfig
 import com.newpaper.somewhere.feature.trip.image.ImageViewModel
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 
 @Composable
 fun ProfileRoute(
@@ -49,6 +50,7 @@ fun ProfileRoute(
     userData: UserData,
     navigateToAccount: () -> Unit,
     navigateToSubscription: () -> Unit,
+    hazeState: HazeState,
 
     modifier: Modifier = Modifier,
     imageViewModel: ImageViewModel = hiltViewModel()
@@ -76,6 +78,7 @@ fun ProfileRoute(
         onClickRemoveAds = navigateToSubscription,
         downloadImage = imageViewModel::getImage,
         adView = adView,
+        hazeState = hazeState,
         modifier = modifier
     )
 }
@@ -90,12 +93,14 @@ fun ProfileScreen(
     onClickRemoveAds: () -> Unit,
     downloadImage: (imagePath: String, tripManagerId: String, (Boolean) -> Unit) -> Unit,
     adView: AdView?,
+    hazeState: HazeState,
 
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
 
     var showMyQrCodeDialog by rememberSaveable { mutableStateOf(false) }
+
 
     if (showMyQrCodeDialog) {
         MyQrCodeDialog(
@@ -112,7 +117,8 @@ fun ProfileScreen(
         topBar = {
             SomewhereTopAppBar(
                 startPadding = spacerValue,
-                title = stringResource(id = R.string.profile)
+                title = stringResource(id = R.string.profile),
+                hazeState = hazeState
             )
         }
     ) {paddingValues ->
@@ -120,11 +126,11 @@ fun ProfileScreen(
             state = lazyListState,
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(spacerValue, 8.dp, spacerValue, 200.dp),
+            contentPadding = PaddingValues(spacerValue, 8.dp + paddingValues.calculateTopPadding(), spacerValue, 200.dp),
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .navigationBarsPadding()
+//                .navigationBarsPadding()
+                .hazeSource(state = hazeState)
         ){
 
             item {
@@ -208,7 +214,8 @@ private fun ProfileScreenPreview(){
                 onProfileClick = { },
                 onClickRemoveAds = { },
                 downloadImage = { _,_,_ ->},
-                adView = AdView(context).apply {}
+                adView = AdView(context).apply {},
+                hazeState = rememberHazeState()
             )
         }
     }

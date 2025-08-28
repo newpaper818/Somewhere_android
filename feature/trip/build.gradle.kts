@@ -81,6 +81,9 @@ dependencies {
     //qr scan
     implementation(libs.easy.qr.scan)
 
+    //haze
+    implementation(libs.haze)
+
 
     //test
     testImplementation(libs.junit)

@@ -3,12 +3,11 @@ package com.newpaper.somewhere.feature.more.openSourceLicense
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +26,8 @@ import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.feature.more.R
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 
 @Composable
 fun OpenSourceLicenseRoute(
@@ -37,11 +38,12 @@ fun OpenSourceLicenseRoute(
         navigateUp()
     }
 
+    val topAppBarHazeState = rememberHazeState()
+
     Scaffold(
         modifier = Modifier
             .imePadding()
-            .navigationBarsPadding()
-            .displayCutoutPadding(),
+            .navigationBarsPadding(),
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {
@@ -49,7 +51,8 @@ fun OpenSourceLicenseRoute(
                 startPadding = startSpacerValue,
                 title = stringResource(id = R.string.open_source_license),
                 navigationIcon = TopAppBarIcon.back,
-                onClickNavigationIcon = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() },
+                hazeState = topAppBarHazeState
             )
         },
     ) { paddingValues ->
@@ -59,8 +62,9 @@ fun OpenSourceLicenseRoute(
         LibrariesContainer(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .simpleVerticalScrollbar(lazyListState),
+                .simpleVerticalScrollbar(lazyListState)
+                .hazeSource(state = topAppBarHazeState),
+            contentPadding = PaddingValues(top = paddingValues.calculateTopPadding()),
             lazyListState = lazyListState,
             showVersion = false,
             itemSpacing = 8.dp

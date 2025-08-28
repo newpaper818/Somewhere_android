@@ -59,6 +59,9 @@ dependencies {
     //qr code
     implementation(libs.qr.code.compose)
 
+    //haze
+    implementation(libs.haze)
+
     //test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

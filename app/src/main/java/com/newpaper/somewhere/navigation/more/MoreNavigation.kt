@@ -2,8 +2,6 @@ package com.newpaper.somewhere.navigation.more
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.displayCutoutPadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,6 +37,7 @@ import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
 import com.newpaper.somewhere.util.WindowHeightSizeClass
 import com.newpaper.somewhere.util.WindowWidthSizeClass
+import dev.chrisbanes.haze.HazeState
 import java.util.UUID
 
 private const val DEEP_LINK_URI_PATTERN =
@@ -62,6 +61,7 @@ fun NavGraphBuilder.moreScreen(
     navigateToDeleteAccount: () -> Unit,
     navigateToOpenSourceLicense: () -> Unit,
     onSignOutDone: () -> Unit,
+    hazeState: HazeState,
 
     modifier: Modifier = Modifier,
 ) {
@@ -148,7 +148,9 @@ fun NavGraphBuilder.moreScreen(
                     use2Panes = externalState.windowSizeClass.use2Panes,
                     currentScreenRoute =
                         if (externalState.windowSizeClass.use2Panes) moreNavController.currentDestination?.route
-                        else null
+                        else null,
+
+                    hazeState = hazeState
                 )
             }
 

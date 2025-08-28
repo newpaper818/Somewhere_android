@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
@@ -26,6 +25,8 @@ import com.newpaper.somewhere.core.ui.item.ItemWithRadioButton
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.more.R
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -85,6 +86,8 @@ private fun SetThemeScreen(
     val scaffoldModifier = if (use2Panes) modifier
         else modifier.navigationBarsPadding()
 
+    val topAppBarHazeState = rememberHazeState()
+
     Scaffold(
         modifier = scaffoldModifier,
         contentWindowInsets = WindowInsets(bottom = 0),
@@ -94,7 +97,8 @@ private fun SetThemeScreen(
                 startPadding = startSpacerValue,
                 title = stringResource(id = R.string.theme),
                 navigationIcon = if (!use2Panes) TopAppBarIcon.back else null,
-                onClickNavigationIcon = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() },
+                hazeState = topAppBarHazeState
             )
         }
     ){ paddingValues ->
@@ -103,10 +107,10 @@ private fun SetThemeScreen(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(startSpacerValue, 16.dp, endSpacerValue, 200.dp),
+            contentPadding = PaddingValues(startSpacerValue, 16.dp + paddingValues.calculateTopPadding(), endSpacerValue, 200.dp),
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .hazeSource(state = topAppBarHazeState)
         ) {
 
             //setting app theme

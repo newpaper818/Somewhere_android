@@ -4,12 +4,10 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -71,6 +69,9 @@ import com.newpaper.somewhere.feature.trip.trips.component.GlanceSpot
 import com.newpaper.somewhere.feature.trip.trips.component.LoadingTripsItem
 import com.newpaper.somewhere.feature.trip.trips.component.NoTripCard
 import com.newpaper.somewhere.feature.trip.trips.component.TripItem
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -98,6 +99,8 @@ fun TripsRoute(
     navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
     navigateToTripAi: () -> Unit,
     navigateToGlanceSpot: (glance: Glance) -> Unit,
+
+    hazeState: HazeState,
 
     modifier: Modifier = Modifier
 ){
@@ -299,6 +302,7 @@ fun TripsRoute(
         lazyListState = lazyListState,
         adView = adView,
         updateTripItemOrder = tripsViewModel::reorderTempTrips,
+        hazeState = hazeState,
         modifier = modifier
     )
 }
@@ -325,6 +329,8 @@ private fun TripsScreen(
     lazyListState: LazyListState,
     adView: AdView?,
     updateTripItemOrder: (isSharedTrips: Boolean, currentIndex: Int, destinationIndex: Int) -> Unit,
+
+    hazeState: HazeState,
 
     modifier: Modifier = Modifier
 ){
@@ -360,8 +366,8 @@ private fun TripsScreen(
 
     MyScaffold(
         modifier = modifier
-            .navigationBarsPadding()
-            .displayCutoutPadding()
+//            .navigationBarsPadding()
+//            .displayCutoutPadding()
             .imePadding(),
 
         //top app bar
@@ -374,7 +380,8 @@ private fun TripsScreen(
                 actionIcon1 = TopAppBarIcon.edit,
                 actionIcon1Onclick = { tripsUiInfo.setIsEditMode(true) },
                 actionIcon1Visible = !isEditMode && !loadingTrips && !tripsIsEmpty,
-                startPadding = spacerValue
+                startPadding = spacerValue,
+                hazeState = hazeState
             )
         },
 
@@ -405,6 +412,7 @@ private fun TripsScreen(
                     //go to spot screen
                     navigate.navigateToGlanceSpot()
                 },
+                hazeState = hazeState
             )
         },
 
@@ -497,16 +505,15 @@ private fun TripsScreen(
                 state = lazyListState,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(spacerValue, 16.dp, spacerValue, 400.dp),
+                contentPadding = PaddingValues(spacerValue, 16.dp + paddingValues.calculateTopPadding(), spacerValue, 400.dp),
                 modifier = modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
-                    .navigationBarsPadding()
                     .onSizeChanged {
                         with(density) {
                             lazyColumnHeightDp = it.height.toDp().value.toInt()
                         }
                     }
+                    .hazeSource(state = hazeState)
             ) {
                 if (adView != null) {
                     item {
@@ -555,15 +562,15 @@ private fun TripsScreen(
                                 trip = trip,
                                 trips = showingTrips,
                                 onClick = if (!isEditMode) { {
-                                    tripsUiInfo.setIsLoadingTrips(true)
-                                    navigate.navigateToTrip(false, trip)
-                                } }
-                                else null,
+                                        tripsUiInfo.setIsLoadingTrips(true)
+                                        navigate.navigateToTrip(false, trip)
+                                    } }
+                                    else null,
                                 onLongClick = if (isEditMode) { {
-                                    dialog.setSelectedTrip(trip)
-                                    dialog.setShowDeleteDialog(true)
-                                } }
-                                else null,
+                                        dialog.setSelectedTrip(trip)
+                                        dialog.setShowDeleteDialog(true)
+                                    } }
+                                    else null,
                                 downloadImage = image::downloadImage,
                                 slideState = slideStates[trip.id] ?: SlideState.NONE,
                                 updateSlideState = { tripId, newSlideState ->
@@ -737,6 +744,7 @@ private fun TripsScreenPreview_Default(){
             lazyListState = LazyListState(),
             adView =  AdView(context).apply {},
             updateTripItemOrder = { _, _, _->},
+            hazeState = rememberHazeState()
         )
     }
 }
@@ -780,7 +788,8 @@ private fun TripsScreenPreview_Edit(){
 
             lazyListState = LazyListState(),
             adView =  AdView(context).apply {},
-            updateTripItemOrder = { _, _, _->}
+            updateTripItemOrder = { _, _, _->},
+            hazeState = rememberHazeState()
         )
     }
 }
@@ -826,7 +835,8 @@ private fun TripsScreenPreview_OnClickCancel(){
 
             lazyListState = LazyListState(),
             adView =  AdView(context).apply {},
-            updateTripItemOrder = { _, _, _->}
+            updateTripItemOrder = { _, _, _->},
+            hazeState = rememberHazeState()
         )
     }
 }

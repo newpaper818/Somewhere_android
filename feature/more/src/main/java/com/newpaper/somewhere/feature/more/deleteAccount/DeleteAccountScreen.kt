@@ -63,6 +63,8 @@ import com.newpaper.somewhere.feature.dialog.checkSubscription.CheckSubscription
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.dialog.deletingAccount.DeletingAccountDialog
 import com.newpaper.somewhere.feature.more.R
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -289,6 +291,8 @@ private fun DeleteAccountScreen(
 
     modifier: Modifier = Modifier
 ){
+    val topAppBarHazeState = rememberHazeState()
+
     Scaffold(
         modifier = modifier
             .imePadding()
@@ -301,7 +305,8 @@ private fun DeleteAccountScreen(
                 startPadding = spacerValue,
                 title = stringResource(id = R.string.delete_account),
                 navigationIcon = TopAppBarIcon.back,
-                onClickNavigationIcon = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() },
+                hazeState = topAppBarHazeState
             )
         },
         snackbarHost = {
@@ -323,10 +328,10 @@ private fun DeleteAccountScreen(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(24.dp),
-            contentPadding = PaddingValues(spacerValue, 8.dp, spacerValue, 200.dp),
+            contentPadding = PaddingValues(spacerValue, 8.dp+ paddingValues.calculateTopPadding(), spacerValue, 200.dp),
             modifier = Modifier
-                .padding(paddingValues)
                 .fillMaxSize()
+                .hazeSource(state = topAppBarHazeState)
         ) {
             //user profile
             item {

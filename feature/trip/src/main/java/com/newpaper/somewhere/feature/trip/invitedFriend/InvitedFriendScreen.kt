@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -52,6 +51,8 @@ import com.newpaper.somewhere.feature.trip.invitedFriend.component.AppUserCard
 import com.newpaper.somewhere.feature.trip.invitedFriend.component.FriendList
 import com.newpaper.somewhere.feature.trip.invitedFriend.component.LoadingCard
 import com.newpaper.somewhere.feature.trip.trips.component.TripItem
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -281,6 +282,7 @@ private fun InvitedFriendsScreen(
 
     modifier: Modifier = Modifier
 ) {
+    val topAppBarHazeState = rememberHazeState()
 
     Scaffold(
         modifier = modifier
@@ -295,7 +297,8 @@ private fun InvitedFriendsScreen(
                 internetEnabled = internetEnabled,
                 title = stringResource(id = R.string.trip_mates),
                 navigationIcon = TopAppBarIcon.back,
-                onClickNavigationIcon = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() },
+                hazeState = topAppBarHazeState
             )
         },
         snackbarHost = {
@@ -313,15 +316,15 @@ private fun InvitedFriendsScreen(
     ) { paddingValues ->
         Box(
             contentAlignment = Alignment.BottomCenter,
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             LazyColumn(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(spacerValue, 8.dp, spacerValue, 200.dp),
-                modifier = Modifier.fillMaxSize()
+                contentPadding = PaddingValues(spacerValue, 8.dp + paddingValues.calculateTopPadding(), spacerValue, 200.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .hazeSource(state = topAppBarHazeState)
             ) {
                 item {
                     //trip image, title, date

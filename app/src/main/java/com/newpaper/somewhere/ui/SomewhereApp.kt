@@ -1,6 +1,5 @@
 package com.newpaper.somewhere.ui
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -58,12 +57,14 @@ fun SomewhereApp(
 
     //set navigation bar(recent, home, back) color
     when (appUiState.screenDestination.currentScreenDestination) {
-        ScreenDestination.IMAGE -> systemUiController.setNavigationBarColor(color = Color.Transparent)
-
-        ScreenDestination.TRIPS, ScreenDestination.PROFILE, ScreenDestination.MORE
-         -> systemUiController.setNavigationBarColor(color = MaterialTheme.colorScheme.surfaceDim)
-
-        else -> systemUiController.setNavigationBarColor(color = MaterialTheme.colorScheme.surface)
+//        ScreenDestination.IMAGE -> systemUiController.setNavigationBarColor(color = Color.Transparent)
+//
+//        ScreenDestination.TRIPS, ScreenDestination.PROFILE, ScreenDestination.MORE
+//         -> systemUiController.setNavigationBarColor(color = MaterialTheme.colorScheme.surfaceDim)
+//
+//        else -> systemUiController.setNavigationBarColor(color = MaterialTheme.colorScheme.surface)
+//
+        else -> systemUiController.setNavigationBarColor(color = Color.Transparent)
     }
 
 
