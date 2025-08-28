@@ -124,7 +124,7 @@
     <string name="no_plan">계획 없음</string>
     <string name="no_spot">장소 없음</string>
     <string name="delete_image">사진 삭제</string>
-    <string name="search_location">위치 검색</string>
+    <string name="search_location">장소 검색</string>
     <string name="search_friend">친구 검색</string>
     <string name="clear_text">모두 지우기</string>
     <string name="expand">펼치기</string>
