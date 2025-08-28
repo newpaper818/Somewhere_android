@@ -43,7 +43,7 @@ fun MyScaffold(
     val buttonsModifier = if (useBottomNavBar) Modifier
                             .navigationBarsPadding()    //system nav bar padding
                             .padding(bottom = 80.dp)    //app bottom nav bar padding
-                        else Modifier.navigationBarsPadding().imePadding()
+                        else Modifier.imePadding()
 
     val glanceSpotModifier = if (useBottomNavBar) buttonsModifier.padding(bottom = 16.dp)
                                 else buttonsModifier.padding(bottom = 16.dp).fillMaxWidth()
@@ -62,9 +62,10 @@ fun MyScaffold(
                 visible = bottomSaveCancelBarVisible,
                 onClickCancel = onClickCancel,
                 onClickSave = onClickSave,
+                modifier = buttonsModifier,
                 saveEnabled = saveEnabled,
                 use2PanesAndSpotScreen = use2PanesAndSpotScreen,
-                modifier = buttonsModifier
+                useBottomNavBar = useBottomNavBar
             )
 
 
