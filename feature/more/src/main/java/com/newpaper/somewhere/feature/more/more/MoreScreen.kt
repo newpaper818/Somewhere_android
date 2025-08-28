@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -37,6 +35,9 @@ import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.more.R
 import com.newpaper.somewhere.feature.trip.BuildConfig
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 
 @Composable
 fun MoreRoute(
@@ -48,6 +49,8 @@ fun MoreRoute(
     spacerValue: Dp,
     lazyListState: LazyListState,
     navigateTo: (ScreenDestination) -> Unit,
+
+    hazeState: HazeState,
 
     modifier: Modifier = Modifier,
     currentScreenRoute: String? = null
@@ -76,6 +79,7 @@ fun MoreRoute(
         lazyListState = lazyListState,
         navigateTo = navigateTo,
         adView = adView,
+        hazeState = hazeState,
         modifier = modifier,
         currentScreenRoute = currentScreenRoute
     )
@@ -91,6 +95,7 @@ private fun MoreScreen(
     lazyListState: LazyListState,
     navigateTo: (ScreenDestination) -> Unit,
     adView: AdView?,
+    hazeState: HazeState,
 
     modifier: Modifier = Modifier,
     currentScreenRoute: String? = null
@@ -107,7 +112,8 @@ private fun MoreScreen(
         topBar = {
             SomewhereTopAppBar(
                 startPadding = startSpacerValue,
-                title = stringResource(id = R.string.more)
+                title = stringResource(id = R.string.more),
+                hazeState = hazeState
             )
         },
     ){ paddingValues ->
@@ -116,10 +122,11 @@ private fun MoreScreen(
             state = lazyListState,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(startSpacerValue, 16.dp, endSpacerValue, 200.dp),
+            contentPadding = PaddingValues(startSpacerValue,
+                16.dp + paddingValues.calculateTopPadding(), endSpacerValue, 200.dp),
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .hazeSource(state = hazeState)
         ) {
             //setting
             item {
@@ -258,7 +265,9 @@ private fun MoreScreenPreview(){
             endSpacerValue = 16.dp,
             lazyListState = LazyListState(),
             navigateTo = {},
-            adView = AdView(context).apply {}
+            adView = AdView(context).apply {},
+            hazeState = rememberHazeState()
+
         )
     }
 }
@@ -275,7 +284,8 @@ private fun MoreScreenPreview_Debug(){
             endSpacerValue = 16.dp,
             lazyListState = LazyListState(),
             navigateTo = {},
-            adView = AdView(context).apply {}
+            adView = AdView(context).apply {},
+            hazeState = rememberHazeState()
         )
     }
 }

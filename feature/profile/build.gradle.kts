@@ -45,6 +45,9 @@ dependencies {
     //google ad
     implementation(libs.play.services.ads)
 
+    //haze
+    implementation(libs.haze)
+
     //
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

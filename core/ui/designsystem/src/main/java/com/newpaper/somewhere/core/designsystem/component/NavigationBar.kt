@@ -36,20 +36,41 @@ import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcon
 import com.newpaper.somewhere.core.designsystem.icon.NavigationBarIcon
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 
 val NAVIGATION_BOTTOM_BAR_WIDTH = 0.dp
 val NAVIGATION_RAIL_BAR_WIDTH = 80.dp
 val NAVIGATION_DRAWER_BAR_WIDTH = 180.dp
 
+
+
 //compact
 @Composable
 fun SomewhereNavigationBottomBar(
     modifier: Modifier = Modifier,
+    hazeState: HazeState? = null,
     content: @Composable RowScope.() -> Unit,
 ) {
+    val containerColor = if (hazeState == null) MaterialTheme.colorScheme.surfaceDim
+                            else Color.Transparent
+
+    val topAppBarColor = MaterialTheme.colorScheme.surfaceDim
+
+    val navBarModifier = if (hazeState == null) modifier.clip(RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp))
+                            else modifier
+                                    .clip(RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp))
+                                    .hazeEffect(state = hazeState) {
+                                        blurRadius = 16.dp
+                                        tints = listOf(
+                                            HazeTint(topAppBarColor.copy(alpha = 0.9f))
+                                        )
+                                    }
+
     NavigationBar(
-        modifier = modifier.clip(RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp)),
-        containerColor = MaterialTheme.colorScheme.surfaceDim,
+        modifier = navBarModifier,
+        containerColor = containerColor,
         content = content
     )
 }

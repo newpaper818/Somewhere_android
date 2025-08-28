@@ -9,11 +9,9 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -89,6 +87,8 @@ import com.newpaper.somewhere.feature.trip.trip.component.DateListItem
 import com.newpaper.somewhere.feature.trip.trip.component.DateListTopTitleCard
 import com.newpaper.somewhere.feature.trip.trip.component.ShareTripCards
 import com.newpaper.somewhere.feature.trip.trip.component.TripDurationCard
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -427,6 +427,7 @@ private fun TripScreen(
         } else
             LocalDate.now().let { now -> now.plusDays(1)..now.plusDays(5) }
 
+    val topAppBarHazeState = rememberHazeState()
 
 
 
@@ -437,10 +438,7 @@ private fun TripScreen(
 
 
     MyScaffold (
-        modifier = modifier
-            .navigationBarsPadding()
-            .displayCutoutPadding()
-            .imePadding(),
+        modifier = modifier.imePadding(),
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarHostState,
@@ -468,6 +466,7 @@ private fun TripScreen(
                 actionIcon1 = TopAppBarIcon.edit,
                 actionIcon1Onclick = { tripUiInfo.setIsEditMode(true) },
                 actionIcon1Visible = !loadingTrip && !isEditMode && !use2Panes && showingTrip.editable,
+                hazeState = topAppBarHazeState
             )
         },
 
@@ -571,18 +570,18 @@ private fun TripScreen(
 
 
         Box(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
         ) {
             LazyColumn(
                 state = scrollState,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 contentPadding = PaddingValues(
-                    spacerValue, 16.dp, if (use2Panes) spacerValue / 2 else spacerValue, 200.dp
+                    spacerValue, 16.dp + paddingValues.calculateTopPadding(), if (use2Panes) spacerValue / 2 else spacerValue, 200.dp
                 ),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .hazeSource(state = topAppBarHazeState)
             ) {
 
                 //share trip (trip mate / share)

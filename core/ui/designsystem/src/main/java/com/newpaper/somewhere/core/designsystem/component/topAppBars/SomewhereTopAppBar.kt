@@ -19,6 +19,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -35,6 +36,9 @@ import com.newpaper.somewhere.core.designsystem.icon.MyIcon
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.designsystem.R
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,13 +61,29 @@ fun SomewhereTopAppBar(
     dropdownMenuContent: @Composable () -> Unit = {},
 
     useHorizontalLayoutTitles: Boolean = false,
-    startPadding: Dp = 16.dp
+    startPadding: Dp = 16.dp,
+
+    hazeState: HazeState? = null
 ) {
+
+    val containerColor = if (hazeState == null) MaterialTheme.colorScheme.surface
+                            else Color.Transparent
+
+    val topAppBarColor = MaterialTheme.colorScheme.surface
+    val topAppBarModifier = if (hazeState == null) Modifier
+                            else Modifier.hazeEffect(state = hazeState) {
+                                blurRadius = 16.dp
+                                tints = listOf(
+                                    HazeTint(topAppBarColor.copy(alpha = 0.7f))
+                                )
+                            }
+
 
     //app bar
     TopAppBar(
+        modifier = topAppBarModifier,
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = containerColor,
             navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
             actionIconContentColor = MaterialTheme.colorScheme.onSurface
         ),

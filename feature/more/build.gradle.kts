@@ -62,6 +62,9 @@ dependencies {
     //billing
     implementation(libs.billing.ktx)
 
+    //haze
+    implementation(libs.haze)
+
     //test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

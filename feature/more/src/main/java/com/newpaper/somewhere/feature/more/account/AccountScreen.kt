@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,6 +37,8 @@ import com.newpaper.somewhere.core.ui.item.ListGroupCard
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.more.R
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -124,6 +125,8 @@ private fun AccountScreen(
 
     var showSignOutDialog by rememberSaveable { mutableStateOf(false) }
 
+    val topAppBarHazeState = rememberHazeState()
+
     if (showSignOutDialog) {
         TwoButtonsDialog(
             bodyText = stringResource(id = R.string.dialog_body_sign_out),
@@ -147,7 +150,8 @@ private fun AccountScreen(
                 startPadding = startSpacerValue,
                 title = stringResource(id = R.string.account),
                 navigationIcon = if (!use2Panes) TopAppBarIcon.back else null,
-                onClickNavigationIcon = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() },
+                hazeState = topAppBarHazeState
             )
         },
         snackbarHost = {
@@ -169,10 +173,10 @@ private fun AccountScreen(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(startSpacerValue, 8.dp, endSpacerValue, 200.dp),
+            contentPadding = PaddingValues(startSpacerValue, 8.dp + paddingValues.calculateTopPadding(), endSpacerValue, 200.dp),
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .hazeSource(state = topAppBarHazeState)
         ) {
             //user profile
             item {

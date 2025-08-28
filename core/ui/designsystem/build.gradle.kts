@@ -51,6 +51,9 @@ dependencies {
     //permission
     implementation(libs.accompanist.permissions)
 
+    //haze
+    implementation(libs.haze)
+
     //test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

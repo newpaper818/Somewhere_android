@@ -10,11 +10,9 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
@@ -22,8 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -43,7 +39,6 @@ import com.newpaper.somewhere.core.designsystem.component.button.RestorePurchase
 import com.newpaper.somewhere.core.designsystem.component.button.SubscribeButton
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
-import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.ui.InternetUnavailableText
 import com.newpaper.somewhere.core.ui.card.AppIconWithAppNameProCard
@@ -52,11 +47,12 @@ import com.newpaper.somewhere.core.utils.FREE_MAX_TRIPS
 import com.newpaper.somewhere.core.utils.PLAY_STORE_SUBSCRIPTIONS_URL
 import com.newpaper.somewhere.core.utils.PRO_MAX_INVITE_FRIENDS
 import com.newpaper.somewhere.core.utils.PRO_MAX_TRIPS
-import com.newpaper.somewhere.feature.more.BuildConfig
 import com.newpaper.somewhere.feature.more.R
 import com.newpaper.somewhere.feature.more.subscription.component.NoticeText
 import com.newpaper.somewhere.feature.more.subscription.component.OneFreeWeekText
 import com.newpaper.somewhere.feature.more.subscription.component.PlansTable
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -187,6 +183,8 @@ private fun SubscriptionScreen(
     val scaffoldModifier = if (use2Panes) modifier
         else modifier.navigationBarsPadding()
 
+    val topAppBarHazeState = rememberHazeState()
+
     Scaffold(
         modifier = scaffoldModifier,
         contentWindowInsets = WindowInsets(bottom = 0),
@@ -197,7 +195,8 @@ private fun SubscriptionScreen(
                 startPadding = startSpacerValue,
 
                 navigationIcon = TopAppBarIcon.close,
-                onClickNavigationIcon = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() },
+                hazeState = topAppBarHazeState
             )
         },
         snackbarHost = {
@@ -219,10 +218,10 @@ private fun SubscriptionScreen(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(24.dp),
-            contentPadding = PaddingValues(startSpacerValue, 16.dp, endSpacerValue, 200.dp),
+            contentPadding = PaddingValues(startSpacerValue, 16.dp + paddingValues.calculateTopPadding(), endSpacerValue, 200.dp),
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .hazeSource(state = topAppBarHazeState)
         ) {
 //            if(BuildConfig.DEBUG){
 //                item {

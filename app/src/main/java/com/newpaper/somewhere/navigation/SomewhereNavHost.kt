@@ -63,6 +63,7 @@ import com.newpaper.somewhere.navigationUi.TopLevelDestination
 import com.newpaper.somewhere.ui.AppUiState
 import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -155,7 +156,7 @@ fun SomewhereNavHost(
         beforeUse2Panes = externalState.windowSizeClass.use2Panes
     }
 
-
+    val hazeState = rememberHazeState()
     val tripsLazyListState = rememberLazyListState()
     val profileLazyListState = rememberLazyListState()
     val moreLazyListState = rememberLazyListState()
@@ -187,6 +188,7 @@ fun SomewhereNavHost(
         windowSizeClass = externalState.windowSizeClass,
         currentTopLevelDestination = appUiState.screenDestination.currentTopLevelDestination,
         showNavigationBar = showNavigationBar,
+        hazeState = hazeState,
         onClickNavBarItem = {
             val prevTopLevelDestination = appUiState.screenDestination.currentTopLevelDestination
             val currentMoreDetailScreenDestination = appUiState.screenDestination.currentScreenDestination
@@ -290,7 +292,8 @@ fun SomewhereNavHost(
                     mainNavController.navigateToSpot(
                         navOptions = navOptions { launchSingleTop = true }
                     )
-                }
+                },
+                hazeState = hazeState
             )
 
             profileScreen(
@@ -323,7 +326,8 @@ fun SomewhereNavHost(
                         navOptions = navOptions { launchSingleTop = true }
                     )
                 },
-                navigateUp = navigateUp
+                navigateUp = navigateUp,
+                hazeState = hazeState
             )
 
             moreScreen(
@@ -352,7 +356,8 @@ fun SomewhereNavHost(
                     navOptions = navOptions { launchSingleTop = true }
                 ) },
                 onSignOutDone = onSignOutDone,
-                modifier = modifier
+                modifier = modifier,
+                hazeState = hazeState
             )
 
 

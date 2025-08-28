@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -48,6 +47,8 @@ import com.newpaper.somewhere.core.utils.SOMEWHERE_PLAY_STORE_URL
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.core.utils.onClickPrivacyPolicy
 import com.newpaper.somewhere.feature.more.R
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 
 @Composable
 fun AboutRoute(
@@ -122,6 +123,8 @@ private fun AboutScreen(
     val scaffoldModifier = if (use2Panes) modifier
                     else modifier.navigationBarsPadding().displayCutoutPadding()
 
+    val topAppBarHazeState = rememberHazeState()
+
     Scaffold(
         modifier = scaffoldModifier,
         contentWindowInsets = WindowInsets(bottom = 0),
@@ -131,7 +134,8 @@ private fun AboutScreen(
                 startPadding = startSpacerValue,
                 title = stringResource(id = R.string.about),
                 navigationIcon = if (!use2Panes) TopAppBarIcon.back else null,
-                onClickNavigationIcon = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() },
+                hazeState = topAppBarHazeState
             )
         },
         snackbarHost = {
@@ -153,10 +157,10 @@ private fun AboutScreen(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(startSpacerValue, 16.dp, endSpacerValue, 200.dp),
+            contentPadding = PaddingValues(startSpacerValue, 16.dp + paddingValues.calculateTopPadding(), endSpacerValue, 200.dp),
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .hazeSource(state = topAppBarHazeState)
         ) {
             item{
                 //app icon image

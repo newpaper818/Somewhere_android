@@ -30,6 +30,7 @@ import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
 import com.newpaper.somewhere.util.WindowHeightSizeClass
 import com.newpaper.somewhere.util.WindowWidthSizeClass
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.delay
 
 private const val DEEP_LINK_URI_PATTERN =
@@ -49,6 +50,8 @@ fun NavGraphBuilder.tripsScreen(
     navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
     navigateToTripAi: () -> Unit,
     navigateToGlanceSpot: (glance: Glance) -> Unit,
+
+    hazeState: HazeState
 ) {
     composable(
         route = TopLevelDestination.TRIPS.route,
@@ -103,7 +106,9 @@ fun NavGraphBuilder.tripsScreen(
 
                     navigateToTrip = navigateToTrip,
                     navigateToTripAi = navigateToTripAi,
-                    navigateToGlanceSpot = navigateToGlanceSpot
+                    navigateToGlanceSpot = navigateToGlanceSpot,
+
+                    hazeState = hazeState
                 )
             }
             else {

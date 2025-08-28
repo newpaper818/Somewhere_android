@@ -41,6 +41,8 @@ import com.newpaper.somewhere.core.ui.item.ListGroupCard
 import com.newpaper.somewhere.core.ui.segmentedButtons.TimeFormatSegmentedButtons
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.more.R
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -125,6 +127,8 @@ private fun SetDateTimeFormatScreen(
     val scaffoldModifier = if (use2Panes) modifier
         else modifier.navigationBarsPadding()
 
+    val topAppBarHazeState = rememberHazeState()
+
     Scaffold(
         modifier = scaffoldModifier,
         contentWindowInsets = WindowInsets(bottom = 0),
@@ -134,7 +138,8 @@ private fun SetDateTimeFormatScreen(
                 startPadding = startSpacerValue,
                 title = stringResource(id = R.string.date_time_format),
                 navigationIcon = if (!use2Panes) TopAppBarIcon.back else null,
-                onClickNavigationIcon = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() },
+                hazeState = topAppBarHazeState
             )
         }
     ){ paddingValues ->
@@ -144,10 +149,10 @@ private fun SetDateTimeFormatScreen(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(startSpacerValue, 16.dp, endSpacerValue, 200.dp),
+            contentPadding = PaddingValues(startSpacerValue, 16.dp + paddingValues.calculateTopPadding(), endSpacerValue, 200.dp),
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .hazeSource(state = topAppBarHazeState)
         ) {
             //current date
             item {

@@ -72,6 +72,8 @@ import com.newpaper.somewhere.core.ui.card.ProfileImage
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.more.R
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -193,6 +195,8 @@ private fun EditProfileScreen(
 
     modifier: Modifier = Modifier,
 ){
+    val topAppBarHazeState = rememberHazeState()
+
     MyScaffold(
         modifier = modifier
             .imePadding()
@@ -212,7 +216,8 @@ private fun EditProfileScreen(
                 startPadding = spacerValue,
                 title = stringResource(id = R.string.edit_profile),
                 navigationIcon = TopAppBarIcon.close,
-                onClickNavigationIcon = { onClickBack() }
+                onClickNavigationIcon = { onClickBack() },
+                hazeState = topAppBarHazeState
             )
         },
         snackbarHost = {
@@ -248,10 +253,10 @@ private fun EditProfileScreen(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(spacerValue, 8.dp, spacerValue, 200.dp),
+            contentPadding = PaddingValues(spacerValue, 8.dp + paddingValues.calculateTopPadding(), spacerValue, 200.dp),
             modifier = Modifier
-                .padding(paddingValues)
                 .fillMaxSize()
+                .hazeSource(state = topAppBarHazeState)
         ) {
             //profile image
             item {

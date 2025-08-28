@@ -45,7 +45,7 @@ animationCoreAndroid = "1.7.0"
 foundationAndroid = "1.7.0"
 moshi = "1.15.1"
 billing = "7.1.1"
-
+haze = "1.6.10"
 
 
 
@@ -161,6 +161,10 @@ moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.re
 billing = { group = "com.android.billingclient", name = "billing", version.ref = "billing" }
 billing-ktx = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billing" }
 
+#haze
+haze = { group = "dev.chrisbanes.haze", name = "haze", version.ref = "haze" }
+
+
 
 junit =                     { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit =            { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -181,10 +185,11 @@ androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", vers
 androidApplication =        { id = "com.android.application", version.ref = "agp" }
 androidLibrary =            { id = "com.android.library", version.ref = "agp" }
 jetbrainsKotlinAndroid =    { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+compose-compiler =          { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 googleDevToolsKsp =         { id = "com.google.devtools.ksp", version.ref = "devTools" }
 googleMapsPlatformGraglePlugin = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "mapsPlatform"}
 gmsGoogleServices =         { id = "com.google.gms.google-services", version.ref = "gmsGoogleServices" }
-aboutlibraries =      { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries"}
+aboutlibraries =            { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries"}
 jetbrainsKotlinJvm =        { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 hilt =                      { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-serialization =      { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
