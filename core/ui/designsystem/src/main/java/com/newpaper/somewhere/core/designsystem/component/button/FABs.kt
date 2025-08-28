@@ -7,10 +7,12 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -62,9 +64,12 @@ fun NewTripExtendedFAB(
 
     val modifier =
         if (glanceSpotShown && !useBottomNavBar) Modifier
+            .navigationBarsPadding()
             .padding(bottom = bottomNavBarPadding + glanceSpotPadding + padding)
             .height(70.dp)
-        else Modifier.padding(bottom = bottomNavBarPadding + glanceSpotPadding + padding)
+        else Modifier
+            .navigationBarsPadding()
+            .padding(bottom = bottomNavBarPadding + glanceSpotPadding + padding)
 
     AnimatedVisibility(
         visible = visible,
@@ -105,7 +110,7 @@ fun SeeOnMapExtendedFAB(
             icon = FabIcon.map,
             onClick = onClick,
             expanded = expanded,
-            modifier = Modifier
+            modifier = Modifier.navigationBarsPadding()
         )
     }
 }
@@ -123,7 +128,13 @@ private fun SomewhereFAB(
         icon = { DisplayIcon(icon) },
         onClick = onClick,
         expanded = expanded,
-        modifier = modifier
+        modifier = modifier,
+        elevation = FloatingActionButtonDefaults.elevation(
+            defaultElevation = 0.dp,
+            pressedElevation = 0.dp,
+            focusedElevation = 0.dp,
+            hoveredElevation = 0.dp
+        )
     )
 }
 

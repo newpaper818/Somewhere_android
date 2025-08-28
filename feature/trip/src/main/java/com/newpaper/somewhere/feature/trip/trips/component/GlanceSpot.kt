@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,6 +46,9 @@ import com.newpaper.somewhere.core.utils.convert.getStartTimeText
 import com.newpaper.somewhere.core.utils.convert.isFirstSpot
 import com.newpaper.somewhere.core.utils.convert.isLastSpot
 import com.newpaper.somewhere.feature.trip.R
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 
 private val DUMMY_SPACE_HEIGHT: Dp = 10.dp
 private val MIN_CARD_HEIGHT: Dp = 40.dp
@@ -61,7 +65,8 @@ internal fun GlanceSpot(
     date: Date,
     spot: Spot,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    hazeState: HazeState? = null,
 ){
     val tripTitleText = if (trip.titleText == null || trip.titleText == "") stringResource(id = R.string.no_title)
                         else trip.titleText!!
@@ -96,6 +101,27 @@ internal fun GlanceSpot(
             )) Color.Transparent
         else MaterialTheme.colorScheme.outline
 
+    val containerColor = if (hazeState == null) MaterialTheme.colorScheme.surface
+                        else Color.Transparent
+
+    val glanceSpotColor = MaterialTheme.colorScheme.surfaceBright
+
+    val glanceSpotModifier = modifier
+                                .height(70.dp)
+                                .widthIn(max = if (useBottomNavBar) 600.dp else 400.dp)
+                                .padding(horizontal = 16.dp)
+                                .clip(MaterialTheme.shapes.large)
+                                .border(1.dp, MaterialTheme.colorScheme.surfaceDim, MaterialTheme.shapes.large)
+//                                .shadow(70.dp, MaterialTheme.shapes.large)
+
+    val glanceSpotHazeModifier = if (hazeState == null) glanceSpotModifier
+                            else glanceSpotModifier.hazeEffect(state = hazeState) {
+                                blurRadius = 16.dp
+                                tints = listOf(
+                                    HazeTint(glanceSpotColor.copy(alpha = 0.8f))
+                                )
+                            }
+
 
     AnimatedVisibility(
         visible = visible,
@@ -108,13 +134,9 @@ internal fun GlanceSpot(
     ) {
         ClickableBox(
             onClick = onClick,
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = containerColor,
             shape = MaterialTheme.shapes.large,
-            modifier = modifier
-                .height(70.dp)
-                .widthIn(max = if (useBottomNavBar) 600.dp else 400.dp)
-                .padding(horizontal = 16.dp)
-                .shadow(6.dp, MaterialTheme.shapes.large)
+            modifier = glanceSpotHazeModifier
         ) {
             Row {
                 //line point
