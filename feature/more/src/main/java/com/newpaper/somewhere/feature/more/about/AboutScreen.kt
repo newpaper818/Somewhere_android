@@ -4,10 +4,8 @@ import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -120,13 +118,10 @@ private fun AboutScreen(
 ){
     val uriHandler = LocalUriHandler.current
 
-    val scaffoldModifier = if (use2Panes) modifier
-                    else modifier.navigationBarsPadding().displayCutoutPadding()
-
     val topAppBarHazeState = rememberHazeState()
 
     Scaffold(
-        modifier = scaffoldModifier,
+        modifier = modifier,
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {

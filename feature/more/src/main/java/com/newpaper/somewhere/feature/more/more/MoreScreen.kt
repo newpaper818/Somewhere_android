@@ -104,9 +104,7 @@ private fun MoreScreen(
     val itemModifier = Modifier.widthIn(max = itemMaxWidthSmall)
 
     Scaffold(
-        modifier = modifier
-            .fillMaxSize()
-            .navigationBarsPadding(),
+        modifier = modifier.fillMaxSize(),
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {

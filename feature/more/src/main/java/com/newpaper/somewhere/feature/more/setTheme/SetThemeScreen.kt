@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
@@ -83,13 +82,10 @@ private fun SetThemeScreen(
     val appThemeList = enumValues<AppTheme>()
     val mapThemeList = enumValues<MapTheme>()
 
-    val scaffoldModifier = if (use2Panes) modifier
-        else modifier.navigationBarsPadding()
-
     val topAppBarHazeState = rememberHazeState()
 
     Scaffold(
-        modifier = scaffoldModifier,
+        modifier = modifier,
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {

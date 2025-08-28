@@ -180,13 +180,11 @@ private fun SubscriptionScreen(
 
     modifier: Modifier = Modifier,
 ) {
-    val scaffoldModifier = if (use2Panes) modifier
-        else modifier.navigationBarsPadding()
 
     val topAppBarHazeState = rememberHazeState()
 
     Scaffold(
-        modifier = scaffoldModifier,
+        modifier = modifier,
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {

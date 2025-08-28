@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -120,9 +119,6 @@ private fun AccountScreen(
 
     modifier: Modifier = Modifier
 ) {
-    val scaffoldModifier = if (use2Panes) modifier
-        else modifier.navigationBarsPadding()
-
     var showSignOutDialog by rememberSaveable { mutableStateOf(false) }
 
     val topAppBarHazeState = rememberHazeState()
@@ -142,7 +138,7 @@ private fun AccountScreen(
     }
 
     Scaffold(
-        modifier = scaffoldModifier,
+        modifier = modifier,
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {

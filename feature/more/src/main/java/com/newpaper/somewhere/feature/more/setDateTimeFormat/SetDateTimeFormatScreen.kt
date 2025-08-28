@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -124,13 +123,10 @@ private fun SetDateTimeFormatScreen(
 
     val dateFormatList = enumValues<DateFormat>()
 
-    val scaffoldModifier = if (use2Panes) modifier
-        else modifier.navigationBarsPadding()
-
     val topAppBarHazeState = rememberHazeState()
 
     Scaffold(
-        modifier = scaffoldModifier,
+        modifier = modifier,
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {
