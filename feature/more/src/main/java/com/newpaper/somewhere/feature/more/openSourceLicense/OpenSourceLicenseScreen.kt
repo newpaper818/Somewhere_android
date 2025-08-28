@@ -3,10 +3,12 @@ package com.newpaper.somewhere.feature.more.openSourceLicense
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
@@ -56,16 +58,24 @@ fun OpenSourceLicenseRoute(
 
         val lazyListState = rememberLazyListState()
 
-        LibrariesContainer(
-            modifier = Modifier
-                .fillMaxSize()
-                .simpleVerticalScrollbar(lazyListState)
-                .hazeSource(state = topAppBarHazeState),
-            contentPadding = PaddingValues(top = paddingValues.calculateTopPadding()),
-            lazyListState = lazyListState,
-            showVersion = false,
-            itemSpacing = 8.dp
-        )
+        Box {
+            LibrariesContainer(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .hazeSource(state = topAppBarHazeState),
+                contentPadding = PaddingValues(top = paddingValues.calculateTopPadding(), bottom = 200.dp),
+                lazyListState = lazyListState,
+                showVersion = false,
+                itemSpacing = 8.dp
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = paddingValues.calculateTopPadding(), bottom = 16.dp)
+                    .simpleVerticalScrollbar(lazyListState)
+            )
+        }
     }
 }
 
