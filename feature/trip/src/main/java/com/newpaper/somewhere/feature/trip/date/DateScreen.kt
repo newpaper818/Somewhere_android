@@ -452,7 +452,7 @@ private fun DateScreen(
             SomewhereTopAppBar(
                 startPadding = startSpacerValue,
                 title = topBarTitle,
-                internetEnabled = dateUiInfo.internetEnabled,
+                internetEnabled = dateUiInfo.use2Panes || dateUiInfo.internetEnabled,
 
                 //back button
                 navigationIcon = if (dateUiInfo.use2Panes || dateUiInfo.isEditMode) null else TopAppBarIcon.back,
