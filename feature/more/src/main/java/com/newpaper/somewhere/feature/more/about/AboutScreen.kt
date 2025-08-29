@@ -1,6 +1,8 @@
 package com.newpaper.somewhere.feature.more.about
 
+import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,6 +32,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.play.core.review.ReviewException
+import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.play.core.review.model.ReviewErrorCode
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
@@ -122,6 +127,8 @@ private fun AboutScreen(
 
     modifier: Modifier = Modifier
 ){
+    val context = LocalContext.current
+
     val uriHandler = LocalUriHandler.current
 
     val topAppBarHazeState = if(useBlurEffect) rememberHazeState() else null
@@ -205,8 +212,26 @@ private fun AboutScreen(
                     ItemWithText(
                         text = stringResource(id = R.string.app_review),
                         onItemClick = {
+                            val activity = context as Activity
 
-                        },
+                            val manager = ReviewManagerFactory.create(context)
+                            val request = manager.requestReviewFlow()
+
+                            request.addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    // We got the ReviewInfo object
+                                    val reviewInfo = task.result
+
+                                    val flow = manager.launchReviewFlow(activity, reviewInfo)
+                                    flow.addOnCompleteListener { _ -> }
+                                } else {
+                                    // There was some problem, log or handle the error code.
+                                    @ReviewErrorCode val reviewErrorCode = (task.getException() as ReviewException).errorCode
+                                }
+                            }
+
+
+                        }
                     )
 
                     ItemDivider()
