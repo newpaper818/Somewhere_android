@@ -201,6 +201,16 @@ private fun AboutScreen(
                 ListGroupCard(
                     modifier = itemModifier
                 ) {
+                    //google play in app review
+                    ItemWithText(
+                        text = stringResource(id = R.string.app_review),
+                        onItemClick = {
+
+                        },
+                    )
+
+                    ItemDivider()
+
                     //send feedback - open web browser to google form
                     ItemWithText(
                         text = stringResource(id = R.string.send_feedback),
