@@ -82,6 +82,7 @@ internal fun SpotDetailPage(
             //title card
             TitleCard(
                 isEditMode = spotUiInfo.isEditMode,
+                useDelayEnter = false,
                 titleText = currentSpot.titleText,
                 onTitleChange = { newTitleText ->
                     currentSpot.setTitleText(

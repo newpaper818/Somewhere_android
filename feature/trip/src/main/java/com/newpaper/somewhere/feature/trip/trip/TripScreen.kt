@@ -612,6 +612,7 @@ private fun TripScreen(
                 item {
                     TitleCard(
                         isEditMode = isEditMode,
+                        useDelayEnter = true,
                         titleText = showingTrip.titleText,
                         onTitleChange = { newTitleText ->
                             showingTrip.setTitleText(updateTripState, newTitleText)

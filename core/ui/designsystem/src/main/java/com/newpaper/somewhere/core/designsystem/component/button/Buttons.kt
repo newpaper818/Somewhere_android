@@ -1,11 +1,6 @@
 package com.newpaper.somewhere.core.designsystem.component.button
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -52,6 +47,8 @@ import com.newpaper.somewhere.core.designsystem.icon.MyIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.designsystem.R
+import com.newpaper.somewhere.core.utils.enterVerticallyScaleIn
+import com.newpaper.somewhere.core.utils.exitVerticallyScaleOut
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -259,8 +256,8 @@ fun DeleteItemButton(
     Box(modifier = Modifier.height(40.dp)){
         AnimatedVisibility(
             visible = visible,
-            enter = fadeIn(tween(400)) + scaleIn(tween(300)),
-            exit = fadeOut(tween(300)) + scaleOut(tween(400))
+            enter = enterVerticallyScaleIn,
+            exit = exitVerticallyScaleOut
         ) {
             IconTextButton(
                 icon = IconTextButtonIcon.delete,
