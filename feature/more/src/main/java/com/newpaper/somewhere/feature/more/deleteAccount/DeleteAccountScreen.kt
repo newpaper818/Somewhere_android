@@ -10,6 +10,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -329,7 +330,7 @@ private fun DeleteAccountScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp),
             contentPadding = PaddingValues(spacerValue, 8.dp+ paddingValues.calculateTopPadding(), spacerValue, 200.dp),
             modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
-                            .hazeSource(state = topAppBarHazeState)
+                            .hazeSource(state = topAppBarHazeState).background(MaterialTheme.colorScheme.background)
                         else Modifier.fillMaxSize()
         ) {
             //user profile

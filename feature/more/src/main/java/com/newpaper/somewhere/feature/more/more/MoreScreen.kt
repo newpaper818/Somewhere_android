@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.more.more
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -124,7 +125,7 @@ private fun MoreScreen(
                 16.dp + paddingValues.calculateTopPadding(), endSpacerValue, 200.dp),
             modifier = if(hazeState != null) Modifier
                             .fillMaxSize()
-                            .hazeSource(state = hazeState)
+                            .hazeSource(state = hazeState).background(MaterialTheme.colorScheme.background)
                         else Modifier.fillMaxSize()
         ) {
             //setting

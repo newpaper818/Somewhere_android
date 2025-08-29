@@ -1,11 +1,13 @@
 package com.newpaper.somewhere.feature.profile.profile
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -129,7 +131,7 @@ fun ProfileScreen(
             contentPadding = PaddingValues(spacerValue, 8.dp + paddingValues.calculateTopPadding(), spacerValue, 200.dp),
             modifier = if(hazeState != null) Modifier
                             .fillMaxSize()
-                            .hazeSource(state = hazeState)
+                            .hazeSource(state = hazeState).background(MaterialTheme.colorScheme.background)
                         else Modifier.fillMaxSize()
         ){
 

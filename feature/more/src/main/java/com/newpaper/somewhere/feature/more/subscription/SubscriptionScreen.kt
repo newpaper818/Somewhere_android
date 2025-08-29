@@ -7,6 +7,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -221,7 +222,7 @@ private fun SubscriptionScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp),
             contentPadding = PaddingValues(startSpacerValue, 16.dp + paddingValues.calculateTopPadding(), endSpacerValue, 200.dp),
             modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
-                            .hazeSource(state = topAppBarHazeState)
+                            .hazeSource(state = topAppBarHazeState).background(MaterialTheme.colorScheme.background)
                         else Modifier.fillMaxSize()
         ) {
 //            if(BuildConfig.DEBUG){

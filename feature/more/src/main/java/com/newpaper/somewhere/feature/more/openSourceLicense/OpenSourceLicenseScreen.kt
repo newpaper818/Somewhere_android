@@ -3,6 +3,7 @@ package com.newpaper.somewhere.feature.more.openSourceLicense
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -62,7 +63,7 @@ fun OpenSourceLicenseRoute(
         Box {
             LibrariesContainer(
                 modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
-                                .hazeSource(state = topAppBarHazeState)
+                                .hazeSource(state = topAppBarHazeState).background(MaterialTheme.colorScheme.background)
                             else Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(top = paddingValues.calculateTopPadding(), bottom = 200.dp),
                 lazyListState = lazyListState,

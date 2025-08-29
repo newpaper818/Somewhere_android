@@ -1,6 +1,7 @@
 package com.newpaper.somewhere.feature.trip.trips
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -365,10 +366,7 @@ private fun TripsScreen(
 
 
     MyScaffold(
-        modifier = modifier
-//            .navigationBarsPadding()
-//            .displayCutoutPadding()
-            .imePadding(),
+        modifier = modifier.imePadding(),
 
         //top app bar
         topBar = {
@@ -516,7 +514,7 @@ private fun TripsScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(spacerValue, 16.dp + paddingValues.calculateTopPadding(), spacerValue, 400.dp),
-                modifier = if (hazeState != null) lazyColumnModifier.hazeSource(state = hazeState)
+                modifier = if (hazeState != null) lazyColumnModifier.hazeSource(state = hazeState).background(MaterialTheme.colorScheme.background)
                             else lazyColumnModifier
             ) {
                 if (adView != null) {
