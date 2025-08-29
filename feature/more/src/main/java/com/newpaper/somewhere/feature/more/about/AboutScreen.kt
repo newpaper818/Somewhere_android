@@ -1,6 +1,7 @@
 package com.newpaper.somewhere.feature.more.about
 
 import android.content.Intent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -158,7 +159,7 @@ private fun AboutScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(startSpacerValue, 16.dp + paddingValues.calculateTopPadding(), endSpacerValue, 200.dp),
             modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
-                            .hazeSource(state = topAppBarHazeState)
+                            .hazeSource(state = topAppBarHazeState).background(MaterialTheme.colorScheme.background)
                         else Modifier.fillMaxSize()
         ) {
             item{

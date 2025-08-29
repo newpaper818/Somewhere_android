@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -583,7 +584,7 @@ private fun TripScreen(
                     spacerValue, 16.dp + paddingValues.calculateTopPadding(), if (use2Panes) spacerValue / 2 else spacerValue, 200.dp
                 ),
                 modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
-                                .hazeSource(state = topAppBarHazeState)
+                                .hazeSource(state = topAppBarHazeState).background(MaterialTheme.colorScheme.background)
                             else Modifier.fillMaxSize()
             ) {
 

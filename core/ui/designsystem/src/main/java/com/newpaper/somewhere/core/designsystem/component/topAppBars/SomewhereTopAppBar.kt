@@ -68,10 +68,10 @@ fun SomewhereTopAppBar(
     hazeState: HazeState? = null
 ) {
 
-    val containerColor = if (hazeState == null) MaterialTheme.colorScheme.surface
+    val containerColor = if (hazeState == null) MaterialTheme.colorScheme.background
                             else Color.Transparent
 
-    val topAppBarColor = MaterialTheme.colorScheme.surface
+    val topAppBarColor = MaterialTheme.colorScheme.background
     val topAppBarModifier = if (hazeState == null) Modifier
                             else Modifier.hazeEffect(state = hazeState) {
                                 blurRadius = 16.dp

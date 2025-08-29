@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.more.account
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -174,7 +175,7 @@ private fun AccountScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(startSpacerValue, 8.dp + paddingValues.calculateTopPadding(), endSpacerValue, 200.dp),
             modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
-                            .hazeSource(state = topAppBarHazeState)
+                            .hazeSource(state = topAppBarHazeState).background(MaterialTheme.colorScheme.background)
                         else Modifier.fillMaxSize()
         ) {
             //user profile
