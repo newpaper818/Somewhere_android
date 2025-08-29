@@ -65,6 +65,10 @@ dependencies {
     //haze
     implementation(libs.haze)
 
+    //google play in app review
+    implementation(libs.android.play.review)
+    implementation(libs.android.play.review.ktx)
+
     //test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
