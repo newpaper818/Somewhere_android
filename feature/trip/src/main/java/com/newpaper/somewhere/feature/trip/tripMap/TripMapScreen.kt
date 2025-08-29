@@ -245,7 +245,8 @@ private fun TripMapScreenVertical(
                     modifier = Modifier
                         .width(300.dp)
                         .padding(bottom = bottomPadding.dp)
-                        .padding(horizontal = 4.dp),
+                        .padding(horizontal = 4.dp)
+                        .navigationBarsPadding(),
                     snackbar = {
                         Snackbar(
                             snackbarData = it,
@@ -392,7 +393,7 @@ private fun TripMapScreenHorizontal(
             ) {
                 SnackbarHost(
                     hostState = snackBarHostState,
-                    modifier = Modifier.width(300.dp),
+                    modifier = Modifier.width(300.dp).navigationBarsPadding(),
                     snackbar = {
                         Snackbar(
                             snackbarData = it,

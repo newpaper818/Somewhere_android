@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -304,7 +306,7 @@ private fun InvitedFriendsScreen(
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarHostState,
-                modifier = Modifier.width(500.dp),
+                modifier = Modifier.width(500.dp).navigationBarsPadding(),
                 snackbar = {
                     Snackbar(
                         snackbarData = it,
@@ -384,7 +386,11 @@ private fun InvitedFriendsScreen(
 
 
             //add friend button
-            Column {
+            Column(
+                modifier = Modifier
+                    .padding(bottom = 32.dp)
+                    .navigationBarsPadding()
+            ) {
                 AnimatedVisibility(
                     visible = appUserIsTripManager && internetEnabled && friendList.size < getMaxInviteFriends(appUserData.isUsingSomewherePro),
                     enter = slideInVertically(
@@ -396,8 +402,6 @@ private fun InvitedFriendsScreen(
                 ) {
                     AddFriendButton(onClick = navigateToInviteFriend)
                 }
-
-                MySpacerColumn(32.dp)
             }
         }
     }

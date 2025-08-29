@@ -184,7 +184,8 @@ fun SetLocationDialog(
                         bottom = if (LocalConfiguration.current.screenWidthDp > 670) 90.dp
                         else 150.dp
                     )
-                    .imePadding(),
+                    .imePadding()
+                    .navigationBarsPadding(),
                 snackbar = {
                     Snackbar(
                         snackbarData = it,
