@@ -43,9 +43,9 @@
     <string name="theme">테마</string>
     <string name="account">계정</string>
     <string name="feedback">피드백</string>
-    <string name="app_review">앱 리뷰</string>
+    <string name="app_review">앱 리뷰하기</string>
     <string name="send_feedback">피드백 보내기</string>
-    <string name="bug_report">버그 신고</string>
+    <string name="bug_report">버그 신고하기</string>
     <string name="about">앱 정보</string>
 
     <!--setDateTimeFormat========================================================================-->
