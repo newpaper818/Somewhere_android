@@ -1,7 +1,10 @@
 package com.newpaper.somewhere.feature.trip.spot.component
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -147,6 +151,14 @@ fun SpotMapCard(
             )
 
             MySpacerColumn(height = 16.dp)
+
+            AnimatedVisibility(
+                visible = isMapExpand && !use2Panes,
+                enter = expandVertically(tween(300)),
+                exit = shrinkVertically(tween(300))
+            ) {
+                Box(modifier = Modifier.navigationBarsPadding())
+            }
         }
     }
 }
