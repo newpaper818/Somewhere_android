@@ -659,7 +659,7 @@ private fun TripsScreen(
                 showAds = adView != null,
                 use2Panes = tripsUiInfo.use2Panes,
                 modifier = Modifier
-                    .padding(spacerValue, 16.dp, spacerValue, 0.dp)
+                    .padding(spacerValue, 0.dp, spacerValue, 0.dp)
                     .padding(paddingValues)
             )
         }
