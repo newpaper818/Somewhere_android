@@ -56,10 +56,10 @@ fun GoogleBannerAd(
     val modifier =
         if (!useFullBanner) Modifier
             .size(320.dp, 50.dp) //BANNER
-            .background(MaterialTheme.colorScheme.surfaceDim)
+            .background(MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.5f))
         else Modifier
             .size(468.dp, 60.dp) //FULL_BANNER
-            .background(MaterialTheme.colorScheme.surfaceDim)
+            .background(MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.5f))
 
     Box(
         modifier = modifier
@@ -88,7 +88,7 @@ fun GoogleMediumRectangleAd(
 
     MyCard(
         colors = CardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceDim,
+            containerColor = MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.5f),
             contentColor = MaterialTheme.colorScheme.onSurface,
             disabledContainerColor = MaterialTheme.colorScheme.surfaceBright,
             disabledContentColor = MaterialTheme.colorScheme.onSurface
