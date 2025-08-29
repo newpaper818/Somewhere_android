@@ -7,8 +7,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
@@ -93,7 +91,10 @@ import com.newpaper.somewhere.core.utils.convert.setSpotType
 import com.newpaper.somewhere.core.utils.convert.setStartTime
 import com.newpaper.somewhere.core.utils.convert.setTitleText
 import com.newpaper.somewhere.core.utils.enterVertically
+import com.newpaper.somewhere.core.utils.enterVerticallyScaleIn
+import com.newpaper.somewhere.core.utils.enterVerticallyScaleInDelay
 import com.newpaper.somewhere.core.utils.exitVertically
+import com.newpaper.somewhere.core.utils.exitVerticallyScaleOut
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.dialog.memo.MemoDialog
 import com.newpaper.somewhere.feature.dialog.setColor.SetColorDialog
@@ -751,12 +752,8 @@ private fun DatePage(
         item {
             AnimatedVisibility(
                 visible = !isEditMode,
-                enter = scaleIn(animationSpec = tween(300))
-                        + expandVertically(animationSpec = tween(300))
-                        + fadeIn(animationSpec = tween(300)),
-                exit = scaleOut(animationSpec = tween(300))
-                        + shrinkVertically(animationSpec = tween(300))
-                        + fadeOut(animationSpec = tween(300))
+                enter = enterVerticallyScaleInDelay,
+                exit = exitVerticallyScaleOut
             ) {
                 Column {
                     InformationCard(
@@ -1000,8 +997,8 @@ private fun DatePage(
             Box(modifier = Modifier.height(40.dp)){
                 AnimatedVisibility(
                     visible = isEditMode && spotList.size < 100,
-                    enter = fadeIn(tween(300)) + scaleIn(tween(300)),
-                    exit = fadeOut(tween(300)) + scaleOut(tween(300))
+                    enter = enterVerticallyScaleIn,
+                    exit = exitVerticallyScaleOut
                 ) {
                     NewItemButton(
                         text = stringResource(id = R.string.new_spot),

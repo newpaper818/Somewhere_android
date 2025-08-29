@@ -10,8 +10,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -71,6 +69,8 @@ import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.ui.R
 import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.dragAndDropHorizontal
+import com.newpaper.somewhere.core.utils.enterVerticallyScaleIn
+import com.newpaper.somewhere.core.utils.exitVerticallyScaleOut
 import kotlinx.coroutines.launch
 
 private const val IMAGE_MAX_COUNT = 6
@@ -148,12 +148,8 @@ fun ImageCard(
 
     AnimatedVisibility(
         visible = isEditMode || imagePathList.isNotEmpty(),
-        enter = scaleIn(animationSpec = tween(300))
-                + expandVertically(animationSpec = tween(300))
-                + fadeIn(animationSpec = tween(300)),
-        exit = scaleOut(animationSpec = tween(300))
-                + shrinkVertically(animationSpec = tween(300))
-                + fadeOut(animationSpec = tween(300))
+        enter = enterVerticallyScaleIn,
+        exit = exitVerticallyScaleOut
     ) {
 
         Column(

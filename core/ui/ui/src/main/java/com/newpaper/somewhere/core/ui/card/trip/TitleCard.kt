@@ -3,10 +3,6 @@ package com.newpaper.somewhere.core.ui.card.trip
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -53,12 +49,16 @@ import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.MyColor
 import com.newpaper.somewhere.core.ui.MyTextField
 import com.newpaper.somewhere.core.ui.ui.R
+import com.newpaper.somewhere.core.utils.enterVerticallyScaleIn
+import com.newpaper.somewhere.core.utils.enterVerticallyScaleInDelay
+import com.newpaper.somewhere.core.utils.exitVerticallyScaleOut
 
 const val MAX_TITLE_LENGTH = 100
 
 @Composable
 fun TitleCard(
     isEditMode: Boolean,
+    useDelayEnter: Boolean,
     titleText: String?,
     onTitleChange: (String) -> Unit,
     focusManager: FocusManager,
@@ -68,12 +68,8 @@ fun TitleCard(
 ){
     AnimatedVisibility(
         visible = isEditMode,
-        enter = scaleIn(animationSpec = tween(300, delayMillis = 30))
-                + expandVertically(animationSpec = tween(300))
-                + fadeIn(animationSpec = tween(250, delayMillis = 30)),
-        exit = scaleOut(animationSpec = tween(300))
-                + shrinkVertically(animationSpec = tween(300, delayMillis = 30))
-                + fadeOut(animationSpec = tween(250))
+        enter = if (useDelayEnter) enterVerticallyScaleInDelay else enterVerticallyScaleIn,
+        exit = exitVerticallyScaleOut
     ) {
         Column(modifier = modifier) {
             Row {
@@ -106,12 +102,8 @@ fun TitleWithColorCard(
 
     AnimatedVisibility(
         visible = isEditMode,
-        enter = scaleIn(animationSpec = tween(300, delayMillis = 30))
-                + expandVertically(animationSpec = tween(300))
-                + fadeIn(animationSpec = tween(250, delayMillis = 30)),
-        exit = scaleOut(animationSpec = tween(300))
-                + shrinkVertically(animationSpec = tween(300, delayMillis = 30))
-                + fadeOut(animationSpec = tween(250))
+        enter = enterVerticallyScaleInDelay,
+        exit = exitVerticallyScaleOut
     ) {
         Column(modifier = modifier) {
             Row {
@@ -284,6 +276,7 @@ private fun Preview_TitleCard_Edit(){
         ) {
             TitleCard(
                 isEditMode = true,
+                useDelayEnter = true,
                 titleText = "title text",
                 onTitleChange = {},
                 focusManager = LocalFocusManager.current,
@@ -305,6 +298,7 @@ private fun Preview_TitleCard_Edit_Empty(){
         ) {
             TitleCard(
                 isEditMode = true,
+                useDelayEnter = true,
                 titleText = null,
                 onTitleChange = {},
                 focusManager = LocalFocusManager.current,
