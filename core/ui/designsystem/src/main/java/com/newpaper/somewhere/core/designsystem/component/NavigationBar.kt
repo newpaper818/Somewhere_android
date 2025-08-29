@@ -151,6 +151,7 @@ fun SomewhereNavigationRailBarItem(
     labelText: String
 ){
     NavigationRailItem(
+        modifier = Modifier.padding(vertical = 10.dp),
         selected = selected,
         onClick = onClick,
         icon = {
