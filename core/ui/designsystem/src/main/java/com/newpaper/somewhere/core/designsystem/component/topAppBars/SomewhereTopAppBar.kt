@@ -76,7 +76,7 @@ fun SomewhereTopAppBar(
                             else Modifier.hazeEffect(state = hazeState) {
                                 blurRadius = 16.dp
                                 tints = listOf(
-                                    HazeTint(topAppBarColor.copy(alpha = 0.7f))
+                                    HazeTint(topAppBarColor.copy(alpha = 0.75f))
                                 )
                                 inputScale = HazeInputScale.Fixed(0.5f)
                             }
