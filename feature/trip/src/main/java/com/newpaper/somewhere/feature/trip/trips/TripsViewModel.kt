@@ -387,8 +387,8 @@ class TripsViewModel @Inject constructor(
         )
 
         //update tripUiState tempTripList
-        val tempTripList = (commonTripUiState.value.tripInfo.tempTrips ?: listOf<Trip>()) .toMutableList()
-        tempTripList.add(newTrip)
+        val tempTripList = (commonTripUiState.value.tripInfo.tempTrips ?: listOf<Trip>()).toMutableList()
+        tempTripList.add(0, newTrip)
 
         commonTripUiStateRepository._commonTripUiState.update {
             it.copy(
@@ -407,8 +407,8 @@ class TripsViewModel @Inject constructor(
     ): Trip{
         //get last orderId
         var newOrderId = 0
-        val lastTrip = commonTripUiState.value.tripInfo.trips?.lastOrNull()
-        if (lastTrip != null) { newOrderId = lastTrip.orderId + 1 }
+        val lastTrip = commonTripUiState.value.tripInfo.trips?.firstOrNull()
+        if (lastTrip != null) { newOrderId = lastTrip.orderId - 1 }
 
         val newId = getTripId(
             managerId = appUserId,
