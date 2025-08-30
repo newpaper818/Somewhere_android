@@ -89,9 +89,9 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
             searchPlace(it)
         }
 
-        placeInfoList.forEach{ place ->
-            Log.d("gemini", "name: ${place.displayName}, id: ${place.id}")
-        }
+//        placeInfoList.forEach{ place ->
+//            Log.d("gemini", "name: ${place.displayName}, id: ${place.id}")
+//        }
 
         return if (placeInfoList.isEmpty())
             null

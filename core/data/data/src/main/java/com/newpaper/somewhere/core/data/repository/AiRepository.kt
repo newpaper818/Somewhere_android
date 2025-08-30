@@ -47,7 +47,7 @@ class AiRepository @Inject constructor(
         val aiCreatedTripJson = aiRemoteDataSource.getTripPlan(
             places = places,
             city = city,
-            tripDate = "$startDate ~ $endDate",
+            tripDate = "$startDate to $endDate",
             tripWith = tripWith,
             tripType = tripType,
             language = language
