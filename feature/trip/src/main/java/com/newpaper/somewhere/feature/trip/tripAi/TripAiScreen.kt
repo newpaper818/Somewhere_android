@@ -48,7 +48,6 @@ import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.ui.loadAndShowRewardedAd
-import com.newpaper.somewhere.core.ui.loadRewardedAd
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
@@ -143,22 +142,6 @@ fun TripAiRoute(
                 navigateUp()
             }
         )
-    }
-
-    //load ad
-    LaunchedEffect(tripAiUiState.tripAiPhase) {
-        if (
-            !appUserData.isUsingSomewherePro
-            && tripAiUiState.tripAiPhase == TripAiPhase.TRIP_TYPE
-            && rewardedInterstitialAd == null
-        ){
-            loadRewardedAd(
-                context = context,
-                onAdLoaded = { ad ->
-                    rewardedInterstitialAd = ad
-                }
-            )
-        }
     }
 
 
