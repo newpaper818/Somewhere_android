@@ -88,24 +88,24 @@
     <string name="not_selected">선택되지 않음</string>
 
     <string name="where_are_you_going">어디로 여행하나요?</string>
-    <string name="type_a_destination">목적지를 입력하세요.</string>
-    <string name="type_city_or_country_name">도시 또는 나라 이름을 입력하세요.</string>
+    <string name="type_a_destination">목적지를 입력하세요</string>
+    <string name="type_city_or_country_name">도시 또는 나라 이름을 입력하세요</string>
 
     <string name="when_are_you_going">언제 여행 가나요?</string>
     <string name="starts">시작일</string>
     <string name="ends">종료일</string>
     <string name="date_range">%s - %s</string>
-    <string name="choose_a_date_range">날짜 범위를 선택하세요. (최대 15일)</string>
-    <string name="date_range_error">여행 일수는 16일보다 작아야 해요.</string>
+    <string name="choose_a_date_range">날짜 범위를 선택하세요 (최대 15일)</string>
+    <string name="date_range_error">여행 일수는 16일보다 작아야 해요</string>
 
     <string name="who_are_you_traveling_with">누구와 여행하나요?</string>
-    <string name="select_one">하나 선택하세요.</string>
+    <string name="select_one">하나 선택하세요</string>
 
     <string name="whats_your_trip_type">여행 유형은 무엇인가요?</string>
-    <string name="select_multiple">여러개 선택하세요.</string>
+    <string name="select_multiple">여러개 선택하세요</string>
 
-    <string name="creating_trip_with_ai">AI로 여행 만드는 중…</string>
-    <string name="it_may_took_a_while">시간이 약간 걸릴 수 있어요.</string>
+    <string name="creating_trip_with_ai">AI 여행 생성 중…</string>
+    <string name="it_may_took_a_while">시간이 약간 걸릴 수 있어요</string>
     <string name="it_may_contain_incorrect_information">잘못된 정보가 포함되어 있을 수 있어요.</string>
     <string name="something_went_wrong">뭔가 잘못되었어요…</string>
     <string name="close">닫기</string>
