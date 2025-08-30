@@ -35,7 +35,7 @@
     <!--MyQrCodeDialog.kt-->
     <string name="no_name">이름 없음</string>
     <string name="no_email">이메일 없음</string>
-    <string name="scan_this_qr_code_to_invited">이 QR 코드를 스캔해서\n친구의 여행에 초대받으세요.</string>
+    <string name="scan_this_qr_code_to_invited">이 QR 코드를 스캔해서\n친구의 여행에 초대받으세요</string>
     <string name="close">닫기</string>
 
     <!--TripCreationOptionsDialog.kt-->
