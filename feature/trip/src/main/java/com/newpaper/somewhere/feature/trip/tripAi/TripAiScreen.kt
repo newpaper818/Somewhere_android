@@ -129,17 +129,7 @@ fun TripAiRoute(
         }
     }
 
-    val adView =
-        if (!appUserData.isUsingSomewherePro) {
-            AdView(context).apply {
-                setAdSize(AdSize.MEDIUM_RECTANGLE)
-                adUnitId = if (BuildConfig.DEBUG) BANNER_AD_UNIT_ID_TEST
-                            else BANNER_AD_UNIT_ID
 
-                loadAd(AdRequest.Builder().build())
-            }
-        }
-        else null
 
     if (tripAiUiState.showExitDialog) {
         TwoButtonsDialog(
@@ -227,7 +217,6 @@ fun TripAiRoute(
         internetEnabled = internetEnabled,
         dateTimeFormat = dateTimeFormat,
         tripAiUiState = tripAiUiState,
-        adView = adView,
 
         onClickBack = onClickBack,
 
@@ -252,7 +241,6 @@ fun TripAiScreen(
     internetEnabled: Boolean,
     dateTimeFormat: DateTimeFormat,
     tripAiUiState: TripAiUiState,
-    adView: AdView?,
 
     onClickBack: () -> Unit,
 
@@ -406,6 +394,19 @@ fun TripAiScreen(
                         }
 
                         TripAiPhase.CREATE_TRIP -> {
+                            // rectangle ad
+                            val adView =
+                                if (!isUsingSomewherePro) {
+                                    AdView(context).apply {
+                                        setAdSize(AdSize.MEDIUM_RECTANGLE)
+                                        adUnitId = if (BuildConfig.DEBUG) BANNER_AD_UNIT_ID_TEST
+                                                    else BANNER_AD_UNIT_ID
+
+                                        loadAd(AdRequest.Builder().build())
+                                    }
+                                }
+                                else null
+
                             CreateTripPage(
                                 internetEnabled = internetEnabled,
                                 adView = adView,
