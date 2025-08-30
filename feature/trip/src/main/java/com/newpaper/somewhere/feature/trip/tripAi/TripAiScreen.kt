@@ -300,7 +300,7 @@ fun TripAiScreen(
                             //to next page
                             coroutineScope.launch {
                                 pagerState.animateScrollToPage(
-                                    pagerState.currentPage + 1
+                                    tripAiPhaseList.size - 1
                                 )
                             }
                         }
