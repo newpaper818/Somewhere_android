@@ -171,7 +171,7 @@ private fun AboutScreen(
                 AppIconWithAppNameCard(
                     modifier = itemModifier
                 )
-                MySpacerColumn(height = 24.dp)
+                MySpacerColumn(height = 32.dp)
 
                 ItemDivider(modifier = itemModifier)
             }
