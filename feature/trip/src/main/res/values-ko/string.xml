@@ -107,7 +107,7 @@
     <string name="select_multiple">여러개 선택하세요</string>
 
     <string name="creating_trip_with_ai">AI 여행 생성 중…</string>
-    <string name="it_may_took_a_while">시간이 약간 걸릴 수 있어요</string>
+    <string name="it_may_took_a_while">시간이 약간 걸릴 수 있어요.</string>
     <string name="it_may_contain_incorrect_information">잘못된 정보가 포함되어 있을 수 있어요.</string>
     <string name="something_went_wrong">뭔가 잘못되었어요…</string>
     <string name="close">닫기</string>
