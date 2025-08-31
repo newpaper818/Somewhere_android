@@ -296,6 +296,11 @@ fun SomewhereNavHost(
                         navOptions = navOptions { launchSingleTop = true }
                     )
                 },
+                navigateToSubscription = {
+                    mainNavController.navigateToSubscription(
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
+                },
                 hazeState = hazeState
             )
 

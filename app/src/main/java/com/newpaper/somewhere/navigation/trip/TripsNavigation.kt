@@ -50,6 +50,7 @@ fun NavGraphBuilder.tripsScreen(
     navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
     navigateToTripAi: () -> Unit,
     navigateToGlanceSpot: (glance: Glance) -> Unit,
+    navigateToSubscription: () -> Unit,
 
     hazeState: HazeState?
 ) {
@@ -107,6 +108,7 @@ fun NavGraphBuilder.tripsScreen(
                     navigateToTrip = navigateToTrip,
                     navigateToTripAi = navigateToTripAi,
                     navigateToGlanceSpot = navigateToGlanceSpot,
+                    navigateToSubscription = navigateToSubscription,
 
                     hazeState = hazeState
                 )

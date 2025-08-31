@@ -1,9 +1,11 @@
 package com.newpaper.somewhere.feature.trip.trips
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,6 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -44,6 +47,7 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.button.NewTripExtendedFAB
+import com.newpaper.somewhere.core.designsystem.component.button.UpgradeToSomewhereProButton
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
@@ -59,6 +63,8 @@ import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
 import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.convert.getAllImagesPath
 import com.newpaper.somewhere.core.utils.convert.getMaxTrips
+import com.newpaper.somewhere.core.utils.enterVerticallyDelay
+import com.newpaper.somewhere.core.utils.exitVertically
 import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrLeaveTripDialog
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
@@ -100,6 +106,7 @@ fun TripsRoute(
     navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
     navigateToTripAi: () -> Unit,
     navigateToGlanceSpot: (glance: Glance) -> Unit,
+    navigateToSubscription: () -> Unit,
 
     hazeState: HazeState?,
 
@@ -294,10 +301,9 @@ fun TripsRoute(
                 else
                     navigateToTrip(isNewTrip, trip!!)
             },
-            _navigateToTripAi = {
-                navigateToTripAi()
-            },
+            _navigateToTripAi = { navigateToTripAi() },
             _navigateToGlanceSpot = { navigateToGlanceSpot(tripsUiState.glance) },
+            _navigateToSubscription = { navigateToSubscription() }
         ),
 
         lazyListState = lazyListState,
@@ -525,6 +531,28 @@ private fun TripsScreen(
                         )
 
                         MySpacerColumn(height = 8.dp)
+
+                        AnimatedVisibility(
+                            visible = !loadingTrips
+                                    && !appUserData.isUsingSomewherePro
+                                    && showingTrips.size >= getMaxTrips(false),
+                            enter = enterVerticallyDelay,
+                            exit = exitVertically
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.maximum_number_of_trips_reached),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center
+                                )
+
+                                //upgrade to Somewhere Pro button
+                                UpgradeToSomewhereProButton(onClick = { navigate.navigateToSubscription() })
+                            }
+                        }
                     }
                 }
 

@@ -131,6 +131,7 @@
     <string name="no_date">일정 없음</string>
     <string name="image">사진</string>
 
+    <string name="maximum_number_of_trips_reached">여행 개수 한도에 도달했어요</string>
     <string name="my_trips">내 여행</string>
     <string name="shared_trips">공유받은 여행</string>
 
