@@ -12,6 +12,7 @@ import androidx.compose.animation.shrinkVertically
 
 
 val enterVertically = expandVertically(tween(350)) + fadeIn(tween(300, delayMillis = 200))
+val enterVerticallyDelay = expandVertically(tween(350, delayMillis = 800)) + fadeIn(tween(300, delayMillis = 1000))
 val exitVertically = shrinkVertically(tween(350, delayMillis = 150)) + fadeOut(tween(300))
 
 val enterHorizontally = expandHorizontally(tween(350)) + fadeIn(tween(300, delayMillis = 200))

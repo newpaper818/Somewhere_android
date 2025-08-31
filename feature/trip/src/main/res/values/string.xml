@@ -132,6 +132,7 @@
     <string name="no_date">No Date</string>
     <string name="image">Image</string>
 
+    <string name="maximum_number_of_trips_reached">Maximum trips reached</string>
     <string name="my_trips">My trips</string>
     <string name="shared_trips">Shared trips</string>
 
