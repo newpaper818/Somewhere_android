@@ -39,8 +39,8 @@
     <string name="close">Close</string>
 
     <!--TripCreationOptionsDialog.kt-->
-    <string name="enter_your_own">Enter your own</string>
-    <string name="create_with_AI">Create with AI</string>
+    <string name="enter_your_own">Plan manually</string>
+    <string name="create_with_AI">Plan with AI</string>
     <string name="beta">BETA</string>
 
     <!--SelectDateDialog.kt-->
