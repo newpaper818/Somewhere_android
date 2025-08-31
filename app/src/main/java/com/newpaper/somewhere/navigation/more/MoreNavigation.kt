@@ -205,7 +205,7 @@ private fun MoreDetailPane(
             navigateUp = { }
         )
 
-        setThemeScreen(
+        setScreenStyleScreen(
             appViewModel = appViewModel,
             externalState = externalState,
             navigateUp = { }
