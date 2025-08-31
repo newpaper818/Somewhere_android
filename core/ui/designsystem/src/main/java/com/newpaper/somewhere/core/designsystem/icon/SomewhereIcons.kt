@@ -15,8 +15,8 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.rounded.AccessTime
 import androidx.compose.material.icons.rounded.AccountBalance
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.BeachAccess
-import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material.icons.rounded.Bookmarks
 import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.material.icons.rounded.Close
@@ -25,6 +25,7 @@ import androidx.compose.material.icons.rounded.CropOriginal
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.DragHandle
+import androidx.compose.material.icons.rounded.DriveFileRenameOutline
 import androidx.compose.material.icons.rounded.East
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.EditNote
@@ -255,8 +256,8 @@ object MyIcons {
     val rightArrowToSmall = MyIcon(Icons.Rounded.East,  18.dp, true, null, R.string.to)
 
     //trip creation options dialog
-    val manual = MyIcon(Icons.Rounded.Edit,    26.dp, false, null, null)
-    val ai = MyIcon(Icons.Rounded.Bolt,         26.dp, false, null, null)
+    val manual = MyIcon(Icons.Rounded.DriveFileRenameOutline,   26.dp, false, null, null)
+    val ai = MyIcon(Icons.Rounded.AutoAwesome,                  26.dp, false, null, null)
 
     //set time dialog
     val switchToTextInput = MyIcon(Icons.Outlined.Keyboard,   22.dp, true, null, R.string.switch_to_keyboard_input)
