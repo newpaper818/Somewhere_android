@@ -2,6 +2,8 @@ package com.newpaper.somewhere.feature.trip.invitedFriend
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -22,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -31,10 +35,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.newpaper.somewhere.core.designsystem.component.button.AddFriendButton
+import com.newpaper.somewhere.core.designsystem.component.button.UpgradeToSomewhereProButton
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
@@ -69,6 +75,7 @@ fun InvitedFriendsRoute(
 
     navigateUp: () -> Unit,
     navigateToInviteFriend: () -> Unit,
+    navigateToSubscription: () -> Unit,
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
 
     modifier: Modifier = Modifier,
@@ -252,6 +259,7 @@ fun InvitedFriendsRoute(
         downloadImage = invitedFriendViewModel::getImage,
         navigateUp = navigateUp,
         navigateToInviteFriend = navigateToInviteFriend,
+        navigateToSubscription = navigateToSubscription,
         modifier = modifier
     )
 
@@ -284,6 +292,7 @@ private fun InvitedFriendsScreen(
     downloadImage: (imagePath: String, tripManagerId: String, (Boolean) -> Unit) -> Unit,
     navigateUp: () -> Unit,
     navigateToInviteFriend: () -> Unit,
+    navigateToSubscription: () -> Unit,
 
     modifier: Modifier = Modifier
 ) {
@@ -382,7 +391,64 @@ private fun InvitedFriendsScreen(
                         }
                     }
                 }
+
+
+
+                item {
+                    Column(
+                        modifier = Modifier.heightIn(min = 200.dp)
+                    ) {
+                        AnimatedVisibility(
+                            visible = !appUserData.isUsingSomewherePro
+                                    && appUserIsTripManager
+                                    && friendList.size >= getMaxInviteFriends(false),
+                            enter = fadeIn(tween(500)),
+                            exit = fadeOut(tween(500))
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                MySpacerColumn(16.dp)
+
+                                Text(
+                                    text = stringResource(R.string.upgrade_to_somewhere_pro_to_invite_more_friends),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center
+                                )
+
+                                MySpacerColumn(4.dp)
+
+                                //upgrade to Somewhere Pro button
+                                UpgradeToSomewhereProButton(onClick = navigateToSubscription)
+                            }
+                        }
+
+
+
+                        AnimatedVisibility(
+                            visible = appUserData.isUsingSomewherePro
+                                    && appUserIsTripManager
+                                    && friendList.size >= getMaxInviteFriends(true),
+                            enter = fadeIn(tween(500)),
+                            exit = fadeOut(tween(500))
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.maximum_number_of_invited_friends_reached),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                }
             }
+
+
+
 
 
             //add friend button
@@ -392,7 +458,7 @@ private fun InvitedFriendsScreen(
                     .navigationBarsPadding()
             ) {
                 AnimatedVisibility(
-                    visible = appUserIsTripManager && internetEnabled && friendList.size < getMaxInviteFriends(appUserData.isUsingSomewherePro),
+                    visible = !loading && appUserIsTripManager && friendList.size < getMaxInviteFriends(appUserData.isUsingSomewherePro),
                     enter = slideInVertically(
                         animationSpec = tween(500),
                         initialOffsetY = { (it * 2.5f).toInt() }),
@@ -400,7 +466,10 @@ private fun InvitedFriendsScreen(
                         animationSpec = tween(500),
                         targetOffsetY = { (it * 2.5f).toInt() })
                 ) {
-                    AddFriendButton(onClick = navigateToInviteFriend)
+                    AddFriendButton(
+                        onClick = navigateToInviteFriend,
+                        enabled = !loading && appUserIsTripManager && internetEnabled && friendList.size < getMaxInviteFriends(appUserData.isUsingSomewherePro)
+                    )
                 }
             }
         }
