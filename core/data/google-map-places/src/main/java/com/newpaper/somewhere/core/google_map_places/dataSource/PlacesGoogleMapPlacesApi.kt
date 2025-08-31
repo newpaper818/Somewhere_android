@@ -93,6 +93,8 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
 //            Log.d("gemini", "name: ${place.displayName}, id: ${place.id}")
 //        }
 
+        Log.d("gemini", "getPlacesInfo: ${placeInfoList.size}")
+
         return if (placeInfoList.isEmpty())
             null
         else

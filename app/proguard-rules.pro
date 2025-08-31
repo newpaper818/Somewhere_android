@@ -20,4 +20,9 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class com.newpaper.somewhere.** { *; }
+-keep class com.newpaper.somewhere.core.model.tripData.** { *; }
+-keep class com.newpaper.somewhere.core.model.enums.CurrencyType { *; }
+-keep class com.newpaper.somewhere.core.model.enums.SpotType { *; }
+
+-keep class com.newpaper.somewhere.core.firebase_common.model.** { *; }
+-keep class com.newpaper.somewhere.core.firebase_firestore.model.** { *; }
