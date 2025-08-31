@@ -1,4 +1,4 @@
-package com.newpaper.somewhere.feature.more.setTheme
+package com.newpaper.somewhere.feature.more.setScreenStyle
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,7 +32,7 @@ import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 @Composable
-fun SetThemeRoute(
+fun SetScreenStyleRoute(
     use2Panes: Boolean,
     spacerValue: Dp,
     theme: Theme,
@@ -41,18 +41,18 @@ fun SetThemeRoute(
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier,
 
-    setThemeViewModel: SetThemeViewModel = hiltViewModel()
+    setScreenStyleViewModel: SetScreenStyleViewModel = hiltViewModel()
 ){
     val coroutineScope = rememberCoroutineScope()
 
-    SetThemeScreen(
+    SetScreenStyleScreen(
         startSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
         endSpacerValue = spacerValue,
         theme = theme,
         saveUserPreferences = { useBlurEffect, appTheme, mapTheme ->
             coroutineScope.launch {
                 //save to dataStore
-                setThemeViewModel.saveThemePreferences(
+                setScreenStyleViewModel.saveThemePreferences(
                     useBlurEffect, appTheme, mapTheme
                 )
 
@@ -68,7 +68,7 @@ fun SetThemeRoute(
 }
 
 @Composable
-private fun SetThemeScreen(
+private fun SetScreenStyleScreen(
     startSpacerValue: Dp,
     endSpacerValue: Dp,
     theme: Theme,
@@ -95,7 +95,7 @@ private fun SetThemeScreen(
         topBar = {
             SomewhereTopAppBar(
                 startPadding = startSpacerValue,
-                title = stringResource(id = R.string.theme),
+                title = stringResource(id = R.string.screen_style),
                 navigationIcon = if (!use2Panes) TopAppBarIcon.back else null,
                 onClickNavigationIcon = { navigateUp() },
                 hazeState = topAppBarHazeState

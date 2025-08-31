@@ -40,7 +40,7 @@
     <string name="somewhere_pro" translatable="false">Somewhere Pro</string>
     <string name="settings">Settings</string>
     <string name="date_time_format">Date time format</string>
-    <string name="theme">Theme</string>
+    <string name="screen_style">Screen style</string>
     <string name="account">Account</string>
     <string name="feedback">Feedback</string>
     <string name="app_review">Review the app</string>
@@ -54,7 +54,7 @@
     <string name="use_month_name">Use month name</string>
     <string name="include_day_of_week">Include day of week</string>
 
-    <!--setTheme=================================================================================-->
+    <!--setScreenStyle=================================================================================-->
     <string name="blur_effect">Blur effect</string>
     <string name="app_theme">App theme</string>
     <string name="map_theme">Map theme</string>

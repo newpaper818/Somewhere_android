@@ -40,7 +40,7 @@
 
     <string name="settings">설정</string>
     <string name="date_time_format">날짜 및 시간</string>
-    <string name="theme">테마</string>
+    <string name="screen_style">화면 스타일</string>
     <string name="account">계정</string>
     <string name="feedback">피드백</string>
     <string name="app_review">앱 리뷰하기</string>
@@ -54,7 +54,7 @@
     <string name="use_month_name">월 이름 사용</string>
     <string name="include_day_of_week">요일 포함</string>
 
-    <!--setTheme=================================================================================-->
+    <!--setScreenStyle=================================================================================-->
     <string name="blur_effect">블러 효과</string>
     <string name="app_theme">앱 테마</string>
     <string name="map_theme">지도 테마</string>

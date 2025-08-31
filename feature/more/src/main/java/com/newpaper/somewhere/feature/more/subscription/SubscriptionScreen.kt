@@ -230,24 +230,24 @@ private fun SubscriptionScreen(
                             .hazeSource(state = topAppBarHazeState).background(MaterialTheme.colorScheme.background)
                         else Modifier.fillMaxSize()
         ) {
-//            if(BuildConfig.DEBUG){
-//                item {
-//                    Row(
-//                        verticalAlignment = Alignment.CenterVertically,
-//                    ) {
-//                        Text(text = "using Somewhere Pro (debug)")
-//
-//                        MySpacerRow(width = 12.dp)
-//
-//                        Switch(
-//                            checked = isUsingSomewherePro,
-//                            onCheckedChange = {
-//                                setIsUsingSomewhereProDebug(!isUsingSomewherePro)
-//                            }
-//                        )
-//                    }
-//                }
-//            }
+            if(BuildConfig.DEBUG){
+                item {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(text = "using Somewhere Pro (debug)")
+
+                        MySpacerRow(width = 12.dp)
+
+                        Switch(
+                            checked = isUsingSomewherePro,
+                            onCheckedChange = {
+                                setIsUsingSomewhereProDebug(!isUsingSomewherePro)
+                            }
+                        )
+                    }
+                }
+            }
 
 
 

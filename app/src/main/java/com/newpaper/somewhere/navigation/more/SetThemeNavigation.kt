@@ -10,7 +10,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
-import com.newpaper.somewhere.feature.more.setTheme.SetThemeRoute
+import com.newpaper.somewhere.feature.more.setScreenStyle.SetScreenStyleRoute
 import com.newpaper.somewhere.navigation.enterTransitionHorizontal
 import com.newpaper.somewhere.navigation.exitTransitionHorizontal
 import com.newpaper.somewhere.navigation.popEnterTransitionHorizontal
@@ -20,19 +20,19 @@ import com.newpaper.somewhere.ui.ExternalState
 import kotlinx.coroutines.launch
 
 private const val DEEP_LINK_URI_PATTERN =
-    "https://www.somewhere.newpaper.com/more/setTheme"
+    "https://www.somewhere.newpaper.com/more/setScreenStyle"
 
-fun NavController.navigateToSetTheme(navOptions: NavOptions? = null) =
-    navigate(ScreenDestination.SET_THEME.route, navOptions)
+fun NavController.navigateToSetScreenStyle(navOptions: NavOptions? = null) =
+    navigate(ScreenDestination.SET_SCREEN_STYLE.route, navOptions)
 
-fun NavGraphBuilder.setThemeScreen(
+fun NavGraphBuilder.setScreenStyleScreen(
     appViewModel: AppViewModel,
     externalState: ExternalState,
 
     navigateUp: () -> Unit
 ){
     composable(
-        route = ScreenDestination.SET_THEME.route,
+        route = ScreenDestination.SET_SCREEN_STYLE.route,
         deepLinks = listOf(
             navDeepLink { uriPattern = DEEP_LINK_URI_PATTERN }
         ),
@@ -42,16 +42,16 @@ fun NavGraphBuilder.setThemeScreen(
         popExitTransition = { popExitTransitionHorizontal }
     ) {
         LaunchedEffect(Unit) {
-            appViewModel.updateCurrentScreenDestination(ScreenDestination.SET_THEME)
+            appViewModel.updateCurrentScreenDestination(ScreenDestination.SET_SCREEN_STYLE)
             if (!externalState.windowSizeClass.use2Panes)
-                appViewModel.updateMoreDetailCurrentScreenDestination(ScreenDestination.SET_THEME)
+                appViewModel.updateMoreDetailCurrentScreenDestination(ScreenDestination.SET_SCREEN_STYLE)
         }
 
         val coroutineScope = rememberCoroutineScope()
 
         val appUiState by appViewModel.appUiState.collectAsState()
 
-        SetThemeRoute(
+        SetScreenStyleRoute(
             use2Panes = externalState.windowSizeClass.use2Panes,
             spacerValue = externalState.windowSizeClass.spacerValue,
             theme = appUiState.appPreferences.theme,

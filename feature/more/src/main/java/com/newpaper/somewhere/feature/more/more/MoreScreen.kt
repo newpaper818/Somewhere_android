@@ -145,9 +145,9 @@ private fun MoreScreen(
 
                     //app theme
                     ItemWithText(
-                        isSelected = currentScreenRoute == ScreenDestination.SET_THEME.route,
-                        text = stringResource(id = R.string.theme),
-                        onItemClick = { navigateTo(ScreenDestination.SET_THEME) }
+                        isSelected = currentScreenRoute == ScreenDestination.SET_SCREEN_STYLE.route,
+                        text = stringResource(id = R.string.screen_style),
+                        onItemClick = { navigateTo(ScreenDestination.SET_SCREEN_STYLE) }
                     )
                 }
             }

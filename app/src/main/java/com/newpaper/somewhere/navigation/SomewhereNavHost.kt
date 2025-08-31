@@ -32,7 +32,7 @@ import com.newpaper.somewhere.navigation.more.moreScreen
 import com.newpaper.somewhere.navigation.more.navigateToOpenSourceLicense
 import com.newpaper.somewhere.navigation.more.openSourceLicenseScreen
 import com.newpaper.somewhere.navigation.more.setDateTimeFormatScreen
-import com.newpaper.somewhere.navigation.more.setThemeScreen
+import com.newpaper.somewhere.navigation.more.setScreenStyleScreen
 import com.newpaper.somewhere.navigation.profile.deleteAccountScreen
 import com.newpaper.somewhere.navigation.profile.editProfileScreen
 import com.newpaper.somewhere.navigation.profile.navigateToDeleteAccount
@@ -117,7 +117,7 @@ fun SomewhereNavHost(
     val isOnMoreList = appUiState.screenDestination.currentScreenDestination == ScreenDestination.MORE
 
     val isOnMoreDetail = appUiState.screenDestination.currentScreenDestination == ScreenDestination.SET_DATE_TIME_FORMAT
-            || appUiState.screenDestination.currentScreenDestination == ScreenDestination.SET_THEME
+            || appUiState.screenDestination.currentScreenDestination == ScreenDestination.SET_SCREEN_STYLE
             || appUiState.screenDestination.currentScreenDestination == ScreenDestination.ACCOUNT
             || appUiState.screenDestination.currentScreenDestination == ScreenDestination.ABOUT
 
@@ -388,7 +388,7 @@ fun SomewhereNavHost(
                 navigateUp = navigateUp
             )
 
-            setThemeScreen(
+            setScreenStyleScreen(
                 appViewModel = appViewModel,
                 externalState = externalState,
                 navigateUp = navigateUp
@@ -651,7 +651,7 @@ private fun organizeNavStack(
     val isOnSpot = currentScreenDestination == ScreenDestination.SPOT
 
     val isOnMoreDetail = currentScreenDestination == ScreenDestination.SET_DATE_TIME_FORMAT
-            || currentScreenDestination == ScreenDestination.SET_THEME
+            || currentScreenDestination == ScreenDestination.SET_SCREEN_STYLE
             || currentScreenDestination == ScreenDestination.ACCOUNT
             || currentScreenDestination == ScreenDestination.ABOUT
 
