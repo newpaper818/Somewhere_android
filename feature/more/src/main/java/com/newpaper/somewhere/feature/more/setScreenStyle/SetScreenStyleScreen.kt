@@ -114,6 +114,7 @@ private fun SetScreenStyleScreen(
         ) {
             item {
                 ListGroupCard(
+                    title = stringResource(id = R.string.visual_effect),
                     modifier = itemModifier
                 ) {
                     ItemWithSwitch(

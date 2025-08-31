@@ -55,6 +55,7 @@
     <string name="include_day_of_week">Include day of week</string>
 
     <!--setScreenStyle=================================================================================-->
+    <string name="visual_effect">Visual effect</string>
     <string name="blur_effect">Blur effect</string>
     <string name="app_theme">App theme</string>
     <string name="map_theme">Map theme</string>
