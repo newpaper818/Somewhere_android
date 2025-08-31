@@ -76,9 +76,12 @@ fun ListGroupCard(
 @Composable
 fun ItemDivider(
     startPadding: Dp = 16.dp,
-    endPadding: Dp = 16.dp
+    endPadding: Dp = 16.dp,
+    modifier: Modifier = Modifier
 ){
-    Row {
+    Row(
+        modifier = modifier
+    ) {
         MySpacerRow(width = startPadding)
         HorizontalDivider(modifier = Modifier.weight(1f))
         MySpacerRow(width = endPadding)

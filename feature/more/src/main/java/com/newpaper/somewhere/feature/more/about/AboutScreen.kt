@@ -172,6 +172,8 @@ private fun AboutScreen(
                     modifier = itemModifier
                 )
                 MySpacerColumn(height = 24.dp)
+
+                ItemDivider(modifier = itemModifier)
             }
 
             item{
@@ -189,6 +191,8 @@ private fun AboutScreen(
                 DeveloperCard(
                     modifier = itemModifier
                 )
+
+                MySpacerColumn(8.dp)
             }
 
             item{
