@@ -17,6 +17,8 @@
     <string name="friends">친구</string>
     <string name="no_friends">초대한 친구 없음\n친구를 초대해 여행을 공유하세요!</string>
     <string name="unknown">알 수 없음</string>
+    <string name="upgrade_to_somewhere_pro_to_invite_more_friends">친구 초대 한도에 도달했어요.\n더 초대하려면 Somewhere Pro로 업그레이드하세요.</string>
+    <string name="maximum_number_of_invited_friends_reached">친구 초대 한도에 도달했어요</string>
     <string name="snackbar_delete_friend_error">친구 삭제 에러</string>
     <string name="snackbar_set_editable_error">권한 설정 에러</string>
 

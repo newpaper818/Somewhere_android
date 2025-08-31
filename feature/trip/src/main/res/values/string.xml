@@ -17,6 +17,8 @@
     <string name="friends">friends</string>
     <string name="no_friends">No invited friend\nInvite friend to share trip!</string>
     <string name="unknown">Unknown</string>
+    <string name="upgrade_to_somewhere_pro_to_invite_more_friends">Maximum number of invited friends reached.\nUpgrade to Somewhere Pro to invite more friends.</string>
+    <string name="maximum_number_of_invited_friends_reached">Maximum number of invited friends reached</string>
     <string name="snackbar_delete_friend_error">Delete friend error</string>
     <string name="snackbar_set_editable_error">Set permission error</string>
 

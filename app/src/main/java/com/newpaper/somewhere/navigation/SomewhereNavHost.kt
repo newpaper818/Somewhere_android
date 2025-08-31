@@ -578,6 +578,11 @@ fun SomewhereNavHost(
                         navOptions = navOptions { launchSingleTop = true }
                     )
                 },
+                navigateToSubscription = {
+                    mainNavController.navigateToSubscription(
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
+                },
                 navigateToMyTrips = {
                     mainNavController.navigateToTrips(
                         navOptions = navOptions {

@@ -76,6 +76,18 @@ fun PrivacyPolicyButton(
 }
 
 @Composable
+fun UpgradeToSomewhereProButton(
+    onClick: () -> Unit,
+){
+    MyTextButton(
+        modifier = Modifier.widthIn(min = 120.dp),
+        text = stringResource(id = R.string.upgrade_to_somewhere_pro),
+        containerColor = Color.Transparent,
+        onClick = onClick
+    )
+}
+
+@Composable
 fun RemoveAdsButton(
     onClick: () -> Unit,
 ) {
@@ -237,12 +249,14 @@ fun NewItemButton(
 @Composable
 fun AddFriendButton(
     onClick: () -> Unit,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier
 ){
     IconTextButton(
         icon = IconTextButtonIcon.inviteFriend,
         text = stringResource(id = R.string.invite_friend),
         onClick = onClick,
+        enabled = enabled,
         modifier = modifier.height(48.dp)
     )
 }
@@ -441,7 +455,12 @@ private fun MyTextButton(
             enabled = enabled,
             onClick = onClick,
             modifier = modifier,
-            colors = ButtonDefaults.buttonColors(containerColor = containerColor)
+            colors = ButtonDefaults.buttonColors(
+                containerColor = containerColor,
+                contentColor = MaterialTheme.colorScheme.contentColorFor(containerColor),
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceTint,
+                disabledContentColor = MaterialTheme.colorScheme.outline
+            )
         ) {
             Text(
                 text = text,
@@ -499,7 +518,9 @@ private fun IconTextButton(
     Button(
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
-            contentColor = MaterialTheme.colorScheme.contentColorFor(containerColor)
+            contentColor = MaterialTheme.colorScheme.contentColorFor(containerColor),
+            disabledContainerColor = MaterialTheme.colorScheme.surfaceTint,
+            disabledContentColor = MaterialTheme.colorScheme.outline
         ),
         contentPadding = PaddingValues(16.dp, 0.dp, 20.dp, 0.dp),
         enabled = enabled,
@@ -678,7 +699,7 @@ private fun CopyAppPlayStoreLinkButtonPreview(){
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)
-                .width(260.dp)
+                .width(190.dp)
         ) {
             ShareAppButton{ }
         }
@@ -895,6 +916,27 @@ private fun IconTextButtonPreview(){
                 icon = IconTextButtonIcon.add,
                 text = "Icon text button",
                 onClick = {}
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewLightDark
+private fun IconTextButtonDisabledPreview(){
+    SomewhereTheme {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp)
+                .width(190.dp)
+        ) {
+            IconTextButton(
+                icon = IconTextButtonIcon.add,
+                text = "Icon text button",
+                onClick = {},
+                enabled = false
             )
         }
     }
