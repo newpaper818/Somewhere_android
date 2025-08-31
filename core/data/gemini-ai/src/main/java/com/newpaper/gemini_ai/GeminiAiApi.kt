@@ -12,6 +12,8 @@ import javax.inject.Inject
 
 private const val GEMINI_AI_TAG = "Gemini-Ai"
 
+private const val GEMINI_MODEL_NAME = "gemini-2.0-flash"
+
 class GeminiAiApi @Inject constructor(
 
 ): AiRemoteDataSource{
@@ -21,10 +23,12 @@ class GeminiAiApi @Inject constructor(
         tripWith: String,
         tripType: String
     ): Set<String>? {
+        Log.d(GEMINI_AI_TAG, "getRecommendSpots start")
+
         val generativeModel =
             GenerativeModel(
                 // Specify a Gemini model appropriate for your use case
-                modelName = "gemini-2.0-flash",
+                modelName = GEMINI_MODEL_NAME,
                 // Access your API key as a Build Configuration variable (see "Set up your API key" above)
                 apiKey = BuildConfig.GEMINI_AI_API_KEY,
                 generationConfig = generationConfig {
@@ -80,7 +84,7 @@ class GeminiAiApi @Inject constructor(
         val generativeModel =
             GenerativeModel(
                 // Specify a Gemini model appropriate for your use case
-                modelName = "gemini-2.0-flash",
+                modelName = GEMINI_MODEL_NAME,
                 // Access your API key as a Build Configuration variable (see "Set up your API key" above)
                 apiKey = BuildConfig.GEMINI_AI_API_KEY,
                 generationConfig = generationConfig {

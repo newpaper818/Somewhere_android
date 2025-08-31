@@ -1,8 +1,10 @@
 package com.newpaper.somewhere.core.model.tripData
 
 import com.newpaper.somewhere.core.model.data.MyColor
+import com.squareup.moshi.JsonClass
 import java.time.LocalDate
 
+@JsonClass(generateAdapter = true)
 data class Date(
     var id: Int = 0,
     var index: Int = 0,

@@ -156,6 +156,7 @@ serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization
 # moshi
 moshi = { group = "com.squareup.moshi", name = "moshi", version.ref = "moshi" }
 moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshi" }
+moshi-kotlin-codegen = { group = "com.squareup.moshi", name = "moshi-kotlin-codegen", version.ref = "moshi" }
 
 #google billing
 billing = { group = "com.android.billingclient", name = "billing", version.ref = "billing" }

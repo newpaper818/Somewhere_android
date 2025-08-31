@@ -4,9 +4,11 @@ import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import com.google.android.gms.maps.model.LatLng
 import com.newpaper.somewhere.core.model.enums.SpotType
+import com.squareup.moshi.JsonClass
 import java.time.LocalDate
 import java.time.LocalTime
 
+@JsonClass(generateAdapter = true)
 data class Spot(
     var id: Int = 777,
     val googleMapsPlacesId: String? = null,
