@@ -45,6 +45,7 @@ import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.tripData.Trip
+import com.newpaper.somewhere.core.utils.convert.getMaxInviteFriends
 import com.newpaper.somewhere.core.utils.convert.setSharingTo
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.trip.R
@@ -52,6 +53,7 @@ import com.newpaper.somewhere.feature.trip.inviteFriend.component.EmailPage
 import com.newpaper.somewhere.feature.trip.inviteFriend.component.FriendInfoWithInviteCard
 import com.newpaper.somewhere.feature.trip.inviteFriend.component.QrCodePage
 import com.newpaper.somewhere.feature.trip.trips.component.TripItem
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -79,7 +81,7 @@ fun InviteFriendRoute(
 
     LaunchedEffect(internetEnabled, inviteFriendUiState.inviteButtonEnabled){
         if (!inviteFriendUiState.inviteButtonEnabled){
-            //block click for 1.7 sec if user click invite button
+            //block click for 2 sec if user click invite button
             delay(2000)
             inviteFriendViewModel.setInviteButtonEnabled(internetEnabled)
         } else {
@@ -204,6 +206,14 @@ fun InviteFriendRoute(
                                             updateTripState = updateTripState,
                                             userDataList = newInvitedFriendList
                                         )
+
+                                        inviteFriendViewModel.setFriendInfoWithInviteCardVisible(false)
+                                        inviteFriendViewModel.setSearchFriendAvailable(true)
+
+                                        if (newInvitedFriendList.size >= getMaxInviteFriends(appUserData.isUsingSomewherePro))
+                                            coroutineScope.launch(Dispatchers.Main) {
+                                                navigateUp()
+                                            }
                                     },
                                     onError = { }
                                 )
