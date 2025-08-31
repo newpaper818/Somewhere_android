@@ -72,7 +72,7 @@ fun TripCreationOptionsDialog(
                     icon = MyIcons.ai,
                     text = stringResource(id = R.string.create_with_AI),
                     onClick = { onClick(false) },
-                    showBetaLabel = true
+                    showBetaLabel = false
                 )
 
                 //hidden button - for talk back
