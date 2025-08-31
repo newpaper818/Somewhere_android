@@ -81,7 +81,7 @@
 
     <!--tripAiDialog.kt-->
     <string name="caution">Caution</string>
-    <string name="it_could_contain_incorrect_information">It could contain incorrect information.</string>
+    <string name="it_could_contain_incorrect_information">It could contain incorrect information</string>
     <string name="i_understand">I understand</string>
     <string name="watch_ad_and_create_trip">Watch AD and create trip</string>
 
