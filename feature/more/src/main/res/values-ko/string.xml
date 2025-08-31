@@ -39,7 +39,7 @@
 
 
     <string name="settings">설정</string>
-    <string name="date_time_format">날짜 및 시간</string>
+    <string name="date_time_format">날짜 및 시간 형식</string>
     <string name="screen_style">화면 스타일</string>
     <string name="account">계정</string>
     <string name="feedback">피드백</string>
