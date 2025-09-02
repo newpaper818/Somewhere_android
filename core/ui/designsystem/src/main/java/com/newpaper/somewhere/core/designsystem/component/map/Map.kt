@@ -162,6 +162,7 @@ fun MapForSpot(
     isDarkMapTheme: Boolean,
     cameraPositionState: CameraPositionState,
     userLocationEnabled: Boolean,
+    onMapLoaded: () -> Unit,
 
     dateList: List<Date>,
     dateIndex: Int,
@@ -189,6 +190,7 @@ fun MapForSpot(
         modifier = Modifier.fillMaxSize().clearAndSetSemantics { },
         googleMapOptionsFactory = { GoogleMapOptions().mapId(getMapId(isDarkMapTheme)) },
         cameraPositionState = cameraPositionState,
+        onMapLoaded = onMapLoaded,
         properties = properties,
         uiSettings = uiSettings
     ) {

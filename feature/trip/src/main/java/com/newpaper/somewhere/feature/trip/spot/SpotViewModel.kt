@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 data class SpotUiState(
+    val isMapLoaded: Boolean = false,
     val mapSize: IntSize = IntSize.Zero,
     val isMapExpanded: Boolean = false,
 
@@ -43,6 +44,12 @@ class SpotViewModel @Inject constructor(
 
 
     //map
+    fun setIsMapLoaded(isMapLoaded: Boolean) {
+        _spotUiState.update {
+            it.copy(isMapLoaded = isMapLoaded)
+        }
+    }
+
     fun setMapSize(mapSize: IntSize) {
         _spotUiState.update {
             it.copy(mapSize = mapSize)

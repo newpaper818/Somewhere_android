@@ -48,6 +48,7 @@ fun SpotMapCard(
     isMapExpand: Boolean,
     expandHeight: Int,
     mapSize: IntSize,
+    onMapLoaded: () -> Unit,
 
     isDarkMapTheme: Boolean,
     fusedLocationClient: FusedLocationProviderClient,
@@ -112,6 +113,7 @@ fun SpotMapCard(
             isDarkMapTheme = isDarkMapTheme,
             cameraPositionState = cameraPositionState,
             userLocationEnabled = userLocationEnabled,
+            onMapLoaded = onMapLoaded,
             dateList = dateList,
             dateIndex = dateIndex,
             spotList = spotList,
