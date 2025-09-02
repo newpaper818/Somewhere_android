@@ -30,6 +30,9 @@ import com.newpaper.somewhere.core.utils.convert.getNextSpot
 import com.newpaper.somewhere.core.utils.convert.getPrevSpot
 
 
+private const val LIGHT_MAP_ID = "1b6b3c8ee88760e9"
+private const val DARK_MAP_ID = "c99ac47fc79e73ea"
+
 /**
  * Google map for trip map screen
  *
@@ -66,13 +69,10 @@ fun MapForTripMap(
         )
     }
 
-    val mapId = if (isDarkMapTheme) stringResource(id = R.string.dark_map_id)
-                else stringResource(id = R.string.light_map_id)
-
 
     GoogleMap(
         modifier = Modifier.fillMaxSize().clearAndSetSemantics { },
-        googleMapOptionsFactory = { GoogleMapOptions().mapId(mapId) },
+        googleMapOptionsFactory = { GoogleMapOptions().mapId(getMapId(isDarkMapTheme)) },
         cameraPositionState = cameraPositionState,
         properties = properties,
         uiSettings = uiSettings,
@@ -184,13 +184,10 @@ fun MapForSpot(
         )
     }
 
-    val mapId = if (isDarkMapTheme) stringResource(id = R.string.dark_map_id)
-                else stringResource(id = R.string.light_map_id)
-
 
     GoogleMap(
         modifier = Modifier.fillMaxSize().clearAndSetSemantics { },
-        googleMapOptionsFactory = { GoogleMapOptions().mapId(mapId) },
+        googleMapOptionsFactory = { GoogleMapOptions().mapId(getMapId(isDarkMapTheme)) },
         cameraPositionState = cameraPositionState,
         properties = properties,
         uiSettings = uiSettings
@@ -266,16 +263,13 @@ fun MapForSetLocation(
         )
     }
 
-    val mapId = if (isDarkMapTheme) stringResource(id = R.string.dark_map_id)
-                else stringResource(id = R.string.light_map_id)
-
     val uiSettings = remember {
         MapUiSettings(myLocationButtonEnabled = false, zoomControlsEnabled = false)
     }
 
     GoogleMap(
         modifier = Modifier.fillMaxSize().clearAndSetSemantics { },
-        googleMapOptionsFactory = { GoogleMapOptions().mapId(mapId) },
+        googleMapOptionsFactory = { GoogleMapOptions().mapId(getMapId(isDarkMapTheme)) },
         cameraPositionState = cameraPositionState,
         properties = properties,
         uiSettings = uiSettings,
@@ -356,4 +350,13 @@ fun MapForSetLocation(
             }
         }
     }
+}
+
+
+
+private fun getMapId(
+    isDarkMapTheme: Boolean
+): String{
+    return if (isDarkMapTheme) DARK_MAP_ID
+            else LIGHT_MAP_ID
 }
