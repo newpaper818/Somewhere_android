@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-
-
-
     <!--component/button/ =======================================================================-->
     <!-- AuthButtons.kt -->
     <string name="sign_in_with_google">Google로 로그인</string>
