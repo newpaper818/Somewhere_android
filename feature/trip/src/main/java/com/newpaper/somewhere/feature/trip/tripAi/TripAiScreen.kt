@@ -64,6 +64,7 @@ import com.newpaper.somewhere.feature.trip.tripAi.page.EnterTripCityPage
 import com.newpaper.somewhere.feature.trip.tripAi.page.EnterTripDurationPage
 import com.newpaper.somewhere.feature.trip.tripAi.page.SelectTripTypePage
 import com.newpaper.somewhere.feature.trip.tripAi.page.SelectTripWithPage
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -370,6 +371,15 @@ fun TripAiScreen(
                         }
 
                         TripAiPhase.TRIP_TYPE -> {
+                            LaunchedEffect(Unit) {
+                                while (true){
+                                    delay(700)
+                                    if (tripAiUiState.userGetReward) {
+                                        pagerState.animateScrollToPage(tripAiPhaseList.size - 1)
+                                        break
+                                    }
+                                }
+                            }
                             SelectTripTypePage(
                                 selectedTripTypes = tripAiUiState.tripTypes,
                                 onClick = onClickTripType
