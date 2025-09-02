@@ -344,7 +344,7 @@ fun MapForSetLocation(
                         location = locationInfo.location!!,
                         title = locationInfo.title,
                         iconText = "",
-                        isBigMarker = false,
+                        isBigMarker = true,
                         iconColor = 0xFFff0000.toInt(),
                         onIconColor = 0xFFff0000.toInt()
                     )
