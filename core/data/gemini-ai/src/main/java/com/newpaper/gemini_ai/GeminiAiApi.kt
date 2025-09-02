@@ -44,7 +44,7 @@ class GeminiAiApi @Inject constructor(
             - Do NOT wrap the array in another array or object.
             - Do NOT include any explanations, comments, or sentences.
             - Each element must be just a place name (String), not a sentence.
-            - The array must contain at least ${tripDays * 6} place names.
+            - The array must contain at least ${tripDays * 5} place names.
             
             <Trip Info>
             - City or country: $city
