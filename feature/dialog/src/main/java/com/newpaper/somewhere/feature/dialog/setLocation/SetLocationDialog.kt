@@ -332,14 +332,17 @@ fun SetLocationDialog(
                                     focusManager.clearFocus()
                                     setLocationViewModel.setUserTexting(false)
 
-                                    setLocationViewModel.updateAllLatLng()
-                                    mapAnimateToLatLng(
-                                        setLocationUiState.searchLocation.searchLocationList,
-                                        cameraPositionState,
-                                        mapSize,
-                                        coroutineScope
+                                    setLocationViewModel.updateAllLatLng(
+                                        onDone = { newSearchLocationList ->
+                                            mapAnimateToLatLng(
+                                                newSearchLocationList,
+                                                cameraPositionState,
+                                                mapSize,
+                                                coroutineScope
+                                            )
+                                            setLocationViewModel.setIsLoading(false)
+                                        }
                                     )
-                                    setLocationViewModel.setIsLoading(false)
                                 }
                             } else {
                                 focusManager.clearFocus()
@@ -368,30 +371,37 @@ fun SetLocationDialog(
                                 && setLocationUiState.searchLocation.searchLocationList.isNotEmpty(),
                         locationAutoFillList = setLocationUiState.searchLocation.searchLocationList,
                         selectedPlaceId = setLocationUiState.googleMapsPlacesId,
-                        onClickItem = { placeInfo ->
+                        onClickItem = { clickedLocationInfo ->
                             //get one location from touched item
                             focusManager.clearFocus()
                             setLocationViewModel.setUserTexting(false)
 
-                            if (placeInfo.location != null) {
+                            if (clickedLocationInfo.location != null) {
                                 mapAnimateToLatLng(
-                                    listOf(placeInfo),
+                                    listOf(clickedLocationInfo),
                                     cameraPositionState,
                                     mapSize,
                                     coroutineScope
                                 )
                             } else {
                                 coroutineScope.launch {
-                                    setLocationViewModel.updateOneLatLng(placeInfo)
-                                    mapAnimateToLatLng(
-                                        listOf(placeInfo),
-                                        cameraPositionState,
-                                        mapSize,
-                                        coroutineScope
+                                    setLocationViewModel.updateOneLatLng(
+                                        locationInfo = clickedLocationInfo,
+                                        onDone = { newLocationInfo ->
+                                            mapAnimateToLatLng(
+                                                listOf(newLocationInfo),
+                                                cameraPositionState,
+                                                mapSize,
+                                                coroutineScope
+                                            )
+                                        }
+                                    )
+                                    setLocationViewModel.updateAllLatLng(
+                                        onDone = {}
                                     )
                                 }
                             }
-                            setLocationViewModel.setGoogleMapsPlacesId(placeInfo.placeId)
+                            setLocationViewModel.setGoogleMapsPlacesId(clickedLocationInfo.placeId)
                         },
                         onSearchListSizeChanged = {
                             searchListSize = it
