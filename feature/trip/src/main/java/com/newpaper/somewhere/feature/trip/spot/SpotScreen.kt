@@ -257,16 +257,24 @@ fun SpotRoute(
             //animate map spot
             if (newSpotIndex < spotList.size)
                 coroutineScope.launch {
-                    mapAnimateToSpot(
-                        scrollState,
-                        spotList[newSpotIndex],
-                        dateList,
-                        currentDateIndex,
-                        cameraPositionState,
-                        spotUiState.mapSize,
-                        density,
-                        coroutineScope
-                    )
+                    repeat(10){
+                        if (spotUiState.isMapLoaded){
+                            mapAnimateToSpot(
+                                scrollState,
+                                spotList[currentSpotIndex],
+                                dateList,
+                                currentDateIndex,
+                                cameraPositionState,
+                                spotUiState.mapSize,
+                                density,
+                                coroutineScope
+                            )
+                            return@repeat
+                        }
+                        else{
+                            delay(200)
+                        }
+                    }
                 }
         }
     }
@@ -290,6 +298,35 @@ fun SpotRoute(
 
                 //animate map spot
                 coroutineScope.launch {
+                    repeat(10){
+                        if (spotUiState.isMapLoaded){
+                            mapAnimateToSpot(
+                                scrollState,
+                                spotList[currentSpotIndex],
+                                dateList,
+                                currentDateIndex,
+                                cameraPositionState,
+                                spotUiState.mapSize,
+                                density,
+                                coroutineScope
+                            )
+                            return@repeat
+                        }
+                        else{
+                            delay(200)
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    //if after set location, animate map spot
+    LaunchedEffect(spotUiState.showSetLocationDialog) {
+        if (!spotUiState.showSetLocationDialog && currentSpot?.location != null){
+            repeat(10){
+                if (spotUiState.isMapLoaded){
                     mapAnimateToSpot(
                         scrollState,
                         spotList[currentSpotIndex],
@@ -300,24 +337,12 @@ fun SpotRoute(
                         density,
                         coroutineScope
                     )
+                    return@repeat
+                }
+                else{
+                    delay(200)
                 }
             }
-        }
-    }
-
-    //if after set location, animate map spot
-    LaunchedEffect(spotUiState.showSetLocationDialog) {
-        if (!spotUiState.showSetLocationDialog && currentSpot?.location != null){
-            mapAnimateToSpot(
-                scrollState,
-                currentSpot,
-                dateList,
-                currentDateIndex,
-                cameraPositionState,
-                spotUiState.mapSize,
-                density,
-                coroutineScope
-            )
         }
     }
 
@@ -355,6 +380,7 @@ fun SpotRoute(
             mapSize = spotUiState.mapSize,
             userLocationEnabled = userLocationEnabled,
             isMapExpand = spotUiState.isMapExpanded,
+            _onMapLoaded = { spotViewModel.setIsMapLoaded(true) },
             _setMapSize = spotViewModel::setMapSize,
             _setUserLocationEnabled = setUserLocationEnabled,
             _setIsMapExpanded = spotViewModel::setIsMapExpanded,
@@ -904,6 +930,7 @@ private fun Spot1Pane(
                 isMapExpand = spotMap.isMapExpand,
                 expandHeight = (lazyColumnHeight / LocalDensity.current.density).toInt() + 1,
                 mapSize = spotMap.mapSize,
+                onMapLoaded = spotMap::onMapLoaded,
 
                 isDarkMapTheme = spotUiInfo.isDarkMapTheme,
                 fusedLocationClient = spotMap.fusedLocationClient,
@@ -1075,6 +1102,7 @@ private fun Spot2Panes(
                 isMapExpand = true,
                 expandHeight = (lazyColumnHeight / LocalDensity.current.density).toInt() - 1,
                 mapSize = spotMap.mapSize,
+                onMapLoaded = spotMap::onMapLoaded,
 
                 isDarkMapTheme = spotUiInfo.isDarkMapTheme,
                 fusedLocationClient = spotMap.fusedLocationClient,
