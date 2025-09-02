@@ -34,7 +34,10 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
 
         delay(300)
 
-        val request = FindAutocompletePredictionsRequest.builder().setQuery(query).build()
+        val request = FindAutocompletePredictionsRequest
+            .builder()
+            .setQuery(query)
+            .build()
 
         placesClient.findAutocompletePredictions(request)
             .addOnSuccessListener { response ->
@@ -57,7 +60,7 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
 
             }
             .addOnFailureListener {
-                Log.e(this.toString(), it.stackTraceToString())
+                Log.e(GOOGLE_MAP_PLACES_TAG, it.stackTraceToString())
                 locationList.complete(null)
             }
 
@@ -75,7 +78,7 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
         ).addOnSuccessListener {
             continuation.resume(it.place.location)
         }.addOnFailureListener {
-            Log.e(this.toString(), it.stackTraceToString())
+            Log.e(GOOGLE_MAP_PLACES_TAG, it.stackTraceToString())
             continuation.resume(null)
         }
     }
@@ -118,8 +121,9 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
             Place.Field.OPENING_HOURS
         )
 
-        val request = SearchByTextRequest.builder(query, placeFields)
-            .setMaxResultCount(3)
+        val request = SearchByTextRequest
+            .builder(query, placeFields)
+            .setMaxResultCount(2)
             .build()
 
         placesClient.searchByText(request)
@@ -127,7 +131,7 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
                 placeInfo.complete(response.places.firstOrNull())
             }
             .addOnFailureListener {
-                Log.e(this.toString(), it.stackTraceToString())
+                Log.e(GOOGLE_MAP_PLACES_TAG, it.stackTraceToString())
                 placeInfo.complete(null)
             }
 
@@ -141,7 +145,7 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
         if (!Places.isInitialized()
 //            || !::placesClient.isInitialized
         ) {
-            Places.initialize(context, BuildConfig.GOOGLE_MAPS_API_KEY)
+            Places.initializeWithNewPlacesApiEnabled(context, BuildConfig.GOOGLE_MAPS_API_KEY)
             placesClient = Places.createClient(context)
         }
     }
