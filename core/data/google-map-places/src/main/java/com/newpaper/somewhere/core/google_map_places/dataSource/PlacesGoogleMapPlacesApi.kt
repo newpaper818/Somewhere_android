@@ -85,10 +85,10 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
 
     override suspend fun getPlacesInfo(
         places: Set<String>
-    ): Set<Place>? {
+    ): Set<Pair<String, Place>>? {
         checkPlacesClientAndInit()
 
-        val placeInfoList = places.mapNotNull {
+        val placeInfoList: List<Pair<String, Place>> = places.mapNotNull {
             searchPlace(it)
         }
 
@@ -106,29 +106,28 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
 
     private suspend fun searchPlace(
         query: String
-    ): Place?{
-        val placeInfo = CompletableDeferred<Place?>()
+    ): Pair<String, Place>?{
+        val placeInfo = CompletableDeferred<Pair<String, Place>?>()
 
         val placeFields: List<Place.Field> = arrayListOf(
             Place.Field.ID,
-            Place.Field.DISPLAY_NAME,
+            Place.Field.TYPES,
             Place.Field.FORMATTED_ADDRESS,
             Place.Field.LOCATION,
-            Place.Field.GOOGLE_MAPS_URI,
-            Place.Field.WEBSITE_URI,
-            Place.Field.TYPES,
-            Place.Field.RATING,
-            Place.Field.OPENING_HOURS
         )
 
         val request = SearchByTextRequest
             .builder(query, placeFields)
-            .setMaxResultCount(2)
+            .setMaxResultCount(1)
             .build()
 
         placesClient.searchByText(request)
             .addOnSuccessListener { response ->
-                placeInfo.complete(response.places.firstOrNull())
+                val place = response.places.firstOrNull()
+                if (place != null)
+                    placeInfo.complete(Pair(query, place))
+                else
+                    placeInfo.complete(null)
             }
             .addOnFailureListener {
                 Log.e(GOOGLE_MAP_PLACES_TAG, it.stackTraceToString())

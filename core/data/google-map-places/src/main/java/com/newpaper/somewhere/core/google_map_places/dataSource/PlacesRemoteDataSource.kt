@@ -15,5 +15,5 @@ interface PlacesRemoteDataSource {
 
     suspend fun getPlacesInfo(
         places: Set<String>
-    ): Set<Place>?
+    ): Set<Pair<String, Place>>?
 }

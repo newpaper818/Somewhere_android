@@ -38,14 +38,14 @@ class AiRepository @Inject constructor(
             return null
 
         //get places info from Google places
-        val places = placesRemoteDataSource.getPlacesInfo(recommendPlaceSet)
+        val nameWithPlaces = placesRemoteDataSource.getPlacesInfo(recommendPlaceSet)
 
-        if (places == null)
+        if (nameWithPlaces == null)
             return null
 
         //get trip plans from ai
         val aiCreatedTripJson = aiRemoteDataSource.getTripPlan(
-            places = places,
+            placesWithPlaces = nameWithPlaces,
             city = city,
             tripDate = "$startDate to $endDate",
             tripWith = tripWith,
@@ -73,7 +73,7 @@ class AiRepository @Inject constructor(
         //add location
         val tripWithLocation = addLocation(
             trip = aiCreatedTrip,
-            places = places
+            places = nameWithPlaces.map { it.second }.toSet()
         )
 
         return tripWithLocation

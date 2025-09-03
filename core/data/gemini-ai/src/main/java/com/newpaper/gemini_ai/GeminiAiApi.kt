@@ -74,7 +74,7 @@ class GeminiAiApi @Inject constructor(
     }
 
     override suspend fun getTripPlan(
-        places: Set<Place>,
+        placesWithPlaces: Set<Pair<String, Place>>,
         city: String,
         tripDate: String,
         tripWith: String,
@@ -107,14 +107,14 @@ class GeminiAiApi @Inject constructor(
             time format: HH:MM (24h, zero-padded, no AM/PM, 00:00 to 23:59)
             date format: yyyy-mm-dd (zero-padded, no extra text)
             
-            <places>
-            ${placesToString(places)}
+            <places> - exclude not in <trip info>'s city(or country)
+            ${placesToString(placesWithPlaces)}
             
             <other request>
-            - Consider transportation time.
+            - Consider transportation time and the places' addresses when planning the order, and exclude any spots that are not located in the <trip info>'s city(or country).
             - spotList must be sorted by time.
             - googleMapsPlacesId must exactly match the given <places>'s id.
-            - spot's titleText must equal the place's name.
+            - Ensure each spot's titleText exactly matches the place's name and translate the titleText of each item in the spotList into $language.
             - You don't have to follow <places> order.
             - From <places>'s placeTypes, map to <spot type list> instead of copying.
             - Include breakfast, lunch, dinner.
@@ -128,7 +128,7 @@ class GeminiAiApi @Inject constructor(
             ${jsonTypeString()}
         """.trimIndent()
 
-//        Log.d("gemini-ai", "prompt: $prompt")
+//        Log.d("gemini-ai", "prompt: $prompt") //<<<<<<<<<<<<<<<<<<<<
 
 
         try {
@@ -144,9 +144,9 @@ class GeminiAiApi @Inject constructor(
     }
 
     private fun placesToString(
-        places: Set<Place>
+        nameWithPlaces: Set<Pair<String, Place>>
     ): String{
-        val placeList = places.map { place ->
+        val placeList = nameWithPlaces.map { place ->
             placeToString(place)
         }
 
@@ -154,12 +154,13 @@ class GeminiAiApi @Inject constructor(
     }
 
     private fun placeToString(
-        place: Place
+        nameWithPlace: Pair<String, Place>
     ): String {
         val stringList = listOf(
-            "name: " + place.displayName,
-            "id: " + place.id,
-            "placeTypes: " + place.placeTypes
+            "name: " + nameWithPlace.first,
+            "id: " + nameWithPlace.second.id,
+            "placeTypes: " + nameWithPlace.second.placeTypes,
+            "address: " + nameWithPlace.second.formattedAddress
         )
 
         return stringList.joinToString(", ", "{", "}")
