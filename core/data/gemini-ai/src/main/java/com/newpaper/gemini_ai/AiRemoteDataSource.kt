@@ -11,7 +11,7 @@ interface AiRemoteDataSource {
     ): Set<String>?
 
     suspend fun  getTripPlan(
-        places: Set<Place>,
+        placesWithPlaces: Set<Pair<String, Place>>,
         city: String,
         tripDate: String,
         tripWith: String,
