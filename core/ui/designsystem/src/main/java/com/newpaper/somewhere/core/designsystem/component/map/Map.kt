@@ -173,7 +173,11 @@ fun MapForSpot(
     spotTo: Spot? = null
 ){
     val uiSettings = remember {
-        MapUiSettings(myLocationButtonEnabled = false, zoomControlsEnabled = false)
+        MapUiSettings(
+            myLocationButtonEnabled = false,
+            zoomControlsEnabled = false,
+            mapToolbarEnabled = false
+        )
     }
 
     val properties by remember {
