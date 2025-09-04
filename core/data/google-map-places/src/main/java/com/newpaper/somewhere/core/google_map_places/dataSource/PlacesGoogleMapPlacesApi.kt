@@ -32,7 +32,7 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
 
         checkPlacesClientAndInit()
 
-        delay(300)
+        delay(600)
 
         val request = FindAutocompletePredictionsRequest
             .builder()
