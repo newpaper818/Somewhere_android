@@ -12,6 +12,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -552,7 +553,7 @@ private fun MapSearchBox(
         .height(50.dp)
         .widthIn(max = 450.dp)
         .clip(CircleShape)
-        .background(MaterialTheme.colorScheme.surfaceBright)
+        .background(MaterialTheme.colorScheme.surface.copy(0.95f))
 
     AnimatedVisibility(
         visible = visible,
@@ -633,7 +634,7 @@ private fun MapSearchList(
                 .clip(RoundedCornerShape(25.dp))
                 .heightIn(max = 200.dp)
                 .widthIn(max = 450.dp)
-                .background(MaterialTheme.colorScheme.surfaceBright.copy(alpha = 0.93f))
+                .background(MaterialTheme.colorScheme.surfaceBright.copy(alpha = 0.95f))
                 .onSizeChanged {
                     onSearchListSizeChanged(it)
                 }

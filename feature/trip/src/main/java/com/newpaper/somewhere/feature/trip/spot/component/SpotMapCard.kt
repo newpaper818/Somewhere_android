@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -388,7 +389,8 @@ private fun MapButtonsRow(
     Row(
         modifier = Modifier
             .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surface.copy(0.85f)),
+            .background(MaterialTheme.colorScheme.surface.copy(0.95f))
+            .border(1.dp, MaterialTheme.colorScheme.surfaceTint, CircleShape),
         verticalAlignment = Alignment.CenterVertically
     ) {
         buttonsContent()
