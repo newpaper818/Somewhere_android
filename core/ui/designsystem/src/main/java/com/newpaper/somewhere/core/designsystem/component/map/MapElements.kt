@@ -47,6 +47,24 @@ fun MapMarker(
     )
 }
 
+@Composable
+fun SearchMapMarker(
+    location: LatLng,
+    title: String,
+    iconText: String? = null,
+    @ColorInt iconColor: Int = 0xFFbbbbbb.toInt(),
+    @ColorInt onIconColor: Int = 0xFF000000.toInt(),
+){
+    //draw marker on map
+    Marker(
+        state = MarkerState(position = location),
+        title = title,
+        icon = bitmapDescriptor(false, iconText, iconColor, onIconColor),
+        anchor = Offset(0.5f, 0.5f),
+        zIndex = if (false) 2f else 1.5f
+    )
+}
+
 /**
  * Draw line on Google map
  *

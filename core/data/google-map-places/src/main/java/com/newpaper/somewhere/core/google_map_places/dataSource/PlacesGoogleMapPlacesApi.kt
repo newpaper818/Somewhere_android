@@ -49,11 +49,12 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
                 )
 
                 locationList.complete(
-                    subList.map {
+                    subList.mapIndexed { index, it ->
                         LocationInfo(
                             title = it.getPrimaryText(null).toString(),
                             address = it.getSecondaryText(null).toString(),
                             placeId = it.placeId,
+                            mapMarkerIndex = ('A' + index).toString()
                         )
                     }
                 )

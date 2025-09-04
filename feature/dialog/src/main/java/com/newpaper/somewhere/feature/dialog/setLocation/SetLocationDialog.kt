@@ -611,7 +611,7 @@ private fun MapSearchList(
     onSearchListSizeChanged: (IntSize) -> Unit
 ){
     val itemHeight = 62.dp
-    val horizontalPadding = 20.dp
+    val horizontalPadding = 16.dp
 
     val selected = stringResource(id = R.string.selected)
     val notSelected = stringResource(id = R.string.not_selected)
@@ -672,31 +672,58 @@ private fun MapSearchList(
                         shape = RoundedCornerShape(25.dp),
                         onClick = { onClickItem(it) }
                     ) {
-                        Column(
-                            verticalArrangement = Arrangement.Center,
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(horizontalPadding, 0.dp)
                         ) {
-                            Text(
-                                text = it.title,
-                                style = MaterialTheme.typography.bodyMedium,
-                                maxLines = 1
-                            )
+                            //
+                            if (it.mapMarkerIndex != null) {
 
-                            if (it.address != "") {
-                                MySpacerColumn(height = 1.dp)
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier
+                                        .size(26.dp)
+                                        .clip(CircleShape)
+                                        .background(Color(0xFFbbbbbb.toInt()))
+                                ) {
+                                    Text(
+                                        text = it.mapMarkerIndex!!,
+                                        style = MaterialTheme.typography.labelMedium,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = Color(0xFF000000.toInt())
+                                    )
+                                }
 
+                                MySpacerRow(8.dp)
+                            }
+
+                            //
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                modifier = Modifier
+                            ) {
                                 Text(
-                                    text = it.address,
-                                    style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                                    text = it.title,
+                                    style = MaterialTheme.typography.bodyMedium,
                                     maxLines = 1
                                 )
+
+                                if (it.address != "") {
+                                    MySpacerColumn(height = 1.dp)
+
+                                    Text(
+                                        text = it.address,
+                                        style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                                        maxLines = 1
+                                    )
+                                }
                             }
                         }
                     }
                     if (locationAutoFillList.last() != it){
-                        ItemDivider(horizontalPadding, horizontalPadding)
+                        ItemDivider(20.dp, 20.dp)
                     }
                 }
             }
