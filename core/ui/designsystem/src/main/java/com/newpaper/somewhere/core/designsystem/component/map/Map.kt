@@ -340,13 +340,10 @@ fun MapForSetLocation(
         if (showSearchLocationMarker) {
             for (locationInfo in searchLocationMarkerList) {
                 if (locationInfo.location != null) {
-                    MapMarker(
+                    SearchMapMarker(
                         location = locationInfo.location!!,
                         title = locationInfo.title,
-                        iconText = "",
-                        isBigMarker = true,
-                        iconColor = 0xFFff0000.toInt(),
-                        onIconColor = 0xFFff0000.toInt()
+                        iconText = locationInfo.mapMarkerIndex,
                     )
                 }
             }
