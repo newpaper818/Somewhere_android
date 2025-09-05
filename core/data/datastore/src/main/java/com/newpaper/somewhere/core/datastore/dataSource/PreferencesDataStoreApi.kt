@@ -26,6 +26,7 @@ class PreferencesDataStoreApi @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ): PreferencesLocalDataSource {
     private companion object {
+        val USE_BLUR_EFFECT = booleanPreferencesKey("use_blur_effect")
         val APP_THEME = intPreferencesKey("app_theme")
         val MAP_THEME = intPreferencesKey("map_theme")
 
@@ -34,6 +35,19 @@ class PreferencesDataStoreApi @Inject constructor(
         val DATE_INCLUDE_DAY_OF_WEEK = booleanPreferencesKey("date_include_day_of_week")
         val TIME_FORMAT = intPreferencesKey("time_format")
     }
+
+    private val useBlurEffect: Flow<Boolean> = dataStore.data
+        .catch {
+            if (it is IOException) {
+                Log.e(DATA_STORE_TAG, "Error reading preferences.", it)
+                emit(emptyPreferences())
+            } else {
+                throw it
+            }
+        }
+        .map { preferences ->
+            preferences[USE_BLUR_EFFECT] ?: true
+        }
 
     private val appTheme: Flow<Int> = dataStore.data
         .catch {
@@ -136,6 +150,7 @@ class PreferencesDataStoreApi @Inject constructor(
 
         //get data from dataStore
         //theme
+        val useBlurEffect = useBlurEffect.firstOrNull() ?: true
         val appTheme = AppTheme.get(appTheme.firstOrNull() ?: AppTheme.AUTO.ordinal)
         val mapTheme = MapTheme.get(mapTheme.firstOrNull() ?: MapTheme.AUTO.ordinal)
 
@@ -146,11 +161,17 @@ class PreferencesDataStoreApi @Inject constructor(
         val timeFormat = TimeFormat.get(timeFormat.firstOrNull() ?: TimeFormat.T24H.ordinal)
 
         onGet(
-            Theme(appTheme, mapTheme),
+            Theme(useBlurEffect, appTheme, mapTheme),
             DateTimeFormat(timeFormat, useMonthName, includeDayOfWeek, dateFormat)
         )
     }
 
+
+    override suspend fun saveUseBlurEffectPreference(useBlurEffect: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[USE_BLUR_EFFECT] = useBlurEffect
+        }
+    }
 
     override suspend fun saveAppThemePreference(appTheme: AppTheme) {
         dataStore.edit { preferences ->

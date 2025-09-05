@@ -7,10 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +16,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -94,6 +90,11 @@ import com.newpaper.somewhere.core.utils.convert.setMemoText
 import com.newpaper.somewhere.core.utils.convert.setSpotType
 import com.newpaper.somewhere.core.utils.convert.setStartTime
 import com.newpaper.somewhere.core.utils.convert.setTitleText
+import com.newpaper.somewhere.core.utils.enterVertically
+import com.newpaper.somewhere.core.utils.enterVerticallyScaleIn
+import com.newpaper.somewhere.core.utils.enterVerticallyScaleInDelay
+import com.newpaper.somewhere.core.utils.exitVertically
+import com.newpaper.somewhere.core.utils.exitVerticallyScaleOut
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.dialog.memo.MemoDialog
 import com.newpaper.somewhere.feature.dialog.setColor.SetColorDialog
@@ -107,7 +108,6 @@ import com.newpaper.somewhere.feature.trip.date.component.SpotListItem
 import kotlinx.coroutines.launch
 import java.time.LocalTime
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DateRoute(
     use2Panes: Boolean,
@@ -434,16 +434,14 @@ private fun DateScreen(
 
 
     MyScaffold(
-        modifier = modifier
-            .navigationBarsPadding()
-            .displayCutoutPadding()
-            .imePadding(),
+        modifier = modifier.imePadding(),
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarHostState,
                 modifier = Modifier
                     .width(500.dp)
-                    .imePadding(),
+                    .imePadding()
+                    .navigationBarsPadding(),
                 snackbar = {
                     Snackbar(
                         snackbarData = it,
@@ -457,7 +455,7 @@ private fun DateScreen(
             SomewhereTopAppBar(
                 startPadding = startSpacerValue,
                 title = topBarTitle,
-                internetEnabled = dateUiInfo.internetEnabled,
+                internetEnabled = dateUiInfo.use2Panes || dateUiInfo.internetEnabled,
 
                 //back button
                 navigationIcon = if (dateUiInfo.use2Panes || dateUiInfo.isEditMode) null else TopAppBarIcon.back,
@@ -754,12 +752,8 @@ private fun DatePage(
         item {
             AnimatedVisibility(
                 visible = !isEditMode,
-                enter = scaleIn(animationSpec = tween(300))
-                        + expandVertically(animationSpec = tween(300))
-                        + fadeIn(animationSpec = tween(300)),
-                exit = scaleOut(animationSpec = tween(300))
-                        + shrinkVertically(animationSpec = tween(300))
-                        + fadeOut(animationSpec = tween(300))
+                enter = enterVerticallyScaleInDelay,
+                exit = exitVerticallyScaleOut
             ) {
                 Column {
                     InformationCard(
@@ -843,20 +837,22 @@ private fun DatePage(
 
                 //spots title when edit mode
                 item {
-                    AnimatedVisibility(
-                        visible = isEditMode,
-                        enter = expandVertically(tween(400)),
-                        exit = shrinkVertically(tween(400))
+
+                    Box(
+                        modifier = Modifier
+                            .padding(startSpacerValue, 0.dp, endSpacerValue, 0.dp)
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surfaceBright)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .height(18.dp)
-                                .padding(startSpacerValue, 0.dp, endSpacerValue, 0.dp)
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.surfaceBright)
+                        AnimatedVisibility(
+                            visible = isEditMode,
+                            enter = enterVertically,
+                            exit = exitVertically
                         ) {
                             Row(
-                                modifier = Modifier.padding(16.dp, 0.dp)
+                                modifier = Modifier
+                                    .height(18.dp)
+                                    .padding(16.dp, 0.dp)
                             ) {
                                 Text(
                                     text = stringResource(id = R.string.spots),
@@ -864,18 +860,29 @@ private fun DatePage(
                                 )
 
                                 //up to 100 characters
-                                if (errorCount.spotTitleErrorCount > 0){
+                                if (errorCount.spotTitleErrorCount > 0) {
                                     Spacer(modifier = Modifier.weight(1f))
 
                                     Text(
-                                        text = stringResource(id = R.string.long_text, MAX_TITLE_LENGTH),
+                                        text = stringResource(
+                                            id = R.string.long_text,
+                                            MAX_TITLE_LENGTH
+                                        ),
                                         style = MaterialTheme.typography.bodySmall.copy(color = CustomColor.outlineError)
                                     )
                                 }
                             }
+                        }
 
-                            if(firstSpotShowUpperLine)
-                                DummySpaceWithLine(modifier = Modifier.fillMaxHeight())
+                        AnimatedVisibility(
+                            visible = isEditMode,
+                            enter = expandVertically(tween(350)),
+                            exit = shrinkVertically(tween(300, delayMillis = 100))
+                        ) {
+                            if (firstSpotShowUpperLine)
+                                Box(Modifier.height(18.dp)) {
+                                    DummySpaceWithLine(modifier = Modifier.fillMaxHeight())
+                                }
                         }
                     }
                 }
@@ -915,43 +922,43 @@ private fun DatePage(
                                     spotList[spot.index].setTitleText(showingTrip, dateIndex, updateTripState, spotTitleText)
                                 },
                                 isLongText = {
-                                    if (it) {
-                                        errorCount.increaseTotalErrorCount()
-                                        errorCount.increaseSpotTitleErrorCount()
-                                    } else {
-                                        errorCount.decreaseTotalErrorCount()
-                                        errorCount.decreaseSpotTitleErrorCount()
-                                    }
-                                },
+                                        if (it) {
+                                            errorCount.increaseTotalErrorCount()
+                                            errorCount.increaseSpotTitleErrorCount()
+                                        } else {
+                                            errorCount.decreaseTotalErrorCount()
+                                            errorCount.decreaseSpotTitleErrorCount()
+                                        }
+                                    },
                                 onClickItem =
-                                if (!isEditMode){
-                                    {
-                                        navigate.navigateToSpot(dateIndex, spotList.indexOf(spot))
+                                    if (!isEditMode){
+                                        {
+                                            navigate.navigateToSpot(dateIndex, spotList.indexOf(spot))
+                                        }
                                     }
-                                }
-                                else null,
+                                    else null,
                                 onClickDelete = {
-                                    //dialog: ask delete
-                                    deleteSpot(dateIndex, spot.index)
-                                    spotTypeWithShownList =
-                                        updateSpotTypeGroupWithShownList(currentDate, spotTypeWithShownList)
-                                },
+                                        //dialog: ask delete
+                                        deleteSpot(dateIndex, spot.index)
+                                        spotTypeWithShownList =
+                                            updateSpotTypeGroupWithShownList(currentDate, spotTypeWithShownList)
+                                    },
                                 onClickSideText =
-                                if (isEditMode){
-                                    {
-                                        dialog.setSelectedDate(spot)
-                                        dialog.setShowSetTimeDialog(true)
+                                    if (isEditMode){
+                                        {
+                                            dialog.setSelectedDate(spot)
+                                            dialog.setShowSetTimeDialog(true)
+                                        }
                                     }
-                                }
                                 else null,
                                 onClickPoint =
-                                if (isEditMode){
-                                    {
-                                        dialog.setSelectedDate(spot)
-                                        dialog.setShowSetSpotTypeDialog(true)
+                                    if (isEditMode){
+                                        {
+                                            dialog.setSelectedDate(spot)
+                                            dialog.setShowSetSpotTypeDialog(true)
+                                        }
                                     }
-                                }
-                                else null
+                                    else null
                             )
                         }
                     }
@@ -990,8 +997,8 @@ private fun DatePage(
             Box(modifier = Modifier.height(40.dp)){
                 AnimatedVisibility(
                     visible = isEditMode && spotList.size < 100,
-                    enter = fadeIn(tween(300)) + scaleIn(tween(300)),
-                    exit = fadeOut(tween(300)) + scaleOut(tween(300))
+                    enter = enterVerticallyScaleIn,
+                    exit = exitVerticallyScaleOut
                 ) {
                     NewItemButton(
                         text = stringResource(id = R.string.new_spot),

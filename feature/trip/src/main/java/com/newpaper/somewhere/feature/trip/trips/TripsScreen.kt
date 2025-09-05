@@ -1,15 +1,16 @@
 package com.newpaper.somewhere.feature.trip.trips
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -37,6 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -45,6 +47,7 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.button.NewTripExtendedFAB
+import com.newpaper.somewhere.core.designsystem.component.button.UpgradeToSomewhereProButton
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
@@ -60,6 +63,8 @@ import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
 import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.convert.getAllImagesPath
 import com.newpaper.somewhere.core.utils.convert.getMaxTrips
+import com.newpaper.somewhere.core.utils.enterVerticallyDelay
+import com.newpaper.somewhere.core.utils.exitVertically
 import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrLeaveTripDialog
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
@@ -71,6 +76,9 @@ import com.newpaper.somewhere.feature.trip.trips.component.GlanceSpot
 import com.newpaper.somewhere.feature.trip.trips.component.LoadingTripsItem
 import com.newpaper.somewhere.feature.trip.trips.component.NoTripCard
 import com.newpaper.somewhere.feature.trip.trips.component.TripItem
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -98,6 +106,9 @@ fun TripsRoute(
     navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
     navigateToTripAi: () -> Unit,
     navigateToGlanceSpot: (glance: Glance) -> Unit,
+    navigateToSubscription: () -> Unit,
+
+    hazeState: HazeState?,
 
     modifier: Modifier = Modifier
 ){
@@ -290,15 +301,15 @@ fun TripsRoute(
                 else
                     navigateToTrip(isNewTrip, trip!!)
             },
-            _navigateToTripAi = {
-                navigateToTripAi()
-            },
+            _navigateToTripAi = { navigateToTripAi() },
             _navigateToGlanceSpot = { navigateToGlanceSpot(tripsUiState.glance) },
+            _navigateToSubscription = { navigateToSubscription() }
         ),
 
         lazyListState = lazyListState,
         adView = adView,
         updateTripItemOrder = tripsViewModel::reorderTempTrips,
+        hazeState = hazeState,
         modifier = modifier
     )
 }
@@ -325,6 +336,8 @@ private fun TripsScreen(
     lazyListState: LazyListState,
     adView: AdView?,
     updateTripItemOrder: (isSharedTrips: Boolean, currentIndex: Int, destinationIndex: Int) -> Unit,
+
+    hazeState: HazeState?,
 
     modifier: Modifier = Modifier
 ){
@@ -359,10 +372,7 @@ private fun TripsScreen(
 
 
     MyScaffold(
-        modifier = modifier
-            .navigationBarsPadding()
-            .displayCutoutPadding()
-            .imePadding(),
+        modifier = modifier.imePadding(),
 
         //top app bar
         topBar = {
@@ -374,7 +384,8 @@ private fun TripsScreen(
                 actionIcon1 = TopAppBarIcon.edit,
                 actionIcon1Onclick = { tripsUiInfo.setIsEditMode(true) },
                 actionIcon1Visible = !isEditMode && !loadingTrips && !tripsIsEmpty,
-                startPadding = spacerValue
+                startPadding = spacerValue,
+                hazeState = hazeState
             )
         },
 
@@ -395,6 +406,7 @@ private fun TripsScreen(
         },
         glanceSpot = {
             GlanceSpot(
+                useBottomNavBar = useBottomNavBar,
                 visible = glance.visible && !isEditMode && !loadingTrips,
                 dateTimeFormat = dateTimeFormat,
                 trip = glance.trip ?: Trip(id = 0, managerId = ""), //if glanceVisible is true, glanceTrip, Date, Spot is not null
@@ -404,6 +416,7 @@ private fun TripsScreen(
                     //go to spot screen
                     navigate.navigateToGlanceSpot()
                 },
+                hazeState = hazeState
             )
         },
 
@@ -491,21 +504,24 @@ private fun TripsScreen(
             contentAlignment = Alignment.TopCenter
         ) {
 
+            val lazyColumnModifier = modifier
+                .fillMaxSize()
+                .onSizeChanged {
+                    with(density) {
+                        lazyColumnHeightDp = it.height.toDp().value.toInt()
+                    }
+                }
+
+
+
             //display trips list (my trips + shared trips)
             LazyColumn(
                 state = lazyListState,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(spacerValue, 16.dp, spacerValue, 400.dp),
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .navigationBarsPadding()
-                    .onSizeChanged {
-                        with(density) {
-                            lazyColumnHeightDp = it.height.toDp().value.toInt()
-                        }
-                    }
+                contentPadding = PaddingValues(spacerValue, 16.dp + paddingValues.calculateTopPadding(), spacerValue, 400.dp),
+                modifier = if (hazeState != null) lazyColumnModifier.hazeSource(state = hazeState).background(MaterialTheme.colorScheme.background)
+                            else lazyColumnModifier
             ) {
                 if (adView != null) {
                     item {
@@ -515,6 +531,28 @@ private fun TripsScreen(
                         )
 
                         MySpacerColumn(height = 8.dp)
+
+                        AnimatedVisibility(
+                            visible = !loadingTrips
+                                    && !appUserData.isUsingSomewherePro
+                                    && showingTrips.size >= getMaxTrips(false),
+                            enter = enterVerticallyDelay,
+                            exit = exitVertically
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.maximum_number_of_trips_reached),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center
+                                )
+
+                                //upgrade to Somewhere Pro button
+                                UpgradeToSomewhereProButton(onClick = { navigate.navigateToSubscription() })
+                            }
+                        }
                     }
                 }
 
@@ -554,15 +592,15 @@ private fun TripsScreen(
                                 trip = trip,
                                 trips = showingTrips,
                                 onClick = if (!isEditMode) { {
-                                    tripsUiInfo.setIsLoadingTrips(true)
-                                    navigate.navigateToTrip(false, trip)
-                                } }
-                                else null,
+                                        tripsUiInfo.setIsLoadingTrips(true)
+                                        navigate.navigateToTrip(false, trip)
+                                    } }
+                                    else null,
                                 onLongClick = if (isEditMode) { {
-                                    dialog.setSelectedTrip(trip)
-                                    dialog.setShowDeleteDialog(true)
-                                } }
-                                else null,
+                                        dialog.setSelectedTrip(trip)
+                                        dialog.setShowDeleteDialog(true)
+                                    } }
+                                    else null,
                                 downloadImage = image::downloadImage,
                                 slideState = slideStates[trip.id] ?: SlideState.NONE,
                                 updateSlideState = { tripId, newSlideState ->
@@ -649,7 +687,7 @@ private fun TripsScreen(
                 showAds = adView != null,
                 use2Panes = tripsUiInfo.use2Panes,
                 modifier = Modifier
-                    .padding(spacerValue, 16.dp, spacerValue, 0.dp)
+                    .padding(spacerValue, 0.dp, spacerValue, 0.dp)
                     .padding(paddingValues)
             )
         }
@@ -736,6 +774,7 @@ private fun TripsScreenPreview_Default(){
             lazyListState = LazyListState(),
             adView =  AdView(context).apply {},
             updateTripItemOrder = { _, _, _->},
+            hazeState = rememberHazeState()
         )
     }
 }
@@ -779,7 +818,8 @@ private fun TripsScreenPreview_Edit(){
 
             lazyListState = LazyListState(),
             adView =  AdView(context).apply {},
-            updateTripItemOrder = { _, _, _->}
+            updateTripItemOrder = { _, _, _->},
+            hazeState = rememberHazeState()
         )
     }
 }
@@ -825,7 +865,8 @@ private fun TripsScreenPreview_OnClickCancel(){
 
             lazyListState = LazyListState(),
             adView =  AdView(context).apply {},
-            updateTripItemOrder = { _, _, _->}
+            updateTripItemOrder = { _, _, _->},
+            hazeState = rememberHazeState()
         )
     }
 }

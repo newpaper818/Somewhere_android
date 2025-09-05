@@ -48,7 +48,6 @@ import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.ui.loadAndShowRewardedAd
-import com.newpaper.somewhere.core.ui.loadRewardedAd
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
@@ -65,6 +64,7 @@ import com.newpaper.somewhere.feature.trip.tripAi.page.EnterTripCityPage
 import com.newpaper.somewhere.feature.trip.tripAi.page.EnterTripDurationPage
 import com.newpaper.somewhere.feature.trip.tripAi.page.SelectTripTypePage
 import com.newpaper.somewhere.feature.trip.tripAi.page.SelectTripWithPage
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -129,17 +129,7 @@ fun TripAiRoute(
         }
     }
 
-    val adView =
-        if (!appUserData.isUsingSomewherePro) {
-            AdView(context).apply {
-                setAdSize(AdSize.MEDIUM_RECTANGLE)
-                adUnitId = if (BuildConfig.DEBUG) BANNER_AD_UNIT_ID_TEST
-                            else BANNER_AD_UNIT_ID
 
-                loadAd(AdRequest.Builder().build())
-            }
-        }
-        else null
 
     if (tripAiUiState.showExitDialog) {
         TwoButtonsDialog(
@@ -153,22 +143,6 @@ fun TripAiRoute(
                 navigateUp()
             }
         )
-    }
-
-    //load ad
-    LaunchedEffect(tripAiUiState.tripAiPhase) {
-        if (
-            !appUserData.isUsingSomewherePro
-            && tripAiUiState.tripAiPhase == TripAiPhase.TRIP_TYPE
-            && rewardedInterstitialAd == null
-        ){
-            loadRewardedAd(
-                context = context,
-                onAdLoaded = { ad ->
-                    rewardedInterstitialAd = ad
-                }
-            )
-        }
     }
 
 
@@ -194,10 +168,9 @@ fun TripAiRoute(
 
                     //add id time in ai created raw trip
                     var newOrderId = 0
-                    val lastTrip =
-                        commonTripViewModel.commonTripUiState.value.tripInfo.trips?.lastOrNull()
+                    val lastTrip = commonTripViewModel.commonTripUiState.value.tripInfo.trips?.firstOrNull()
                     if (lastTrip != null) {
-                        newOrderId = lastTrip.orderId + 1
+                        newOrderId = lastTrip.orderId - 1
                     }
 
                     val aiCreatedTrip = tripAiViewModel.addAdditionalDataToAiCreatedRawTrip(
@@ -228,7 +201,6 @@ fun TripAiRoute(
         internetEnabled = internetEnabled,
         dateTimeFormat = dateTimeFormat,
         tripAiUiState = tripAiUiState,
-        adView = adView,
 
         onClickBack = onClickBack,
 
@@ -253,7 +225,6 @@ fun TripAiScreen(
     internetEnabled: Boolean,
     dateTimeFormat: DateTimeFormat,
     tripAiUiState: TripAiUiState,
-    adView: AdView?,
 
     onClickBack: () -> Unit,
 
@@ -330,7 +301,7 @@ fun TripAiScreen(
                             //to next page
                             coroutineScope.launch {
                                 pagerState.animateScrollToPage(
-                                    pagerState.currentPage + 1
+                                    tripAiPhaseList.size - 1
                                 )
                             }
                         }
@@ -400,6 +371,15 @@ fun TripAiScreen(
                         }
 
                         TripAiPhase.TRIP_TYPE -> {
+                            LaunchedEffect(Unit) {
+                                while (true){
+                                    delay(700)
+                                    if (tripAiUiState.userGetReward) {
+                                        pagerState.animateScrollToPage(tripAiPhaseList.size - 1)
+                                        break
+                                    }
+                                }
+                            }
                             SelectTripTypePage(
                                 selectedTripTypes = tripAiUiState.tripTypes,
                                 onClick = onClickTripType
@@ -407,6 +387,19 @@ fun TripAiScreen(
                         }
 
                         TripAiPhase.CREATE_TRIP -> {
+                            // rectangle ad
+                            val adView =
+                                if (!isUsingSomewherePro) {
+                                    AdView(context).apply {
+                                        setAdSize(AdSize.MEDIUM_RECTANGLE)
+                                        adUnitId = if (BuildConfig.DEBUG) BANNER_AD_UNIT_ID_TEST
+                                                    else BANNER_AD_UNIT_ID
+
+                                        loadAd(AdRequest.Builder().build())
+                                    }
+                                }
+                                else null
+
                             CreateTripPage(
                                 internetEnabled = internetEnabled,
                                 adView = adView,

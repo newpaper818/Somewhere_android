@@ -18,7 +18,7 @@ import kotlin.math.min
  * @param spotList
  * @param density
  */
-suspend fun focusOnToSpots(
+suspend fun fitBoundsToMarkers(
     cameraPositionState: CameraPositionState,
     mapSize: IntSize,
     spotList: List<Spot>,
@@ -101,7 +101,7 @@ suspend fun focusOnToLatLngForSetLocation(
     }
 }
 
-suspend fun focusOnToSpotForTripMap(
+suspend fun fitBoundsToMarkersForTripMap(
     mapSize: IntSize,   //exclude map padding
     cameraPositionState: CameraPositionState,
     spotList: List<Spot>

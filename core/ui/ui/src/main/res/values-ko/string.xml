@@ -138,8 +138,11 @@
 
 
     <!--ErrorScreen.kt-->
-    <string name="error_occurred">오류가 발생했어요...</string>
+    <string name="error_occurred">오류가 발생했어요…</string>
     <string name="turning_the_app_off_and_on">앱을 껐다 켜보세요.</string>
+
+    <!--GoogleAd.kt-->
+    <string name="ad_area">광고 영역</string>
 
     <!--FriendInfo.kt-->
     <string name="unknown">알 수 없음</string>

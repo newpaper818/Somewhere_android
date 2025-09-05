@@ -26,6 +26,7 @@ import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
 import com.newpaper.somewhere.util.WindowHeightSizeClass
 import com.newpaper.somewhere.util.WindowWidthSizeClass
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.delay
 
 private const val DEEP_LINK_URI_PATTERN =
@@ -41,7 +42,9 @@ fun NavGraphBuilder.profileScreen(
     lazyListState: LazyListState,
     navigateToAccount: () -> Unit,
     navigateToSubscription: () -> Unit,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+
+    hazeState: HazeState?,
 ) {
     composable(
         route = TopLevelDestination.PROFILE.route,
@@ -85,7 +88,9 @@ fun NavGraphBuilder.profileScreen(
                     use2Panes = externalState.windowSizeClass.use2Panes,
                     userData = appUiState.appUserData!!,
                     navigateToAccount = navigateToAccount,
-                    navigateToSubscription = navigateToSubscription
+                    navigateToSubscription = navigateToSubscription,
+
+                    hazeState = hazeState
                 )
             }
         }

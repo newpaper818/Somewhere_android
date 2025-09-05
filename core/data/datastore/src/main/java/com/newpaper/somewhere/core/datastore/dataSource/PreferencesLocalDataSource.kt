@@ -17,7 +17,7 @@ interface PreferencesLocalDataSource {
     )
 
 
-
+    suspend fun saveUseBlurEffectPreference(useBlurEffect: Boolean)
 
     suspend fun saveAppThemePreference(appTheme: AppTheme)
 

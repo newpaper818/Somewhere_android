@@ -17,6 +17,8 @@
     <string name="friends">friends</string>
     <string name="no_friends">No invited friend\nInvite friend to share trip!</string>
     <string name="unknown">Unknown</string>
+    <string name="upgrade_to_somewhere_pro_to_invite_more_friends">Maximum number of invited friends reached.\nUpgrade to Somewhere Pro to invite more friends.</string>
+    <string name="maximum_number_of_invited_friends_reached">Maximum number of invited friends reached</string>
     <string name="snackbar_delete_friend_error">Delete friend error</string>
     <string name="snackbar_set_editable_error">Set permission error</string>
 
@@ -41,8 +43,15 @@
     <string name="snackbar_invite_friend_error">Invite friend error</string>
     <string name="snackbar_search_friend_error">Search friend error</string>
 
-
     <!--setLocation/ ============================================================================-->
+
+
+    <!--shareTrip/ ==============================================================================-->
+    <string name="share_trip">Share trip</string>
+    <string name="background_image">Background image</string>
+    <string name="sticker_image">Sticker image</string>
+    <string name="loading_sticker_image">Loading sticker image</string>
+    <string name="use_background">Use background</string>
 
 
     <!--spot/ ===================================================================================-->
@@ -54,7 +63,7 @@
 
 
     <!--trip/ ===================================================================================-->
-    <!--SharingWithFriendsCard.kt-->
+    <!--ShareTripCard.kt-->
     <string name="me">Me</string>
     <string name="trip_mates">Trip mates</string>
 
@@ -82,21 +91,21 @@
     <string name="not_selected">Unselected</string>
 
     <string name="where_are_you_going">Where are you traveling?</string>
-    <string name="type_a_destination">Type a destination.</string>
-    <string name="type_city_or_country_name">Type city or country name.</string>
+    <string name="type_a_destination">Type a destination</string>
+    <string name="type_city_or_country_name">Type city or country name</string>
 
     <string name="when_are_you_going">When are you traveling?</string>
     <string name="starts">Starts</string>
     <string name="ends">Ends</string>
     <string name="date_range">%s - %s</string>
-    <string name="choose_a_date_range">Choose a date range. (Up to 15 days)</string>
-    <string name="date_range_error">Date range should be less than 16 days.</string>
+    <string name="choose_a_date_range">Choose a date range (Up to 15 days)</string>
+    <string name="date_range_error">Date range should be less than 16 days</string>
 
     <string name="who_are_you_traveling_with">Who are you traveling with?</string>
-    <string name="select_one">Select one.</string>
+    <string name="select_one">Select one</string>
 
     <string name="whats_your_trip_type">What\'s your trip type?</string>
-    <string name="select_multiple">Select multiple.</string>
+    <string name="select_multiple">Select multiple</string>
 
     <string name="creating_trip_with_ai">Creating a trip with AI…</string>
     <string name="it_may_took_a_while">It may took a while.</string>
@@ -123,6 +132,7 @@
     <string name="no_date">No Date</string>
     <string name="image">Image</string>
 
+    <string name="maximum_number_of_trips_reached">Maximum trips reached</string>
     <string name="my_trips">My trips</string>
     <string name="shared_trips">Shared trips</string>
 

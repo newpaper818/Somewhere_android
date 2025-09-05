@@ -101,7 +101,8 @@ fun DateRangeDialog(
                     colors = DatePickerDefaults.colors(
                         containerColor = Color.Transparent,
                         headlineContentColor = MaterialTheme.colorScheme.onSurface,
-                        subheadContentColor = MaterialTheme.colorScheme.onSurface
+                        subheadContentColor = MaterialTheme.colorScheme.onSurface,
+                        dayInSelectionRangeContainerColor = MaterialTheme.colorScheme.primaryContainer,
                     )
                 )
             }
@@ -220,12 +221,12 @@ private fun MyDialogForDatePicker(
 private fun Preview_DateRangeDialog(){
     SomewhereTheme {
         MyScaffold {
-//            DateRangeDialog(
-//                defaultDateRange = LocalDate.now().plusDays(2) .. LocalDate.now().plusDays(5),
-//                dateTimeFormat = DateTimeFormat(),
-//                onDismissRequest = {},
-//                onConfirm = {_, _->}
-//            )
+            DateRangeDialog(
+                defaultDateRange = LocalDate.now().plusDays(2) .. LocalDate.now().plusDays(5),
+                dateTimeFormat = DateTimeFormat(),
+                onDismissRequest = {},
+                onConfirm = {_, _->}
+            )
         }
     }
 }

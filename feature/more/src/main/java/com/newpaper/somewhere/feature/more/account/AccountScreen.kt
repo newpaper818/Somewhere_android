@@ -1,11 +1,11 @@
 package com.newpaper.somewhere.feature.more.account
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,6 +38,8 @@ import com.newpaper.somewhere.core.ui.item.ListGroupCard
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.more.R
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -46,6 +48,7 @@ fun AccountRoute(
     userData: UserData,
     internetEnabled: Boolean,
     spacerValue: Dp,
+    useBlurEffect: Boolean,
 
     navigateToEditAccount: () -> Unit,
     navigateToSubscription: () -> Unit,
@@ -71,7 +74,9 @@ fun AccountRoute(
     }
 
     AccountScreen(
+        use2Panes = use2Panes,
         userData = userData,
+        useBlurEffect = useBlurEffect,
         onSignOut = {
             coroutineScope.launch {
                 accountViewModel.signOut(
@@ -96,7 +101,6 @@ fun AccountRoute(
         snackBarHostState = snackBarHostState,
         downloadImage = accountViewModel::getImage,
         modifier = modifier,
-        use2Panes = use2Panes
     )
 }
 
@@ -104,6 +108,7 @@ fun AccountRoute(
 private fun AccountScreen(
     use2Panes: Boolean,
     userData: UserData,
+    useBlurEffect: Boolean,
 
     onSignOut: () -> Unit,
     navigateToEditAccount: () -> Unit,
@@ -119,10 +124,9 @@ private fun AccountScreen(
 
     modifier: Modifier = Modifier
 ) {
-    val scaffoldModifier = if (use2Panes) modifier
-        else modifier.navigationBarsPadding()
-
     var showSignOutDialog by rememberSaveable { mutableStateOf(false) }
+
+    val topAppBarHazeState = if(useBlurEffect) rememberHazeState() else null
 
     if (showSignOutDialog) {
         TwoButtonsDialog(
@@ -139,7 +143,7 @@ private fun AccountScreen(
     }
 
     Scaffold(
-        modifier = scaffoldModifier,
+        modifier = modifier,
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {
@@ -147,13 +151,14 @@ private fun AccountScreen(
                 startPadding = startSpacerValue,
                 title = stringResource(id = R.string.account),
                 navigationIcon = if (!use2Panes) TopAppBarIcon.back else null,
-                onClickNavigationIcon = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() },
+                hazeState = topAppBarHazeState
             )
         },
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarHostState,
-                modifier = Modifier.width(500.dp),
+                modifier = Modifier.width(500.dp).navigationBarsPadding(),
                 snackbar = {
                     Snackbar(
                         snackbarData = it,
@@ -169,10 +174,10 @@ private fun AccountScreen(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(startSpacerValue, 8.dp, endSpacerValue, 200.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            contentPadding = PaddingValues(startSpacerValue, 8.dp + paddingValues.calculateTopPadding(), endSpacerValue, 200.dp),
+            modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
+                            .hazeSource(state = topAppBarHazeState).background(MaterialTheme.colorScheme.background)
+                        else Modifier.fillMaxSize()
         ) {
             //user profile
             item {

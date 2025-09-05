@@ -6,10 +6,10 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -86,18 +87,23 @@ import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.trip.component.DateListEmptyTextCard
 import com.newpaper.somewhere.feature.trip.trip.component.DateListItem
 import com.newpaper.somewhere.feature.trip.trip.component.DateListTopTitleCard
-import com.newpaper.somewhere.feature.trip.trip.component.SharingWithFriendsCard
+import com.newpaper.somewhere.feature.trip.trip.component.ShareTripCards
 import com.newpaper.somewhere.feature.trip.trip.component.TripDurationCard
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.ZoneId
 
 @Composable
 fun TripRoute(
+    isDarkAppTheme: Boolean,
     appUserData: UserData,
     use2Panes: Boolean,
     spacerValue: Dp,
+    useBlurEffect: Boolean,
     dateTimeFormat: DateTimeFormat,
     internetEnabled: Boolean,
 
@@ -105,6 +111,7 @@ fun TripRoute(
 
     //navigate
     navigateUp: () -> Unit,
+    navigateToShareTrip: (imageList: List<String>, initialImageIndex: Int) -> Unit,
     navigateUpAndDeleteNewTrip: (deleteTrip: Trip) -> Unit,
     navigateToInviteFriend: () -> Unit,
     navigateToInvitedFriends: () -> Unit,
@@ -151,6 +158,9 @@ fun TripRoute(
                 tripViewModel.setLoadingTrip(false)
             }
         }
+        else {
+            tripViewModel.setLoadingTrip(false)
+        }
     }
 
     LaunchedEffect(isEditMode) {
@@ -184,11 +194,13 @@ fun TripRoute(
         }
 
     TripScreen(
+        isDarkAppTheme = isDarkAppTheme,
         appUserId = appUserData.userId,
         isUsingSomewherePro = appUserData.isUsingSomewherePro,
         tripUiInfo = TripUiInfo(
             use2Panes = use2Panes,
             spacerValue = spacerValue,
+            useBlurEffect = useBlurEffect,
             loadingTrip = tripUiState.loadingTrip,
             dateTimeFormat = dateTimeFormat,
             internetEnabled = internetEnabled,
@@ -236,6 +248,7 @@ fun TripRoute(
                 if (!isEditMode) navigateUp()
                 else onClickBackButton()
             },
+            _navigateToShareTrip = navigateToShareTrip,
             _navigateToInviteFriend = navigateToInviteFriend,
             _navigateToInvitedFriends = navigateToInvitedFriends,
             _navigateToImage = navigateToImage,
@@ -329,6 +342,7 @@ fun TripRoute(
 
 @Composable
 private fun TripScreen(
+    isDarkAppTheme: Boolean,
     appUserId: String,
     isUsingSomewherePro: Boolean,
     tripUiInfo: TripUiInfo,
@@ -354,6 +368,7 @@ private fun TripScreen(
 
     val use2Panes = tripUiInfo.use2Panes
     val spacerValue = tripUiInfo.spacerValue
+    val useBlurEffect = tripUiInfo.useBlurEffect
 
     val loadingTrip = tripUiInfo.loadingTrip
     val dateTimeFormat = tripUiInfo.dateTimeFormat
@@ -381,6 +396,9 @@ private fun TripScreen(
     val slideStates = remember { mutableStateMapOf(
         *showingTrip.dateList.map { it.id to SlideState.NONE }.toTypedArray()
     ) }
+
+    //images pager state
+    val imagesPagerState = rememberPagerState { showingTrip.imagePathList.size }
 
 
     //set top bar title
@@ -414,6 +432,7 @@ private fun TripScreen(
         } else
             LocalDate.now().let { now -> now.plusDays(1)..now.plusDays(5) }
 
+    val topAppBarHazeState = if(useBlurEffect) rememberHazeState() else null
 
 
 
@@ -424,16 +443,14 @@ private fun TripScreen(
 
 
     MyScaffold (
-        modifier = modifier
-            .navigationBarsPadding()
-            .displayCutoutPadding()
-            .imePadding(),
+        modifier = modifier.imePadding(),
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarHostState,
                 modifier = Modifier
                     .width(500.dp)
                     .padding(bottom = snackBarPadding.dp)
+                    .navigationBarsPadding()
                     .imePadding(),
                 snackbar = {
                     Snackbar(
@@ -451,9 +468,11 @@ private fun TripScreen(
                 internetEnabled = internetEnabled,
                 navigationIcon = if(!isEditMode) TopAppBarIcon.back else null,
                 onClickNavigationIcon = { tripNavigate.navigateUp() },
+
                 actionIcon1 = TopAppBarIcon.edit,
                 actionIcon1Onclick = { tripUiInfo.setIsEditMode(true) },
-                actionIcon1Visible = !loadingTrip && !isEditMode && !use2Panes && showingTrip.editable
+                actionIcon1Visible = !loadingTrip && !isEditMode && !use2Panes && showingTrip.editable,
+                hazeState = topAppBarHazeState
             )
         },
 
@@ -557,29 +576,31 @@ private fun TripScreen(
 
 
         Box(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
         ) {
             LazyColumn(
                 state = scrollState,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 contentPadding = PaddingValues(
-                    spacerValue, 16.dp, if (use2Panes) spacerValue / 2 else spacerValue, 200.dp
+                    spacerValue, 16.dp + paddingValues.calculateTopPadding(), if (use2Panes) spacerValue / 2 else spacerValue, 200.dp
                 ),
-                modifier = Modifier.fillMaxSize()
+                modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
+                                .hazeSource(state = topAppBarHazeState).background(MaterialTheme.colorScheme.background)
+                            else Modifier.fillMaxSize()
             ) {
 
+                //share trip (trip mate / share)
                 item {
-                    SharingWithFriendsCard(
+                    ShareTripCards(
                         trip = showingTrip,
                         maxInviteFriends = getMaxInviteFriends(isUsingSomewherePro),
                         userIsManager = appUserId == showingTrip.managerId,
                         internetEnabled = internetEnabled,
                         isEditMode = isEditMode,
                         onClickInvitedFriends = tripNavigate::navigateToInvitedFriends,
-                        onClickShareTrip = tripNavigate::navigateToInviteFriend
+                        onClickAddFriend = tripNavigate::navigateToInviteFriend,
+                        onClickShareTrip = { tripNavigate.navigateToShareTrip(showingTrip.imagePathList, imagesPagerState.currentPage) }
                     )
                 }
 
@@ -591,6 +612,7 @@ private fun TripScreen(
                 item {
                     TitleCard(
                         isEditMode = isEditMode,
+                        useDelayEnter = true,
                         titleText = showingTrip.titleText,
                         onTitleChange = { newTitleText ->
                             showingTrip.setTitleText(updateTripState, newTitleText)
@@ -611,6 +633,7 @@ private fun TripScreen(
                 //image card
                 item {
                     ImageCard(
+                        isDarkAppTheme = isDarkAppTheme,
                         imageUserId = showingTrip.managerId,
                         internetEnabled = internetEnabled,
                         isEditMode = isEditMode,
@@ -640,7 +663,8 @@ private fun TripScreen(
                         },
                         reorderImageList = tripImage::reorderTripImageList,
                         downloadImage = tripImage::downloadImage,
-                        saveImageToInternalStorage = tripImage::saveImageToInternalStorage
+                        saveImageToInternalStorage = tripImage::saveImageToInternalStorage,
+                        pagerState = imagesPagerState
                     )
                 }
 
@@ -809,14 +833,16 @@ private fun TripScreen(
                         MySpacerColumn(height = 64.dp)
 
                         val firstCreatedTime = tripData.originalTrip.firstCreatedTime
+                        val localZoneId = ZoneId.systemDefault()
+                        val firstCreatedTimeZoned = firstCreatedTime.withZoneSameInstant(localZoneId)
 
                         val dateText = getDateText(
-                            date = firstCreatedTime.toLocalDate(),
+                            date = firstCreatedTimeZoned.toLocalDate(),
                             dateTimeFormat = dateTimeFormat,
                         )
 
                         val timeText = getTimeText(
-                            time = firstCreatedTime.toLocalTime(),
+                            time = firstCreatedTimeZoned.toLocalTime(),
                             timeFormat = dateTimeFormat.timeFormat
                         )
 

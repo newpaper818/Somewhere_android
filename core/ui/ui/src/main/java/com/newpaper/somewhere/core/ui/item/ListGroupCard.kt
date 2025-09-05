@@ -7,12 +7,14 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
@@ -26,6 +28,7 @@ import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 fun ListGroupCard(
     modifier: Modifier = Modifier,
     title: String? = null,
+    isTransparentCard: Boolean = false,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(
@@ -43,9 +46,28 @@ fun ListGroupCard(
             MySpacerColumn(height = 6.dp)
         }
 
-        MyCard (modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                content()
+        if (!isTransparentCard) {
+            MyCard(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    content()
+                }
+            }
+        }
+        else {
+            val cardColors = CardColors(
+                containerColor = Color.Transparent,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceBright,
+                disabledContentColor = MaterialTheme.colorScheme.onSurface
+            )
+
+            MyCard (
+                modifier = Modifier.fillMaxWidth(),
+                colors = cardColors
+            ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    content()
+                }
             }
         }
     }
@@ -54,9 +76,12 @@ fun ListGroupCard(
 @Composable
 fun ItemDivider(
     startPadding: Dp = 16.dp,
-    endPadding: Dp = 16.dp
+    endPadding: Dp = 16.dp,
+    modifier: Modifier = Modifier
 ){
-    Row {
+    Row(
+        modifier = modifier
+    ) {
         MySpacerRow(width = startPadding)
         HorizontalDivider(modifier = Modifier.weight(1f))
         MySpacerRow(width = endPadding)

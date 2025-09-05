@@ -9,13 +9,13 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -72,6 +72,8 @@ import com.newpaper.somewhere.core.ui.card.ProfileImage
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.more.R
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -79,6 +81,7 @@ fun EditProfileRoute(
     userData: UserData,
     internetEnabled: Boolean,
     spacerValue: Dp,
+    useBlurEffect: Boolean,
 
     updateUserState: (userData: UserData) -> Unit,
     navigateUp: () -> Unit,
@@ -132,6 +135,8 @@ fun EditProfileRoute(
         editProfileUiState = editProfileUiState,
         userData = userData,
         spacerValue = spacerValue,
+        useBlurEffect = useBlurEffect,
+
         internetEnabled = internetEnabled,
         showExitDialog = editProfileUiState.showExitDialog,
         setShowExitDialog = editProfileViewModel::setShowExitDialog,
@@ -176,6 +181,8 @@ private fun EditProfileScreen(
     editProfileUiState: EditProfileUiState,
     userData: UserData,
     spacerValue: Dp,
+    useBlurEffect: Boolean,
+
     internetEnabled: Boolean,
     showExitDialog: Boolean,
     setShowExitDialog: (Boolean) -> Unit,
@@ -193,11 +200,10 @@ private fun EditProfileScreen(
 
     modifier: Modifier = Modifier,
 ){
+    val topAppBarHazeState = if(useBlurEffect) rememberHazeState() else null
+
     MyScaffold(
-        modifier = modifier
-            .imePadding()
-            .navigationBarsPadding()
-            .displayCutoutPadding(),
+        modifier = modifier.imePadding(),
         contentWindowInsets = WindowInsets(bottom = 0),
 
         bottomSaveCancelBarVisible = !showExitDialog,
@@ -212,7 +218,8 @@ private fun EditProfileScreen(
                 startPadding = spacerValue,
                 title = stringResource(id = R.string.edit_profile),
                 navigationIcon = TopAppBarIcon.close,
-                onClickNavigationIcon = { onClickBack() }
+                onClickNavigationIcon = { onClickBack() },
+                hazeState = topAppBarHazeState
             )
         },
         snackbarHost = {
@@ -221,6 +228,7 @@ private fun EditProfileScreen(
                 modifier = Modifier
                     .width(500.dp)
                     .padding(bottom = 60.dp)
+                    .navigationBarsPadding()
                     .imePadding(),
                 snackbar = {
                     Snackbar(
@@ -248,10 +256,10 @@ private fun EditProfileScreen(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(spacerValue, 8.dp, spacerValue, 200.dp),
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
+            contentPadding = PaddingValues(spacerValue, 8.dp + paddingValues.calculateTopPadding(), spacerValue, 200.dp),
+            modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
+                            .hazeSource(state = topAppBarHazeState).background(MaterialTheme.colorScheme.background)
+                        else Modifier.fillMaxSize()
         ) {
             //profile image
             item {

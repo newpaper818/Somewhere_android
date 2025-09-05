@@ -19,6 +19,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -35,8 +36,13 @@ import com.newpaper.somewhere.core.designsystem.icon.MyIcon
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.designsystem.R
+import dev.chrisbanes.haze.ExperimentalHazeApi
+import dev.chrisbanes.haze.HazeInputScale
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalHazeApi::class)
 @Composable
 fun SomewhereTopAppBar(
     title: String,
@@ -57,13 +63,30 @@ fun SomewhereTopAppBar(
     dropdownMenuContent: @Composable () -> Unit = {},
 
     useHorizontalLayoutTitles: Boolean = false,
-    startPadding: Dp = 16.dp
+    startPadding: Dp = 16.dp,
+
+    hazeState: HazeState? = null
 ) {
+
+    val containerColor = if (hazeState == null) MaterialTheme.colorScheme.background
+                            else Color.Transparent
+
+    val topAppBarColor = MaterialTheme.colorScheme.background
+    val topAppBarModifier = if (hazeState == null) Modifier
+                            else Modifier.hazeEffect(state = hazeState) {
+                                blurRadius = 16.dp
+                                tints = listOf(
+                                    HazeTint(topAppBarColor.copy(alpha = 0.75f))
+                                )
+                                inputScale = HazeInputScale.Fixed(0.5f)
+                            }
+
 
     //app bar
     TopAppBar(
+        modifier = topAppBarModifier,
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = containerColor,
             navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
             actionIconContentColor = MaterialTheme.colorScheme.onSurface
         ),
@@ -143,23 +166,6 @@ fun SomewhereTopAppBar(
             }
         },
         actions = {
-            //action1
-            AnimatedVisibility(
-                visible = actionIcon1Visible,
-                enter = fadeIn(tween(350)),
-                exit = fadeOut(tween(350))
-            ) {
-                if (actionIcon1 != null) {
-                    MyPlainTooltipBox(
-                        tooltipText = stringResource(id = actionIcon1.descriptionTextId!!)
-                    ) {
-                        IconButton(onClick = actionIcon1Onclick) {
-                            DisplayIcon(icon = actionIcon1)
-                        }
-                    }
-                }
-            }
-
             //action2
             AnimatedVisibility(
                 visible = actionIcon2Visible,
@@ -172,6 +178,23 @@ fun SomewhereTopAppBar(
                     ) {
                         IconButton(onClick = actionIcon2Onclick) {
                             DisplayIcon(icon = actionIcon2)
+                        }
+                    }
+                }
+            }
+
+            //action1
+            AnimatedVisibility(
+                visible = actionIcon1Visible,
+                enter = fadeIn(tween(350)),
+                exit = fadeOut(tween(350))
+            ) {
+                if (actionIcon1 != null) {
+                    MyPlainTooltipBox(
+                        tooltipText = stringResource(id = actionIcon1.descriptionTextId!!)
+                    ) {
+                        IconButton(onClick = actionIcon1Onclick) {
+                            DisplayIcon(icon = actionIcon1)
                         }
                     }
                 }

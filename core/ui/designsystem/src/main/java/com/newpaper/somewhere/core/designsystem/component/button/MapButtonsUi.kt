@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,18 +28,18 @@ import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import java.text.DecimalFormat
 
 @Composable
-fun FocusOnToSpotButtonUi(
-    focusOnToSpotEnabled: Boolean,
+fun FitBoundsToMarkersButtonUi(
+    fitBoundsToMarkersEnabled: Boolean,
     onClickEnabled: () -> Unit,
     onClickDisabled: () -> Unit
 ){
     MyPlainTooltipBox(
-        tooltipText = if (focusOnToSpotEnabled) stringResource(id = MapButtonIcon.focusOnToTarget.descriptionTextId!!)
-            else stringResource(id = MapButtonIcon.disabledFocusOnToTarget.descriptionTextId!!)
+        tooltipText = if (fitBoundsToMarkersEnabled) stringResource(id = MapButtonIcon.fitBoundsToMarkers.descriptionTextId!!)
+            else stringResource(id = MapButtonIcon.disabledFitBoundsToMarkers.descriptionTextId!!)
     ) {
         IconButton(
             onClick = {
-                if (focusOnToSpotEnabled)
+                if (fitBoundsToMarkersEnabled)
                     onClickEnabled()
                 else
                     onClickDisabled()
@@ -46,8 +47,8 @@ fun FocusOnToSpotButtonUi(
         ) {
             DisplayIcon(
                 icon =
-                if (focusOnToSpotEnabled) MapButtonIcon.focusOnToTarget
-                else MapButtonIcon.disabledFocusOnToTarget
+                if (fitBoundsToMarkersEnabled) MapButtonIcon.fitBoundsToMarkers
+                else MapButtonIcon.disabledFitBoundsToMarkers
             )
         }
     }
@@ -90,7 +91,7 @@ fun ZoomButtonsUi(
     val zoomLevelText = DecimalFormat("0.0").format(zoomLevel)
 
     MyCard(
-        shape = MaterialTheme.shapes.extraLarge
+        shape = CircleShape
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomOut.descriptionTextId!!)) {
@@ -167,7 +168,7 @@ fun ZoomButtonsUi(
 
 @Composable
 @PreviewLightDark
-private fun FocusOnToSpotButtonPreview(){
+private fun FitBoundsToMarkersButtonPreview(){
     SomewhereTheme {
         Row(
             modifier = Modifier
@@ -176,10 +177,10 @@ private fun FocusOnToSpotButtonPreview(){
                 .width(300.dp)
         ) {
             MyCard(
-                shape = MaterialTheme.shapes.extraLarge
+                shape = CircleShape
             ) {
-                FocusOnToSpotButtonUi(
-                    focusOnToSpotEnabled = true,
+                FitBoundsToMarkersButtonUi(
+                    fitBoundsToMarkersEnabled = true,
                     onClickEnabled = { },
                     onClickDisabled = { }
                 )
@@ -188,10 +189,10 @@ private fun FocusOnToSpotButtonPreview(){
             MySpacerRow(width = 16.dp)
 
             MyCard(
-                shape = MaterialTheme.shapes.extraLarge
+                shape = CircleShape
             ) {
-                FocusOnToSpotButtonUi(
-                    focusOnToSpotEnabled = false,
+                FitBoundsToMarkersButtonUi(
+                    fitBoundsToMarkersEnabled = false,
                     onClickEnabled = { },
                     onClickDisabled = { }
                 )
@@ -211,7 +212,7 @@ private fun UserLocationButtonPreview(){
                 .width(300.dp)
         ) {
             MyCard(
-                shape = MaterialTheme.shapes.extraLarge
+                shape = CircleShape
             ) {
                 UserLocationButtonUi(
                     userLocationPermissionGranted = true,
@@ -223,7 +224,7 @@ private fun UserLocationButtonPreview(){
             MySpacerRow(width = 16.dp)
 
             MyCard(
-                shape = MaterialTheme.shapes.extraLarge
+                shape = CircleShape
             ) {
                 UserLocationButtonUi(
                     userLocationPermissionGranted = false,
@@ -247,7 +248,7 @@ private fun ZoomButtonsPreview(){
                 .width(300.dp)
         ) {
             MyCard(
-                shape = MaterialTheme.shapes.extraLarge
+                shape = CircleShape
             ) {
                 ZoomButtonsUi(
                     zoomLevel = 10.5f,

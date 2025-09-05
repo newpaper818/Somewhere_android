@@ -35,12 +35,12 @@
     <!--MyQrCodeDialog.kt-->
     <string name="no_name">No name</string>
     <string name="no_email">No email</string>
-    <string name="scan_this_qr_code_to_invited">Scan this QR code to be invited\nto join a friend\'s trip.</string>
+    <string name="scan_this_qr_code_to_invited">Scan this QR code to be invited\nto join a friend\'s trip</string>
     <string name="close">Close</string>
 
     <!--TripCreationOptionsDialog.kt-->
-    <string name="enter_your_own">Enter your own</string>
-    <string name="create_with_AI">Create with AI</string>
+    <string name="enter_your_own">Plan manually</string>
+    <string name="create_with_AI">Plan with AI</string>
     <string name="beta">BETA</string>
 
     <!--SelectDateDialog.kt-->
@@ -81,7 +81,7 @@
 
     <!--tripAiDialog.kt-->
     <string name="caution">Caution</string>
-    <string name="it_could_contain_incorrect_information">It could contain incorrect information.</string>
+    <string name="it_could_contain_incorrect_information">It could contain incorrect information</string>
     <string name="i_understand">I understand</string>
     <string name="watch_ad_and_create_trip">Watch AD and create trip</string>
 

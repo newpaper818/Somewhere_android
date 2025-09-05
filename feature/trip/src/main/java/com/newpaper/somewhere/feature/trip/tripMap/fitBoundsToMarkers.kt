@@ -5,11 +5,11 @@ import com.google.maps.android.compose.CameraPositionState
 import com.newpaper.somewhere.core.model.data.DateWithBoolean
 import com.newpaper.somewhere.core.model.data.SpotTypeGroupWithBoolean
 import com.newpaper.somewhere.core.model.tripData.Spot
-import com.newpaper.somewhere.core.utils.focusOnToSpotForTripMap
+import com.newpaper.somewhere.core.utils.fitBoundsToMarkersForTripMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-internal fun focusOnToSpot(
+internal fun fitBoundsToMarkers(
     mapSize: IntSize,   //map size without padding
     coroutineScope: CoroutineScope,
     dateListWithShownMarkerList: List<DateWithBoolean>,
@@ -31,9 +31,9 @@ internal fun focusOnToSpot(
         }
     }
 
-    //focus on to spot
+    //fit bounds to markers
     coroutineScope.launch {
-        focusOnToSpotForTripMap(
+        fitBoundsToMarkersForTripMap(
             mapSize, cameraPositionState, spotList.toList()
         )
     }

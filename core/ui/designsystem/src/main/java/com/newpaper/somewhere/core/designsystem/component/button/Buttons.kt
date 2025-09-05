@@ -1,11 +1,6 @@
 package com.newpaper.somewhere.core.designsystem.component.button
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,8 +10,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,6 +29,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -46,6 +47,8 @@ import com.newpaper.somewhere.core.designsystem.icon.MyIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.designsystem.R
+import com.newpaper.somewhere.core.utils.enterVerticallyScaleIn
+import com.newpaper.somewhere.core.utils.exitVerticallyScaleOut
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,6 +73,18 @@ fun PrivacyPolicyButton(
             )
         }
     }
+}
+
+@Composable
+fun UpgradeToSomewhereProButton(
+    onClick: () -> Unit,
+){
+    MyTextButton(
+        modifier = Modifier.widthIn(min = 120.dp),
+        text = stringResource(id = R.string.upgrade_to_somewhere_pro),
+        containerColor = Color.Transparent,
+        onClick = onClick
+    )
 }
 
 @Composable
@@ -232,6 +247,21 @@ fun NewItemButton(
 }
 
 @Composable
+fun AddFriendButton(
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier
+){
+    IconTextButton(
+        icon = IconTextButtonIcon.inviteFriend,
+        text = stringResource(id = R.string.invite_friend),
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier.height(48.dp)
+    )
+}
+
+@Composable
 fun DeleteItemButton(
     visible: Boolean,
     text: String,
@@ -240,8 +270,8 @@ fun DeleteItemButton(
     Box(modifier = Modifier.height(40.dp)){
         AnimatedVisibility(
             visible = visible,
-            enter = fadeIn(tween(400)) + scaleIn(tween(300)),
-            exit = fadeOut(tween(300)) + scaleOut(tween(400))
+            enter = enterVerticallyScaleIn,
+            exit = exitVerticallyScaleOut
         ) {
             IconTextButton(
                 icon = IconTextButtonIcon.delete,
@@ -339,6 +369,65 @@ fun ToNextDateButton(
 }
 
 @Composable
+fun ShareToInstagramStoryButton(
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier
+){
+    IconCircleButtonWithText(
+        icon = MyIcons.shareToInstagram,
+        text = stringResource(id = R.string.share_to_ig_story),
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun SaveAsImageButton(
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier
+){
+    IconCircleButtonWithText(
+        icon = MyIcons.saveAsImage,
+        text = stringResource(id = R.string.save_as_image),
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun ShareMoreButton(
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier
+){
+    IconCircleButtonWithText(
+        icon = MyIcons.shareMore,
+        text = stringResource(id = R.string.more),
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier
+    )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@Composable
 private fun MyTextButton(
     text: String,
     onClick: () -> Unit,
@@ -366,7 +455,12 @@ private fun MyTextButton(
             enabled = enabled,
             onClick = onClick,
             modifier = modifier,
-            colors = ButtonDefaults.buttonColors(containerColor = containerColor)
+            colors = ButtonDefaults.buttonColors(
+                containerColor = containerColor,
+                contentColor = MaterialTheme.colorScheme.contentColorFor(containerColor),
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceTint,
+                disabledContentColor = MaterialTheme.colorScheme.outline
+            )
         ) {
             Text(
                 text = text,
@@ -424,7 +518,9 @@ private fun IconTextButton(
     Button(
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
-            contentColor = MaterialTheme.colorScheme.contentColorFor(containerColor)
+            contentColor = MaterialTheme.colorScheme.contentColorFor(containerColor),
+            disabledContainerColor = MaterialTheme.colorScheme.surfaceTint,
+            disabledContentColor = MaterialTheme.colorScheme.outline
         ),
         contentPadding = PaddingValues(16.dp, 0.dp, 20.dp, 0.dp),
         enabled = enabled,
@@ -492,7 +588,52 @@ private fun IconTextButtonColumn(
     }
 }
 
+@Composable
+private fun IconCircleButtonWithText(
+    icon: MyIcon,
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceDim,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
+    textStyle: TextStyle = MaterialTheme.typography.labelMedium
+){
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .semantics(mergeDescendants = true) {
+                role = Role.Button
+            }
+    ) {
+        Button(
+            colors = ButtonDefaults.buttonColors(
+                containerColor = containerColor,
+                contentColor = contentColor,
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
+                disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+            ),
+            shape = CircleShape,
+            contentPadding = PaddingValues(8.dp),
+            enabled = enabled,
+            onClick = onClick,
+            modifier = Modifier.size(56.dp).clearAndSetSemantics { }
+        ){
+            DisplayIcon(icon = icon)
+        }
 
+        MySpacerColumn(6.dp)
+
+        Text(
+            text = text,
+            style = if (enabled) textStyle
+                    else textStyle.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.SemiBold
+        )
+    }
+
+}
 
 
 
@@ -558,7 +699,7 @@ private fun CopyAppPlayStoreLinkButtonPreview(){
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)
-                .width(260.dp)
+                .width(190.dp)
         ) {
             ShareAppButton{ }
         }
@@ -775,6 +916,27 @@ private fun IconTextButtonPreview(){
                 icon = IconTextButtonIcon.add,
                 text = "Icon text button",
                 onClick = {}
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewLightDark
+private fun IconTextButtonDisabledPreview(){
+    SomewhereTheme {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp)
+                .width(190.dp)
+        ) {
+            IconTextButton(
+                icon = IconTextButtonIcon.add,
+                text = "Icon text button",
+                onClick = {},
+                enabled = false
             )
         }
     }

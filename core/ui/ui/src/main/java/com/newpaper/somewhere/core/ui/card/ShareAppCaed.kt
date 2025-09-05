@@ -31,7 +31,6 @@ import com.lightspark.composeqr.DotShape
 import com.lightspark.composeqr.QrCodeView
 import com.newpaper.somewhere.core.designsystem.component.ImageFromDrawable
 import com.newpaper.somewhere.core.designsystem.component.button.ShareAppButton
-import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.ui.R
@@ -42,30 +41,26 @@ fun ShareAppCard(
     onClickShareApp: () -> Unit,
     modifier: Modifier = Modifier
 ){
-    MyCard(
-        modifier = Modifier
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = modifier.padding(16.dp)
-        ) {
-            //share app
-            ShareAppButton(
-                onClick = onClickShareApp
-            )
+        //share app
+        ShareAppButton(
+            onClick = onClickShareApp
+        )
 
-            //or
-            Text(
-                text = stringResource(id = R.string.or),
-                style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-                modifier = Modifier.clearAndSetSemantics {  }
-            )
+        //or
+        Text(
+            text = stringResource(id = R.string.or),
+            style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+            modifier = Modifier.clearAndSetSemantics {  }
+        )
 
-            MySpacerColumn(height = 14.dp)
+        MySpacerColumn(height = 14.dp)
 
-            //qr code
-            AppQrCode()
-        }
+        //qr code
+        AppQrCode()
     }
 }
 

@@ -5,12 +5,14 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -22,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,21 +46,30 @@ import com.newpaper.somewhere.core.utils.convert.getStartTimeText
 import com.newpaper.somewhere.core.utils.convert.isFirstSpot
 import com.newpaper.somewhere.core.utils.convert.isLastSpot
 import com.newpaper.somewhere.feature.trip.R
+import dev.chrisbanes.haze.ExperimentalHazeApi
+import dev.chrisbanes.haze.HazeInputScale
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 
 private val DUMMY_SPACE_HEIGHT: Dp = 10.dp
 private val MIN_CARD_HEIGHT: Dp = 40.dp
 private val ADDITIONAL_HEIGHT: Dp = 22.dp
 private val POINT_CIRCLE_SIZE: Dp = 24.dp
 private val LINE_WIDTH: Dp = 7.dp
+
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 internal fun GlanceSpot(
+    useBottomNavBar: Boolean,
     visible: Boolean,
     dateTimeFormat: DateTimeFormat,
     trip: Trip,
     date: Date,
     spot: Spot,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    hazeState: HazeState? = null,
 ){
     val tripTitleText = if (trip.titleText == null || trip.titleText == "") stringResource(id = R.string.no_title)
                         else trip.titleText!!
@@ -94,6 +104,29 @@ internal fun GlanceSpot(
             )) Color.Transparent
         else MaterialTheme.colorScheme.outline
 
+    val containerColor = if (hazeState == null) MaterialTheme.colorScheme.surfaceBright
+                        else Color.Transparent
+
+    val glanceSpotColor = MaterialTheme.colorScheme.surfaceBright
+
+    val glanceSpotModifier = modifier
+                                .navigationBarsPadding()
+                                .height(70.dp)
+                                .widthIn(max = if (useBottomNavBar) 600.dp else 400.dp)
+                                .padding(horizontal = 16.dp)
+                                .clip(MaterialTheme.shapes.large)
+                                .border(1.dp, MaterialTheme.colorScheme.surfaceDim, MaterialTheme.shapes.large)
+//                                .shadow(70.dp, MaterialTheme.shapes.large)
+
+    val glanceSpotHazeModifier = if (hazeState == null) glanceSpotModifier
+                            else glanceSpotModifier.hazeEffect(state = hazeState) {
+                                blurRadius = 16.dp
+                                tints = listOf(
+                                    HazeTint(glanceSpotColor.copy(alpha = 0.8f))
+                                )
+                                inputScale = HazeInputScale.Fixed(0.5f)
+                            }
+
 
     AnimatedVisibility(
         visible = visible,
@@ -106,13 +139,9 @@ internal fun GlanceSpot(
     ) {
         ClickableBox(
             onClick = onClick,
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = containerColor,
             shape = MaterialTheme.shapes.large,
-            modifier = modifier
-                .height(70.dp)
-                .widthIn(max = 420.dp)
-                .padding(horizontal = 16.dp)
-                .shadow(6.dp, MaterialTheme.shapes.large)
+            modifier = glanceSpotHazeModifier
         ) {
             Row {
                 //line point

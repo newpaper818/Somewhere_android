@@ -1,6 +1,9 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hilt)
     alias(libs.plugins.googleDevToolsKsp)
     alias(libs.plugins.kotlin.serialization)
@@ -12,18 +15,21 @@ android {
 
     defaultConfig {
         minSdk = 26
+
+        buildConfigField("String", "FACEBOOK_APP_ID", getApiKey("FACEBOOK_APP_ID"))
     }
 
     buildFeatures {
         compose = true
         buildConfig = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.13"
-    }
     kotlinOptions {
         jvmTarget = "1.8"
     }
+}
+
+fun getApiKey(propertyKey: String): String {
+    return gradleLocalProperties(rootDir, providers).getProperty(propertyKey)
 }
 
 dependencies {
@@ -74,6 +80,9 @@ dependencies {
 
     //qr scan
     implementation(libs.easy.qr.scan)
+
+    //haze
+    implementation(libs.haze)
 
 
     //test

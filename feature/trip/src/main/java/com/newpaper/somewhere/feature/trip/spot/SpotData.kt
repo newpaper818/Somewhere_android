@@ -61,6 +61,7 @@ internal data class SpotMap(
     val mapSize: IntSize = IntSize.Zero,
     val userLocationEnabled: Boolean = false,
     val isMapExpand: Boolean = false,
+    private val _onMapLoaded: () -> Unit,
     private val _setMapSize: (mapSize: IntSize) -> Unit = {},
     private val _setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit = {},
     private val _setIsMapExpanded: (isMapExpand: Boolean) -> Unit = {},
@@ -68,6 +69,8 @@ internal data class SpotMap(
     val spotFrom: Spot? = null,
     val spotTo: Spot? = null
 ){
+    fun onMapLoaded(){
+        _onMapLoaded() }
     fun setMapSize(mapSize: IntSize){
         _setMapSize(mapSize) }
     fun setUserLocationEnabled(userLocationEnabled: Boolean){

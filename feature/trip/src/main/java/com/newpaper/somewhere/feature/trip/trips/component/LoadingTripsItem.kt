@@ -26,8 +26,8 @@ internal fun LoadingTripsItem(
     use2Panes: Boolean,
     modifier: Modifier = Modifier
 ){
-    var spacerValue = 64.dp
-    if (showAds) spacerValue += 50.dp
+    var spacerValue = 16.dp + 34.dp + 16.dp
+    if (showAds) spacerValue += (16.dp + 50.dp + 8.dp)
     if (showAds && use2Panes) spacerValue += 10.dp
 
     AnimatedVisibility(

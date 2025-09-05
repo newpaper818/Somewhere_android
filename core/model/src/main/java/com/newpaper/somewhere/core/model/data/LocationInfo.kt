@@ -6,5 +6,6 @@ data class LocationInfo(
     val title: String,
     val address: String,
     val placeId: String,
-    var location: LatLng? = null
+    val location: LatLng? = null,
+    val mapMarkerIndex: String? = null
 )

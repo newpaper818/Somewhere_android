@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -112,7 +113,7 @@ private fun DialogButton(
         Button(
             onClick = onClick,
             enabled = enabled,
-            shape = MaterialTheme.shapes.medium,
+            shape = CircleShape,
             colors = ButtonDefaults.buttonColors(
                 containerColor = containerColor,
                 contentColor = contentColor
@@ -147,7 +148,7 @@ fun DialogButtonLoading(
         Button(
             onClick = { },
             enabled = false,
-            shape = MaterialTheme.shapes.medium,
+            shape = CircleShape,
             colors = ButtonDefaults.buttonColors(
                 containerColor = buttonColor,
                 contentColor = contentColor,

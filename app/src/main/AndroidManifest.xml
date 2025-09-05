@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <queries>
+        <package android:name="com.instagram.android" />
+    </queries>
+
     <!-- permissions  -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
@@ -9,7 +13,6 @@
     <uses-feature android:name="android.hardware.camera"/>
     <uses-feature android:name="android.hardware.camera.autofocus"/>
     <uses-permission android:name="android.permission.CAMERA"/>
-
 
     <application
         android:name=".SomewhereApplication"
@@ -23,6 +26,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Somewhere"
         tools:targetApi="34">
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
         <activity
             android:name=".MainActivity"

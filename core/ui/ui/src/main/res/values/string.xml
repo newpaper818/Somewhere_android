@@ -138,8 +138,11 @@
 
 
     <!--ErrorScreen.kt-->
-    <string name="error_occurred">Error occurred...</string>
+    <string name="error_occurred">Error occurred…</string>
     <string name="turning_the_app_off_and_on">Try turning the app off and on.</string>
+
+    <!--GoogleAd.kt-->
+    <string name="ad_area">Ad area</string>
 
     <!--FriendInfo.kt-->
     <string name="unknown">Unknown</string>

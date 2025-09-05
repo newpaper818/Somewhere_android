@@ -38,6 +38,7 @@ import com.newpaper.somewhere.feature.trip.spot.SpotUiInfo
 
 @Composable
 internal fun SpotDetailPage(
+    isDarkAppTheme: Boolean,
     spotUiInfo: SpotUiInfo,
     spotData: SpotData,
     errorCount: SpotErrorCount,
@@ -81,6 +82,7 @@ internal fun SpotDetailPage(
             //title card
             TitleCard(
                 isEditMode = spotUiInfo.isEditMode,
+                useDelayEnter = false,
                 titleText = currentSpot.titleText,
                 onTitleChange = { newTitleText ->
                     currentSpot.setTitleText(
@@ -162,6 +164,7 @@ internal fun SpotDetailPage(
 
             //image card
             ImageCard(
+                isDarkAppTheme = isDarkAppTheme,
                 imageUserId = showingTrip.managerId,
                 internetEnabled = spotUiInfo.internetEnabled,
                 isEditMode = spotUiInfo.isEditMode,

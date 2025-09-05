@@ -1,13 +1,13 @@
-package com.newpaper.somewhere.feature.more.setTheme
+package com.newpaper.somewhere.feature.more.setScreenStyle
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -23,13 +23,16 @@ import com.newpaper.somewhere.core.model.data.Theme
 import com.newpaper.somewhere.core.model.enums.AppTheme
 import com.newpaper.somewhere.core.model.enums.MapTheme
 import com.newpaper.somewhere.core.ui.item.ItemWithRadioButton
+import com.newpaper.somewhere.core.ui.item.ItemWithSwitch
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.more.R
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 @Composable
-fun SetThemeRoute(
+fun SetScreenStyleRoute(
     use2Panes: Boolean,
     spacerValue: Dp,
     theme: Theme,
@@ -38,19 +41,19 @@ fun SetThemeRoute(
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier,
 
-    setThemeViewModel: SetThemeViewModel = hiltViewModel()
+    setScreenStyleViewModel: SetScreenStyleViewModel = hiltViewModel()
 ){
     val coroutineScope = rememberCoroutineScope()
 
-    SetThemeScreen(
+    SetScreenStyleScreen(
         startSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
         endSpacerValue = spacerValue,
         theme = theme,
-        saveUserPreferences = { appTheme, mapTheme ->
+        saveUserPreferences = { useBlurEffect, appTheme, mapTheme ->
             coroutineScope.launch {
                 //save to dataStore
-                setThemeViewModel.saveThemePreferences(
-                    appTheme, mapTheme
+                setScreenStyleViewModel.saveThemePreferences(
+                    useBlurEffect, appTheme, mapTheme
                 )
 
                 //update preferences at appViewModel
@@ -65,36 +68,37 @@ fun SetThemeRoute(
 }
 
 @Composable
-private fun SetThemeScreen(
+private fun SetScreenStyleScreen(
     startSpacerValue: Dp,
     endSpacerValue: Dp,
     theme: Theme,
 
-    saveUserPreferences: (appTheme: AppTheme?, mapTheme: MapTheme?) -> Unit,
+    saveUserPreferences: (useBlurEffect: Boolean?, appTheme: AppTheme?, mapTheme: MapTheme?) -> Unit,
 
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier,
     use2Panes: Boolean
 ){
+    val useBlurEffect = theme.useBlurEffect
     val appTheme = theme.appTheme
     val mapTheme = theme.mapTheme
 
     val appThemeList = enumValues<AppTheme>()
     val mapThemeList = enumValues<MapTheme>()
 
-    val scaffoldModifier = if (use2Panes) modifier
-        else modifier.navigationBarsPadding()
+    val topAppBarHazeState = if(useBlurEffect) rememberHazeState() else null
 
     Scaffold(
-        modifier = scaffoldModifier,
+        modifier = modifier,
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {
             SomewhereTopAppBar(
                 startPadding = startSpacerValue,
-                title = stringResource(id = R.string.theme),
+                title = stringResource(id = R.string.screen_style),
                 navigationIcon = if (!use2Panes) TopAppBarIcon.back else null,
-                onClickNavigationIcon = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() },
+                hazeState = topAppBarHazeState
             )
         }
     ){ paddingValues ->
@@ -103,11 +107,25 @@ private fun SetThemeScreen(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(startSpacerValue, 16.dp, endSpacerValue, 200.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            contentPadding = PaddingValues(startSpacerValue, 16.dp + paddingValues.calculateTopPadding(), endSpacerValue, 200.dp),
+            modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
+                            .hazeSource(state = topAppBarHazeState).background(MaterialTheme.colorScheme.background)
+                        else Modifier.fillMaxSize()
         ) {
+            item {
+                ListGroupCard(
+                    title = stringResource(id = R.string.visual_effect),
+                    modifier = itemModifier
+                ) {
+                    ItemWithSwitch(
+                        text = stringResource(id = R.string.blur_effect),
+                        checked = useBlurEffect,
+                        onCheckedChange = { newUseBlurEffect ->
+                            saveUserPreferences(newUseBlurEffect , null, null)
+                        }
+                    )
+                }
+            }
 
             //setting app theme
             item {
@@ -121,7 +139,7 @@ private fun SetThemeScreen(
                             text = stringResource(id = oneAppTheme.textId),
                             onItemClick = {
                                 if (oneAppTheme != appTheme){
-                                    saveUserPreferences(oneAppTheme, null)
+                                    saveUserPreferences(null, oneAppTheme, null)
                                 }
                             }
                         )
@@ -141,7 +159,7 @@ private fun SetThemeScreen(
                             text = stringResource(id = oneMapTheme.textId),
                             onItemClick = {
                                 if (oneMapTheme != mapTheme){
-                                    saveUserPreferences(null, oneMapTheme)
+                                    saveUserPreferences(null, null, oneMapTheme)
                                 }
                             }
                         )

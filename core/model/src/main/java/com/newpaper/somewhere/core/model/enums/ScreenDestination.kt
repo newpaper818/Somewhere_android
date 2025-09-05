@@ -12,7 +12,7 @@ enum class ScreenDestination(
     MORE("more"),
 
     SET_DATE_TIME_FORMAT("setDateTimeFormat"),
-    SET_THEME("setTheme"),
+    SET_SCREEN_STYLE("setScreenStyle"),
     ACCOUNT("account"),
     EDIT_PROFILE("editProfile"),
     SUBSCRIPTION("subscription"),
@@ -24,6 +24,8 @@ enum class ScreenDestination(
     TRIP("trip"),
     DATE("date"),
     SPOT("spot"),
+
+    SHARE_TRIP("shareTrip"),
 
     INVITE_FRIEND("inviteFriend"),
     INVITED_FRIENDS("invitedFriends"),

@@ -7,7 +7,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,6 +21,7 @@ import com.newpaper.somewhere.core.designsystem.component.SomewhereNavigationRai
 import com.newpaper.somewhere.util.WindowHeightSizeClass
 import com.newpaper.somewhere.util.WindowSizeClass
 import com.newpaper.somewhere.util.WindowWidthSizeClass
+import dev.chrisbanes.haze.HazeState
 
 @Composable
 fun ScreenWithNavigationBar(
@@ -34,6 +34,7 @@ fun ScreenWithNavigationBar(
 
     modifier: Modifier = Modifier,
     topLevelDestinations: List<TopLevelDestination> = TopLevelDestination.entries,
+    hazeState: HazeState? = null,
     content: @Composable () -> Unit = {}
 ) {
 
@@ -57,7 +58,9 @@ fun ScreenWithNavigationBar(
                     enter = slideInVertically(tween(300), initialOffsetY = { it }),
                     exit = slideOutVertically(tween(300), targetOffsetY = { it })
                 ) {
-                    SomewhereNavigationBottomBar{
+                    SomewhereNavigationBottomBar(
+                        hazeState = hazeState
+                    ){
                         topLevelDestinations.forEach {
                             SomewhereNavigationBottomBarItem(
                                 selected = it == currentTopLevelDestination,
@@ -84,7 +87,7 @@ fun ScreenWithNavigationBar(
             || windowSizeClass.widthSizeClass == WindowWidthSizeClass.Medium
         ) {
             Box(
-                modifier = Modifier.displayCutoutPadding().fillMaxSize()
+                modifier = Modifier.fillMaxSize()
             ) {
                 //content
                 content()

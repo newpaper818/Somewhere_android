@@ -1,9 +1,6 @@
 package com.newpaper.somewhere.feature.trip.trip.component
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,11 +22,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
-import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
+import com.newpaper.somewhere.core.utils.enterHorizontally
+import com.newpaper.somewhere.core.utils.exitHorizontally
 import com.newpaper.somewhere.feature.trip.R
 import java.time.LocalDate
 
@@ -78,37 +76,38 @@ internal fun TripDurationCard(
                     modifier = Modifier.weight(1f)
                 ) {
 
-                    AnimatedVisibility(
-                        visible = isEditMode,
-                        enter = expandVertically(tween(400)),
-                        exit = shrinkVertically(tween(400))
-                    ) {
-
-                        Column {
-                            Row(
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = stringResource(id = R.string.trip_duration_card_title),
-                                    style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                )
-
-                                MySpacerRow(width = 8.dp)
-
-                                Text(
-                                    text = durationText ?: "",
-                                    style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                )
-                            }
-
-                            MySpacerColumn(height = 8.dp)
-                        }
-                    }
+//                    AnimatedVisibility(
+//                        visible = isEditMode,
+//                        enter = expandVertically(tween(400)),
+//                        exit = shrinkVertically(tween(400))
+//                    ) {
+//
+//                        Column {
+//                            Row(
+//                                modifier = Modifier.fillMaxWidth()
+//                            ) {
+//                                Text(
+//                                    text = stringResource(id = R.string.trip_duration_card_title),
+//                                    style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+//                                )
+//
+//                                MySpacerRow(width = 8.dp)
+//
+//                                Text(
+//                                    text = durationText ?: "",
+//                                    style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+//                                )
+//                            }
+//
+//                            MySpacerColumn(height = 8.dp)
+//                        }
+//                    }
 
                     //start date -> end date
                     FlowRow(
                         modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.Center
+                        verticalArrangement = Arrangement.Center,
+                        horizontalArrangement = Arrangement.Center
                     ) {
 
                         //start date
@@ -151,28 +150,31 @@ internal fun TripDurationCard(
                             }
                         }
 
-                        if (!isEditMode) {
-                            Box(
-                                modifier = Modifier
-                                    .height(26.dp)
-                                    .padding(8.dp, 0.dp, 0.dp, 0.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = durationText ?: "",
-                                    style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                )
-                            }
+                        Box(
+                            modifier = Modifier
+                                .height(26.dp)
+                                .padding(8.dp, 0.dp, 0.dp, 0.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = durationText ?: "",
+                                style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            )
                         }
                     }
                 }
 
                 //clickable icon
-                if (isEditMode)
+                AnimatedVisibility(
+                    visible = isEditMode,
+                    enter = enterHorizontally,
+                    exit = exitHorizontally
+                ) {
                     DisplayIcon(
                         icon = MyIcons.clickableItem,
                         contentDescriptionIsNull = true
                     )
+                }
             }
         }
 
