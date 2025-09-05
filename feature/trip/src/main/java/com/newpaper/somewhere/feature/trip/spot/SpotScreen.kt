@@ -4,8 +4,8 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -81,7 +80,7 @@ import com.newpaper.somewhere.core.utils.convert.setLocationAndUpdateTravelDista
 import com.newpaper.somewhere.core.utils.convert.setSpotType
 import com.newpaper.somewhere.core.utils.convert.setStartTime
 import com.newpaper.somewhere.core.utils.convert.setTravelDistance
-import com.newpaper.somewhere.core.utils.focusOnToSpots
+import com.newpaper.somewhere.core.utils.fitBoundsToMarkers
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.dialog.memo.MemoDialog
 import com.newpaper.somewhere.feature.dialog.selectDate.SelectDateDialog
@@ -102,6 +101,7 @@ import java.time.LocalTime
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SpotRoute(
+    isDarkAppTheme: Boolean,
     use2Panes: Boolean,
     spacerValue: Dp,
     appUserId: String,
@@ -257,16 +257,24 @@ fun SpotRoute(
             //animate map spot
             if (newSpotIndex < spotList.size)
                 coroutineScope.launch {
-                    mapAnimateToSpot(
-                        scrollState,
-                        spotList[newSpotIndex],
-                        dateList,
-                        currentDateIndex,
-                        cameraPositionState,
-                        spotUiState.mapSize,
-                        density,
-                        coroutineScope
-                    )
+                    repeat(10){
+                        if (spotUiState.isMapLoaded){
+                            mapAnimateToSpot(
+                                scrollState,
+                                spotList[currentSpotIndex],
+                                dateList,
+                                currentDateIndex,
+                                cameraPositionState,
+                                spotUiState.mapSize,
+                                density,
+                                coroutineScope
+                            )
+                            return@repeat
+                        }
+                        else{
+                            delay(200)
+                        }
+                    }
                 }
         }
     }
@@ -290,6 +298,35 @@ fun SpotRoute(
 
                 //animate map spot
                 coroutineScope.launch {
+                    repeat(10){
+                        if (spotUiState.isMapLoaded){
+                            mapAnimateToSpot(
+                                scrollState,
+                                spotList[currentSpotIndex],
+                                dateList,
+                                currentDateIndex,
+                                cameraPositionState,
+                                spotUiState.mapSize,
+                                density,
+                                coroutineScope
+                            )
+                            return@repeat
+                        }
+                        else{
+                            delay(200)
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    //if after set location, animate map spot
+    LaunchedEffect(spotUiState.showSetLocationDialog) {
+        if (!spotUiState.showSetLocationDialog && currentSpot?.location != null){
+            repeat(10){
+                if (spotUiState.isMapLoaded){
                     mapAnimateToSpot(
                         scrollState,
                         spotList[currentSpotIndex],
@@ -300,29 +337,18 @@ fun SpotRoute(
                         density,
                         coroutineScope
                     )
+                    return@repeat
+                }
+                else{
+                    delay(200)
                 }
             }
         }
     }
 
-    //if after set location, animate map spot
-    LaunchedEffect(spotUiState.showSetLocationDialog) {
-        if (!spotUiState.showSetLocationDialog && currentSpot?.location != null){
-            mapAnimateToSpot(
-                scrollState,
-                currentSpot,
-                dateList,
-                currentDateIndex,
-                cameraPositionState,
-                spotUiState.mapSize,
-                density,
-                coroutineScope
-            )
-        }
-    }
-
 
     SpotScreen(
+        isDarkAppTheme = isDarkAppTheme,
         spotUiInfo = SpotUiInfo(
             use2Panes = use2Panes,
             spacerValue = spacerValue,
@@ -354,6 +380,7 @@ fun SpotRoute(
             mapSize = spotUiState.mapSize,
             userLocationEnabled = userLocationEnabled,
             isMapExpand = spotUiState.isMapExpanded,
+            _onMapLoaded = { spotViewModel.setIsMapLoaded(true) },
             _setMapSize = spotViewModel::setMapSize,
             _setUserLocationEnabled = setUserLocationEnabled,
             _setIsMapExpanded = spotViewModel::setIsMapExpanded,
@@ -453,6 +480,7 @@ fun SpotRoute(
 
 @Composable
 private fun SpotScreen(
+    isDarkAppTheme: Boolean,
     spotUiInfo: SpotUiInfo,
     spotData: SpotData,
     spotState: SpotState,
@@ -529,8 +557,8 @@ private fun SpotScreen(
     //set location dialog(full screen dialog)
     AnimatedVisibility(
         visible = spotDialog.showSetLocationDialog,
-        enter = slideInHorizontally(animationSpec = tween(300), initialOffsetX = { it }),
-        exit = slideOutHorizontally(animationSpec = tween(300), targetOffsetX = { it }),
+        enter = slideInVertically(animationSpec = tween(300), initialOffsetY = { it }),
+        exit = slideOutVertically(animationSpec = tween(300), targetOffsetY = { it }),
         modifier = Modifier.zIndex(1f)
     ) {
         SetLocationDialog(
@@ -555,6 +583,7 @@ private fun SpotScreen(
         if (!spotUiInfo.use2Panes) Modifier
             .width(500.dp)
             .padding(bottom = bottomSnackBarPadding.dp)
+            .navigationBarsPadding()
             .imePadding()
         else Modifier
             .width(500.dp)
@@ -563,9 +592,7 @@ private fun SpotScreen(
             .imePadding()
 
     MyScaffold(
-        modifier = modifier
-            .navigationBarsPadding()
-            .displayCutoutPadding(),
+        modifier = modifier,
         snackbarHost = {
             Row {
                 Box(
@@ -795,6 +822,7 @@ private fun SpotScreen(
 
                 if (!spotUiInfo.use2Panes){
                     Spot1Pane(
+                        isDarkAppTheme = isDarkAppTheme,
                         spotUiInfo = spotUiInfo,
                         spotData = spotData,
                         spotState = spotState,
@@ -815,6 +843,7 @@ private fun SpotScreen(
                 else{
                     MySpacerColumn(height = 8.dp)
                     Spot2Panes(
+                        isDarkAppTheme = isDarkAppTheme,
                         spotUiInfo = spotUiInfo,
                         spotData = spotData,
                         spotState = spotState,
@@ -843,6 +872,7 @@ private fun SpotScreen(
 
 @Composable
 private fun Spot1Pane(
+    isDarkAppTheme: Boolean,
     spotUiInfo: SpotUiInfo,
     spotData: SpotData,
     spotState: SpotState,
@@ -900,6 +930,7 @@ private fun Spot1Pane(
                 isMapExpand = spotMap.isMapExpand,
                 expandHeight = (lazyColumnHeight / LocalDensity.current.density).toInt() + 1,
                 mapSize = spotMap.mapSize,
+                onMapLoaded = spotMap::onMapLoaded,
 
                 isDarkMapTheme = spotUiInfo.isDarkMapTheme,
                 fusedLocationClient = spotMap.fusedLocationClient,
@@ -996,6 +1027,7 @@ private fun Spot1Pane(
 
                         //each page
                         SpotDetailPage(
+                            isDarkAppTheme = isDarkAppTheme,
                             spotUiInfo = spotUiInfo,
                             spotData = spotData.copy(currentSpotIndex = pageIndex),
                             errorCount = errorCount,
@@ -1021,6 +1053,7 @@ private fun Spot1Pane(
 
 @Composable
 private fun Spot2Panes(
+    isDarkAppTheme: Boolean,
     spotUiInfo: SpotUiInfo,
     spotData: SpotData,
     spotState: SpotState,
@@ -1069,6 +1102,7 @@ private fun Spot2Panes(
                 isMapExpand = true,
                 expandHeight = (lazyColumnHeight / LocalDensity.current.density).toInt() - 1,
                 mapSize = spotMap.mapSize,
+                onMapLoaded = spotMap::onMapLoaded,
 
                 isDarkMapTheme = spotUiInfo.isDarkMapTheme,
                 fusedLocationClient = spotMap.fusedLocationClient,
@@ -1187,6 +1221,7 @@ private fun Spot2Panes(
 
                             //each page
                             SpotDetailPage(
+                                isDarkAppTheme = isDarkAppTheme,
                                 spotUiInfo = spotUiInfo,
                                 spotData = spotData.copy(currentSpotIndex = pageIndex),
                                 errorCount = errorCount,
@@ -1230,13 +1265,13 @@ private fun mapAnimateToSpot(
         //if spot is move
         if (currentSpot.spotType.isMove() && spotFrom?.location != null && spotTo?.location != null) {
             coroutineScope.launch {
-                focusOnToSpots(cameraPositionState, mapSize, listOf(spotFrom, spotTo), density)
+                fitBoundsToMarkers(cameraPositionState, mapSize, listOf(spotFrom, spotTo), density)
             }
         }
         //if spot is not move
         else if (currentSpot.spotType.isNotMove() && currentSpot.location != null) {
             coroutineScope.launch {
-                focusOnToSpots(cameraPositionState, mapSize, listOf(currentSpot))
+                fitBoundsToMarkers(cameraPositionState, mapSize, listOf(currentSpot))
             }
         }
     }

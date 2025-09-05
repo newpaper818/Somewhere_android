@@ -32,9 +32,12 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
 
         checkPlacesClientAndInit()
 
-        delay(300)
+        delay(600)
 
-        val request = FindAutocompletePredictionsRequest.builder().setQuery(query).build()
+        val request = FindAutocompletePredictionsRequest
+            .builder()
+            .setQuery(query)
+            .build()
 
         placesClient.findAutocompletePredictions(request)
             .addOnSuccessListener { response ->
@@ -46,18 +49,19 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
                 )
 
                 locationList.complete(
-                    subList.map {
+                    subList.mapIndexed { index, it ->
                         LocationInfo(
                             title = it.getPrimaryText(null).toString(),
                             address = it.getSecondaryText(null).toString(),
                             placeId = it.placeId,
+                            mapMarkerIndex = ('A' + index).toString()
                         )
                     }
                 )
 
             }
             .addOnFailureListener {
-                Log.e(this.toString(), it.stackTraceToString())
+                Log.e(GOOGLE_MAP_PLACES_TAG, it.stackTraceToString())
                 locationList.complete(null)
             }
 
@@ -75,23 +79,25 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
         ).addOnSuccessListener {
             continuation.resume(it.place.location)
         }.addOnFailureListener {
-            Log.e(this.toString(), it.stackTraceToString())
+            Log.e(GOOGLE_MAP_PLACES_TAG, it.stackTraceToString())
             continuation.resume(null)
         }
     }
 
     override suspend fun getPlacesInfo(
         places: Set<String>
-    ): Set<Place>? {
+    ): Set<Pair<String, Place>>? {
         checkPlacesClientAndInit()
 
-        val placeInfoList = places.mapNotNull {
+        val placeInfoList: List<Pair<String, Place>> = places.mapNotNull {
             searchPlace(it)
         }
 
-        placeInfoList.forEach{ place ->
-            Log.d("gemini", "name: ${place.displayName}, id: ${place.id}")
-        }
+//        placeInfoList.forEach{ place ->
+//            Log.d("gemini", "name: ${place.displayName}, id: ${place.id}")
+//        }
+
+        Log.d("gemini", "getPlacesInfo: ${placeInfoList.size}")
 
         return if (placeInfoList.isEmpty())
             null
@@ -101,31 +107,31 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
 
     private suspend fun searchPlace(
         query: String
-    ): Place?{
-        val placeInfo = CompletableDeferred<Place?>()
+    ): Pair<String, Place>?{
+        val placeInfo = CompletableDeferred<Pair<String, Place>?>()
 
         val placeFields: List<Place.Field> = arrayListOf(
             Place.Field.ID,
-            Place.Field.DISPLAY_NAME,
+            Place.Field.TYPES,
             Place.Field.FORMATTED_ADDRESS,
             Place.Field.LOCATION,
-            Place.Field.GOOGLE_MAPS_URI,
-            Place.Field.WEBSITE_URI,
-            Place.Field.TYPES,
-            Place.Field.RATING,
-            Place.Field.OPENING_HOURS
         )
 
-        val request = SearchByTextRequest.builder(query, placeFields)
-            .setMaxResultCount(3)
+        val request = SearchByTextRequest
+            .builder(query, placeFields)
+            .setMaxResultCount(1)
             .build()
 
         placesClient.searchByText(request)
             .addOnSuccessListener { response ->
-                placeInfo.complete(response.places.firstOrNull())
+                val place = response.places.firstOrNull()
+                if (place != null)
+                    placeInfo.complete(Pair(query, place))
+                else
+                    placeInfo.complete(null)
             }
             .addOnFailureListener {
-                Log.e(this.toString(), it.stackTraceToString())
+                Log.e(GOOGLE_MAP_PLACES_TAG, it.stackTraceToString())
                 placeInfo.complete(null)
             }
 
@@ -139,7 +145,7 @@ class PlacesGoogleMapPlacesApi @Inject constructor(
         if (!Places.isInitialized()
 //            || !::placesClient.isInitialized
         ) {
-            Places.initialize(context, BuildConfig.GOOGLE_MAPS_API_KEY)
+            Places.initializeWithNewPlacesApiEnabled(context, BuildConfig.GOOGLE_MAPS_API_KEY)
             placesClient = Places.createClient(context)
         }
     }

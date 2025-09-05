@@ -3,11 +3,12 @@ package com.newpaper.somewhere.feature.more.openSourceLicense
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -27,21 +28,23 @@ import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.feature.more.R
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 
 @Composable
 fun OpenSourceLicenseRoute(
     startSpacerValue: Dp,
+    useBlurEffect: Boolean,
     navigateUp: () -> Unit
 ){
     BackHandler {
         navigateUp()
     }
 
+    val topAppBarHazeState = if(useBlurEffect) rememberHazeState() else null
+
     Scaffold(
-        modifier = Modifier
-            .imePadding()
-            .navigationBarsPadding()
-            .displayCutoutPadding(),
+        modifier = Modifier.imePadding(),
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {
@@ -49,22 +52,32 @@ fun OpenSourceLicenseRoute(
                 startPadding = startSpacerValue,
                 title = stringResource(id = R.string.open_source_license),
                 navigationIcon = TopAppBarIcon.back,
-                onClickNavigationIcon = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() },
+                hazeState = topAppBarHazeState
             )
         },
     ) { paddingValues ->
 
         val lazyListState = rememberLazyListState()
 
-        LibrariesContainer(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .simpleVerticalScrollbar(lazyListState),
-            lazyListState = lazyListState,
-            showVersion = false,
-            itemSpacing = 8.dp
-        )
+        Box {
+            LibrariesContainer(
+                modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
+                                .hazeSource(state = topAppBarHazeState).background(MaterialTheme.colorScheme.background)
+                            else Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(top = paddingValues.calculateTopPadding(), bottom = 200.dp),
+                lazyListState = lazyListState,
+                showVersion = false,
+                itemSpacing = 8.dp
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = paddingValues.calculateTopPadding(), bottom = 16.dp)
+                    .simpleVerticalScrollbar(lazyListState)
+            )
+        }
     }
 }
 

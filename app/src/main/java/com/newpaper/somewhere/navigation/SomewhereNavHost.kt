@@ -32,7 +32,7 @@ import com.newpaper.somewhere.navigation.more.moreScreen
 import com.newpaper.somewhere.navigation.more.navigateToOpenSourceLicense
 import com.newpaper.somewhere.navigation.more.openSourceLicenseScreen
 import com.newpaper.somewhere.navigation.more.setDateTimeFormatScreen
-import com.newpaper.somewhere.navigation.more.setThemeScreen
+import com.newpaper.somewhere.navigation.more.setScreenStyleScreen
 import com.newpaper.somewhere.navigation.profile.deleteAccountScreen
 import com.newpaper.somewhere.navigation.profile.editProfileScreen
 import com.newpaper.somewhere.navigation.profile.navigateToDeleteAccount
@@ -52,6 +52,7 @@ import com.newpaper.somewhere.navigation.trip.navigateToSpot
 import com.newpaper.somewhere.navigation.trip.navigateToTrip
 import com.newpaper.somewhere.navigation.trip.navigateToTripAi
 import com.newpaper.somewhere.navigation.trip.navigateToTrips
+import com.newpaper.somewhere.navigation.trip.shareTripScreen
 import com.newpaper.somewhere.navigation.trip.spotScreen
 import com.newpaper.somewhere.navigation.trip.tripAiScreen
 import com.newpaper.somewhere.navigation.trip.tripMapScreen
@@ -62,6 +63,7 @@ import com.newpaper.somewhere.navigationUi.TopLevelDestination
 import com.newpaper.somewhere.ui.AppUiState
 import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -91,6 +93,7 @@ fun SomewhereNavHost(
 
     val appUiState by appViewModel.appUiState.collectAsState()
 
+    val useBlurEffect = appUiState.appPreferences.theme.useBlurEffect
     val isDarkMapTheme = appUiState.appPreferences.theme.mapTheme == MapTheme.DARK
             || appUiState.appPreferences.theme.mapTheme == MapTheme.AUTO && isDarkAppTheme
 
@@ -114,7 +117,7 @@ fun SomewhereNavHost(
     val isOnMoreList = appUiState.screenDestination.currentScreenDestination == ScreenDestination.MORE
 
     val isOnMoreDetail = appUiState.screenDestination.currentScreenDestination == ScreenDestination.SET_DATE_TIME_FORMAT
-            || appUiState.screenDestination.currentScreenDestination == ScreenDestination.SET_THEME
+            || appUiState.screenDestination.currentScreenDestination == ScreenDestination.SET_SCREEN_STYLE
             || appUiState.screenDestination.currentScreenDestination == ScreenDestination.ACCOUNT
             || appUiState.screenDestination.currentScreenDestination == ScreenDestination.ABOUT
 
@@ -154,6 +157,8 @@ fun SomewhereNavHost(
         beforeUse2Panes = externalState.windowSizeClass.use2Panes
     }
 
+    val hazeState = if(useBlurEffect) rememberHazeState()
+                    else null
 
     val tripsLazyListState = rememberLazyListState()
     val profileLazyListState = rememberLazyListState()
@@ -186,6 +191,7 @@ fun SomewhereNavHost(
         windowSizeClass = externalState.windowSizeClass,
         currentTopLevelDestination = appUiState.screenDestination.currentTopLevelDestination,
         showNavigationBar = showNavigationBar,
+        hazeState = hazeState,
         onClickNavBarItem = {
             val prevTopLevelDestination = appUiState.screenDestination.currentTopLevelDestination
             val currentMoreDetailScreenDestination = appUiState.screenDestination.currentScreenDestination
@@ -289,7 +295,13 @@ fun SomewhereNavHost(
                     mainNavController.navigateToSpot(
                         navOptions = navOptions { launchSingleTop = true }
                     )
-                }
+                },
+                navigateToSubscription = {
+                    mainNavController.navigateToSubscription(
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
+                },
+                hazeState = hazeState
             )
 
             profileScreen(
@@ -322,7 +334,8 @@ fun SomewhereNavHost(
                         navOptions = navOptions { launchSingleTop = true }
                     )
                 },
-                navigateUp = navigateUp
+                navigateUp = navigateUp,
+                hazeState = hazeState
             )
 
             moreScreen(
@@ -351,7 +364,8 @@ fun SomewhereNavHost(
                     navOptions = navOptions { launchSingleTop = true }
                 ) },
                 onSignOutDone = onSignOutDone,
-                modifier = modifier
+                modifier = modifier,
+                hazeState = hazeState
             )
 
 
@@ -374,7 +388,7 @@ fun SomewhereNavHost(
                 navigateUp = navigateUp
             )
 
-            setThemeScreen(
+            setScreenStyleScreen(
                 appViewModel = appViewModel,
                 externalState = externalState,
                 navigateUp = navigateUp
@@ -480,6 +494,7 @@ fun SomewhereNavHost(
             )
 
             tripScreen(
+                isDarkAppTheme = isDarkAppTheme,
                 appViewModel = appViewModel,
                 externalState = externalState,
                 commonTripViewModel = commonTripViewModel,
@@ -500,6 +515,7 @@ fun SomewhereNavHost(
             )
 
             dateScreen(
+                isDarkAppTheme = isDarkAppTheme,
                 appViewModel = appViewModel,
                 externalState = externalState,
                 commonTripViewModel = commonTripViewModel,
@@ -521,6 +537,7 @@ fun SomewhereNavHost(
             )
 
             spotScreen(
+                isDarkAppTheme = isDarkAppTheme,
                 appViewModel = appViewModel,
                 externalState = externalState,
                 commonTripViewModel = commonTripViewModel,
@@ -566,6 +583,11 @@ fun SomewhereNavHost(
                         navOptions = navOptions { launchSingleTop = true }
                     )
                 },
+                navigateToSubscription = {
+                    mainNavController.navigateToSubscription(
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
+                },
                 navigateToMyTrips = {
                     mainNavController.navigateToTrips(
                         navOptions = navOptions {
@@ -579,6 +601,15 @@ fun SomewhereNavHost(
 
             inviteFriendScreen(
                 externalState = externalState,
+                appViewModel = appViewModel,
+                commonTripViewModel = commonTripViewModel,
+                navigateUp = navigateUp,
+                modifier = modifier
+            )
+
+            shareTripScreen(
+                externalState = externalState,
+                isDarkAppTheme = isDarkAppTheme,
                 appViewModel = appViewModel,
                 commonTripViewModel = commonTripViewModel,
                 navigateUp = navigateUp,
@@ -620,7 +651,7 @@ private fun organizeNavStack(
     val isOnSpot = currentScreenDestination == ScreenDestination.SPOT
 
     val isOnMoreDetail = currentScreenDestination == ScreenDestination.SET_DATE_TIME_FORMAT
-            || currentScreenDestination == ScreenDestination.SET_THEME
+            || currentScreenDestination == ScreenDestination.SET_SCREEN_STYLE
             || currentScreenDestination == ScreenDestination.ACCOUNT
             || currentScreenDestination == ScreenDestination.ABOUT
 

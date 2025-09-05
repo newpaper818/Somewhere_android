@@ -12,6 +12,8 @@ import javax.inject.Inject
 
 private const val GEMINI_AI_TAG = "Gemini-Ai"
 
+private const val GEMINI_MODEL_NAME = "gemini-2.0-flash"
+
 class GeminiAiApi @Inject constructor(
 
 ): AiRemoteDataSource{
@@ -21,10 +23,12 @@ class GeminiAiApi @Inject constructor(
         tripWith: String,
         tripType: String
     ): Set<String>? {
+        Log.d(GEMINI_AI_TAG, "getRecommendSpots start")
+
         val generativeModel =
             GenerativeModel(
                 // Specify a Gemini model appropriate for your use case
-                modelName = "gemini-2.0-flash",
+                modelName = GEMINI_MODEL_NAME,
                 // Access your API key as a Build Configuration variable (see "Set up your API key" above)
                 apiKey = BuildConfig.GEMINI_AI_API_KEY,
                 generationConfig = generationConfig {
@@ -33,19 +37,22 @@ class GeminiAiApi @Inject constructor(
             )
 
         val prompt = """
-            Get trip places using this JSON schema:
-            Return: Array<String> (Each String should not be sentence. Like [N Seoul tower, Empire state building, Central park])
+            You are a travel assistant.
             
-            [other request]
-            You should get at least ${tripDays * 6} places on each trip type.
-        
-            [trip info]
-            city(or country): $city
-            trip with(solo, partner, friend, family): $tripWith
-            trip type: $tripType
+            Return only a valid JSON array of strings, with no extra text.
+            - Format: ["N Seoul Tower", "Empire State Building", "Central Park"]
+            - Do NOT wrap the array in another array or object.
+            - Do NOT include any explanations, comments, or sentences.
+            - Each element must be just a place name (String), not a sentence.
+            - The array must contain at least ${tripDays * 5} place names.
+            
+            <Trip Info>
+            - City or country: $city
+            - Trip with (solo, partner, friend, family): $tripWith
+            - Trip type: $tripType
         """.trimIndent()
 
-
+//        Log.d("gemini-ai", "prompt: $prompt")
 
         try {
             val response = generativeModel.generateContent(prompt)
@@ -67,7 +74,7 @@ class GeminiAiApi @Inject constructor(
     }
 
     override suspend fun getTripPlan(
-        places: Set<Place>,
+        placesWithPlaces: Set<Pair<String, Place>>,
         city: String,
         tripDate: String,
         tripWith: String,
@@ -77,7 +84,7 @@ class GeminiAiApi @Inject constructor(
         val generativeModel =
             GenerativeModel(
                 // Specify a Gemini model appropriate for your use case
-                modelName = "gemini-1.5-flash",
+                modelName = GEMINI_MODEL_NAME,
                 // Access your API key as a Build Configuration variable (see "Set up your API key" above)
                 apiKey = BuildConfig.GEMINI_AI_API_KEY,
                 generationConfig = generationConfig {
@@ -86,40 +93,43 @@ class GeminiAiApi @Inject constructor(
             )
 
         val prompt = """
-            Make trip plan.
-            When you make trip plan, use [places].
+            You are a travel assistant. Make a detailed trip plan.
+            When you make trip plan, use <places>.
             
-            [trip info]
+            <trip info>
             city(or country): $city
             trip date: $tripDate
             trip with(solo, partner, friend, family): $tripWith
             trip type: $tripType
             
-            [format] - follow this rule
+            <format>
             language: $language
-            time format: HH:MM (24h, do not add additional data)
-            date format: yyyy-mm-dd (do not add additional data)
+            time format: HH:MM (24h, zero-padded, no AM/PM, 00:00 to 23:59)
+            date format: yyyy-mm-dd (zero-padded, no extra text)
             
-            [places]
-            ${placesToString(places)}
+            <places> - exclude not in <trip info>'s city(or country)
+            ${placesToString(placesWithPlaces)}
             
-            [other request]
-            Consider transportation time.
-            spotList's item is order by time.
-            googleMapsPlacesId should be same with given [places]'s id.
-            spot's titleText is place's name.
-            You don't have to follow [places] order.
-            From [places]'s placeTypes, set spotType from [spot type list] (Do not use [places]'s placeTypes.)
-            Only use [spot type list]'s item for spotType.
-            Include breakfast, lunch, dinner.
-            Lodging should be close to [places].
+            <other request>
+            - Consider transportation time and the places' addresses when planning the order, and exclude any spots that are not located in the <trip info>'s city(or country).
+            - spotList must be sorted by time.
+            - googleMapsPlacesId must exactly match the given <places>'s id.
+            - Ensure each spot's titleText exactly matches the place's name and translate the titleText of each item in the spotList into $language.
+            - You don't have to follow <places> order.
+            - From <places>'s placeTypes, map to <spot type list> instead of copying.
+            - Include breakfast, lunch, dinner.
+            - Lodging should be close to <places>.
             
-            [spot type list] - select spotType from below
+            <spot type list>
             ${enumValues<SpotType>().map { it }}
             
-            [return: JSON type]
+            <return>
+            Return only a valid JSON object that strictly follows this schema:
             ${jsonTypeString()}
         """.trimIndent()
+
+//        Log.d("gemini-ai", "prompt: $prompt") //<<<<<<<<<<<<<<<<<<<<
+
 
         try {
             val response = generativeModel.generateContent(prompt)
@@ -134,9 +144,9 @@ class GeminiAiApi @Inject constructor(
     }
 
     private fun placesToString(
-        places: Set<Place>
+        nameWithPlaces: Set<Pair<String, Place>>
     ): String{
-        val placeList = places.map { place ->
+        val placeList = nameWithPlaces.map { place ->
             placeToString(place)
         }
 
@@ -144,12 +154,13 @@ class GeminiAiApi @Inject constructor(
     }
 
     private fun placeToString(
-        place: Place
+        nameWithPlace: Pair<String, Place>
     ): String {
         val stringList = listOf(
-            "name: " + place.displayName,
-            "id: " + place.id,
-            "placeTypes: " + place.placeTypes
+            "name: " + nameWithPlace.first,
+            "id: " + nameWithPlace.second.id,
+            "placeTypes: " + nameWithPlace.second.placeTypes,
+            "address: " + nameWithPlace.second.formattedAddress
         )
 
         return stringList.joinToString(", ", "{", "}")

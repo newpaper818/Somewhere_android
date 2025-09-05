@@ -10,6 +10,7 @@ import com.newpaper.somewhere.core.model.tripData.Trip
 internal data class TripUiInfo(
     val use2Panes: Boolean = false,
     val spacerValue: Dp = 16.dp,
+    val useBlurEffect: Boolean = true,
     val loadingTrip: Boolean = false,
     val dateTimeFormat: DateTimeFormat = DateTimeFormat(),
     val internetEnabled: Boolean = true,
@@ -79,6 +80,7 @@ internal data class TripDialog(
 
 internal data class TripNavigate(
     private val _navigateUp: () -> Unit = {},
+    private val _navigateToShareTrip: (imageList: List<String>, initialImageIndex: Int) -> Unit = { _, _ -> },
     private val _navigateToInviteFriend: () -> Unit = {},
     private val _navigateToInvitedFriends: () -> Unit = {},
     private val _navigateToImage: (imageList: List<String>, initialImageIndex: Int) -> Unit = { _, _ -> },
@@ -88,6 +90,8 @@ internal data class TripNavigate(
 ){
     fun navigateUp(){
         _navigateUp() }
+    fun navigateToShareTrip(imageList: List<String>, initialImageIndex: Int){
+        _navigateToShareTrip(imageList, initialImageIndex) }
     fun navigateToInviteFriend(){
         _navigateToInviteFriend() }
     fun navigateToInvitedFriends(){

@@ -61,6 +61,8 @@ import com.newpaper.somewhere.core.designsystem.theme.whiteInt
 import com.newpaper.somewhere.core.ui.MyTextField
 import com.newpaper.somewhere.core.ui.card.trip.MAX_TITLE_LENGTH
 import com.newpaper.somewhere.core.ui.ui.R
+import com.newpaper.somewhere.core.utils.enterHorizontally
+import com.newpaper.somewhere.core.utils.exitHorizontally
 
 val DUMMY_SPACE_HEIGHT: Dp = 10.dp
 val MIN_CARD_HEIGHT: Dp = 48.dp
@@ -280,8 +282,14 @@ private fun SideText(
                     style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
                 )
             }
-            else if (sideTextPlaceHolderIcon != null && isEditMode) {
-                DisplayIcon(icon = sideTextPlaceHolderIcon)
+            else if (sideTextPlaceHolderIcon != null) {
+                AnimatedVisibility(
+                    visible = isEditMode,
+                    enter = enterHorizontally,
+                    exit = exitHorizontally
+                ) {
+                    DisplayIcon(icon = sideTextPlaceHolderIcon)
+                }
             }
         }
     }
@@ -415,8 +423,8 @@ private fun Icons(
             //delete icon
             AnimatedVisibility(
                 visible = isEditMode && deleteEnabled,
-                enter = scaleIn(tween(300)),
-                exit = scaleOut(tween(400)) + fadeOut(tween(300))
+                enter = enterHorizontally,
+                exit = exitHorizontally
             ) {
                 MyPlainTooltipBox(tooltipText = stringResource(id = MyIcons.deleteSpot.descriptionTextId!!)) {
                     IconButton(onClick = onClickDelete) {
@@ -430,8 +438,8 @@ private fun Icons(
             //drag handle
             AnimatedVisibility(
                 visible = isEditMode && dragEnabled,
-                enter = scaleIn(tween(300)),
-                exit = scaleOut(tween(400)) + fadeOut(tween(300))
+                enter = enterHorizontally,
+                exit = exitHorizontally
             ) {
                 IconButton(
                     modifier = dragHandleModifier,
@@ -448,8 +456,8 @@ private fun Icons(
         //expand / collapse icon
         AnimatedVisibility(
             visible = !isEditMode,
-            enter = scaleIn(tween(300)),
-            exit = scaleOut(tween(400)) + fadeOut(tween(300))
+            enter = enterHorizontally,
+            exit = exitHorizontally
         ) {
             if (!expandedTextIsNull) {
                 MyPlainTooltipBox(

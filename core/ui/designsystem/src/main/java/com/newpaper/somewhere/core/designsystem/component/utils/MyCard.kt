@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun MyCard(
@@ -18,7 +19,7 @@ fun MyCard(
     onClick: (() -> Unit)? = null,
     shape: Shape = CardDefaults.shape,
     colors: CardColors? = null,
-    elevation: CardElevation = CardDefaults.cardElevation(),
+    elevation: CardElevation = CardDefaults.cardElevation(0.dp, 0.dp, 0.dp, 0.dp),
     border: BorderStroke? = null,
     content: @Composable ColumnScope.() -> Unit
 ){

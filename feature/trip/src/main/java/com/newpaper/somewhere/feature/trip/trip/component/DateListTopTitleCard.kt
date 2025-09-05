@@ -1,9 +1,6 @@
 package com.newpaper.somewhere.feature.trip.trip.component
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -18,6 +15,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.theme.CustomColor
 import com.newpaper.somewhere.core.ui.card.trip.MAX_TITLE_LENGTH
+import com.newpaper.somewhere.core.utils.enterVertically
+import com.newpaper.somewhere.core.utils.exitVertically
 import com.newpaper.somewhere.feature.trip.R
 
 @Composable
@@ -26,15 +25,16 @@ internal fun DateListTopTitleCard(
     dateListIsEmpty: Boolean,
     dateTitleErrorCount: Int
 ){
-    AnimatedVisibility(
-        visible = isEditMode,
-        enter = expandVertically(tween(400)),
-        exit = shrinkVertically(tween(400))
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceBright)
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surfaceBright)
+        AnimatedVisibility(
+            visible = isEditMode,
+            enter = enterVertically,
+            exit = exitVertically
         ) {
             Row(
                 modifier = Modifier.padding(16.dp, 0.dp)

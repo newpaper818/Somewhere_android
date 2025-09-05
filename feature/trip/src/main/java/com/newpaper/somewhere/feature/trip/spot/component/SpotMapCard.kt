@@ -1,8 +1,12 @@
 package com.newpaper.somewhere.feature.trip.spot.component
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +38,7 @@ import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MapButtonIcon
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
-import com.newpaper.somewhere.core.ui.FocusOnToSpotButton
+import com.newpaper.somewhere.core.ui.FitBoundsToMarkersButton
 import com.newpaper.somewhere.core.ui.UserLocationButton
 import com.newpaper.somewhere.core.utils.convert.nextSpotOrDateIsExist
 import com.newpaper.somewhere.core.utils.convert.prevSpotOrDateIsExist
@@ -44,6 +49,7 @@ fun SpotMapCard(
     isMapExpand: Boolean,
     expandHeight: Int,
     mapSize: IntSize,
+    onMapLoaded: () -> Unit,
 
     isDarkMapTheme: Boolean,
     fusedLocationClient: FusedLocationProviderClient,
@@ -108,6 +114,7 @@ fun SpotMapCard(
             isDarkMapTheme = isDarkMapTheme,
             cameraPositionState = cameraPositionState,
             userLocationEnabled = userLocationEnabled,
+            onMapLoaded = onMapLoaded,
             dateList = dateList,
             dateIndex = dateIndex,
             spotList = spotList,
@@ -147,6 +154,14 @@ fun SpotMapCard(
             )
 
             MySpacerColumn(height = 16.dp)
+
+            AnimatedVisibility(
+                visible = isMapExpand && !use2Panes,
+                enter = expandVertically(tween(300)),
+                exit = shrinkVertically(tween(300))
+            ) {
+                Box(modifier = Modifier.navigationBarsPadding())
+            }
         }
     }
 }
@@ -179,7 +194,7 @@ private fun MapSpotMapButtons(
 
     showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
 ){
-    val focusOnToSpotEnabled =
+    val fitBoundsToMarkersEnabled =
         if (spot == null) false
         else
             spot.spotType.isMove() && spotFrom?.location != null && spotTo?.location != null
@@ -217,13 +232,13 @@ private fun MapSpotMapButtons(
 
         MySpacerRow(width = 16.dp)
 
-        SpotNavigateWithFocusOnToSpotButtons(
+        SpotNavigateWithFitBoundsToMarkersButtons(
             toPrevSpotEnabled = toPrevSpotEnabled,
             toNextSpotEnabled = toNextSpotEnabled,
             toPrevSpot = toPrevSpot,
             toNextSpot = toNextSpot,
             mapSize = mapSize,
-            focusOnToSpotEnabled = focusOnToSpotEnabled,
+            fitBoundsToMarkersEnabled = fitBoundsToMarkersEnabled,
             cameraPositionState = cameraPositionState,
             spotList = spotList,
             showSnackBar = showSnackBar
@@ -302,14 +317,14 @@ private fun EditAndDeleteLocationButtons(
 
 // < spot >
 @Composable
-private fun SpotNavigateWithFocusOnToSpotButtons(
+private fun SpotNavigateWithFitBoundsToMarkersButtons(
     toPrevSpotEnabled: Boolean,
     toNextSpotEnabled: Boolean,
     toPrevSpot: () -> Unit,
     toNextSpot: () -> Unit,
 
     mapSize: IntSize,
-    focusOnToSpotEnabled: Boolean,
+    fitBoundsToMarkersEnabled: Boolean,
     cameraPositionState: CameraPositionState,
     spotList: List<Spot>,
     showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
@@ -329,7 +344,7 @@ private fun SpotNavigateWithFocusOnToSpotButtons(
         }
 
         //focus on to spot
-        FocusOnToSpotButton(mapSize, focusOnToSpotEnabled, cameraPositionState, spotList, showSnackBar)
+        FitBoundsToMarkersButton(mapSize, fitBoundsToMarkersEnabled, cameraPositionState, spotList, showSnackBar)
 
 
         //to next spot
@@ -353,13 +368,13 @@ private fun ToGoogleMapButton(
     onClick: () -> Unit,
 ){
     MapButtonsRow {
-        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.openInGoogleMap.descriptionTextId!!)) {
+        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.openInGoogleMaps.descriptionTextId!!)) {
             IconButton(
                 enabled = enabled,
                 onClick = onClick
             ) {
                 DisplayIcon(
-                    icon = MapButtonIcon.openInGoogleMap,
+                    icon = MapButtonIcon.openInGoogleMaps,
                     enabled = enabled
                 )
             }
@@ -374,7 +389,8 @@ private fun MapButtonsRow(
     Row(
         modifier = Modifier
             .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surface.copy(0.85f)),
+            .background(MaterialTheme.colorScheme.surface.copy(0.95f))
+            .border(1.dp, MaterialTheme.colorScheme.surfaceTint, CircleShape),
         verticalAlignment = Alignment.CenterVertically
     ) {
         buttonsContent()

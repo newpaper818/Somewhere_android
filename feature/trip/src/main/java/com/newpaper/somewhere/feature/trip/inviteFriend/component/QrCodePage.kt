@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -242,7 +243,7 @@ private fun FlashLightButton(
     modifier: Modifier = Modifier
 ){
     MyCard(
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = CircleShape,
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceBright.copy(alpha = 0.7f)),
         modifier = modifier
     ) {

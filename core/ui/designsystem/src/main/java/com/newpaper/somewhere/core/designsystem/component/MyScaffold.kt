@@ -3,6 +3,7 @@ package com.newpaper.somewhere.core.designsystem.component
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -42,7 +43,10 @@ fun MyScaffold(
     val buttonsModifier = if (useBottomNavBar) Modifier
                             .navigationBarsPadding()    //system nav bar padding
                             .padding(bottom = 80.dp)    //app bottom nav bar padding
-                        else Modifier.navigationBarsPadding().imePadding()
+                        else Modifier.imePadding()
+
+    val glanceSpotModifier = if (useBottomNavBar) buttonsModifier.padding(bottom = 16.dp)
+                                else buttonsModifier.padding(bottom = 16.dp).fillMaxWidth()
 
     Scaffold(
         modifier, topBar, bottomBar, snackbarHost, floatingActionButton,
@@ -58,14 +62,16 @@ fun MyScaffold(
                 visible = bottomSaveCancelBarVisible,
                 onClickCancel = onClickCancel,
                 onClickSave = onClickSave,
+                modifier = buttonsModifier,
                 saveEnabled = saveEnabled,
                 use2PanesAndSpotScreen = use2PanesAndSpotScreen,
-                modifier = buttonsModifier
+                useBottomNavBar = useBottomNavBar
             )
+
 
             //glance spot
             Box (
-                modifier = buttonsModifier.padding(bottom = 16.dp)
+                modifier = glanceSpotModifier
             ){
                 glanceSpot()
             }

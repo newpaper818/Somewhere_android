@@ -40,7 +40,7 @@ fun MemoDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 0.dp)
-                    .clip(MaterialTheme.shapes.medium)
+                    .clip(MaterialTheme.shapes.large)
                     .background(MaterialTheme.colorScheme.surfaceBright)
 
             ){

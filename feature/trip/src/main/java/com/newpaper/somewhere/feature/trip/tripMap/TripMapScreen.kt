@@ -1,15 +1,22 @@
 package com.newpaper.somewhere.feature.trip.tripMap
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -37,12 +44,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.CameraPosition
@@ -201,7 +210,7 @@ private fun TripMapScreenVertical(
     val spotTypeGroupWithShownMarkerList = tripMapUiState.spotTypeGroupWithShownMarkerList
     val currentDateIndex = tripMapUiState.currentDateIndex
     val oneDateShown = tripMapUiState.oneDateShown
-    val focusOnToSpotEnabled = tripMapUiState.focusOnToSpotEnabled
+    val fitBoundsToMarkersEnabled = tripMapUiState.fitBoundsToMarkersEnabled
 
     val bottomSheetState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(initialValue = SheetValue.Expanded)
@@ -236,7 +245,8 @@ private fun TripMapScreenVertical(
                     modifier = Modifier
                         .width(300.dp)
                         .padding(bottom = bottomPadding.dp)
-                        .padding(horizontal = 4.dp),
+                        .padding(horizontal = 4.dp)
+                        .navigationBarsPadding(),
                     snackbar = {
                         Snackbar(
                             snackbarData = it,
@@ -269,7 +279,7 @@ private fun TripMapScreenVertical(
                         coroutineScope,
                         cameraPositionState,
                         mapSize,
-                        focusOnToSpotEnabled,
+                        fitBoundsToMarkersEnabled,
                         oneDateShown,
                         dateTimeFormat,
                         currentDateIndex,
@@ -283,7 +293,7 @@ private fun TripMapScreenVertical(
             }
         ){ _ ->
 
-            val mapPadding = PaddingValues(0.dp, paddingValue.calculateTopPadding(), 66.dp, bottomPadding.dp)
+            val mapPadding = PaddingValues(0.dp, paddingValue.calculateTopPadding(), 0.dp, bottomPadding.dp)
 
             //map
             Box(
@@ -302,8 +312,8 @@ private fun TripMapScreenVertical(
                     dateList = currentTrip.dateList,
                     dateListWithShownMarkerList = dateWithShownMarkerList,
                     spotTypeGroupWithShownMarkerList = spotTypeGroupWithShownMarkerList,
-                    firstFocusOnToSpot = {
-                        focusOnToSpot(
+                    firstFitBoundsToMarkers = {
+                        fitBoundsToMarkers(
                             mapSize,
                             coroutineScope,
                             dateWithShownMarkerList,
@@ -363,7 +373,7 @@ private fun TripMapScreenHorizontal(
     val spotTypeGroupWithShownMarkerList = tripMapUiState.spotTypeGroupWithShownMarkerList
     val currentDateIndex = tripMapUiState.currentDateIndex
     val oneDateShown = tripMapUiState.oneDateShown
-    val focusOnToSpotEnabled = tripMapUiState.focusOnToSpotEnabled
+    val fitBoundsToMarkersEnabled = tripMapUiState.fitBoundsToMarkersEnabled
 
     val density = LocalDensity.current.density
     val coroutineScope = rememberCoroutineScope()
@@ -374,7 +384,6 @@ private fun TripMapScreenHorizontal(
     Scaffold(
         modifier = modifier
             .imePadding()
-            .navigationBarsPadding()
             .fillMaxSize(),
 
         snackbarHost = {
@@ -384,7 +393,7 @@ private fun TripMapScreenHorizontal(
             ) {
                 SnackbarHost(
                     hostState = snackBarHostState,
-                    modifier = Modifier.width(300.dp),
+                    modifier = Modifier.width(300.dp).navigationBarsPadding(),
                     snackbar = {
                         Snackbar(
                             snackbarData = it,
@@ -396,7 +405,7 @@ private fun TripMapScreenHorizontal(
         }
     ) { paddingValues ->
 
-        val mapPadding = PaddingValues(0.dp, paddingValues.calculateTopPadding(), cardWidth.dp + 66.dp, 0.dp)
+        val mapPadding = PaddingValues(0.dp, paddingValues.calculateTopPadding(), cardWidth.dp, 0.dp)
 
         Box(
             contentAlignment = Alignment.BottomEnd
@@ -418,8 +427,8 @@ private fun TripMapScreenHorizontal(
                     dateList = currentTrip.dateList,
                     dateListWithShownMarkerList = dateWithShownMarkerList,
                     spotTypeGroupWithShownMarkerList = spotTypeGroupWithShownMarkerList,
-                    firstFocusOnToSpot = {
-                        focusOnToSpot(
+                    firstFitBoundsToMarkers = {
+                        fitBoundsToMarkers(
                             mapSize,
                             coroutineScope,
                             dateWithShownMarkerList,
@@ -445,62 +454,65 @@ private fun TripMapScreenHorizontal(
                     (screenWidth * 0.45f).toInt()
                 }
 
-            //get status bar padding value - get top padding
-            val statusBarPaddingValue = paddingValues.calculateTopPadding()
-            val topPadding = if (statusBarPaddingValue == 0.dp) 16.dp
-            else statusBarPaddingValue
 
-            //control panel
-            MyCard(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
-                shape = MaterialTheme.shapes.extraLarge,
+            Row(
                 modifier = Modifier
-                    .width(cardWidth.dp)
-                    .padding(0.dp, topPadding, 16.dp, 16.dp)
-                    .fillMaxHeight()
+                    .navigationBarsPadding()
+                    .statusBarsPadding()
+                    .padding(0.dp, 0.dp, 16.dp, 16.dp),
+                verticalAlignment = Alignment.Bottom
             ) {
-                Column {
-                    MySpacerColumn(height = 16.dp)
-
-                    ControlPanel(
-                        tripMapViewModel,
-                        coroutineScope,
-                        cameraPositionState,
-                        mapSize,
-                        focusOnToSpotEnabled,
-                        oneDateShown,
-                        dateTimeFormat,
-                        currentDateIndex,
-                        dateListState,
-                        spotTypeGroupWithShownMarkerList,
-                        dateWithShownMarkerList,
-                        navigateUp,
-                        snackBarHostState
-                    )
-                }
-            }
-
-            //map buttons
-            MapButtons(
-                paddingValues = PaddingValues(end = cardWidth.dp + 16.dp, bottom = 16.dp),
-                cameraPositionState = cameraPositionState,
-                fusedLocationClient = fusedLocationClient,
-                setUserLocationEnabled = setUserLocationEnabled,
-                showSnackBar = { text, actionLabel, duration, onActionClick ->
-                    coroutineScope.launch {
-                        snackBarHostState.showSnackbar(
-                            message = text,
-                            actionLabel = actionLabel,
-                            duration = duration
-                        ).run {
-                            when (this){
-                                SnackbarResult.Dismissed -> { }
-                                SnackbarResult.ActionPerformed -> onActionClick()
+                //map buttons
+                MapButtons(
+                    paddingValues = PaddingValues(end = 16.dp),
+                    cameraPositionState = cameraPositionState,
+                    fusedLocationClient = fusedLocationClient,
+                    setUserLocationEnabled = setUserLocationEnabled,
+                    showSnackBar = { text, actionLabel, duration, onActionClick ->
+                        coroutineScope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = text,
+                                actionLabel = actionLabel,
+                                duration = duration
+                            ).run {
+                                when (this){
+                                    SnackbarResult.Dismissed -> { }
+                                    SnackbarResult.ActionPerformed -> onActionClick()
+                                }
                             }
                         }
                     }
+                )
+
+                //control panel
+                MyCard(
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+                    shape = MaterialTheme.shapes.extraLarge,
+                    modifier = Modifier
+                        .width(cardWidth.dp)
+                        .fillMaxHeight()
+                ) {
+                    Column {
+                        MySpacerColumn(height = 16.dp)
+
+                        ControlPanel(
+                            tripMapViewModel,
+                            coroutineScope,
+                            cameraPositionState,
+                            mapSize,
+                            fitBoundsToMarkersEnabled,
+                            oneDateShown,
+                            dateTimeFormat,
+                            currentDateIndex,
+                            dateListState,
+                            spotTypeGroupWithShownMarkerList,
+                            dateWithShownMarkerList,
+                            navigateUp,
+                            snackBarHostState
+                        )
+                    }
                 }
-            )
+            }
         }
     }
 }

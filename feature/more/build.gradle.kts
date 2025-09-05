@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hilt)
     alias(libs.plugins.googleDevToolsKsp)
     alias(libs.plugins.aboutlibraries)
@@ -17,9 +18,6 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.13"
     }
     kotlinOptions {
         jvmTarget = "1.8"
@@ -63,6 +61,13 @@ dependencies {
 
     //billing
     implementation(libs.billing.ktx)
+
+    //haze
+    implementation(libs.haze)
+
+    //google play in app review
+    implementation(libs.android.play.review)
+    implementation(libs.android.play.review.ktx)
 
     //test
     testImplementation(libs.junit)

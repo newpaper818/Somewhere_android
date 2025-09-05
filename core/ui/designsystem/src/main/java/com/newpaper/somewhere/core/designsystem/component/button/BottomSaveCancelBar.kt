@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -37,7 +39,8 @@ fun AnimatedBottomSaveCancelButtons(
     onClickSave: () -> Unit,
     modifier: Modifier = Modifier,
     saveEnabled: Boolean = true,
-    use2PanesAndSpotScreen: Boolean = false
+    use2PanesAndSpotScreen: Boolean = false,
+    useBottomNavBar: Boolean = false
 ){
     AnimatedVisibility(
         visible = visible,
@@ -54,7 +57,7 @@ fun AnimatedBottomSaveCancelButtons(
                 Spacer(modifier = Modifier.weight(1f))
 
             Column(modifier = Modifier.weight(1f)) {
-                //gradation
+                //gradiant
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -79,6 +82,14 @@ fun AnimatedBottomSaveCancelButtons(
                         .padding(10.dp, 2.dp, 10.dp, 10.dp),
                     positiveEnabled = saveEnabled,
                 )
+
+                if (!useBottomNavBar)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.background)
+                            .navigationBarsPadding()
+                    )
             }
         }
     }
@@ -133,7 +144,7 @@ private fun BigNegativeButton(
             disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
             disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
-        shape = MaterialTheme.shapes.medium,
+        shape = CircleShape,
         enabled = enabled,
         onClick = onClick
     ) {
@@ -154,11 +165,11 @@ private fun BigPositiveButton(
 ){
     Button(
         modifier = modifier.height(48.dp), //max width: 150.dp
-        shape = MaterialTheme.shapes.medium,
         colors = ButtonDefaults.buttonColors(
             disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
             disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
+        shape = CircleShape,
         enabled = enabled,
         onClick = onClick
     ) {

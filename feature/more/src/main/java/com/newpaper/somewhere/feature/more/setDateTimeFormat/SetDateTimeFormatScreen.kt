@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.more.setDateTimeFormat
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -8,7 +9,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -41,12 +41,15 @@ import com.newpaper.somewhere.core.ui.item.ListGroupCard
 import com.newpaper.somewhere.core.ui.segmentedButtons.TimeFormatSegmentedButtons
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.more.R
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 @Composable
 fun SetDateTimeFormatRoute(
     use2Panes: Boolean,
     spacerValue: Dp,
+    useBlurEffect: Boolean,
     dateTimeFormat: DateTimeFormat,
     updatePreferencesValue: () -> Unit,
 
@@ -66,6 +69,7 @@ fun SetDateTimeFormatRoute(
     SetDateTimeFormatScreen(
         startSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
         endSpacerValue = spacerValue,
+        useBlurEffect = useBlurEffect,
         dateTimeFormat = dateTimeFormat,
         dateExampleText = setDateTimeFormatUiState.dateExample,
         timeExampleText = setDateTimeFormatUiState.timeExample,
@@ -103,6 +107,7 @@ fun SetDateTimeFormatRoute(
 private fun SetDateTimeFormatScreen(
     startSpacerValue: Dp,
     endSpacerValue: Dp,
+    useBlurEffect: Boolean,
     dateTimeFormat: DateTimeFormat,
 
     dateExampleText: String,
@@ -122,11 +127,10 @@ private fun SetDateTimeFormatScreen(
 
     val dateFormatList = enumValues<DateFormat>()
 
-    val scaffoldModifier = if (use2Panes) modifier
-        else modifier.navigationBarsPadding()
+    val topAppBarHazeState = if(useBlurEffect) rememberHazeState() else null
 
     Scaffold(
-        modifier = scaffoldModifier,
+        modifier = modifier,
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {
@@ -134,7 +138,8 @@ private fun SetDateTimeFormatScreen(
                 startPadding = startSpacerValue,
                 title = stringResource(id = R.string.date_time_format),
                 navigationIcon = if (!use2Panes) TopAppBarIcon.back else null,
-                onClickNavigationIcon = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() },
+                hazeState = topAppBarHazeState
             )
         }
     ){ paddingValues ->
@@ -144,10 +149,10 @@ private fun SetDateTimeFormatScreen(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(startSpacerValue, 16.dp, endSpacerValue, 200.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            contentPadding = PaddingValues(startSpacerValue, 16.dp + paddingValues.calculateTopPadding(), endSpacerValue, 200.dp),
+            modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
+                            .hazeSource(state = topAppBarHazeState).background(MaterialTheme.colorScheme.background)
+                        else Modifier.fillMaxSize()
         ) {
             //current date
             item {
@@ -162,6 +167,7 @@ private fun SetDateTimeFormatScreen(
             item {
                 ListGroupCard(
                     title = stringResource(id = R.string.time_format),
+                    isTransparentCard = true,
                     modifier = itemModifier
                 ) {
                     TimeFormatSegmentedButtons(

@@ -186,7 +186,7 @@ class CommonTripViewModel @Inject constructor(
      * save Trip form tempTrip
      *
      * @param appUserId not managerId
-     * @param deleteNotEnabledDate
+     * @param deleteNotEnabledDate delete (NotEnabledDate)?
      * @return tempTrip.dateList 's size (include not enabled Date)
      */
     fun saveTrip(
@@ -223,12 +223,12 @@ class CommonTripViewModel @Inject constructor(
             val isInSharedTripList = newTempTrip.managerId != appUserId
 
             val indexOfTempTrip = if (!isInSharedTripList)
-                commonTripUiState.value.tripInfo.trips?.indexOfFirst { it.id == newTempTrip.id }
+                commonTripUiState.value.tripInfo.tempTrips?.indexOfFirst { it.id == newTempTrip.id }
             else
                 commonTripUiState.value.tripInfo.tempSharedTrips?.indexOfFirst { it.id == newTempTrip.id }
 
             val newTripList = if (!isInSharedTripList)
-                commonTripUiState.value.tripInfo.trips?.toMutableList()
+                commonTripUiState.value.tripInfo.tempTrips?.toMutableList()
             else
                 commonTripUiState.value.tripInfo.tempSharedTrips?.toMutableList()
 

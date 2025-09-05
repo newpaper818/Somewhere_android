@@ -1,6 +1,7 @@
 package com.newpaper.somewhere.feature.trip.tripMap.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -45,7 +46,8 @@ internal fun MapButtons(
         Column(
             modifier = Modifier
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surface.copy(0.85f)),
+                .background(MaterialTheme.colorScheme.surface.copy(0.95f))
+                .border(1.dp, MaterialTheme.colorScheme.surfaceTint, CircleShape),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomIn.descriptionTextId!!)) {
@@ -85,7 +87,8 @@ internal fun MapButtons(
         Row(
             modifier = Modifier
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surface.copy(0.85f)),
+                .background(MaterialTheme.colorScheme.surface.copy(0.95f))
+                .border(1.dp, MaterialTheme.colorScheme.surfaceTint, CircleShape),
             verticalAlignment = Alignment . CenterVertically,
         ) {
             //my location button

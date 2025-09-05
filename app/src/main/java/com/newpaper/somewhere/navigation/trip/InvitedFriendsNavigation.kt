@@ -14,10 +14,10 @@ import com.newpaper.somewhere.core.ui.ErrorScreen
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.invitedFriend.InvitedFriendsRoute
 import com.newpaper.somewhere.feature.trip.trips.TripsViewModel
-import com.newpaper.somewhere.navigation.enterTransition
-import com.newpaper.somewhere.navigation.exitTransition
-import com.newpaper.somewhere.navigation.popEnterTransition
-import com.newpaper.somewhere.navigation.popExitTransition
+import com.newpaper.somewhere.navigation.enterTransitionHorizontal
+import com.newpaper.somewhere.navigation.exitTransitionHorizontal
+import com.newpaper.somewhere.navigation.popEnterTransitionHorizontal
+import com.newpaper.somewhere.navigation.popExitTransitionHorizontal
 import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
 
@@ -35,6 +35,7 @@ fun NavGraphBuilder.invitedFriendsScreen(
 
     navigateUp: () -> Unit,
     navigateToInviteFriend: () -> Unit,
+    navigateToSubscription: () -> Unit,
     navigateToMyTrips: () -> Unit,
 
     modifier: Modifier = Modifier,
@@ -44,10 +45,10 @@ fun NavGraphBuilder.invitedFriendsScreen(
         deepLinks = listOf(
             navDeepLink { uriPattern = DEEP_LINK_URI_PATTERN }
         ),
-        enterTransition = { enterTransition },
-        exitTransition = { exitTransition },
-        popEnterTransition = { popEnterTransition },
-        popExitTransition = { popExitTransition }
+        enterTransition = { enterTransitionHorizontal },
+        exitTransition = { exitTransitionHorizontal },
+        popEnterTransition = { popEnterTransitionHorizontal },
+        popExitTransition = { popExitTransitionHorizontal }
     ) {
         LaunchedEffect(Unit) {
             appViewModel.updateCurrentScreenDestination(ScreenDestination.INVITED_FRIENDS)
@@ -62,6 +63,7 @@ fun NavGraphBuilder.invitedFriendsScreen(
         if (appUserData != null && currentTrip != null) {
             InvitedFriendsRoute(
                 spacerValue = externalState.windowSizeClass.spacerValue,
+                useBlurEffect = appUiState.appPreferences.theme.useBlurEffect,
                 appUserData = appUserData,
                 internetEnabled = externalState.internetEnabled,
                 dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
@@ -82,6 +84,7 @@ fun NavGraphBuilder.invitedFriendsScreen(
 
                 navigateUp = navigateUp,
                 navigateToInviteFriend = navigateToInviteFriend,
+                navigateToSubscription = navigateToSubscription,
                 updateTripState = commonTripViewModel::updateTripState,
                 modifier = modifier
             )

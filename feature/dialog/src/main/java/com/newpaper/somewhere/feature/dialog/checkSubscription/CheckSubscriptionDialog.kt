@@ -8,9 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.button.ManageSubscriptionButton
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
+import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.utils.PLAY_STORE_SUBSCRIPTIONS_URL
 import com.newpaper.somewhere.feature.dialog.ButtonLayout
 import com.newpaper.somewhere.feature.dialog.CancelDialogButton
@@ -67,4 +70,17 @@ fun CheckSubscriptionDialog(
             )
         }
     )
+}
+
+
+
+
+@Composable
+@PreviewLightDark
+private fun Preview_DateRangeDialog(){
+    SomewhereTheme {
+        MyScaffold {
+            CheckSubscriptionDialog({}, {})
+        }
+    }
 }

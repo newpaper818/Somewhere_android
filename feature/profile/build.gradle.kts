@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -13,9 +14,6 @@ android {
 
     buildFeatures {
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.13"
     }
     kotlinOptions {
         jvmTarget = "1.8"
@@ -46,6 +44,9 @@ dependencies {
 
     //google ad
     implementation(libs.play.services.ads)
+
+    //haze
+    implementation(libs.haze)
 
     //
     implementation(libs.androidx.core.ktx)

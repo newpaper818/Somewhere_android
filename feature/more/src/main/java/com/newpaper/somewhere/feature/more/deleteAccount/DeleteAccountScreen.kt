@@ -10,12 +10,12 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -63,6 +63,8 @@ import com.newpaper.somewhere.feature.dialog.checkSubscription.CheckSubscription
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.dialog.deletingAccount.DeletingAccountDialog
 import com.newpaper.somewhere.feature.more.R
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -72,6 +74,7 @@ fun DeleteAccountRoute(
     userData: UserData,
     internetEnabled: Boolean,
     spacerValue: Dp,
+    useBlurEffect: Boolean,
 
     navigateUp: () -> Unit,
     onDeleteAccountDone: () -> Unit,
@@ -251,6 +254,7 @@ fun DeleteAccountRoute(
         deleteAccountUiState = deleteAccountUiState,
         isDarkAppTheme = isDarkAppTheme,
         userData = userData,
+        useBlurEffect = useBlurEffect,
         internetEnabled = internetEnabled,
         spacerValue = spacerValue,
         snackBarHostState = snackBarHostState,
@@ -277,6 +281,8 @@ private fun DeleteAccountScreen(
     deleteAccountUiState: DeleteAccountUiState,
     isDarkAppTheme: Boolean,
     userData: UserData,
+    useBlurEffect: Boolean,
+
     internetEnabled: Boolean,
     spacerValue: Dp,
     snackBarHostState: SnackbarHostState,
@@ -289,11 +295,10 @@ private fun DeleteAccountScreen(
 
     modifier: Modifier = Modifier
 ){
+    val topAppBarHazeState = if(useBlurEffect) rememberHazeState() else null
+
     Scaffold(
-        modifier = modifier
-            .imePadding()
-            .navigationBarsPadding()
-            .displayCutoutPadding(),
+        modifier = modifier.imePadding(),
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {
@@ -301,13 +306,14 @@ private fun DeleteAccountScreen(
                 startPadding = spacerValue,
                 title = stringResource(id = R.string.delete_account),
                 navigationIcon = TopAppBarIcon.back,
-                onClickNavigationIcon = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() },
+                hazeState = topAppBarHazeState
             )
         },
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarHostState,
-                modifier = Modifier.width(500.dp),
+                modifier = Modifier.width(500.dp).navigationBarsPadding(),
                 snackbar = {
                     Snackbar(
                         snackbarData = it,
@@ -323,10 +329,10 @@ private fun DeleteAccountScreen(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(24.dp),
-            contentPadding = PaddingValues(spacerValue, 8.dp, spacerValue, 200.dp),
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
+            contentPadding = PaddingValues(spacerValue, 8.dp+ paddingValues.calculateTopPadding(), spacerValue, 200.dp),
+            modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
+                            .hazeSource(state = topAppBarHazeState).background(MaterialTheme.colorScheme.background)
+                        else Modifier.fillMaxSize()
         ) {
             //user profile
             item {

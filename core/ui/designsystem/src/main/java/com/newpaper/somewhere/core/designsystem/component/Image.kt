@@ -1,15 +1,22 @@
 package com.newpaper.somewhere.core.designsystem.component
 
+import android.net.Uri
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +29,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -59,6 +68,9 @@ fun ImageFromDrawable(
     )
 }
 
+/**
+ * @param imageUrl "https://..."
+ */
 @Composable
 fun ImageFromUrl(
     imageUrl: String,
@@ -70,7 +82,12 @@ fun ImageFromUrl(
     var isLoading by rememberSaveable { mutableStateOf(false) }
     var isError by rememberSaveable { mutableStateOf(false) }
 
-    if (isLoading){
+
+    AnimatedVisibility(
+        visible = isLoading,
+        enter = fadeIn(tween(200)),
+        exit = fadeOut(tween(200))
+    ) {
         OnLoadingImage()
     }
 
@@ -101,6 +118,78 @@ fun ImageFromUrl(
     )
 }
 
+
+/**
+ * for share trip screen
+ */
+@Composable
+fun ImageFromUri(
+    imageUri: Uri?,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Crop
+){
+    val context = LocalContext.current
+    var isLoading by rememberSaveable { mutableStateOf(imageUri == null) }
+    var isError by rememberSaveable { mutableStateOf(false) }
+
+
+    // on loading
+    AnimatedVisibility(
+        visible = isLoading,
+        enter = fadeIn(tween(250)),
+        exit = fadeOut(tween(250))
+    ) {
+        Box(
+            Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(24.dp, 64.dp)
+                    .size(300.dp, 400.dp)
+                    .clip(MaterialTheme.shapes.medium)
+                    .alpha(0.5f)
+                    .shimmerEffect()
+
+            )
+        }
+    }
+
+
+    if (isError){
+        OnErrorImage()
+    }
+
+    if (imageUri != null) {
+        AsyncImage(
+            model = ImageRequest.Builder(context)
+                .data(imageUri)
+                .crossfade(true)
+                .crossfade(300)
+                .build(),
+            contentDescription = contentDescription,
+            contentScale = contentScale,
+            modifier = modifier,
+            onLoading = {
+                isLoading = true
+            },
+            onSuccess = {
+                isLoading = false
+                isError = false
+            },
+            onError = {
+                isLoading = false
+                isError = true
+            }
+        )
+    }
+}
+
+
+/**
+ * @param imagePath "001_231011_103012157_0.jpg"
+ */
 @Composable
 fun ImageFromFile(
     internetEnabled: Boolean,
@@ -122,7 +211,11 @@ fun ImageFromFile(
     var isError by rememberSaveable { mutableStateOf(false) }
 
 
-    if (isLoading){
+    AnimatedVisibility(
+        visible = isLoading,
+        enter = fadeIn(tween(200)),
+        exit = fadeOut(tween(200))
+    ) {
         OnLoadingImage(
             isImageScreen = isImageScreen
         )
@@ -208,10 +301,11 @@ fun ImageFromFile(
 
 @Composable
 private fun OnLoadingImage(
-    isImageScreen: Boolean = false
+    isImageScreen: Boolean = false,
+    modifier: Modifier = Modifier
 ){
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
             .shimmerEffect(isImageScreen = isImageScreen)
@@ -221,7 +315,8 @@ private fun OnLoadingImage(
 @Composable
 private fun OnErrorImage(
     isImageScreen: Boolean = false,
-    onClick: () -> Unit = { }
+    onClick: () -> Unit = { },
+    modifier: Modifier = Modifier
 ){
     var boxSize by remember{
         mutableStateOf(IntSize.Zero)
@@ -238,7 +333,7 @@ private fun OnErrorImage(
     else MaterialTheme.colorScheme.onSurface
 
     ClickableBox(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .onSizeChanged { boxSize = it },
         contentAlignment = Alignment.Center,
@@ -271,29 +366,28 @@ private fun OnErrorImage(
 fun Modifier.shimmerEffect(
     isImageScreen: Boolean = false
 ): Modifier = composed {
-    var size by remember{
-        mutableStateOf(IntSize.Zero)
-    }
+    var size by remember { mutableStateOf(IntSize.Zero) }
+
+    val gradientWidth = size.width.toFloat()
 
     val transition = rememberInfiniteTransition(label = "infinite_transition")
     val startOffsetX by transition.animateFloat(
-        initialValue = -2 * size.width.toFloat(),
-        targetValue = 2 * size.width.toFloat(),
+        initialValue = -gradientWidth*6,
+        targetValue = gradientWidth*6,
         animationSpec = infiniteRepeatable(
-            animation = tween(1200)
+            animation = tween(durationMillis = 1300, easing = LinearEasing)
         ),
         label = "shimmer_effect"
     )
 
-    val colors = if (isImageScreen){
+    val colors = if (isImageScreen) {
         listOf(
             CustomColor.imageBackground,
             Color(0xFF1A1A1A),
             Color(0xFF1A1A1A),
             CustomColor.imageBackground
         )
-    }
-    else {
+    } else {
         listOf(
             MaterialTheme.colorScheme.surfaceBright,
             MaterialTheme.colorScheme.surfaceTint,
@@ -302,15 +396,13 @@ fun Modifier.shimmerEffect(
         )
     }
 
-
     background(
         brush = Brush.linearGradient(
             colors = colors,
-            start = Offset(startOffsetX, 0f),
-            end = Offset(startOffsetX + size.width.toFloat(), size.height.toFloat())
+            start = Offset(startOffsetX - gradientWidth, 0f),
+            end = Offset(startOffsetX, gradientWidth)
         )
-    )
-        .onGloballyPositioned {
-            size = it.size
-        }
+    ).onGloballyPositioned {
+        size = it.size
+    }
 }

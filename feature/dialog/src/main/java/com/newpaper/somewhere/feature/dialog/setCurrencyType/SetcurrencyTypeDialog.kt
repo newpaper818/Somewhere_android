@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,7 +59,7 @@ fun SetCurrencyTypeDialog(
                 contentPadding = PaddingValues(8.dp),
                 modifier = Modifier
                     .heightIn(min = 0.dp)
-                    .clip(MaterialTheme.shapes.medium)
+                    .clip(RoundedCornerShape(35.dp))
                     .background(MaterialTheme.colorScheme.surfaceBright)
             ) {
                 items(currencyTypeList) {
@@ -100,17 +102,17 @@ private fun OneCurrencyType(
     onClick: () -> Unit
 ){
     val cardColor = if (isSelected)  MaterialTheme.colorScheme.primaryContainer
-    else            MaterialTheme.colorScheme.surfaceBright
+                    else            MaterialTheme.colorScheme.surfaceBright
 
-    val symbolTextStyle = if (isSelected)    MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
-    else            MaterialTheme.typography.bodyLarge
+    val symbolTextStyle = if (isSelected)    MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimaryContainer, fontWeight = FontWeight.Bold)
+                            else            MaterialTheme.typography.bodyLarge
 
-    val textStyle = if (isSelected)  MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
-    else            MaterialTheme.typography.bodyMedium
+    val textStyle = if (isSelected)  MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onPrimaryContainer, fontWeight = FontWeight.Bold)
+                    else            MaterialTheme.typography.bodyMedium
 
 
     ClickableBox(
-        shape = MaterialTheme.shapes.small,
+        shape = CircleShape,
         containerColor = cardColor,
         modifier = Modifier
             .height(54.dp)

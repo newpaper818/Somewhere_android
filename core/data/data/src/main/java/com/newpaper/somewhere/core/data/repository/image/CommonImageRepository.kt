@@ -97,4 +97,12 @@ class CommonImageRepository @Inject constructor(
             imageFileName = imageFileName
         )
     }
+
+    fun saveUriToExternalStorage(
+        uri: Uri
+    ): Boolean{
+        return imageLocalDataSource.saveUriToExternalStorage(
+            uri = uri
+        )
+    }
 }

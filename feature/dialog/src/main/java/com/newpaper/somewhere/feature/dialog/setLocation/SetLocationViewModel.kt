@@ -62,6 +62,18 @@ class SetLocationViewModel @Inject constructor(
         }
     }
 
+    fun setSearchLocationList(
+        searchLocationList: List<LocationInfo>
+    ){
+        _setLocationUiState.update {
+            it.copy(
+                searchLocation = it.searchLocation.copy(
+                    searchLocationList = searchLocationList
+                )
+            )
+        }
+    }
+
     fun setIsLoadingSearchPlaces(
         isLoadingSearchPlaces: Boolean
     ){
@@ -147,33 +159,49 @@ class SetLocationViewModel @Inject constructor(
         job = viewModelScope.launch {
             val newSearchLocationList = placesRepository.searchPlaces(query)
             if (newSearchLocationList != null){
-                _setLocationUiState.update {
-                    it.copy(
-                        searchLocation = it.searchLocation.copy(
-                            searchLocationList = it.searchLocation.searchLocationList + newSearchLocationList
-                        ),
-                    )
-                }
+                setSearchLocationList(_setLocationUiState.value.searchLocation.searchLocationList + newSearchLocationList)
             }
         }
     }
 
-    suspend fun updateAllLatLng(){
+    suspend fun updateAllLatLng(
+        onDone: (newSearchLocationList: List<LocationInfo>) -> Unit
+    ){
         while (_setLocationUiState.value.searchLocation.isLoadingSearchPlaces){
             delay(100)
         }
 
-        for (index: Int in 0 until _setLocationUiState.value.searchLocation.searchLocationList.size){
-            val locationInfo = _setLocationUiState.value.searchLocation.searchLocationList.getOrNull(index)
-            if (locationInfo != null){
-                if (locationInfo.location == null) {
-                    locationInfo.location = placesRepository.getLatLngFromPlaceId(locationInfo.placeId)
-                }
+        val searchLocationList = _setLocationUiState.value.searchLocation.searchLocationList
+        val newSearchLocationList = mutableListOf<LocationInfo>()
+
+        searchLocationList.forEach { locationInfo ->
+            var newLocationInfo = locationInfo
+            if (locationInfo.location == null) {
+                newLocationInfo = locationInfo.copy(location = placesRepository.getLatLngFromPlaceId(locationInfo.placeId))
             }
+            newSearchLocationList.add(newLocationInfo)
         }
+
+        setSearchLocationList(newSearchLocationList)
+
+        onDone(newSearchLocationList)
     }
 
-    suspend fun updateOneLatLng(locationInfo: LocationInfo){
-        locationInfo.location = placesRepository.getLatLngFromPlaceId(locationInfo.placeId)
+    suspend fun updateOneLatLng(
+        locationInfo: LocationInfo,
+        onDone: (newLocationInfo: LocationInfo) -> Unit
+    ){
+        if (locationInfo.location == null) {
+            val newLocationInfo = locationInfo.copy(location = placesRepository.getLatLngFromPlaceId(locationInfo.placeId))
+            val searchLocationList = _setLocationUiState.value.searchLocation.searchLocationList
+            val index = searchLocationList.indexOf(locationInfo)
+            val newSearchLocationList = searchLocationList.toMutableList()
+            newSearchLocationList[index] = newLocationInfo
+            setSearchLocationList(newSearchLocationList)
+            onDone(newLocationInfo)
+        }
+        else{
+            onDone(locationInfo)
+        }
     }
 }

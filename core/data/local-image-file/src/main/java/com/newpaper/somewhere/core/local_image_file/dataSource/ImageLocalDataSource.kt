@@ -25,6 +25,15 @@ interface ImageLocalDataSource {
         imageFileName: String
     ): Boolean
 
+    /**
+     * download uri(sticker .png) to external storage
+     *
+     * user can see image on gallery app or files
+     */
+    fun saveUriToExternalStorage(
+        uri: Uri
+    ): Boolean
+
 
     fun deleteFilesFromInternalStorage(
         files: List<String>

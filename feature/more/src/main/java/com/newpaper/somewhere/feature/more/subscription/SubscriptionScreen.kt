@@ -7,6 +7,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
@@ -57,6 +57,8 @@ import com.newpaper.somewhere.feature.more.R
 import com.newpaper.somewhere.feature.more.subscription.component.NoticeText
 import com.newpaper.somewhere.feature.more.subscription.component.OneFreeWeekText
 import com.newpaper.somewhere.feature.more.subscription.component.PlansTable
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -65,6 +67,7 @@ import kotlinx.coroutines.launch
 fun SubscriptionRoute(
     use2Panes: Boolean,
     spacerValue: Dp,
+    useBlurEffect: Boolean,
     internetEnabled: Boolean,
 
     updateIsUsingSomewherePro: (isUsingSomewherePro: Boolean) -> Unit,
@@ -111,6 +114,7 @@ fun SubscriptionRoute(
         use2Panes = use2Panes,
         startSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
         endSpacerValue = spacerValue,
+        useBlurEffect = useBlurEffect,
         internetEnabled = internetEnabled,
 
         snackBarHostState = snackBarHostState,
@@ -168,6 +172,7 @@ private fun SubscriptionScreen(
     use2Panes: Boolean,
     startSpacerValue: Dp,
     endSpacerValue: Dp,
+    useBlurEffect: Boolean,
     internetEnabled: Boolean,
     snackBarHostState: SnackbarHostState,
 
@@ -184,11 +189,11 @@ private fun SubscriptionScreen(
 
     modifier: Modifier = Modifier,
 ) {
-    val scaffoldModifier = if (use2Panes) modifier
-        else modifier.navigationBarsPadding()
+
+    val topAppBarHazeState = if(useBlurEffect) rememberHazeState() else null
 
     Scaffold(
-        modifier = scaffoldModifier,
+        modifier = modifier,
         contentWindowInsets = WindowInsets(bottom = 0),
 
         topBar = {
@@ -197,7 +202,8 @@ private fun SubscriptionScreen(
                 startPadding = startSpacerValue,
 
                 navigationIcon = TopAppBarIcon.close,
-                onClickNavigationIcon = { navigateUp() }
+                onClickNavigationIcon = { navigateUp() },
+                hazeState = topAppBarHazeState
             )
         },
         snackbarHost = {
@@ -219,10 +225,10 @@ private fun SubscriptionScreen(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(24.dp),
-            contentPadding = PaddingValues(startSpacerValue, 16.dp, endSpacerValue, 200.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            contentPadding = PaddingValues(startSpacerValue, 16.dp + paddingValues.calculateTopPadding(), endSpacerValue, 200.dp),
+            modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
+                            .hazeSource(state = topAppBarHazeState).background(MaterialTheme.colorScheme.background)
+                        else Modifier.fillMaxSize()
         ) {
 //            if(BuildConfig.DEBUG){
 //                item {

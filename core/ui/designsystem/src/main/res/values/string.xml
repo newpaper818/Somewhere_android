@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="light_map_id" translatable="false">1b6b3c8ee88760e9</string>
-    <string name="dark_map_id" translatable="false">c99ac47fc79e73ea</string>
-
 
     <!--component/button/ =======================================================================-->
     <!-- AuthButtons.kt -->
@@ -33,7 +30,10 @@
     <string name="invite_friend_with_email">Invite friend with email</string>
     <string name="invite_friend_with_qr_code">Invite friend with QR code</string>
     <string name="delete_account">Delete account</string>
+    <string name="invite_friend">Invite friend</string>
     <string name="change_image">Change image</string>
+    <string name="share_to_ig_story">Share to\nIG stories</string>
+    <string name="save_as_image">Save as\nimage</string>
 
     <!-- FABs.kt -->
     <string name="see_on_map">See on Map</string>
@@ -83,7 +83,7 @@
     <string name="close">Close</string>
     <string name="more_options">More options</string>
     <string name="download_image">Download image</string>
-    <string name="invite_friend">Invite friend</string>
+    <string name="share_trip">Share trip</string>
 
     <!--IconTextButtonIcon-->
     <string name="add">Add trip</string>
@@ -95,8 +95,8 @@
     <string name="map">Map</string>
 
     <!--MapButtonIcon-->
-    <string name="focus_on_to_target">Focus on to target</string>
-    <string name="disabled_focus_on_to_target">Focus on to target disabled</string>
+    <string name="fit_bounds_to_markers">Fit bounds to markers</string>
+    <string name="disabled_fit_bounds_to_markers">Fit bounds to markers disabled</string>
     <string name="fullscreen_map">Fullscreen map</string>
     <string name="my_location">My location</string>
     <string name="disabled_my_location">My location disabled</string>
@@ -108,7 +108,7 @@
     <string name="delete_location">Delete location</string>
     <string name="previous_spot">Previous spot</string>
     <string name="next_spot">Next spot</string>
-    <string name="open_in_google_map">Open in Google maps</string>
+    <string name="open_in_google_maps">Open in Google Maps</string>
 
 
     <!--SelectSwitchIcon-->
@@ -147,7 +147,6 @@
     <string name="open_in_new">Open in new</string>
     <string name="send_email">Send email</string>
     <string name="delete_friend">Delete friend</string>
-    <string name="number_of_trip_mates">Number of trip mates</string>
     <string name="manager">Manager</string>
     <string name="leave_trip">Leave trip</string>
 

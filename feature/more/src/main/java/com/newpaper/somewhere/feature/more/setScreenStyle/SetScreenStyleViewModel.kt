@@ -1,4 +1,4 @@
-package com.newpaper.somewhere.feature.more.setTheme
+package com.newpaper.somewhere.feature.more.setScreenStyle
 
 import androidx.lifecycle.ViewModel
 import com.newpaper.somewhere.core.data.repository.PreferencesRepository
@@ -8,15 +8,19 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class SetThemeViewModel @Inject constructor(
+class SetScreenStyleViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
 ): ViewModel() {
 
     suspend fun saveThemePreferences(
+        useBlurEffect: Boolean?,
         appTheme: AppTheme?,
         mapTheme: MapTheme?
     ){
-        if (appTheme != null) {
+        if (useBlurEffect != null) {
+            preferencesRepository.saveUseBlurEffectPreference(useBlurEffect)
+        }
+        else if (appTheme != null) {
             preferencesRepository.saveAppThemePreference(appTheme)
         }
         else if (mapTheme != null) {

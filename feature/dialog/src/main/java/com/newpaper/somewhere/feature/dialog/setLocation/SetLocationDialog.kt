@@ -12,6 +12,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,7 +22,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -175,9 +175,7 @@ fun SetLocationDialog(
 
 
     MyScaffold(
-        modifier = Modifier
-            .navigationBarsPadding()
-            .displayCutoutPadding(),
+        modifier = Modifier,
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarHostState,
@@ -187,7 +185,8 @@ fun SetLocationDialog(
                         bottom = if (LocalConfiguration.current.screenWidthDp > 670) 90.dp
                         else 150.dp
                     )
-                    .imePadding(),
+                    .imePadding()
+                    .navigationBarsPadding(),
                 snackbar = {
                     Snackbar(
                         snackbarData = it,
@@ -334,14 +333,17 @@ fun SetLocationDialog(
                                     focusManager.clearFocus()
                                     setLocationViewModel.setUserTexting(false)
 
-                                    setLocationViewModel.updateAllLatLng()
-                                    mapAnimateToLatLng(
-                                        setLocationUiState.searchLocation.searchLocationList,
-                                        cameraPositionState,
-                                        mapSize,
-                                        coroutineScope
+                                    setLocationViewModel.updateAllLatLng(
+                                        onDone = { newSearchLocationList ->
+                                            mapAnimateToLatLng(
+                                                newSearchLocationList,
+                                                cameraPositionState,
+                                                mapSize,
+                                                coroutineScope
+                                            )
+                                            setLocationViewModel.setIsLoading(false)
+                                        }
                                     )
-                                    setLocationViewModel.setIsLoading(false)
                                 }
                             } else {
                                 focusManager.clearFocus()
@@ -370,30 +372,37 @@ fun SetLocationDialog(
                                 && setLocationUiState.searchLocation.searchLocationList.isNotEmpty(),
                         locationAutoFillList = setLocationUiState.searchLocation.searchLocationList,
                         selectedPlaceId = setLocationUiState.googleMapsPlacesId,
-                        onClickItem = { placeInfo ->
+                        onClickItem = { clickedLocationInfo ->
                             //get one location from touched item
                             focusManager.clearFocus()
                             setLocationViewModel.setUserTexting(false)
 
-                            if (placeInfo.location != null) {
+                            if (clickedLocationInfo.location != null) {
                                 mapAnimateToLatLng(
-                                    listOf(placeInfo),
+                                    listOf(clickedLocationInfo),
                                     cameraPositionState,
                                     mapSize,
                                     coroutineScope
                                 )
                             } else {
                                 coroutineScope.launch {
-                                    setLocationViewModel.updateOneLatLng(placeInfo)
-                                    mapAnimateToLatLng(
-                                        listOf(placeInfo),
-                                        cameraPositionState,
-                                        mapSize,
-                                        coroutineScope
+                                    setLocationViewModel.updateOneLatLng(
+                                        locationInfo = clickedLocationInfo,
+                                        onDone = { newLocationInfo ->
+                                            mapAnimateToLatLng(
+                                                listOf(newLocationInfo),
+                                                cameraPositionState,
+                                                mapSize,
+                                                coroutineScope
+                                            )
+                                        }
+                                    )
+                                    setLocationViewModel.updateAllLatLng(
+                                        onDone = {}
                                     )
                                 }
                             }
-                            setLocationViewModel.setGoogleMapsPlacesId(placeInfo.placeId)
+                            setLocationViewModel.setGoogleMapsPlacesId(clickedLocationInfo.placeId)
                         },
                         onSearchListSizeChanged = {
                             searchListSize = it
@@ -437,6 +446,7 @@ fun SetLocationDialog(
             FlowRow(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .navigationBarsPadding()
 //                    .clickable(enabled = false) { }
                 ,
                 horizontalArrangement = Arrangement.SpaceAround,
@@ -543,7 +553,7 @@ private fun MapSearchBox(
         .height(50.dp)
         .widthIn(max = 450.dp)
         .clip(CircleShape)
-        .background(MaterialTheme.colorScheme.surfaceBright)
+        .background(MaterialTheme.colorScheme.surface.copy(0.95f))
 
     AnimatedVisibility(
         visible = visible,
@@ -602,7 +612,7 @@ private fun MapSearchList(
     onSearchListSizeChanged: (IntSize) -> Unit
 ){
     val itemHeight = 62.dp
-    val horizontalPadding = 20.dp
+    val horizontalPadding = 16.dp
 
     val selected = stringResource(id = R.string.selected)
     val notSelected = stringResource(id = R.string.not_selected)
@@ -624,7 +634,7 @@ private fun MapSearchList(
                 .clip(RoundedCornerShape(25.dp))
                 .heightIn(max = 200.dp)
                 .widthIn(max = 450.dp)
-                .background(MaterialTheme.colorScheme.surfaceBright.copy(alpha = 0.93f))
+                .background(MaterialTheme.colorScheme.surfaceBright.copy(alpha = 0.95f))
                 .onSizeChanged {
                     onSearchListSizeChanged(it)
                 }
@@ -663,31 +673,58 @@ private fun MapSearchList(
                         shape = RoundedCornerShape(25.dp),
                         onClick = { onClickItem(it) }
                     ) {
-                        Column(
-                            verticalArrangement = Arrangement.Center,
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(horizontalPadding, 0.dp)
                         ) {
-                            Text(
-                                text = it.title,
-                                style = MaterialTheme.typography.bodyMedium,
-                                maxLines = 1
-                            )
+                            //
+                            if (it.mapMarkerIndex != null) {
 
-                            if (it.address != "") {
-                                MySpacerColumn(height = 1.dp)
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier
+                                        .size(26.dp)
+                                        .clip(CircleShape)
+                                        .background(Color(0xFFbbbbbb.toInt()))
+                                ) {
+                                    Text(
+                                        text = it.mapMarkerIndex!!,
+                                        style = MaterialTheme.typography.labelMedium,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = Color(0xFF000000.toInt())
+                                    )
+                                }
 
+                                MySpacerRow(8.dp)
+                            }
+
+                            //
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                modifier = Modifier
+                            ) {
                                 Text(
-                                    text = it.address,
-                                    style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                                    text = it.title,
+                                    style = MaterialTheme.typography.bodyMedium,
                                     maxLines = 1
                                 )
+
+                                if (it.address != "") {
+                                    MySpacerColumn(height = 1.dp)
+
+                                    Text(
+                                        text = it.address,
+                                        style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                                        maxLines = 1
+                                    )
+                                }
                             }
                         }
                     }
                     if (locationAutoFillList.last() != it){
-                        ItemDivider(horizontalPadding, horizontalPadding)
+                        ItemDivider(20.dp, 20.dp)
                     }
                 }
             }

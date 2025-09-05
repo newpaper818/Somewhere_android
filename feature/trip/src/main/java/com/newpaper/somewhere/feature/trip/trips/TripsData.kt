@@ -90,6 +90,7 @@ internal data class TripsNavigate(
     private val _navigateToTrip: (isNewTrip: Boolean, trip: Trip?) -> Unit = { _, _ ->},
     private val _navigateToTripAi: () -> Unit = {},
     private val _navigateToGlanceSpot: () -> Unit = {},
+    private val _navigateToSubscription: () -> Unit = {},
 ){
     fun onClickBackButton(){
         _onClickBackButton() }
@@ -99,4 +100,6 @@ internal data class TripsNavigate(
         _navigateToTripAi() }
     fun navigateToGlanceSpot(){
         _navigateToGlanceSpot() }
+    fun navigateToSubscription(){
+        _navigateToSubscription() }
 }

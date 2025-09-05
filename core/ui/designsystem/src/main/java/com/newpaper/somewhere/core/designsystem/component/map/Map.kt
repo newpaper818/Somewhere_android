@@ -30,6 +30,9 @@ import com.newpaper.somewhere.core.utils.convert.getNextSpot
 import com.newpaper.somewhere.core.utils.convert.getPrevSpot
 
 
+private const val LIGHT_MAP_ID = "1b6b3c8ee88760e9"
+private const val DARK_MAP_ID = "c99ac47fc79e73ea"
+
 /**
  * Google map for trip map screen
  *
@@ -40,7 +43,7 @@ import com.newpaper.somewhere.core.utils.convert.getPrevSpot
  * @param dateList
  * @param dateListWithShownMarkerList
  * @param spotTypeGroupWithShownMarkerList
- * @param firstFocusOnToSpot
+ * @param firstFitBoundsToMarkers
  */
 @Composable
 fun MapForTripMap(
@@ -51,7 +54,7 @@ fun MapForTripMap(
     dateList: List<Date>,
     dateListWithShownMarkerList: List<DateWithBoolean>,
     spotTypeGroupWithShownMarkerList: List<SpotTypeGroupWithBoolean>,
-    firstFocusOnToSpot: () -> Unit
+    firstFitBoundsToMarkers: () -> Unit
 ){
     val uiSettings = remember {
         MapUiSettings(myLocationButtonEnabled = false, zoomControlsEnabled = false)
@@ -66,18 +69,15 @@ fun MapForTripMap(
         )
     }
 
-    val mapId = if (isDarkMapTheme) stringResource(id = R.string.dark_map_id)
-                else stringResource(id = R.string.light_map_id)
-
 
     GoogleMap(
         modifier = Modifier.fillMaxSize().clearAndSetSemantics { },
-        googleMapOptionsFactory = { GoogleMapOptions().mapId(mapId) },
+        googleMapOptionsFactory = { GoogleMapOptions().mapId(getMapId(isDarkMapTheme)) },
         cameraPositionState = cameraPositionState,
         properties = properties,
         uiSettings = uiSettings,
         onMapLoaded = {
-            firstFocusOnToSpot()
+            firstFitBoundsToMarkers()
         },
         contentPadding = mapPadding
     ) {
@@ -162,6 +162,7 @@ fun MapForSpot(
     isDarkMapTheme: Boolean,
     cameraPositionState: CameraPositionState,
     userLocationEnabled: Boolean,
+    onMapLoaded: () -> Unit,
 
     dateList: List<Date>,
     dateIndex: Int,
@@ -172,7 +173,11 @@ fun MapForSpot(
     spotTo: Spot? = null
 ){
     val uiSettings = remember {
-        MapUiSettings(myLocationButtonEnabled = false, zoomControlsEnabled = false)
+        MapUiSettings(
+            myLocationButtonEnabled = false,
+            zoomControlsEnabled = false,
+            mapToolbarEnabled = false
+        )
     }
 
     val properties by remember {
@@ -184,14 +189,12 @@ fun MapForSpot(
         )
     }
 
-    val mapId = if (isDarkMapTheme) stringResource(id = R.string.dark_map_id)
-                else stringResource(id = R.string.light_map_id)
-
 
     GoogleMap(
         modifier = Modifier.fillMaxSize().clearAndSetSemantics { },
-        googleMapOptionsFactory = { GoogleMapOptions().mapId(mapId) },
+        googleMapOptionsFactory = { GoogleMapOptions().mapId(getMapId(isDarkMapTheme)) },
         cameraPositionState = cameraPositionState,
+        onMapLoaded = onMapLoaded,
         properties = properties,
         uiSettings = uiSettings
     ) {
@@ -266,16 +269,13 @@ fun MapForSetLocation(
         )
     }
 
-    val mapId = if (isDarkMapTheme) stringResource(id = R.string.dark_map_id)
-                else stringResource(id = R.string.light_map_id)
-
     val uiSettings = remember {
         MapUiSettings(myLocationButtonEnabled = false, zoomControlsEnabled = false)
     }
 
     GoogleMap(
         modifier = Modifier.fillMaxSize().clearAndSetSemantics { },
-        googleMapOptionsFactory = { GoogleMapOptions().mapId(mapId) },
+        googleMapOptionsFactory = { GoogleMapOptions().mapId(getMapId(isDarkMapTheme)) },
         cameraPositionState = cameraPositionState,
         properties = properties,
         uiSettings = uiSettings,
@@ -344,16 +344,22 @@ fun MapForSetLocation(
         if (showSearchLocationMarker) {
             for (locationInfo in searchLocationMarkerList) {
                 if (locationInfo.location != null) {
-                    MapMarker(
+                    SearchMapMarker(
                         location = locationInfo.location!!,
                         title = locationInfo.title,
-                        iconText = "",
-                        isBigMarker = false,
-                        iconColor = 0xFFff0000.toInt(),
-                        onIconColor = 0xFFff0000.toInt()
+                        iconText = locationInfo.mapMarkerIndex,
                     )
                 }
             }
         }
     }
+}
+
+
+
+private fun getMapId(
+    isDarkMapTheme: Boolean
+): String{
+    return if (isDarkMapTheme) DARK_MAP_ID
+            else LIGHT_MAP_ID
 }

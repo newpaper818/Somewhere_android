@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -26,6 +27,7 @@ import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -34,20 +36,45 @@ import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcon
 import com.newpaper.somewhere.core.designsystem.icon.NavigationBarIcon
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
+import dev.chrisbanes.haze.ExperimentalHazeApi
+import dev.chrisbanes.haze.HazeInputScale
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 
 val NAVIGATION_BOTTOM_BAR_WIDTH = 0.dp
 val NAVIGATION_RAIL_BAR_WIDTH = 80.dp
 val NAVIGATION_DRAWER_BAR_WIDTH = 180.dp
 
+
+
 //compact
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 fun SomewhereNavigationBottomBar(
     modifier: Modifier = Modifier,
+    hazeState: HazeState? = null,
     content: @Composable RowScope.() -> Unit,
 ) {
+    val containerColor = if (hazeState == null) MaterialTheme.colorScheme.surfaceDim
+                            else Color.Transparent
+
+    val topAppBarColor = MaterialTheme.colorScheme.surfaceDim
+
+    val navBarModifier = if (hazeState == null) modifier.clip(RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp))
+                            else modifier
+                                    .clip(RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp))
+                                    .hazeEffect(state = hazeState) {
+                                        blurRadius = 16.dp
+                                        tints = listOf(
+                                            HazeTint(topAppBarColor.copy(alpha = 0.9f))
+                                        )
+                                        inputScale = HazeInputScale.Fixed(0.5f)
+                                    }
+
     NavigationBar(
-        modifier = modifier,
-        containerColor = MaterialTheme.colorScheme.surfaceDim,
+        modifier = navBarModifier,
+        containerColor = containerColor,
         content = content
     )
 }
@@ -77,8 +104,10 @@ fun RowScope.SomewhereNavigationBottomBarItem(
             selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
             selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
             selectedIndicatorColor = MaterialTheme.colorScheme.primaryContainer,
+
             unselectedIconColor = MaterialTheme.colorScheme.inverseSurface,
             unselectedTextColor = MaterialTheme.colorScheme.inverseSurface,
+
             disabledIconColor = Color.Unspecified,
             disabledTextColor = Color.Unspecified
         )
@@ -95,6 +124,7 @@ fun SomewhereNavigationRailBar(
 ){
     NavigationRail(
 //        modifier = modifier.width(NAVIGATION_RAIL_BAR_WIDTH),
+        modifier = Modifier.clip(RoundedCornerShape(0.dp, 24.dp, 24.dp, 0.dp)),
         header = {
             //FAB
         },
@@ -121,6 +151,7 @@ fun SomewhereNavigationRailBarItem(
     labelText: String
 ){
     NavigationRailItem(
+        modifier = Modifier.padding(vertical = 10.dp),
         selected = selected,
         onClick = onClick,
         icon = {
@@ -137,8 +168,10 @@ fun SomewhereNavigationRailBarItem(
             selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
             selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
             selectedIndicatorColor = MaterialTheme.colorScheme.primaryContainer,
+
             unselectedIconColor = MaterialTheme.colorScheme.inverseSurface,
             unselectedTextColor = MaterialTheme.colorScheme.inverseSurface,
+
             disabledIconColor = Color.Unspecified,
             disabledTextColor = Color.Unspecified
         )
@@ -154,6 +187,7 @@ fun SomewhereNavigationDrawer(
 ){
     Box(
         modifier = modifier
+            .clip(RoundedCornerShape(0.dp, 24.dp, 24.dp, 0.dp))
             .width(NAVIGATION_DRAWER_BAR_WIDTH)
             .background(MaterialTheme.colorScheme.surfaceDim)
     ) {
@@ -197,6 +231,10 @@ fun SomewhereNavigationDrawerItem(
             )
         },
         colors = NavigationDrawerItemDefaults.colors(
+            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+
             unselectedContainerColor = Color.Transparent,
             unselectedIconColor = MaterialTheme.colorScheme.inverseSurface,
             unselectedTextColor = MaterialTheme.colorScheme.inverseSurface,

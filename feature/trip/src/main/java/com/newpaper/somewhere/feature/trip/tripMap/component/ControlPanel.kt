@@ -62,7 +62,7 @@ import com.newpaper.somewhere.core.utils.convert.getDateText
 import com.newpaper.somewhere.core.utils.convert.getSpotTypeGroupCount
 import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.tripMap.TripMapViewModel
-import com.newpaper.somewhere.feature.trip.tripMap.focusOnToSpot
+import com.newpaper.somewhere.feature.trip.tripMap.fitBoundsToMarkers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -88,7 +88,7 @@ internal fun BottomSheetHandel(
     MySpacerColumn(height = 14.dp)
 }
 
-/*
+/**
 have to Column()
 */
 @Composable
@@ -98,7 +98,7 @@ internal fun ControlPanel(
 
     cameraPositionState: CameraPositionState,
     mapSize: IntSize,
-    focusOnToSpotEnabled: Boolean,
+    fitBoundsToMarkersEnabled: Boolean,
     oneDateShown: Boolean,
 
     dateTimeFormat: DateTimeFormat,
@@ -113,14 +113,14 @@ internal fun ControlPanel(
 ){
     ControlButtonsRow(
         mapSize = mapSize,
-        focusOnToTargetEnabled = focusOnToSpotEnabled,
+        fitBoundsToMarkersEnabled = fitBoundsToMarkersEnabled,
         isDateShown = oneDateShown,
         dateTimeFormat = dateTimeFormat,
         currentDateIndex = currentDateIndex,
         onClickOneDate = {
             val newDateShownList =
                 tripMapViewModel.updateDateWithShownMarkerListToCurrentDate()
-            focusOnToSpot(
+            fitBoundsToMarkers(
                 mapSize,
                 coroutineScope,
                 newDateShownList,
@@ -137,7 +137,7 @@ internal fun ControlPanel(
             val newCurrentDateIndex = tripMapViewModel.currentDateIndexToPrevious()
             val newDateShownList =
                 tripMapViewModel.updateDateWithShownMarkerListToCurrentDate()
-            focusOnToSpot(
+            fitBoundsToMarkers(
                 mapSize,
                 coroutineScope,
                 newDateShownList,
@@ -154,7 +154,7 @@ internal fun ControlPanel(
             val newCurrentDateIndex = tripMapViewModel.currentDateIndexToNext()
             val newDateShownList =
                 tripMapViewModel.updateDateWithShownMarkerListToCurrentDate()
-            focusOnToSpot(
+            fitBoundsToMarkers(
                 mapSize,
                 coroutineScope,
                 newDateShownList,
@@ -192,18 +192,15 @@ internal fun ControlPanel(
 
     AnimatedVisibility(
         visible = true,
-        enter =
-        expandVertically(
-            animationSpec = tween(durationMillis = 400),
-            expandFrom = Alignment.Top
-        ),
-        exit =
-        shrinkVertically(
-            animationSpec = tween(durationMillis = 400),
-            shrinkTowards = Alignment.Top
-        )
-    )
-    {
+        enter = expandVertically(
+                animationSpec = tween(durationMillis = 400),
+                expandFrom = Alignment.Top
+            ),
+        exit = shrinkVertically(
+                animationSpec = tween(durationMillis = 400),
+                shrinkTowards = Alignment.Top
+            )
+    ) {
         DateList(
             dateTimeFormat = dateTimeFormat,
             dateListState = dateListState,
@@ -219,7 +216,7 @@ internal fun ControlPanel(
 internal fun ControlButtonsRow(
     mapSize: IntSize,
 
-    focusOnToTargetEnabled: Boolean,
+    fitBoundsToMarkersEnabled: Boolean,
 
     isDateShown: Boolean,
     dateTimeFormat: DateTimeFormat,
@@ -261,10 +258,10 @@ internal fun ControlButtonsRow(
                     .background(MaterialTheme.colorScheme.surfaceBright),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                //focus on to target button
-                FocusOnToSpotButton(
+                //fit bounds to markers button
+                FitBoundsToMarkersButton(
                     mapSize = mapSize,
-                    focusOnToTargetEnabled = focusOnToTargetEnabled,
+                    fitBoundsToMarkersEnabled = fitBoundsToMarkersEnabled,
                     cameraPositionState = cameraPositionState,
                     dateListWithShownIconList = dateListWithShownIconList,
                     spotTypeGroupWithShownIconList = spotTypeGroupWithShownIconList,
@@ -330,9 +327,9 @@ internal fun ControlButtonsRow(
 
 
 @Composable
-internal fun FocusOnToSpotButton(
+internal fun FitBoundsToMarkersButton(
     mapSize: IntSize,
-    focusOnToTargetEnabled: Boolean,
+    fitBoundsToMarkersEnabled: Boolean,
     cameraPositionState: CameraPositionState,
     dateListWithShownIconList:List<DateWithBoolean>,
     spotTypeGroupWithShownIconList: List<SpotTypeGroupWithBoolean>,
@@ -347,11 +344,11 @@ internal fun FocusOnToSpotButton(
             spotTypeShownList.add(spotTypeWithBoolean.spotTypeGroup)
     }
 
-    if (focusOnToTargetEnabled){
-        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.focusOnToTarget.descriptionTextId!!)) {
+    if (fitBoundsToMarkersEnabled){
+        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.fitBoundsToMarkers.descriptionTextId!!)) {
             IconButton(
                 onClick = {
-                    focusOnToSpot(
+                    fitBoundsToMarkers(
                         mapSize = mapSize,
                         coroutineScope = coroutineScope,
                         dateListWithShownMarkerList = dateListWithShownIconList,
@@ -360,18 +357,18 @@ internal fun FocusOnToSpotButton(
                     )
                 }
             ) {
-                DisplayIcon(icon = MapButtonIcon.focusOnToTarget)
+                DisplayIcon(icon = MapButtonIcon.fitBoundsToMarkers)
             }
         }
     }
     else{
-        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.disabledFocusOnToTarget.descriptionTextId!!)) {
+        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.disabledFitBoundsToMarkers.descriptionTextId!!)) {
             IconButton(
                 onClick = {
                     showSnackBar(snackBarText, null, SnackbarDuration.Short)
                 }
             ) {
-                DisplayIcon(icon = MapButtonIcon.disabledFocusOnToTarget)
+                DisplayIcon(icon = MapButtonIcon.disabledFitBoundsToMarkers)
             }
         }
     }
