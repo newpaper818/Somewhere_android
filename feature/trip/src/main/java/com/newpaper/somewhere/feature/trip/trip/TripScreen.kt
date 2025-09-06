@@ -1,12 +1,8 @@
 package com.newpaper.somewhere.feature.trip.trip
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,7 +14,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -61,7 +56,6 @@ import com.newpaper.somewhere.core.ui.card.trip.MemoCard
 import com.newpaper.somewhere.core.ui.card.trip.TitleCard
 import com.newpaper.somewhere.core.ui.card.trip.currencyItem
 import com.newpaper.somewhere.core.ui.card.trip.travelDistanceItem
-import com.newpaper.somewhere.core.ui.tripScreenUtils.StartEndDummySpaceWithRoundedCorner
 import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.convert.getDurationText
 import com.newpaper.somewhere.core.utils.convert.getEndDateText
@@ -75,6 +69,8 @@ import com.newpaper.somewhere.core.utils.convert.setColor
 import com.newpaper.somewhere.core.utils.convert.setCurrencyType
 import com.newpaper.somewhere.core.utils.convert.setImage
 import com.newpaper.somewhere.core.utils.convert.setMemoText
+import com.newpaper.somewhere.core.utils.convert.setSpotType
+import com.newpaper.somewhere.core.utils.convert.setStartTime
 import com.newpaper.somewhere.core.utils.convert.setTitleText
 import com.newpaper.somewhere.core.utils.getDateText
 import com.newpaper.somewhere.core.utils.getTimeText
@@ -84,12 +80,11 @@ import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.dialog.memo.MemoDialog
 import com.newpaper.somewhere.feature.dialog.setColor.SetColorDialog
 import com.newpaper.somewhere.feature.dialog.setCurrencyType.SetCurrencyTypeDialog
+import com.newpaper.somewhere.feature.dialog.setSpotType.SetSpotTypeDialog
+import com.newpaper.somewhere.feature.dialog.setTime.SetTimeDialog
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.trip.component.DateCard
-import com.newpaper.somewhere.feature.trip.trip.component.DateListEmptyTextCard
-import com.newpaper.somewhere.feature.trip.trip.component.DateListItem
-import com.newpaper.somewhere.feature.trip.trip.component.DateListTopTitleCard
 import com.newpaper.somewhere.feature.trip.trip.component.ShareTripCards
 import com.newpaper.somewhere.feature.trip.trip.component.TripDurationCard
 import dev.chrisbanes.haze.hazeSource
@@ -98,6 +93,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
 
 @Composable
@@ -120,6 +116,7 @@ fun TripRoute(
     navigateToInvitedFriends: () -> Unit,
     navigateToImage: (imageList: List<String>, initialImageIndex: Int) -> Unit,
     navigateToDate: (dateIndex: Int) -> Unit,
+    navigateToSpot: (dateIndex: Int, spotIndex: Int) -> Unit,
     navigateToTripMap: () -> Unit,
 
     setIsShowingDialog: (isShowingDialog: Boolean) -> Unit,
@@ -236,15 +233,21 @@ fun TripRoute(
             showMemoDialog = tripUiState.showMemoDialog,
             showSetCurrencyDialog = tripUiState.showSetCurrencyDialog,
             showSetColorDialog = tripUiState.showSetColorDialog,
+            showSetTimeDialog = tripUiState.showSetTimeDialog,
+            showSetSpotTypeDialog = tripUiState.showSetSpotTypeDialog,
 
             _setShowExitDialog = tripViewModel::setShowExitDialog,
             _setShowDateRangeDialog = tripViewModel::setShowDateRangeDialog,
             _setShowMemoDialog = tripViewModel::setShowMemoDialog,
             _setShowSetCurrencyDialog = tripViewModel::setShowSetCurrencyDialog,
             _setShowSetColorDialog = tripViewModel::setShowSetColorDialog,
+            _setShowSetTimeDialog = tripViewModel::setShowSetTimeDialog,
+            _setShowSetSpotTypeDialog = tripViewModel::setShowSetSpotTypeDialog,
 
             selectedDate = tripUiState.selectedDate,
-            _setSelectedDate = tripViewModel::setSelectedDate
+            _setSelectedDate = tripViewModel::setSelectedDate,
+            selectedSpot = tripUiState.selectedSpot,
+            _setSelectedSpot = tripViewModel::setSelectedSpot
         ),
         tripNavigate = TripNavigate(
             _navigateUp = {
@@ -256,6 +259,7 @@ fun TripRoute(
             _navigateToInvitedFriends = navigateToInvitedFriends,
             _navigateToImage = navigateToImage,
             _navigateToDate = navigateToDate,
+            _navigateToSpot = navigateToSpot,
             _navigateToTripMap = navigateToTripMap,
             _navigateUpAndDeleteNewTrip = navigateUpAndDeleteNewTrip
         ),
@@ -290,10 +294,9 @@ fun TripRoute(
         reorderDateList = { currentIndex, destinationIndex ->
             tripViewModel.reorderDateList(currentIndex, destinationIndex)
         },
-        reorderSpotList = { dateIndex, currentSpotIndex, destinationSpotIndex ->
-            //TODO
-//            tripViewModel.reorderSpotList(dateIndex, currentSpotIndex, destinationSpotIndex)
-        },
+        addNewSpot = commonTripViewModel::addNewSpot,
+        deleteSpot = commonTripViewModel::deleteSpot,
+        reorderSpotList = commonTripViewModel::reorderSpotListAndUpdateTravelDistance,
         onClickSave = {
             coroutineScope.launch {
                 if (isNewTrip || originalTrip != tempTrip){
@@ -362,6 +365,9 @@ private fun TripScreen(
     //update
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
     updateTripDurationAndTripState: (toTempTrip: Boolean, startDate: LocalDate, endDate: LocalDate) -> Unit,
+
+    addNewSpot: (dateIndex: Int) -> Unit,
+    deleteSpot: (dateIndex: Int, spotIndex: Int) -> Unit,
 
     //reorder date list
     reorderDateList: (currentIndex: Int, destinationIndex: Int) -> Unit,
@@ -451,6 +457,14 @@ private fun TripScreen(
     LaunchedEffect(tripDialog.isShowingDialog) {
         focusManager.clearFocus()
     }
+
+
+
+
+
+
+
+
 
 
     MyScaffold (
@@ -577,6 +591,44 @@ private fun TripScreen(
                 onOkClick = {
                     tripDialog.setShowSetColorDialog(false)
                     tripDialog.selectedDate.setColor(showingTrip, updateTripState, it)
+                    tripDialog.setSelectedDate(null)
+                }
+            )
+        }
+
+        if (tripDialog.showSetTimeDialog && tripDialog.selectedDate != null && tripDialog.selectedSpot != null){
+            SetTimeDialog(
+                initialTime = tripDialog.selectedSpot.startTime ?: LocalTime.of(12,0),
+                timeFormat = dateTimeFormat.timeFormat,
+                isSetStartTime = true,
+                onDismissRequest = {
+                    tripDialog.setShowSetTimeDialog(false)
+                    tripDialog.setSelectedDate(null)
+                },
+                onConfirm = {newTime ->
+                    tripDialog.selectedSpot.setStartTime(showingTrip, tripDialog.selectedDate.index, updateTripState, newTime)
+                    tripDialog.setShowSetTimeDialog(false)
+                    tripDialog.setSelectedDate(null)
+                }
+            )
+        }
+
+        if (tripDialog.showSetSpotTypeDialog && tripDialog.selectedDate != null && tripDialog.selectedSpot != null) {
+            SetSpotTypeDialog(
+                initialSpotType = tripDialog.selectedSpot.spotType,
+                onDismissRequest = {
+                    tripDialog.setShowSetSpotTypeDialog(false)
+                    tripDialog.setSelectedDate(null)
+                },
+                onClickOk = { newSpotType ->
+                    tripDialog.setShowSetSpotTypeDialog(false)
+                    tripDialog.selectedSpot.setSpotType(
+                        showingTrip,
+                        enabledDateList,
+                        tripDialog.selectedDate.index,
+                        updateTripState,
+                        newSpotType
+                    )
                     tripDialog.setSelectedDate(null)
                 }
             )
@@ -756,8 +808,6 @@ private fun TripScreen(
                     key(enabledDateList.map { it.id }) {
                         val slideState = slideStates[date.id] ?: SlideState.NONE
 
-                        MySpacerColumn(24.dp)
-
                         DateCard(
                             visible = !loadingTrip || !enabledDateListIsEmpty,
                             trip = showingTrip,
@@ -791,7 +841,7 @@ private fun TripScreen(
 
                                     //on drag end
                                     coroutineScope.launch {
-                                        delay(400)
+                                        delay(405)
                                         //reorder list
                                         reorderDateList(dateIndex, destinationIndex)
 
@@ -813,7 +863,7 @@ private fun TripScreen(
 
                                     //on drag end
                                     coroutineScope.launch {
-                                        delay(400)
+                                        delay(405)
                                         //reorder list
                                         reorderDateList(dateIndex, destinationIndex)
 
@@ -824,7 +874,8 @@ private fun TripScreen(
                                 }
                             },
                             onClickSetDateColor = {
-                                //TODO
+                                tripDialog.setSelectedDate(date)
+                                tripDialog.setShowSetColorDialog(true)
                             },
                             onSpotTitleTextChange = { spot, spotTitleText ->
                                 spot.setTitleText(
@@ -835,118 +886,37 @@ private fun TripScreen(
                                 )
                             },
                             onClickSpotItem = { spot ->
-                                //TODO go to spot screen
+                                tripNavigate.navigateToSpot(dateIndex, spot.index)
                             },
                             onClickDeleteSpot = { spot ->
-                                //TODO
+                                deleteSpot(dateIndex, spot.index)
+                                tripImage.addDeletedImages(enabledDateList[dateIndex].spotList[spot.index].imagePathList)
                             },
                             onClickSpotSideText = { spot ->
-                                //TODO
+                                tripDialog.setSelectedDate(date)
+                                tripDialog.setSelectedSpot(spot)
+                                tripDialog.setShowSetTimeDialog(true)
                             },
                             onClickSpotPoint = { spot ->
-                                //TODO
+                                tripDialog.setSelectedDate(date)
+                                tripDialog.setSelectedSpot(spot)
+                                tripDialog.setShowSetSpotTypeDialog(true)
+                            },
+                            onClickNewSpot = {
+                                addNewSpot(dateIndex)
                             },
                             reorderSpotList = { dateIndex, currentSpotIndex, destinationSpotIndex ->
                                 reorderSpotList(dateIndex, currentSpotIndex, destinationSpotIndex)
-                            },
-                            modifier = modifier
+                            }
                         )
                     }
                 }
 
 
 
-
-//                //dates card
-//                item {
-//                    StartEndDummySpaceWithRoundedCorner(isFirst = true, isLast = false)
-//                }
-//
-//                //dates text
-//                item {
-//                    DateListTopTitleCard(
-//                        isEditMode = isEditMode,
-//                        dateListIsEmpty = showingTrip.dateList.isEmpty(),
-//                        dateTitleErrorCount = tripErrorCount.dateTitleErrorCount
-//                    )
-//                }
-//
-//                //empty date
-//                item {
-//                    DateListEmptyTextCard(
-//                        isEditMode = isEditMode,
-//                        enabledDateListIsEmpty = enabledDateList.isEmpty()
-//                    )
-//                }
-//
-//                //date list
-//                items(enabledDateList) { date ->
-//
-//                    key(enabledDateList.map { it.id }) {
-//                        val slideState = slideStates[date.id] ?: SlideState.NONE
-//
-//                        AnimatedVisibility(
-//                            visible = !loadingTrip || !enabledDateListIsEmpty,
-//                            enter =  expandVertically(tween(500)),
-//                            exit = shrinkVertically(tween(500))
-//                        ) {
-//                            DateListItem(
-//                                trip = showingTrip,
-//                                date = date,
-//                                isEditMode = isEditMode,
-//                                isHighlighted = date.index == currentDateIndex && use2Panes,
-//                                dateTimeFormat = dateTimeFormat,
-//
-//                                slideState = slideState,
-//                                updateSlideState = { dateId, newSlideState ->
-//                                    slideStates[enabledDateList[dateId].id] = newSlideState
-//                                },
-//                                updateItemPosition = { currentIndex, destinationIndex ->
-//                                    //on drag end
-//                                    coroutineScope.launch {
-//                                        //reorder list
-//                                        reorderDateList(currentIndex, destinationIndex)
-//
-//                                        //all slideState to NONE
-//                                        slideStates.putAll(enabledDateList.map { it.id }
-//                                            .associateWith { SlideState.NONE })
-//                                    }
-//                                },
-//                                updateTripState = updateTripState,
-//                                isLongText = {
-//                                    if (it) {
-//                                        tripErrorCount.increaseTotalErrorCount()
-//                                        tripErrorCount.increaseDateTitleErrorCount()
-//                                    } else {
-//                                        tripErrorCount.decreaseTotalErrorCount()
-//                                        tripErrorCount.decreaseDateTitleErrorCount()
-//                                    }
-//                                },
-//                                onClickItem =
-//                                if (!isEditMode){
-//                                    { tripNavigate.navigateToDate(date.index) }
-//                                }
-//                                else null,
-//                                onClickSideText = null,
-//                                onClickPoint =
-//                                    if (isEditMode) {
-//                                        {
-//                                            tripDialog.setSelectedDate(date)
-//                                            tripDialog.setShowSetColorDialog(true)
-//                                        }
-//                                    } else null
-//                            )
-//                        }
-//                    }
-//                }
-//
-//                item {
-//                    StartEndDummySpaceWithRoundedCorner(isFirst = false, isLast = true)
-//                }
-
                 if (appUserId == tripData.originalTrip.managerId) {
                     item {
-                        MySpacerColumn(height = 64.dp)
+                        MySpacerColumn(height = 100.dp)
 
                         val firstCreatedTime = tripData.originalTrip.firstCreatedTime
                         val localZoneId = ZoneId.systemDefault()
@@ -974,3 +944,10 @@ private fun TripScreen(
         }
     }
 }
+
+
+
+
+
+
+

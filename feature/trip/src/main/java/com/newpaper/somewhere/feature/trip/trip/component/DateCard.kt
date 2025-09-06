@@ -1,19 +1,19 @@
 package com.newpaper.somewhere.feature.trip.trip.component
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,20 +22,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -43,6 +39,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.newpaper.somewhere.core.designsystem.component.button.NewItemButton
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
@@ -59,15 +56,20 @@ import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.ui.card.trip.TitleLayout
 import com.newpaper.somewhere.core.ui.item.ItemDivider
+import com.newpaper.somewhere.core.ui.tripScreenUtils.DUMMY_SPACE_HEIGHT
+import com.newpaper.somewhere.core.ui.tripScreenUtils.MIN_CARD_HEIGHT
 import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.convert.getDateText
-import com.newpaper.somewhere.core.utils.enterVertically
+import com.newpaper.somewhere.core.utils.convert.getTotalBudgetText
+import com.newpaper.somewhere.core.utils.enterVerticallyDelay
+import com.newpaper.somewhere.core.utils.enterVerticallyDelayForMaxTrips
+import com.newpaper.somewhere.core.utils.enterVerticallyScaleIn
 import com.newpaper.somewhere.core.utils.exitVertically
+import com.newpaper.somewhere.core.utils.exitVerticallyScaleOut
 import com.newpaper.somewhere.feature.trip.R
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
-import kotlin.math.roundToInt
 
 @Composable
 internal fun DateCard(
@@ -84,8 +86,6 @@ internal fun DateCard(
     upperItemHeight: Float,
     lowerItemHeight: Float,
     onItemHeightChanged: (dateId: Int, itemHeight: Float) -> Unit,
-//    updateSlideState: (tripIdx: Int, slideState: SlideState) -> Unit,
-//    updateItemPosition: (currentIndex: Int, destinationIndex: Int) -> Unit,
 
     onDateTitleTextChange: (title: String) -> Unit,
     isLongText: (Boolean) -> Unit,
@@ -98,12 +98,12 @@ internal fun DateCard(
     onClickDeleteSpot: (spot: Spot) -> Unit,
     onClickSpotSideText: (spot: Spot) -> Unit,
     onClickSpotPoint: (spot: Spot) -> Unit,
+    onClickNewSpot: () -> Unit,
     reorderSpotList: (dateIndex: Int, currentSpotIndex: Int, destinationSpotIndex: Int) -> Unit,
 
     modifier: Modifier = Modifier
 ){
     val coroutineScope = rememberCoroutineScope()
-    val density = LocalDensity.current
 
     val currentDate = trip.dateList[dateIndex]
     val spotList = trip.dateList[dateIndex].spotList
@@ -116,7 +116,6 @@ internal fun DateCard(
 
     //date
     //get item height(px), use at drag reorder
-    var itemHeight by rememberSaveable { mutableFloatStateOf(0f) }
 
     val verticalTranslation by animateFloatAsState(
         targetValue = when (slideState){
@@ -137,21 +136,27 @@ internal fun DateCard(
 
 
     Column(
-        modifier = dragModifier.onSizeChanged{
-            itemHeight = it.height.toFloat() + with(density){ 24.dp.toPx() }
-            onItemHeightChanged(trip.dateList[dateIndex].id, itemHeight)
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = dragModifier.onSizeChanged {
+            if (isEditMode)
+                onItemHeightChanged(trip.dateList[dateIndex].id, it.height.toFloat())
         }
     ) {
-
         AnimatedVisibility(
             visible = visible,
             enter = expandVertically(tween(500)),
             exit = shrinkVertically(tween(500))
         ) {
+
+            // date / day budget / move date
             Column {
+                MySpacerColumn(32.dp)
+
                 //date
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
@@ -165,16 +170,37 @@ internal fun DateCard(
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
+                    MySpacerRow(4.dp)
 
-                    AnimatedVisibility(
-                        visible = isEditMode,
-                        enter = enterVertically,
-                        exit = exitVertically
+                    Column(
+                        horizontalAlignment = Alignment.End
                     ) {
-                        MoveDateButtonsWithText(
-                            onClickUp = onClickDateMoveUp,
-                            onClickDown = onClickDateMoveDown
-                        )
+                        AnimatedVisibility(
+                            visible = !isEditMode,
+                            enter = enterVerticallyDelay,
+                            exit = exitVertically
+                        ) {
+                            Text(
+                                text = currentDate.getTotalBudgetText(
+                                    trip,
+                                    trip.unitOfCurrencyType.numberOfDecimalPlaces
+                                ),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(end = 16.dp)
+                            )
+                        }
+
+                        AnimatedVisibility(
+                            visible = isEditMode,
+                            enter = enterVerticallyDelay,
+                            exit = exitVertically
+                        ) {
+                            MoveDateButtonsWithText(
+                                onClickUp = onClickDateMoveUp,
+                                onClickDown = onClickDateMoveDown
+                            )
+                        }
                     }
                 }
 
@@ -184,15 +210,18 @@ internal fun DateCard(
 
 
         MyCard(
-            modifier = modifier,
+            modifier = Modifier.fillMaxWidth(),
         ) {
             AnimatedVisibility(
+                modifier = Modifier.zIndex(2f),
                 visible = visible,
                 enter = expandVertically(tween(500)),
                 exit = shrinkVertically(tween(500))
             ) {
                 //set color / date title
-                Column {
+                Column(
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surfaceBright)
+                ) {
                     Row(
                         modifier = Modifier.padding(18.dp, 14.dp, 16.dp, 14.dp),
                         verticalAlignment = Alignment.CenterVertically
@@ -215,58 +244,92 @@ internal fun DateCard(
                             useUpperTitleAnimation = true
                         )
                     }
+
                     ItemDivider()
+
+                    if (spotList.isEmpty()){
+                        Box(
+                            modifier = Modifier.height(MIN_CARD_HEIGHT + DUMMY_SPACE_HEIGHT * 2),
+                            contentAlignment = Alignment.CenterStart
+                        ) {
+                            Text(
+                                text = stringResource(R.string.no_plan),
+                                style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                                modifier = Modifier.padding(start = 16.dp)
+                            )
+                        }
+                    }
                 }
             }
 
-            Column {
+            Column(
+                modifier = Modifier.zIndex(1f)
+            ) {
                 spotList.forEach { spot ->
-                    val slideState = spotSlideStates[spot.id] ?: SlideState.NONE
 
-                    AnimatedVisibility(
-                        visible = visible,
-                        enter = expandVertically(tween(500)),
-                        exit = shrinkVertically(tween(500))
-                    ) {
-                        SpotListItem(
-                            trip = trip,
-                            dateIndex = dateIndex,
-                            spot = spot,
-                            isEditMode = isEditMode,
-                            timeFormat = dateTimeFormat.timeFormat,
+                    key(spotList.map { it.id }) {
+                        val slideState = spotSlideStates[spot.id] ?: SlideState.NONE
 
-                            slideState = slideState,
-                            updateSlideState = { dateId, newSlideState ->
-                                spotSlideStates[spotList[dateId].id] = newSlideState
-                            },
-                            updateItemPosition = { currentIndex, destinationIndex ->
-                                //on drag end
-                                coroutineScope.launch {
+                        AnimatedVisibility(
+                            visible = visible,
+                            enter = expandVertically(tween(500)),
+                            exit = shrinkVertically(tween(500))
+                        ) {
+                            SpotListItem(
+                                trip = trip,
+                                dateIndex = dateIndex,
+                                spot = spot,
+                                isEditMode = isEditMode,
+                                timeFormat = dateTimeFormat.timeFormat,
 
-                                    //reorder list & update travel distance
-                                    reorderSpotList(dateIndex, currentIndex, destinationIndex)
+                                slideState = slideState,
+                                updateSlideState = { spotIndex, newSlideState ->
+                                    spotSlideStates[spotList[spotIndex].id] = newSlideState
+                                },
+                                updateItemPosition = { currentIndex, destinationIndex ->
+                                    //on drag end
+                                    coroutineScope.launch {
+                                        //reorder list & update travel distance
+                                        reorderSpotList(dateIndex, currentIndex, destinationIndex)
 
-                                    //all slideState to NONE
-                                    spotSlideStates.putAll(spotList.map { it.id }
-                                        .associateWith { SlideState.NONE })
-                                }
-                            },
-                            onTitleTextChange = { spotTitleText ->
-                                onSpotTitleTextChange(spot, spotTitleText)
-                            },
-                            isLongText = isLongText,
-                            onClickItem = { onClickSpotItem(spot) },
-                            onClickDelete = { onClickDeleteSpot(spot) },
-                            onClickSideText =
-                                if (isEditMode) {
+                                        //all slideState to NONE
+                                        spotSlideStates.putAll(spotList.map { it.id }
+                                            .associateWith { SlideState.NONE })
+                                    }
+                                },
+                                onTitleTextChange = { spotTitleText ->
+                                    onSpotTitleTextChange(spot, spotTitleText)
+                                },
+                                isLongText = isLongText,
+                                onClickItem = if (!isEditMode) {
+                                    { onClickSpotItem(spot) }
+                                } else null,
+                                onClickDelete = { onClickDeleteSpot(spot) },
+                                onClickSetStartTime = if (isEditMode) {
                                     { onClickSpotSideText(spot) }
                                 } else null,
-                            onClickPoint = if (isEditMode) {
-                                { onClickSpotPoint(spot) }
-                            } else null
-                        )
+                                onClickSetSpotType = if (isEditMode) {
+                                    { onClickSpotPoint(spot) }
+                                } else null
+                            )
+                        }
                     }
                 }
+            }
+        }
+
+        AnimatedVisibility(
+            visible = isEditMode,
+            enter = enterVerticallyScaleIn,
+            exit = exitVerticallyScaleOut
+        ) {
+            Column {
+                MySpacerColumn(height = 16.dp)
+
+                NewItemButton(
+                    text = stringResource(id = R.string.new_spot),
+                    onClick = onClickNewSpot
+                )
             }
         }
     }
@@ -338,6 +401,7 @@ private fun SetDateColorButton(
             .clip(CircleShape)
             .size(scale.dp),
         contentAlignment = Alignment.Center,
+        enabled = isEditMode,
         onClick = onClick
     ) {
         AnimatedVisibility(
@@ -425,6 +489,7 @@ private fun DateCardPreview(){
             onClickDeleteSpot = {},
             onClickSpotSideText = {},
             onClickSpotPoint = { },
+            onClickNewSpot = {},
             reorderSpotList = {_,_,_->}
         )
     }
@@ -484,6 +549,7 @@ private fun DateCardEditPreview(){
             onClickDeleteSpot = {},
             onClickSpotSideText = {},
             onClickSpotPoint = { },
+            onClickNewSpot = {},
             reorderSpotList = {_,_,_->}
         )
     }

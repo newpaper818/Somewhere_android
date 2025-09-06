@@ -903,8 +903,8 @@ private fun DatePage(
                                 isEditMode = isEditMode,
                                 timeFormat = timeFormat,
                                 slideState = slideState,
-                                updateSlideState = { dateId, newSlideState ->
-                                    slideStates[spotList[dateId].id] = newSlideState
+                                updateSlideState = { dateIndex, newSlideState ->
+                                    slideStates[spotList[dateIndex].id] = newSlideState
                                 },
                                 updateItemPosition = { currentIndex, destinationIndex ->
                                     //on drag end

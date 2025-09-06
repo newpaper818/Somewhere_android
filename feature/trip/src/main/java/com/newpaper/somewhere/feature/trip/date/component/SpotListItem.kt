@@ -41,7 +41,7 @@ internal fun SpotListItem(
     timeFormat: TimeFormat,
 
     slideState: SlideState,
-    updateSlideState: (tripIdx: Int, slideState: SlideState) -> Unit,
+    updateSlideState: (dateIndex: Int, slideState: SlideState) -> Unit,
     updateItemPosition: (currentIndex: Int, destinationIndex: Int) -> Unit,
 
     onTitleTextChange: (title: String) -> Unit,
@@ -74,7 +74,7 @@ internal fun SpotListItem(
 
     with(LocalDensity.current){
         itemHeight = if (isExpanded) expandedItemHeight.toPx().toInt()
-        else            unExpandedItemHeight.toPx().toInt()
+                        else            unExpandedItemHeight.toPx().toInt()
     }
 
     //is dragged
@@ -86,8 +86,7 @@ internal fun SpotListItem(
             SlideState.UP -> -itemHeight
             SlideState.DOWN -> itemHeight
             else -> 0
-        },
-        label = "vertical translation"
+        }
     )
 
     //item y offset
@@ -113,9 +112,7 @@ internal fun SpotListItem(
                 itemHeight = itemHeight,
                 updateSlideState = updateSlideState,
                 offsetY = itemOffsetY,
-                onStartDrag = {
-                    isDragged = true
-                },
+                onStartDrag = { isDragged = true },
                 onStopDrag = { currentIndex, destinationIndex ->
 
                     if (currentIndex != destinationIndex){
