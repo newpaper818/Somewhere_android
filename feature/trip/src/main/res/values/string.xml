@@ -63,6 +63,10 @@
 
 
     <!--trip/ ===================================================================================-->
+    <!--DateCard.kt-->
+    <string name="date_title">Date title</string>
+    <string name="move_date">Move date</string>
+
     <!--ShareTripCard.kt-->
     <string name="me">Me</string>
     <string name="trip_mates">Trip mates</string>

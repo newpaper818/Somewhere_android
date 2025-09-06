@@ -1,4 +1,5 @@
-package com.newpaper.somewhere.feature.trip.date.component
+package com.newpaper.somewhere.feature.trip.trip.component
+
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateIntAsState
@@ -131,7 +132,7 @@ internal fun SpotListItem(
         isExpanded = isExpanded,
 
         iconText = if (spot.spotType.isNotMove()) spot.iconText.toString()
-            else null,
+        else null,
         iconTextColor = spot.spotType.group.color.onColor,
 
         sideTextPlaceHolderIcon = MyIcons.setTime,
