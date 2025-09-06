@@ -1,9 +1,6 @@
 package com.newpaper.somewhere.core.ui.card.trip
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -49,11 +46,13 @@ import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.MyColor
 import com.newpaper.somewhere.core.ui.MyTextField
 import com.newpaper.somewhere.core.ui.ui.R
+import com.newpaper.somewhere.core.utils.enterVertically
 import com.newpaper.somewhere.core.utils.enterVerticallyScaleIn
 import com.newpaper.somewhere.core.utils.enterVerticallyScaleInDelay
+import com.newpaper.somewhere.core.utils.exitVertically
 import com.newpaper.somewhere.core.utils.exitVerticallyScaleOut
 
-const val MAX_TITLE_LENGTH = 100
+const val MAX_TITLE_LENGTH = 70
 
 @Composable
 fun TitleCard(
@@ -84,6 +83,8 @@ fun TitleCard(
     }
 }
 
+
+@Deprecated("date screen will be remove")
 @Composable
 fun TitleWithColorCard(
     isEditMode: Boolean,
@@ -135,6 +136,7 @@ fun TitleWithColorCard(
     }
 }
 
+
 @Composable
 private fun TitleCardUi(
     isEditMode: Boolean,
@@ -144,18 +146,19 @@ private fun TitleCardUi(
     focusManager: FocusManager,
     isLongText: (Boolean) -> Unit,
 
+    //delete?
     getCardHeight: (cardHeight: Int) -> Unit,
 
     modifier: Modifier = Modifier
 ){
-    var isTextSizeLimit by rememberSaveable { mutableStateOf(false) }
+    var useErrorBorder by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(isEditMode){
-        isTextSizeLimit = (titleText ?: "").length > MAX_TITLE_LENGTH
+        useErrorBorder = (titleText ?: "").length > MAX_TITLE_LENGTH
     }
 
-    val borderColor = if (isTextSizeLimit) CustomColor.outlineError
-    else Color.Transparent
+    val borderColor = if (useErrorBorder) CustomColor.outlineError
+                        else Color.Transparent
 
     MyCard(
         modifier = modifier
@@ -166,83 +169,111 @@ private fun TitleCardUi(
             }
             .semantics(mergeDescendants = true) { }
     ) {
-        Column(
-            Modifier.padding(16.dp, 14.dp)
-        ) {
-            AnimatedVisibility(
-                visible = isEditMode,
-                enter = expandVertically(tween(400)),
-                exit = shrinkVertically(tween(400))
-            ) {
-                Column {
-                    Row {
-                        //title
-                        Text(
-                            text = stringResource(id = R.string.title_card_title),
-                            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        )
-
-                        //up to 100 characters
-                        if (isTextSizeLimit){
-                            MySpacerRow(width = 4.dp)
-
-                            Spacer(modifier = Modifier.weight(1f))
-
-                            Text(
-                                text = stringResource(id = R.string.long_text, MAX_TITLE_LENGTH),
-                                style = MaterialTheme.typography.bodySmall.copy(color = CustomColor.outlineError),
-                                textAlign = TextAlign.Right,
-                                maxLines = 2
-                            )
-                        }
-                    }
-
-                    MySpacerColumn(height = 8.dp)
-                }
-            }
-
-            //view mode
-            if(!isEditMode){
-                Text(
-                    text = titleText ?: stringResource(id = R.string.no_title),
-                    style = if (titleText != null)   MaterialTheme.typography.bodyLarge
-                    else                    MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
-                )
-            }
-
-            //edit mode
-            else{
-                //TODO focus 되면 배경색 달라지게?
-                MyTextField(
-                    inputText = titleText,
-                    inputTextStyle = MaterialTheme.typography.bodyLarge,
-
-                    placeholderText = stringResource(id = R.string.title_card_body_add_a_title),
-                    placeholderTextStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-
-                    onValueChange = {
-                        if (it.length > MAX_TITLE_LENGTH && !isTextSizeLimit){
-                            isTextSizeLimit = true
-                            isLongText(true)
-                        }
-                        else if (it.length <= MAX_TITLE_LENGTH && isTextSizeLimit){
-                            isTextSizeLimit = false
-                            isLongText(false)
-                        }
-                        onTitleChange(it)
-                    },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = {
-                        focusManager.clearFocus()
-                    })
-                )
-            }
-        }
+        TitleLayout(
+            isEditMode = isEditMode,
+            titleText = titleText,
+            onTitleChange = onTitleChange,
+            focusManager = focusManager,
+            isLongText = {
+                useErrorBorder = it
+                isLongText(it)
+            },
+            modifier = Modifier.padding(16.dp, 14.dp)
+        )
     }
 }
 
+@Composable
+fun TitleLayout(
+    isEditMode: Boolean,
 
+    titleText: String?,
+    onTitleChange: (String) -> Unit,
+    focusManager: FocusManager,
+    isLongText: (Boolean) -> Unit,
+
+    modifier: Modifier = Modifier,
+    upperTitleText: String = stringResource(id = R.string.title_card_title),
+    useUpperTitleAnimation: Boolean = false,
+){
+
+    var isTextSizeLimit by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(isEditMode){
+        isTextSizeLimit = (titleText ?: "").length > MAX_TITLE_LENGTH
+    }
+
+    Column(
+        modifier = modifier
+    ) {
+        AnimatedVisibility(
+            visible = if (useUpperTitleAnimation) isEditMode else true,
+            enter = enterVertically,
+            exit = exitVertically
+        ) {
+            Column {
+                Row {
+                    //title
+                    Text(
+                        text = upperTitleText,
+                        style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    )
+
+                    //up to [MAX_TITLE_LENGTH] characters
+                    if (isTextSizeLimit) {
+                        MySpacerRow(width = 4.dp)
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Text(
+                            text = stringResource(id = R.string.long_text, MAX_TITLE_LENGTH),
+                            style = MaterialTheme.typography.bodySmall.copy(color = CustomColor.outlineError),
+                            textAlign = TextAlign.Right,
+                            maxLines = 2
+                        )
+                    }
+                }
+
+                MySpacerColumn(height = 8.dp)
+            }
+        }
+
+        //view mode
+        if(!isEditMode){
+            Text(
+                text = titleText ?: stringResource(id = R.string.no_title),
+                style = if (titleText != null)   MaterialTheme.typography.bodyLarge
+                        else                    MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+            )
+        }
+
+        //edit mode
+        else{
+            MyTextField(
+                inputText = titleText,
+                inputTextStyle = MaterialTheme.typography.bodyLarge,
+
+                placeholderText = stringResource(id = R.string.title_card_body_add_a_title),
+                placeholderTextStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+
+                onValueChange = {
+                    if (it.length > MAX_TITLE_LENGTH && !isTextSizeLimit){
+                        isTextSizeLimit = true
+                        isLongText(true)
+                    }
+                    else if (it.length <= MAX_TITLE_LENGTH && isTextSizeLimit){
+                        isTextSizeLimit = false
+                        isLongText(false)
+                    }
+                    onTitleChange(it)
+                },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
+            )
+        }
+    }
+}
 
 
 

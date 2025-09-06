@@ -233,9 +233,13 @@ object MyIcons {
     val dragHandle = MyIcon(Icons.Rounded.DragHandle,    22.dp, true, null, R.string.drag_handle)
     val clickableItem = MyIcon(Icons.AutoMirrored.Rounded.NavigateNext,    22.dp, true, null, R.string.clickable_item)
 
+    //move date
+    val moveUp = MyIcon(Icons.Rounded.ExpandLess,  22.dp, true, null, R.string.move_up)
+    val moveDown = MyIcon(Icons.Rounded.ExpandMore,  22.dp, true, null, R.string.move_down)
+
 
     //set color
-    val setColor = MyIcon(Icons.Outlined.Palette,   24.dp, false, null, R.string.set_color)
+    val setColor = MyIcon(Icons.Outlined.Palette,   20.dp, false, null, R.string.set_color)
     val selectedColor = MyIcon(Icons.Rounded.Done,  22.dp, false, null, R.string.selected_color)
 
 

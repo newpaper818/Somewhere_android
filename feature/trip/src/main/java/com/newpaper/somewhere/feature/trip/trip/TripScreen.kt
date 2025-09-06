@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.trip.trip
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
@@ -84,6 +86,7 @@ import com.newpaper.somewhere.feature.dialog.setColor.SetColorDialog
 import com.newpaper.somewhere.feature.dialog.setCurrencyType.SetCurrencyTypeDialog
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.R
+import com.newpaper.somewhere.feature.trip.trip.component.DateCard
 import com.newpaper.somewhere.feature.trip.trip.component.DateListEmptyTextCard
 import com.newpaper.somewhere.feature.trip.trip.component.DateListItem
 import com.newpaper.somewhere.feature.trip.trip.component.DateListTopTitleCard
@@ -287,6 +290,10 @@ fun TripRoute(
         reorderDateList = { currentIndex, destinationIndex ->
             tripViewModel.reorderDateList(currentIndex, destinationIndex)
         },
+        reorderSpotList = { dateIndex, currentSpotIndex, destinationSpotIndex ->
+            //TODO
+//            tripViewModel.reorderSpotList(dateIndex, currentSpotIndex, destinationSpotIndex)
+        },
         onClickSave = {
             coroutineScope.launch {
                 if (isNewTrip || originalTrip != tempTrip){
@@ -358,6 +365,7 @@ private fun TripScreen(
 
     //reorder date list
     reorderDateList: (currentIndex: Int, destinationIndex: Int) -> Unit,
+    reorderSpotList: (dateIndex: Int, currentSpotIndex: Int, destinationSpotIndex: Int) -> Unit,
 
     onClickSave: () -> Unit,
 
@@ -395,6 +403,9 @@ private fun TripScreen(
     //slideStates
     val slideStates = remember { mutableStateMapOf(
         *showingTrip.dateList.map { it.id to SlideState.NONE }.toTypedArray()
+    ) }
+    val dateItemHeights = remember { mutableStateMapOf(
+        *showingTrip.dateList.map { it.id to 0f }.toTypedArray()
     ) }
 
     //images pager state
@@ -585,8 +596,10 @@ private fun TripScreen(
                 contentPadding = PaddingValues(
                     spacerValue, 16.dp + paddingValues.calculateTopPadding(), if (use2Panes) spacerValue / 2 else spacerValue, 200.dp
                 ),
-                modifier = if (topAppBarHazeState != null) Modifier.fillMaxSize()
-                                .hazeSource(state = topAppBarHazeState).background(MaterialTheme.colorScheme.background)
+                modifier = if (topAppBarHazeState != null) Modifier
+                    .fillMaxSize()
+                    .hazeSource(state = topAppBarHazeState)
+                    .background(MaterialTheme.colorScheme.background)
                             else Modifier.fillMaxSize()
             ) {
 
@@ -737,96 +750,199 @@ private fun TripScreen(
 
 
 
-
-
-
-
-                //dates card
-                item {
-                    StartEndDummySpaceWithRoundedCorner(isFirst = true, isLast = false)
-                }
-
-                //dates text
-                item {
-                    DateListTopTitleCard(
-                        isEditMode = isEditMode,
-                        dateListIsEmpty = showingTrip.dateList.isEmpty(),
-                        dateTitleErrorCount = tripErrorCount.dateTitleErrorCount
-                    )
-                }
-
-                //empty date
-                item {
-                    DateListEmptyTextCard(
-                        isEditMode = isEditMode,
-                        enabledDateListIsEmpty = enabledDateList.isEmpty()
-                    )
-                }
-
-                //date list
-                items(enabledDateList) { date ->
+                // all dates
+                itemsIndexed(enabledDateList) { dateIndex, date ->
 
                     key(enabledDateList.map { it.id }) {
                         val slideState = slideStates[date.id] ?: SlideState.NONE
 
-                        AnimatedVisibility(
-                            visible = !loadingTrip || !enabledDateListIsEmpty,
-                            enter =  expandVertically(tween(500)),
-                            exit = shrinkVertically(tween(500))
-                        ) {
-                            DateListItem(
-                                trip = showingTrip,
-                                date = date,
-                                isEditMode = isEditMode,
-                                isHighlighted = date.index == currentDateIndex && use2Panes,
-                                dateTimeFormat = dateTimeFormat,
+                        MySpacerColumn(24.dp)
 
-                                slideState = slideState,
-                                updateSlideState = { dateId, newSlideState ->
-                                    slideStates[enabledDateList[dateId].id] = newSlideState
-                                },
-                                updateItemPosition = { currentIndex, destinationIndex ->
+                        DateCard(
+                            visible = !loadingTrip || !enabledDateListIsEmpty,
+                            trip = showingTrip,
+                            dateIndex = dateIndex,
+                            isEditMode = isEditMode,
+                            dateTimeFormat = dateTimeFormat,
+                            focusManager = focusManager,
+
+                            slideState = slideState,
+                            upperItemHeight = if (dateIndex == 0) 0f
+                                                else dateItemHeights[enabledDateList[dateIndex - 1].id] ?: 0f,
+                            lowerItemHeight = if (dateIndex == enabledDateList.lastIndex) 0f
+                                                else dateItemHeights[enabledDateList[dateIndex + 1].id] ?: 0f,
+                            onItemHeightChanged = { dateId, itemHeight ->
+                                dateItemHeights[dateId] = itemHeight
+                            },
+                            onDateTitleTextChange = {
+                                date.setTitleText(showingTrip, updateTripState, it)
+                            },
+                            isLongText = {
+                                if (it) tripErrorCount.increaseTotalErrorCount()
+                                else tripErrorCount.decreaseTotalErrorCount()
+                            },
+                            onClickDateMoveUp = {
+                                val destinationIndex = if (dateIndex - 1 < 0) 0
+                                                        else dateIndex - 1
+
+                                if (dateIndex != destinationIndex) {
+                                    slideStates[enabledDateList[dateIndex].id] = SlideState.UP
+                                    slideStates[enabledDateList[destinationIndex].id] = SlideState.DOWN
+
                                     //on drag end
                                     coroutineScope.launch {
+                                        delay(400)
                                         //reorder list
-                                        reorderDateList(currentIndex, destinationIndex)
+                                        reorderDateList(dateIndex, destinationIndex)
 
                                         //all slideState to NONE
                                         slideStates.putAll(enabledDateList.map { it.id }
                                             .associateWith { SlideState.NONE })
                                     }
-                                },
-                                updateTripState = updateTripState,
-                                isLongText = {
-                                    if (it) {
-                                        tripErrorCount.increaseTotalErrorCount()
-                                        tripErrorCount.increaseDateTitleErrorCount()
-                                    } else {
-                                        tripErrorCount.decreaseTotalErrorCount()
-                                        tripErrorCount.decreaseDateTitleErrorCount()
-                                    }
-                                },
-                                onClickItem =
-                                if (!isEditMode){
-                                    { tripNavigate.navigateToDate(date.index) }
                                 }
-                                else null,
-                                onClickSideText = null,
-                                onClickPoint =
-                                    if (isEditMode) {
-                                        {
-                                            tripDialog.setSelectedDate(date)
-                                            tripDialog.setShowSetColorDialog(true)
-                                        }
-                                    } else null
-                            )
-                        }
+                            },
+                            onClickDateMoveDown = {
+                                val destinationIndex =
+                                    if (dateIndex + 1 > enabledDateList.lastIndex) dateIndex
+                                    else dateIndex + 1
+
+                                if (dateIndex != destinationIndex) {
+                                    slideStates[enabledDateList[dateIndex].id] = SlideState.DOWN
+                                    slideStates[enabledDateList[destinationIndex].id] = SlideState.UP
+
+
+                                    //on drag end
+                                    coroutineScope.launch {
+                                        delay(400)
+                                        //reorder list
+                                        reorderDateList(dateIndex, destinationIndex)
+
+                                        //all slideState to NONE
+                                        slideStates.putAll(enabledDateList.map { it.id }
+                                            .associateWith { SlideState.NONE })
+                                    }
+                                }
+                            },
+                            onClickSetDateColor = {
+                                //TODO
+                            },
+                            onSpotTitleTextChange = { spot, spotTitleText ->
+                                spot.setTitleText(
+                                    showingTrip,
+                                    dateIndex,
+                                    updateTripState,
+                                    spotTitleText
+                                )
+                            },
+                            onClickSpotItem = { spot ->
+                                //TODO go to spot screen
+                            },
+                            onClickDeleteSpot = { spot ->
+                                //TODO
+                            },
+                            onClickSpotSideText = { spot ->
+                                //TODO
+                            },
+                            onClickSpotPoint = { spot ->
+                                //TODO
+                            },
+                            reorderSpotList = { dateIndex, currentSpotIndex, destinationSpotIndex ->
+                                reorderSpotList(dateIndex, currentSpotIndex, destinationSpotIndex)
+                            },
+                            modifier = modifier
+                        )
                     }
                 }
 
-                item {
-                    StartEndDummySpaceWithRoundedCorner(isFirst = false, isLast = true)
-                }
+
+
+
+//                //dates card
+//                item {
+//                    StartEndDummySpaceWithRoundedCorner(isFirst = true, isLast = false)
+//                }
+//
+//                //dates text
+//                item {
+//                    DateListTopTitleCard(
+//                        isEditMode = isEditMode,
+//                        dateListIsEmpty = showingTrip.dateList.isEmpty(),
+//                        dateTitleErrorCount = tripErrorCount.dateTitleErrorCount
+//                    )
+//                }
+//
+//                //empty date
+//                item {
+//                    DateListEmptyTextCard(
+//                        isEditMode = isEditMode,
+//                        enabledDateListIsEmpty = enabledDateList.isEmpty()
+//                    )
+//                }
+//
+//                //date list
+//                items(enabledDateList) { date ->
+//
+//                    key(enabledDateList.map { it.id }) {
+//                        val slideState = slideStates[date.id] ?: SlideState.NONE
+//
+//                        AnimatedVisibility(
+//                            visible = !loadingTrip || !enabledDateListIsEmpty,
+//                            enter =  expandVertically(tween(500)),
+//                            exit = shrinkVertically(tween(500))
+//                        ) {
+//                            DateListItem(
+//                                trip = showingTrip,
+//                                date = date,
+//                                isEditMode = isEditMode,
+//                                isHighlighted = date.index == currentDateIndex && use2Panes,
+//                                dateTimeFormat = dateTimeFormat,
+//
+//                                slideState = slideState,
+//                                updateSlideState = { dateId, newSlideState ->
+//                                    slideStates[enabledDateList[dateId].id] = newSlideState
+//                                },
+//                                updateItemPosition = { currentIndex, destinationIndex ->
+//                                    //on drag end
+//                                    coroutineScope.launch {
+//                                        //reorder list
+//                                        reorderDateList(currentIndex, destinationIndex)
+//
+//                                        //all slideState to NONE
+//                                        slideStates.putAll(enabledDateList.map { it.id }
+//                                            .associateWith { SlideState.NONE })
+//                                    }
+//                                },
+//                                updateTripState = updateTripState,
+//                                isLongText = {
+//                                    if (it) {
+//                                        tripErrorCount.increaseTotalErrorCount()
+//                                        tripErrorCount.increaseDateTitleErrorCount()
+//                                    } else {
+//                                        tripErrorCount.decreaseTotalErrorCount()
+//                                        tripErrorCount.decreaseDateTitleErrorCount()
+//                                    }
+//                                },
+//                                onClickItem =
+//                                if (!isEditMode){
+//                                    { tripNavigate.navigateToDate(date.index) }
+//                                }
+//                                else null,
+//                                onClickSideText = null,
+//                                onClickPoint =
+//                                    if (isEditMode) {
+//                                        {
+//                                            tripDialog.setSelectedDate(date)
+//                                            tripDialog.setShowSetColorDialog(true)
+//                                        }
+//                                    } else null
+//                            )
+//                        }
+//                    }
+//                }
+//
+//                item {
+//                    StartEndDummySpaceWithRoundedCorner(isFirst = false, isLast = true)
+//                }
 
                 if (appUserId == tripData.originalTrip.managerId) {
                     item {

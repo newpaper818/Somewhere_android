@@ -90,7 +90,7 @@ internal fun GlanceSpot(
 
     val upperLineColor =
         if (spot.isFirstSpot(
-                dateId = date.id,
+                dateIndex = date.id,
                 dateList = trip.dateList,
                 spotList = date.spotList
             )) Color.Transparent
@@ -98,7 +98,7 @@ internal fun GlanceSpot(
 
     val lowerLineColor =
         if (spot.isLastSpot(
-                dateId = date.id,
+                dateIndex = date.id,
                 dateList = trip.dateList,
                 spotList = date.spotList
             )) Color.Transparent

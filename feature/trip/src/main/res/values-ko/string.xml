@@ -62,6 +62,10 @@
 
 
     <!--trip/ ===================================================================================-->
+    <!--DateCard.kt-->
+    <string name="date_title">날짜 제목</string>
+    <string name="move_date">날짜 이동</string>
+
     <!--ShareTripCard.kt-->
     <string name="me">나</string>
     <string name="trip_mates">여행 친구</string>

@@ -898,7 +898,7 @@ private fun DatePage(
                             SpotListItem(
                                 modifier = Modifier.padding(startSpacerValue, 0.dp, endSpacerValue, 0.dp),
                                 trip = showingTrip,
-                                dateId = dateIndex,
+                                dateIndex = dateIndex,
                                 spot = spot,
                                 isEditMode = isEditMode,
                                 timeFormat = timeFormat,
