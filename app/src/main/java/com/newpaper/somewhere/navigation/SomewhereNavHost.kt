@@ -511,6 +511,14 @@ fun SomewhereNavHost(
                         navOptions = navOptions { launchSingleTop = true }
                     )
                 },
+                navigateToSpot = { dateIndex, spotIndex ->
+                    commonTripViewModel.setIsNewTrip(false)
+                    commonTripViewModel.setCurrentDateIndex(dateIndex)
+                    commonTripViewModel.setCurrentSpotIndex(spotIndex)
+                    mainNavController.navigateToSpot(
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
+                },
                 navigateUp = navigateUp
             )
 

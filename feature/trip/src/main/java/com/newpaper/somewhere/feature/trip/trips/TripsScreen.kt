@@ -63,7 +63,7 @@ import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
 import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.convert.getAllImagesPath
 import com.newpaper.somewhere.core.utils.convert.getMaxTrips
-import com.newpaper.somewhere.core.utils.enterVerticallyDelay
+import com.newpaper.somewhere.core.utils.enterVerticallyDelayForMaxTrips
 import com.newpaper.somewhere.core.utils.exitVertically
 import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrLeaveTripDialog
@@ -536,7 +536,7 @@ private fun TripsScreen(
                             visible = !loadingTrips
                                     && !appUserData.isUsingSomewherePro
                                     && showingTrips.size >= getMaxTrips(false),
-                            enter = enterVerticallyDelay,
+                            enter = enterVerticallyDelayForMaxTrips,
                             exit = exitVertically
                         ) {
                             Column(

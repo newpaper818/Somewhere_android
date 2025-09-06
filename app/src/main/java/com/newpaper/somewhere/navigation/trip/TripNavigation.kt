@@ -33,6 +33,7 @@ fun NavGraphBuilder.tripScreen(
 
     navigateTo: (ScreenDestination) -> Unit,
     navigateToDate: (dateIndex: Int) -> Unit,
+    navigateToSpot: (dateIndex: Int, spotIndex: Int) -> Unit,
     navigateUp: () -> Unit,
 ) {
     composable(
@@ -83,6 +84,9 @@ fun NavGraphBuilder.tripScreen(
                 },
                 navigateToDate = { dateIndex, ->
                     navigateToDate(dateIndex)
+                },
+                navigateToSpot = { dateIndex, spotIndex ->
+                    navigateToSpot(dateIndex, spotIndex)
                 },
                 navigateToTripMap = {
                     navigateTo(ScreenDestination.TRIP_MAP)

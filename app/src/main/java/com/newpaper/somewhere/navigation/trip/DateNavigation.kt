@@ -103,6 +103,9 @@ fun NavGraphBuilder.dateScreen(
                             navigateToDate = { dateIndex, ->
                                 commonTripViewModel.setCurrentDateIndex(dateIndex)
                             },
+                            navigateToSpot = { dateIndex, spotIndex ->
+                                navigateToSpot(dateIndex, spotIndex)
+                            },
                             navigateToTripMap = {
                                 navigateTo(ScreenDestination.TRIP_MAP)
                             },
