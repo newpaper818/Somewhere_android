@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.trip.spot
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -295,34 +296,36 @@ fun SpotRoute(
                 progressBarState.animateScrollToItem(toIdx)
             }
 
-            if (currentSpotIndex < spotList.size && currentSpotIndex >= 0) {
-                //animate pager
-                coroutineScope.launch {
-                    spotPagerState.animateScrollToPage(currentSpotIndex)
-                }
 
-                //animate map spot
-                coroutineScope.launch {
-                    repeat(10){
-                        if (spotUiState.isMapLoaded){
-                            mapAnimateToSpot(
-                                scrollState,
-                                spotList[currentSpotIndex],
-                                dateList,
-                                currentDateIndex,
-                                cameraPositionState,
-                                spotUiState.mapSize,
-                                density,
-                                coroutineScope
-                            )
-                            return@repeat
-                        }
-                        else{
-                            delay(200)
-                        }
+        }
+
+        if (currentSpotIndex < spotList.size && currentSpotIndex >= 0) {
+            //animate pager
+            coroutineScope.launch {
+                spotPagerState.animateScrollToPage(currentSpotIndex)
+            }
+
+            //animate map spot
+            coroutineScope.launch {
+                repeat(10){
+                    if (spotUiState.isMapLoaded){
+                        mapAnimateToSpot(
+                            scrollState,
+                            spotList[currentSpotIndex],
+                            dateList,
+                            currentDateIndex,
+                            cameraPositionState,
+                            spotUiState.mapSize,
+                            density,
+                            coroutineScope
+                        )
+                        return@repeat
                     }
-
+                    else{
+                        delay(200)
+                    }
                 }
+
             }
         }
     }
