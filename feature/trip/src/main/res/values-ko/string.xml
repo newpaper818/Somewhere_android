@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--date/ ===================================================================================-->
-    <string name="edit_date">일정 편집</string>
     <string name="spots">장소</string>
     <string name="choose_spot_type">장소 유형을 선택하세요!</string>
     <string name="new_spot">새 장소</string>
