@@ -14,6 +14,7 @@ import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -527,6 +528,23 @@ private fun SpotScreen(
 
     //set top bar title
     val dateTitle = dateList.getOrNull(currentDateIndex)?.titleText
+
+    val topBarTitle =
+        if (spotUiInfo.isEditMode)
+            stringResource(id = R.string.edit_spot)
+        else if (spotUiInfo.use2Panes){
+            if (currentSpot?.titleText == null || currentSpot.titleText == "")
+                stringResource(id = R.string.no_title)
+            else
+                currentSpot.titleText!!
+        }
+        else {
+            if (showingTrip.titleText == null || showingTrip.titleText == "")
+                stringResource(id = R.string.no_title)
+            else
+                showingTrip.titleText!!
+        }
+
     val subTitle =
         if (dateList.isNotEmpty()) {
             if (dateTitle == null)
@@ -536,15 +554,6 @@ private fun SpotScreen(
         }
         else null
 
-    val topBarTitle =
-        if (spotUiInfo.isEditMode) stringResource(id = R.string.edit_spot)
-        else if (spotUiInfo.use2Panes) subTitle ?: ""
-        else {
-            if (showingTrip.titleText == null || showingTrip.titleText == "")
-                stringResource(id = R.string.no_title)
-            else
-                showingTrip.titleText!!
-        }
 
 
 
@@ -626,9 +635,9 @@ private fun SpotScreen(
         //top bar
         topBar = {
             SomewhereTopAppBar(
-                useHorizontalLayoutTitles = spotUiInfo.use2Panes,
+                useHorizontalLayoutTitles = false,
                 title = topBarTitle,
-                subtitle = if(spotUiInfo.use2Panes) null else subTitle,
+                subtitle = subTitle,
                 internetEnabled = spotUiInfo.use2Panes || spotUiInfo.internetEnabled,
 
                 //back button
@@ -805,47 +814,49 @@ private fun SpotScreen(
                         .background(MaterialTheme.colorScheme.background)
                 ) {
 
-                    MySpacerColumn(height = 8.dp)
+                    if(!spotUiInfo.use2Panes) {
+                        MySpacerColumn(height = 8.dp)
 
-                    //progress bar
-                    SpotListProgressBar(
-                        useLargeItemWidth = !isCompactWidth,
-                        spacerValue = spotUiInfo.spacerValue,
-                        progressBarState = spotState.progressBarState,
-                        isEditMode = spotUiInfo.isEditMode,
+                        //progress bar
+                        SpotListProgressBar(
+                            useLargeItemWidth = !isCompactWidth,
+                            spacerValue = spotUiInfo.spacerValue,
+                            progressBarState = spotState.progressBarState,
+                            isEditMode = spotUiInfo.isEditMode,
 
-                        dateTimeFormat = spotUiInfo.dateTimeFormat,
-                        dateList = dateList,
-                        dateIndex = currentDateIndex,
-                        spotList = spotList,
-                        currentSpotIndex = currentSpotIndex,
-                        addNewSpot = {
-                            coroutineScope.launch {
-                                dateList[spotData.currentDateIndex].id
-                                addNewSpot(currentDateIndex)
-                                delay(70)
-                                val lastIdx = spotList.size
-                                spotData.setCurrentSpotIndex(lastIdx)
-                                spotState.spotPagerState.animateScrollToPage(lastIdx)
+                            dateTimeFormat = spotUiInfo.dateTimeFormat,
+                            dateList = dateList,
+                            dateIndex = currentDateIndex,
+                            spotList = spotList,
+                            currentSpotIndex = currentSpotIndex,
+                            addNewSpot = {
+                                coroutineScope.launch {
+                                    dateList[spotData.currentDateIndex].id
+                                    addNewSpot(currentDateIndex)
+                                    delay(70)
+                                    val lastIdx = spotList.size
+                                    spotData.setCurrentSpotIndex(lastIdx)
+                                    spotState.spotPagerState.animateScrollToPage(lastIdx)
+                                }
+                            },
+                            onClickSpot = { toSpotIndex ->
+                                spotUiInfo.setUserSwiping(false)
+                                spotData.setCurrentSpotIndex(toSpotIndex)
+                            },
+                            onPrevDateClick = { toDateIndex ->
+                                spotUiInfo.setUserSwiping(false)
+                                spotData.setCurrentDateIndex(toDateIndex)
+                                spotData.setCurrentSpotIndex(dateList[toDateIndex].spotList.lastIndex)
+                            },
+                            onNextDateClick = { toDateIndex ->
+                                spotUiInfo.setUserSwiping(false)
+                                spotData.setCurrentDateIndex(toDateIndex)
+                                spotData.setCurrentSpotIndex(0)
                             }
-                        },
-                        onClickSpot = { toSpotIndex ->
-                            spotUiInfo.setUserSwiping(false)
-                            spotData.setCurrentSpotIndex(toSpotIndex)
-                        },
-                        onPrevDateClick = { toDateIndex ->
-                            spotUiInfo.setUserSwiping(false)
-                            spotData.setCurrentDateIndex(toDateIndex)
-                            spotData.setCurrentSpotIndex(dateList[toDateIndex].spotList.lastIndex)
-                        },
-                        onNextDateClick = { toDateIndex ->
-                            spotUiInfo.setUserSwiping(false)
-                            spotData.setCurrentDateIndex(toDateIndex)
-                            spotData.setCurrentSpotIndex(0)
-                        }
-                    )
+                        )
 
-                    MySpacerColumn(height = 16.dp)
+                        MySpacerColumn(height = 16.dp)
+                    }
 
                     Spot1Pane(
                         isDarkAppTheme = isDarkAppTheme,
@@ -925,7 +936,8 @@ private fun Spot1Pane(
             },
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
-        userScrollEnabled = !spotMap.isMapExpand
+        userScrollEnabled = !spotMap.isMapExpand,
+        contentPadding = if (spotUiInfo.use2Panes) PaddingValues(top = 16.dp) else PaddingValues(0.dp)
     ) {
         item {
             //map
@@ -936,7 +948,7 @@ private fun Spot1Pane(
                     else Modifier,
                 isEditMode = spotUiInfo.isEditMode,
                 isMapExpand = spotMap.isMapExpand,
-                expandHeight = if (spotUiInfo.use2Panes) (lazyColumnHeight / LocalDensity.current.density).toInt() - spotUiInfo.spacerValue.value.toInt()
+                expandHeight = if (spotUiInfo.use2Panes) (lazyColumnHeight / LocalDensity.current.density).toInt() - spotUiInfo.spacerValue.value.toInt() - 16
                                 else (lazyColumnHeight / LocalDensity.current.density).toInt() + 1,
                 mapSize = spotMap.mapSize,
                 onMapLoaded = spotMap::onMapLoaded,
