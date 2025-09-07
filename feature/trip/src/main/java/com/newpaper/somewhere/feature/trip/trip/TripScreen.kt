@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -510,13 +511,13 @@ private fun TripScreen(
 
         //bottom floating action button
         floatingActionButton = {
-            if (!use2Panes)
-                SeeOnMapExtendedFAB(
-                    visible = !isEditMode && showingTrip.getFirstLocation() != null,
-                    onClick = tripNavigate::navigateToTripMap,
-                    expanded = isFABExpanded
-                )
+            SeeOnMapExtendedFAB(
+                visible = !isEditMode && showingTrip.getFirstLocation() != null,
+                onClick = tripNavigate::navigateToTripMap,
+                expanded = isFABExpanded
+            )
         },
+        floatingActionButtonPosition = if (use2Panes) FabPosition.Center else FabPosition.End,
 
         //bottom save cancel button
         bottomSaveCancelBarVisible = isEditMode && !tripDialog.isShowingDialog && !use2Panes,
