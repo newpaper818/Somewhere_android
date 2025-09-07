@@ -358,6 +358,7 @@ fun SpotRoute(
             spacerValue = spacerValue,
             dateTimeFormat = dateTimeFormat,
             internetEnabled = internetEnabled,
+            isErrorExitOnTripScreen = isErrorExitOnTripScreen,
             isDarkMapTheme = isDarkMapTheme,
             userSwiping = userSwiping,
             _setUserSwiping = { userSwiping = it },
@@ -654,7 +655,7 @@ private fun SpotScreen(
             spotNavigate.onClickBackButton()
         },
         onClickSave = onClickSave,
-        saveEnabled = spotErrorCount.totalErrorCount <= 0
+        saveEnabled = spotErrorCount.totalErrorCount <= 0 && !spotUiInfo.isErrorExitOnTripScreen
 
     ) { paddingValues ->
 

@@ -18,6 +18,7 @@ internal data class SpotUiInfo(
     val spacerValue: Dp = 16.dp,
     val dateTimeFormat: DateTimeFormat = DateTimeFormat(),
     val internetEnabled: Boolean = true,
+    val isErrorExitOnTripScreen: Boolean = false,
     val isDarkMapTheme: Boolean = false,
 
     val userSwiping: Boolean = false,
