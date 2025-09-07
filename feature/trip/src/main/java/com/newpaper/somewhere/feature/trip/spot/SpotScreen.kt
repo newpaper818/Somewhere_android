@@ -649,7 +649,6 @@ private fun SpotScreen(
 
         //bottom save cancel bar
         bottomSaveCancelBarVisible = spotUiInfo.isEditMode && !spotDialog.isShowingDialog,
-        use2PanesAndSpotScreen = spotUiInfo.use2Panes,
         onClickCancel = {
             focusManager.clearFocus()
             spotNavigate.onClickBackButton()
