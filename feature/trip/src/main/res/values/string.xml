@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--date/ ===================================================================================-->
-    <string name="edit_date">Edit Date</string>
     <string name="spots">Spots</string>
     <string name="choose_spot_type">Choose Spot Type!</string>
     <string name="new_spot">New Spot</string>

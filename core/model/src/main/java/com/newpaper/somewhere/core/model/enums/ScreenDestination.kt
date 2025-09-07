@@ -22,7 +22,6 @@ enum class ScreenDestination(
 
     TRIP_AI("tripAi"),
     TRIP("trip"),
-    DATE("date"),
     SPOT("spot"),
 
     SHARE_TRIP("shareTrip"),
