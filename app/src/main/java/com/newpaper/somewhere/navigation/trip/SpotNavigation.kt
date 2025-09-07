@@ -135,6 +135,7 @@ fun NavGraphBuilder.spotScreen(
                         isDarkAppTheme = isDarkAppTheme,
                         use2Panes = externalState.windowSizeClass.use2Panes,
                         spacerValue = externalState.windowSizeClass.spacerValue,
+                        useBlurEffect = appUiState.appPreferences.theme.useBlurEffect,
                         appUserId = appUiState.appUserData!!.userId,
                         dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
                         internetEnabled = externalState.internetEnabled,
