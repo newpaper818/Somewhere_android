@@ -42,11 +42,9 @@ import com.newpaper.somewhere.navigation.profile.profileScreen
 import com.newpaper.somewhere.navigation.profile.subscriptionScreen
 import com.newpaper.somewhere.navigation.signIn.navigateToSignIn
 import com.newpaper.somewhere.navigation.signIn.signInScreen
-import com.newpaper.somewhere.navigation.trip.dateScreen
 import com.newpaper.somewhere.navigation.trip.imageScreen
 import com.newpaper.somewhere.navigation.trip.inviteFriendScreen
 import com.newpaper.somewhere.navigation.trip.invitedFriendsScreen
-import com.newpaper.somewhere.navigation.trip.navigateToDate
 import com.newpaper.somewhere.navigation.trip.navigateToInviteFriend
 import com.newpaper.somewhere.navigation.trip.navigateToSpot
 import com.newpaper.somewhere.navigation.trip.navigateToTrip
@@ -265,7 +263,7 @@ fun SomewhereNavHost(
                     commonTripViewModel.setIsNewTrip(isNewTrip)
 
                     if (externalState.windowSizeClass.use2Panes)
-                        mainNavController.navigateToDate(
+                        mainNavController.navigateToSpot(
                             navOptions = navOptions { launchSingleTop = true }
                         )
                     else
@@ -289,9 +287,6 @@ fun SomewhereNavHost(
                             navOptions = navOptions { launchSingleTop = true }
                         )
 
-                    mainNavController.navigateToDate(
-                        navOptions = navOptions { launchSingleTop = true }
-                    )
                     mainNavController.navigateToSpot(
                         navOptions = navOptions { launchSingleTop = true }
                     )
@@ -476,7 +471,7 @@ fun SomewhereNavHost(
                     commonTripViewModel.setIsNewTrip(false)
 
                     if (externalState.windowSizeClass.use2Panes)
-                        mainNavController.navigateToDate(
+                        mainNavController.navigateToSpot(
                             navOptions = navOptions {
                                 popUpTo(ScreenDestination.TRIPS.route) { inclusive = false }
                                 launchSingleTop = true
@@ -504,13 +499,6 @@ fun SomewhereNavHost(
                         navOptions = navOptions { launchSingleTop = true }
                     )
                 },
-                navigateToDate = { dateIndex ->
-                    commonTripViewModel.setIsNewTrip(false)
-                    commonTripViewModel.setCurrentDateIndex(dateIndex)
-                    mainNavController.navigateToDate(
-                        navOptions = navOptions { launchSingleTop = true }
-                    )
-                },
                 navigateToSpot = { dateIndex, spotIndex ->
                     commonTripViewModel.setIsNewTrip(false)
                     commonTripViewModel.setCurrentDateIndex(dateIndex)
@@ -520,28 +508,6 @@ fun SomewhereNavHost(
                     )
                 },
                 navigateUp = navigateUp
-            )
-
-            dateScreen(
-                isDarkAppTheme = isDarkAppTheme,
-                appViewModel = appViewModel,
-                externalState = externalState,
-                commonTripViewModel = commonTripViewModel,
-                navigateTo = { screenDestination ->
-                    mainNavController.navigate(
-                        route = screenDestination.route,
-                        navOptions = navOptions { launchSingleTop = true }
-                    )
-                },
-                navigateUp = navigateUp,
-                navigateToSpot = { dateIndex, spotIndex ->
-                    commonTripViewModel.setCurrentDateIndex(dateIndex)
-                    commonTripViewModel.setCurrentSpotIndex(spotIndex)
-                    mainNavController.navigateToSpot(
-                        navOptions = navOptions { launchSingleTop = true }
-                    )
-                },
-                modifier = modifier
             )
 
             spotScreen(
@@ -643,7 +609,7 @@ fun SomewhereNavHost(
 
 
 
-
+//TODO
 private fun organizeNavStack(
     use2Panes: Boolean,
     beforeUse2Panes: Boolean,
@@ -655,7 +621,6 @@ private fun organizeNavStack(
     val currentScreenDestination = appUiState.screenDestination.currentScreenDestination
 
     val isOnTrip = currentScreenDestination == ScreenDestination.TRIP
-    val isOnDate = currentScreenDestination == ScreenDestination.DATE
     val isOnSpot = currentScreenDestination == ScreenDestination.SPOT
 
     val isOnMoreDetail = currentScreenDestination == ScreenDestination.SET_DATE_TIME_FORMAT
@@ -675,23 +640,11 @@ private fun organizeNavStack(
     // 1pane -> 2panes
     if (!beforeUse2Panes && use2Panes){
         if (isOnTrip){
-            //delete Trip, add Date
-            //    Trips - Trip
-            // -> Trips - Date
+            //delete TRIP, add SPOT
+            //    TRIPS - TRIP
+            // -> TRIPS        - SPOT
             mainNavController.navigate(
-                route = ScreenDestination.DATE.route,
-                navOptions = navOptions {
-                    popUpTo(ScreenDestination.TRIPS.route){ inclusive = false }
-                    launchSingleTop = true
-                }
-            )
-        }
-        else if (isOnDate){
-            //delete Trip
-            //    Trips - Trip - Date
-            // -> Trips -        Date
-            mainNavController.navigate(
-                route = appUiState.screenDestination.currentScreenDestination.route,
+                route = ScreenDestination.SPOT.route,
                 navOptions = navOptions {
                     popUpTo(ScreenDestination.TRIPS.route){ inclusive = false }
                     launchSingleTop = true
@@ -699,24 +652,20 @@ private fun organizeNavStack(
             )
         }
         else if (isOnSpot){
-            //delete Trip
-            //     Trips - Trip - Date - Spot
-            // ->  Trips -        Date - spot
+            //delete TRIP
+            //     TRIPS - TRIP - SPOT
+            // ->  TRIPS -      - SPOT
             mainNavController.navigate(
-                route = ScreenDestination.DATE.route,
+                route = ScreenDestination.SPOT.route,
                 navOptions = navOptions {
                     popUpTo(ScreenDestination.TRIPS.route){ inclusive = false }
                     launchSingleTop = true
                 }
             )
-            mainNavController.navigate(
-                route = ScreenDestination.SPOT.route,
-                navOptions = navOptions { launchSingleTop = true }
-            )
         }
         else if (isOnMore3rd) {
-            //    More - About - OSL (Open source license)
-            // -> More -         OSL
+            //    MORE - ABOUT - OSL (Open source license)
+            // -> MORE -         OSL
             mainNavController.navigate(
                 route = appUiState.screenDestination.currentScreenDestination.route,
                 navOptions = navOptions {
@@ -729,36 +678,19 @@ private fun organizeNavStack(
             mainNavController.popBackStack()
         }
     }
+
     // 2panes -> 1pane
     else if (beforeUse2Panes && !use2Panes) {
-        if (isOnDate){
-            //add Trip
-            //    Trips -        Date
-            // -> Trips - Trip - Date
-            mainNavController.popBackStack()
-            mainNavController.navigate(
-                route = ScreenDestination.TRIP.route,
-                navOptions = navOptions { launchSingleTop = true }
-            )
-            mainNavController.navigate(
-                route = ScreenDestination.DATE.route,
-                navOptions = navOptions { launchSingleTop = true }
-            )
-        }
-        else if (isOnSpot){
-            //add Trip
-            //    Trips -        Date - spot
-            // -> Trips - Trip - Date - Spot
+        if (isOnSpot){
+            //add TRIP
+            //    TRIPS -      - SPOT
+            // -> TRIPS - TRIP - SPOT
             mainNavController.navigate(
                 route = ScreenDestination.TRIP.route,
                 navOptions = navOptions {
                     popUpTo(ScreenDestination.TRIPS.route){ inclusive = false }
                     launchSingleTop = true
                 }
-            )
-            mainNavController.navigate(
-                route = ScreenDestination.DATE.route,
-                navOptions = navOptions { launchSingleTop = true }
             )
             mainNavController.navigate(
                 route = ScreenDestination.SPOT.route,

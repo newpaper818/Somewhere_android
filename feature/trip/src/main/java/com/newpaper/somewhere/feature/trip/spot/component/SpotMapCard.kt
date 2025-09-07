@@ -94,16 +94,16 @@ fun SpotMapCard(
         currentSpot?.nextSpotOrDateIsExist(spotList, dateList, dateIndex) ?: (dateIndex < dateList.lastIndex)
 
     val boxModifier = if (!use2Panes) modifier
-        .fillMaxWidth()
-        .height(cardHeight.dp)
-        .onSizeChanged {
-            setMapSize(it)
-        }
-    else modifier
-        .fillMaxSize()
-        .onSizeChanged {
-            setMapSize(it)
-        }
+            .fillMaxWidth()
+            .height(cardHeight.dp)
+            .onSizeChanged {
+                setMapSize(it)
+            }
+        else modifier
+            .fillMaxSize()
+            .onSizeChanged {
+                setMapSize(it)
+            }
 
     Box(
         contentAlignment = Alignment.BottomCenter,

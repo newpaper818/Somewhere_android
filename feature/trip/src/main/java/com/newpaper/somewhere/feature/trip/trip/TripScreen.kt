@@ -115,7 +115,6 @@ fun TripRoute(
     navigateToInviteFriend: () -> Unit,
     navigateToInvitedFriends: () -> Unit,
     navigateToImage: (imageList: List<String>, initialImageIndex: Int) -> Unit,
-    navigateToDate: (dateIndex: Int) -> Unit,
     navigateToSpot: (dateIndex: Int, spotIndex: Int) -> Unit,
     navigateToTripMap: () -> Unit,
 
@@ -258,7 +257,6 @@ fun TripRoute(
             _navigateToInviteFriend = navigateToInviteFriend,
             _navigateToInvitedFriends = navigateToInvitedFriends,
             _navigateToImage = navigateToImage,
-            _navigateToDate = navigateToDate,
             _navigateToSpot = navigateToSpot,
             _navigateToTripMap = navigateToTripMap,
             _navigateUpAndDeleteNewTrip = navigateUpAndDeleteNewTrip

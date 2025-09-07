@@ -32,7 +32,6 @@ fun NavGraphBuilder.tripScreen(
     commonTripViewModel: CommonTripViewModel,
 
     navigateTo: (ScreenDestination) -> Unit,
-    navigateToDate: (dateIndex: Int) -> Unit,
     navigateToSpot: (dateIndex: Int, spotIndex: Int) -> Unit,
     navigateUp: () -> Unit,
 ) {
@@ -81,9 +80,6 @@ fun NavGraphBuilder.tripScreen(
                 navigateToImage = { imageList, initialImageIndex ->
                     commonTripViewModel.setImageListAndInitialImageIndex(imageList, initialImageIndex)
                     navigateTo(ScreenDestination.IMAGE)
-                },
-                navigateToDate = { dateIndex, ->
-                    navigateToDate(dateIndex)
                 },
                 navigateToSpot = { dateIndex, spotIndex ->
                     navigateToSpot(dateIndex, spotIndex)

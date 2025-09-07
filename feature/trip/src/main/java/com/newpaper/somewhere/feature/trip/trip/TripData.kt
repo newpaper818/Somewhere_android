@@ -99,7 +99,6 @@ internal data class TripNavigate(
     private val _navigateToInviteFriend: () -> Unit = {},
     private val _navigateToInvitedFriends: () -> Unit = {},
     private val _navigateToImage: (imageList: List<String>, initialImageIndex: Int) -> Unit = { _, _ -> },
-    private val _navigateToDate: (dateIndex: Int) -> Unit = {},
     private val _navigateToSpot: (dateIndex: Int, spotIndex: Int) -> Unit = { _, _ -> },
     private val _navigateToTripMap: () -> Unit = {},
     private val _navigateUpAndDeleteNewTrip: (deleteTrip: Trip) -> Unit = {}
@@ -114,8 +113,6 @@ internal data class TripNavigate(
         _navigateToInvitedFriends() }
     fun navigateToImage(imageList: List<String>, initialImageIndex: Int){
         _navigateToImage(imageList, initialImageIndex) }
-    fun navigateToDate(dateIndex: Int){
-        _navigateToDate(dateIndex) }
     fun navigateToSpot(dateIndex: Int, spotIndex: Int){
         _navigateToSpot(dateIndex, spotIndex) }
     fun navigateToTripMap(){
