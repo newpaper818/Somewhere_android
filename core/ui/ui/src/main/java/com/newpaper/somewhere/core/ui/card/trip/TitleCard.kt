@@ -8,9 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -18,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -27,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -35,15 +31,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
-import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
-import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.theme.CustomColor
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
-import com.newpaper.somewhere.core.model.data.MyColor
 import com.newpaper.somewhere.core.ui.MyTextField
 import com.newpaper.somewhere.core.ui.ui.R
 import com.newpaper.somewhere.core.utils.enterVertically
@@ -64,6 +56,7 @@ fun TitleCard(
     isLongText: (Boolean) -> Unit,
 
     modifier: Modifier = Modifier,
+    upperTitleText: String = stringResource(id = R.string.title_card_title)
 ){
     AnimatedVisibility(
         visible = isEditMode,
@@ -73,7 +66,13 @@ fun TitleCard(
         Column(modifier = modifier) {
             Row {
                 //TODO focus 되면 배경색 달라지게?
-                TitleCardUi(isEditMode, titleText, onTitleChange, focusManager, isLongText,
+                TitleCardUi(
+                    isEditMode = isEditMode,
+                    upperTitleText = upperTitleText,
+                    titleText = titleText,
+                    onTitleChange = onTitleChange,
+                    focusManager = focusManager,
+                    isLongText = isLongText,
                     getCardHeight = { }, modifier = Modifier.weight(1f)
                 )
             }
@@ -84,63 +83,13 @@ fun TitleCard(
 }
 
 
-@Deprecated("date screen will be remove")
-@Composable
-fun TitleWithColorCard(
-    isEditMode: Boolean,
-
-    titleText: String?,
-    onTitleChange: (newTitle: String) -> Unit,
-    focusManager: FocusManager,
-    isLongText: (Boolean) -> Unit,
-
-    color: MyColor,
-    onClickColorCard: () -> Unit,
-
-    modifier: Modifier = Modifier
-){
-    var cardHeight by rememberSaveable { mutableIntStateOf(0) }
-
-    AnimatedVisibility(
-        visible = isEditMode,
-        enter = enterVerticallyScaleInDelay,
-        exit = exitVerticallyScaleOut
-    ) {
-        Column(modifier = modifier) {
-            Row {
-                //TODO focus 되면 배경색 달라지게?
-                TitleCardUi(isEditMode, titleText, onTitleChange, focusManager, isLongText,
-                    getCardHeight = {newCardHeight ->
-                        cardHeight = newCardHeight
-                    }, modifier = Modifier.weight(1f)
-                )
-
-                MySpacerRow(width = 16.dp)
-
-                //color card
-                ClickableBox(
-                    containerColor = Color(color.color),
-                    modifier = Modifier
-                        .width(77.dp)
-                        .height((cardHeight / LocalDensity.current.density).toInt().dp),
-                    contentAlignment = Alignment.Center,
-                    onClick = onClickColorCard
-
-                ) {
-                    DisplayIcon(icon = MyIcons.setColor, color = Color(color.onColor))
-                }
-            }
-
-            MySpacerColumn(height = 16.dp)
-        }
-    }
-}
 
 
 @Composable
 private fun TitleCardUi(
     isEditMode: Boolean,
 
+    upperTitleText: String,
     titleText: String?,
     onTitleChange: (String) -> Unit,
     focusManager: FocusManager,
@@ -171,6 +120,7 @@ private fun TitleCardUi(
     ) {
         TitleLayout(
             isEditMode = isEditMode,
+            upperTitleText = upperTitleText,
             titleText = titleText,
             onTitleChange = onTitleChange,
             focusManager = focusManager,
@@ -334,52 +284,6 @@ private fun Preview_TitleCard_Edit_Empty(){
                 onTitleChange = {},
                 focusManager = LocalFocusManager.current,
                 isLongText = {}
-            )
-        }
-    }
-}
-
-@Composable
-@PreviewLightDark
-private fun Preview_TitleWithColorCard(){
-    SomewhereTheme {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(16.dp)
-        ) {
-            TitleWithColorCard(
-                isEditMode = true,
-                titleText = "title text",
-                onTitleChange = {},
-                focusManager = LocalFocusManager.current,
-                isLongText = { },
-                color = MyColor(),
-                onClickColorCard = {}
-            )
-        }
-    }
-}
-
-@Composable
-@PreviewLightDark
-private fun Preview_TitleWithColorCard_Empty(){
-    SomewhereTheme {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(16.dp)
-        ) {
-            TitleWithColorCard(
-                isEditMode = true,
-                titleText = null,
-                onTitleChange = {},
-                focusManager = LocalFocusManager.current,
-                isLongText = { },
-                color = MyColor(),
-                onClickColorCard = {}
             )
         }
     }

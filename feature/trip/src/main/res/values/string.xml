@@ -56,6 +56,7 @@
     <!--spot/ ===================================================================================-->
     <string name="edit_spot">Edit Spot</string>
     <string name="sub_title">%s - %s</string>
+    <string name="spot_title">Spot title</string>
     <string name="delete_spot">Delete spot</string>
     <string name="no_spot">No spot</string>
     <string name="dialog_body_delete_spot">Delete this Spot?</string>
@@ -79,6 +80,7 @@
 
     <!--TripScreen.kt-->
     <string name="edit_trip">Edit Trip</string>
+    <string name="trip_title">Trip title</string>
     <string name="long_text">Long Text(Up to %d characters)</string>
     <string name="dates">Dates</string>
     <string name="set_trip_duration">Set Trip Duration</string>

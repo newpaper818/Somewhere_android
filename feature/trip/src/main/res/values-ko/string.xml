@@ -44,6 +44,7 @@
 
     <!--setLocation/ ============================================================================-->
 
+
     <!--shareTrip/ ==============================================================================-->
     <string name="share_trip">여행 공유</string>
     <string name="background_image">배경 이미지</string>
@@ -55,6 +56,7 @@
     <!--spot/ ===================================================================================-->
     <string name="edit_spot">장소 편집</string>
     <string name="sub_title">%s - %s</string>
+    <string name="spot_title">장소 제목</string>
     <string name="delete_spot">장소 삭제</string>
     <string name="no_spot">장소 없음</string>
     <string name="dialog_body_delete_spot">이 장소를 삭제할까요?</string>
@@ -78,6 +80,7 @@
 
     <!--TripScreen.kt-->
     <string name="edit_trip">여행 편집</string>
+    <string name="trip_title">여행 제목</string>
     <string name="long_text">최대 %d자</string>
     <string name="dates">일정</string>
     <string name="set_trip_duration">여행 기간 설정</string>
