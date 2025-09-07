@@ -1,6 +1,5 @@
 package com.newpaper.somewhere.feature.trip.spot
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -98,6 +97,9 @@ import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.spot.component.NoSpotCard
 import com.newpaper.somewhere.feature.trip.spot.component.SpotDetailPage
 import com.newpaper.somewhere.feature.trip.spot.component.SpotMapCard
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -109,6 +111,7 @@ fun SpotRoute(
     isDarkAppTheme: Boolean,
     use2Panes: Boolean,
     spacerValue: Dp,
+    useBlurEffect: Boolean,
     appUserId: String,
     dateTimeFormat: DateTimeFormat,
     internetEnabled: Boolean,
@@ -360,6 +363,7 @@ fun SpotRoute(
         spotUiInfo = SpotUiInfo(
             use2Panes = use2Panes,
             spacerValue = spacerValue,
+            useBlurEffect = useBlurEffect,
             dateTimeFormat = dateTimeFormat,
             internetEnabled = internetEnabled,
             isErrorExitOnTripScreen = isErrorExitOnTripScreen,
@@ -508,6 +512,8 @@ private fun SpotScreen(
 
     modifier: Modifier = Modifier
 ){
+    val useBlurEffect = spotUiInfo.useBlurEffect
+
     val showingTrip = if (spotUiInfo.isEditMode) spotData.tempTrip
                         else            spotData.originalTrip
 
@@ -526,6 +532,7 @@ private fun SpotScreen(
 
     val snackBarHostState = remember { SnackbarHostState() }
 
+    val topAppBarHazeState = if(useBlurEffect && spotUiInfo.use2Panes) rememberHazeState() else null
 
 
 
@@ -655,7 +662,8 @@ private fun SpotScreen(
                         spotMap.setIsMapExpanded(false)
                     spotUiInfo.setIsEditMode(true)
                 },
-                actionIcon1Visible = !spotUiInfo.isEditMode && showingTrip.editable
+                actionIcon1Visible = !spotUiInfo.isEditMode && showingTrip.editable,
+                hazeState = topAppBarHazeState
             )
         },
 
@@ -808,7 +816,8 @@ private fun SpotScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues),
+                    .padding(if(spotUiInfo.use2Panes) PaddingValues(0.dp)
+                                            else paddingValues),
                 contentAlignment = Alignment.BottomCenter
             ) {
                 Column(
@@ -873,6 +882,8 @@ private fun SpotScreen(
                         image = spotImage,
                         spotFrom = spotMap.spotFrom,
                         spotTo = spotMap.spotTo,
+                        scaffoldPaddingValues = paddingValues,
+                        topAppBarHazeState = topAppBarHazeState,
                         cameraPositionState = spotMap.cameraPositionState,
                         snackBarHostState = snackBarHostState,
                         focusManager = focusManager,
@@ -904,6 +915,8 @@ private fun Spot1Pane(
     spotFrom: Spot?,
     spotTo: Spot?,
 
+    scaffoldPaddingValues: PaddingValues,
+    topAppBarHazeState: HazeState?,
     cameraPositionState: CameraPositionState,
     snackBarHostState: SnackbarHostState,
     focusManager: FocusManager,
@@ -928,19 +941,23 @@ private fun Spot1Pane(
     val coroutineScope = rememberCoroutineScope()
     val uriHandler = LocalUriHandler.current
 
+    val lazyColumnModifier = Modifier
+        .fillMaxSize()
+        .imePadding()
+        .onGloballyPositioned { lazyColumnHeight = it.size.height }
+
     //map + spot page
     LazyColumn(
         state = spotState.scrollState,
-        modifier = Modifier
-            .fillMaxSize()
-            .imePadding()
-            .onGloballyPositioned {
-                lazyColumnHeight = it.size.height
-            },
+        modifier = if (topAppBarHazeState != null) lazyColumnModifier
+                .hazeSource(state = topAppBarHazeState)
+                .background(MaterialTheme.colorScheme.background)
+            else lazyColumnModifier,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
         userScrollEnabled = !spotMap.isMapExpand,
-        contentPadding = if (spotUiInfo.use2Panes) PaddingValues(top = 16.dp) else PaddingValues(0.dp)
+        contentPadding = if (spotUiInfo.use2Panes) PaddingValues(top = 16.dp + scaffoldPaddingValues.calculateTopPadding())
+                            else PaddingValues(0.dp)
     ) {
         item {
             //map
@@ -951,7 +968,11 @@ private fun Spot1Pane(
                     else Modifier,
                 isEditMode = spotUiInfo.isEditMode,
                 isMapExpand = spotMap.isMapExpand,
-                expandHeight = if (spotUiInfo.use2Panes) (lazyColumnHeight / LocalDensity.current.density).toInt() - spotUiInfo.spacerValue.value.toInt() - 16
+                expandHeight = if (spotUiInfo.use2Panes)
+                                    (lazyColumnHeight / LocalDensity.current.density).toInt()
+                                    - spotUiInfo.spacerValue.value.toInt()
+                                    - 16 - scaffoldPaddingValues.calculateTopPadding().value.toInt()
+                                
                                 else (lazyColumnHeight / LocalDensity.current.density).toInt() + 1,
                 mapSize = spotMap.mapSize,
                 onMapLoaded = spotMap::onMapLoaded,
