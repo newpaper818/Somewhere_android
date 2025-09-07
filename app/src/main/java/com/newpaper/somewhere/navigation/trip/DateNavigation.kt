@@ -100,9 +100,6 @@ fun NavGraphBuilder.dateScreen(
                                 commonTripViewModel.setImageListAndInitialImageIndex(imageList, initialImageIndex)
                                 navigateTo(ScreenDestination.IMAGE)
                             },
-                            navigateToDate = { dateIndex, ->
-                                commonTripViewModel.setCurrentDateIndex(dateIndex)
-                            },
                             navigateToSpot = { dateIndex, spotIndex ->
                                 navigateToSpot(dateIndex, spotIndex)
                             },
