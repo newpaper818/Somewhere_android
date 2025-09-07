@@ -458,6 +458,13 @@ private fun TripScreen(
         focusManager.clearFocus()
     }
 
+    LaunchedEffect(currentDateIndex) {
+        if (use2Panes && currentDateIndex != null){
+            coroutineScope.launch {
+                scrollState.animateScrollToItem(6 + currentDateIndex)
+            }
+        }
+    }
 
 
 

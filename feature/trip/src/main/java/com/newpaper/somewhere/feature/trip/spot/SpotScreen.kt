@@ -972,7 +972,7 @@ private fun Spot1Pane(
                                     (lazyColumnHeight / LocalDensity.current.density).toInt()
                                     - spotUiInfo.spacerValue.value.toInt()
                                     - 16 - scaffoldPaddingValues.calculateTopPadding().value.toInt()
-                                
+
                                 else (lazyColumnHeight / LocalDensity.current.density).toInt() + 1,
                 mapSize = spotMap.mapSize,
                 onMapLoaded = spotMap::onMapLoaded,
