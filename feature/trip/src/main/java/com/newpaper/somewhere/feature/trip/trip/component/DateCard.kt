@@ -62,7 +62,6 @@ import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.convert.getDateText
 import com.newpaper.somewhere.core.utils.convert.getTotalBudgetText
 import com.newpaper.somewhere.core.utils.enterVerticallyDelay
-import com.newpaper.somewhere.core.utils.enterVerticallyDelayForMaxTrips
 import com.newpaper.somewhere.core.utils.enterVerticallyScaleIn
 import com.newpaper.somewhere.core.utils.exitVertically
 import com.newpaper.somewhere.core.utils.exitVerticallyScaleOut
@@ -101,7 +100,9 @@ internal fun DateCard(
     onClickNewSpot: () -> Unit,
     reorderSpotList: (dateIndex: Int, currentSpotIndex: Int, destinationSpotIndex: Int) -> Unit,
 
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    currentDateIndex: Int? = null,
+    currentSpotIndex: Int? = null,
 ){
     val coroutineScope = rememberCoroutineScope()
 
@@ -280,6 +281,7 @@ internal fun DateCard(
                                 dateIndex = dateIndex,
                                 spot = spot,
                                 isEditMode = isEditMode,
+                                isHighlighted = currentDateIndex == dateIndex && currentSpotIndex == spot.index,
                                 timeFormat = dateTimeFormat.timeFormat,
 
                                 slideState = slideState,

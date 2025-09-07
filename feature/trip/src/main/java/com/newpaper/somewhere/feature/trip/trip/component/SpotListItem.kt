@@ -38,6 +38,7 @@ internal fun SpotListItem(
     spot: Spot,
 
     isEditMode: Boolean,
+    isHighlighted: Boolean,
 
     timeFormat: TimeFormat,
 
@@ -127,6 +128,7 @@ internal fun SpotListItem(
         pointColor = pointColor,
         isEditMode = isEditMode,
         isExpanded = isExpanded,
+        isHighlighted = isHighlighted,
 
         iconText = if (spot.spotType.isNotMove()) spot.iconText.toString()
         else null,

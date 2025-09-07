@@ -326,7 +326,8 @@ fun TripRoute(
             }
         },
         modifier = modifier,
-        currentDateIndex = commonTripUiState.tripInfo.dateIndex
+        currentDateIndex = if (use2Panes) commonTripUiState.tripInfo.dateIndex ?: 0 else null,
+        currentSpotIndex = if (use2Panes) commonTripUiState.tripInfo.spotIndex ?: 0 else null,
     )
 }
 
@@ -375,6 +376,7 @@ private fun TripScreen(
 
     modifier: Modifier = Modifier,
     currentDateIndex: Int? = null,
+    currentSpotIndex: Int? = null,
 ){
     val coroutineScope = rememberCoroutineScope()
 
@@ -808,6 +810,8 @@ private fun TripScreen(
                         val slideState = slideStates[date.id] ?: SlideState.NONE
 
                         DateCard(
+                            currentDateIndex = currentDateIndex,
+                            currentSpotIndex = currentSpotIndex,
                             visible = !loadingTrip || !enabledDateListIsEmpty,
                             trip = showingTrip,
                             dateIndex = dateIndex,
