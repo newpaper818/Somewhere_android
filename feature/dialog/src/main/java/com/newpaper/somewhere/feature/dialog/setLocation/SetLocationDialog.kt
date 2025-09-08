@@ -528,15 +528,23 @@ private fun CenterMarker(
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .size(26.dp)
+            .size(30.dp)
             .clip(CircleShape)
-            .background(color)
+            .background(onColor)
     ) {
-        Text(
-            text = markerText,
-            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
-                .copy(color = onColor)
-        )
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(26.dp)
+                .clip(CircleShape)
+                .background(color)
+        ) {
+            Text(
+                text = markerText,
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
+                    .copy(color = onColor)
+            )
+        }
     }
 }
 

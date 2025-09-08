@@ -137,7 +137,7 @@ fun MapForTripMap(
                 //draw poly line
                 MapLine(
                     pointList = polyLinePointList,
-                    lineColor = Color(dateList[dateIndex].color.color).copy(alpha = 0.3f)
+                    lineColor = Color(dateList[dateIndex].color.color).copy(alpha = 0.8f)
                 )
             }
         }
@@ -328,7 +328,7 @@ fun MapForSetLocation(
                 //draw poly line
                 MapLine(
                     pointList = polyLinePointList,
-                    lineColor = if (showOtherDateSpotMarkers) Color(date.color.color).copy(alpha = 0.3f)
+                    lineColor = if (showOtherDateSpotMarkers) Color(date.color.color).copy(alpha = 0.8f)
                                 else null
                 )
             }

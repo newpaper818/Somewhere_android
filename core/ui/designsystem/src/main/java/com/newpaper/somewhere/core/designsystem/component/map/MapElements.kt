@@ -82,7 +82,7 @@ fun MapLine(
 
     Polyline(
         points = pointList,
-        color = lineColor ?: MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+        color = lineColor ?: MaterialTheme.colorScheme.outline.copy(alpha = 0.8f),
         width = lineWidth,
         zIndex = 1.1f
     )
