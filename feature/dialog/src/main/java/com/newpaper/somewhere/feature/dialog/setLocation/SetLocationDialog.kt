@@ -493,7 +493,7 @@ fun SetLocationDialog(
                 ) {
                     //cancel save buttons
                     NegativePositiveButtons(
-                        positiveButtonText = stringResource(id = R.string.save),
+                        positiveButtonText = stringResource(id = R.string.save_location),
                         onClickCancel = setShowSetLocationDialogToFalse,
                         onClickPositive = {
                             //set location and zoom level
