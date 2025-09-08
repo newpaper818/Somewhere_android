@@ -41,6 +41,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -64,7 +65,11 @@ import com.newpaper.somewhere.feature.trip.tripMap.component.BottomSheetHandel
 import com.newpaper.somewhere.feature.trip.tripMap.component.ControlPanel
 import com.newpaper.somewhere.feature.trip.tripMap.component.MapButtons
 import com.newpaper.somewhere.feature.trip.trips.component.GlanceSpot
+import dev.chrisbanes.haze.ExperimentalHazeApi
+import dev.chrisbanes.haze.HazeInputScale
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -196,7 +201,7 @@ private fun TripMapScreen(
 
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalHazeApi::class)
 @Composable
 private fun TripMapScreenVertical(
     tripMapViewModel: TripMapViewModel,
@@ -268,16 +273,29 @@ private fun TripMapScreenVertical(
             }
         }
     ) { paddingValue ->
+
+        val sheetContainerColor = if (hazeState == null) MaterialTheme.colorScheme.background
+                                else Color.Transparent
+
+        val hazeTintColor = MaterialTheme.colorScheme.background
+
+        val sheetModifier = if (hazeState == null) Modifier
+                                    else Modifier.hazeEffect(state = hazeState) {
+                                        blurRadius = 16.dp
+                                        tints = listOf(HazeTint(hazeTintColor.copy(alpha = 0.8f)))
+                                        inputScale = HazeInputScale.Fixed(0.5f)
+                                    }
+
         BottomSheetScaffold(
             scaffoldState = bottomSheetState,
             //control
             sheetSwipeEnabled = true,
-            sheetContainerColor = MaterialTheme.colorScheme.background,
+            sheetContainerColor = sheetContainerColor,
             sheetPeekHeight = SHEET_PEEK_HEIGHT,
             sheetDragHandle = { },
             sheetContent = {
                 Column(
-                    modifier = Modifier
+                    modifier = sheetModifier
                         .fillMaxHeight(0.5f)
                         .onSizeChanged {
                             sheetHeightDp = (it.height / density).toInt()
@@ -381,7 +399,8 @@ private fun TripMapScreenVertical(
                                             }
                                         }
                                     }
-                                }
+                                },
+                                hazeState = hazeState
                             )
                         }
 
@@ -410,6 +429,7 @@ private fun TripMapScreenVertical(
     }
 }
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 private fun TripMapScreenHorizontal(
     configuration: Configuration,
@@ -547,15 +567,30 @@ private fun TripMapScreenHorizontal(
                     verticalAlignment = Alignment.Bottom
                 ) {
                     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+
+                        val panelContainerColor = if (hazeState == null) MaterialTheme.colorScheme.background
+                                                    else Color.Transparent
+
+                        val hazeTintColor = MaterialTheme.colorScheme.background
+
+                        val panelModifier = if (hazeState == null) Modifier
+                                            else Modifier.hazeEffect(state = hazeState) {
+                                                blurRadius = 16.dp
+                                                tints = listOf(HazeTint(hazeTintColor.copy(alpha = 0.8f)))
+                                                inputScale = HazeInputScale.Fixed(0.5f)
+                                            }
+
                         //control panel
                         MyCard(
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+                            colors = CardDefaults.cardColors(containerColor = panelContainerColor),
                             shape = MaterialTheme.shapes.extraLarge,
                             modifier = Modifier
                                 .width(cardWidth.dp)
                                 .fillMaxHeight()
                         ) {
-                            Column {
+                            Column(
+                                modifier = panelModifier.fillMaxHeight()
+                            ) {
                                 MySpacerColumn(height = 16.dp)
 
                                 ControlPanel(
@@ -597,7 +632,8 @@ private fun TripMapScreenHorizontal(
                                         }
                                     }
                                 }
-                            }
+                            },
+                            hazeState = hazeState
                         )
                     }
 

@@ -177,7 +177,8 @@ fun MapForSpot(
     currentSpot: Spot?,
 
     spotFrom: Spot? = null,
-    spotTo: Spot? = null
+    spotTo: Spot? = null,
+    modifier: Modifier = Modifier
 ){
     val uiSettings = remember {
         MapUiSettings(
@@ -198,7 +199,7 @@ fun MapForSpot(
 
 
     GoogleMap(
-        modifier = Modifier.fillMaxSize().clearAndSetSemantics { },
+        modifier = modifier.fillMaxSize().clearAndSetSemantics { },
         googleMapOptionsFactory = { GoogleMapOptions().mapId(getMapId(isDarkMapTheme)) },
         cameraPositionState = cameraPositionState,
         onMapLoaded = onMapLoaded,
