@@ -138,11 +138,12 @@ private fun bitmapDescriptor(
 
     val density = LocalDensity.current.density
 
-    val iconDp = if(isBigIcon) 30 else 24
+    val iconDp = if (isBigIcon) 30 else 24
+    val borderDp = 2
     val textDp = if(isBigIcon) 16 else 12
 
     //bitmap size 30.dp to int
-    val bitmapSize = (30 * density).toInt()
+    val bitmapSize = ((iconDp + borderDp * 2) * density).toInt()
 
     //icon & text size
     val iconSize = (iconDp * density).toInt()
@@ -152,12 +153,17 @@ private fun bitmapDescriptor(
     val bm = Bitmap.createBitmap(bitmapSize, bitmapSize, Bitmap.Config.ARGB_8888)
     val canvas = android.graphics.Canvas(bm)
 
-    // Draw the circle background
+    //draw border circle background
+    val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    borderPaint.color = onColor
+    canvas.drawCircle(bitmapSize / 2f, bitmapSize / 2f, bitmapSize / 2f, borderPaint)
+
+    // Draw icon circle background
     val circlePaint = Paint(Paint.ANTI_ALIAS_FLAG)
     circlePaint.color = iconColor
     canvas.drawCircle(bitmapSize / 2f, bitmapSize / 2f, iconSize / 2f, circlePaint)
 
-    // Draw the text
+    // Draw text
     if (iconText != null){
         val textPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         textPaint.color = onColor
