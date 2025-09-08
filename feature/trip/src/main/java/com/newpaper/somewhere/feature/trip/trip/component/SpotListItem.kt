@@ -60,11 +60,7 @@ internal fun SpotListItem(
     val spotList = trip.dateList[dateIndex].spotList
 
     //set point color
-    val pointColor =
-        if (spot.spotType.isMove())
-            Color.Transparent
-        else
-            Color(spot.spotType.group.color.color)
+    val pointColor = Color(spot.spotType.group.color.color)
 
     //is expanded
     var isExpanded by rememberSaveable { mutableStateOf(false) }
@@ -125,13 +121,14 @@ internal fun SpotListItem(
                 }
             ),
 
+        showPoint = !spot.spotType.isMove(),
         pointColor = pointColor,
         isEditMode = isEditMode,
         isExpanded = isExpanded,
         isHighlighted = isHighlighted,
 
         iconText = if (spot.spotType.isNotMove()) spot.iconText.toString()
-        else null,
+                    else null,
         iconTextColor = spot.spotType.group.color.onColor,
 
         sideTextPlaceHolderIcon = MyIcons.setTime,
