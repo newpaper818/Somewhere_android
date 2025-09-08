@@ -67,6 +67,7 @@ fun NavGraphBuilder.tripMapScreen(
                 currentTrip = currentTrip,
                 useVerticalLayout = externalState.windowSizeClass.isVertical
                         || externalState.windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact,
+                useBlurEffect = appUiState.appPreferences.theme.useBlurEffect,
                 dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
                 navigateUp = navigateUp,
                 isDarkMapTheme = isDarkMapTheme,

@@ -61,7 +61,7 @@ private val LINE_WIDTH: Dp = 7.dp
 @OptIn(ExperimentalHazeApi::class)
 @Composable
 internal fun GlanceSpot(
-    useBottomNavBar: Boolean,
+    uesLongWidth: Boolean,
     visible: Boolean,
     dateTimeFormat: DateTimeFormat,
     trip: Trip,
@@ -112,7 +112,7 @@ internal fun GlanceSpot(
     val glanceSpotModifier = modifier
                                 .navigationBarsPadding()
                                 .height(70.dp)
-                                .widthIn(max = if (useBottomNavBar) 600.dp else 400.dp)
+                                .widthIn(max = if (uesLongWidth) 600.dp else 400.dp)
                                 .padding(horizontal = 16.dp)
                                 .clip(MaterialTheme.shapes.large)
                                 .border(1.dp, MaterialTheme.colorScheme.surfaceDim, MaterialTheme.shapes.large)

@@ -1,21 +1,17 @@
 package com.newpaper.somewhere.feature.trip.tripMap
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.displayCutoutPadding
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
@@ -33,6 +29,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -44,14 +41,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.CameraPosition
@@ -63,9 +59,14 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.utils.convert.getFirstLocation
+import com.newpaper.somewhere.core.utils.fitBoundsToMarkersForTripMap
 import com.newpaper.somewhere.feature.trip.tripMap.component.BottomSheetHandel
 import com.newpaper.somewhere.feature.trip.tripMap.component.ControlPanel
 import com.newpaper.somewhere.feature.trip.tripMap.component.MapButtons
+import com.newpaper.somewhere.feature.trip.trips.component.GlanceSpot
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 private val SHEET_PEEK_HEIGHT = 150.dp
@@ -76,6 +77,7 @@ private const val CONTROL_PANEL_MIN_WIDTH = 366
 fun TripMapRoute(
     currentTrip: Trip,
     useVerticalLayout: Boolean,
+    useBlurEffect: Boolean,
     dateTimeFormat: DateTimeFormat,
     navigateUp: () -> Unit,
     isDarkMapTheme: Boolean,
@@ -105,6 +107,7 @@ fun TripMapRoute(
     val dateListState = rememberLazyListState()
 
     TripMapScreen(
+        useBlurEffect,
         tripMapViewModel,
         snackBarHostState,
         dateTimeFormat,
@@ -124,6 +127,8 @@ fun TripMapRoute(
 
 @Composable
 private fun TripMapScreen(
+    useBlurEffect: Boolean,
+
     tripMapViewModel: TripMapViewModel,
     snackBarHostState: SnackbarHostState,
     dateTimeFormat: DateTimeFormat,
@@ -144,6 +149,9 @@ private fun TripMapScreen(
     //screen is horizontal/vertical
     val configuration = LocalConfiguration.current
 
+    val hazeState = if (useBlurEffect) rememberHazeState() else null
+
+
     //at vertical
     if (useVerticalLayout) {
         TripMapScreenVertical(
@@ -158,6 +166,7 @@ private fun TripMapScreen(
             fusedLocationClient,
             setUserLocationEnabled,
             navigateUp,
+            hazeState,
             modifier
         )
     }
@@ -177,6 +186,7 @@ private fun TripMapScreen(
             fusedLocationClient,
             setUserLocationEnabled,
             navigateUp,
+            hazeState,
             modifier
         )
     }
@@ -202,6 +212,7 @@ private fun TripMapScreenVertical(
     setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
 
     navigateUp: () -> Unit,
+    hazeState: HazeState?,
 
     modifier: Modifier = Modifier
 ){
@@ -297,7 +308,7 @@ private fun TripMapScreenVertical(
 
             //map
             Box(
-                contentAlignment = Alignment.BottomEnd,
+                contentAlignment = Alignment.BottomStart,
                 modifier = Modifier
                     .fillMaxSize()
                     .onSizeChanged {
@@ -305,6 +316,8 @@ private fun TripMapScreenVertical(
                     }
             ) {
                 MapForTripMap(
+                    modifier = if (hazeState != null) Modifier.hazeSource(state = hazeState)
+                                else Modifier,
                     mapPadding = mapPadding,
                     isDarkMapTheme = isDarkMapTheme,
                     userLocationEnabled = userLocationEnabled,
@@ -320,30 +333,78 @@ private fun TripMapScreenVertical(
                             spotTypeGroupWithShownMarkerList,
                             cameraPositionState
                         )
+                    },
+                    onClickMarker = { date, spot ->
+                        if (tripMapUiState.glanceSpot != spot || (tripMapUiState.glanceSpot == spot && !tripMapUiState.showGlanceSpot)) {
+                            tripMapViewModel.setGlanceTripSpot(currentTrip, date, spot)
+                            tripMapViewModel.setShowGlanceSpot(true)
+
+                            coroutineScope.launch {
+                                fitBoundsToMarkersForTripMap(
+                                    mapSize = mapSize,
+                                    cameraPositionState = cameraPositionState,
+                                    spotList = listOf(spot)
+                                )
+                            }
+                        }
+                        else
+                            tripMapViewModel.setShowGlanceSpot(false)
+                    },
+                    onClickMap = {
+                        tripMapViewModel.setShowGlanceSpot(false)
                     }
                 )
 
-                //map buttons
-                MapButtons(
-                    paddingValues = PaddingValues(end = 16.dp, bottom = bottomPadding.dp + 16.dp),
-                    cameraPositionState = cameraPositionState,
-                    fusedLocationClient = fusedLocationClient,
-                    setUserLocationEnabled = setUserLocationEnabled,
-                    showSnackBar = { text, actionLabel, duration, onActionClick ->
-                        coroutineScope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = text,
-                                actionLabel = actionLabel,
-                                duration = duration
-                            ).run {
-                                when (this){
-                                    SnackbarResult.Dismissed -> { }
-                                    SnackbarResult.ActionPerformed -> onActionClick()
+                //***** RTL *****
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                    Row(
+                        modifier = Modifier.padding(start = 16.dp, bottom = bottomPadding.dp + 16.dp),
+                        verticalAlignment = Alignment.Bottom
+                    ) {
+                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                            //map buttons
+                            MapButtons(
+                                paddingValues = PaddingValues(end = 0.dp),
+                                cameraPositionState = cameraPositionState,
+                                fusedLocationClient = fusedLocationClient,
+                                setUserLocationEnabled = setUserLocationEnabled,
+                                showSnackBar = { text, actionLabel, duration, onActionClick ->
+                                    coroutineScope.launch {
+                                        snackBarHostState.showSnackbar(
+                                            message = text,
+                                            actionLabel = actionLabel,
+                                            duration = duration
+                                        ).run {
+                                            when (this) {
+                                                SnackbarResult.Dismissed -> {}
+                                                SnackbarResult.ActionPerformed -> onActionClick()
+                                            }
+                                        }
+                                    }
                                 }
-                            }
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+
+                            //glance spot
+                            GlanceSpot(
+                                uesLongWidth = false,
+                                visible = tripMapUiState.showGlanceSpot,
+                                dateTimeFormat = dateTimeFormat,
+                                trip = tripMapUiState.glanceTrip,
+                                date = tripMapUiState.glanceDate,
+                                spot = tripMapUiState.glanceSpot,
+                                onClick = {
+
+                                },
+                                hazeState = hazeState
+                            )
                         }
                     }
-                )
+                }
             }
         }
     }
@@ -365,6 +426,7 @@ private fun TripMapScreenHorizontal(
     setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
 
     navigateUp: () -> Unit,
+    hazeState: HazeState?,
 
     modifier: Modifier = Modifier
 ){
@@ -420,6 +482,8 @@ private fun TripMapScreenHorizontal(
                     }
             ) {
                 MapForTripMap(
+                    modifier = if (hazeState != null) Modifier.hazeSource(state = hazeState)
+                                else Modifier,
                     mapPadding = mapPadding,
                     isDarkMapTheme = isDarkMapTheme,
                     userLocationEnabled = userLocationEnabled,
@@ -435,6 +499,25 @@ private fun TripMapScreenHorizontal(
                             spotTypeGroupWithShownMarkerList,
                             cameraPositionState
                         )
+                    },
+                    onClickMarker = { date, spot ->
+                        if (tripMapUiState.glanceSpot != spot || (tripMapUiState.glanceSpot == spot && !tripMapUiState.showGlanceSpot)) {
+                            tripMapViewModel.setGlanceTripSpot(currentTrip, date, spot)
+                            tripMapViewModel.setShowGlanceSpot(true)
+
+                            coroutineScope.launch {
+                                fitBoundsToMarkersForTripMap(
+                                    mapSize = mapSize,
+                                    cameraPositionState = cameraPositionState,
+                                    spotList = listOf(spot)
+                                )
+                            }
+                        }
+                        else
+                            tripMapViewModel.setShowGlanceSpot(false)
+                    },
+                    onClickMap = {
+                        tripMapViewModel.setShowGlanceSpot(false)
                     }
                 )
             }
@@ -454,61 +537,85 @@ private fun TripMapScreenHorizontal(
                     (screenWidth * 0.45f).toInt()
                 }
 
+            //***** RTL *****
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                Row(
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .statusBarsPadding()
+                        .padding(16.dp, 0.dp, 0.dp, 16.dp),
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                        //control panel
+                        MyCard(
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+                            shape = MaterialTheme.shapes.extraLarge,
+                            modifier = Modifier
+                                .width(cardWidth.dp)
+                                .fillMaxHeight()
+                        ) {
+                            Column {
+                                MySpacerColumn(height = 16.dp)
 
-            Row(
-                modifier = Modifier
-                    .navigationBarsPadding()
-                    .statusBarsPadding()
-                    .padding(0.dp, 0.dp, 16.dp, 16.dp),
-                verticalAlignment = Alignment.Bottom
-            ) {
-                //map buttons
-                MapButtons(
-                    paddingValues = PaddingValues(end = 16.dp),
-                    cameraPositionState = cameraPositionState,
-                    fusedLocationClient = fusedLocationClient,
-                    setUserLocationEnabled = setUserLocationEnabled,
-                    showSnackBar = { text, actionLabel, duration, onActionClick ->
-                        coroutineScope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = text,
-                                actionLabel = actionLabel,
-                                duration = duration
-                            ).run {
-                                when (this){
-                                    SnackbarResult.Dismissed -> { }
-                                    SnackbarResult.ActionPerformed -> onActionClick()
-                                }
+                                ControlPanel(
+                                    tripMapViewModel,
+                                    coroutineScope,
+                                    cameraPositionState,
+                                    mapSize,
+                                    fitBoundsToMarkersEnabled,
+                                    oneDateShown,
+                                    dateTimeFormat,
+                                    currentDateIndex,
+                                    dateListState,
+                                    spotTypeGroupWithShownMarkerList,
+                                    dateWithShownMarkerList,
+                                    navigateUp,
+                                    snackBarHostState
+                                )
                             }
                         }
                     }
-                )
 
-                //control panel
-                MyCard(
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
-                    shape = MaterialTheme.shapes.extraLarge,
-                    modifier = Modifier
-                        .width(cardWidth.dp)
-                        .fillMaxHeight()
-                ) {
-                    Column {
-                        MySpacerColumn(height = 16.dp)
+                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                        //map buttons
+                        MapButtons(
+                            paddingValues = PaddingValues(end = 16.dp),
+                            cameraPositionState = cameraPositionState,
+                            fusedLocationClient = fusedLocationClient,
+                            setUserLocationEnabled = setUserLocationEnabled,
+                            showSnackBar = { text, actionLabel, duration, onActionClick ->
+                                coroutineScope.launch {
+                                    snackBarHostState.showSnackbar(
+                                        message = text,
+                                        actionLabel = actionLabel,
+                                        duration = duration
+                                    ).run {
+                                        when (this) {
+                                            SnackbarResult.Dismissed -> {}
+                                            SnackbarResult.ActionPerformed -> onActionClick()
+                                        }
+                                    }
+                                }
+                            }
+                        )
+                    }
 
-                        ControlPanel(
-                            tripMapViewModel,
-                            coroutineScope,
-                            cameraPositionState,
-                            mapSize,
-                            fitBoundsToMarkersEnabled,
-                            oneDateShown,
-                            dateTimeFormat,
-                            currentDateIndex,
-                            dateListState,
-                            spotTypeGroupWithShownMarkerList,
-                            dateWithShownMarkerList,
-                            navigateUp,
-                            snackBarHostState
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                        //glance spot
+                        GlanceSpot(
+                            uesLongWidth = true,
+                            visible = tripMapUiState.showGlanceSpot,
+                            dateTimeFormat = dateTimeFormat,
+                            trip = tripMapUiState.glanceTrip,
+                            date = tripMapUiState.glanceDate,
+                            spot = tripMapUiState.glanceSpot,
+                            onClick = {
+
+                            },
+                            hazeState = hazeState
                         )
                     }
                 }

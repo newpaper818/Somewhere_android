@@ -54,7 +54,10 @@ fun MapForTripMap(
     dateList: List<Date>,
     dateListWithShownMarkerList: List<DateWithBoolean>,
     spotTypeGroupWithShownMarkerList: List<SpotTypeGroupWithBoolean>,
-    firstFitBoundsToMarkers: () -> Unit
+    firstFitBoundsToMarkers: () -> Unit,
+    onClickMarker: (Date, Spot) -> Unit,
+    onClickMap: (LatLng) -> Unit,
+    modifier: Modifier = Modifier
 ){
     val uiSettings = remember {
         MapUiSettings(myLocationButtonEnabled = false, zoomControlsEnabled = false)
@@ -71,7 +74,7 @@ fun MapForTripMap(
 
 
     GoogleMap(
-        modifier = Modifier.fillMaxSize().clearAndSetSemantics { },
+        modifier = modifier.fillMaxSize().clearAndSetSemantics { },
         googleMapOptionsFactory = { GoogleMapOptions().mapId(getMapId(isDarkMapTheme)) },
         cameraPositionState = cameraPositionState,
         properties = properties,
@@ -79,7 +82,8 @@ fun MapForTripMap(
         onMapLoaded = {
             firstFitBoundsToMarkers()
         },
-        contentPadding = mapPadding
+        contentPadding = mapPadding,
+        onMapClick = onClickMap
     ) {
         dateListWithShownMarkerList.forEachIndexed { dateIndex, dateWithBoolean ->
             if (dateWithBoolean.isShown) {
@@ -102,7 +106,10 @@ fun MapForTripMap(
                             isBigMarker = false,
                             iconText = spot.iconText.toString(),
                             iconColor = dateWithBoolean.date.color.color,
-                            onIconColor = dateWithBoolean.date.color.onColor
+                            onIconColor = dateWithBoolean.date.color.onColor,
+                            onClick = {
+                                onClickMarker(dateWithBoolean.date, spot)
+                            }
                         )
 
                         //add poly line point

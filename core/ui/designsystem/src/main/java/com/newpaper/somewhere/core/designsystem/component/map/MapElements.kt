@@ -36,6 +36,7 @@ fun MapMarker(
     iconText: String? = null,
     @ColorInt iconColor: Int,
     @ColorInt onIconColor: Int,
+    onClick: () -> Unit = {}
 ){
     //draw marker on map
     Marker(
@@ -43,7 +44,11 @@ fun MapMarker(
         title = title,
         icon = bitmapDescriptor(isBigMarker, iconText, iconColor, onIconColor),
         anchor = Offset(0.5f, 0.5f),
-        zIndex = if (isBigMarker) 2f else 1.5f
+        zIndex = if (isBigMarker) 2f else 1.5f,
+        onClick = {
+            onClick()
+            true
+        }
     )
 }
 
