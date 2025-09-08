@@ -769,11 +769,11 @@ private fun SpotScreen(
 
         if (spotDialog.showSetDistanceDialog && currentSpot != null){
             SetBudgetOrDistanceDialog(
-                initialValue = currentSpot.travelDistance,
+                initialValue = currentSpot.travelDistance.toDouble(),
                 onDismissRequest = { spotDialog.setShowSetDistanceDialog(false) },
                 onSaveClick = { newTravelDistance ->
                     spotDialog.setShowSetDistanceDialog(false)
-                    currentSpot.setTravelDistance(showingTrip, currentDateIndex, updateTripState, newTravelDistance)
+                    currentSpot.setTravelDistance(showingTrip, currentDateIndex, updateTripState, newTravelDistance.toFloat())
                 }
             )
         }

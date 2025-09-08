@@ -34,7 +34,7 @@ data class Spot(
     val startTime: LocalTime? = null,
     val endTime: LocalTime? = null,
 
-    val budget: Float = 0.0f,
+    val budget: Double = 0.0,
     val travelDistance: Float = 0.0f,
     val memoText: String? = null
 ): Cloneable {

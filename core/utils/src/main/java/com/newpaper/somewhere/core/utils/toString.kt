@@ -3,6 +3,7 @@ package com.newpaper.somewhere.core.utils
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.enums.DateFormat
 import com.newpaper.somewhere.core.model.enums.TimeFormat
+import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.time.Instant
 import java.time.LocalDate
@@ -12,20 +13,32 @@ import java.time.ZoneId
 import java.time.format.TextStyle
 import java.util.Locale
 
-//1234567.12 -> "1,234,567.12" / 1,234 -> "1,234.00"
-fun getNumToText(number: Float, numberOfDecimalPlaces: Int): String{
-    var pattern = "#,##0"
-
-    if (numberOfDecimalPlaces != 0){
-        pattern += "."
-        repeat(numberOfDecimalPlaces){
-            pattern += "0"
+//1234567.12 -> "1,234,567.12" / 1234 -> "1,234.00"
+fun getNumToText(
+    number: Number,
+    numberOfDecimalPlaces: Int,
+    includeComma: Boolean = true,
+    stripTrailingZeros: Boolean = false
+): String{
+    val pattern = buildString {
+        append(if (includeComma) "#,##0" else "0")
+        if (numberOfDecimalPlaces > 0) {
+            append(".")
+            repeat(numberOfDecimalPlaces) { append("0") }
         }
     }
 
     val numberFormat = DecimalFormat(pattern)
+    val formatted = numberFormat.format(number.toDouble())
 
-    return numberFormat.format(number)
+    return if (stripTrailingZeros) {
+        val bd = BigDecimal(formatted.replace(",", ""))
+        val stripped = bd.stripTrailingZeros()
+        val finalPattern = if (includeComma) "#,##0.################" else "0.################"
+        DecimalFormat(finalPattern).format(stripped)
+    } else {
+        formatted
+    }
 }
 
 //LocalDate -> "2023.06.12"
