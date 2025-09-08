@@ -167,8 +167,8 @@ fun Trip.getTotalBudgetText(): String{
 
 private fun getTotalBudget(
     dateList: List<Date>
-): Float{
-    var totalBudget = 0.0f
+): Double{
+    var totalBudget = 0.0
 
     for (date in dateList){
         totalBudget += date.getTotalBudget()

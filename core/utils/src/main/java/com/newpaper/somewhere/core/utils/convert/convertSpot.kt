@@ -281,7 +281,7 @@ fun Spot.setBudget(
     currentDateIndex: Int,
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
 
-    newBudget: Float
+    newBudget: Double
 ) {
     val newSpotList = showingTrip.dateList[currentDateIndex].spotList.toMutableList()
     newSpotList[index] = newSpotList[index].copy(budget = newBudget)
