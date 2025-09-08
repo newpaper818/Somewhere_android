@@ -304,24 +304,25 @@ fun SomewhereNavHost(
                 externalState = externalState,
                 lazyListState = profileLazyListState,
                 navigateToAccount = {
-                    if (externalState.windowSizeClass.use2Panes)
+                    if (externalState.windowSizeClass.use2Panes) {
                         appViewModel.updateMoreDetailCurrentScreenDestination(ScreenDestination.ACCOUNT)
 
-                    mainNavController.navigate(
-                        route = ScreenDestination.MORE.route,
-                        navOptions = navOptions {
-                            popUpTo(ScreenDestination.PROFILE.route) {
-                                inclusive = true
+                        mainNavController.navigate(
+                            route = ScreenDestination.MORE.route,
+                            navOptions = navOptions {
+                                popUpTo(ScreenDestination.PROFILE.route) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
                             }
-                            launchSingleTop = true
-                        }
-                    )
-
-                    if (!externalState.windowSizeClass.use2Panes)
+                        )
+                    }
+                    else {
                         mainNavController.navigate(
                             route = ScreenDestination.ACCOUNT.route,
                             navOptions = navOptions { launchSingleTop = true }
                         )
+                    }
                 },
                 navigateToSubscription = {
                     mainNavController.navigate(
@@ -609,7 +610,7 @@ fun SomewhereNavHost(
 
 
 
-//TODO
+
 private fun organizeNavStack(
     use2Panes: Boolean,
     beforeUse2Panes: Boolean,
