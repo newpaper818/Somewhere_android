@@ -107,7 +107,7 @@ internal fun GlanceSpot(
     val containerColor = if (hazeState == null) MaterialTheme.colorScheme.surfaceBright
                         else Color.Transparent
 
-    val glanceSpotColor = MaterialTheme.colorScheme.surfaceBright
+    val hazeTintColor = MaterialTheme.colorScheme.surfaceBright
 
     val glanceSpotModifier = modifier
                                 .navigationBarsPadding()
@@ -121,9 +121,7 @@ internal fun GlanceSpot(
     val glanceSpotHazeModifier = if (hazeState == null) glanceSpotModifier
                             else glanceSpotModifier.hazeEffect(state = hazeState) {
                                 blurRadius = 16.dp
-                                tints = listOf(
-                                    HazeTint(glanceSpotColor.copy(alpha = 0.8f))
-                                )
+                                tints = listOf(HazeTint(hazeTintColor.copy(alpha = 0.8f)))
                                 inputScale = HazeInputScale.Fixed(0.5f)
                             }
 

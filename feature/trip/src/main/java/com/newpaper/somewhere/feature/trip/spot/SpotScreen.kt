@@ -870,6 +870,7 @@ private fun SpotScreen(
                     }
 
                     Spot1Pane(
+                        useBlurEffect= useBlurEffect,
                         isDarkAppTheme = isDarkAppTheme,
                         spotUiInfo = spotUiInfo,
                         spotData = spotData,
@@ -901,6 +902,7 @@ private fun SpotScreen(
 
 @Composable
 private fun Spot1Pane(
+    useBlurEffect: Boolean,
     isDarkAppTheme: Boolean,
     spotUiInfo: SpotUiInfo,
     spotData: SpotData,
@@ -965,6 +967,7 @@ private fun Spot1Pane(
                         .padding(spotUiInfo.spacerValue/2, 0.dp, spotUiInfo.spacerValue, spotUiInfo.spacerValue)
                         .clip(RoundedCornerShape(16.dp))
                     else Modifier,
+                useBlurEffect = useBlurEffect,
                 isEditMode = spotUiInfo.isEditMode,
                 isMapExpand = spotMap.isMapExpand,
                 expandHeight = if (spotUiInfo.use2Panes)
@@ -1051,7 +1054,7 @@ private fun Spot1Pane(
                     }
                 },
                 spotFrom = spotFrom,
-                spotTo = spotTo
+                spotTo = spotTo,
             )
 
 
