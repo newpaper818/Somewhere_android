@@ -520,7 +520,7 @@ private fun TripScreen(
                 expanded = isFABExpanded
             )
         },
-        floatingActionButtonPosition = if (use2Panes) FabPosition.Center else FabPosition.End,
+        floatingActionButtonPosition = if (use2Panes) FabPosition.Start else FabPosition.End,
 
         //bottom save cancel button
         bottomSaveCancelBarVisible = isEditMode && !tripDialog.isShowingDialog && !use2Panes,
