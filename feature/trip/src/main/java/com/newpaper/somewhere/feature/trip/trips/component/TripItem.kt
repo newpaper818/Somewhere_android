@@ -294,7 +294,7 @@ private fun TripItemUi(
                         text = title,
                         style = if (titleIsNull) MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 else MaterialTheme.typography.titleMedium,
-                        maxLines = 1,
+                        maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
 
