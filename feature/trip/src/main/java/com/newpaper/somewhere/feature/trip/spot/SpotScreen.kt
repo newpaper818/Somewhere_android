@@ -53,7 +53,6 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
@@ -940,7 +939,6 @@ private fun Spot1Pane(
     val currentSpot = currentDate.spotList.getOrNull(currentSpotIndex)
 
     val coroutineScope = rememberCoroutineScope()
-    val uriHandler = LocalUriHandler.current
 
     val lazyColumnModifier = Modifier
         .fillMaxSize()
@@ -1032,13 +1030,6 @@ private fun Spot1Pane(
                     spotMap.setMapSize(it)
                 },
                 openInGoogleMapEnabled = currentSpot?.googleMapsPlacesId != null && currentSpot.googleMapsPlacesId != "",
-                onClickOpenInGoogleMap = {
-                    //open in google map
-                    if (currentSpot?.googleMapsPlacesId != null){
-                        val url = "https://www.google.com/maps/search/?api=1&query=<address>&query_place_id=${currentSpot.googleMapsPlacesId}"
-                        uriHandler.openUri(url)
-                    }
-                },
                 showSnackBar = { text, actionLabel, duration, onActionClick ->
                     coroutineScope.launch {
                         snackBarHostState.showSnackbar(

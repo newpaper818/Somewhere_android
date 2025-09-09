@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.maps.android.compose.CameraPositionState
+import com.newpaper.somewhere.core.designsystem.component.button.ToGoogleMapsButton
 import com.newpaper.somewhere.core.designsystem.component.map.MapForSpot
 import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
@@ -80,7 +81,6 @@ fun SpotMapCard(
     setMapSize: (IntSize) -> Unit,
 
     openInGoogleMapEnabled: Boolean,
-    onClickOpenInGoogleMap: () -> Unit,
 
     modifier: Modifier = Modifier,
 
@@ -162,7 +162,6 @@ fun SpotMapCard(
                 deleteLocation = deleteLocation,
 
                 openInGoogleMapEnabled = openInGoogleMapEnabled,
-                onClickOpenInGoogleMap = onClickOpenInGoogleMap,
 
                 showSnackBar = showSnackBar,
                 hazeState = mapButtonHazeState
@@ -205,7 +204,6 @@ private fun MapSpotMapButtons(
     deleteLocation: () -> Unit,
 
     openInGoogleMapEnabled: Boolean,
-    onClickOpenInGoogleMap: () -> Unit,
 
     showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
     hazeState: HazeState?,
@@ -267,7 +265,7 @@ private fun MapSpotMapButtons(
 
         ToGoogleMapButton(
             enabled = openInGoogleMapEnabled,
-            onClick = onClickOpenInGoogleMap,
+            googleMapsPlacesId = spot?.googleMapsPlacesId ?: "",
             hazeState = hazeState
         )
     }
@@ -388,23 +386,17 @@ private fun SpotNavigateWithFitBoundsToMarkersButtons(
 @Composable
 private fun ToGoogleMapButton(
     enabled: Boolean,
-    onClick: () -> Unit,
+    googleMapsPlacesId: String,
     hazeState: HazeState?,
 ){
     MapButtonsRow(hazeState = hazeState) {
-        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.openInGoogleMaps.descriptionTextId!!)) {
-            IconButton(
-                enabled = enabled,
-                onClick = onClick
-            ) {
-                DisplayIcon(
-                    icon = MapButtonIcon.openInGoogleMaps,
-                    enabled = enabled
-                )
-            }
-        }
+        ToGoogleMapsButton(
+            enabled = enabled,
+            googleMapsPlacesId = googleMapsPlacesId
+        )
     }
 }
+
 
 @OptIn(ExperimentalHazeApi::class)
 @Composable
