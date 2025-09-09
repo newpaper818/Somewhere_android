@@ -242,7 +242,7 @@ object MyIcons {
 
     //set color
     val setColor = MyIcon(Icons.Outlined.Palette,   20.dp, false, null, R.string.set_color)
-    val selectedColor = MyIcon(Icons.Rounded.Done,  22.dp, false, null, R.string.selected_color)
+    val selectedColor = MyIcon(Icons.Rounded.Done,  24.dp, false, null, R.string.selected_color)
 
 
     //invited friend
