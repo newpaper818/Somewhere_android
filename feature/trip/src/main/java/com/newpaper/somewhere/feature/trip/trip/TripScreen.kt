@@ -459,14 +459,6 @@ private fun TripScreen(
         focusManager.clearFocus()
     }
 
-    LaunchedEffect(currentDateIndex) {
-        if (use2Panes && currentDateIndex != null){
-            coroutineScope.launch {
-                scrollState.animateScrollToItem(6 + currentDateIndex)
-            }
-        }
-    }
-
 
 
 
@@ -898,6 +890,12 @@ private fun TripScreen(
                             },
                             onClickSpotItem = { spot ->
                                 tripNavigate.navigateToSpot(dateIndex, spot.index)
+
+                                if (use2Panes && currentDateIndex != dateIndex){
+                                    coroutineScope.launch {
+                                        scrollState.animateScrollToItem(6 + dateIndex)
+                                    }
+                                }
                             },
                             onClickDeleteSpot = { spot ->
                                 deleteSpot(dateIndex, spot.index)
