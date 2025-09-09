@@ -46,7 +46,8 @@ fun ItemWithSwitch(
 
     ClickableBox(
         onClick = {
-            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            if (!checked) haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
+            else haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
             onCheckedChange(!checked)
         },
         modifier = Modifier
