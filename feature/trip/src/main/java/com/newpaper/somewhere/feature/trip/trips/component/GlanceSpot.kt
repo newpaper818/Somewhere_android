@@ -1,6 +1,8 @@
 package com.newpaper.somewhere.feature.trip.trips.component
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -71,6 +73,13 @@ internal fun GlanceSpot(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     hazeState: HazeState? = null,
+
+    enterAnimation: EnterTransition = slideInVertically(
+        animationSpec = tween(500),
+        initialOffsetY = { (it * 2.5f).toInt() }),
+    exitAnimation: ExitTransition = slideOutVertically(
+        animationSpec = tween(500),
+        targetOffsetY = { (it * 2.5f).toInt() })
 ){
     val tripTitleText = if (trip.titleText == null || trip.titleText == "") stringResource(id = R.string.no_title)
                         else trip.titleText!!
@@ -129,12 +138,8 @@ internal fun GlanceSpot(
 
     AnimatedVisibility(
         visible = visible,
-        enter = slideInVertically(
-            animationSpec = tween(500),
-            initialOffsetY = { (it * 2.5f).toInt() }),
-        exit = slideOutVertically(
-            animationSpec = tween(500),
-            targetOffsetY = { (it * 2.5f).toInt() })
+        enter = enterAnimation,
+        exit = exitAnimation
     ) {
         ClickableBox(
             onClick = onClick,

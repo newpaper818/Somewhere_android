@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -60,6 +61,8 @@ import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.utils.convert.getFirstLocation
+import com.newpaper.somewhere.core.utils.enterVertically
+import com.newpaper.somewhere.core.utils.exitVertically
 import com.newpaper.somewhere.core.utils.fitBoundsToMarkersForTripMap
 import com.newpaper.somewhere.feature.trip.tripMap.component.BottomSheetHandel
 import com.newpaper.somewhere.feature.trip.tripMap.component.ControlPanel
@@ -333,7 +336,7 @@ private fun TripMapScreenVertical(
 
             //map
             Box(
-                contentAlignment = Alignment.BottomStart,
+                contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
                     .fillMaxSize()
                     .onSizeChanged {
@@ -380,56 +383,56 @@ private fun TripMapScreenVertical(
                     }
                 )
 
-                //***** RTL *****
-                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-                    Row(
-                        modifier = Modifier.padding(start = 16.dp, bottom = bottomPadding.dp + 16.dp),
-                        verticalAlignment = Alignment.Bottom
+                Column (
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = bottomPadding.dp + 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    //map buttons
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.BottomEnd
                     ) {
-                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                            //map buttons
-                            MapButtons(
-                                paddingValues = PaddingValues(end = 0.dp),
-                                cameraPositionState = cameraPositionState,
-                                fusedLocationClient = fusedLocationClient,
-                                setUserLocationEnabled = setUserLocationEnabled,
-                                showSnackBar = { text, actionLabel, duration, onActionClick ->
-                                    coroutineScope.launch {
-                                        snackBarHostState.showSnackbar(
-                                            message = text,
-                                            actionLabel = actionLabel,
-                                            duration = duration
-                                        ).run {
-                                            when (this) {
-                                                SnackbarResult.Dismissed -> {}
-                                                SnackbarResult.ActionPerformed -> onActionClick()
-                                            }
+                        MapButtons(
+                            paddingValues = PaddingValues(end = 16.dp),
+                            cameraPositionState = cameraPositionState,
+                            fusedLocationClient = fusedLocationClient,
+                            setUserLocationEnabled = setUserLocationEnabled,
+                            showSnackBar = { text, actionLabel, duration, onActionClick ->
+                                coroutineScope.launch {
+                                    snackBarHostState.showSnackbar(
+                                        message = text,
+                                        actionLabel = actionLabel,
+                                        duration = duration
+                                    ).run {
+                                        when (this) {
+                                            SnackbarResult.Dismissed -> {}
+                                            SnackbarResult.ActionPerformed -> onActionClick()
                                         }
                                     }
-                                },
-                                hazeState = hazeState
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-
-                            //glance spot
-                            GlanceSpot(
-                                uesLongWidth = true,
-                                visible = tripMapUiState.showGlanceSpot,
-                                dateTimeFormat = dateTimeFormat,
-                                trip = tripMapUiState.glanceTrip,
-                                date = tripMapUiState.glanceDate,
-                                spot = tripMapUiState.glanceSpot,
-                                onClick = {
-                                    navigateToSpot(tripMapUiState.glanceDate.index, tripMapUiState.glanceSpot.index)
-                                },
-                                hazeState = hazeState
-                            )
-                        }
+                                }
+                            },
+                            hazeState = hazeState
+                        )
                     }
+
+                    //glance spot
+                    GlanceSpot(
+                        modifier = Modifier.padding(top = 16.dp),
+                        uesLongWidth = true,
+                        visible = tripMapUiState.showGlanceSpot,
+                        dateTimeFormat = dateTimeFormat,
+                        trip = tripMapUiState.glanceTrip,
+                        date = tripMapUiState.glanceDate,
+                        spot = tripMapUiState.glanceSpot,
+                        onClick = {
+                            navigateToSpot(tripMapUiState.glanceDate.index, tripMapUiState.glanceSpot.index)
+                        },
+                        hazeState = hazeState,
+                        enterAnimation = enterVertically,
+                        exitAnimation = exitVertically
+                    )
                 }
             }
         }
