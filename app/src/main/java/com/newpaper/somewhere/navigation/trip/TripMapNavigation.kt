@@ -40,6 +40,7 @@ fun NavGraphBuilder.tripMapScreen(
     setUserLocationEnabled: (Boolean) -> Unit,
 
     navigateUp: () -> Unit,
+    navigateToSpot: (dateIndex: Int, spotIndex: Int) -> Unit,
 
     modifier: Modifier = Modifier,
 ) {
@@ -70,6 +71,7 @@ fun NavGraphBuilder.tripMapScreen(
                 useBlurEffect = appUiState.appPreferences.theme.useBlurEffect,
                 dateTimeFormat = appUiState.appPreferences.dateTimeFormat,
                 navigateUp = navigateUp,
+                navigateToSpot = navigateToSpot,
                 isDarkMapTheme = isDarkMapTheme,
                 fusedLocationClient = fusedLocationClient,
                 userLocationEnabled = userLocationEnabled,
