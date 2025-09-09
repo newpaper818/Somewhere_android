@@ -5,9 +5,6 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
@@ -58,6 +55,8 @@ import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.convert.getStartEndDateText
 import com.newpaper.somewhere.core.utils.dragAndDropVertical
+import com.newpaper.somewhere.core.utils.enterHorizontally
+import com.newpaper.somewhere.core.utils.exitHorizontally
 import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.trips.tripCardHeightDp
 import kotlin.math.roundToInt
@@ -258,7 +257,7 @@ private fun TripItemUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(tripCardHeightDp)
-                    .padding(12.dp),
+                    .padding(12.dp, 12.dp, 0.dp, 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
@@ -308,14 +307,22 @@ private fun TripItemUi(
                     )
                 }
 
-                MySpacerRow(width = 8.dp)
+                MySpacerRow(width = 4.dp)
+
+                AnimatedVisibility(
+                    visible = !showDragIcon,
+                    enter = enterHorizontally,
+                    exit = exitHorizontally
+                ) {
+                    MySpacerRow(width = 8.dp)
+                }
 
 
                 //drag handel icon when edit mode
                 AnimatedVisibility(
                     visible = showDragIcon,
-                    enter = scaleIn(tween(300)),
-                    exit = scaleOut(tween(400)) + fadeOut(tween(300))
+                    enter = enterHorizontally,
+                    exit = exitHorizontally
                 ) {
                     IconButton(
                         modifier = dragHandleModifier,
