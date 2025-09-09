@@ -85,6 +85,7 @@ fun TripMapRoute(
     useBlurEffect: Boolean,
     dateTimeFormat: DateTimeFormat,
     navigateUp: () -> Unit,
+    navigateToSpot: (dateIndex: Int, spotIndex: Int) -> Unit,
     isDarkMapTheme: Boolean,
     fusedLocationClient: FusedLocationProviderClient,
     userLocationEnabled: Boolean,
@@ -125,6 +126,7 @@ fun TripMapRoute(
         fusedLocationClient,
         setUserLocationEnabled,
         navigateUp,
+        navigateToSpot,
         modifier
     )
 }
@@ -148,6 +150,7 @@ private fun TripMapScreen(
     setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
 
     navigateUp: () -> Unit,
+    navigateToSpot: (dateIndex: Int, spotIndex: Int) -> Unit,
 
     modifier: Modifier = Modifier,
 ){
@@ -171,6 +174,7 @@ private fun TripMapScreen(
             fusedLocationClient,
             setUserLocationEnabled,
             navigateUp,
+            navigateToSpot,
             hazeState,
             modifier
         )
@@ -191,6 +195,7 @@ private fun TripMapScreen(
             fusedLocationClient,
             setUserLocationEnabled,
             navigateUp,
+            navigateToSpot,
             hazeState,
             modifier
         )
@@ -217,6 +222,8 @@ private fun TripMapScreenVertical(
     setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
 
     navigateUp: () -> Unit,
+    navigateToSpot: (dateIndex: Int, spotIndex: Int) -> Unit,
+
     hazeState: HazeState?,
 
     modifier: Modifier = Modifier
@@ -417,7 +424,7 @@ private fun TripMapScreenVertical(
                                 date = tripMapUiState.glanceDate,
                                 spot = tripMapUiState.glanceSpot,
                                 onClick = {
-
+                                    navigateToSpot(tripMapUiState.glanceDate.index, tripMapUiState.glanceSpot.index)
                                 },
                                 hazeState = hazeState
                             )
@@ -446,6 +453,8 @@ private fun TripMapScreenHorizontal(
     setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
 
     navigateUp: () -> Unit,
+    navigateToSpot: (dateIndex: Int, spotIndex: Int) -> Unit,
+
     hazeState: HazeState?,
 
     modifier: Modifier = Modifier
@@ -649,7 +658,7 @@ private fun TripMapScreenHorizontal(
                             date = tripMapUiState.glanceDate,
                             spot = tripMapUiState.glanceSpot,
                             onClick = {
-
+                                navigateToSpot(tripMapUiState.glanceDate.index, tripMapUiState.glanceSpot.index)
                             },
                             hazeState = hazeState
                         )
