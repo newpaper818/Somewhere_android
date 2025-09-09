@@ -417,7 +417,7 @@ private fun TripMapScreenVertical(
 
                             //glance spot
                             GlanceSpot(
-                                uesLongWidth = false,
+                                uesLongWidth = true,
                                 visible = tripMapUiState.showGlanceSpot,
                                 dateTimeFormat = dateTimeFormat,
                                 trip = tripMapUiState.glanceTrip,

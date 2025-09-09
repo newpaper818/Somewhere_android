@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.newpaper.somewhere.core.designsystem.component.button.ToGoogleMapsButton
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
@@ -199,8 +200,9 @@ internal fun GlanceSpot(
 
                 Row(
                     modifier = Modifier
+                        .weight(1f)
                         .fillMaxHeight()
-                        .padding(10.dp, 8.dp, 16.dp, 8.dp),
+                        .padding(10.dp, 8.dp, 8.dp, 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     //text
@@ -268,6 +270,26 @@ internal fun GlanceSpot(
                             style = dateTimeStyle,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(0.dp, 0.dp, 16.dp, 0.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (spot.googleMapsPlacesId != null){
+                        ToGoogleMapsButton(
+                            enabled = true,
+                            googleMapsPlacesId = spot.googleMapsPlacesId!!,
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.surfaceBright)
+                                .border(1.dp, MaterialTheme.colorScheme.surfaceDim, CircleShape)
                         )
                     }
                 }
