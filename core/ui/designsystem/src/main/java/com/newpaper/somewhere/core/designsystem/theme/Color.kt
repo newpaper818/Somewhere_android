@@ -187,45 +187,54 @@ const val whiteInt = 0xffffffff.toInt()
 
 val dateColorList = listOf(
 
-    MyColor(0xFF493cfa.toInt()),
-    MyColor(0xFF22b14c.toInt(), blackInt),
-    MyColor(0xFFff7f27.toInt(), blackInt),
-    MyColor(0xFF732bf5.toInt()),
+//    MyColor(0xFF493cfa.toInt()),
+//    MyColor(0xFF22b14c.toInt(), blackInt),
+//    MyColor(0xFFff7f27.toInt(), blackInt),
+//    MyColor(0xFF732bf5.toInt()),
 
-    MyColor(0xFFffaec9.toInt(), blackInt),
-    MyColor(0xFFed1c24.toInt()),
-    MyColor(0xFF00a2e8.toInt(), blackInt),
-    MyColor(0xFFa349a4.toInt()),
+    // Vivid
+    MyColor(0xFF2962FF.toInt(), whiteInt), //  1 Vivid Blue
+    MyColor(0xFF00C853.toInt(), whiteInt), //  2 Vivid Green
+    MyColor(0xFFFF6D00.toInt(), whiteInt), //  3 Vivid Orange
+    MyColor(0xFFAA00FF.toInt(), whiteInt), //  4 Vivid Purple
+    MyColor(0xFFFF1744.toInt(), whiteInt), //  5 Vivid Red
+    MyColor(0xFFFFD600.toInt(), blackInt), //  6 Vivid Yellow
+    MyColor(0xFF00B0FF.toInt(), whiteInt), //  7 Vivid Cyan
+    MyColor(0xFFD500F9.toInt(), whiteInt), //  8 Vivid Magenta
+    MyColor(0xFF1DE9B6.toInt(), blackInt), //  9 Vivid Teal
+    MyColor(0xFFFF4081.toInt(), whiteInt), // 10 Vivid Pink
+    MyColor(0xFF651FFF.toInt(), whiteInt), // 11 Vivid Indigo
+    MyColor(0xFFFFAB00.toInt(), blackInt), // 12 Vivid Amber
+    MyColor(0xFF00E676.toInt(), blackInt), // 13 Vivid Light Green
+    MyColor(0xFF2979FF.toInt(), whiteInt), // 14 Vivid Deep Blue
+    MyColor(0xFFE040FB.toInt(), whiteInt), // 15 Vivid Violet
+    MyColor(0xFFFF3D00.toInt(), whiteInt), // 16 Vivid Deep Orange
 
-    MyColor(0xFF0023f5.toInt()),
-    MyColor(0xFF73fbfd.toInt(), blackInt),
-    MyColor(0xFF7168e8.toInt()),
-    MyColor(0xFFb97a57.toInt()),
+    // Pastel / Light
+    MyColor(0xFFffaec9.toInt(), blackInt), // 17 Light Pink
+    MyColor(0xFF73fbfd.toInt(), blackInt), // 18 Aqua Pastel
+    MyColor(0xFF99d9ea.toInt(), blackInt), // 19 Light Cyan
+    MyColor(0xFF75fa8d.toInt(), blackInt), // 20 Green
+    MyColor(0xFF7f82bb.toInt(), blackInt), // 21 Dusty Violet
+    MyColor(0xFFefe4b0.toInt(), blackInt), // 22 Light Beige
+    MyColor(0xFFb5e61d.toInt(), blackInt), // 23 Lime
+    MyColor(0xFFc8bfe7.toInt(), blackInt), // 24 Lavender
 
-    MyColor(0xFF880015.toInt()),
-    MyColor(0xFF99d9ea.toInt(), blackInt),
-    MyColor(0xFFfff200.toInt(), blackInt),
-    MyColor(0xFF3f48cc.toInt()),
+    // Dark
+    MyColor(0xFF1A237E.toInt(), whiteInt), // 25 Dark Indigo
+    MyColor(0xFF004D40.toInt(), whiteInt), // 26 Dark Teal
+    MyColor(0xFFB71C1C.toInt(), whiteInt), // 27 Dark Red
+    MyColor(0xFF3E2723.toInt(), whiteInt), // 28 Dark Brown
+    MyColor(0xFF263238.toInt(), whiteInt), // 29 Dark Blue Gray
+    MyColor(0xFF1B5E20.toInt(), whiteInt), // 30 Dark Green
+    MyColor(0xFF4A148C.toInt(), whiteInt), // 31 Dark Purple
+    MyColor(0xFFBF360C.toInt(), whiteInt), // 32 Dark Orange
 
-    MyColor(0xFF75fa8d.toInt(), blackInt),
-    MyColor(0xFF7f82bb.toInt(), blackInt),
-    MyColor(0xFF3a083e.toInt()),
-    MyColor(0xFF7092be.toInt(), blackInt),
-
-    MyColor(0xFF3a0603.toInt()),
-    MyColor(0xFFffc90e.toInt(), blackInt),
-    MyColor(0xFF183e0c.toInt()),
-    MyColor(0xFFefe4b0.toInt(), blackInt),
-
-    MyColor(0xFFb5e61d.toInt(), blackInt),
-    MyColor(0xFFc8bfe7.toInt(), blackInt),
-    MyColor(0xFF817f26.toInt()),
-    MyColor(0xFF75163f.toInt()),
-
-    MyColor(0xFF000000.toInt()),
-    MyColor(0xFF7f7f7f.toInt(), blackInt),
-    MyColor(0xFFc3c3c3.toInt(), blackInt),
-    MyColor(0xFFffffff.toInt(), blackInt),
+    // Neutral
+    MyColor(0xFF000000.toInt(), whiteInt), // 33 Black
+    MyColor(0xFF9E9E9E.toInt(), blackInt), // 34 Dark Gray
+    MyColor(0xFFE0E0E0.toInt(), blackInt), // 35 Light Gray
+    MyColor(0xFFFFFFFF.toInt(), blackInt), // 36 White
 )
 
 @Preview
