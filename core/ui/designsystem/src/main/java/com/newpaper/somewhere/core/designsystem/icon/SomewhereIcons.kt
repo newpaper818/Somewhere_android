@@ -28,6 +28,7 @@ import androidx.compose.material.icons.rounded.DragHandle
 import androidx.compose.material.icons.rounded.DriveFileRenameOutline
 import androidx.compose.material.icons.rounded.East
 import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.EditLocation
 import androidx.compose.material.icons.rounded.EditNote
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.ErrorOutline
@@ -142,8 +143,8 @@ object MapButtonIcon {
     val zoomInLess = MyIcon(Icons.Rounded.Add,                   18.dp, false, null, R.string.zoom_in_less)
     val zoomIn = MyIcon(Icons.Rounded.Add,                       26.dp, false, null, R.string.zoom_in)
 
-    val editLocation = MyIcon(Icons.Rounded.Edit,           24.dp, false, null, R.string.edit_location)
-    val deleteLocation = MyIcon(Icons.Rounded.Delete,       24.dp, false, null, R.string.delete_location)
+    val editLocation = MyIcon(Icons.Rounded.EditLocation,           24.dp, false, null, R.string.edit_location)
+    val deleteLocation = MyIcon(Icons.Rounded.LocationOff,       24.dp, false, null, R.string.delete_location)
 
     val prevSpot = MyIcon(Icons.Rounded.KeyboardArrowLeft,  30.dp, false, null, R.string.previous_spot)
     val nextSpot = MyIcon(Icons.Rounded.KeyboardArrowRight, 30.dp, false, null, R.string.next_spot)
