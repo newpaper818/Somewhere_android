@@ -98,6 +98,7 @@
     <string name="fit_bounds_to_markers">Fit bounds to markers</string>
     <string name="disabled_fit_bounds_to_markers">Fit bounds to markers disabled</string>
     <string name="fullscreen_map">Fullscreen map</string>
+    <string name="exit_fullscreen_map">Exit fullscreen map</string>
     <string name="my_location">My location</string>
     <string name="disabled_my_location">My location disabled</string>
     <string name="zoom_out">Zoom out</string>

@@ -40,6 +40,7 @@ import androidx.compose.material.icons.rounded.FlashOff
 import androidx.compose.material.icons.rounded.FlashOn
 import androidx.compose.material.icons.rounded.Flight
 import androidx.compose.material.icons.rounded.Fullscreen
+import androidx.compose.material.icons.rounded.FullscreenExit
 import androidx.compose.material.icons.rounded.Group
 import androidx.compose.material.icons.rounded.Hiking
 import androidx.compose.material.icons.rounded.Hotel
@@ -132,6 +133,7 @@ object MapButtonIcon {
     val fitBoundsToMarkers = MyIcon(R.drawable.fit_bounds_to_markers,           24.dp, false, null, R.string.fit_bounds_to_markers)
     val disabledFitBoundsToMarkers = MyIcon(R.drawable.fit_bounds_to_markers,   24.dp, true, null, R.string.disabled_fit_bounds_to_markers)
     val fullscreen = MyIcon(Icons.Rounded.Fullscreen,               24.dp, false, null, R.string.fullscreen_map)
+    val fullscreenExit = MyIcon(Icons.Rounded.FullscreenExit,       24.dp, false, null, R.string.exit_fullscreen_map)
     val myLocation = MyIcon(Icons.Rounded.MyLocation,               24.dp, false, null, R.string.my_location)
     val disabledMyLocation = MyIcon(Icons.Rounded.LocationDisabled, 24.dp, true, null, R.string.disabled_my_location)
 

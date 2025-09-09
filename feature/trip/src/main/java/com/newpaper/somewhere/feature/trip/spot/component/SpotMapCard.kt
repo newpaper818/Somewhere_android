@@ -156,6 +156,7 @@ fun SpotMapCard(
                 toPrevSpot = toPrevSpot,
                 toNextSpot = toNextSpot,
 
+                isFullscreenMap = isMapExpand,
                 showFullScreenButton = !use2Panes,
                 onFullScreenClicked = onFullScreenClicked,
                 toggleIsEditLocation = toggleIsEditLocation,
@@ -198,6 +199,7 @@ private fun MapSpotMapButtons(
     toPrevSpot: () -> Unit,
     toNextSpot: () -> Unit,
 
+    isFullscreenMap: Boolean,
     showFullScreenButton: Boolean,
     onFullScreenClicked: () -> Unit,
     toggleIsEditLocation: () -> Unit,
@@ -230,6 +232,7 @@ private fun MapSpotMapButtons(
                 fusedLocationClient = fusedLocationClient,
                 cameraPositionState = cameraPositionState,
                 setUserLocationEnabled = setUserLocationEnabled,
+                isFullscreenMap = isFullscreenMap,
                 onFullScreenClicked = onFullScreenClicked,
                 showSnackBar = showSnackBar,
                 showFullScreenButton = showFullScreenButton,
@@ -277,6 +280,7 @@ private fun UserLocationAndFullScreenButtons(
     fusedLocationClient: FusedLocationProviderClient,
     cameraPositionState: CameraPositionState,
     setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
+    isFullscreenMap: Boolean,
     onFullScreenClicked: () -> Unit,
     showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
     showFullScreenButton: Boolean = true,
@@ -288,9 +292,13 @@ private fun UserLocationAndFullScreenButtons(
 
         //fullscreen map
         if (showFullScreenButton) {
-            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.fullscreen.descriptionTextId!!)) {
+            MyPlainTooltipBox(tooltipText = stringResource(id =
+                if (!isFullscreenMap) MapButtonIcon.fullscreen.descriptionTextId!!
+                else                MapButtonIcon.fullscreenExit.descriptionTextId!!
+            )) {
                 IconButton(onClick = onFullScreenClicked) {
-                    DisplayIcon(icon = MapButtonIcon.fullscreen)
+                    if (!isFullscreenMap) DisplayIcon(icon = MapButtonIcon.fullscreen)
+                    else                DisplayIcon(icon = MapButtonIcon.fullscreenExit)
                 }
             }
         }
