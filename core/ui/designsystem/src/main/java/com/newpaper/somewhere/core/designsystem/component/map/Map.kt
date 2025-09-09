@@ -8,6 +8,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -72,6 +74,8 @@ fun MapForTripMap(
         )
     }
 
+    val haptic = LocalHapticFeedback.current
+
 
     GoogleMap(
         modifier = modifier.fillMaxSize().clearAndSetSemantics { },
@@ -108,6 +112,9 @@ fun MapForTripMap(
                             iconColor = dateWithBoolean.date.color.color,
                             onIconColor = dateWithBoolean.date.color.onColor,
                             onClick = {
+                                //haptic
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+
                                 onClickMarker(dateWithBoolean.date, spot)
                             }
                         )
