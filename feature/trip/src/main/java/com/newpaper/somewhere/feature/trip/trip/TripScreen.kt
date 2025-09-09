@@ -380,6 +380,8 @@ private fun TripScreen(
     currentDateIndex: Int? = null,
     currentSpotIndex: Int? = null,
 ){
+    var prevDateIndex: Int? by remember { mutableStateOf(null) }
+
     val coroutineScope = rememberCoroutineScope()
 
     val use2Panes = tripUiInfo.use2Panes
@@ -460,7 +462,15 @@ private fun TripScreen(
         focusManager.clearFocus()
     }
 
-
+    LaunchedEffect(currentDateIndex) {
+        if (use2Panes && currentDateIndex != null && prevDateIndex != null){
+            coroutineScope.launch {
+                scrollState.animateScrollToItem(6 + currentDateIndex)
+            }
+        }
+        if (currentDateIndex != null)
+            prevDateIndex = currentDateIndex
+    }
 
 
 
@@ -891,12 +901,6 @@ private fun TripScreen(
                             },
                             onClickSpotItem = { spot ->
                                 tripNavigate.navigateToSpot(dateIndex, spot.index)
-
-                                if (use2Panes && currentDateIndex != dateIndex){
-                                    coroutineScope.launch {
-                                        scrollState.animateScrollToItem(6 + dateIndex)
-                                    }
-                                }
                             },
                             onClickDeleteSpot = { spot ->
                                 deleteSpot(dateIndex, spot.index)
