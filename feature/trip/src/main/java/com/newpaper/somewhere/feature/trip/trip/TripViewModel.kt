@@ -1,6 +1,7 @@
 package com.newpaper.somewhere.feature.trip.trip
 
 import androidx.lifecycle.ViewModel
+import com.newpaper.somewhere.core.designsystem.theme.dateColorList
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
@@ -196,7 +197,7 @@ class TripViewModel @Inject constructor(
                 while (currDate != endDateAfter1Day) {
 
                     //add Date in dateList
-                    dateList.add(Date(id = index, index = index, date = currDate))
+                    dateList.add(Date(id = index, index = index, date = currDate, color = dateColorList.getOrElse(index) { dateColorList[0] }))
                     index++
                     currDate = currDate.plusDays(1)
                 }
