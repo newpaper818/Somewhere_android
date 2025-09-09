@@ -160,6 +160,7 @@ fun TripRoute(
         }
         else {
             tripViewModel.setLoadingTrip(false)
+            tripViewModel.setShowDateRangeDialog(true)
         }
     }
 

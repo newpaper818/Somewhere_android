@@ -103,6 +103,7 @@ import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.LocalTime
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -933,9 +934,9 @@ private fun Spot1Pane(
     val currentSpotIndex = spotData.currentSpotIndex ?: 0
 
     val dateList = showingTrip.dateList
-    val spotList = dateList[currentDateIndex].spotList
+    val spotList = dateList.getOrNull(currentDateIndex)?.spotList ?: listOf()
 
-    val currentDate = dateList[currentDateIndex]
+    val currentDate = dateList.getOrNull(currentDateIndex) ?: Date(date = LocalDate.now())
     val currentSpot = currentDate.spotList.getOrNull(currentSpotIndex)
 
     val coroutineScope = rememberCoroutineScope()
