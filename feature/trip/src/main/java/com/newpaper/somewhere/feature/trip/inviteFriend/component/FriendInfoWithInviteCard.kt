@@ -5,8 +5,10 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -45,7 +47,9 @@ internal fun FriendInfoWithInviteCard(
             targetOffsetY = { (it * 2.5f).toInt() })
     ) {
         MyCard(
-            shape = MaterialTheme.shapes.extraLarge
+            shape = MaterialTheme.shapes.extraLarge,
+            elevation = CardDefaults.cardElevation(16.dp, 0.dp, 0.dp, 0.dp),
+            modifier = Modifier.navigationBarsPadding()
         ) {
             Column(
                 modifier = Modifier
