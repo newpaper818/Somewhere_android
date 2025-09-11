@@ -22,7 +22,7 @@ zoomable = "1.5.2"
 splashscreen = "1.0.1"
 datastore = "1.1.1"
 qrCode = "1.0.1"
-easyQrScan = "0.1.5"
+easyQrScan = "0.4.0"
 gemini = "0.9.0"
 serialization = "1.7.1"
 
