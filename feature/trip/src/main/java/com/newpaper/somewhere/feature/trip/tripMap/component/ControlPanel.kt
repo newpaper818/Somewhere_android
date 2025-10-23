@@ -45,7 +45,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.google.maps.android.compose.CameraPositionState
-import com.newpaper.somewhere.core.designsystem.component.button.SpotTypeGroupCard
+import com.newpaper.somewhere.core.designsystem.component.button.FilterChipButton
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
@@ -389,13 +389,14 @@ internal fun SpotTypeList(
         items(spotTypeGroupWithShownIconList) {
 
             Row {
-                SpotTypeGroupCard(
-                    spotTypeGroup = it.spotTypeGroup,
+                FilterChipButton(
+                    text = stringResource(it.spotTypeGroup.textId),
                     selected = it.isShown,
-                    onCardClicked = { spotTypeGroup ->
-                        onSpotTypeItemClicked(spotTypeGroup)
-                    },
-                    selectedColor = isShownColor,
+                    onClick = { onSpotTypeItemClicked(it.spotTypeGroup) },
+
+                    selectedButtonColor = isShownColor,
+                    selectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                    notSelectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 MySpacerRow(width = 12.dp)
