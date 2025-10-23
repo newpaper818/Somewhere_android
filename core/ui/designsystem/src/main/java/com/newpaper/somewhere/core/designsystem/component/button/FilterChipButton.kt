@@ -2,25 +2,25 @@ package com.newpaper.somewhere.core.designsystem.component.button
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.designsystem.R
@@ -31,7 +31,7 @@ fun FilterChipButton(
     selected: Boolean,
     onClick: () -> Unit,
 
-    selectedButtonColor: Color = MaterialTheme.colorScheme.inverseSurface, //black
+    selectedButtonColor: Color = MaterialTheme.colorScheme.inverseSurface, //black - at light mode
     notSelectedButtonColor: Color = Color.Transparent, //white
 
     selectedTextColor: Color = MaterialTheme.colorScheme.inverseOnSurface, // white
@@ -41,43 +41,39 @@ fun FilterChipButton(
         if (selected)    selectedButtonColor
         else             notSelectedButtonColor
 
-    val border =
-        if (selected)   null
-        else            BorderStroke(1.5.dp, MaterialTheme.colorScheme.outlineVariant)
-
     val textStyle =
-        if (selected) MaterialTheme.typography.labelLarge.copy(color = selectedTextColor)
-        else    MaterialTheme.typography.labelLarge.copy(color = notSelectedTextColor)
+        if (selected) MaterialTheme.typography.labelMedium.copy(color = selectedTextColor, fontWeight = FontWeight.SemiBold)
+        else    MaterialTheme.typography.labelMedium.copy(color = notSelectedTextColor, fontWeight = FontWeight.SemiBold)
 
     val selectedText = stringResource(id = R.string.selected)
     val notSelectedText = stringResource(id = R.string.not_selected)
     val toggle = stringResource(id = R.string.toggle)
 
 
-    Button(
-        colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
-        border = border,
-        contentPadding = PaddingValues(12.dp, 0.dp, 12.dp, 1.dp),
+    val buttonModifier = Modifier.semantics {
+        stateDescription = if (selected) selectedText else notSelectedText
+        onClick(
+            label = toggle,
+            action = {
+                onClick()
+                true
+            }
+        )
+    }
+
+    ClickableBox(
+        modifier = if (!selected) buttonModifier.border(0.8.dp, MaterialTheme.colorScheme.surfaceVariant, CircleShape)
+                    else buttonModifier,
         onClick = onClick,
-        modifier = Modifier.semantics {
-            stateDescription = if (selected) selectedText else notSelectedText
-            onClick(
-                label = toggle,
-                action = {
-                    onClick()
-                    true
-                }
-            )
-        }
+        containerColor = buttonColor,
+        shape = CircleShape,
+
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = text,
-                style = textStyle
-            )
-        }
+        Text(
+            text = text,
+            style = textStyle,
+            modifier = Modifier.padding(14.dp, 8.dp)
+        )
     }
 }
 
