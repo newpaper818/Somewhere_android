@@ -103,7 +103,10 @@
     <string name="theme_auto">Same as device theme</string>
     <string name="map_theme_auto">Same as app theme</string>
 
-
+    <!--TripsDisplayMode.kt-->
+    <string name="all">All</string>
+    <string name="active">Active</string>
+    <string name="past">Past</string>
 
 
 
