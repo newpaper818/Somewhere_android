@@ -151,29 +151,32 @@ class CommonTripViewModel @Inject constructor(
             val isInSharedTripList = trip.managerId != appUserId
 
             val indexOfTrip = if (!isInSharedTripList)
-                commonTripUiState.value.tripInfo.trips?.indexOfFirst { it.id == trip.id }
+                commonTripUiState.value.tripInfo.myTripsGroup?.all?.indexOfFirst { it.id == trip.id }
             else
-                commonTripUiState.value.tripInfo.tempSharedTrips?.indexOfFirst { it.id == trip.id }
+                commonTripUiState.value.tripInfo.tempSharedTripsGroup?.all?.indexOfFirst { it.id == trip.id }
 
             val newTripList = if (!isInSharedTripList)
-                commonTripUiState.value.tripInfo.trips?.toMutableList()
+                commonTripUiState.value.tripInfo.myTripsGroup?.all?.toMutableList()
             else
-                commonTripUiState.value.tripInfo.tempSharedTrips?.toMutableList()
+                commonTripUiState.value.tripInfo.tempSharedTripsGroup?.all?.toMutableList()
 
             if (indexOfTrip != null && indexOfTrip != -1) {
                 newTripList?.set(indexOfTrip, trip)
             }
 
+            val tripsGroup = if (newTripList == null) null
+                            else classifyAndConvertToTripsGroup(newTripList.toList())
+
             if (!isInSharedTripList)
                 commonTripUiStateRepository._commonTripUiState.update {
                     it.copy(
-                        tripInfo = it.tripInfo.copy(trips = newTripList?.toList(), tempTrips = newTripList?.toList())
+                        tripInfo = it.tripInfo.copy(myTripsGroup = tripsGroup, tempMyTripsGroup = tripsGroup)
                     )
                 }
             else
                 commonTripUiStateRepository._commonTripUiState.update {
                     it.copy(
-                        tripInfo = it.tripInfo.copy(sharedTrips = newTripList?.toList(), tempSharedTrips = newTripList?.toList())
+                        tripInfo = it.tripInfo.copy(sharedTripsGroup = tripsGroup, tempSharedTripsGroup = tripsGroup)
                     )
                 }
 
@@ -223,14 +226,14 @@ class CommonTripViewModel @Inject constructor(
             val isInSharedTripList = newTempTrip.managerId != appUserId
 
             val indexOfTempTrip = if (!isInSharedTripList)
-                commonTripUiState.value.tripInfo.tempTrips?.indexOfFirst { it.id == newTempTrip.id }
+                commonTripUiState.value.tripInfo.tempMyTripsGroup?.all?.indexOfFirst { it.id == newTempTrip.id }
             else
-                commonTripUiState.value.tripInfo.tempSharedTrips?.indexOfFirst { it.id == newTempTrip.id }
+                commonTripUiState.value.tripInfo.tempSharedTripsGroup?.all?.indexOfFirst { it.id == newTempTrip.id }
 
             val newTripList = if (!isInSharedTripList)
-                commonTripUiState.value.tripInfo.tempTrips?.toMutableList()
+                commonTripUiState.value.tripInfo.tempMyTripsGroup?.all?.toMutableList()
             else
-                commonTripUiState.value.tripInfo.tempSharedTrips?.toMutableList()
+                commonTripUiState.value.tripInfo.tempSharedTripsGroup?.all?.toMutableList()
 
 
             if (indexOfTempTrip != null && indexOfTempTrip != -1) {
@@ -240,14 +243,17 @@ class CommonTripViewModel @Inject constructor(
                 newTripList?.add(newTempTrip)
             }
 
+            val tripsGroup = if (newTripList == null) null
+                                else classifyAndConvertToTripsGroup(newTripList.toList())
+
             commonTripUiStateRepository._commonTripUiState.update {
                 if (!isInSharedTripList)
                     it.copy(tripInfo = it.tripInfo.copy(
-                        trips = newTripList, tempTrips = newTripList
+                        myTripsGroup = tripsGroup, tempMyTripsGroup = tripsGroup
                     ))
                 else
                     it.copy(tripInfo = it.tripInfo.copy(
-                        sharedTrips = newTripList, tempSharedTrips = newTripList
+                        sharedTripsGroup = tripsGroup, tempSharedTripsGroup = tripsGroup
                     ))
             }
 
@@ -269,8 +275,8 @@ class CommonTripViewModel @Inject constructor(
         commonTripUiStateRepository._commonTripUiState.update {
             it.copy(
                 tripInfo = it.tripInfo.copy(
-                    tempTrips = it.tripInfo.trips,
-                    tempSharedTrips = it.tripInfo.tempSharedTrips
+                    tempMyTripsGroup = it.tripInfo.myTripsGroup,
+                    tempSharedTripsGroup = it.tripInfo.tempSharedTripsGroup
                 )
             )
         }
@@ -427,11 +433,14 @@ class CommonTripViewModel @Inject constructor(
     //==============================================================================================
     //edit trip ====================================================================================
     fun deleteTempTrip(trip: Trip){
-        val newTempTripList = commonTripUiState.value.tripInfo.tempTrips?.toMutableList()
+        val newTempTripList = commonTripUiState.value.tripInfo.tempMyTripsGroup?.all?.toMutableList()
         newTempTripList?.remove(trip)
+        val tempMyTripsGroup = if (newTempTripList == null) null
+                            else classifyAndConvertToTripsGroup(newTempTripList)
+
         commonTripUiStateRepository._commonTripUiState.update {
             it.copy(
-                tripInfo = it.tripInfo.copy(tempTrips = newTempTripList)
+                tripInfo = it.tripInfo.copy(tempMyTripsGroup = tempMyTripsGroup)
             )
         }
     }

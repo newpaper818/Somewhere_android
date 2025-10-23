@@ -58,6 +58,7 @@ import com.newpaper.somewhere.core.model.enums.TripsDisplayMode
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
+import com.newpaper.somewhere.core.model.tripData.TripsGroup
 import com.newpaper.somewhere.core.ui.GoogleBannerAd
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
@@ -121,20 +122,11 @@ fun TripsRoute(
 
     val isEditMode = commonTripUiState.isEditMode
 
-    val originalTrips = commonTripUiState.tripInfo.trips ?: listOf()
-    val tempTrips = commonTripUiState.tripInfo.tempTrips ?: listOf()
-    val originalSharedTrips = commonTripUiState.tripInfo.sharedTrips ?: listOf()
-    val tempSharedTrips = commonTripUiState.tripInfo.tempSharedTrips ?: listOf()
+    val myTripsGroup = commonTripUiState.tripInfo.myTripsGroup ?: TripsGroup()
+    val tempMyTripsGroup = commonTripUiState.tripInfo.tempMyTripsGroup ?: TripsGroup()
 
-    val (allMyTrips, activeMyTrips, pastMyTrips)  = classifyTrips(originalTrips)
-    val (allMyTempTrips, activeMyTempTrips, pastMyTempTrips)  = if (originalTrips == tempTrips)  Triple(allMyTrips, activeMyTrips, pastMyTrips)
-                                                                else classifyTrips(tempTrips)
-
-    val (allSharedTrips, activeSharedTrips, pastSharedTrips)  = classifyTrips(originalSharedTrips)
-    val (allSharedTempTrips, activeSharedTempTrips, pastSharedTempTrips)  = if (originalSharedTrips == tempSharedTrips)  Triple(allSharedTrips, activeSharedTrips, pastSharedTrips)
-                                                                                    else classifyTrips(tempSharedTrips)
-
-
+    val sharedTripsGroup = commonTripUiState.tripInfo.sharedTripsGroup ?: TripsGroup()
+    val tempSharedTripsGroup = commonTripUiState.tripInfo.tempSharedTripsGroup ?: TripsGroup()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -225,20 +217,20 @@ fun TripsRoute(
 
     val showingTrips =
         when (tripsUiState.tripsDisplayMode){
-            TripsDisplayMode.ALL -> if (!isEditMode) allMyTrips else allMyTempTrips
-            TripsDisplayMode.ACTIVE -> if (!isEditMode) activeMyTrips else activeMyTempTrips
-            TripsDisplayMode.PAST -> if (!isEditMode) pastMyTrips else pastMyTempTrips
+            TripsDisplayMode.ALL ->     if (!isEditMode) myTripsGroup.all       else tempMyTripsGroup.all
+            TripsDisplayMode.ACTIVE ->  if (!isEditMode) myTripsGroup.active    else tempMyTripsGroup.active
+            TripsDisplayMode.PAST ->    if (!isEditMode) myTripsGroup.past      else tempMyTripsGroup.past
         }
 
     val showingSharedTrips =
         when (tripsUiState.tripsDisplayMode){
-            TripsDisplayMode.ALL -> if (!isEditMode) allSharedTrips else allSharedTempTrips
-            TripsDisplayMode.ACTIVE -> if (!isEditMode) activeSharedTrips else activeSharedTempTrips
-            TripsDisplayMode.PAST -> if (!isEditMode) pastSharedTrips else pastSharedTempTrips
+            TripsDisplayMode.ALL ->     if (!isEditMode) sharedTripsGroup.all       else tempSharedTripsGroup.all
+            TripsDisplayMode.ACTIVE ->  if (!isEditMode) sharedTripsGroup.active    else tempSharedTripsGroup.active
+            TripsDisplayMode.PAST ->    if (!isEditMode) sharedTripsGroup.past      else tempSharedTripsGroup.past
         }
 
     val onClickBackButton = {
-        if (originalTrips != tempTrips || originalSharedTrips != tempSharedTrips)
+        if (myTripsGroup != tempMyTripsGroup || sharedTripsGroup != tempSharedTripsGroup)
             tripsViewModel.setShowExitDialog(true)
         else
             commonTripViewModel.setIsEditMode(false)

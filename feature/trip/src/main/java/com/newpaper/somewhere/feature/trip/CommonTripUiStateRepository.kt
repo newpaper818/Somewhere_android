@@ -1,17 +1,18 @@
 package com.newpaper.somewhere.feature.trip
 
 import com.newpaper.somewhere.core.model.tripData.Trip
+import com.newpaper.somewhere.core.model.tripData.TripsGroup
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 data class TripInfo(
-    val trips: List<Trip>? = null,
-    val tempTrips: List<Trip>? = null,
+    val myTripsGroup: TripsGroup? = null,
+    val tempMyTripsGroup: TripsGroup? = null,
 
-    val sharedTrips: List<Trip>? = null,
-    val tempSharedTrips: List<Trip>? = null,
+    val sharedTripsGroup: TripsGroup? = null,
+    val tempSharedTripsGroup: TripsGroup? = null,
 
     val trip: Trip? = null,
     val tempTrip: Trip? = null,

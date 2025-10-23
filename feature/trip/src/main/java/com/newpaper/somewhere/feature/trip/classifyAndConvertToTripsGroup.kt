@@ -1,15 +1,17 @@
-package com.newpaper.somewhere.feature.trip.trips
+package com.newpaper.somewhere.feature.trip
 
 import com.newpaper.somewhere.core.model.tripData.Trip
+import com.newpaper.somewhere.core.model.tripData.TripsGroup
 import java.time.LocalDate
 import java.time.ZonedDateTime
+import kotlin.collections.forEach
 
 /**
  * Classify Trips to (all / active / past) trips
  * */
-internal fun classifyTrips(
+internal fun classifyAndConvertToTripsGroup(
     trips: List<Trip>,
-): Triple<List<Trip>, List<Trip>, List<Trip>> {
+): TripsGroup {
 
     val allTrips = trips
     val activeTrips = mutableListOf<Trip>()
@@ -26,5 +28,5 @@ internal fun classifyTrips(
         }
     }
 
-    return Triple(allTrips, activeTrips, pastTrips)
+    return TripsGroup(allTrips, activeTrips, pastTrips)
 }

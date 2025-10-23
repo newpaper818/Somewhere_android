@@ -9,6 +9,7 @@ import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.utils.getTripId
 import com.newpaper.somewhere.feature.trip.CommonTripUiStateRepository
+import com.newpaper.somewhere.feature.trip.classifyAndConvertToTripsGroup
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -172,7 +173,7 @@ class TripsViewModel @Inject constructor(
 
         // all trip data(not really all, user have to go to TripScreen) will be saved before execute app
         for (trip in newTripList) {
-            val matchingOldTrip = commonTripUiState.value.tripInfo.trips?.find { it.id == trip.id }
+            val matchingOldTrip = commonTripUiState.value.tripInfo.myTripsGroup?.all?.find { it.id == trip.id }
 
             if (matchingOldTrip != null){
                 trip.dateList = matchingOldTrip.dateList
@@ -181,7 +182,7 @@ class TripsViewModel @Inject constructor(
 
         //sharedTrip
         for (trip in newSharedTripList) {
-            val matchingOldTrip = commonTripUiState.value.tripInfo.sharedTrips?.find { it.id == trip.id }
+            val matchingOldTrip = commonTripUiState.value.tripInfo.sharedTripsGroup?.all?.find { it.id == trip.id }
 
             if (matchingOldTrip != null){
                 trip.dateList = matchingOldTrip.dateList
@@ -194,16 +195,20 @@ class TripsViewModel @Inject constructor(
             allTrips = newTripList + newSharedTripList
         )
 
+        val myTripsGroup = classifyAndConvertToTripsGroup(newTripList)
+        val sharedTripsGroup = classifyAndConvertToTripsGroup(newSharedTripList)
+
         commonTripUiStateRepository._commonTripUiState.update {
             it.copy(
                 tripInfo = it.tripInfo.copy(
-                    trips = newTripList, tempTrips = newTripList,
-                    sharedTrips = newSharedTripList, tempSharedTrips = newSharedTripList
+                    myTripsGroup = myTripsGroup, tempMyTripsGroup = myTripsGroup,
+                    sharedTripsGroup = sharedTripsGroup, tempSharedTripsGroup = sharedTripsGroup
 
                 )
             )
         }
     }
+
 
     /** update glance spot info */
     fun findCurrentDateTripAndUpdateGlanceTrip(
@@ -215,8 +220,8 @@ class TripsViewModel @Inject constructor(
         val currentDateTime = LocalDateTime.now()
         val currentDate = currentDateTime.toLocalDate()
 
-        val tripList: List<Trip> = (commonTripUiState.value.tripInfo.trips ?: listOf()) +
-                (commonTripUiState.value.tripInfo.sharedTrips ?: listOf())
+        val tripList: List<Trip> = (commonTripUiState.value.tripInfo.myTripsGroup?.all ?: listOf()) +
+                (commonTripUiState.value.tripInfo.sharedTripsGroup?.all ?: listOf())
 
         //find trip that include current date
         for (trip in tripList) {
@@ -400,13 +405,13 @@ class TripsViewModel @Inject constructor(
         )
 
         //update tripUiState tempTripList
-        val tempTripList = (commonTripUiState.value.tripInfo.tempTrips ?: listOf<Trip>()).toMutableList()
+        val tempTripList = (commonTripUiState.value.tripInfo.tempMyTripsGroup?.all ?: listOf<Trip>()).toMutableList()
         tempTripList.add(0, newTrip)
 
         commonTripUiStateRepository._commonTripUiState.update {
             it.copy(
                 tripInfo = it.tripInfo.copy(
-                    tempTrips = tempTripList
+                    tempMyTripsGroup = classifyAndConvertToTripsGroup(tempTripList)
                 )
             )
         }
@@ -420,7 +425,7 @@ class TripsViewModel @Inject constructor(
     ): Trip{
         //get last orderId
         var newOrderId = 0
-        val lastTrip = commonTripUiState.value.tripInfo.trips?.firstOrNull()
+        val lastTrip = commonTripUiState.value.tripInfo.myTripsGroup?.all?.firstOrNull()
         if (lastTrip != null) { newOrderId = lastTrip.orderId - 1 }
 
         val newId = getTripId(
@@ -452,15 +457,14 @@ class TripsViewModel @Inject constructor(
 
     /** delete given [trip] from tempTripList */
     private fun deleteTripFromTempTrip(trip: Trip){
-        commonTripUiState.value.tripInfo.tempTrips
-        if (commonTripUiState.value.tripInfo.tempTrips != null) {
-            val newTempTripList = commonTripUiState.value.tripInfo.tempTrips!!.toMutableList()
+        if (commonTripUiState.value.tripInfo.tempMyTripsGroup?.all != null) {
+            val newTempTripList = commonTripUiState.value.tripInfo.tempMyTripsGroup!!.all.toMutableList()
             newTempTripList.remove(trip)
 
             commonTripUiStateRepository._commonTripUiState.update {
                 it.copy(
                     tripInfo = it.tripInfo.copy(
-                        tempTrips = newTempTripList.toList()
+                        tempMyTripsGroup = classifyAndConvertToTripsGroup(newTempTripList.toList())
                     )
                 )
             }
@@ -477,8 +481,8 @@ class TripsViewModel @Inject constructor(
 
     /** delete given [trip] from tempSharedTripList */
     fun deleteTripFromTempSharedTrip(trip: Trip){
-        if (commonTripUiState.value.tripInfo.tempSharedTrips != null) {
-            val newTempSharedTripList = commonTripUiState.value.tripInfo.tempSharedTrips!!.toMutableList()
+        if (commonTripUiState.value.tripInfo.tempSharedTripsGroup?.all != null) {
+            val newTempSharedTripList = commonTripUiState.value.tripInfo.tempSharedTripsGroup!!.all.toMutableList()
             newTempSharedTripList.removeIf {
                 it.id == trip.id && it.managerId == trip.managerId
             }
@@ -486,7 +490,7 @@ class TripsViewModel @Inject constructor(
             commonTripUiStateRepository._commonTripUiState.update {
                 it.copy(
                     tripInfo = it.tripInfo.copy(
-                        tempSharedTrips = newTempSharedTripList.toList()
+                        tempSharedTripsGroup = classifyAndConvertToTripsGroup(newTempSharedTripList.toList())
                     )
                 )
             }
@@ -505,8 +509,8 @@ class TripsViewModel @Inject constructor(
         commonTripUiStateRepository._commonTripUiState.update {
             it.copy(
                 tripInfo = it.tripInfo.copy(
-                    trips = it.tripInfo.tempTrips,
-                    sharedTrips = it.tripInfo.tempSharedTrips
+                    myTripsGroup = it.tripInfo.tempMyTripsGroup,
+                    sharedTripsGroup = it.tripInfo.tempSharedTripsGroup
                 )
             )
         }
@@ -532,8 +536,8 @@ class TripsViewModel @Inject constructor(
             it.copy(
                 isEditMode = false,
                 tripInfo = it.tripInfo.copy(
-                    trips = it.tripInfo.tempTrips,
-                    sharedTrips = it.tripInfo.tempSharedTrips
+                    myTripsGroup = it.tripInfo.tempMyTripsGroup,
+                    sharedTripsGroup = it.tripInfo.tempSharedTripsGroup
                 )
             )
         }
@@ -541,7 +545,7 @@ class TripsViewModel @Inject constructor(
         //save myTrips to firestore
         tripsRepository.saveTrips(
             appUserId = appUserId,
-            myTrips = commonTripUiState.value.tripInfo.tempTrips ?: listOf(),
+            myTrips = commonTripUiState.value.tripInfo.tempMyTripsGroup?.all ?: listOf(),
             deletedTripsIds = tripsUiState.value.deletedTripIds,
             deletedSharedTrips = tripsUiState.value.deletedSharedTrips
         )
@@ -549,7 +553,7 @@ class TripsViewModel @Inject constructor(
         //update sharedTrips order to firestore
         tripsRepository.updateSharedTripsOrder(
             appUserId = appUserId,
-            sharedTripList = commonTripUiState.value.tripInfo.tempSharedTrips ?: listOf()
+            sharedTripList = commonTripUiState.value.tripInfo.tempSharedTripsGroup?.all ?: listOf()
         )
 
         //init deletedTripsIdList
@@ -567,10 +571,9 @@ class TripsViewModel @Inject constructor(
         currentIndex: Int,
         destinationIndex: Int
     ){
-        commonTripUiState.value.tripInfo.tempTrips
         //only at edit mode
-        if (!isSharedTripList && commonTripUiState.value.tripInfo.tempTrips != null) {
-            val newTrips = commonTripUiState.value.tripInfo.tempTrips!!.toMutableList()
+        if (!isSharedTripList && commonTripUiState.value.tripInfo.tempMyTripsGroup?.all != null) {
+            val newTrips = commonTripUiState.value.tripInfo.tempMyTripsGroup!!.all.toMutableList()
             val trip = newTrips[currentIndex]
             newTrips.removeAt(currentIndex)
             newTrips.add(destinationIndex, trip)
@@ -582,13 +585,13 @@ class TripsViewModel @Inject constructor(
             commonTripUiStateRepository._commonTripUiState.update {
                 it.copy(
                     tripInfo = it.tripInfo.copy(
-                        tempTrips = newTrips.toList()
+                        tempMyTripsGroup = classifyAndConvertToTripsGroup(newTrips.toList())
                     )
                 )
             }
         }
-        else if (isSharedTripList && commonTripUiState.value.tripInfo.tempSharedTrips != null){
-            val newTrips = commonTripUiState.value.tripInfo.tempSharedTrips!!.toMutableList()
+        else if (isSharedTripList && commonTripUiState.value.tripInfo.tempSharedTripsGroup?.all != null){
+            val newTrips = commonTripUiState.value.tripInfo.tempSharedTripsGroup!!.all.toMutableList()
             val trip = newTrips[currentIndex]
             newTrips.removeAt(currentIndex)
             newTrips.add(destinationIndex, trip)
@@ -600,7 +603,7 @@ class TripsViewModel @Inject constructor(
             commonTripUiStateRepository._commonTripUiState.update {
                 it.copy(
                     tripInfo = it.tripInfo.copy(
-                        tempSharedTrips = newTrips.toList()
+                        tempSharedTripsGroup = classifyAndConvertToTripsGroup(newTrips.toList())
                     )
                 )
             }
