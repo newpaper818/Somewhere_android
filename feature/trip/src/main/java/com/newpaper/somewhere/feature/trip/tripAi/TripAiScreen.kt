@@ -168,7 +168,7 @@ fun TripAiRoute(
 
                     //add id time in ai created raw trip
                     var newOrderId = 0
-                    val lastTrip = commonTripViewModel.commonTripUiState.value.tripInfo.trips?.firstOrNull()
+                    val lastTrip = commonTripViewModel.commonTripUiState.value.tripInfo.myTripsGroup?.all?.firstOrNull()
                     if (lastTrip != null) {
                         newOrderId = lastTrip.orderId - 1
                     }
