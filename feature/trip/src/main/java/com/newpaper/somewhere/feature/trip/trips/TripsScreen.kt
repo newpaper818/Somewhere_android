@@ -247,6 +247,8 @@ fun TripsRoute(
             _firstLaunchToFalse = firstLaunchToFalse,
             loadingTrips = tripsUiState.loadingTrips,
             _setIsLoadingTrips = tripsViewModel::setLoadingTrips,
+            tripsDisplayMode = tripsUiState.tripsDisplayMode,
+            _setTripsDisplayMode = tripsViewModel::setTripsDisplayMode,
             isEditMode = isEditMode,
             _setIsEditMode = commonTripViewModel::setIsEditMode
         ),

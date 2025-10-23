@@ -3,6 +3,7 @@ package com.newpaper.somewhere.feature.trip.trips
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
+import com.newpaper.somewhere.core.model.enums.TripsDisplayMode
 import com.newpaper.somewhere.core.model.tripData.Trip
 
 
@@ -19,6 +20,9 @@ internal data class TripsUiInfo(
     val loadingTrips: Boolean = false,
     private val _setIsLoadingTrips: (loadingTrips: Boolean) -> Unit = {},
 
+    val tripsDisplayMode: TripsDisplayMode = TripsDisplayMode.ACTIVE,
+    private val _setTripsDisplayMode: (tripsDisplayMode: TripsDisplayMode) -> Unit = {},
+
     val isEditMode: Boolean = false,
     private val _setIsEditMode: (isEditMode: Boolean?) -> Unit = {},
 ){
@@ -26,6 +30,8 @@ internal data class TripsUiInfo(
         _firstLaunchToFalse() }
     fun setIsLoadingTrips(loadingTrips: Boolean){
         _setIsLoadingTrips(loadingTrips) }
+    fun setTripsDisplayMode(tripsDisplayMode: TripsDisplayMode){
+        _setTripsDisplayMode(tripsDisplayMode) }
     fun setIsEditMode(isEditMode: Boolean?){
         _setIsEditMode(isEditMode) }
 }

@@ -103,7 +103,10 @@
     <string name="theme_auto">기기 테마와 동일</string>
     <string name="map_theme_auto">앱 테마와 동일</string>
 
-
+    <!--TripsDisplayMode.kt-->
+    <string name="all">전체</string>
+    <string name="active">진행 중 / 예정</string>
+    <string name="past">지난 여행</string>
 
 
 

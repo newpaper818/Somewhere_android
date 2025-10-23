@@ -3,6 +3,7 @@ package com.newpaper.somewhere.feature.trip.trips
 import androidx.lifecycle.ViewModel
 import com.newpaper.somewhere.core.data.repository.image.CommonImageRepository
 import com.newpaper.somewhere.core.data.repository.trip.TripsRepository
+import com.newpaper.somewhere.core.model.enums.TripsDisplayMode
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
@@ -31,6 +32,8 @@ data class TripsUiState(
     val glance: Glance = Glance(),
 
     val loadingTrips: Boolean = true,
+
+    val tripsDisplayMode: TripsDisplayMode = TripsDisplayMode.ACTIVE,
 
     val isShowingDialog: Boolean = false,
     val showTripCreationOptionsDialog: Boolean = false,
@@ -74,6 +77,16 @@ class TripsViewModel @Inject constructor(
     ){
         _tripsUiState.update {
             it.copy(loadingTrips = isLoadingTrips)
+        }
+    }
+
+    fun setTripsDisplayMode(
+        tripsDisplayMode: TripsDisplayMode
+    ){
+        _tripsUiState.update {
+            it.copy(
+                tripsDisplayMode = tripsDisplayMode
+            )
         }
     }
 
