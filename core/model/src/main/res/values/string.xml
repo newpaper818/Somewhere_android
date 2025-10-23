@@ -103,18 +103,8 @@
     <string name="theme_auto">Same as device theme</string>
     <string name="map_theme_auto">Same as app theme</string>
 
-    <!--TripType.kt-->
-    <string name="trip_type_cultural_experiences">Cultural experiences</string>
-    <string name="trip_type_historical_sites">Historical sites</string>
-    <string name="trip_type_exhibitions_museums">Exhibitions &amp; Museums</string>
-    <string name="trip_type_sports_activity">Sports &amp; Activity</string>
-    <string name="trip_type_great_food">Great food</string>
-    <string name="trip_type_shopping">Shopping</string>
 
-    <!--TripWith.kt-->
-    <string name="trip_with_solo">Solo</string>
-    <string name="trip_with_partner">Partner</string>
-    <string name="trip_with_friends">Friends</string>
-    <string name="trip_with_family">Family</string>
+
+
 
 </resources>
