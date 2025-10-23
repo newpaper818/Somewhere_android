@@ -75,6 +75,7 @@ import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.trips.component.GlanceSpot
 import com.newpaper.somewhere.feature.trip.trips.component.LoadingTripsItem
 import com.newpaper.somewhere.feature.trip.trips.component.NoTripCard
+import com.newpaper.somewhere.feature.trip.trips.component.TripFilterChips
 import com.newpaper.somewhere.feature.trip.trips.component.TripItem
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
@@ -556,6 +557,13 @@ private fun TripsScreen(
                             }
                         }
                     }
+                }
+
+                item {
+                    TripFilterChips(
+                        tripsDisplayMode = tripsUiInfo.tripsDisplayMode,
+                        onClickTripsDisplayMode = tripsUiInfo::setTripsDisplayMode
+                    )
                 }
 
 
