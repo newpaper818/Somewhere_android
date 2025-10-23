@@ -77,7 +77,7 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
-private val SHEET_PEEK_HEIGHT = 150.dp
+private val SHEET_PEEK_HEIGHT = 136.dp
 private const val CONTROL_PANEL_MAX_WIDTH = 420 //use at horizontal layout-
 private const val CONTROL_PANEL_MIN_WIDTH = 366
 

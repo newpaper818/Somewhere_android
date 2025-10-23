@@ -383,7 +383,7 @@ internal fun SpotTypeList(
 ){
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(0.dp),
-        contentPadding = PaddingValues(16.dp, 8.dp, 4.dp, 8.dp),
+        contentPadding = PaddingValues(16.dp, 12.dp, 4.dp, 12.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
         items(spotTypeGroupWithShownIconList) {
@@ -415,7 +415,7 @@ internal fun DateList(
     LazyColumn(
         state = dateListState,
         modifier = Modifier
-            .padding(16.dp, 8.dp, 16.dp, 16.dp)
+            .padding(16.dp, 0.dp, 16.dp, 16.dp)
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
     ) {
