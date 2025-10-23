@@ -2,6 +2,7 @@ package com.newpaper.somewhere.core.firebase_firestore.dataSource.trip.trips
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.WriteBatch
@@ -40,11 +41,11 @@ class TripsFirestoreApi @Inject constructor(
         val source = if (internetEnabled) Source.DEFAULT else Source.CACHE
         val tripList = CompletableDeferred<List<Trip>>()
 
-        Log.d(FIREBASE_FIRESTORE_TRIPS_TAG, "get my trips order by id - userId: $userId ")
+        Log.d(FIREBASE_FIRESTORE_TRIPS_TAG, "get my trips - userId: $userId ")
 
         firestoreDb.collection(USERS).document(userId)
             .collection(TRIPS)
-            .orderBy("orderId")
+            .orderBy("startDate", Query.Direction.DESCENDING)
             .get(source)
             .addOnSuccessListener { trips ->
                 val newTripList = trips.map { it.toObject<TripFirestore>().toTrip(
@@ -89,7 +90,7 @@ class TripsFirestoreApi @Inject constructor(
             tripList.add(trip.await())
         }
 
-        return tripList.filterNotNull()
+        return tripList.filterNotNull().sortedByDescending { it.startDate }
     }
 
     override suspend fun saveTrips(
