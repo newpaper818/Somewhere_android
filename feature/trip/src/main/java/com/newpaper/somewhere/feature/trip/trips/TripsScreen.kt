@@ -366,16 +366,6 @@ private fun TripsScreen(
     val showingSharedTrips = tripsData.showingSharedTrips
     val glance = tripsData.glance
 
-    val density = LocalDensity.current
-    var lazyColumnHeightDp by rememberSaveable { mutableIntStateOf(0) }
-
-    val slideStates = remember { mutableStateMapOf(
-        *showingTrips.map { it.id to SlideState.NONE }.toTypedArray()
-    ) }
-
-    val sharedTripsSlideStates = remember { mutableStateMapOf(
-        *showingSharedTrips.map { it.id to SlideState.NONE }.toTypedArray()
-    ) }
 
     val tripsIsEmpty = showingTrips.isEmpty() && showingSharedTrips.isEmpty()
 
@@ -519,14 +509,7 @@ private fun TripsScreen(
             contentAlignment = Alignment.TopCenter
         ) {
 
-            val lazyColumnModifier = modifier
-                .fillMaxSize()
-                .onSizeChanged {
-                    with(density) {
-                        lazyColumnHeightDp = it.height.toDp().value.toInt()
-                    }
-                }
-
+            val lazyColumnModifier = modifier.fillMaxSize()
 
 
             //display trips list (my trips + shared trips)
