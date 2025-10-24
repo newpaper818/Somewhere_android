@@ -10,21 +10,25 @@ class TripsRepository @Inject constructor(
 ) {
     suspend fun getMyTrips(
         internetEnabled: Boolean,
-        userId: String
+        userId: String,
+        orderByLatest: Boolean
     ): List<Trip> {
         return tripsRemoteDataSource.getMyTrips(
             internetEnabled = internetEnabled,
-            userId = userId
+            userId = userId,
+            orderByLatest = orderByLatest
         )
     }
 
     suspend fun getSharedTrips(
         internetEnabled: Boolean,
         appUserId: String,
+        orderByLatest: Boolean
     ): List<Trip> {
         return tripsRemoteDataSource.getSharedTrips(
             internetEnabled = internetEnabled,
-            appUserId = appUserId
+            appUserId = appUserId,
+            orderByLatest = orderByLatest
         )
     }
 
