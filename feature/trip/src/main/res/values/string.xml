@@ -160,4 +160,6 @@
 
     <string name="no_trip">No Trip…\nLet\'s create a new trip!</string>
 
+    <string name="delete">delete</string>
+
 </resources>

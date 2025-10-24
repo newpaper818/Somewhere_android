@@ -160,4 +160,6 @@
 
     <string name="no_trip">여행이 없어요…\n새 여행을 추가해 보세요!</string>
 
+    <string name="delete">삭제</string>
+
 </resources>
