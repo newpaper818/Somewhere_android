@@ -26,7 +26,6 @@ fun MyScaffold(
     onClickSave: () -> Unit = {},
     saveEnabled: Boolean = true,
 
-    use2PanesAndSpotScreen: Boolean = false,
     useBottomNavBar: Boolean = false,
 
     topBar: @Composable () -> Unit = {},
@@ -64,7 +63,6 @@ fun MyScaffold(
                 onClickSave = onClickSave,
                 modifier = buttonsModifier,
                 saveEnabled = saveEnabled,
-                use2PanesAndSpotScreen = use2PanesAndSpotScreen,
                 useBottomNavBar = useBottomNavBar
             )
 

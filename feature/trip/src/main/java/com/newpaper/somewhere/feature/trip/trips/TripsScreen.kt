@@ -24,7 +24,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
@@ -54,16 +53,18 @@ import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.data.UserData
+import com.newpaper.somewhere.core.model.enums.TripsDisplayMode
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
+import com.newpaper.somewhere.core.model.tripData.TripsGroup
 import com.newpaper.somewhere.core.ui.GoogleBannerAd
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
 import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.convert.getAllImagesPath
 import com.newpaper.somewhere.core.utils.convert.getMaxTrips
-import com.newpaper.somewhere.core.utils.enterVerticallyDelay
+import com.newpaper.somewhere.core.utils.enterVerticallyDelayForMaxTrips
 import com.newpaper.somewhere.core.utils.exitVertically
 import com.newpaper.somewhere.core.utils.itemMaxWidth
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.DeleteOrLeaveTripDialog
@@ -75,6 +76,7 @@ import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.trips.component.GlanceSpot
 import com.newpaper.somewhere.feature.trip.trips.component.LoadingTripsItem
 import com.newpaper.somewhere.feature.trip.trips.component.NoTripCard
+import com.newpaper.somewhere.feature.trip.trips.component.TripFilterChipsWithSortOrderButton
 import com.newpaper.somewhere.feature.trip.trips.component.TripItem
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
@@ -119,11 +121,11 @@ fun TripsRoute(
 
     val isEditMode = commonTripUiState.isEditMode
 
-    val originalTrips = commonTripUiState.tripInfo.trips ?: listOf()
-    val tempTrips = commonTripUiState.tripInfo.tempTrips ?: listOf()
+    val myTripsGroup = commonTripUiState.tripInfo.myTripsGroup ?: TripsGroup()
+    val tempMyTripsGroup = commonTripUiState.tripInfo.tempMyTripsGroup ?: TripsGroup()
 
-    val originalSharedTrips = commonTripUiState.tripInfo.sharedTrips ?: listOf()
-    val tempSharedTrips = commonTripUiState.tripInfo.tempSharedTrips ?: listOf()
+    val sharedTripsGroup = commonTripUiState.tripInfo.sharedTripsGroup ?: TripsGroup()
+    val tempSharedTripsGroup = commonTripUiState.tripInfo.tempSharedTripsGroup ?: TripsGroup()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -166,7 +168,8 @@ fun TripsRoute(
         //update trips
         tripsViewModel.updateTrips(
             internetEnabled = internetEnabled,
-            appUserId = appUserData.userId
+            appUserId = appUserData.userId,
+            orderByLatest = tripsUiState.isTripsSortOrderByLatest
         )
         tripsViewModel.setLoadingTrips(false)
 
@@ -213,15 +216,21 @@ fun TripsRoute(
 
 
     val showingTrips =
-        if (isEditMode) tempTrips
-        else            originalTrips
+        when (tripsUiState.tripsDisplayMode){
+            TripsDisplayMode.ALL ->     if (!isEditMode) myTripsGroup.all       else tempMyTripsGroup.all
+            TripsDisplayMode.ACTIVE ->  if (!isEditMode) myTripsGroup.active    else tempMyTripsGroup.active
+            TripsDisplayMode.PAST ->    if (!isEditMode) myTripsGroup.past      else tempMyTripsGroup.past
+        }
 
     val showingSharedTrips =
-        if (isEditMode) tempSharedTrips
-        else            originalSharedTrips
+        when (tripsUiState.tripsDisplayMode){
+            TripsDisplayMode.ALL ->     if (!isEditMode) sharedTripsGroup.all       else tempSharedTripsGroup.all
+            TripsDisplayMode.ACTIVE ->  if (!isEditMode) sharedTripsGroup.active    else tempSharedTripsGroup.active
+            TripsDisplayMode.PAST ->    if (!isEditMode) sharedTripsGroup.past      else tempSharedTripsGroup.past
+        }
 
     val onClickBackButton = {
-        if (originalTrips != tempTrips || originalSharedTrips != tempSharedTrips)
+        if (myTripsGroup != tempMyTripsGroup || sharedTripsGroup != tempSharedTripsGroup)
             tripsViewModel.setShowExitDialog(true)
         else
             commonTripViewModel.setIsEditMode(false)
@@ -247,6 +256,10 @@ fun TripsRoute(
             _firstLaunchToFalse = firstLaunchToFalse,
             loadingTrips = tripsUiState.loadingTrips,
             _setIsLoadingTrips = tripsViewModel::setLoadingTrips,
+            tripsDisplayMode = tripsUiState.tripsDisplayMode,
+            _setTripsDisplayMode = tripsViewModel::setTripsDisplayMode,
+            isTripsSortOrderByLatest = tripsUiState.isTripsSortOrderByLatest,
+            _setIsTripsSortOrderByLatest = tripsViewModel::setIsTripsSortOrderByLatest,
             isEditMode = isEditMode,
             _setIsEditMode = commonTripViewModel::setIsEditMode
         ),
@@ -353,20 +366,12 @@ private fun TripsScreen(
     val showingSharedTrips = tripsData.showingSharedTrips
     val glance = tripsData.glance
 
-    val density = LocalDensity.current
-    var lazyColumnHeightDp by rememberSaveable { mutableIntStateOf(0) }
-
-    val slideStates = remember { mutableStateMapOf(
-        *showingTrips.map { it.id to SlideState.NONE }.toTypedArray()
-    ) }
-
-    val sharedTripsSlideStates = remember { mutableStateMapOf(
-        *showingSharedTrips.map { it.id to SlideState.NONE }.toTypedArray()
-    ) }
 
     val tripsIsEmpty = showingTrips.isEmpty() && showingSharedTrips.isEmpty()
 
-    val itemModifier = Modifier.widthIn(max = itemMaxWidth)
+    val itemModifier = Modifier
+        .widthIn(max = itemMaxWidth)
+        .padding(horizontal = spacerValue)
 
     val firstItemVisible by remember { derivedStateOf { lazyListState.firstVisibleItemIndex == 0 } }
 
@@ -406,7 +411,7 @@ private fun TripsScreen(
         },
         glanceSpot = {
             GlanceSpot(
-                useBottomNavBar = useBottomNavBar,
+                uesLongWidth = useBottomNavBar,
                 visible = glance.visible && !isEditMode && !loadingTrips,
                 dateTimeFormat = dateTimeFormat,
                 trip = glance.trip ?: Trip(id = 0, managerId = ""), //if glanceVisible is true, glanceTrip, Date, Spot is not null
@@ -504,14 +509,7 @@ private fun TripsScreen(
             contentAlignment = Alignment.TopCenter
         ) {
 
-            val lazyColumnModifier = modifier
-                .fillMaxSize()
-                .onSizeChanged {
-                    with(density) {
-                        lazyColumnHeightDp = it.height.toDp().value.toInt()
-                    }
-                }
-
+            val lazyColumnModifier = modifier.fillMaxSize()
 
 
             //display trips list (my trips + shared trips)
@@ -519,8 +517,10 @@ private fun TripsScreen(
                 state = lazyListState,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(spacerValue, 16.dp + paddingValues.calculateTopPadding(), spacerValue, 400.dp),
-                modifier = if (hazeState != null) lazyColumnModifier.hazeSource(state = hazeState).background(MaterialTheme.colorScheme.background)
+                contentPadding = PaddingValues(0.dp, 16.dp + paddingValues.calculateTopPadding(), 0.dp, 400.dp),
+                modifier = if (hazeState != null) lazyColumnModifier
+                    .hazeSource(state = hazeState)
+                    .background(MaterialTheme.colorScheme.background)
                             else lazyColumnModifier
             ) {
                 if (adView != null) {
@@ -536,7 +536,7 @@ private fun TripsScreen(
                             visible = !loadingTrips
                                     && !appUserData.isUsingSomewherePro
                                     && showingTrips.size >= getMaxTrips(false),
-                            enter = enterVerticallyDelay,
+                            enter = enterVerticallyDelayForMaxTrips,
                             exit = exitVertically
                         ) {
                             Column(
@@ -554,6 +554,17 @@ private fun TripsScreen(
                             }
                         }
                     }
+                }
+
+                item {
+                    TripFilterChipsWithSortOrderButton(
+                        spacerValue = spacerValue,
+                        tripsDisplayMode = tripsUiInfo.tripsDisplayMode,
+                        onClickTripsDisplayMode = tripsUiInfo::setTripsDisplayMode,
+                        isOrderByLatest = tripsUiInfo.isTripsSortOrderByLatest,
+                        onClickSortOrder = { tripsUiInfo.setIsTripsSortOrderByLatest(!tripsUiInfo.isTripsSortOrderByLatest) },
+                        modifier = Modifier.widthIn(max = itemMaxWidth)
+                    )
                 }
 
 
@@ -580,41 +591,30 @@ private fun TripsScreen(
 
 
 
-                    items(showingTrips) { trip ->
-
-                        key(showingTrips) {
-                            TripItem(
-                                modifier = itemModifier,
-                                showDragIcon = isEditMode,
-                                internetEnabled = internetEnabled,
-                                dateTimeFormat = dateTimeFormat,
-                                firstLaunch = firstLaunch,
-                                trip = trip,
-                                trips = showingTrips,
-                                onClick = if (!isEditMode) { {
-                                        tripsUiInfo.setIsLoadingTrips(true)
-                                        navigate.navigateToTrip(false, trip)
-                                    } }
-                                    else null,
-                                onLongClick = if (isEditMode) { {
-                                        dialog.setSelectedTrip(trip)
-                                        dialog.setShowDeleteDialog(true)
-                                    } }
-                                    else null,
-                                downloadImage = image::downloadImage,
-                                slideState = slideStates[trip.id] ?: SlideState.NONE,
-                                updateSlideState = { tripId, newSlideState ->
-                                    slideStates[showingTrips[tripId].id] = newSlideState
-                                },
-                                updateItemPosition = { currentIndex, destinationIndex ->
-                                    updateTripItemOrder(false, currentIndex, destinationIndex)
-
-                                    //all slideState to NONE
-                                    slideStates.putAll(showingTrips.map { it.id }
-                                        .associateWith { SlideState.NONE })
+                    items(
+                        items = showingTrips,
+                        key = { it.id }
+                    ) { trip ->
+                        TripItem(
+                            trip = trip,
+                            internetEnabled = internetEnabled,
+                            dateTimeFormat = dateTimeFormat,
+                            downloadImage = image::downloadImage,
+                            modifier = itemModifier,
+                            showDeleteIcon = isEditMode,
+                            firstLaunch = firstLaunch,
+                            onClick = if (!isEditMode) { {
+                                    tripsUiInfo.setIsLoadingTrips(true)
+                                    navigate.navigateToTrip(false, trip)
+                                } }
+                                else null,
+                            onClickDelete = {
+                                if (isEditMode){
+                                    dialog.setSelectedTrip(trip)
+                                    dialog.setShowDeleteDialog(true)
                                 }
-                            )
-                        }
+                            },
+                        )
                     }
 
                     //each shared trip item ================================================================
@@ -635,41 +635,31 @@ private fun TripsScreen(
                         }
                     }
 
-                    items(showingSharedTrips) { sharedTrip ->
-                        key(showingSharedTrips) {
-                            TripItem(
-                                modifier = itemModifier,
-                                showDragIcon = isEditMode,
-                                internetEnabled = internetEnabled,
-                                dateTimeFormat = dateTimeFormat,
-                                firstLaunch = firstLaunch,
-                                trip = sharedTrip,
-                                trips = showingSharedTrips,
-                                onClick = if (!isEditMode) { {
+                    items(
+                        items = showingSharedTrips,
+                        key = { it.id }
+                    ) { sharedTrip ->
+                        TripItem(
+                            trip = sharedTrip,
+                            internetEnabled = internetEnabled,
+                            dateTimeFormat = dateTimeFormat,
+                            downloadImage = image::downloadImage,
+                            modifier = itemModifier,
+                            showDeleteIcon = isEditMode,
+                            firstLaunch = firstLaunch,
+                            onClick = if (!isEditMode) { {
                                     tripsUiInfo.setIsLoadingTrips(true)
                                     navigate.navigateToTrip(false, sharedTrip)
                                 } }
                                 else null,
-                                onLongClick = if (isEditMode) { {
+                            onClickDelete = {
+                                if (isEditMode){
                                     dialog.setSelectedTrip(sharedTrip)
                                     dialog.setShowDeleteDialog(true)
-                                } }
-                                else null,
-                                downloadImage = image::downloadImage,
-                                slideState = sharedTripsSlideStates[sharedTrip.id]
-                                    ?: SlideState.NONE,
-                                updateSlideState = { tripId, newSlideState ->
-                                    sharedTripsSlideStates[showingTrips[tripId].id] = newSlideState
-                                },
-                                updateItemPosition = { currentIndex, destinationIndex ->
-                                    updateTripItemOrder(true, currentIndex, destinationIndex)
-
-                                    //all slideState to NONE
-                                    sharedTripsSlideStates.putAll(showingTrips.map { it.id }
-                                        .associateWith { SlideState.NONE })
                                 }
-                            )
-                        }
+                            },
+                        )
+
                     }
                 } else {
                     item {

@@ -39,7 +39,6 @@ fun AnimatedBottomSaveCancelButtons(
     onClickSave: () -> Unit,
     modifier: Modifier = Modifier,
     saveEnabled: Boolean = true,
-    use2PanesAndSpotScreen: Boolean = false,
     useBottomNavBar: Boolean = false
 ){
     AnimatedVisibility(
@@ -52,45 +51,41 @@ fun AnimatedBottomSaveCancelButtons(
             targetOffsetY = { (it * 2).toInt() })
     ) {
 
-        Row {
-            if (use2PanesAndSpotScreen)
-                Spacer(modifier = Modifier.weight(1f))
 
-            Column(modifier = Modifier.weight(1f)) {
-                //gradiant
+        Column(modifier = Modifier.fillMaxWidth()) {
+            //gradiant
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(34.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            listOf(Color.Transparent, MaterialTheme.colorScheme.background)
+                        )
+                    )
+            )
+
+
+            //no gradation
+            NegativePositiveButtons(
+                negativeButtonText = stringResource(id = R.string.cancel),
+                positiveButtonText = stringResource(id = R.string.save),
+                onClickCancel = onClickCancel,
+                onClickPositive = onClickSave,
+                modifier = modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(10.dp, 2.dp, 10.dp, 10.dp),
+                positiveEnabled = saveEnabled,
+            )
+
+            if (!useBottomNavBar)
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(34.dp)
-                        .background(
-                            brush = Brush.verticalGradient(
-                                listOf(Color.Transparent, MaterialTheme.colorScheme.background)
-                            )
-                        )
-                )
-
-
-                //no gradation
-                NegativePositiveButtons(
-                    negativeButtonText = stringResource(id = R.string.cancel),
-                    positiveButtonText = stringResource(id = R.string.save),
-                    onClickCancel = onClickCancel,
-                    onClickPositive = onClickSave,
-                    modifier = modifier
-                        .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.background)
-                        .padding(10.dp, 2.dp, 10.dp, 10.dp),
-                    positiveEnabled = saveEnabled,
+                        .navigationBarsPadding()
                 )
-
-                if (!useBottomNavBar)
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.background)
-                            .navigationBarsPadding()
-                    )
-            }
         }
     }
 }

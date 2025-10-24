@@ -1,7 +1,9 @@
 package com.newpaper.somewhere.feature.trip.trip
 
 import androidx.lifecycle.ViewModel
+import com.newpaper.somewhere.core.designsystem.theme.dateColorList
 import com.newpaper.somewhere.core.model.tripData.Date
+import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.utils.convert.setAllSpotDate
 import com.newpaper.somewhere.feature.trip.CommonTripUiStateRepository
@@ -21,8 +23,11 @@ data class TripUiState(
     val showSetCurrencyDialog: Boolean = false,
     val showMemoDialog: Boolean = false,
     val showSetColorDialog: Boolean = false,
+    val showSetTimeDialog: Boolean = false,
+    val showSetSpotTypeDialog: Boolean = false,
 
-    val selectedDate: Date? = null, //for set color dialog
+    val selectedDate: Date? = null,
+    val selectedSpot: Spot? = null,
 
     val totalErrorCount: Int = 0,
     val dateTitleErrorCount: Int = 0,
@@ -52,7 +57,8 @@ class TripViewModel @Inject constructor(
     private fun setIsShowingDialog(){
         val isShowingDialog = _tripUiState.value.showExitDialog ||
                 _tripUiState.value.showSetDateRangeDialog || _tripUiState.value.showSetCurrencyDialog ||
-                _tripUiState.value.showMemoDialog || _tripUiState.value.showSetColorDialog
+                _tripUiState.value.showMemoDialog || _tripUiState.value.showSetColorDialog ||
+                _tripUiState.value.showSetTimeDialog || _tripUiState.value.showSetSpotTypeDialog
 
         _tripUiState.update {
             it.copy(isShowingDialog = isShowingDialog)
@@ -95,9 +101,29 @@ class TripViewModel @Inject constructor(
         setIsShowingDialog()
     }
 
+    fun setShowSetTimeDialog(showSetTimeDialog: Boolean) {
+        _tripUiState.update {
+            it.copy(showSetTimeDialog = showSetTimeDialog)
+        }
+        setIsShowingDialog()
+    }
+
+    fun setShowSetSpotTypeDialog(showSetSpotTypeDialog: Boolean) {
+        _tripUiState.update {
+            it.copy(showSetSpotTypeDialog = showSetSpotTypeDialog)
+        }
+        setIsShowingDialog()
+    }
+
     fun setSelectedDate(date: Date?){
         _tripUiState.update {
             it.copy(selectedDate = date)
+        }
+    }
+
+    fun setSelectedSpot(spot: Spot?){
+        _tripUiState.update {
+            it.copy(selectedSpot = spot)
         }
     }
 
@@ -171,7 +197,7 @@ class TripViewModel @Inject constructor(
                 while (currDate != endDateAfter1Day) {
 
                     //add Date in dateList
-                    dateList.add(Date(id = index, index = index, date = currDate))
+                    dateList.add(Date(id = index, index = index, date = currDate, color = dateColorList.getOrElse(index) { dateColorList[0] }))
                     index++
                     currDate = currDate.plusDays(1)
                 }

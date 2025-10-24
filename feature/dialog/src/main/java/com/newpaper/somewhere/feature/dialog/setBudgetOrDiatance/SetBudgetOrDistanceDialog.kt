@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CardDefaults
@@ -39,6 +38,7 @@ import com.newpaper.somewhere.core.designsystem.theme.CustomColor
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.enums.CurrencyType
 import com.newpaper.somewhere.core.ui.MyTextField
+import com.newpaper.somewhere.core.utils.getNumToText
 import com.newpaper.somewhere.feature.dialog.ButtonLayout
 import com.newpaper.somewhere.feature.dialog.CancelDialogButton
 import com.newpaper.somewhere.feature.dialog.DialogButtons
@@ -48,21 +48,23 @@ import com.newpaper.somewhere.feature.dialog.myDialog.MyDialog
 
 @Composable
 fun SetBudgetOrDistanceDialog(
-    initialValue: Float,
+    initialValue: Double,
     onDismissRequest: () -> Unit,
-    onSaveClick: (newBudget: Float) -> Unit,
+    onSaveClick: (newBudget: Double) -> Unit,
     currencyType: CurrencyType? = null
 ){
     val titleText = if (currencyType == null) stringResource(id = R.string.set_travel_distance)
-    else stringResource(id = R.string.set_budget)
+                    else stringResource(id = R.string.set_budget)
 
     val newValueText: String by rememberSaveable {
         mutableStateOf(
-            if (initialValue == 0.0f) ""
-            else if (initialValue == initialValue.toInt().toFloat())
-                initialValue.toInt().toString()
-            else
-                initialValue.toString().trimEnd('0').trimEnd('.')
+            if (initialValue == 0.0) ""
+                    else getNumToText(
+                            number = initialValue,
+                            numberOfDecimalPlaces = currencyType?.numberOfDecimalPlaces ?: 2,
+                            includeComma = false,
+                            stripTrailingZeros = true
+                        )
         )
     }
 
@@ -133,9 +135,10 @@ fun SetBudgetOrDistanceDialog(
                             textAlign = TextAlign.End
                         ),
                         onValueChange = {
+                            val newText = it.text.take(12)
                             textFieldValue.value =
-                                TextFieldValue(it.text, TextRange(it.text.length))
-                            isInvalidText = !isValidFloatText(it.text, numberOfDecimalPlaces)
+                                TextFieldValue(newText, TextRange(newText.length))
+                            isInvalidText = !isValidFloatText(newText, numberOfDecimalPlaces)
                         },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(
@@ -178,9 +181,9 @@ fun SetBudgetOrDistanceDialog(
                         onClick = {
                             if (!isInvalidText) {
                                 val text = if (textFieldValue.value.text == "") "0"
-                                else textFieldValue.value.text
+                                            else textFieldValue.value.text
 
-                                onSaveClick(text.toFloat())
+                                onSaveClick(text.toDouble())
                             }
                         },
                         enabled = !isInvalidText,
@@ -240,7 +243,7 @@ private fun Preview_SetBudgetDialog(){
     SomewhereTheme {
         MyScaffold {
             SetBudgetOrDistanceDialog(
-                initialValue = 0.0f,
+                initialValue = 0.0,
                 onDismissRequest = {},
                 onSaveClick = {},
                 currencyType = CurrencyType.USD
@@ -255,7 +258,7 @@ private fun Preview_SetDistanceDialog(){
     SomewhereTheme {
         MyScaffold {
             SetBudgetOrDistanceDialog(
-                initialValue = 0.0f,
+                initialValue = 0.0,
                 onDismissRequest = {},
                 onSaveClick = {},
             )

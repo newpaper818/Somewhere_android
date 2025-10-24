@@ -4,6 +4,8 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -12,8 +14,9 @@ import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,11 +29,13 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -43,11 +48,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
@@ -60,7 +65,6 @@ import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
-import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
@@ -81,6 +85,7 @@ import com.newpaper.somewhere.core.utils.convert.setSpotType
 import com.newpaper.somewhere.core.utils.convert.setStartTime
 import com.newpaper.somewhere.core.utils.convert.setTravelDistance
 import com.newpaper.somewhere.core.utils.fitBoundsToMarkers
+import com.newpaper.somewhere.core.utils.getTalkbackDateText
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.dialog.memo.MemoDialog
 import com.newpaper.somewhere.feature.dialog.selectDate.SelectDateDialog
@@ -93,9 +98,13 @@ import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.spot.component.NoSpotCard
 import com.newpaper.somewhere.feature.trip.spot.component.SpotDetailPage
 import com.newpaper.somewhere.feature.trip.spot.component.SpotMapCard
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.LocalTime
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -104,9 +113,11 @@ fun SpotRoute(
     isDarkAppTheme: Boolean,
     use2Panes: Boolean,
     spacerValue: Dp,
+    useBlurEffect: Boolean,
     appUserId: String,
     dateTimeFormat: DateTimeFormat,
     internetEnabled: Boolean,
+    isErrorExitOnTripScreen: Boolean, //TODO
 
     commonTripViewModel: CommonTripViewModel,
     isCompactWidth: Boolean,
@@ -149,7 +160,7 @@ fun SpotRoute(
     var userSwiping by rememberSaveable { mutableStateOf(true) }
 
     val dateList = showingTrip.dateList
-    val spotList = dateList[currentDateIndex].spotList
+    val spotList = dateList.getOrNull(currentDateIndex)?.spotList ?: emptyList()
     val currentSpot = spotList.getOrNull(currentSpotIndex)
 
     val coroutineScope = rememberCoroutineScope()
@@ -290,34 +301,36 @@ fun SpotRoute(
                 progressBarState.animateScrollToItem(toIdx)
             }
 
-            if (currentSpotIndex < spotList.size && currentSpotIndex >= 0) {
-                //animate pager
-                coroutineScope.launch {
-                    spotPagerState.animateScrollToPage(currentSpotIndex)
-                }
 
-                //animate map spot
-                coroutineScope.launch {
-                    repeat(10){
-                        if (spotUiState.isMapLoaded){
-                            mapAnimateToSpot(
-                                scrollState,
-                                spotList[currentSpotIndex],
-                                dateList,
-                                currentDateIndex,
-                                cameraPositionState,
-                                spotUiState.mapSize,
-                                density,
-                                coroutineScope
-                            )
-                            return@repeat
-                        }
-                        else{
-                            delay(200)
-                        }
+        }
+
+        if (currentSpotIndex < spotList.size && currentSpotIndex >= 0) {
+            //animate pager
+            coroutineScope.launch {
+                spotPagerState.animateScrollToPage(currentSpotIndex)
+            }
+
+            //animate map spot
+            coroutineScope.launch {
+                repeat(10){
+                    if (spotUiState.isMapLoaded){
+                        mapAnimateToSpot(
+                            scrollState,
+                            spotList[currentSpotIndex],
+                            dateList,
+                            currentDateIndex,
+                            cameraPositionState,
+                            spotUiState.mapSize,
+                            density,
+                            coroutineScope
+                        )
+                        return@repeat
                     }
-
+                    else{
+                        delay(200)
+                    }
                 }
+
             }
         }
     }
@@ -352,8 +365,10 @@ fun SpotRoute(
         spotUiInfo = SpotUiInfo(
             use2Panes = use2Panes,
             spacerValue = spacerValue,
+            useBlurEffect = useBlurEffect,
             dateTimeFormat = dateTimeFormat,
             internetEnabled = internetEnabled,
+            isErrorExitOnTripScreen = isErrorExitOnTripScreen,
             isDarkMapTheme = isDarkMapTheme,
             userSwiping = userSwiping,
             _setUserSwiping = { userSwiping = it },
@@ -499,6 +514,8 @@ private fun SpotScreen(
 
     modifier: Modifier = Modifier
 ){
+    val useBlurEffect = spotUiInfo.useBlurEffect
+
     val showingTrip = if (spotUiInfo.isEditMode) spotData.tempTrip
                         else            spotData.originalTrip
 
@@ -506,7 +523,7 @@ private fun SpotScreen(
     val currentSpotIndex = spotData.currentSpotIndex ?: 0
 
     val dateList = showingTrip.dateList
-    val spotList = dateList[currentDateIndex].spotList
+    val spotList = dateList.getOrNull(currentDateIndex)?.spotList ?: emptyList()
 
     val currentDate = dateList.getOrNull(currentDateIndex)
     val currentSpot = spotList.getOrNull(currentSpotIndex)
@@ -517,14 +534,22 @@ private fun SpotScreen(
 
     val snackBarHostState = remember { SnackbarHostState() }
 
+    val topAppBarHazeState = if(useBlurEffect && spotUiInfo.use2Panes) rememberHazeState() else null
 
 
 
     //set top bar title
+    val dateTitle = dateList.getOrNull(currentDateIndex)?.titleText
+
     val topBarTitle =
         if (spotUiInfo.isEditMode)
             stringResource(id = R.string.edit_spot)
-
+        else if (spotUiInfo.use2Panes){
+            if (currentSpot?.titleText == null || currentSpot.titleText == "")
+                stringResource(id = R.string.no_title)
+            else
+                currentSpot.titleText!!
+        }
         else {
             if (showingTrip.titleText == null || showingTrip.titleText == "")
                 stringResource(id = R.string.no_title)
@@ -532,12 +557,26 @@ private fun SpotScreen(
                 showingTrip.titleText!!
         }
 
-    val dateTitle = dateList[currentDateIndex].titleText
     val subTitle =
-        if (dateTitle == null)
-            dateList[currentDateIndex].getDateText(spotUiInfo.dateTimeFormat, includeYear = true)
-        else
-            stringResource(id = R.string.sub_title, dateList[currentDateIndex].getDateText(spotUiInfo.dateTimeFormat, includeYear = true), dateTitle)
+        if (dateList.isNotEmpty()) {
+            if (dateTitle == null)
+                dateList[currentDateIndex].getDateText(spotUiInfo.dateTimeFormat, includeYear = true)
+            else
+                stringResource(id = R.string.sub_title, dateList[currentDateIndex].getDateText(spotUiInfo.dateTimeFormat, includeYear = true), dateTitle)
+        }
+        else null
+
+    val talkbackSubTitle =
+        if (dateList.isNotEmpty()) {
+            if (dateTitle == null)
+                getTalkbackDateText(dateList[currentDateIndex].date, spotUiInfo.dateTimeFormat, includeYear = true)
+            else
+                stringResource(id = R.string.sub_title, getTalkbackDateText(dateList[currentDateIndex].date, spotUiInfo.dateTimeFormat, includeYear = true), dateTitle)
+        }
+        else null
+
+
+
 
     val bottomSnackBarPadding by animateFloatAsState(
         targetValue = if (spotUiInfo.use2Panes) 88f
@@ -564,7 +603,7 @@ private fun SpotScreen(
         SetLocationDialog(
             internetEnabled = spotUiInfo.internetEnabled,
             dateTimeFormat = spotUiInfo.dateTimeFormat,
-            use2Panes = spotUiInfo.use2Panes,
+            use2Panes = false,
             showingTrip = showingTrip,
             dateList = dateList,
             spotList = spotList,
@@ -592,7 +631,7 @@ private fun SpotScreen(
             .imePadding()
 
     MyScaffold(
-        modifier = modifier,
+        modifier = modifier.imePadding(),
         snackbarHost = {
             Row {
                 Box(
@@ -617,15 +656,16 @@ private fun SpotScreen(
         //top bar
         topBar = {
             SomewhereTopAppBar(
-                useHorizontalLayoutTitles = spotUiInfo.use2Panes,
+                useHorizontalLayoutTitles = false,
                 title = topBarTitle,
                 subtitle = subTitle,
-                internetEnabled = spotUiInfo.internetEnabled,
+                talkbackSubTitle = talkbackSubTitle,
+                internetEnabled = spotUiInfo.use2Panes || spotUiInfo.internetEnabled,
 
                 //back button
                 navigationIcon =
-                    if (!spotUiInfo.isEditMode)        TopAppBarIcon.back
-                    else                               null,
+                    if (spotUiInfo.use2Panes || spotUiInfo.isEditMode) null
+                    else                                    TopAppBarIcon.back,
                 onClickNavigationIcon = spotNavigate::onClickBackButton,
 
                 actionIcon1 = TopAppBarIcon.edit,
@@ -634,19 +674,19 @@ private fun SpotScreen(
                         spotMap.setIsMapExpanded(false)
                     spotUiInfo.setIsEditMode(true)
                 },
-                actionIcon1Visible = !spotUiInfo.isEditMode && showingTrip.editable
+                actionIcon1Visible = !spotUiInfo.isEditMode && showingTrip.editable,
+                hazeState = topAppBarHazeState
             )
         },
 
         //bottom save cancel bar
         bottomSaveCancelBarVisible = spotUiInfo.isEditMode && !spotDialog.isShowingDialog,
-        use2PanesAndSpotScreen = spotUiInfo.use2Panes,
         onClickCancel = {
             focusManager.clearFocus()
             spotNavigate.onClickBackButton()
         },
         onClickSave = onClickSave,
-        saveEnabled = spotErrorCount.totalErrorCount <= 0
+        saveEnabled = spotErrorCount.totalErrorCount <= 0 && !spotUiInfo.isErrorExitOnTripScreen
 
     ) { paddingValues ->
 
@@ -741,11 +781,11 @@ private fun SpotScreen(
 
         if (spotDialog.showSetDistanceDialog && currentSpot != null){
             SetBudgetOrDistanceDialog(
-                initialValue = currentSpot.travelDistance,
+                initialValue = currentSpot.travelDistance.toDouble(),
                 onDismissRequest = { spotDialog.setShowSetDistanceDialog(false) },
                 onSaveClick = { newTravelDistance ->
                     spotDialog.setShowSetDistanceDialog(false)
-                    currentSpot.setTravelDistance(showingTrip, currentDateIndex, updateTripState, newTravelDistance)
+                    currentSpot.setTravelDistance(showingTrip, currentDateIndex, updateTripState, newTravelDistance.toFloat())
                 }
             )
         }
@@ -763,65 +803,85 @@ private fun SpotScreen(
         }
 
 
-
-
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentAlignment = Alignment.BottomCenter
+        //show when use 2 panes and no date
+        AnimatedVisibility(
+            visible = dateList.isEmpty(),
+            enter = fadeIn(tween(500)),
+            exit = fadeOut(tween(500))
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
             ) {
-
-                MySpacerColumn(height = 8.dp)
-
-                //progress bar
-                SpotListProgressBar(
-                    useLargeItemWidth = !isCompactWidth,
-                    spacerValue = spotUiInfo.spacerValue,
-                    progressBarState = spotState.progressBarState,
-                    isEditMode = spotUiInfo.isEditMode,
-
-                    dateTimeFormat = spotUiInfo.dateTimeFormat,
-                    dateList = dateList,
-                    dateIndex = currentDateIndex,
-                    spotList = spotList,
-                    currentSpotIndex = currentSpotIndex,
-                    addNewSpot = {
-                        coroutineScope.launch {
-                            dateList[spotData.currentDateIndex].id
-                            addNewSpot(currentDateIndex)
-                            delay(70)
-                            val lastIdx = spotList.size
-                            spotData.setCurrentSpotIndex(lastIdx)
-                            spotState.spotPagerState.animateScrollToPage(lastIdx)
-                        }
-                    },
-                    onClickSpot = {toSpotIndex ->
-                        spotUiInfo.setUserSwiping(false)
-                        spotData.setCurrentSpotIndex(toSpotIndex)
-                    },
-                    onPrevDateClick = {toDateIndex ->
-                        spotUiInfo.setUserSwiping(false)
-                        spotData.setCurrentDateIndex(toDateIndex)
-                        spotData.setCurrentSpotIndex(dateList[toDateIndex].spotList.lastIndex)
-                    },
-                    onNextDateClick = {toDateIndex ->
-                        spotUiInfo.setUserSwiping(false)
-                        spotData.setCurrentDateIndex(toDateIndex)
-                        spotData.setCurrentSpotIndex(0)
-                    }
+                Text(
+                    text = stringResource(id = R.string.no_spot),
+                    style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
                 )
+            }
+        }
 
-                MySpacerColumn(height = 16.dp)
+        AnimatedVisibility(
+            visible = dateList.isNotEmpty(),
+            enter = fadeIn(tween(500)),
+            exit = fadeOut(tween(500))
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                ) {
 
-                if (!spotUiInfo.use2Panes){
+                    if(!spotUiInfo.use2Panes) {
+                        Spacer(modifier = Modifier.padding(top = paddingValues.calculateTopPadding()))
+                        MySpacerColumn(height = 8.dp)
+
+                        //progress bar
+                        SpotListProgressBar(
+                            useLargeItemWidth = !isCompactWidth,
+                            spacerValue = spotUiInfo.spacerValue,
+                            progressBarState = spotState.progressBarState,
+                            isEditMode = spotUiInfo.isEditMode,
+
+                            dateTimeFormat = spotUiInfo.dateTimeFormat,
+                            dateList = dateList,
+                            dateIndex = currentDateIndex,
+                            spotList = spotList,
+                            currentSpotIndex = currentSpotIndex,
+                            addNewSpot = {
+                                coroutineScope.launch {
+                                    dateList[spotData.currentDateIndex].id
+                                    addNewSpot(currentDateIndex)
+                                    delay(70)
+                                    val lastIdx = spotList.size
+                                    spotData.setCurrentSpotIndex(lastIdx)
+                                    spotState.spotPagerState.animateScrollToPage(lastIdx)
+                                }
+                            },
+                            onClickSpot = { toSpotIndex ->
+                                spotUiInfo.setUserSwiping(false)
+                                spotData.setCurrentSpotIndex(toSpotIndex)
+                            },
+                            onPrevDateClick = { toDateIndex ->
+                                spotUiInfo.setUserSwiping(false)
+                                spotData.setCurrentDateIndex(toDateIndex)
+                                spotData.setCurrentSpotIndex(dateList[toDateIndex].spotList.lastIndex)
+                            },
+                            onNextDateClick = { toDateIndex ->
+                                spotUiInfo.setUserSwiping(false)
+                                spotData.setCurrentDateIndex(toDateIndex)
+                                spotData.setCurrentSpotIndex(0)
+                            }
+                        )
+
+                        MySpacerColumn(height = 16.dp)
+                    }
+
                     Spot1Pane(
+                        useBlurEffect= useBlurEffect,
                         isDarkAppTheme = isDarkAppTheme,
                         spotUiInfo = spotUiInfo,
                         spotData = spotData,
@@ -833,27 +893,8 @@ private fun SpotScreen(
                         image = spotImage,
                         spotFrom = spotMap.spotFrom,
                         spotTo = spotMap.spotTo,
-                        cameraPositionState = spotMap.cameraPositionState,
-                        snackBarHostState = snackBarHostState,
-                        focusManager = focusManager,
-                        updateTripState = updateTripState,
-                        setUserSwiping = spotUiInfo::setUserSwiping
-                    )
-                }
-                else{
-                    MySpacerColumn(height = 8.dp)
-                    Spot2Panes(
-                        isDarkAppTheme = isDarkAppTheme,
-                        spotUiInfo = spotUiInfo,
-                        spotData = spotData,
-                        spotState = spotState,
-                        spotMap = spotMap,
-                        errorCount = spotErrorCount,
-                        dialog = spotDialog,
-                        navigate = spotNavigate,
-                        image = spotImage,
-                        spotFrom = spotMap.spotFrom,
-                        spotTo = spotMap.spotTo,
+                        scaffoldPaddingValues = paddingValues,
+                        topAppBarHazeState = topAppBarHazeState,
                         cameraPositionState = spotMap.cameraPositionState,
                         snackBarHostState = snackBarHostState,
                         focusManager = focusManager,
@@ -872,6 +913,7 @@ private fun SpotScreen(
 
 @Composable
 private fun Spot1Pane(
+    useBlurEffect: Boolean,
     isDarkAppTheme: Boolean,
     spotUiInfo: SpotUiInfo,
     spotData: SpotData,
@@ -885,6 +927,8 @@ private fun Spot1Pane(
     spotFrom: Spot?,
     spotTo: Spot?,
 
+    scaffoldPaddingValues: PaddingValues,
+    topAppBarHazeState: HazeState?,
     cameraPositionState: CameraPositionState,
     snackBarHostState: SnackbarHostState,
     focusManager: FocusManager,
@@ -901,34 +945,47 @@ private fun Spot1Pane(
     val currentSpotIndex = spotData.currentSpotIndex ?: 0
 
     val dateList = showingTrip.dateList
-    val spotList = dateList[currentDateIndex].spotList
+    val spotList = dateList.getOrNull(currentDateIndex)?.spotList ?: listOf()
 
-    val currentDate = dateList[currentDateIndex]
+    val currentDate = dateList.getOrNull(currentDateIndex) ?: Date(date = LocalDate.now())
     val currentSpot = currentDate.spotList.getOrNull(currentSpotIndex)
 
     val coroutineScope = rememberCoroutineScope()
-    val uriHandler = LocalUriHandler.current
+
+    val lazyColumnModifier = Modifier
+        .fillMaxSize()
+        .imePadding()
+        .onGloballyPositioned { lazyColumnHeight = it.size.height }
 
     //map + spot page
     LazyColumn(
         state = spotState.scrollState,
-        modifier = Modifier
-            .fillMaxSize()
-            .imePadding()
-            .onGloballyPositioned {
-                lazyColumnHeight = it.size.height
-            },
+        modifier = if (topAppBarHazeState != null) lazyColumnModifier
+                .hazeSource(state = topAppBarHazeState)
+                .background(MaterialTheme.colorScheme.background)
+            else lazyColumnModifier,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
-        userScrollEnabled = !spotMap.isMapExpand
+        userScrollEnabled = !spotMap.isMapExpand,
+        contentPadding = if (spotUiInfo.use2Panes) PaddingValues(top = 16.dp + scaffoldPaddingValues.calculateTopPadding())
+                            else PaddingValues(0.dp)
     ) {
-
         item {
             //map
             SpotMapCard(
+                modifier = if (spotUiInfo.use2Panes) Modifier
+                        .padding(spotUiInfo.spacerValue/2, 0.dp, spotUiInfo.spacerValue, spotUiInfo.spacerValue)
+                        .clip(RoundedCornerShape(16.dp))
+                    else Modifier,
+                useBlurEffect = useBlurEffect,
                 isEditMode = spotUiInfo.isEditMode,
                 isMapExpand = spotMap.isMapExpand,
-                expandHeight = (lazyColumnHeight / LocalDensity.current.density).toInt() + 1,
+                expandHeight = if (spotUiInfo.use2Panes)
+                                    (lazyColumnHeight / LocalDensity.current.density).toInt()
+                                    - spotUiInfo.spacerValue.value.toInt()
+                                    - 16 - scaffoldPaddingValues.calculateTopPadding().value.toInt()
+
+                                else (lazyColumnHeight / LocalDensity.current.density).toInt() + 1,
                 mapSize = spotMap.mapSize,
                 onMapLoaded = spotMap::onMapLoaded,
 
@@ -985,13 +1042,6 @@ private fun Spot1Pane(
                     spotMap.setMapSize(it)
                 },
                 openInGoogleMapEnabled = currentSpot?.googleMapsPlacesId != null && currentSpot.googleMapsPlacesId != "",
-                onClickOpenInGoogleMap = {
-                    //open in google map
-                    if (currentSpot?.googleMapsPlacesId != null){
-                        val url = "https://www.google.com/maps/search/?api=1&query=<address>&query_place_id=${currentSpot.googleMapsPlacesId}"
-                        uriHandler.openUri(url)
-                    }
-                },
                 showSnackBar = { text, actionLabel, duration, onActionClick ->
                     coroutineScope.launch {
                         snackBarHostState.showSnackbar(
@@ -1007,7 +1057,7 @@ private fun Spot1Pane(
                     }
                 },
                 spotFrom = spotFrom,
-                spotTo = spotTo
+                spotTo = spotTo,
             )
 
 
@@ -1051,200 +1101,6 @@ private fun Spot1Pane(
 }
 
 
-@Composable
-private fun Spot2Panes(
-    isDarkAppTheme: Boolean,
-    spotUiInfo: SpotUiInfo,
-    spotData: SpotData,
-    spotState: SpotState,
-    spotMap: SpotMap,
-    errorCount: SpotErrorCount,
-    dialog: SpotDialog,
-    navigate: SpotNavigate,
-    image: SpotImage,
-
-    spotFrom: Spot?,
-    spotTo: Spot?,
-
-    cameraPositionState: CameraPositionState,
-    snackBarHostState: SnackbarHostState,
-    focusManager: FocusManager,
-
-    updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
-    setUserSwiping: (userSwiping: Boolean) -> Unit,
-){
-    var lazyColumnHeight by rememberSaveable { mutableIntStateOf(0) }
-
-    val showingTrip = if (spotUiInfo.isEditMode) spotData.tempTrip
-                        else            spotData.originalTrip
-
-    val currentDateIndex = spotData.currentDateIndex
-    val currentSpotIndex = spotData.currentSpotIndex ?: 0
-
-    val dateList = showingTrip.dateList
-    val spotList = dateList[currentDateIndex].spotList
-
-    val currentDate = dateList[currentDateIndex]
-    val currentSpot = currentDate.spotList.getOrNull(currentSpotIndex)
-
-    val coroutineScope = rememberCoroutineScope()
-    val uriHandler = LocalUriHandler.current
-
-    Row {
-        MyCard(
-            modifier = Modifier
-                .weight(1f)
-                .padding(24.dp, 0.dp, 12.dp, 24.dp)
-        ) {
-            SpotMapCard(
-                use2Panes = true,
-                isEditMode = spotUiInfo.isEditMode,
-                isMapExpand = true,
-                expandHeight = (lazyColumnHeight / LocalDensity.current.density).toInt() - 1,
-                mapSize = spotMap.mapSize,
-                onMapLoaded = spotMap::onMapLoaded,
-
-                isDarkMapTheme = spotUiInfo.isDarkMapTheme,
-                fusedLocationClient = spotMap.fusedLocationClient,
-                userLocationEnabled = spotMap.userLocationEnabled,
-                setUserLocationEnabled = spotMap::setUserLocationEnabled,
-                cameraPositionState = cameraPositionState,
-
-                dateList = dateList,
-                dateIndex = currentDateIndex,
-                spotList = spotList,
-                currentSpot = currentSpot,
-                onFullScreenClicked = {
-                    spotMap.setIsMapExpanded(!spotMap.isMapExpand)
-
-                    //scroll to top(map)
-                    if (spotMap.isMapExpand)
-                        coroutineScope.launch {
-                            spotState.scrollState.animateScrollToItem(0)
-                        }
-                },
-
-                toPrevSpot = {
-                    setUserSwiping(false)
-                    if (currentSpotIndex > 0) {
-                        spotData.setCurrentSpotIndex(currentSpotIndex - 1)
-                    } else {
-                        //first date and first spot will not be here
-                        spotData.setCurrentDateIndex(currentDateIndex - 1)
-                        spotData.setCurrentSpotIndex(dateList[currentDateIndex - 1].spotList.lastIndex)
-                    }
-                },
-                toNextSpot = {
-                    setUserSwiping(false)
-                    if (currentSpotIndex < spotList.lastIndex) {
-                        spotData.setCurrentSpotIndex(currentSpotIndex + 1)
-                    } else {
-                        spotData.setCurrentDateIndex(currentDateIndex + 1)
-                        spotData.setCurrentSpotIndex(0)
-                    }
-                },
-
-                toggleIsEditLocation = {
-                    dialog.setShowSetLocationDialog(!dialog.showSetLocationDialog)
-                },
-                deleteLocation = {
-                    currentSpot?.setLocationAndUpdateTravelDistance(
-                        showingTrip, currentDateIndex, updateTripState, null, null, null
-                    )
-                },
-                setMapSize = {
-                    spotMap.setMapSize(it)
-                },
-                openInGoogleMapEnabled = currentSpot?.googleMapsPlacesId != null && currentSpot.googleMapsPlacesId != "",
-                onClickOpenInGoogleMap = {
-                    //open in google map
-                    if (currentSpot?.googleMapsPlacesId != null){
-                        val url = "https://www.google.com/maps/search/?api=1&query=<address>&query_place_id=${currentSpot.googleMapsPlacesId}"
-                        uriHandler.openUri(url)
-                    }
-                },
-                showSnackBar = { text, actionLabel, duration, onActionClick ->
-                    coroutineScope.launch {
-                        snackBarHostState.showSnackbar(
-                            message = text,
-                            actionLabel = actionLabel,
-                            duration = duration
-                        ).run {
-                            when (this){
-                                SnackbarResult.Dismissed -> { }
-                                SnackbarResult.ActionPerformed -> onActionClick()
-                            }
-                        }
-                    }
-                },
-                spotFrom = spotFrom,
-                spotTo = spotTo
-            )
-        }
-
-        if (spotList.isEmpty()){
-
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-            ) {
-                NoSpotCard()
-            }
-        }
-        else {
-            LazyColumn(
-                state = spotState.scrollState,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxSize()
-                    .onGloballyPositioned {
-                        lazyColumnHeight = it.size.height
-                    }
-                    .imePadding(),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                userScrollEnabled = !spotMap.isMapExpand
-            ) {
-                //each spot page
-                item {
-                    //each page
-                    //pageIndex == spotIndex
-
-                    HorizontalPager(
-                        modifier = Modifier.weight(1f),
-                        verticalAlignment = Alignment.Top,
-                        state = spotState.spotPagerState,
-                        pageContent = {pageIndex ->
-                            //pageIndex == spotIndex
-
-                            //each page
-                            SpotDetailPage(
-                                isDarkAppTheme = isDarkAppTheme,
-                                spotUiInfo = spotUiInfo,
-                                spotData = spotData.copy(currentSpotIndex = pageIndex),
-                                errorCount = errorCount,
-                                dialog = dialog,
-                                navigate = navigate,
-                                image = image,
-                                focusManager = focusManager,
-                                deleteTime = { isStartTime ->
-                                    if (isStartTime)
-                                        currentSpot?.setStartTime(showingTrip, currentDateIndex, updateTripState, null)
-                                    else
-                                        currentSpot?.setEndTime(showingTrip, currentDateIndex, updateTripState, null)
-                                },
-                                updateTripState = updateTripState,
-                                minHeight = (lazyColumnHeight / LocalDensity.current.density).toInt().dp
-                            )
-                        }
-                    )
-                }
-            }
-        }
-    }
-}
 
 
 

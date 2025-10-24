@@ -103,18 +103,11 @@
     <string name="theme_auto">기기 테마와 동일</string>
     <string name="map_theme_auto">앱 테마와 동일</string>
 
-    <!--TripType.kt-->
-    <string name="trip_type_cultural_experiences">문화 체험</string>
-    <string name="trip_type_historical_sites">역사 유적지</string>
-    <string name="trip_type_exhibitions_museums">전시 &amp; 박물관</string>
-    <string name="trip_type_sports_activity">스포츠 &amp; 액티비티</string>
-    <string name="trip_type_great_food">맛집 탐방</string>
-    <string name="trip_type_shopping">쇼핑</string>
+    <!--TripsDisplayMode.kt-->
+    <string name="all">전체</string>
+    <string name="active">진행 중 / 예정</string>
+    <string name="past">지난 여행</string>
 
-    <!--TripWith.kt-->
-    <string name="trip_with_solo">혼자</string>
-    <string name="trip_with_partner">연인</string>
-    <string name="trip_with_friends">친구</string>
-    <string name="trip_with_family">가족</string>
+
 
 </resources>

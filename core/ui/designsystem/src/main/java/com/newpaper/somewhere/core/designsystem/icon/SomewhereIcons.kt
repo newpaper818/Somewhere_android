@@ -28,6 +28,7 @@ import androidx.compose.material.icons.rounded.DragHandle
 import androidx.compose.material.icons.rounded.DriveFileRenameOutline
 import androidx.compose.material.icons.rounded.East
 import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.EditLocation
 import androidx.compose.material.icons.rounded.EditNote
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.ErrorOutline
@@ -40,6 +41,7 @@ import androidx.compose.material.icons.rounded.FlashOff
 import androidx.compose.material.icons.rounded.FlashOn
 import androidx.compose.material.icons.rounded.Flight
 import androidx.compose.material.icons.rounded.Fullscreen
+import androidx.compose.material.icons.rounded.FullscreenExit
 import androidx.compose.material.icons.rounded.Group
 import androidx.compose.material.icons.rounded.Hiking
 import androidx.compose.material.icons.rounded.Hotel
@@ -57,6 +59,7 @@ import androidx.compose.material.icons.rounded.MoreHoriz
 import androidx.compose.material.icons.rounded.MoreTime
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.MyLocation
+import androidx.compose.material.icons.rounded.North
 import androidx.compose.material.icons.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material.icons.rounded.People
@@ -71,6 +74,7 @@ import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.ShoppingBag
+import androidx.compose.material.icons.rounded.South
 import androidx.compose.material.icons.rounded.Train
 import androidx.compose.material.icons.rounded.TravelExplore
 import androidx.compose.material.icons.rounded.Visibility
@@ -121,6 +125,8 @@ object IconTextButtonIcon {
     val delete = MyIcon(Icons.Rounded.Delete,                 24.dp, false, null, null)
     val leftArrow = MyIcon(Icons.Rounded.KeyboardArrowLeft,   30.dp, false, null, R.string.previous_date)
     val rightArrow = MyIcon(Icons.Rounded.KeyboardArrowRight, 30.dp, false, null, R.string.next_date)
+    val sortArrowAscending = MyIcon(Icons.Rounded.North,               20.dp, true, null, null)
+    val sortArrowDescending = MyIcon(Icons.Rounded.South,               20.dp, true, null, null)
 }
 
 object FabIcon {
@@ -132,6 +138,7 @@ object MapButtonIcon {
     val fitBoundsToMarkers = MyIcon(R.drawable.fit_bounds_to_markers,           24.dp, false, null, R.string.fit_bounds_to_markers)
     val disabledFitBoundsToMarkers = MyIcon(R.drawable.fit_bounds_to_markers,   24.dp, true, null, R.string.disabled_fit_bounds_to_markers)
     val fullscreen = MyIcon(Icons.Rounded.Fullscreen,               24.dp, false, null, R.string.fullscreen_map)
+    val fullscreenExit = MyIcon(Icons.Rounded.FullscreenExit,       24.dp, false, null, R.string.exit_fullscreen_map)
     val myLocation = MyIcon(Icons.Rounded.MyLocation,               24.dp, false, null, R.string.my_location)
     val disabledMyLocation = MyIcon(Icons.Rounded.LocationDisabled, 24.dp, true, null, R.string.disabled_my_location)
 
@@ -140,15 +147,15 @@ object MapButtonIcon {
     val zoomInLess = MyIcon(Icons.Rounded.Add,                   18.dp, false, null, R.string.zoom_in_less)
     val zoomIn = MyIcon(Icons.Rounded.Add,                       26.dp, false, null, R.string.zoom_in)
 
-    val editLocation = MyIcon(Icons.Rounded.Edit,           24.dp, false, null, R.string.edit_location)
-    val deleteLocation = MyIcon(Icons.Rounded.Delete,       24.dp, false, null, R.string.delete_location)
+    val editLocation = MyIcon(Icons.Rounded.EditLocation,           24.dp, false, null, R.string.edit_location)
+    val deleteLocation = MyIcon(Icons.Rounded.LocationOff,       24.dp, false, null, R.string.delete_location)
 
     val prevSpot = MyIcon(Icons.Rounded.KeyboardArrowLeft,  30.dp, false, null, R.string.previous_spot)
     val nextSpot = MyIcon(Icons.Rounded.KeyboardArrowRight, 30.dp, false, null, R.string.next_spot)
     val prevDate = MyIcon(Icons.Rounded.KeyboardArrowLeft,  30.dp, false, null, R.string.previous_date)
     val nextDate = MyIcon(Icons.Rounded.KeyboardArrowRight, 30.dp, false, null, R.string.next_date)
 
-    val openInGoogleMaps = MyIcon(Icons.Rounded.Map, 24.dp, false, null, R.string.open_in_google_maps)
+    val openInGoogleMaps = MyIcon(R.drawable.google_maps, 24.dp, false, null, R.string.open_in_google_maps)
 }
 
 object SelectSwitchIcon {
@@ -233,10 +240,14 @@ object MyIcons {
     val dragHandle = MyIcon(Icons.Rounded.DragHandle,    22.dp, true, null, R.string.drag_handle)
     val clickableItem = MyIcon(Icons.AutoMirrored.Rounded.NavigateNext,    22.dp, true, null, R.string.clickable_item)
 
+    //move date
+    val moveUp = MyIcon(Icons.Rounded.ExpandLess,  22.dp, true, null, R.string.move_up)
+    val moveDown = MyIcon(Icons.Rounded.ExpandMore,  22.dp, true, null, R.string.move_down)
+
 
     //set color
-    val setColor = MyIcon(Icons.Outlined.Palette,   24.dp, false, null, R.string.set_color)
-    val selectedColor = MyIcon(Icons.Rounded.Done,  22.dp, false, null, R.string.selected_color)
+    val setColor = MyIcon(Icons.Outlined.Palette,   20.dp, false, null, R.string.set_color)
+    val selectedColor = MyIcon(Icons.Rounded.Done,  24.dp, false, null, R.string.selected_color)
 
 
     //invited friend

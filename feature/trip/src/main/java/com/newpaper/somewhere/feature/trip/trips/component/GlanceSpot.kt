@@ -1,6 +1,8 @@
 package com.newpaper.somewhere.feature.trip.trips.component
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -31,6 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.newpaper.somewhere.core.designsystem.component.button.ToGoogleMapsButton
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
@@ -61,7 +64,7 @@ private val LINE_WIDTH: Dp = 7.dp
 @OptIn(ExperimentalHazeApi::class)
 @Composable
 internal fun GlanceSpot(
-    useBottomNavBar: Boolean,
+    uesLongWidth: Boolean,
     visible: Boolean,
     dateTimeFormat: DateTimeFormat,
     trip: Trip,
@@ -70,6 +73,13 @@ internal fun GlanceSpot(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     hazeState: HazeState? = null,
+
+    enterAnimation: EnterTransition = slideInVertically(
+        animationSpec = tween(500),
+        initialOffsetY = { (it * 2.5f).toInt() }),
+    exitAnimation: ExitTransition = slideOutVertically(
+        animationSpec = tween(500),
+        targetOffsetY = { (it * 2.5f).toInt() })
 ){
     val tripTitleText = if (trip.titleText == null || trip.titleText == "") stringResource(id = R.string.no_title)
                         else trip.titleText!!
@@ -90,7 +100,7 @@ internal fun GlanceSpot(
 
     val upperLineColor =
         if (spot.isFirstSpot(
-                dateId = date.id,
+                dateIndex = date.id,
                 dateList = trip.dateList,
                 spotList = date.spotList
             )) Color.Transparent
@@ -98,7 +108,7 @@ internal fun GlanceSpot(
 
     val lowerLineColor =
         if (spot.isLastSpot(
-                dateId = date.id,
+                dateIndex = date.id,
                 dateList = trip.dateList,
                 spotList = date.spotList
             )) Color.Transparent
@@ -107,12 +117,12 @@ internal fun GlanceSpot(
     val containerColor = if (hazeState == null) MaterialTheme.colorScheme.surfaceBright
                         else Color.Transparent
 
-    val glanceSpotColor = MaterialTheme.colorScheme.surfaceBright
+    val hazeTintColor = MaterialTheme.colorScheme.surfaceBright
 
     val glanceSpotModifier = modifier
                                 .navigationBarsPadding()
                                 .height(70.dp)
-                                .widthIn(max = if (useBottomNavBar) 600.dp else 400.dp)
+                                .widthIn(max = if (uesLongWidth) 600.dp else 400.dp)
                                 .padding(horizontal = 16.dp)
                                 .clip(MaterialTheme.shapes.large)
                                 .border(1.dp, MaterialTheme.colorScheme.surfaceDim, MaterialTheme.shapes.large)
@@ -121,21 +131,15 @@ internal fun GlanceSpot(
     val glanceSpotHazeModifier = if (hazeState == null) glanceSpotModifier
                             else glanceSpotModifier.hazeEffect(state = hazeState) {
                                 blurRadius = 16.dp
-                                tints = listOf(
-                                    HazeTint(glanceSpotColor.copy(alpha = 0.8f))
-                                )
+                                tints = listOf(HazeTint(hazeTintColor.copy(alpha = 0.8f)))
                                 inputScale = HazeInputScale.Fixed(0.5f)
                             }
 
 
     AnimatedVisibility(
         visible = visible,
-        enter = slideInVertically(
-            animationSpec = tween(500),
-            initialOffsetY = { (it * 2.5f).toInt() }),
-        exit = slideOutVertically(
-            animationSpec = tween(500),
-            targetOffsetY = { (it * 2.5f).toInt() })
+        enter = enterAnimation,
+        exit = exitAnimation
     ) {
         ClickableBox(
             onClick = onClick,
@@ -201,8 +205,9 @@ internal fun GlanceSpot(
 
                 Row(
                     modifier = Modifier
+                        .weight(1f)
                         .fillMaxHeight()
-                        .padding(10.dp, 8.dp, 16.dp, 8.dp),
+                        .padding(10.dp, 8.dp, 8.dp, 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     //text
@@ -270,6 +275,26 @@ internal fun GlanceSpot(
                             style = dateTimeStyle,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(0.dp, 0.dp, 16.dp, 0.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (spot.googleMapsPlacesId != null){
+                        ToGoogleMapsButton(
+                            enabled = true,
+                            googleMapsPlacesId = spot.googleMapsPlacesId!!,
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.surfaceBright)
+                                .border(1.dp, MaterialTheme.colorScheme.surfaceDim, CircleShape)
                         )
                     }
                 }

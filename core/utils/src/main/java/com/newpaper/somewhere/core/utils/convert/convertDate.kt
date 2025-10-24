@@ -49,8 +49,8 @@ fun Date.getTotalBudgetText(trip: Trip, numberOfDecimalPlaces: Int): String{
     return "${trip.unitOfCurrencyType.symbol} $budget"
 }
 
-fun Date.getTotalBudget(): Float{
-    var total = 0.0f
+fun Date.getTotalBudget(): Double{
+    var total = 0.0
     for (spot in spotList){
         total += spot.budget
     }

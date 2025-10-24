@@ -56,23 +56,23 @@ fun Spot.getEndTimeText(timeFormat: TimeFormat): String? {
 }
 
 fun Spot.isFirstSpot(
-    dateId: Int,
+    dateIndex: Int,
     dateList: List<Date>,
     spotList: List<Spot>
 ): Boolean{
     return spotType.isNotMove()
             && this == (spotList.firstOrNull() ?: false)
-            && getPrevSpot(dateList, dateId)?.spotType?.isNotMove() ?: true
+            && getPrevSpot(dateList, dateIndex)?.spotType?.isNotMove() ?: true
 }
 
 fun Spot.isLastSpot(
-    dateId: Int,
+    dateIndex: Int,
     dateList: List<Date>,
     spotList: List<Spot>
 ): Boolean{
     return spotType.isNotMove()
             && this == (spotList.lastOrNull() ?: false)
-            && getNextSpot(dateList, dateId)?.spotType?.isNotMove() ?: true
+            && getNextSpot(dateList, dateIndex)?.spotType?.isNotMove() ?: true
 }
 
 /**
@@ -281,7 +281,7 @@ fun Spot.setBudget(
     currentDateIndex: Int,
     updateTripState: (toTempTrip: Boolean, trip: Trip) -> Unit,
 
-    newBudget: Float
+    newBudget: Double
 ) {
     val newSpotList = showingTrip.dateList[currentDateIndex].spotList.toMutableList()
     newSpotList[index] = newSpotList[index].copy(budget = newBudget)

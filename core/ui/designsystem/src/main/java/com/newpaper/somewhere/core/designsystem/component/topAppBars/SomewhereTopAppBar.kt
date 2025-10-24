@@ -21,6 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,6 +50,7 @@ fun SomewhereTopAppBar(
     title: String,
     internetEnabled: Boolean = true,
     subtitle: String? = null,
+    talkbackSubTitle: String? = null,
 
     navigationIcon: MyIcon? = null,
     onClickNavigationIcon: () -> Unit = {},
@@ -108,7 +111,7 @@ fun SomewhereTopAppBar(
                         )
                         if (subtitle != null) {
                             MySpacerColumn(height = 2.dp)
-                            TopAppBarSubtitle(subtitle = subtitle)
+                            TopAppBarSubtitle(subtitle = subtitle, talkbackSubTitle = talkbackSubTitle)
                         }
                         else {
                             AnimatedVisibility(
@@ -135,7 +138,7 @@ fun SomewhereTopAppBar(
                         )
                         if (subtitle != null) {
                             MySpacerRow(width = 24.dp)
-                            TopAppBarSubtitle(subtitle = subtitle)
+                            TopAppBarSubtitle(subtitle = subtitle, talkbackSubTitle = talkbackSubTitle)
                         }
                         else {
                             AnimatedVisibility(
@@ -208,13 +211,17 @@ fun SomewhereTopAppBar(
 
 @Composable
 private fun TopAppBarSubtitle(
-    subtitle: String
+    subtitle: String,
+    talkbackSubTitle: String? = null
 ){
     Text(
         text = subtitle,
         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier.semantics{
+            contentDescription = talkbackSubTitle ?: subtitle
+        }
     )
 }
 

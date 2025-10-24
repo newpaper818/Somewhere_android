@@ -61,6 +61,7 @@ import com.newpaper.somewhere.core.utils.convert.getDateText
 import com.newpaper.somewhere.core.utils.convert.getNextSpot
 import com.newpaper.somewhere.core.utils.convert.getPrevSpot
 import com.newpaper.somewhere.core.utils.convert.getStartTimeText
+import com.newpaper.somewhere.core.utils.getTalkbackDateText
 import java.time.LocalDate
 
 val PROGRESS_BAR_HEIGHT = 104.dp
@@ -172,7 +173,8 @@ fun SpotListProgressBar(
 
                     ToPrevDateButton( //height: 40.dp
                         text = dateList[dateIndex - 1].getDateText(dateTimeFormat, false),
-                        onClick = { onPrevDateClick(dateIndex - 1) }
+                        onClick = { onPrevDateClick(dateIndex - 1) },
+                        talkbackText = getTalkbackDateText(dateList[dateIndex - 1].date, dateTimeFormat, false)
                     )
                 }
             }
@@ -300,7 +302,8 @@ fun SpotListProgressBar(
 
                     ToNextDateButton(
                         text = dateList[dateIndex + 1].getDateText(dateTimeFormat, false),
-                        onClick = { onNextDateClick(dateIndex + 1) }
+                        onClick = { onNextDateClick(dateIndex + 1) },
+                        talkbackText = getTalkbackDateText(dateList[dateIndex + 1].date, dateTimeFormat, false)
                     )
                 }
 

@@ -5,9 +5,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -107,6 +104,7 @@ fun GraphListItem(
     isShown: Boolean = true,
     sideTextPlaceHolderIcon: MyIcon? = null,
 
+    showPoint: Boolean = true,
     itemColor: Color = MaterialTheme.colorScheme.surfaceBright,
     pointColor: Color = GraphColor.point,
     lineColor: Color = GraphColor.line
@@ -185,7 +183,7 @@ fun GraphListItem(
                         iconText = iconText,
                         onClick = onClickPoint,
                         iconTextColor = iconTextColor,
-                        pointColor = pointColor,
+                        pointColor = if (showPoint) pointColor else Color.Transparent,
                         upperLineColor = upperLineColor,
                         lowerLineColor = lowerLineColor,
                         spotDragModifier = spotDragModifier

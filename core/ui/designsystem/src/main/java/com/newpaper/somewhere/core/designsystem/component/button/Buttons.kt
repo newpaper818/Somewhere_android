@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
@@ -321,12 +322,14 @@ fun DeleteProfileImageButton(
 @Composable
 fun ToPrevDateButton(
     text: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    talkbackText: String? = null
 ){
     Button(
         contentPadding = PaddingValues(8.dp, 0.dp, 20.dp, 0.dp),
         onClick = onClick,
-        modifier = Modifier.offset(1.dp)
+        modifier = modifier.offset(1.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -337,7 +340,10 @@ fun ToPrevDateButton(
             Text(
                 text = text,
                 style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.semantics{
+                    contentDescription = talkbackText ?: text
+                }
             )
         }
     }
@@ -346,12 +352,14 @@ fun ToPrevDateButton(
 @Composable
 fun ToNextDateButton(
     text: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    talkbackText: String? = null
 ){
     Button(
         contentPadding = PaddingValues(20.dp, 0.dp, 8.dp, 0.dp),
         onClick = onClick,
-        modifier = Modifier.offset((-1).dp)
+        modifier = modifier.offset((-1).dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -360,7 +368,10 @@ fun ToNextDateButton(
             Text(
                 text = text,
                 style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.semantics{
+                    contentDescription = talkbackText ?: text
+                }
             )
 
             DisplayIcon(icon = IconTextButtonIcon.rightArrow)

@@ -67,7 +67,7 @@
     <string name="on">사용 중</string>
     <string name="off">사용 안 함</string>
     <string name="toggle">전환</string>
-    <string name="save">저장</string>
+    <string name="save_location">장소 저장</string>
     <string name="set_location">위치 설정</string>
     <string name="search_location">장소 검색</string>
     <string name="show_other_date_spot_marker">다른 날짜 장소 보기</string>

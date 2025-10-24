@@ -3,7 +3,7 @@ package com.newpaper.somewhere.feature.trip.tripAi.model
 import androidx.annotation.StringRes
 import com.newpaper.somewhere.core.designsystem.icon.MyIcon
 import com.newpaper.somewhere.core.designsystem.icon.TripTypeIcon
-import com.newpaper.somewhere.core.model.R
+import com.newpaper.somewhere.feature.trip.R
 
 enum class TripType(
     val icon: MyIcon,

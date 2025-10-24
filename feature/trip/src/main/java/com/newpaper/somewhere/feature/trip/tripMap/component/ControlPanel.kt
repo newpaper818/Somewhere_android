@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -45,7 +46,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.google.maps.android.compose.CameraPositionState
-import com.newpaper.somewhere.core.designsystem.component.button.SpotTypeGroupCard
+import com.newpaper.somewhere.core.designsystem.component.button.FilterChipButton
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
@@ -60,6 +61,7 @@ import com.newpaper.somewhere.core.model.enums.SpotTypeGroup
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.utils.convert.getDateText
 import com.newpaper.somewhere.core.utils.convert.getSpotTypeGroupCount
+import com.newpaper.somewhere.core.utils.getTalkbackDateText
 import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.tripMap.TripMapViewModel
 import com.newpaper.somewhere.feature.trip.tripMap.fitBoundsToMarkers
@@ -303,7 +305,11 @@ internal fun ControlButtonsRow(
                                 dateTimeFormat.copy(includeDayOfWeek = false),
                                 false
                             ),
-                            style = dateTextStyle
+                            style = dateTextStyle,
+                            modifier = Modifier.semantics{
+                                contentDescription = getTalkbackDateText(dateListWithShownIconList[currentDateIndex].date.date, dateTimeFormat.copy(includeDayOfWeek = false),
+                                    false)
+                            }
                         )
                     }
                 }
@@ -383,19 +389,20 @@ internal fun SpotTypeList(
 ){
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(0.dp),
-        contentPadding = PaddingValues(16.dp, 8.dp, 4.dp, 8.dp),
+        contentPadding = PaddingValues(16.dp, 12.dp, 4.dp, 12.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
         items(spotTypeGroupWithShownIconList) {
 
             Row {
-                SpotTypeGroupCard(
-                    spotTypeGroup = it.spotTypeGroup,
+                FilterChipButton(
+                    text = stringResource(it.spotTypeGroup.textId),
                     selected = it.isShown,
-                    onCardClicked = { spotTypeGroup ->
-                        onSpotTypeItemClicked(spotTypeGroup)
-                    },
-                    selectedColor = isShownColor,
+                    onClick = { onSpotTypeItemClicked(it.spotTypeGroup) },
+
+                    selectedButtonColor = isShownColor,
+                    selectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                    notSelectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 MySpacerRow(width = 12.dp)
@@ -414,7 +421,7 @@ internal fun DateList(
     LazyColumn(
         state = dateListState,
         modifier = Modifier
-            .padding(16.dp, 8.dp, 16.dp, 16.dp)
+            .padding(16.dp, 0.dp, 16.dp, 16.dp)
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
     ) {
@@ -493,7 +500,10 @@ internal fun DateItem(
             ){
                 Text(
                     text = date.getDateText(dateTimeFormat.copy(includeDayOfWeek = false), false),
-                    style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                    modifier = Modifier.semantics{
+                        contentDescription = getTalkbackDateText(date.date, dateTimeFormat.copy(includeDayOfWeek = false), false)
+                    }
                 )
             }
 
