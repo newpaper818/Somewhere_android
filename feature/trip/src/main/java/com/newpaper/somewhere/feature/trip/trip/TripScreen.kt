@@ -39,6 +39,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -64,6 +66,7 @@ import com.newpaper.somewhere.core.utils.convert.getFirstLocation
 import com.newpaper.somewhere.core.utils.convert.getLastEnabledDate
 import com.newpaper.somewhere.core.utils.convert.getMaxInviteFriends
 import com.newpaper.somewhere.core.utils.convert.getStartDateText
+import com.newpaper.somewhere.core.utils.convert.getTalkbackStartEndDateText
 import com.newpaper.somewhere.core.utils.convert.getTotalBudgetText
 import com.newpaper.somewhere.core.utils.convert.getTotalTravelDistanceText
 import com.newpaper.somewhere.core.utils.convert.setColor
@@ -74,6 +77,7 @@ import com.newpaper.somewhere.core.utils.convert.setSpotType
 import com.newpaper.somewhere.core.utils.convert.setStartTime
 import com.newpaper.somewhere.core.utils.convert.setTitleText
 import com.newpaper.somewhere.core.utils.getDateText
+import com.newpaper.somewhere.core.utils.getTalkbackDateText
 import com.newpaper.somewhere.core.utils.getTimeText
 import com.newpaper.somewhere.core.utils.millisToLocalDate
 import com.newpaper.somewhere.feature.dialog.dateRange.DateRangeDialog
@@ -761,6 +765,7 @@ private fun TripScreen(
                         isDateListEmpty = showingTrip.dateList.isEmpty(),
                         startDateText = showingTrip.getStartDateText(dateTimeFormat, true),
                         endDateText = showingTrip.getEndDateText(dateTimeFormat, !sameYear),
+                        talkbackDateText = showingTrip.getTalkbackStartEndDateText(dateTimeFormat),
                         durationText = showingTrip.getDurationText(),
                         isEditMode = isEditMode,
                         onClick = { tripDialog.setShowDateRangeDialog(true) },
@@ -942,17 +947,26 @@ private fun TripScreen(
                             date = firstCreatedTimeZoned.toLocalDate(),
                             dateTimeFormat = dateTimeFormat,
                         )
+                        val talkbackDateText = getTalkbackDateText(
+                            date = firstCreatedTimeZoned.toLocalDate(),
+                            dateTimeFormat = dateTimeFormat
+                        )
 
                         val timeText = getTimeText(
                             time = firstCreatedTimeZoned.toLocalTime(),
                             timeFormat = dateTimeFormat.timeFormat
                         )
 
+                        val tripCreatedTimeText = stringResource(id = R.string.trip_created_time)
+
                         Text(
-                            text = "${stringResource(id = R.string.trip_created_time)}\n$dateText, $timeText",
+                            text = "${tripCreatedTimeText}\n$dateText, $timeText",
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.semantics{
+                                contentDescription = "${tripCreatedTimeText}\n$talkbackDateText, $timeText"
+                            }
                         )
                     }
                 }

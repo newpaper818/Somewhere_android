@@ -34,6 +34,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntOffset
@@ -65,6 +67,7 @@ import com.newpaper.somewhere.core.utils.enterVerticallyDelay
 import com.newpaper.somewhere.core.utils.enterVerticallyScaleIn
 import com.newpaper.somewhere.core.utils.exitVertically
 import com.newpaper.somewhere.core.utils.exitVerticallyScaleOut
+import com.newpaper.somewhere.core.utils.getTalkbackDateText
 import com.newpaper.somewhere.feature.trip.R
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -167,7 +170,10 @@ internal fun DateCard(
                         ),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.semantics{
+                            contentDescription = getTalkbackDateText(currentDate.date, dateTimeFormat, includeYear = false)
+                        }
                     )
 
                     Spacer(modifier = Modifier.weight(1f))

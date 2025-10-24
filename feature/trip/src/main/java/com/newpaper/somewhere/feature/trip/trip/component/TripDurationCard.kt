@@ -18,6 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -39,6 +42,7 @@ internal fun TripDurationCard(
     isDateListEmpty: Boolean,
     startDateText: String?,
     endDateText: String?,
+    talkbackDateText: String?,
     durationText: String?,
 
     isEditMode: Boolean,
@@ -58,11 +62,26 @@ internal fun TripDurationCard(
     val bodyTextStyle1 = if (!isDateListEmpty) MaterialTheme.typography.bodyLarge
                             else MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
 
+    val talkbackDateDurationText = if (talkbackDateText == null)
+            stringResource(id = R.string.trip_duration_card_body_no_start_date) + ", " +  stringResource(id = R.string.trip_duration_card_body_no_end_date)
+        else
+            "$talkbackDateText, $durationText"
 
     //ui
     Column {
         MyCard(
-            modifier = modifier.fillMaxWidth(),
+            modifier = modifier
+                .fillMaxWidth()
+                .clearAndSetSemantics{
+                    contentDescription = talkbackDateDurationText
+                    if (isEditMode)
+                        onClick(
+                            action = {
+                                onClick()
+                                true
+                            }
+                        )
+                },
             onClick = onClick,
             enabled = isEditMode
         ) {
@@ -220,6 +239,7 @@ private fun Preview_TripDurationCard(){
                 isDateListEmpty = false,
                 startDateText = "2023.03.14",
                 endDateText = "03.16",
+                talkbackDateText = "",
                 durationText = "3 days",
                 isEditMode = false,
                 onClick = {}
@@ -243,6 +263,7 @@ private fun Preview_TripDurationCard_edit(){
                 isDateListEmpty = false,
                 startDateText = "2023.03.14",
                 endDateText = "03.16",
+                talkbackDateText = "",
                 durationText = "3 days",
                 isEditMode = true,
                 onClick = {}
@@ -266,6 +287,7 @@ private fun Preview_TripDurationCard_noDate(){
                 isDateListEmpty = true,
                 startDateText = null,
                 endDateText = null,
+                talkbackDateText = "",
                 durationText = null,
                 isEditMode = false,
                 onClick = {}
@@ -289,6 +311,7 @@ private fun Preview_TripDurationCard_noDate_Edit(){
                 isDateListEmpty = true,
                 startDateText = null,
                 endDateText = null,
+                talkbackDateText = "",
                 durationText = null,
                 isEditMode = true,
                 onClick = {}
