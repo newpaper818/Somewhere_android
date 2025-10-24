@@ -23,7 +23,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -39,11 +40,13 @@ import com.newpaper.somewhere.core.ui.item.ItemWithRadioButton
 import com.newpaper.somewhere.core.ui.item.ItemWithSwitch
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
 import com.newpaper.somewhere.core.ui.segmentedButtons.TimeFormatSegmentedButtons
+import com.newpaper.somewhere.core.utils.getTalkbackDateText
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.feature.more.R
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @Composable
 fun SetDateTimeFormatRoute(
@@ -159,6 +162,10 @@ private fun SetDateTimeFormatScreen(
                 UpperDateTimeExampleBox(
                     dateText = dateExampleText,
                     timeText = timeExampleText,
+                    talkbackDateText = getTalkbackDateText(
+                        date = LocalDate.of(2023, 10, 21),
+                        dateTimeFormat = dateTimeFormat
+                    ),
                     modifier = itemModifier
                 )
             }
@@ -238,6 +245,7 @@ private fun SetDateTimeFormatScreen(
 private fun UpperDateTimeExampleBox(
     dateText: String,
     timeText: String,
+    talkbackDateText: String,
     modifier: Modifier = Modifier
 ){
     Box(
@@ -245,7 +253,7 @@ private fun UpperDateTimeExampleBox(
         modifier = modifier
             .height(120.dp)
             .padding(16.dp, 0.dp)
-            .semantics(mergeDescendants = true) { }
+            .clearAndSetSemantics { contentDescription = "$talkbackDateText, $timeText" }
     ) {
         FlowRow(
             verticalArrangement = Arrangement.Center,

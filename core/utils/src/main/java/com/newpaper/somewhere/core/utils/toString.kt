@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.core.utils
 
+import com.ibm.icu.text.RuleBasedNumberFormat
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.enums.DateFormat
 import com.newpaper.somewhere.core.model.enums.TimeFormat
@@ -56,7 +57,7 @@ fun getDateText(
 
     //month
     var month = if (dateTimeFormat.useMonthName) date.month.getDisplayName(TextStyle.SHORT, locale)
-    else df0.format(date.monthValue)
+                else df0.format(date.monthValue)
 
     if (!dateTimeFormat.useMonthName) month = "$month."
 
@@ -99,6 +100,62 @@ fun getDateText(
 
 
     return text
+}
+
+//LocalDate -> "2023 June 12" / "2023년 6월 12일"
+fun getTalkbackDateText(
+    date: LocalDate,
+    dateTimeFormat: DateTimeFormat,
+    includeYear: Boolean = true,
+    locale: Locale = Locale.getDefault()
+): String {
+    val df0 = DecimalFormat("0")
+
+    val formatter = RuleBasedNumberFormat(
+        locale,
+        RuleBasedNumberFormat.ORDINAL
+    )
+
+    //year
+    val year = date.year.toString()
+
+    //month
+    val month = date.month.getDisplayName(TextStyle.FULL, locale)
+
+    //day
+    val day = df0.format(date.dayOfMonth)
+    val dayEng = formatter.format(date.dayOfMonth.toLong())
+
+    //day of week
+    val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.FULL, locale)
+
+
+    var talkbackText =
+        if (locale.language == "ko"){
+            when (dateTimeFormat.dateFormat) {
+                DateFormat.YMD -> if(includeYear) "${year}년 ${month} ${day}일"   else "${month} ${day}일"
+                DateFormat.DMY -> if(includeYear) "${day}일 ${month} ${year}년"   else "${day}일 ${month}"
+                DateFormat.MDY -> if(includeYear) "${month} ${day}일 ${year}년"   else "${month} ${day}일"
+            }
+        }
+        else {
+            when (dateTimeFormat.dateFormat) {
+                DateFormat.YMD -> if(includeYear) "$year $month $dayEng"   else "$month $dayEng"
+                DateFormat.DMY -> if(includeYear) "$dayEng $month $year"   else "$dayEng $month"
+                DateFormat.MDY -> if(includeYear) "$month $dayEng $year"   else "$month $dayEng"
+            }
+        }
+
+
+    if (dateTimeFormat.includeDayOfWeek)
+        talkbackText = when (dateTimeFormat.dateFormat) {
+            DateFormat.YMD -> "$talkbackText $dayOfWeek"
+            DateFormat.DMY -> "$dayOfWeek, $talkbackText"
+            DateFormat.MDY -> "$dayOfWeek, $talkbackText"
+        }
+
+
+    return talkbackText
 }
 
 fun getDateText(

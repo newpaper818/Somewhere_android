@@ -11,8 +11,10 @@ import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.utils.R
 import com.newpaper.somewhere.core.utils.getDateText
 import com.newpaper.somewhere.core.utils.getNumToText
+import com.newpaper.somewhere.core.utils.getTalkbackDateText
 import java.time.LocalDate
 import java.time.Period
+import java.util.Locale
 
 
 //same with firestore-common/stringValue
@@ -116,6 +118,57 @@ fun Trip.getStartEndDateText(dateTimeFormat: DateTimeFormat): String?{
                 )
 
             "$startDateText - $lastDateText"
+        }
+    }
+    else
+        null
+}
+
+fun Trip.getTalkbackStartEndDateText(
+    dateTimeFormat: DateTimeFormat,
+    locale: Locale = Locale.getDefault()
+): String?{
+
+    //if both date is not null
+    return if (startDate != null && endDate != null){
+
+        val startDate1 = LocalDate.parse(startDate)
+        val endDate1 = LocalDate.parse(endDate)
+
+        //if same date (1 day)
+        if (startDate1 == endDate1){
+            getTalkbackDateText(
+                date = startDate1,
+                dateTimeFormat = dateTimeFormat,
+                includeYear = true
+            )
+        }
+
+        //if not same date (2 days or over)
+        else {
+            val startDateText = getTalkbackDateText(
+                date = startDate1,
+                dateTimeFormat = dateTimeFormat,
+                includeYear = true
+            )
+
+            val lastDateText = if (startDate1.year == endDate1.year)
+                getTalkbackDateText(
+                    date = endDate1,
+                    dateTimeFormat = dateTimeFormat,
+                    includeYear = false
+                )
+            else
+                getTalkbackDateText(
+                    date = endDate1,
+                    dateTimeFormat = dateTimeFormat,
+                    includeYear = true
+                )
+
+            if (locale.language == "ko")
+                "${startDateText} 부터 ${lastDateText} 까지"
+            else
+                "$startDateText to $lastDateText"
         }
     }
     else

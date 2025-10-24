@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,6 +46,7 @@ import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.utils.convert.getStartEndDateText
+import com.newpaper.somewhere.core.utils.convert.getTalkbackStartEndDateText
 import com.newpaper.somewhere.core.utils.enterHorizontally
 import com.newpaper.somewhere.core.utils.exitHorizontally
 import com.newpaper.somewhere.feature.trip.R
@@ -71,6 +73,9 @@ internal fun TripItem(
 
     val dateText = trip.getStartEndDateText(dateTimeFormat.copy(includeDayOfWeek = false))
                     ?: stringResource(id = R.string.no_date)
+
+    val talkbackDateText = trip.getTalkbackStartEndDateText(dateTimeFormat.copy(includeDayOfWeek = false))
+                            ?: stringResource(id = R.string.no_date)
 
     val haptic = LocalHapticFeedback.current
 
@@ -104,6 +109,7 @@ internal fun TripItem(
         title = titleText,
         titleIsNull = titleIsNull,
         dateText = dateText,
+        talkbackDateText = talkbackDateText,
         onClick = onClick,
         onClickDelete = onClickDelete,
         downloadImage = downloadImage,
@@ -133,6 +139,7 @@ private fun TripItemUi(
     title: String,
     titleIsNull: Boolean,
     dateText: String,
+    talkbackDateText: String,
 
     onClick: (() -> Unit)?,
     onClickDelete: () -> Unit,
@@ -226,7 +233,10 @@ private fun TripItemUi(
                     //trip start date - end date
                     Text(
                         text = dateText,
-                        style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                        modifier = Modifier.semantics {
+                            contentDescription = talkbackDateText
+                        }
                     )
                 }
 
@@ -309,6 +319,7 @@ private fun TripItemPreview(){
             title = "title",
             titleIsNull = false,
             dateText = "3.14 - 3.16",
+            talkbackDateText = "3.14 - 3.16",
             onClick = { },
             onClickDelete = { },
             downloadImage = {_,_,_ ->}
@@ -329,6 +340,7 @@ private fun TripItemPreview2(){
             title = "title",
             titleIsNull = false,
             dateText = "3.14 - 3.16",
+            talkbackDateText = "3.14 - 3.16",
             onClick = { },
             onClickDelete = { },
             downloadImage = {_,_,_ ->}
@@ -349,6 +361,7 @@ private fun TripItemPreview3(){
             title = "No title",
             titleIsNull = true,
             dateText = "No date",
+            talkbackDateText = "3.14 - 3.16",
             onClick = { },
             onClickDelete = { },
             downloadImage = {_,_,_ ->}

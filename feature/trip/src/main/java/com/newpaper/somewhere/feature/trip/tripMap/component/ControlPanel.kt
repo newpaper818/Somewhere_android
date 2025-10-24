@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -60,6 +61,7 @@ import com.newpaper.somewhere.core.model.enums.SpotTypeGroup
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.utils.convert.getDateText
 import com.newpaper.somewhere.core.utils.convert.getSpotTypeGroupCount
+import com.newpaper.somewhere.core.utils.getTalkbackDateText
 import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.tripMap.TripMapViewModel
 import com.newpaper.somewhere.feature.trip.tripMap.fitBoundsToMarkers
@@ -303,7 +305,11 @@ internal fun ControlButtonsRow(
                                 dateTimeFormat.copy(includeDayOfWeek = false),
                                 false
                             ),
-                            style = dateTextStyle
+                            style = dateTextStyle,
+                            modifier = Modifier.semantics{
+                                contentDescription = getTalkbackDateText(dateListWithShownIconList[currentDateIndex].date.date, dateTimeFormat.copy(includeDayOfWeek = false),
+                                    false)
+                            }
                         )
                     }
                 }
@@ -494,7 +500,10 @@ internal fun DateItem(
             ){
                 Text(
                     text = date.getDateText(dateTimeFormat.copy(includeDayOfWeek = false), false),
-                    style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                    modifier = Modifier.semantics{
+                        contentDescription = getTalkbackDateText(date.date, dateTimeFormat.copy(includeDayOfWeek = false), false)
+                    }
                 )
             }
 

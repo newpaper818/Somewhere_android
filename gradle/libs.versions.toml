@@ -46,6 +46,7 @@ foundationAndroid = "1.7.0"
 moshi = "1.15.1"
 billing = "7.1.1"
 haze = "1.6.10"
+icu4j = "77.1"
 
 
 
@@ -164,6 +165,9 @@ billing-ktx = { group = "com.android.billingclient", name = "billing-ktx", versi
 
 #haze
 haze = { group = "dev.chrisbanes.haze", name = "haze", version.ref = "haze" }
+
+#number to english
+icu4j = { group = "com.ibm.icu", name = "icu4j", version.ref = "icu4j" }
 
 
 

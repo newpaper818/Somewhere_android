@@ -85,6 +85,7 @@ import com.newpaper.somewhere.core.utils.convert.setSpotType
 import com.newpaper.somewhere.core.utils.convert.setStartTime
 import com.newpaper.somewhere.core.utils.convert.setTravelDistance
 import com.newpaper.somewhere.core.utils.fitBoundsToMarkers
+import com.newpaper.somewhere.core.utils.getTalkbackDateText
 import com.newpaper.somewhere.feature.dialog.deleteOrNot.TwoButtonsDialog
 import com.newpaper.somewhere.feature.dialog.memo.MemoDialog
 import com.newpaper.somewhere.feature.dialog.selectDate.SelectDateDialog
@@ -565,6 +566,15 @@ private fun SpotScreen(
         }
         else null
 
+    val talkbackSubTitle =
+        if (dateList.isNotEmpty()) {
+            if (dateTitle == null)
+                getTalkbackDateText(dateList[currentDateIndex].date, spotUiInfo.dateTimeFormat, includeYear = true)
+            else
+                stringResource(id = R.string.sub_title, getTalkbackDateText(dateList[currentDateIndex].date, spotUiInfo.dateTimeFormat, includeYear = true), dateTitle)
+        }
+        else null
+
 
 
 
@@ -649,6 +659,7 @@ private fun SpotScreen(
                 useHorizontalLayoutTitles = false,
                 title = topBarTitle,
                 subtitle = subTitle,
+                talkbackSubTitle = talkbackSubTitle,
                 internetEnabled = spotUiInfo.use2Panes || spotUiInfo.internetEnabled,
 
                 //back button
