@@ -7,7 +7,9 @@ import java.time.ZonedDateTime
 
 /**
  *
- * @property imagePathList List<"001_231011_103012157_0.jpg">
+ * @property startDate "2025-10-23" or null
+ * @property endDate "2025-10-25" or null
+ * @property imagePathList List<"001_231011_103012157_0.jpg", ...>
  */
 @JsonClass(generateAdapter = true)
 data class Trip(

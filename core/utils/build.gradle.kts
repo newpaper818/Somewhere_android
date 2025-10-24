@@ -53,6 +53,9 @@ dependencies {
     implementation(libs.androidx.animation.core.android)
     implementation(libs.androidx.foundation.android)
 
+    //
+    implementation(libs.icu4j)
+
     //test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

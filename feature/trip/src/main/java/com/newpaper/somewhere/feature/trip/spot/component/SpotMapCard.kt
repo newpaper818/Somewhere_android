@@ -24,12 +24,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.maps.android.compose.CameraPositionState
+import com.newpaper.somewhere.core.designsystem.component.button.ToGoogleMapsButton
 import com.newpaper.somewhere.core.designsystem.component.map.MapForSpot
 import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
@@ -42,9 +44,17 @@ import com.newpaper.somewhere.core.ui.FitBoundsToMarkersButton
 import com.newpaper.somewhere.core.ui.UserLocationButton
 import com.newpaper.somewhere.core.utils.convert.nextSpotOrDateIsExist
 import com.newpaper.somewhere.core.utils.convert.prevSpotOrDateIsExist
+import dev.chrisbanes.haze.ExperimentalHazeApi
+import dev.chrisbanes.haze.HazeInputScale
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 
 @Composable
 fun SpotMapCard(
+    useBlurEffect: Boolean,
     isEditMode: Boolean,
     isMapExpand: Boolean,
     expandHeight: Int,
@@ -71,14 +81,13 @@ fun SpotMapCard(
     setMapSize: (IntSize) -> Unit,
 
     openInGoogleMapEnabled: Boolean,
-    onClickOpenInGoogleMap: () -> Unit,
 
     modifier: Modifier = Modifier,
 
     showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
     use2Panes: Boolean = false,
     spotFrom: Spot? = null,
-    spotTo: Spot? = null
+    spotTo: Spot? = null,
 ) {
     val cardHeight by animateIntAsState(
         targetValue = if (isMapExpand)  expandHeight
@@ -94,16 +103,19 @@ fun SpotMapCard(
         currentSpot?.nextSpotOrDateIsExist(spotList, dateList, dateIndex) ?: (dateIndex < dateList.lastIndex)
 
     val boxModifier = if (!use2Panes) modifier
-        .fillMaxWidth()
-        .height(cardHeight.dp)
-        .onSizeChanged {
-            setMapSize(it)
-        }
-    else modifier
-        .fillMaxSize()
-        .onSizeChanged {
-            setMapSize(it)
-        }
+            .fillMaxWidth()
+            .height(cardHeight.dp)
+            .onSizeChanged {
+                setMapSize(it)
+            }
+        else modifier
+            .fillMaxSize()
+            .onSizeChanged {
+                setMapSize(it)
+            }
+
+    val mapButtonHazeState = if(useBlurEffect) rememberHazeState() else null
+
 
     Box(
         contentAlignment = Alignment.BottomCenter,
@@ -111,6 +123,8 @@ fun SpotMapCard(
     ) {
         //map for spot
         MapForSpot(
+            modifier = if (mapButtonHazeState != null) Modifier.hazeSource(state = mapButtonHazeState)
+                        else Modifier,
             isDarkMapTheme = isDarkMapTheme,
             cameraPositionState = cameraPositionState,
             userLocationEnabled = userLocationEnabled,
@@ -142,15 +156,16 @@ fun SpotMapCard(
                 toPrevSpot = toPrevSpot,
                 toNextSpot = toNextSpot,
 
+                isFullscreenMap = isMapExpand,
                 showFullScreenButton = !use2Panes,
                 onFullScreenClicked = onFullScreenClicked,
                 toggleIsEditLocation = toggleIsEditLocation,
                 deleteLocation = deleteLocation,
 
                 openInGoogleMapEnabled = openInGoogleMapEnabled,
-                onClickOpenInGoogleMap = onClickOpenInGoogleMap,
 
-                showSnackBar = showSnackBar
+                showSnackBar = showSnackBar,
+                hazeState = mapButtonHazeState
             )
 
             MySpacerColumn(height = 16.dp)
@@ -184,15 +199,16 @@ private fun MapSpotMapButtons(
     toPrevSpot: () -> Unit,
     toNextSpot: () -> Unit,
 
+    isFullscreenMap: Boolean,
     showFullScreenButton: Boolean,
     onFullScreenClicked: () -> Unit,
     toggleIsEditLocation: () -> Unit,
     deleteLocation: () -> Unit,
 
     openInGoogleMapEnabled: Boolean,
-    onClickOpenInGoogleMap: () -> Unit,
 
     showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
+    hazeState: HazeState?,
 ){
     val fitBoundsToMarkersEnabled =
         if (spot == null) false
@@ -216,9 +232,11 @@ private fun MapSpotMapButtons(
                 fusedLocationClient = fusedLocationClient,
                 cameraPositionState = cameraPositionState,
                 setUserLocationEnabled = setUserLocationEnabled,
+                isFullscreenMap = isFullscreenMap,
                 onFullScreenClicked = onFullScreenClicked,
                 showSnackBar = showSnackBar,
-                showFullScreenButton = showFullScreenButton
+                showFullScreenButton = showFullScreenButton,
+                hazeState = hazeState
             )
         }
         else {
@@ -226,7 +244,8 @@ private fun MapSpotMapButtons(
                 editEnabled = spot?.spotType?.isNotMove() == true,
                 deleteEnabled = deleteEnabled,
                 toggleIsEditLocation = toggleIsEditLocation,
-                deleteLocation = deleteLocation
+                deleteLocation = deleteLocation,
+                hazeState = hazeState
             )
         }
 
@@ -241,14 +260,16 @@ private fun MapSpotMapButtons(
             fitBoundsToMarkersEnabled = fitBoundsToMarkersEnabled,
             cameraPositionState = cameraPositionState,
             spotList = spotList,
-            showSnackBar = showSnackBar
+            showSnackBar = showSnackBar,
+            hazeState = hazeState
         )
 
         MySpacerRow(width = 16.dp)
 
         ToGoogleMapButton(
             enabled = openInGoogleMapEnabled,
-            onClick = onClickOpenInGoogleMap
+            googleMapsPlacesId = spot?.googleMapsPlacesId ?: "",
+            hazeState = hazeState
         )
     }
 }
@@ -259,19 +280,25 @@ private fun UserLocationAndFullScreenButtons(
     fusedLocationClient: FusedLocationProviderClient,
     cameraPositionState: CameraPositionState,
     setUserLocationEnabled: (userLocationEnabled: Boolean) -> Unit,
+    isFullscreenMap: Boolean,
     onFullScreenClicked: () -> Unit,
     showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
-    showFullScreenButton: Boolean = true
+    showFullScreenButton: Boolean = true,
+    hazeState: HazeState?,
 ){
-    MapButtonsRow {
+    MapButtonsRow(hazeState = hazeState) {
         //user location
         UserLocationButton(fusedLocationClient, cameraPositionState, setUserLocationEnabled, showSnackBar)
 
         //fullscreen map
         if (showFullScreenButton) {
-            MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.fullscreen.descriptionTextId!!)) {
+            MyPlainTooltipBox(tooltipText = stringResource(id =
+                if (!isFullscreenMap) MapButtonIcon.fullscreen.descriptionTextId!!
+                else                MapButtonIcon.fullscreenExit.descriptionTextId!!
+            )) {
                 IconButton(onClick = onFullScreenClicked) {
-                    DisplayIcon(icon = MapButtonIcon.fullscreen)
+                    if (!isFullscreenMap) DisplayIcon(icon = MapButtonIcon.fullscreen)
+                    else                DisplayIcon(icon = MapButtonIcon.fullscreenExit)
                 }
             }
         }
@@ -285,8 +312,9 @@ private fun EditAndDeleteLocationButtons(
     deleteEnabled: Boolean,
     toggleIsEditLocation: () -> Unit,
     deleteLocation: () -> Unit,
+    hazeState: HazeState?,
 ){
-    MapButtonsRow {
+    MapButtonsRow(hazeState = hazeState) {
         //edit location
         MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.editLocation.descriptionTextId!!)) {
             IconButton(
@@ -328,8 +356,9 @@ private fun SpotNavigateWithFitBoundsToMarkersButtons(
     cameraPositionState: CameraPositionState,
     spotList: List<Spot>,
     showSnackBar: (text: String, actionLabel: String?, duration: SnackbarDuration, onActionClicked: () -> Unit) -> Unit,
+    hazeState: HazeState?,
 ){
-    MapButtonsRow {
+    MapButtonsRow(hazeState = hazeState) {
         //to prev spot
         MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.prevSpot.descriptionTextId!!)) {
             IconButton(
@@ -365,32 +394,44 @@ private fun SpotNavigateWithFitBoundsToMarkersButtons(
 @Composable
 private fun ToGoogleMapButton(
     enabled: Boolean,
-    onClick: () -> Unit,
+    googleMapsPlacesId: String,
+    hazeState: HazeState?,
 ){
-    MapButtonsRow {
-        MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.openInGoogleMaps.descriptionTextId!!)) {
-            IconButton(
-                enabled = enabled,
-                onClick = onClick
-            ) {
-                DisplayIcon(
-                    icon = MapButtonIcon.openInGoogleMaps,
-                    enabled = enabled
-                )
-            }
-        }
+    MapButtonsRow(hazeState = hazeState) {
+        ToGoogleMapsButton(
+            enabled = enabled,
+            googleMapsPlacesId = googleMapsPlacesId
+        )
     }
 }
 
+
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 private fun MapButtonsRow(
-    buttonsContent: @Composable () -> Unit
+    hazeState: HazeState?,
+    buttonsContent: @Composable () -> Unit,
 ){
+    val containerColor = if (hazeState == null) MaterialTheme.colorScheme.surface
+                            else Color.Transparent
+
+    val hazeTintColor = MaterialTheme.colorScheme.surface
+
+    val rowModifier = Modifier
+                        .clip(CircleShape)
+                        .border(1.dp, MaterialTheme.colorScheme.surfaceTint, CircleShape)
+
+    val hazeModifier = if (hazeState == null) rowModifier.background(containerColor)
+                        else rowModifier
+                            .background(containerColor)
+                            .hazeEffect(state = hazeState) {
+                                blurRadius = 16.dp
+                                tints = listOf(HazeTint(hazeTintColor.copy(alpha = 0.8f)))
+                                inputScale = HazeInputScale.Fixed(0.5f)
+                            }
+
     Row(
-        modifier = Modifier
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surface.copy(0.95f))
-            .border(1.dp, MaterialTheme.colorScheme.surfaceTint, CircleShape),
+        modifier = hazeModifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         buttonsContent()

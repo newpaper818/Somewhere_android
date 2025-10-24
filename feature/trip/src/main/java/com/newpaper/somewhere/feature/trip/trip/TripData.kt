@@ -5,6 +5,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.tripData.Date
+import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
 
 internal data class TripUiInfo(
@@ -54,15 +55,22 @@ internal data class TripDialog(
     val showMemoDialog: Boolean = false,
     val showSetCurrencyDialog: Boolean = false,
     val showSetColorDialog: Boolean = false,
+    val showSetTimeDialog: Boolean = false,
+    val showSetSpotTypeDialog: Boolean = false,
 
     private val _setShowExitDialog: (Boolean) -> Unit = {},
     private val _setShowDateRangeDialog: (Boolean) -> Unit = {},
     private val _setShowMemoDialog: (Boolean) -> Unit = {},
     private val _setShowSetCurrencyDialog: (Boolean) -> Unit = {},
     private val _setShowSetColorDialog: (Boolean) -> Unit = {},
+    private val _setShowSetTimeDialog: (Boolean) -> Unit = {},
+    private val _setShowSetSpotTypeDialog: (Boolean) -> Unit = {},
 
     val selectedDate: Date? = null,
-    private val _setSelectedDate: (Date?) -> Unit = {}
+    private val _setSelectedDate: (Date?) -> Unit = {},
+
+    val selectedSpot: Spot? = null,
+    private val _setSelectedSpot: (Spot?) -> Unit = {}
 ){
     fun setShowExitDialog(showExitDialog: Boolean){
         _setShowExitDialog(showExitDialog) }
@@ -74,8 +82,15 @@ internal data class TripDialog(
         _setShowSetCurrencyDialog(showSetCurrencyDialog) }
     fun setShowSetColorDialog(showSetColorDialog: Boolean){
         _setShowSetColorDialog(showSetColorDialog) }
+    fun setShowSetTimeDialog(showSetTimeDialog: Boolean){
+        _setShowSetTimeDialog(showSetTimeDialog) }
+    fun setShowSetSpotTypeDialog(showSetSpotTypeDialog: Boolean){
+        _setShowSetSpotTypeDialog(showSetSpotTypeDialog) }
+
     fun setSelectedDate(selectedDate: Date?){
         _setSelectedDate(selectedDate) }
+    fun setSelectedSpot(selectedSpot: Spot?){
+        _setSelectedSpot(selectedSpot) }
 }
 
 internal data class TripNavigate(
@@ -84,7 +99,7 @@ internal data class TripNavigate(
     private val _navigateToInviteFriend: () -> Unit = {},
     private val _navigateToInvitedFriends: () -> Unit = {},
     private val _navigateToImage: (imageList: List<String>, initialImageIndex: Int) -> Unit = { _, _ -> },
-    private val _navigateToDate: (dateIndex: Int) -> Unit = {},
+    private val _navigateToSpot: (dateIndex: Int, spotIndex: Int) -> Unit = { _, _ -> },
     private val _navigateToTripMap: () -> Unit = {},
     private val _navigateUpAndDeleteNewTrip: (deleteTrip: Trip) -> Unit = {}
 ){
@@ -98,8 +113,8 @@ internal data class TripNavigate(
         _navigateToInvitedFriends() }
     fun navigateToImage(imageList: List<String>, initialImageIndex: Int){
         _navigateToImage(imageList, initialImageIndex) }
-    fun navigateToDate(dateIndex: Int){
-        _navigateToDate(dateIndex) }
+    fun navigateToSpot(dateIndex: Int, spotIndex: Int){
+        _navigateToSpot(dateIndex, spotIndex) }
     fun navigateToTripMap(){
         _navigateToTripMap() }
     fun navigateUpAndDeleteNewTrip(deleteTrip: Trip){

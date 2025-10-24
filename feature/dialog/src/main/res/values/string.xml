@@ -67,7 +67,7 @@
     <string name="on">On</string>
     <string name="off">Off</string>
     <string name="toggle">switch</string>
-    <string name="save">Save</string>
+    <string name="save_location">Save location</string>
     <string name="set_location">Set Location</string>
     <string name="search_location">Search location</string>
     <string name="show_other_date_spot_marker">Show other date\'s spot markers</string>

@@ -8,6 +8,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -54,7 +56,10 @@ fun MapForTripMap(
     dateList: List<Date>,
     dateListWithShownMarkerList: List<DateWithBoolean>,
     spotTypeGroupWithShownMarkerList: List<SpotTypeGroupWithBoolean>,
-    firstFitBoundsToMarkers: () -> Unit
+    firstFitBoundsToMarkers: () -> Unit,
+    onClickMarker: (Date, Spot) -> Unit,
+    onClickMap: (LatLng) -> Unit,
+    modifier: Modifier = Modifier
 ){
     val uiSettings = remember {
         MapUiSettings(myLocationButtonEnabled = false, zoomControlsEnabled = false)
@@ -69,9 +74,11 @@ fun MapForTripMap(
         )
     }
 
+    val haptic = LocalHapticFeedback.current
+
 
     GoogleMap(
-        modifier = Modifier.fillMaxSize().clearAndSetSemantics { },
+        modifier = modifier.fillMaxSize().clearAndSetSemantics { },
         googleMapOptionsFactory = { GoogleMapOptions().mapId(getMapId(isDarkMapTheme)) },
         cameraPositionState = cameraPositionState,
         properties = properties,
@@ -79,7 +86,8 @@ fun MapForTripMap(
         onMapLoaded = {
             firstFitBoundsToMarkers()
         },
-        contentPadding = mapPadding
+        contentPadding = mapPadding,
+        onMapClick = onClickMap
     ) {
         dateListWithShownMarkerList.forEachIndexed { dateIndex, dateWithBoolean ->
             if (dateWithBoolean.isShown) {
@@ -102,7 +110,13 @@ fun MapForTripMap(
                             isBigMarker = false,
                             iconText = spot.iconText.toString(),
                             iconColor = dateWithBoolean.date.color.color,
-                            onIconColor = dateWithBoolean.date.color.onColor
+                            onIconColor = dateWithBoolean.date.color.onColor,
+                            onClick = {
+                                //haptic
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+
+                                onClickMarker(dateWithBoolean.date, spot)
+                            }
                         )
 
                         //add poly line point
@@ -137,7 +151,7 @@ fun MapForTripMap(
                 //draw poly line
                 MapLine(
                     pointList = polyLinePointList,
-                    lineColor = Color(dateList[dateIndex].color.color).copy(alpha = 0.3f)
+                    lineColor = Color(dateList[dateIndex].color.color).copy(alpha = 0.8f)
                 )
             }
         }
@@ -170,7 +184,8 @@ fun MapForSpot(
     currentSpot: Spot?,
 
     spotFrom: Spot? = null,
-    spotTo: Spot? = null
+    spotTo: Spot? = null,
+    modifier: Modifier = Modifier
 ){
     val uiSettings = remember {
         MapUiSettings(
@@ -191,7 +206,7 @@ fun MapForSpot(
 
 
     GoogleMap(
-        modifier = Modifier.fillMaxSize().clearAndSetSemantics { },
+        modifier = modifier.fillMaxSize().clearAndSetSemantics { },
         googleMapOptionsFactory = { GoogleMapOptions().mapId(getMapId(isDarkMapTheme)) },
         cameraPositionState = cameraPositionState,
         onMapLoaded = onMapLoaded,
@@ -328,7 +343,7 @@ fun MapForSetLocation(
                 //draw poly line
                 MapLine(
                     pointList = polyLinePointList,
-                    lineColor = if (showOtherDateSpotMarkers) Color(date.color.color).copy(alpha = 0.3f)
+                    lineColor = if (showOtherDateSpotMarkers) Color(date.color.color).copy(alpha = 0.8f)
                                 else null
                 )
             }

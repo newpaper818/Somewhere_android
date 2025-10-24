@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--date/ ===================================================================================-->
-    <string name="edit_date">Edit Date</string>
     <string name="spots">Spots</string>
     <string name="choose_spot_type">Choose Spot Type!</string>
     <string name="new_spot">New Spot</string>
-    <string name="no_plan">No Plan…\nLet\'s create a new spot!</string>
+    <string name="no_plan">No Plan… Let\'s create a new spot!</string>
 
 
     <!--image/ ==================================================================================-->
@@ -57,12 +56,17 @@
     <!--spot/ ===================================================================================-->
     <string name="edit_spot">Edit Spot</string>
     <string name="sub_title">%s - %s</string>
+    <string name="spot_title">Spot title</string>
     <string name="delete_spot">Delete spot</string>
     <string name="no_spot">No spot</string>
     <string name="dialog_body_delete_spot">Delete this Spot?</string>
 
 
     <!--trip/ ===================================================================================-->
+    <!--DateCard.kt-->
+    <string name="date_title">Date title</string>
+    <string name="move_date">Move date</string>
+
     <!--ShareTripCard.kt-->
     <string name="me">Me</string>
     <string name="trip_mates">Trip mates</string>
@@ -76,6 +80,7 @@
 
     <!--TripScreen.kt-->
     <string name="edit_trip">Edit Trip</string>
+    <string name="trip_title">Trip title</string>
     <string name="long_text">Long Text(Up to %d characters)</string>
     <string name="dates">Dates</string>
     <string name="set_trip_duration">Set Trip Duration</string>
@@ -113,6 +118,19 @@
     <string name="something_went_wrong">Something went wrong…</string>
     <string name="close">Close</string>
 
+    <!--TripType.kt-->
+    <string name="trip_type_cultural_experiences">Cultural experiences</string>
+    <string name="trip_type_historical_sites">Historical sites</string>
+    <string name="trip_type_exhibitions_museums">Exhibitions &amp; Museums</string>
+    <string name="trip_type_sports_activity">Sports &amp; Activity</string>
+    <string name="trip_type_great_food">Great food</string>
+    <string name="trip_type_shopping">Shopping</string>
+
+    <!--TripWith.kt-->
+    <string name="trip_with_solo">Solo</string>
+    <string name="trip_with_partner">Partner</string>
+    <string name="trip_with_friends">Friends</string>
+    <string name="trip_with_family">Family</string>
 
     <!--tripMap/ ================================================================================-->
     <string name="snackbar_no_location_to_show">No location to show</string>
@@ -141,5 +159,7 @@
     <string name="dialog_button_delete">Delete</string>
 
     <string name="no_trip">No Trip…\nLet\'s create a new trip!</string>
+
+    <string name="delete">delete</string>
 
 </resources>

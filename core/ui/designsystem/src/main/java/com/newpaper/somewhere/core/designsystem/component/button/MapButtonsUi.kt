@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -74,6 +75,31 @@ fun UserLocationButtonUi(
                 icon =
                 if (userLocationPermissionGranted) MapButtonIcon.myLocation
                 else MapButtonIcon.disabledMyLocation
+            )
+        }
+    }
+}
+
+@Composable
+fun ToGoogleMapsButton(
+    enabled: Boolean,
+    googleMapsPlacesId: String,
+    modifier: Modifier = Modifier
+){
+    val uriHandler = LocalUriHandler.current
+
+    MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.openInGoogleMaps.descriptionTextId!!)) {
+        IconButton(
+            modifier = modifier,
+            enabled = enabled,
+            onClick = {
+                val url = "https://www.google.com/maps/search/?api=1&query=<address>&query_place_id=${googleMapsPlacesId}"
+                uriHandler.openUri(url)
+            }
+        ) {
+            DisplayIcon(
+                icon = MapButtonIcon.openInGoogleMaps,
+                enabled = enabled
             )
         }
     }

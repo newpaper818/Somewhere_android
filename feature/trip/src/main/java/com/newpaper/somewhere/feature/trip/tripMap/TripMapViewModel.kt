@@ -5,10 +5,13 @@ import com.newpaper.somewhere.core.model.data.DateWithBoolean
 import com.newpaper.somewhere.core.model.data.SpotTypeGroupWithBoolean
 import com.newpaper.somewhere.core.model.enums.SpotTypeGroup
 import com.newpaper.somewhere.core.model.tripData.Date
+import com.newpaper.somewhere.core.model.tripData.Spot
+import com.newpaper.somewhere.core.model.tripData.Trip
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.time.LocalDate
 import javax.inject.Inject
 
 data class TripMapUiState(
@@ -18,7 +21,12 @@ data class TripMapUiState(
     val fitBoundsToMarkersEnabled: Boolean = true,
 
     val dateWithShownMarkerList: List<DateWithBoolean> = listOf(),
-    val spotTypeGroupWithShownMarkerList: List<SpotTypeGroupWithBoolean> = listOf()
+    val spotTypeGroupWithShownMarkerList: List<SpotTypeGroupWithBoolean> = listOf(),
+
+    val showGlanceSpot: Boolean = false,
+    val glanceTrip: Trip = Trip(),
+    val glanceDate: Date = Date(date = LocalDate.now()),
+    val glanceSpot: Spot = Spot(date = LocalDate.now()),
 )
 
 class TripMapViewModel @Inject constructor(
@@ -62,8 +70,25 @@ class TripMapViewModel @Inject constructor(
         }
     }
 
+    fun setShowGlanceSpot(showGlanceSpot: Boolean){
+        _tripMapUiState.update {
+            it.copy(showGlanceSpot = showGlanceSpot)
+        }
+    }
 
-
+    fun setGlanceTripSpot(
+        trip: Trip,
+        date: Date,
+        spot: Spot
+    ){
+        _tripMapUiState.update {
+            it.copy(
+                glanceTrip = trip,
+                glanceDate = date,
+                glanceSpot = spot
+            )
+        }
+    }
 
 
 

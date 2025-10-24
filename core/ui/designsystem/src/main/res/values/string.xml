@@ -48,7 +48,12 @@
     <string name="restore_purchases">Restore purchases</string>
     <string name="manage_subscription">Manage subscription</string>
 
-    <!--component/button/ =======================================================================-->
+    <!-- ToggleSortOrderButton.kt -->
+    <string name="latest_">Latest</string>
+    <string name="oldest">Oldest</string>
+
+
+    <!--component/map/ =======================================================================-->
     <!-- Map.kt -->
     <string name="no_title">No Title</string>
 
@@ -98,6 +103,7 @@
     <string name="fit_bounds_to_markers">Fit bounds to markers</string>
     <string name="disabled_fit_bounds_to_markers">Fit bounds to markers disabled</string>
     <string name="fullscreen_map">Fullscreen map</string>
+    <string name="exit_fullscreen_map">Exit fullscreen map</string>
     <string name="my_location">My location</string>
     <string name="disabled_my_location">My location disabled</string>
     <string name="zoom_out">Zoom out</string>
@@ -109,7 +115,6 @@
     <string name="previous_spot">Previous spot</string>
     <string name="next_spot">Next spot</string>
     <string name="open_in_google_maps">Open in Google Maps</string>
-
 
     <!--SelectSwitchIcon-->
     <string name="view_only">View only</string>
@@ -132,6 +137,8 @@
     <string name="delete_end_time">Delete end time</string>
     <string name="drag_handle">Drag handle</string>
     <string name="clickable_item">Clickable menu</string>
+    <string name="move_up">Move up</string>
+    <string name="move_down">Move down</string>
     <string name="set_color">Set color</string>
     <string name="selected_color">Selected color</string>
     <string name="flash_on">Flash on</string>

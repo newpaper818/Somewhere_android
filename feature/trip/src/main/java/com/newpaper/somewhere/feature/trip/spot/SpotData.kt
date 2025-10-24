@@ -16,8 +16,10 @@ import com.newpaper.somewhere.core.model.tripData.Trip
 internal data class SpotUiInfo(
     val use2Panes: Boolean = false,
     val spacerValue: Dp = 16.dp,
+    val useBlurEffect: Boolean = true,
     val dateTimeFormat: DateTimeFormat = DateTimeFormat(),
     val internetEnabled: Boolean = true,
+    val isErrorExitOnTripScreen: Boolean = false,
     val isDarkMapTheme: Boolean = false,
 
     val userSwiping: Boolean = false,

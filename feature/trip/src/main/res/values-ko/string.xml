@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--date/ ===================================================================================-->
-    <string name="edit_date">일정 편집</string>
     <string name="spots">장소</string>
     <string name="choose_spot_type">장소 유형을 선택하세요!</string>
     <string name="new_spot">새 장소</string>
-    <string name="no_plan">계획이 없어요…\n새 장소를 추가해 보세요!</string>
+    <string name="no_plan">계획이 없어요… 새 장소를 추가해 보세요!</string>
 
 
     <!--image/ ==================================================================================-->
@@ -45,6 +44,7 @@
 
     <!--setLocation/ ============================================================================-->
 
+
     <!--shareTrip/ ==============================================================================-->
     <string name="share_trip">여행 공유</string>
     <string name="background_image">배경 이미지</string>
@@ -56,12 +56,17 @@
     <!--spot/ ===================================================================================-->
     <string name="edit_spot">장소 편집</string>
     <string name="sub_title">%s - %s</string>
+    <string name="spot_title">장소 제목</string>
     <string name="delete_spot">장소 삭제</string>
     <string name="no_spot">장소 없음</string>
     <string name="dialog_body_delete_spot">이 장소를 삭제할까요?</string>
 
 
     <!--trip/ ===================================================================================-->
+    <!--DateCard.kt-->
+    <string name="date_title">날짜 제목</string>
+    <string name="move_date">날짜 이동</string>
+
     <!--ShareTripCard.kt-->
     <string name="me">나</string>
     <string name="trip_mates">여행 친구</string>
@@ -75,6 +80,7 @@
 
     <!--TripScreen.kt-->
     <string name="edit_trip">여행 편집</string>
+    <string name="trip_title">여행 제목</string>
     <string name="long_text">최대 %d자</string>
     <string name="dates">일정</string>
     <string name="set_trip_duration">여행 기간 설정</string>
@@ -112,6 +118,19 @@
     <string name="something_went_wrong">뭔가 잘못되었어요…</string>
     <string name="close">닫기</string>
 
+    <!--TripType.kt-->
+    <string name="trip_type_cultural_experiences">문화 체험</string>
+    <string name="trip_type_historical_sites">역사 유적지</string>
+    <string name="trip_type_exhibitions_museums">전시 &amp; 박물관</string>
+    <string name="trip_type_sports_activity">스포츠 &amp; 액티비티</string>
+    <string name="trip_type_great_food">맛집 탐방</string>
+    <string name="trip_type_shopping">쇼핑</string>
+
+    <!--TripWith.kt-->
+    <string name="trip_with_solo">혼자</string>
+    <string name="trip_with_partner">연인</string>
+    <string name="trip_with_friends">친구</string>
+    <string name="trip_with_family">가족</string>
 
     <!--tripMap/ ================================================================================-->
     <string name="snackbar_no_location_to_show">위치 없음</string>
@@ -140,5 +159,7 @@
     <string name="dialog_button_delete">삭제</string>
 
     <string name="no_trip">여행이 없어요…\n새 여행을 추가해 보세요!</string>
+
+    <string name="delete">삭제</string>
 
 </resources>
