@@ -10,6 +10,7 @@ interface TripsRemoteDataSource {
     suspend fun getMyTrips(
         internetEnabled: Boolean,
         userId: String,
+        orderByLatest: Boolean
     ): List<Trip>
 
     /**
@@ -18,6 +19,7 @@ interface TripsRemoteDataSource {
     suspend fun getSharedTrips(
         internetEnabled: Boolean,
         appUserId: String,
+        orderByLatest: Boolean
     ): List<Trip>
 
 

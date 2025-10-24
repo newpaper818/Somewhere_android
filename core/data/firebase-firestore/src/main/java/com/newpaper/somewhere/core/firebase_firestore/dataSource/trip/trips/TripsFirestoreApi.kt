@@ -36,7 +36,8 @@ class TripsFirestoreApi @Inject constructor(
 ): TripsRemoteDataSource {
     override suspend fun getMyTrips(
         internetEnabled: Boolean,
-        userId: String
+        userId: String,
+        orderByLatest: Boolean
     ): List<Trip> {
         val source = if (internetEnabled) Source.DEFAULT else Source.CACHE
         val tripList = CompletableDeferred<List<Trip>>()
@@ -45,7 +46,7 @@ class TripsFirestoreApi @Inject constructor(
 
         firestoreDb.collection(USERS).document(userId)
             .collection(TRIPS)
-            .orderBy("startDate", Query.Direction.DESCENDING)
+            .orderBy("startDate", if (orderByLatest) Query.Direction.DESCENDING else Query.Direction.ASCENDING)
             .get(source)
             .addOnSuccessListener { trips ->
                 val newTripList = trips.map { it.toObject<TripFirestore>().toTrip(
@@ -67,6 +68,7 @@ class TripsFirestoreApi @Inject constructor(
     override suspend fun getSharedTrips(
         internetEnabled: Boolean,
         appUserId: String,
+        orderByLatest: Boolean
     ): List<Trip> {
         val tripList: MutableList<Trip?> = mutableListOf()
 
@@ -90,7 +92,8 @@ class TripsFirestoreApi @Inject constructor(
             tripList.add(trip.await())
         }
 
-        return tripList.filterNotNull().sortedByDescending { it.startDate }
+        return if (orderByLatest) tripList.filterNotNull().sortedByDescending { it.startDate }
+                else tripList.filterNotNull().sortedBy { it.startDate }
     }
 
     override suspend fun saveTrips(
