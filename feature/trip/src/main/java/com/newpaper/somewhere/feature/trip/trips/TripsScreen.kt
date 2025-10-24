@@ -24,7 +24,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
@@ -606,41 +605,30 @@ private fun TripsScreen(
 
 
 
-                    items(showingTrips) { trip ->
-
-                        key(showingTrips) {
-                            TripItem(
-                                modifier = itemModifier,
-                                showDragIcon = isEditMode,
-                                internetEnabled = internetEnabled,
-                                dateTimeFormat = dateTimeFormat,
-                                firstLaunch = firstLaunch,
-                                trip = trip,
-                                trips = showingTrips,
-                                onClick = if (!isEditMode) { {
-                                        tripsUiInfo.setIsLoadingTrips(true)
-                                        navigate.navigateToTrip(false, trip)
-                                    } }
-                                    else null,
-                                onLongClick = if (isEditMode) { {
-                                        dialog.setSelectedTrip(trip)
-                                        dialog.setShowDeleteDialog(true)
-                                    } }
-                                    else null,
-                                downloadImage = image::downloadImage,
-                                slideState = slideStates[trip.id] ?: SlideState.NONE,
-                                updateSlideState = { tripId, newSlideState ->
-                                    slideStates[showingTrips[tripId].id] = newSlideState
-                                },
-                                updateItemPosition = { currentIndex, destinationIndex ->
-                                    updateTripItemOrder(false, currentIndex, destinationIndex)
-
-                                    //all slideState to NONE
-                                    slideStates.putAll(showingTrips.map { it.id }
-                                        .associateWith { SlideState.NONE })
+                    items(
+                        items = showingTrips,
+                        key = { it.id }
+                    ) { trip ->
+                        TripItem(
+                            trip = trip,
+                            internetEnabled = internetEnabled,
+                            dateTimeFormat = dateTimeFormat,
+                            downloadImage = image::downloadImage,
+                            modifier = itemModifier,
+                            showDeleteIcon = isEditMode,
+                            firstLaunch = firstLaunch,
+                            onClick = if (!isEditMode) { {
+                                    tripsUiInfo.setIsLoadingTrips(true)
+                                    navigate.navigateToTrip(false, trip)
+                                } }
+                                else null,
+                            onClickDelete = {
+                                if (isEditMode){
+                                    dialog.setSelectedTrip(trip)
+                                    dialog.setShowDeleteDialog(true)
                                 }
-                            )
-                        }
+                            },
+                        )
                     }
 
                     //each shared trip item ================================================================
@@ -661,41 +649,31 @@ private fun TripsScreen(
                         }
                     }
 
-                    items(showingSharedTrips) { sharedTrip ->
-                        key(showingSharedTrips) {
-                            TripItem(
-                                modifier = itemModifier,
-                                showDragIcon = isEditMode,
-                                internetEnabled = internetEnabled,
-                                dateTimeFormat = dateTimeFormat,
-                                firstLaunch = firstLaunch,
-                                trip = sharedTrip,
-                                trips = showingSharedTrips,
-                                onClick = if (!isEditMode) { {
+                    items(
+                        items = showingSharedTrips,
+                        key = { it.id }
+                    ) { sharedTrip ->
+                        TripItem(
+                            trip = sharedTrip,
+                            internetEnabled = internetEnabled,
+                            dateTimeFormat = dateTimeFormat,
+                            downloadImage = image::downloadImage,
+                            modifier = itemModifier,
+                            showDeleteIcon = isEditMode,
+                            firstLaunch = firstLaunch,
+                            onClick = if (!isEditMode) { {
                                     tripsUiInfo.setIsLoadingTrips(true)
                                     navigate.navigateToTrip(false, sharedTrip)
                                 } }
                                 else null,
-                                onLongClick = if (isEditMode) { {
+                            onClickDelete = {
+                                if (isEditMode){
                                     dialog.setSelectedTrip(sharedTrip)
                                     dialog.setShowDeleteDialog(true)
-                                } }
-                                else null,
-                                downloadImage = image::downloadImage,
-                                slideState = sharedTripsSlideStates[sharedTrip.id]
-                                    ?: SlideState.NONE,
-                                updateSlideState = { tripId, newSlideState ->
-                                    sharedTripsSlideStates[showingTrips[tripId].id] = newSlideState
-                                },
-                                updateItemPosition = { currentIndex, destinationIndex ->
-                                    updateTripItemOrder(true, currentIndex, destinationIndex)
-
-                                    //all slideState to NONE
-                                    sharedTripsSlideStates.putAll(showingTrips.map { it.id }
-                                        .associateWith { SlideState.NONE })
                                 }
-                            )
-                        }
+                            },
+                        )
+
                     }
                 } else {
                     item {
