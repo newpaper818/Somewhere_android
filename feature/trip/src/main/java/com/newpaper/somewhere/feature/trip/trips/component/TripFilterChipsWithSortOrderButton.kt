@@ -2,6 +2,7 @@ package com.newpaper.somewhere.feature.trip.trips.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -12,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.button.FilterChipButton
 import com.newpaper.somewhere.core.designsystem.component.button.ToggleSortOrderButton
@@ -22,6 +24,7 @@ import com.newpaper.somewhere.core.model.enums.TripsDisplayMode
 
 @Composable
 fun TripFilterChipsWithSortOrderButton(
+    spacerValue: Dp,
     tripsDisplayMode: TripsDisplayMode,
     onClickTripsDisplayMode: (TripsDisplayMode) -> Unit,
 
@@ -32,10 +35,11 @@ fun TripFilterChipsWithSortOrderButton(
 ){
 
     Row(
-        modifier = modifier
+        modifier = modifier.padding(end = spacerValue)
     ) {
         LazyRow(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            contentPadding = PaddingValues(start = 12.dp + spacerValue)
         ) {
             //filter chips
             items(TripsDisplayMode.entries) {
@@ -87,6 +91,7 @@ private fun FilterChipButtonPreview() {
                 .padding(16.dp).width(300.dp)
         ) {
             TripFilterChipsWithSortOrderButton(
+                spacerValue = 16.dp,
                 tripsDisplayMode = TripsDisplayMode.ALL,
                 onClickTripsDisplayMode = {},
                 isOrderByLatest = true,

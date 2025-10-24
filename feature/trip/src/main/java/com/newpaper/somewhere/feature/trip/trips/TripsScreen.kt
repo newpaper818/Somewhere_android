@@ -379,7 +379,9 @@ private fun TripsScreen(
 
     val tripsIsEmpty = showingTrips.isEmpty() && showingSharedTrips.isEmpty()
 
-    val itemModifier = Modifier.widthIn(max = itemMaxWidth)
+    val itemModifier = Modifier
+        .widthIn(max = itemMaxWidth)
+        .padding(horizontal = spacerValue)
 
     val firstItemVisible by remember { derivedStateOf { lazyListState.firstVisibleItemIndex == 0 } }
 
@@ -532,7 +534,7 @@ private fun TripsScreen(
                 state = lazyListState,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(spacerValue, 16.dp + paddingValues.calculateTopPadding(), spacerValue, 400.dp),
+                contentPadding = PaddingValues(0.dp, 16.dp + paddingValues.calculateTopPadding(), 0.dp, 400.dp),
                 modifier = if (hazeState != null) lazyColumnModifier
                     .hazeSource(state = hazeState)
                     .background(MaterialTheme.colorScheme.background)
@@ -573,11 +575,12 @@ private fun TripsScreen(
 
                 item {
                     TripFilterChipsWithSortOrderButton(
+                        spacerValue = spacerValue,
                         tripsDisplayMode = tripsUiInfo.tripsDisplayMode,
                         onClickTripsDisplayMode = tripsUiInfo::setTripsDisplayMode,
                         isOrderByLatest = tripsUiInfo.isTripsSortOrderByLatest,
                         onClickSortOrder = { tripsUiInfo.setIsTripsSortOrderByLatest(!tripsUiInfo.isTripsSortOrderByLatest) },
-                        modifier = itemModifier
+                        modifier = Modifier.widthIn(max = itemMaxWidth)
                     )
                 }
 
