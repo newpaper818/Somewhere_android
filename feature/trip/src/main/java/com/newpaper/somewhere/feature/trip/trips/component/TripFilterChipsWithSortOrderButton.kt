@@ -2,7 +2,7 @@ package com.newpaper.somewhere.feature.trip.trips.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -14,30 +14,67 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.designsystem.component.button.FilterChipButton
+import com.newpaper.somewhere.core.designsystem.component.button.ToggleSortOrderButton
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.enums.TripsDisplayMode
 
 
 @Composable
-fun TripFilterChips(
+fun TripFilterChipsWithSortOrderButton(
     tripsDisplayMode: TripsDisplayMode,
-    onClickTripsDisplayMode: (TripsDisplayMode) -> Unit
+    onClickTripsDisplayMode: (TripsDisplayMode) -> Unit,
+
+    isOrderByLatest: Boolean,
+    onClickSortOrder: () -> Unit,
+
+    modifier: Modifier = Modifier
 ){
 
-    LazyRow(
-        modifier = Modifier.fillMaxWidth()
+    Row(
+        modifier = modifier
     ) {
-        items(TripsDisplayMode.entries){
-            FilterChipButton(
-                text = stringResource(it.textId),
-                selected = it == tripsDisplayMode,
-                onClick = { onClickTripsDisplayMode(it) }
-            )
-            MySpacerRow(6.dp)
+        LazyRow(
+            modifier = Modifier.weight(1f)
+        ) {
+            //filter chips
+            items(TripsDisplayMode.entries) {
+                FilterChipButton(
+                    text = stringResource(it.textId),
+                    selected = it == tripsDisplayMode,
+                    onClick = { onClickTripsDisplayMode(it) }
+                )
+                MySpacerRow(6.dp)
+            }
         }
+
+        //change order button
+        ToggleSortOrderButton(
+            isOrderByLatest = isOrderByLatest,
+            onClick = onClickSortOrder
+        )
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @Composable
@@ -49,9 +86,11 @@ private fun FilterChipButtonPreview() {
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp).width(300.dp)
         ) {
-            TripFilterChips(
+            TripFilterChipsWithSortOrderButton(
                 tripsDisplayMode = TripsDisplayMode.ALL,
-                onClickTripsDisplayMode = {}
+                onClickTripsDisplayMode = {},
+                isOrderByLatest = true,
+                onClickSortOrder = {}
             )
         }
     }

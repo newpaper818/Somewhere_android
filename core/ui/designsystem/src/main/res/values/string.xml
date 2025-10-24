@@ -48,7 +48,12 @@
     <string name="restore_purchases">Restore purchases</string>
     <string name="manage_subscription">Manage subscription</string>
 
-    <!--component/button/ =======================================================================-->
+    <!-- ToggleSortOrderButton.kt -->
+    <string name="latest_">Latest</string>
+    <string name="oldest">Oldest</string>
+
+
+    <!--component/map/ =======================================================================-->
     <!-- Map.kt -->
     <string name="no_title">No Title</string>
 
@@ -110,7 +115,6 @@
     <string name="previous_spot">Previous spot</string>
     <string name="next_spot">Next spot</string>
     <string name="open_in_google_maps">Open in Google Maps</string>
-
 
     <!--SelectSwitchIcon-->
     <string name="view_only">View only</string>

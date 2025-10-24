@@ -77,7 +77,7 @@ import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.trips.component.GlanceSpot
 import com.newpaper.somewhere.feature.trip.trips.component.LoadingTripsItem
 import com.newpaper.somewhere.feature.trip.trips.component.NoTripCard
-import com.newpaper.somewhere.feature.trip.trips.component.TripFilterChips
+import com.newpaper.somewhere.feature.trip.trips.component.TripFilterChipsWithSortOrderButton
 import com.newpaper.somewhere.feature.trip.trips.component.TripItem
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
@@ -169,7 +169,8 @@ fun TripsRoute(
         //update trips
         tripsViewModel.updateTrips(
             internetEnabled = internetEnabled,
-            appUserId = appUserData.userId
+            appUserId = appUserData.userId,
+            orderByLatest = tripsUiState.isTripsSortOrderByLatest
         )
         tripsViewModel.setLoadingTrips(false)
 
@@ -258,6 +259,8 @@ fun TripsRoute(
             _setIsLoadingTrips = tripsViewModel::setLoadingTrips,
             tripsDisplayMode = tripsUiState.tripsDisplayMode,
             _setTripsDisplayMode = tripsViewModel::setTripsDisplayMode,
+            isTripsSortOrderByLatest = tripsUiState.isTripsSortOrderByLatest,
+            _setIsTripsSortOrderByLatest = tripsViewModel::setIsTripsSortOrderByLatest,
             isEditMode = isEditMode,
             _setIsEditMode = commonTripViewModel::setIsEditMode
         ),
@@ -531,7 +534,9 @@ private fun TripsScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(spacerValue, 16.dp + paddingValues.calculateTopPadding(), spacerValue, 400.dp),
-                modifier = if (hazeState != null) lazyColumnModifier.hazeSource(state = hazeState).background(MaterialTheme.colorScheme.background)
+                modifier = if (hazeState != null) lazyColumnModifier
+                    .hazeSource(state = hazeState)
+                    .background(MaterialTheme.colorScheme.background)
                             else lazyColumnModifier
             ) {
                 if (adView != null) {
@@ -568,9 +573,12 @@ private fun TripsScreen(
                 }
 
                 item {
-                    TripFilterChips(
+                    TripFilterChipsWithSortOrderButton(
                         tripsDisplayMode = tripsUiInfo.tripsDisplayMode,
-                        onClickTripsDisplayMode = tripsUiInfo::setTripsDisplayMode
+                        onClickTripsDisplayMode = tripsUiInfo::setTripsDisplayMode,
+                        isOrderByLatest = tripsUiInfo.isTripsSortOrderByLatest,
+                        onClickSortOrder = { tripsUiInfo.setIsTripsSortOrderByLatest(!tripsUiInfo.isTripsSortOrderByLatest) },
+                        modifier = itemModifier
                     )
                 }
 

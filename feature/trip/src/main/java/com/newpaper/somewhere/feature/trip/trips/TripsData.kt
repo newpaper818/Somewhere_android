@@ -23,6 +23,9 @@ internal data class TripsUiInfo(
     val tripsDisplayMode: TripsDisplayMode = TripsDisplayMode.ACTIVE,
     private val _setTripsDisplayMode: (tripsDisplayMode: TripsDisplayMode) -> Unit = {},
 
+    val isTripsSortOrderByLatest: Boolean = true,
+    private val _setIsTripsSortOrderByLatest: (isTripsSortOrderByLatest: Boolean) -> Unit = {},
+
     val isEditMode: Boolean = false,
     private val _setIsEditMode: (isEditMode: Boolean?) -> Unit = {},
 ){
@@ -32,6 +35,8 @@ internal data class TripsUiInfo(
         _setIsLoadingTrips(loadingTrips) }
     fun setTripsDisplayMode(tripsDisplayMode: TripsDisplayMode){
         _setTripsDisplayMode(tripsDisplayMode) }
+    fun setIsTripsSortOrderByLatest(isTripsSortOrderByLatest: Boolean){
+        _setIsTripsSortOrderByLatest(isTripsSortOrderByLatest) }
     fun setIsEditMode(isEditMode: Boolean?){
         _setIsEditMode(isEditMode) }
 }
