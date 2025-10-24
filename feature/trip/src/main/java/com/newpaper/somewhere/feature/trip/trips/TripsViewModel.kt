@@ -35,6 +35,7 @@ data class TripsUiState(
     val loadingTrips: Boolean = true,
 
     val tripsDisplayMode: TripsDisplayMode = TripsDisplayMode.ACTIVE,
+    val isTripsSortOrderByLatest: Boolean = true,
 
     val isShowingDialog: Boolean = false,
     val showTripCreationOptionsDialog: Boolean = false,
@@ -85,8 +86,31 @@ class TripsViewModel @Inject constructor(
         tripsDisplayMode: TripsDisplayMode
     ){
         _tripsUiState.update {
+            it.copy(tripsDisplayMode = tripsDisplayMode)
+        }
+    }
+
+    fun setIsTripsSortOrderByLatest(
+        isTripsSortOrderByLatest: Boolean
+    ){
+        _tripsUiState.update {
+            it.copy(isTripsSortOrderByLatest = isTripsSortOrderByLatest)
+        }
+
+        //sort order
+        val tripInfo = commonTripUiStateRepository._commonTripUiState.value.tripInfo
+        val sortedMyTripsGroup = tripInfo.myTripsGroup?.sortOrder(isTripsSortOrderByLatest)
+        val sortedTempMyTripsGroup = tripInfo.tempMyTripsGroup?.sortOrder(isTripsSortOrderByLatest)
+        val sortedSharedTripsGroup = tripInfo.sharedTripsGroup?.sortOrder(isTripsSortOrderByLatest)
+        val sortedTempSharedTripsGroup = tripInfo.tempSharedTripsGroup?.sortOrder(isTripsSortOrderByLatest)
+
+        commonTripUiStateRepository._commonTripUiState.update {
             it.copy(
-                tripsDisplayMode = tripsDisplayMode
+                tripInfo = it.tripInfo.copy(
+                    myTripsGroup = sortedMyTripsGroup, tempMyTripsGroup = sortedTempMyTripsGroup,
+                    sharedTripsGroup = sortedSharedTripsGroup, tempSharedTripsGroup = sortedTempSharedTripsGroup
+
+                )
             )
         }
     }
@@ -153,10 +177,11 @@ class TripsViewModel @Inject constructor(
     /** update trips from remote db*/
     suspend fun updateTrips(
         internetEnabled: Boolean,
-        appUserId: String
+        appUserId: String,
+        orderByLatest: Boolean
     ){
-        val newTripList = tripsRepository.getMyTrips(internetEnabled, appUserId)
-        val newSharedTripList = tripsRepository.getSharedTrips(internetEnabled, appUserId)
+        val newTripList = tripsRepository.getMyTrips(internetEnabled, appUserId, orderByLatest)
+        val newSharedTripList = tripsRepository.getSharedTrips(internetEnabled, appUserId, orderByLatest)
 
         //set orderId of shared trip
         newSharedTripList.forEachIndexed { index, sharedTrip ->

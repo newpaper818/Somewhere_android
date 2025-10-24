@@ -59,6 +59,7 @@ import androidx.compose.material.icons.rounded.MoreHoriz
 import androidx.compose.material.icons.rounded.MoreTime
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.MyLocation
+import androidx.compose.material.icons.rounded.North
 import androidx.compose.material.icons.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material.icons.rounded.People
@@ -73,6 +74,7 @@ import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.ShoppingBag
+import androidx.compose.material.icons.rounded.South
 import androidx.compose.material.icons.rounded.Train
 import androidx.compose.material.icons.rounded.TravelExplore
 import androidx.compose.material.icons.rounded.Visibility
@@ -123,6 +125,8 @@ object IconTextButtonIcon {
     val delete = MyIcon(Icons.Rounded.Delete,                 24.dp, false, null, null)
     val leftArrow = MyIcon(Icons.Rounded.KeyboardArrowLeft,   30.dp, false, null, R.string.previous_date)
     val rightArrow = MyIcon(Icons.Rounded.KeyboardArrowRight, 30.dp, false, null, R.string.next_date)
+    val sortArrowAscending = MyIcon(Icons.Rounded.North,               20.dp, true, null, null)
+    val sortArrowDescending = MyIcon(Icons.Rounded.South,               20.dp, true, null, null)
 }
 
 object FabIcon {
