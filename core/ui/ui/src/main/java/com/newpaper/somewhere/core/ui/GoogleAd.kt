@@ -62,11 +62,10 @@ fun GoogleBannerAd(
             .background(MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.5f))
 
     Box(
-        modifier = modifier
+        modifier = modifier.clearAndSetSemantics { }
     ) {
         //banner ad
         AndroidView(
-            modifier = Modifier.clearAndSetSemantics { },
             factory = { adView },
         )
     }
