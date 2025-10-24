@@ -65,7 +65,7 @@ internal fun TripItem(
     firstLaunch: Boolean = false,
 
     onClick: (() -> Unit)? = null,
-    onClickDelete: () -> Unit = {}
+    onClickDelete: (() -> Unit)? = null,
 ){
     val titleIsNull = trip.titleText == null || trip.titleText == ""
     val titleText: String = if (titleIsNull) stringResource(id = R.string.no_title)
@@ -142,7 +142,7 @@ private fun TripItemUi(
     talkbackDateText: String,
 
     onClick: (() -> Unit)?,
-    onClickDelete: () -> Unit,
+    onClickDelete: (() -> Unit)?,
     downloadImage: (imagePath: String, tripManagerId: String, (Boolean) -> Unit) -> Unit,
 
     modifier: Modifier = Modifier,
@@ -162,7 +162,7 @@ private fun TripItemUi(
     val deleteText = stringResource(R.string.delete)
 
     //talkback
-    cardModifier = if (onClick == null) {
+    cardModifier = if (onClick == null && onClickDelete != null) {
         cardModifier.semantics{
             onClick(
                 label = deleteText,
@@ -260,7 +260,7 @@ private fun TripItemUi(
                         modifier = Modifier.clearAndSetSemantics { }
                     ) {
                         IconButton(
-                            onClick = onClickDelete
+                            onClick = onClickDelete ?: {}
                         ) {
                             DisplayIcon(MyIcons.delete)
                         }
