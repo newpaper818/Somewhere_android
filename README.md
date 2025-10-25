@@ -31,4 +31,4 @@ Android Kotlin / Jetpack Compose / Coroutine / MVVM / Hilt / Firebase / Google M
 </br>
 
 
-<img width="6726" height="4882" alt="Group 33" src="https://github.com/user-attachments/assets/b6dbfbad-7b20-4926-ba8a-7e8f10823e75" />
+<img width="6726" height="4882" alt="screenshots" src="https://github.com/user-attachments/assets/8f9ab748-119b-407a-a6f0-c971caf428ab" />
