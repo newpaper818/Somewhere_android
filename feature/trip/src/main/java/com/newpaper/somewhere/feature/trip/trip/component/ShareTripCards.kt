@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,6 +14,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
@@ -79,7 +79,7 @@ private fun TripMatesCard(
 ){
     MyCard(
         onClick = onClickInvitedFriends,
-        shape = CircleShape,
+        shape = SmoothRoundedCornerShape(999.dp, 1f),
         modifier = modifier.semantics { role =  Role.Button}
     ) {
         Row(
@@ -128,7 +128,7 @@ private fun ShareTripCard(
 ){
     MyCard(
         onClick = onClickShareTrip,
-        shape = CircleShape,
+        shape = SmoothRoundedCornerShape(999.dp, 1f),
         modifier = modifier.semantics { role =  Role.Button}
     ) {
         Row(

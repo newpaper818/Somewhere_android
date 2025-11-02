@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
@@ -59,7 +58,7 @@ fun SetCurrencyTypeDialog(
                 contentPadding = PaddingValues(8.dp),
                 modifier = Modifier
                     .heightIn(min = 0.dp)
-                    .clip(RoundedCornerShape(35.dp))
+                    .clip(SmoothRoundedCornerShape(35.dp))
                     .background(MaterialTheme.colorScheme.surfaceBright)
             ) {
                 items(currencyTypeList) {
@@ -112,7 +111,7 @@ private fun OneCurrencyType(
 
 
     ClickableBox(
-        shape = CircleShape,
+        shape = SmoothRoundedCornerShape(999.dp, 1f),
         containerColor = cardColor,
         modifier = Modifier
             .height(54.dp)

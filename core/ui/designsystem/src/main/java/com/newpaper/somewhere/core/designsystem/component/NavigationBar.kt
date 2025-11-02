@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -32,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcon
 import com.newpaper.somewhere.core.designsystem.icon.NavigationBarIcon
@@ -61,9 +61,9 @@ fun SomewhereNavigationBottomBar(
 
     val topAppBarColor = MaterialTheme.colorScheme.surfaceDim
 
-    val navBarModifier = if (hazeState == null) modifier.clip(RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp))
+    val navBarModifier = if (hazeState == null) modifier.clip(SmoothRoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp))
                             else modifier
-                                    .clip(RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp))
+                                    .clip(SmoothRoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp))
                                     .hazeEffect(state = hazeState) {
                                         blurRadius = 16.dp
                                         tints = listOf(
@@ -124,7 +124,7 @@ fun SomewhereNavigationRailBar(
 ){
     NavigationRail(
 //        modifier = modifier.width(NAVIGATION_RAIL_BAR_WIDTH),
-        modifier = Modifier.clip(RoundedCornerShape(0.dp, 24.dp, 24.dp, 0.dp)),
+        modifier = Modifier.clip(SmoothRoundedCornerShape(0.dp, 24.dp, 24.dp, 0.dp)),
         header = {
             //FAB
         },
@@ -187,7 +187,7 @@ fun SomewhereNavigationDrawer(
 ){
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(0.dp, 24.dp, 24.dp, 0.dp))
+            .clip(SmoothRoundedCornerShape(0.dp, 24.dp, 24.dp, 0.dp))
             .width(NAVIGATION_DRAWER_BAR_WIDTH)
             .background(MaterialTheme.colorScheme.surfaceDim)
     ) {

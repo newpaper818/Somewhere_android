@@ -18,7 +18,7 @@ fun ClickableBox(
     enabled: Boolean = true,
     onClick: () -> Unit = { },
     containerColor: Color = Color.Transparent,
-    shape: Shape = MaterialTheme.shapes.medium,  //rounded corner 16.dp
+    shape: Shape = MaterialTheme.shapes.medium,  //smooth rounded corner shape 16.dp
     contentAlignment: Alignment = Alignment.TopStart,
 
     content: @Composable() () -> Unit,

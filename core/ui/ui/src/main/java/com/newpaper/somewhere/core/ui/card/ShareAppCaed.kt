@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +28,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.lightspark.composeqr.DotShape
 import com.lightspark.composeqr.QrCodeView
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.ImageFromDrawable
 import com.newpaper.somewhere.core.designsystem.component.button.ShareAppButton
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
@@ -79,7 +79,7 @@ private fun AppQrCode(
 
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(16.dp))
+            .clip(SmoothRoundedCornerShape(16.dp))
             .background(Color.White)
             .size(width = 240.dp, height = width.dp)
             .onSizeChanged {

@@ -37,6 +37,9 @@ dependencies {
     implementation(libs.compose.material.icons.extended)
     implementation(libs.compose.ui.tooling.preview)
 
+    //smooth corner
+    implementation(libs.smoothCorner)
+    
     //
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.androidx.core.ktx)

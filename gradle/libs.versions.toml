@@ -1,4 +1,7 @@
 [versions]
+#my libs
+smoothCorner = "0.9.5"
+
 composeBom = "2024.09.00"
 firebaseBom = "33.2.0"
 
@@ -56,6 +59,9 @@ icu4j = "77.1"
 
 
 [libraries]
+#my libs
+smoothCorner = { group = "com.github.newpaper818.smooth-corner", name = "smooth-corner", version.ref = "smoothCorner" }
+
 #compose bom
 compose-bom =                       { group = "androidx.compose",    name = "compose-bom", version.ref = "composeBom" }
 compose-ui =                        { group = "androidx.compose.ui", name = "ui" }

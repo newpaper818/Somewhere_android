@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.DateRangePickerState
@@ -27,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.utils.getDateText
 import com.newpaper.somewhere.core.utils.itemMaxWidth
@@ -154,7 +154,7 @@ private fun MyDateRangePicker(
 ){
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
+            .clip(SmoothRoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.surfaceBright)
     ) {
         DateRangePicker(

@@ -24,7 +24,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
@@ -46,6 +45,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.google.maps.android.compose.CameraPositionState
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.button.FilterChipButton
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
@@ -256,7 +256,7 @@ internal fun ControlButtonsRow(
             // my location & focus on target buttons
             Row(
                 modifier = Modifier
-                    .clip(CircleShape)
+                    .clip(SmoothRoundedCornerShape(999.dp, 1f))
                     .background(MaterialTheme.colorScheme.surfaceBright),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -276,7 +276,7 @@ internal fun ControlButtonsRow(
             //date button  <  3.28  >
             Row(
                 modifier = Modifier
-                    .clip(CircleShape)
+                    .clip(SmoothRoundedCornerShape(999.dp, 1f))
                     .background(MaterialTheme.colorScheme.surfaceBright),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -295,7 +295,7 @@ internal fun ControlButtonsRow(
                     modifier = Modifier
                         .width(70.dp)
                         .height(40.dp)
-                        .clip(CircleShape)
+                        .clip(SmoothRoundedCornerShape(999.dp, 1f))
                         .clickable { onClickOneDate() },
                     contentAlignment = Alignment.Center
                 ) {
@@ -423,7 +423,7 @@ internal fun DateList(
         modifier = Modifier
             .padding(16.dp, 0.dp, 16.dp, 16.dp)
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
+            .clip(SmoothRoundedCornerShape(16.dp))
     ) {
         items(dateListWithShownIconList) {
             DateItem(

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
@@ -21,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.maps.android.compose.CameraPositionState
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
@@ -54,13 +54,13 @@ internal fun MapButtons(
 
 
     val modifier = if (hazeState == null) Modifier
-                        .clip(CircleShape)
+                        .clip(SmoothRoundedCornerShape(999.dp, 1f))
                         .background(containerColor)
-                        .border(1.dp, MaterialTheme.colorScheme.surfaceTint, CircleShape)
+                        .border(1.dp, MaterialTheme.colorScheme.surfaceTint, SmoothRoundedCornerShape(999.dp, 1f))
                     else Modifier
-                        .clip(CircleShape)
+                        .clip(SmoothRoundedCornerShape(999.dp, 1f))
                         .background(containerColor)
-                        .border(1.dp, MaterialTheme.colorScheme.surfaceTint, CircleShape)
+                        .border(1.dp, MaterialTheme.colorScheme.surfaceTint, SmoothRoundedCornerShape(999.dp, 1f))
                         .hazeEffect(state = hazeState) {
                             blurRadius = 16.dp
                             tints = listOf(

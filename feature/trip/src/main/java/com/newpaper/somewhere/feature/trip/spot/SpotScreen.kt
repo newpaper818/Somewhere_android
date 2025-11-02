@@ -29,7 +29,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -63,6 +62,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
@@ -975,7 +975,7 @@ private fun Spot1Pane(
             SpotMapCard(
                 modifier = if (spotUiInfo.use2Panes) Modifier
                         .padding(spotUiInfo.spacerValue/2, 0.dp, spotUiInfo.spacerValue, spotUiInfo.spacerValue)
-                        .clip(RoundedCornerShape(16.dp))
+                        .clip(SmoothRoundedCornerShape(16.dp))
                     else Modifier,
                 useBlurEffect = useBlurEffect,
                 isEditMode = spotUiInfo.isEditMode,

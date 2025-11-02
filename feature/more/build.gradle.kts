@@ -41,6 +41,9 @@ dependencies {
     implementation(libs.compose.material.icons.extended)
     implementation(libs.compose.ui.tooling.preview)
 
+    //smooth corner
+    implementation(libs.smoothCorner)
+
 //    implementation(libs.androidx.compose.material3.adaptive.navigation)
 
     //hilt

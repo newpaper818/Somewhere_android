@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
@@ -31,6 +30,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.maps.android.compose.CameraPositionState
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.button.ToGoogleMapsButton
 import com.newpaper.somewhere.core.designsystem.component.map.MapForSpot
 import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
@@ -418,8 +418,8 @@ private fun MapButtonsRow(
     val hazeTintColor = MaterialTheme.colorScheme.surface
 
     val rowModifier = Modifier
-                        .clip(CircleShape)
-                        .border(1.dp, MaterialTheme.colorScheme.surfaceTint, CircleShape)
+                        .clip(SmoothRoundedCornerShape(999.dp, 1f))
+                        .border(1.dp, MaterialTheme.colorScheme.surfaceTint, SmoothRoundedCornerShape(999.dp, 1f))
 
     val hazeModifier = if (hazeState == null) rowModifier.background(containerColor)
                         else rowModifier
