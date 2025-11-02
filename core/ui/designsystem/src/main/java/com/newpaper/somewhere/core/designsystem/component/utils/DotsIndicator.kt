@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.designsystem.theme.n50
 
@@ -39,7 +40,7 @@ fun DotsIndicator(
     Row(
         modifier = Modifier
             .height(20.dp)
-            .clip(CircleShape)
+            .clip(SmoothRoundedCornerShape(999.dp, 1f))
             .background(barColor),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically

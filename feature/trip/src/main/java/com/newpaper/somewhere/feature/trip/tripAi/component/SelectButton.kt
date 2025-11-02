@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcon
@@ -36,7 +36,7 @@ internal fun SelectButton(
 
     val buttonModifier = Modifier
         .widthIn(min = 260.dp)
-        .clip(CircleShape)
+        .clip(SmoothRoundedCornerShape(999.dp, 1f))
         .background(
             if (isSelected) MaterialTheme.colorScheme.primaryContainer
             else Color.Transparent
@@ -46,7 +46,7 @@ internal fun SelectButton(
             color =
             if (!isSelected) MaterialTheme.colorScheme.outlineVariant
             else Color.Transparent,
-            shape = CircleShape
+            shape = SmoothRoundedCornerShape(999.dp, 1f)
         )
         .semantics {
             stateDescription = if (isSelected) selected

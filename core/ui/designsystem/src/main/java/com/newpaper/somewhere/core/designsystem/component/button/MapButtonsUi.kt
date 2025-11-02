@@ -20,6 +20,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
@@ -117,7 +118,7 @@ fun ZoomButtonsUi(
     val zoomLevelText = DecimalFormat("0.0").format(zoomLevel)
 
     MyCard(
-        shape = CircleShape
+        shape = SmoothRoundedCornerShape(999.dp, 1f)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomOut.descriptionTextId!!)) {
@@ -274,7 +275,7 @@ private fun ZoomButtonsPreview(){
                 .width(300.dp)
         ) {
             MyCard(
-                shape = CircleShape
+                shape = SmoothRoundedCornerShape(999.dp, 1f)
             ) {
                 ZoomButtonsUi(
                     zoomLevel = 10.5f,

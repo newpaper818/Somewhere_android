@@ -48,6 +48,9 @@ dependencies {
     implementation(libs.compose.material.icons.extended)
     implementation(libs.compose.ui.tooling.preview)
 
+    //smooth corner
+    implementation(libs.smoothCorner)
+
     //hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

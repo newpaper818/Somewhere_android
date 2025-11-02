@@ -9,11 +9,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.shimmerEffect
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.utils.itemMaxWidth
@@ -45,7 +45,7 @@ internal fun LoadingTripsItem(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(tripCardHeightDp)
-                        .clip(RoundedCornerShape(16.dp))
+                        .clip(SmoothRoundedCornerShape(16.dp))
                         .shimmerEffect()
                 )
                 MySpacerColumn(height = 16.dp)

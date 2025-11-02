@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
@@ -56,7 +56,7 @@ fun SelectDateDialog(
             LazyColumn(
                 modifier = Modifier
                     .heightIn(min = 0.dp)
-                    .clip(RoundedCornerShape(16.dp))
+                    .clip(SmoothRoundedCornerShape(16.dp))
                     .background(MaterialTheme.colorScheme.surfaceBright)
             ) {
                 items(dateList) { date ->
