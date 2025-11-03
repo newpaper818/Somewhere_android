@@ -12,6 +12,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -50,6 +51,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -65,6 +67,7 @@ import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.designsystem.theme.CustomColor
+import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.ui.InternetUnavailableText
 import com.newpaper.somewhere.core.ui.MyTextField
@@ -233,7 +236,7 @@ private fun EditProfileScreen(
                 snackbar = {
                     Snackbar(
                         snackbarData = it,
-                        shape = MaterialTheme.shapes.medium
+                        shape = MaterialTheme.shapes.small
                     )
                 }
             )
@@ -332,7 +335,9 @@ private fun EditableProfileImage(
 
         MySpacerColumn(height = 6.dp)
 
-        MyCard {
+        MyCard(
+            shape = SmoothRoundedCornerShape(40.dp)
+        ) {
             AutoLayoutTwoContents(
                 content1 = {
                     ProfileImage(
@@ -504,3 +509,45 @@ private fun EditableUserName(
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+@PreviewLightDark
+@Composable
+private fun EditableProfileImagePreview(
+
+){
+    SomewhereTheme {
+        Box(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            EditableProfileImage(
+                internetEnabled = false,
+                userId = "1111",
+                profileImage = null,
+                downloadImage = { _, _, _ -> },
+                onClickEditImage = {},
+                onClickDeleteImage = {},
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+    }
+}
+
+
+
+
+
+
+
+
+

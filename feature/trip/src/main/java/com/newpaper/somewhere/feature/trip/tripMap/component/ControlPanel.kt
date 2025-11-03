@@ -423,7 +423,7 @@ internal fun DateList(
         modifier = Modifier
             .padding(16.dp, 0.dp, 16.dp, 16.dp)
             .fillMaxWidth()
-            .clip(SmoothRoundedCornerShape(16.dp))
+            .clip(MaterialTheme.shapes.medium)
     ) {
         items(dateListWithShownIconList) {
             DateItem(

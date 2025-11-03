@@ -582,7 +582,7 @@ private fun IconTextButtonColumn(
             disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
             disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
-        shape = SmoothRoundedCornerShape(999.dp, 1f),
+        shape = SmoothRoundedCornerShape(24.dp),
         contentPadding = PaddingValues(14.dp, 8.dp),
         enabled = enabled,
         onClick = onClick,

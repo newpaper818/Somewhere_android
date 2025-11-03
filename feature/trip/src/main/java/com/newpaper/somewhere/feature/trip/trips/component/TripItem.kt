@@ -195,8 +195,8 @@ private fun TripItemUi(
                 if (imagePath != null) {
                     Box(
                         modifier = Modifier
-                            .size(98.dp)
-                            .clip(SmoothRoundedCornerShape(11.dp)),
+                            .size(tripCardHeightDp - 24.dp)
+                            .clip(SmoothRoundedCornerShape(12.dp)),
                     ) {
                         ImageFromFile(
                             internetEnabled = internetEnabled,
