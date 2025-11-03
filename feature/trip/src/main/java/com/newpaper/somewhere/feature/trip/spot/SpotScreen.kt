@@ -579,13 +579,20 @@ private fun SpotScreen(
 
 
     val bottomSnackBarPadding by animateFloatAsState(
-        targetValue = if (spotUiInfo.use2Panes) 88f
-                        else if (spotMap.isMapExpand) 66f
-                        else if (spotUiInfo.isEditMode) 56f
-                        else 0f,
+        targetValue = if (spotUiInfo.use2Panes) {
+                            if (spotMap.isMapExpand) 66f + 24f
+                            else if (spotUiInfo.isEditMode) 56f
+                            else 0f
+                        }
+                        else {
+                            if (spotMap.isMapExpand) 66f
+                            else if (spotUiInfo.isEditMode) 56f
+                            else 0f
+                        },
         animationSpec = tween(300),
         label = "snackbar padding"
     )
+
 
 
     LaunchedEffect(spotDialog.isShowingDialog) {
@@ -618,25 +625,21 @@ private fun SpotScreen(
         )
     }
 
-    val snackbarModifier =
-        if (!spotUiInfo.use2Panes) Modifier
+    val snackbarModifier = Modifier
             .width(500.dp)
             .padding(bottom = bottomSnackBarPadding.dp)
             .navigationBarsPadding()
             .imePadding()
-        else Modifier
-            .width(500.dp)
-            .padding(bottom = bottomSnackBarPadding.dp)
-            .padding(start = 20.dp, end = 8.dp)
-            .imePadding()
+
 
     MyScaffold(
         modifier = modifier.imePadding(),
         snackbarHost = {
             Row {
                 Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.BottomCenter
+                    contentAlignment = Alignment.BottomCenter,
+                    modifier = if (spotUiInfo.use2Panes) Modifier.padding(start = spotUiInfo.spacerValue / 2, end = spotUiInfo.spacerValue)
+                                else Modifier
                 ){
                     SnackbarHost(
                         hostState = snackBarHostState,
@@ -649,8 +652,6 @@ private fun SpotScreen(
                         }
                     )
                 }
-                if (spotUiInfo.use2Panes)
-                    Box(modifier = Modifier.weight(1f))
             }
         },
         //top bar
@@ -961,8 +962,8 @@ private fun Spot1Pane(
     LazyColumn(
         state = spotState.scrollState,
         modifier = if (topAppBarHazeState != null) lazyColumnModifier
-                .hazeSource(state = topAppBarHazeState)
-                .background(MaterialTheme.colorScheme.background)
+            .hazeSource(state = topAppBarHazeState)
+            .background(MaterialTheme.colorScheme.background)
             else lazyColumnModifier,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -974,8 +975,13 @@ private fun Spot1Pane(
             //map
             SpotMapCard(
                 modifier = if (spotUiInfo.use2Panes) Modifier
-                        .padding(spotUiInfo.spacerValue/2, 0.dp, spotUiInfo.spacerValue, spotUiInfo.spacerValue)
-                        .clip(SmoothRoundedCornerShape(16.dp))
+                    .padding(
+                        spotUiInfo.spacerValue / 2,
+                        0.dp,
+                        spotUiInfo.spacerValue,
+                        spotUiInfo.spacerValue
+                    )
+                    .clip(SmoothRoundedCornerShape(16.dp))
                     else Modifier,
                 useBlurEffect = useBlurEffect,
                 isEditMode = spotUiInfo.isEditMode,
