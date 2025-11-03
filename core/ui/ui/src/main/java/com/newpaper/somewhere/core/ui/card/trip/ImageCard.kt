@@ -373,7 +373,7 @@ private fun ImageWithDeleteIcon(
         .zIndex(zIndex)
 
     MyCard(
-        shape = MaterialTheme.shapes.medium,
+        shape = SmoothRoundedCornerShape(16.dp),
         onClick = onClickImage,
         modifier = dragModifier
             .size(cardWidthDp)

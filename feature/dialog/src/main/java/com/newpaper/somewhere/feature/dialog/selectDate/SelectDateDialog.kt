@@ -56,7 +56,7 @@ fun SelectDateDialog(
             LazyColumn(
                 modifier = Modifier
                     .heightIn(min = 0.dp)
-                    .clip(SmoothRoundedCornerShape(16.dp))
+                    .clip(MaterialTheme.shapes.medium)
                     .background(MaterialTheme.colorScheme.surfaceBright)
             ) {
                 items(dateList) { date ->
