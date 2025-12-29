@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,6 +35,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
@@ -228,12 +228,12 @@ private fun OneTimeRow(
     val modifier =
         if (isEditMode){
             Modifier
-                .clip(RoundedCornerShape(8.dp))
+                .clip(SmoothRoundedCornerShape(8.dp))
                 .clickable {
                     onClickSetTime()
                 }
         }
-        else Modifier.clip(RoundedCornerShape(8.dp))
+        else Modifier.clip(SmoothRoundedCornerShape(8.dp))
 
     MyCard(
         modifier = modifier

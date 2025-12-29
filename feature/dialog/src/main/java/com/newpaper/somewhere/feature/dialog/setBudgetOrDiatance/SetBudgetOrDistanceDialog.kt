@@ -4,7 +4,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CardDefaults
@@ -31,6 +30,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
@@ -93,11 +93,11 @@ fun SetBudgetOrDistanceDialog(
             }
 
             MyCard(
-                shape = CircleShape,
+                shape = SmoothRoundedCornerShape(999.dp, 1f),
                 colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceDim),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, borderColor, CircleShape),
+                    .border(1.dp, borderColor, SmoothRoundedCornerShape(999.dp, 1f)),
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

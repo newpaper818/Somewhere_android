@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
@@ -63,7 +63,8 @@ fun PrivacyPolicyButton(
 
     CompositionLocalProvider(LocalRippleConfiguration provides grayRippleConfiguration) {
         TextButton(
-            onClick = onClick
+            onClick = onClick,
+            shape = SmoothRoundedCornerShape(999.dp)
         ) {
             Text(
                 text = stringResource(id = R.string.privacy_policy),
@@ -329,7 +330,8 @@ fun ToPrevDateButton(
     Button(
         contentPadding = PaddingValues(8.dp, 0.dp, 20.dp, 0.dp),
         onClick = onClick,
-        modifier = modifier.offset(1.dp)
+        modifier = modifier.offset(1.dp),
+        shape = SmoothRoundedCornerShape(999.dp, 1f),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -359,7 +361,8 @@ fun ToNextDateButton(
     Button(
         contentPadding = PaddingValues(20.dp, 0.dp, 8.dp, 0.dp),
         onClick = onClick,
-        modifier = modifier.offset((-1).dp)
+        modifier = modifier.offset((-1).dp),
+        shape = SmoothRoundedCornerShape(999.dp, 1f),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -452,7 +455,8 @@ private fun MyTextButton(
         TextButton(
             enabled = enabled,
             onClick = onClick,
-            modifier = modifier
+            modifier = modifier,
+            shape = SmoothRoundedCornerShape(999.dp, 1f),
         ) {
             Text(
                 text = text,
@@ -466,6 +470,7 @@ private fun MyTextButton(
             enabled = enabled,
             onClick = onClick,
             modifier = modifier,
+            shape = SmoothRoundedCornerShape(999.dp, 1f),
             colors = ButtonDefaults.buttonColors(
                 containerColor = containerColor,
                 contentColor = MaterialTheme.colorScheme.contentColorFor(containerColor),
@@ -505,7 +510,8 @@ internal fun MyTextRippleButton(
         TextButton(
             onClick = onClick,
             enabled = enabled,
-            modifier = modifier
+            modifier = modifier,
+            shape = SmoothRoundedCornerShape(999.dp, 1f),
         ) {
             Text(
                 text = text,
@@ -536,7 +542,8 @@ private fun IconTextButton(
         contentPadding = PaddingValues(16.dp, 0.dp, 20.dp, 0.dp),
         enabled = enabled,
         onClick = onClick,
-        modifier = modifier
+        modifier = modifier,
+        shape = SmoothRoundedCornerShape(999.dp, 1f),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -575,7 +582,7 @@ private fun IconTextButtonColumn(
             disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
             disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
-        shape = MaterialTheme.shapes.medium,
+        shape = SmoothRoundedCornerShape(24.dp),
         contentPadding = PaddingValues(14.dp, 8.dp),
         enabled = enabled,
         onClick = onClick,
@@ -624,7 +631,7 @@ private fun IconCircleButtonWithText(
                 disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
                 disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
             ),
-            shape = CircleShape,
+            shape = SmoothRoundedCornerShape(999.dp, 1f),
             contentPadding = PaddingValues(8.dp),
             enabled = enabled,
             onClick = onClick,

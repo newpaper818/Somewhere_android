@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,6 +35,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.ImageFromFile
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
@@ -195,8 +195,8 @@ private fun TripItemUi(
                 if (imagePath != null) {
                     Box(
                         modifier = Modifier
-                            .size(98.dp)
-                            .clip(RoundedCornerShape(11.dp)),
+                            .size(tripCardHeightDp - 24.dp)
+                            .clip(SmoothRoundedCornerShape(12.dp)),
                     ) {
                         ImageFromFile(
                             internetEnabled = internetEnabled,

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +19,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
@@ -62,11 +62,11 @@ fun FilterChipButton(
     }
 
     ClickableBox(
-        modifier = if (!selected) buttonModifier.border(0.8.dp, MaterialTheme.colorScheme.surfaceVariant, CircleShape)
+        modifier = if (!selected) buttonModifier.border(0.8.dp, MaterialTheme.colorScheme.surfaceVariant, SmoothRoundedCornerShape(999.dp, 1f))
                     else buttonModifier,
         onClick = onClick,
         containerColor = buttonColor,
-        shape = CircleShape,
+        shape = SmoothRoundedCornerShape(999.dp, 1f),
 
     ) {
         Text(

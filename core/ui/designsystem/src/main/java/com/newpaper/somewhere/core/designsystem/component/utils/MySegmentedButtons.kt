@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalRippleConfiguration
@@ -44,6 +42,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcon
 import com.newpaper.somewhere.core.designsystem.icon.SelectSwitchIcon
@@ -76,7 +75,7 @@ fun MySegmentedButtons(
 
     MyCard(
         modifier = modifier,
-        shape = CircleShape,
+        shape = SmoothRoundedCornerShape(999.dp, 1f),
         colors = CardDefaults.cardColors(
             containerColor = containerColor
         )
@@ -89,7 +88,7 @@ fun MySegmentedButtons(
                 modifier = modifier
                     .offset(selectedItemOffset.value.dp)
                     .padding(6.dp)
-                    .clip(CircleShape)
+                    .clip(SmoothRoundedCornerShape(999.dp, 1f))
 
                     .width(width.dp / itemList.size)
                     .fillMaxHeight()
@@ -158,7 +157,7 @@ private fun MySegmentedButtonItem(
     CompositionLocalProvider(LocalRippleConfiguration provides noRippleConfiguration) {
         Box(
             modifier = modifier
-                .clip(CircleShape)
+                .clip(SmoothRoundedCornerShape(999.dp, 1f))
                 .semantics {
                     stateDescription = if (isSelected) selected else unselected
                 }
@@ -171,7 +170,7 @@ private fun MySegmentedButtonItem(
         ) {
             MyCard(
                 modifier = Modifier.fillMaxWidth(),
-                shape = CircleShape,
+                shape = SmoothRoundedCornerShape(999.dp, 1f),
                 colors = CardDefaults.cardColors(
                     containerColor = containerColor,
                     contentColor = contentColor.value

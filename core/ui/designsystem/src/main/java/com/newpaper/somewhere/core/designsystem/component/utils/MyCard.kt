@@ -1,7 +1,11 @@
 package com.newpaper.somewhere.core.designsystem.component.utils
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
@@ -10,14 +14,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
+import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 
 @Composable
 fun MyCard(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     onClick: (() -> Unit)? = null,
-    shape: Shape = CardDefaults.shape,
+    shape: Shape = MaterialTheme.shapes.medium,
     colors: CardColors? = null,
     elevation: CardElevation = CardDefaults.cardElevation(0.dp, 0.dp, 0.dp, 0.dp),
     border: BorderStroke? = null,
@@ -52,6 +59,25 @@ fun MyCard(
             border = border
         ) {
             content()
+        }
+    }
+}
+
+
+@PreviewLightDark
+@Composable
+private fun MyCardPreview(
+
+){
+    SomewhereTheme {
+        Column(
+            modifier = Modifier.background(MaterialTheme.colorScheme.onSurface)
+        ) {
+            MyCard(
+                modifier = Modifier.size(100.dp).padding(16.dp)
+            ) {
+
+            }
         }
     }
 }

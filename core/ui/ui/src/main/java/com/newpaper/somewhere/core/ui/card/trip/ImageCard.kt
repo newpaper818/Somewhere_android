@@ -31,7 +31,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -56,6 +55,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.ImageFromFile
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.DotsIndicator
@@ -158,7 +158,7 @@ fun ImageCard(
             MyCard(
                 modifier = modifier1
                     .fillMaxWidth()
-                    .border(1.dp, borderColor, RoundedCornerShape(16.dp))
+                    .border(1.dp, borderColor, SmoothRoundedCornerShape(16.dp))
             ) {
                 Box {
                     Column {
@@ -193,7 +193,7 @@ fun ImageCard(
                                         text = stringResource(id = R.string.image_card_subtitle_add_images),
                                         style = addImageTextStyle,
                                         modifier = Modifier
-                                            .clip(CircleShape)
+                                            .clip(SmoothRoundedCornerShape(999.dp, 1f))
                                             .clickable(
                                                 enabled = !isImageCountLimit && imagePathList.size < IMAGE_MAX_COUNT,
                                                 onClick = {
@@ -373,7 +373,7 @@ private fun ImageWithDeleteIcon(
         .zIndex(zIndex)
 
     MyCard(
-        shape = MaterialTheme.shapes.medium,
+        shape = SmoothRoundedCornerShape(16.dp),
         onClick = onClickImage,
         modifier = dragModifier
             .size(cardWidthDp)

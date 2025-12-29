@@ -12,7 +12,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,7 +34,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CardDefaults
@@ -86,6 +84,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.button.NegativePositiveButtons
 import com.newpaper.somewhere.core.designsystem.component.map.MapForSetLocation
@@ -190,7 +189,7 @@ fun SetLocationDialog(
                 snackbar = {
                     Snackbar(
                         snackbarData = it,
-                        shape = MaterialTheme.shapes.medium
+                        shape = MaterialTheme.shapes.small
                     )
                 }
             )
@@ -213,7 +212,7 @@ fun SetLocationDialog(
                 dropdownMenuContent = {
                     MaterialTheme(
                         shapes = MaterialTheme.shapes.copy(
-                            extraSmall = RoundedCornerShape(16.dp)
+                            extraSmall = SmoothRoundedCornerShape(16.dp)
                         )
                     ){
                         DropdownMenu(
@@ -560,7 +559,7 @@ private fun MapSearchBox(
     val boxModifier = Modifier
         .height(50.dp)
         .widthIn(max = 450.dp)
-        .clip(CircleShape)
+        .clip(SmoothRoundedCornerShape(999.dp, 1f))
         .background(MaterialTheme.colorScheme.surface.copy(0.95f))
 
     AnimatedVisibility(
@@ -639,7 +638,7 @@ private fun MapSearchList(
     ) {
         LazyColumn(
             modifier = Modifier
-                .clip(RoundedCornerShape(25.dp))
+                .clip(SmoothRoundedCornerShape(25.dp))
                 .heightIn(max = 200.dp)
                 .widthIn(max = 450.dp)
                 .background(MaterialTheme.colorScheme.surfaceBright.copy(alpha = 0.95f))
@@ -678,7 +677,7 @@ private fun MapSearchList(
                                 )
                             },
                         containerColor = itemColor,
-                        shape = RoundedCornerShape(25.dp),
+                        shape = SmoothRoundedCornerShape(25.dp),
                         onClick = { onClickItem(it) }
                     ) {
                         Row(

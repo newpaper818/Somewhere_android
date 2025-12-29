@@ -15,8 +15,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +35,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
@@ -108,7 +107,7 @@ internal fun SetSpotTypeDialog(
                 state = lazyRowState,
                 modifier = Modifier
                     //.height(400.dp)
-                    .clip(CircleShape)
+                    .clip(SmoothRoundedCornerShape(999.dp, 1f))
                     .background(MaterialTheme.colorScheme.surfaceBright)
                     .padding(0.dp, 8.dp)
             ) {
@@ -125,7 +124,7 @@ internal fun SetSpotTypeDialog(
                                         else MaterialTheme.typography.bodyMedium
 
                     ClickableBox(
-                        shape = CircleShape,
+                        shape = SmoothRoundedCornerShape(999.dp, 1f),
                         containerColor = cardColor,
                         modifier = Modifier.height(36.dp)
                             .semantics {
@@ -169,7 +168,7 @@ internal fun SetSpotTypeDialog(
             Column(
                 modifier = Modifier
                     .heightIn(min = 0.dp)
-                    .clip(RoundedCornerShape(31.dp))
+                    .clip(SmoothRoundedCornerShape(31.dp))
                     .background(MaterialTheme.colorScheme.surfaceBright)
             ) {
                 LazyColumn(
@@ -185,7 +184,7 @@ internal fun SetSpotTypeDialog(
 
                         ClickableBox(
                             containerColor = cardColor,
-                            shape = CircleShape,
+                            shape = SmoothRoundedCornerShape(999.dp, 1f),
                             modifier = Modifier
                                 .height(46.dp)
                                 .fillMaxWidth()
