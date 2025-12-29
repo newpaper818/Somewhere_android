@@ -1,5 +1,6 @@
-### AI 여행 생성과 지도 시각화를 통해 효율적인 여행 계획을 돕는 Android 앱
-### 2023.04 - now 개인 프로젝트
+### AI 여행 생성과 지도 시각화를 통해 효율적인 여행 계획을 돕는 여행 계획 앱
+### 개인 프로젝트 Android 앱
+### 2023.04 - current
 
 Google Play: https://play.google.com/store/apps/details?id=com.newpaper.somewhere
 </br></br>
@@ -7,7 +8,14 @@ Google Play: https://play.google.com/store/apps/details?id=com.newpaper.somewher
 
 ### 기술 스택
 
-Android Kotlin / Jetpack Compose / Coroutine / MVVM / Hilt / Firebase / Google Maps / Gemini API
+Android: Kotlin, Jetpack Compose, MVVM, Coroutine, Hilt
+
+Data: Firebase Firestore, Firebase Storage, Preferences Datastore
+
+Map: Google Maps, Google Maps Places
+
+etc: Firebase Authentication, Firebase App Check, Firebase Functions, Google Gemini, Git, Github, Figma, Notion
+</br></br></br>
 
 ### UI/UX
 
