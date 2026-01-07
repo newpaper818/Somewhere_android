@@ -124,14 +124,17 @@ class AppViewModel @Inject constructor(
     fun intiUserAndUpdateStartDestination (
 
     ){
+        if (appUiState.value.screenDestination.startScreenDestination != null)
+            return
+
         Log.d("MainActivity1", "[1] intiUserAndUpdateStartDestination start")
 
         initSignedInUser(
             onDone = { userDataIsNull ->
                 updateCurrentScreenDestination(userDataIsNull)
+                Log.d("MainActivity1", "                              [1] intiUserAndUpdateStartDestination done")
             }
         )
-        Log.d("MainActivity1", "                              [1]intiUserAndUpdateStartDestination done")
     }
 
     private fun initSignedInUser(
@@ -153,8 +156,9 @@ class AppViewModel @Inject constructor(
                 it.copy(appUserData = userData)
             }
 
+            Log.d("MainActivity1", "                              [2] initSignedInUser - user: ${userData?.userId}")
+
             onDone(userData == null || userData.userId == "")
-            Log.d("MainActivity1", "[2] initSignedInUser - user: ${userData?.userId}")
 //            }
 //            Log.d("MainActivity1", "[2] ${time*0.000000001} - initSignedInUser")
         }
