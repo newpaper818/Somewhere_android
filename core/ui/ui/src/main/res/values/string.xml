@@ -13,7 +13,7 @@
 
     <!-- DeveloperCard.kt -->
     <string name="developer">Developer</string>
-    <string name="developer_info">Sejong Lee, Sejong Univ. 19 CS</string>
+    <string name="developer_info">Sejong Lee</string>
 
     <!-- ShareAppCard.kt -->
     <string name="or">or</string>
