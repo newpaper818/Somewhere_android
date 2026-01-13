@@ -1,6 +1,7 @@
 package com.newpaper.somewhere.feature.more.about
 
 import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,10 +33,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
+import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.ui.card.AppIconWithAppNameCard
-import com.newpaper.somewhere.core.ui.card.ContactCard
-import com.newpaper.somewhere.core.ui.card.DeveloperCard
 import com.newpaper.somewhere.core.ui.card.ShareAppCard
 import com.newpaper.somewhere.core.ui.card.VersionCard
 import com.newpaper.somewhere.core.ui.item.ItemDivider
@@ -43,6 +43,7 @@ import com.newpaper.somewhere.core.ui.item.ItemWithText
 import com.newpaper.somewhere.core.ui.item.ListGroupCard
 import com.newpaper.somewhere.core.utils.BUG_REPORT_URL
 import com.newpaper.somewhere.core.utils.FEEDBACK_URL
+import com.newpaper.somewhere.core.utils.GITHUB_URL
 import com.newpaper.somewhere.core.utils.SOMEWHERE_PLAY_STORE_URL
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.core.utils.onClickPrivacyPolicy
@@ -176,6 +177,10 @@ private fun AboutScreen(
                 ItemDivider(modifier = itemModifier)
             }
 
+
+
+
+
             item{
                 //app version
                 VersionCard(
@@ -184,22 +189,47 @@ private fun AboutScreen(
                     onClickUpdate = { uriHandler.openUri(SOMEWHERE_PLAY_STORE_URL) },
                     modifier = itemModifier
                 )
+
+                MySpacerColumn(16.dp)
             }
 
+
+
+
+
+
             item{
-                //developer info
-                DeveloperCard(
+                //developer
+                ListGroupCard(
                     modifier = itemModifier
-                )
-
-                MySpacerColumn(8.dp)
+                ) {
+                    ItemWithText(
+                        titleText = stringResource(id = R.string.developer),
+                        text = stringResource(id = R.string.developer_info),
+                        onItemClick = { uriHandler.openUri(GITHUB_URL) },
+                        iconRight = MyIcons.openInNew
+                    )
+                }
             }
 
             item{
+                val email = stringResource(id = R.string.contact_email)
+
                 //contact
-                ContactCard(
+                ListGroupCard(
                     modifier = itemModifier
-                )
+                ) {
+                    ItemWithText(
+                        titleText = stringResource(id = R.string.contact),
+                        text = email,
+                        onItemClick = {
+                            val uri = Uri.parse("mailto:$email")
+                            val intent = Intent(Intent.ACTION_SENDTO, uri)
+                            context.startActivity(intent)
+                        },
+                        iconRight = MyIcons.sendEmail
+                    )
+                }
             }
 
             //feedback and bug report
@@ -211,7 +241,7 @@ private fun AboutScreen(
                     ItemWithText(
                         text = stringResource(id = R.string.app_review),
                         onItemClick = { uriHandler.openUri(SOMEWHERE_PLAY_STORE_URL) },
-                        isOpenInNew = true
+                        iconRight = MyIcons.openInNew
                     )
 
                     ItemDivider()
@@ -220,7 +250,7 @@ private fun AboutScreen(
                     ItemWithText(
                         text = stringResource(id = R.string.send_feedback),
                         onItemClick = { uriHandler.openUri(FEEDBACK_URL) },
-                        isOpenInNew = true
+                        iconRight = MyIcons.openInNew
                     )
 
                     ItemDivider()
@@ -229,10 +259,12 @@ private fun AboutScreen(
                     ItemWithText(
                         text = stringResource(id = R.string.bug_report),
                         onItemClick = { uriHandler.openUri(BUG_REPORT_URL) },
-                        isOpenInNew = true
+                        iconRight = MyIcons.openInNew
                     )
                 }
             }
+
+
 
             item{
                 ListGroupCard(
@@ -241,8 +273,8 @@ private fun AboutScreen(
                     //privacy policy
                     ItemWithText(
                         text = stringResource(id = R.string.privacy_policy),
-                        isOpenInNew = true,
-                        onItemClick = { onClickPrivacyPolicy(uriHandler)}
+                        onItemClick = { onClickPrivacyPolicy(uriHandler)},
+                        iconRight = MyIcons.openInNew
                     )
 
                     ItemDivider()
@@ -256,6 +288,9 @@ private fun AboutScreen(
                     )
                 }
             }
+
+
+
 
             item {
                 MySpacerColumn(height = 64.dp)
