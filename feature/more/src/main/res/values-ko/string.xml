@@ -43,6 +43,10 @@
     <string name="screen_style">화면 스타일</string>
     <string name="account">계정</string>
     <string name="feedback">피드백</string>
+    <string name="developer">개발자</string>
+    <string name="developer_info">이세종</string>
+    <string name="contact">문의</string>
+
     <string name="app_review">앱 리뷰하기</string>
     <string name="send_feedback">피드백 보내기</string>
     <string name="bug_report">버그 신고하기</string>
