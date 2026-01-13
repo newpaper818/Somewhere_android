@@ -22,9 +22,17 @@ private const val MAIN_ACTIVITY_TAG = "MainActivity1"
 @HiltAndroidApp
 class SomewhereApplication: Application() {
 
+//    companion object {
+//        var startTime: Long = 0
+//    }
+
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onCreate() {
+//        startTime = android.os.SystemClock.elapsedRealtime()
+//        Log.d("splashTime", "start app")
+
+
         super.onCreate()
 
         applicationScope.launch {
