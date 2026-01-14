@@ -32,7 +32,6 @@ import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +50,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.CameraPositionState
@@ -98,7 +98,7 @@ fun TripMapRoute(
     tripMapViewModel: TripMapViewModel = hiltViewModel()
 ){
 
-    val tripMapUiState by tripMapViewModel.tripMapUiState.collectAsState()
+    val tripMapUiState by tripMapViewModel.tripMapUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         if (tripMapUiState.dateWithShownMarkerList.isEmpty())
@@ -231,7 +231,7 @@ private fun TripMapScreenVertical(
 
     modifier: Modifier = Modifier
 ){
-    val tripMapUiState by tripMapViewModel.tripMapUiState.collectAsState()
+    val tripMapUiState by tripMapViewModel.tripMapUiState.collectAsStateWithLifecycle()
     val dateWithShownMarkerList = tripMapUiState.dateWithShownMarkerList
     val spotTypeGroupWithShownMarkerList = tripMapUiState.spotTypeGroupWithShownMarkerList
     val currentDateIndex = tripMapUiState.currentDateIndex
@@ -462,7 +462,7 @@ private fun TripMapScreenHorizontal(
 
     modifier: Modifier = Modifier
 ){
-    val tripMapUiState by tripMapViewModel.tripMapUiState.collectAsState()
+    val tripMapUiState by tripMapViewModel.tripMapUiState.collectAsStateWithLifecycle()
     val dateWithShownMarkerList = tripMapUiState.dateWithShownMarkerList
     val spotTypeGroupWithShownMarkerList = tripMapUiState.spotTypeGroupWithShownMarkerList
     val currentDateIndex = tripMapUiState.currentDateIndex

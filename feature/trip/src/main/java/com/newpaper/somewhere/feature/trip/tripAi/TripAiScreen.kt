@@ -20,7 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -34,6 +33,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
@@ -82,7 +82,7 @@ fun TripAiRoute(
 ){
     val context = LocalContext.current
 
-    val tripAiUiState by tripAiViewModel.tripAiUiState.collectAsState()
+    val tripAiUiState by tripAiViewModel.tripAiUiState.collectAsStateWithLifecycle()
 
     val onClickBack = {
         //if user enter nothing, navigate back

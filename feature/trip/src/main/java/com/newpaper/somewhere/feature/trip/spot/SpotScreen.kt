@@ -37,7 +37,6 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -58,6 +57,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.CameraPositionState
@@ -137,8 +137,8 @@ fun SpotRoute(
     spotViewModel: SpotViewModel = hiltViewModel()
 ){
 
-    val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsState()
-    val spotUiState by spotViewModel.spotUiState.collectAsState()
+    val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsStateWithLifecycle()
+    val spotUiState by spotViewModel.spotUiState.collectAsStateWithLifecycle()
 
     if (commonTripUiState.tripInfo.trip == null
         || commonTripUiState.tripInfo.tempTrip == null

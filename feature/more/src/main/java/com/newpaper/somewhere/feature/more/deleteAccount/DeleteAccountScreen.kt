@@ -32,7 +32,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.newpaper.somewhere.core.designsystem.component.button.AuthWithButton
 import com.newpaper.somewhere.core.designsystem.component.button.DeleteAccountButton
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
@@ -86,7 +86,7 @@ fun DeleteAccountRoute(
         navigateUp()
     }
 
-    val deleteAccountUiState by deleteAccountViewModel.deleteAccountUiState.collectAsState()
+    val deleteAccountUiState by deleteAccountViewModel.deleteAccountUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(internetEnabled, deleteAccountUiState.isAuthing){
         deleteAccountViewModel.setAuthButtonEnabled(

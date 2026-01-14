@@ -1,10 +1,10 @@
 package com.newpaper.somewhere.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.newpaper.somewhere.core.model.enums.MapTheme
@@ -23,7 +23,7 @@ fun SomewhereApp(
     modifier: Modifier = Modifier,
 ) {
 
-    val appUiState by appViewModel.appUiState.collectAsState()
+    val appUiState by appViewModel.appUiState.collectAsStateWithLifecycle()
 
     val isDarkMapTheme = appUiState.appPreferences.theme.mapTheme == MapTheme.DARK
             || appUiState.appPreferences.theme.mapTheme == MapTheme.AUTO && isDarkAppTheme

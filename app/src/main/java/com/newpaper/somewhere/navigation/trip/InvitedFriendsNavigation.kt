@@ -1,9 +1,9 @@
 package com.newpaper.somewhere.navigation.trip
 
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -54,8 +54,8 @@ fun NavGraphBuilder.invitedFriendsScreen(
             appViewModel.updateCurrentScreenDestination(ScreenDestination.INVITED_FRIENDS)
         }
 
-        val appUiState by appViewModel.appUiState.collectAsState()
-        val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsState()
+        val appUiState by appViewModel.appUiState.collectAsStateWithLifecycle()
+        val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsStateWithLifecycle()
 
         val appUserData = appUiState.appUserData
         val currentTrip = commonTripUiState.tripInfo.trip

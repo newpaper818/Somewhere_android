@@ -28,7 +28,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -39,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.newpaper.somewhere.core.designsystem.component.button.AddFriendButton
 import com.newpaper.somewhere.core.designsystem.component.button.UpgradeToSomewhereProButton
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
@@ -81,7 +81,7 @@ fun InvitedFriendsRoute(
     modifier: Modifier = Modifier,
     invitedFriendViewModel: InvitedFriendViewModel = hiltViewModel()
 ){
-    val invitedFriendUiState by invitedFriendViewModel.invitedFriendUiState.collectAsState()
+    val invitedFriendUiState by invitedFriendViewModel.invitedFriendUiState.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
 
     val deleteFriendErrorText = stringResource(id = R.string.snackbar_delete_friend_error)

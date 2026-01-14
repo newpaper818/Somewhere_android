@@ -21,26 +21,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
@@ -61,7 +55,6 @@ import com.newpaper.somewhere.core.model.tripData.TripsGroup
 import com.newpaper.somewhere.core.ui.GoogleBannerAd
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
-import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.convert.getAllImagesPath
 import com.newpaper.somewhere.core.utils.convert.getMaxTrips
 import com.newpaper.somewhere.core.utils.enterVerticallyDelayForMaxTrips
@@ -116,8 +109,8 @@ fun TripsRoute(
 ){
     val context = LocalContext.current
 
-    val tripsUiState by tripsViewModel.tripsUiState.collectAsState()
-    val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsState()
+    val tripsUiState by tripsViewModel.tripsUiState.collectAsStateWithLifecycle()
+    val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsStateWithLifecycle()
 
     val isEditMode = commonTripUiState.isEditMode
 

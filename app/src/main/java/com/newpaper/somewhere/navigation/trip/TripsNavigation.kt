@@ -3,9 +3,9 @@ package com.newpaper.somewhere.navigation.trip
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -70,7 +70,7 @@ fun NavGraphBuilder.tripsScreen(
             appViewModel.updateCurrentScreenDestination(ScreenDestination.TRIPS)
         }
 
-        val appUiState by appViewModel.appUiState.collectAsState()
+        val appUiState by appViewModel.appUiState.collectAsStateWithLifecycle()
 
         val widthSizeClass = externalState.windowSizeClass.widthSizeClass
         val heightSizeClass = externalState.windowSizeClass.heightSizeClass
