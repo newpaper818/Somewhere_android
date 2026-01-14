@@ -27,7 +27,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -42,6 +41,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.button.PrivacyPolicyButton
 import com.newpaper.somewhere.core.designsystem.component.button.SignInWithButton
@@ -74,7 +74,7 @@ fun SignInRoute(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    val signInUiState by signInViewModel.signInUiState.collectAsState()
+    val signInUiState by signInViewModel.signInUiState.collectAsStateWithLifecycle()
     val isSigningIn = signInUiState.isSigningIn
     val signInButtonEnabled = signInUiState.signInButtonEnabled
 

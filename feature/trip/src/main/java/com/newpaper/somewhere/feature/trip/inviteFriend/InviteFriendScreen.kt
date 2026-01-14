@@ -28,7 +28,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -40,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
@@ -72,7 +72,7 @@ fun InviteFriendRoute(
     modifier: Modifier = Modifier,
     inviteFriendViewModel: InviteFriendViewModel = hiltViewModel()
 ){
-    val inviteFriendUiState by inviteFriendViewModel.inviteFriendUiState.collectAsState()
+    val inviteFriendUiState by inviteFriendViewModel.inviteFriendUiState.collectAsStateWithLifecycle()
 
     //invite button enabled
     LaunchedEffect(Unit) {

@@ -25,7 +25,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -45,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.button.SeeOnMapExtendedFAB
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
@@ -132,8 +132,8 @@ fun TripRoute(
 ){
     val coroutineScope = rememberCoroutineScope()
 
-    val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsState()
-    val tripUiState by tripViewModel.tripUiState.collectAsState()
+    val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsStateWithLifecycle()
+    val tripUiState by tripViewModel.tripUiState.collectAsStateWithLifecycle()
 
     val isNewTrip = commonTripUiState.isNewTrip
 

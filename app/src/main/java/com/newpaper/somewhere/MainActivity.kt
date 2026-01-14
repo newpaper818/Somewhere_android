@@ -10,11 +10,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.LocationServices
 import com.google.android.play.core.review.ReviewManagerFactory
@@ -75,7 +74,7 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
-            val appUiState by appViewModel.appUiState.collectAsState()
+            val appUiState by appViewModel.appUiState.collectAsStateWithLifecycle()
 
 //            LaunchedEffect(appUiState.screenDestination.startScreenDestination) {
 //                if (appUiState.screenDestination.startScreenDestination != null) {

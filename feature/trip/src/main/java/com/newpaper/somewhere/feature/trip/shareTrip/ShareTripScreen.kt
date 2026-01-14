@@ -28,7 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -46,6 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.newpaper.somewhere.core.designsystem.component.ImageFromFile
 import com.newpaper.somewhere.core.designsystem.component.ImageFromUri
 import com.newpaper.somewhere.core.designsystem.component.button.SaveAsImageButton
@@ -78,7 +78,7 @@ fun ShareTripRoute(
     modifier: Modifier = Modifier,
     shareTripViewModel: ShareTripViewModel = hiltViewModel()
 ){
-    val shareTripUiState by shareTripViewModel.shareTripUiState.collectAsState()
+    val shareTripUiState by shareTripViewModel.shareTripUiState.collectAsStateWithLifecycle()
 
     val downloadCompleteText = stringResource(id = R.string.toast_download_complete)
     val downloadErrorText = stringResource(id = R.string.toast_download_error)
