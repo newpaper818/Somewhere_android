@@ -107,7 +107,7 @@ internal fun ControlPanel(
     currentDateIndex: Int,
 
     dateListState: LazyListState,
-    spotTypeGroupWithShownMarkerList:List<SpotTypeGroupWithBoolean>,
+    spotTypeGroupWithShownMarkerList: List<SpotTypeGroupWithBoolean>,
     dateWithShownMarkerList: List<DateWithBoolean>,
 
     navigateUp: () -> Unit,
@@ -185,8 +185,8 @@ internal fun ControlPanel(
         }
     )
 
-    SpotTypeList(
-        spotTypeGroupWithShownIconList = spotTypeGroupWithShownMarkerList,
+    SpotTypeFilterChipButton(
+        spotTypeGroupWithBooleanList = spotTypeGroupWithShownMarkerList,
         onSpotTypeItemClicked = { spotTypeGroup ->
             tripMapViewModel.toggleSpotTypeGroupWithShownMarkerList(spotTypeGroup)
         }
@@ -382,17 +382,17 @@ internal fun FitBoundsToMarkersButton(
 
 
 @Composable
-internal fun SpotTypeList(
-    spotTypeGroupWithShownIconList: List<SpotTypeGroupWithBoolean>,
+internal fun SpotTypeFilterChipButton(
+    spotTypeGroupWithBooleanList: List<SpotTypeGroupWithBoolean>,
     onSpotTypeItemClicked: (SpotTypeGroup) -> Unit,
-    isShownColor: Color = MaterialTheme.colorScheme.primary
+    selectedButtonColor: Color = MaterialTheme.colorScheme.primary
 ){
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(0.dp),
         contentPadding = PaddingValues(16.dp, 12.dp, 4.dp, 12.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        items(spotTypeGroupWithShownIconList) {
+        items(spotTypeGroupWithBooleanList) {
 
             Row {
                 FilterChipButton(
@@ -400,7 +400,7 @@ internal fun SpotTypeList(
                     selected = it.isShown,
                     onClick = { onSpotTypeItemClicked(it.spotTypeGroup) },
 
-                    selectedButtonColor = isShownColor,
+                    selectedButtonColor = selectedButtonColor,
                     selectedTextColor = MaterialTheme.colorScheme.onPrimary,
                     notSelectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
