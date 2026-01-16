@@ -152,9 +152,7 @@ fun ImageCard(
         exit = exitVerticallyScaleOut
     ) {
 
-        Column(
-            modifier = modifier
-        ) {
+        Column {
             MyCard(
                 modifier = modifier1
                     .fillMaxWidth()

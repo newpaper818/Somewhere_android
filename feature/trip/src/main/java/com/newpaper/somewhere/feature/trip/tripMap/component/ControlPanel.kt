@@ -42,6 +42,7 @@ import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.google.maps.android.compose.CameraPositionState
@@ -385,11 +386,12 @@ internal fun FitBoundsToMarkersButton(
 internal fun SpotTypeFilterChipButton(
     spotTypeGroupWithBooleanList: List<SpotTypeGroupWithBoolean>,
     onSpotTypeItemClicked: (SpotTypeGroup) -> Unit,
+    spacerValue: Dp = 16.dp,
     selectedButtonColor: Color = MaterialTheme.colorScheme.primary
 ){
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(0.dp),
-        contentPadding = PaddingValues(16.dp, 12.dp, 4.dp, 12.dp),
+        contentPadding = PaddingValues(spacerValue, 12.dp, 4.dp, 12.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
         items(spotTypeGroupWithBooleanList) {
