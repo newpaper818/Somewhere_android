@@ -53,7 +53,7 @@ class TripsViewModel @Inject constructor(
     private val commonTripUiStateRepository: CommonTripUiStateRepository,
     private val tripsRepository: TripsRepository,
     private val commonImageRepository: CommonImageRepository,
-): ViewModel()  {
+): ViewModel() {
     private val _tripsUiState: MutableStateFlow<TripsUiState> =
         MutableStateFlow(
             TripsUiState()
