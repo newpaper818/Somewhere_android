@@ -39,6 +39,7 @@ internal fun ShareTripCards(
 ){
     AnimatedVisibility(
         visible = !isEditMode,
+        modifier = modifier,
         enter = enterVerticallyScaleInDelay,
         exit = exitVerticallyScaleOut
     ) {

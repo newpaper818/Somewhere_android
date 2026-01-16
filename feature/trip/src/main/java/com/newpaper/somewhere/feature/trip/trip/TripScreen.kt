@@ -656,7 +656,7 @@ private fun TripScreen(
         }
 
 
-
+        val spacerValueModifier = Modifier.padding(start = spacerValue, end = if (use2Panes) spacerValue / 2 else spacerValue)
 
 
         Box(
@@ -667,7 +667,7 @@ private fun TripScreen(
                 state = scrollState,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 contentPadding = PaddingValues(
-                    spacerValue, 16.dp + paddingValues.calculateTopPadding(), if (use2Panes) spacerValue / 2 else spacerValue, 200.dp
+                    0.dp, 16.dp + paddingValues.calculateTopPadding(), 0.dp, 200.dp
                 ),
                 modifier = if (topAppBarHazeState != null) Modifier
                     .fillMaxSize()
@@ -686,7 +686,8 @@ private fun TripScreen(
                         isEditMode = isEditMode,
                         onClickInvitedFriends = tripNavigate::navigateToInvitedFriends,
                         onClickAddFriend = tripNavigate::navigateToInviteFriend,
-                        onClickShareTrip = { tripNavigate.navigateToShareTrip(showingTrip.imagePathList, imagesPagerState.currentPage) }
+                        onClickShareTrip = { tripNavigate.navigateToShareTrip(showingTrip.imagePathList, imagesPagerState.currentPage) },
+                        modifier = spacerValueModifier
                     )
                 }
 
@@ -708,7 +709,8 @@ private fun TripScreen(
                         isLongText = {
                             if (it) tripErrorCount.increaseTotalErrorCount()
                             else tripErrorCount.decreaseTotalErrorCount()
-                        }
+                        },
+                        modifier = spacerValueModifier
                     )
                 }
 
@@ -751,7 +753,8 @@ private fun TripScreen(
                         reorderImageList = tripImage::reorderTripImageList,
                         downloadImage = tripImage::downloadImage,
                         saveImageToInternalStorage = tripImage::saveImageToInternalStorage,
-                        pagerState = imagesPagerState
+                        pagerState = imagesPagerState,
+                        modifier = spacerValueModifier
                     )
                 }
 
@@ -773,6 +776,7 @@ private fun TripScreen(
                         durationText = showingTrip.getDurationText(),
                         isEditMode = isEditMode,
                         onClick = { tripDialog.setShowDateRangeDialog(true) },
+                        modifier = spacerValueModifier
                     )
                 }
 
@@ -791,7 +795,8 @@ private fun TripScreen(
                                     tripDialog.setShowSetCurrencyDialog(true)
                                 }),
                             travelDistanceItem.copy(text =  showingTrip.getTotalTravelDistanceText())
-                        )
+                        ),
+                        modifier = spacerValueModifier
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -815,7 +820,8 @@ private fun TripScreen(
                         },
                         showMemoDialog = {
                             tripDialog.setShowMemoDialog(true)
-                        }
+                        },
+                        modifier = spacerValueModifier
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -828,7 +834,8 @@ private fun TripScreen(
                         spotTypeGroupWithBooleanList = tripData.spotTypeGroupWithShownList,
                         onSpotTypeItemClicked = { spotTypeGroup ->
                             tripData.onClickSpotTypeGroupChipButton(spotTypeGroup)
-                        }
+                        },
+                        spacerValue = spacerValue
                     )
                 }
 
@@ -840,6 +847,7 @@ private fun TripScreen(
                         val slideState = slideStates[date.id] ?: SlideState.NONE
 
                         DateCard(
+                            modifier = spacerValueModifier,
                             currentDateIndex = currentDateIndex,
                             currentSpotIndex = currentSpotIndex,
                             visible = !loadingTrip || !enabledDateListIsEmpty,

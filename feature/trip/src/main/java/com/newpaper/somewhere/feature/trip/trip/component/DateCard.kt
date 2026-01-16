@@ -138,9 +138,9 @@ internal fun DateCard(
     //item modifier
     val dragModifier =
         //set y offset while dragging or drag end
-        if (isEditMode) Modifier
+        if (isEditMode) modifier
             .offset { IntOffset(0, verticalTranslation.toInt()) }
-        else Modifier
+        else modifier
 
 
     Column(
