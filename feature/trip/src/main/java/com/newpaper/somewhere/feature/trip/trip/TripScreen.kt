@@ -92,6 +92,7 @@ import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.trip.component.DateCard
 import com.newpaper.somewhere.feature.trip.trip.component.ShareTripCards
 import com.newpaper.somewhere.feature.trip.trip.component.TripDurationCard
+import com.newpaper.somewhere.feature.trip.tripMap.component.SpotTypeFilterChipButton
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
@@ -217,7 +218,10 @@ fun TripRoute(
         tripData = TripData(
             originalTrip = originalTrip,
             tempTrip = tempTrip,
-            isNewTrip = isNewTrip
+            isNewTrip = isNewTrip,
+
+            spotTypeGroupWithShownList = tripUiState.spotTypeGroupWithShownList,
+            _onClickSpotTypeGroupChipButton = tripViewModel::toggleSpotTypeGroupWithShownList
         ),
         tripErrorCount = TripErrorCount(
             totalErrorCount = tripUiState.totalErrorCount,
@@ -818,7 +822,15 @@ private fun TripScreen(
                 }
 
 
-
+                //spot type filter chips
+                item {
+                    SpotTypeFilterChipButton(
+                        spotTypeGroupWithBooleanList = tripData.spotTypeGroupWithShownList,
+                        onSpotTypeItemClicked = { spotTypeGroup ->
+                            tripData.onClickSpotTypeGroupChipButton(spotTypeGroup)
+                        }
+                    )
+                }
 
 
                 // all dates
@@ -833,6 +845,7 @@ private fun TripScreen(
                             visible = !loadingTrip || !enabledDateListIsEmpty,
                             trip = showingTrip,
                             dateIndex = dateIndex,
+                            spotTypeGroupWithShownList = tripData.spotTypeGroupWithShownList,
                             isEditMode = isEditMode,
                             dateTimeFormat = dateTimeFormat,
                             focusManager = focusManager,
