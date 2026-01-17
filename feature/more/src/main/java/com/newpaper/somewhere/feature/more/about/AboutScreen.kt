@@ -8,25 +8,20 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,6 +30,7 @@ import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTo
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
+import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.card.AppIconWithAppNameCard
 import com.newpaper.somewhere.core.ui.card.ShareAppCard
 import com.newpaper.somewhere.core.ui.card.VersionCard
@@ -72,17 +68,16 @@ fun AboutRoute(
         aboutViewModel.updateIsLatestAppVersion(currentAppVersionCode)
     }
 
+
     val aboutUiState by aboutViewModel.aboutUiState.collectAsStateWithLifecycle()
 
-    val snackBarHostState = remember { SnackbarHostState() }
+    val uriHandler = LocalUriHandler.current
 
-    val sendIntent: Intent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, SOMEWHERE_PLAY_STORE_URL)
-        type = "text/plain"
-    }
-    val shareIntent = Intent.createChooser(sendIntent, null)
     val context = LocalContext.current
+
+    val email = stringResource(id = R.string.contact_email)
+
+
 
     AboutScreen(
         use2Panes = use2Panes,
@@ -95,38 +90,56 @@ fun AboutRoute(
         isDebugMode = isDebugMode,
         navigateToOpenSourceLicense = navigateToOpenSourceLicense,
         navigateUp = navigateUp,
+        onClickUpdate = { uriHandler.openUri(SOMEWHERE_PLAY_STORE_URL) },
+        onClickDeveloper = { uriHandler.openUri(GITHUB_URL) },
+        onClickContact = {
+            val uri = Uri.parse("mailto:$email")
+            val intent = Intent(Intent.ACTION_SENDTO, uri)
+            context.startActivity(intent)
+        },
+        onClickReviewTheApp = { uriHandler.openUri(SOMEWHERE_PLAY_STORE_URL) },
+        onClickSendFeedback = { uriHandler.openUri(FEEDBACK_URL) },
+        onClickReportBugs = { uriHandler.openUri(BUG_REPORT_URL) },
+        onClickPrivacyPolicy = { onClickPrivacyPolicy(uriHandler) },
         onClickShareApp = {
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, SOMEWHERE_PLAY_STORE_URL)
+                type = "text/plain"
+            }
+            val shareIntent = Intent.createChooser(sendIntent, null)
+
             context.startActivity(shareIntent)
         },
-        snackBarHostState = snackBarHostState,
         modifier = modifier
     )
 }
 
 @Composable
 private fun AboutScreen(
-    use2Panes: Boolean,
-    startSpacerValue: Dp,
-    endSpacerValue: Dp,
-    useBlurEffect: Boolean,
+    modifier: Modifier = Modifier,
 
-    currentAppVersionName: String,
-    isLatestAppVersion: Boolean?,
-    isDebugMode: Boolean,
+    use2Panes: Boolean = false,
+    startSpacerValue: Dp = 16.dp,
+    endSpacerValue: Dp = 16.dp,
+    useBlurEffect: Boolean = true,
 
-    navigateToOpenSourceLicense: () -> Unit,
-    navigateUp: () -> Unit,
+    currentAppVersionName: String = "99.99.999",
+    isLatestAppVersion: Boolean? = true,
+    isDebugMode: Boolean = false,
 
-    onClickShareApp: () -> Unit,
+    navigateToOpenSourceLicense: () -> Unit = {},
+    navigateUp: () -> Unit = {},
 
-    snackBarHostState: SnackbarHostState,
-
-    modifier: Modifier = Modifier
+    onClickUpdate: () -> Unit = {},
+    onClickDeveloper: () -> Unit = {},
+    onClickContact: () -> Unit = {},
+    onClickReviewTheApp: () -> Unit = {},
+    onClickSendFeedback: () -> Unit = {},
+    onClickReportBugs: () -> Unit = {},
+    onClickPrivacyPolicy: () -> Unit = {},
+    onClickShareApp: () -> Unit = {},
 ){
-    val context = LocalContext.current
-
-    val uriHandler = LocalUriHandler.current
-
     val topAppBarHazeState = if(useBlurEffect) rememberHazeState() else null
 
     Scaffold(
@@ -141,18 +154,6 @@ private fun AboutScreen(
                 onClickNavigationIcon = { navigateUp() },
                 hazeState = topAppBarHazeState
             )
-        },
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackBarHostState,
-                modifier = Modifier.width(500.dp).navigationBarsPadding(),
-                snackbar = {
-                    Snackbar(
-                        snackbarData = it,
-                        shape = MaterialTheme.shapes.small
-                    )
-                }
-            )
         }
     ){ paddingValues ->
 
@@ -166,8 +167,9 @@ private fun AboutScreen(
                             .hazeSource(state = topAppBarHazeState).background(MaterialTheme.colorScheme.background)
                         else Modifier.fillMaxSize()
         ) {
+
+            //app icon image
             item{
-                //app icon image
                 MySpacerColumn(height = 16.dp)
                 AppIconWithAppNameCard(
                     modifier = itemModifier
@@ -177,56 +179,43 @@ private fun AboutScreen(
                 ItemDivider(modifier = itemModifier)
             }
 
-
-
-
-
+            //app version
             item{
-                //app version
                 VersionCard(
                     currentAppVersionName = currentAppVersionName,
                     isLatestAppVersion = isLatestAppVersion,
-                    onClickUpdate = { uriHandler.openUri(SOMEWHERE_PLAY_STORE_URL) },
+                    onClickUpdate = onClickUpdate,
                     modifier = itemModifier
                 )
 
                 MySpacerColumn(16.dp)
             }
 
-
-
-
-
-
+            //developer
             item{
-                //developer
                 ListGroupCard(
                     modifier = itemModifier
                 ) {
                     ItemWithText(
                         titleText = stringResource(id = R.string.developer),
                         text = stringResource(id = R.string.developer_info),
-                        onItemClick = { uriHandler.openUri(GITHUB_URL) },
+                        onItemClick = onClickDeveloper,
                         iconRight = MyIcons.openInNew
                     )
                 }
             }
 
+            //contact
             item{
                 val email = stringResource(id = R.string.contact_email)
 
-                //contact
                 ListGroupCard(
                     modifier = itemModifier
                 ) {
                     ItemWithText(
                         titleText = stringResource(id = R.string.contact),
                         text = email,
-                        onItemClick = {
-                            val uri = Uri.parse("mailto:$email")
-                            val intent = Intent(Intent.ACTION_SENDTO, uri)
-                            context.startActivity(intent)
-                        },
+                        onItemClick = onClickContact,
                         iconRight = MyIcons.sendEmail
                     )
                 }
@@ -240,7 +229,7 @@ private fun AboutScreen(
                     //google play app review
                     ItemWithText(
                         text = stringResource(id = R.string.app_review),
-                        onItemClick = { uriHandler.openUri(SOMEWHERE_PLAY_STORE_URL) },
+                        onItemClick = onClickReviewTheApp,
                         iconRight = MyIcons.openInNew
                     )
 
@@ -249,7 +238,7 @@ private fun AboutScreen(
                     //send feedback - open web browser to google form
                     ItemWithText(
                         text = stringResource(id = R.string.send_feedback),
-                        onItemClick = { uriHandler.openUri(FEEDBACK_URL) },
+                        onItemClick = onClickSendFeedback,
                         iconRight = MyIcons.openInNew
                     )
 
@@ -258,13 +247,11 @@ private fun AboutScreen(
                     //bug report - open web browser to google form
                     ItemWithText(
                         text = stringResource(id = R.string.bug_report),
-                        onItemClick = { uriHandler.openUri(BUG_REPORT_URL) },
+                        onItemClick = onClickReportBugs,
                         iconRight = MyIcons.openInNew
                     )
                 }
             }
-
-
 
             item{
                 ListGroupCard(
@@ -273,7 +260,7 @@ private fun AboutScreen(
                     //privacy policy
                     ItemWithText(
                         text = stringResource(id = R.string.privacy_policy),
-                        onItemClick = { onClickPrivacyPolicy(uriHandler)},
+                        onItemClick = onClickPrivacyPolicy,
                         iconRight = MyIcons.openInNew
                     )
 
@@ -282,25 +269,26 @@ private fun AboutScreen(
                     //open source license
                     ItemWithText(
                         text = stringResource(id = R.string.open_source_license),
-                        onItemClick = {
-                            navigateToOpenSourceLicense()
-                        }
+                        onItemClick = navigateToOpenSourceLicense
                     )
                 }
             }
 
-
-
-
+            //share app / qr code
             item {
                 MySpacerColumn(height = 64.dp)
 
-                //copy link / qr code
                 ShareAppCard(
                     modifier = itemModifier.fillMaxWidth(),
                     onClickShareApp = onClickShareApp,
                 )
             }
+
+
+
+
+
+
 
             if (isDebugMode)
                 item{
@@ -310,5 +298,32 @@ private fun AboutScreen(
                     )
                 }
         }
+    }
+}
+
+
+
+
+
+
+
+
+@PreviewLightDark
+@Composable
+private fun AboutScreenPreview(){
+    SomewhereTheme {
+        AboutScreen(
+            isLatestAppVersion = true
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun AboutScreenPreviewNotLatest(){
+    SomewhereTheme {
+        AboutScreen(
+            isLatestAppVersion = false
+        )
     }
 }
