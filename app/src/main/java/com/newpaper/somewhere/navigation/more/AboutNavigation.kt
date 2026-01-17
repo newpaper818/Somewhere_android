@@ -56,6 +56,7 @@ fun NavGraphBuilder.aboutScreen(
             use2Panes = externalState.windowSizeClass.use2Panes,
             spacerValue = externalState.windowSizeClass.spacerValue,
             useBlurEffect = appUiState.appPreferences.theme.useBlurEffect,
+            internetEnabled = externalState.internetEnabled,
             currentAppVersionCode = BuildConfig.VERSION_CODE,
             currentAppVersionName = BuildConfig.VERSION_NAME,
             isDebugMode = BuildConfig.DEBUG,

@@ -46,12 +46,15 @@ import com.newpaper.somewhere.core.utils.onClickPrivacyPolicy
 import com.newpaper.somewhere.feature.more.R
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.delay
 
 @Composable
 fun AboutRoute(
     use2Panes: Boolean,
     spacerValue: Dp,
     useBlurEffect: Boolean,
+
+    internetEnabled: Boolean,
 
     currentAppVersionCode: Int,
     currentAppVersionName: String,
@@ -64,8 +67,11 @@ fun AboutRoute(
 
     aboutViewModel: AboutViewModel = hiltViewModel()
 ){
-    LaunchedEffect(Unit) {
-        aboutViewModel.updateIsLatestAppVersion(currentAppVersionCode)
+    LaunchedEffect(internetEnabled) {
+        if (internetEnabled) {
+            delay(500)
+            aboutViewModel.updateIsLatestAppVersion(currentAppVersionCode)
+        }
     }
 
 
