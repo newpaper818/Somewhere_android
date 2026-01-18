@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -33,7 +34,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
@@ -492,6 +495,16 @@ private fun TripsScreen(
 
 
 
+        val stickyOffsetPx by remember(paddingValues.calculateTopPadding(), tripsUiInfo.tripsDisplayMode, tripsUiInfo.isTripsSortOrderByLatest) {
+            derivedStateOf {
+                val stickyItem = lazyListState.layoutInfo.visibleItemsInfo.firstOrNull { it.contentType == "sticky" }
+
+                val itemOffset = stickyItem?.offset?.toFloat()
+
+                if (itemOffset == null || itemOffset > 0) { 0 }
+                else { (-itemOffset).toInt() }
+            }
+        }
 
 
 
@@ -549,14 +562,19 @@ private fun TripsScreen(
                     }
                 }
 
-                item {
+                stickyHeader(
+                    contentType = "sticky"
+                ){
                     TripFilterChipsWithSortOrderButton(
                         spacerValue = spacerValue,
                         tripsDisplayMode = tripsUiInfo.tripsDisplayMode,
                         onClickTripsDisplayMode = tripsUiInfo::setTripsDisplayMode,
                         isOrderByLatest = tripsUiInfo.isTripsSortOrderByLatest,
                         onClickSortOrder = { tripsUiInfo.setIsTripsSortOrderByLatest(!tripsUiInfo.isTripsSortOrderByLatest) },
-                        modifier = Modifier.widthIn(max = itemMaxWidth)
+                        modifier = Modifier
+                            .widthIn(max = itemMaxWidth)
+                            .offset{ IntOffset(0, stickyOffsetPx) }
+                            .zIndex(1f)
                     )
                 }
 
