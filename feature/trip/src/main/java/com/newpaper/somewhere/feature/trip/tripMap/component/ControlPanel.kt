@@ -386,13 +386,15 @@ internal fun FitBoundsToMarkersButton(
 internal fun SpotTypeFilterChipButton(
     spotTypeGroupWithBooleanList: List<SpotTypeGroupWithBoolean>,
     onSpotTypeItemClicked: (SpotTypeGroup) -> Unit,
+
+    modifier: Modifier = Modifier,
     spacerValue: Dp = 16.dp,
     selectedButtonColor: Color = MaterialTheme.colorScheme.primary
 ){
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(0.dp),
         contentPadding = PaddingValues(spacerValue, 12.dp, 4.dp, 12.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         items(spotTypeGroupWithBooleanList) {
 
@@ -403,6 +405,7 @@ internal fun SpotTypeFilterChipButton(
                     onClick = { onSpotTypeItemClicked(it.spotTypeGroup) },
 
                     selectedButtonColor = selectedButtonColor,
+                    notSelectedButtonColor = MaterialTheme.colorScheme.background,
                     selectedTextColor = MaterialTheme.colorScheme.onPrimary,
                     notSelectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
