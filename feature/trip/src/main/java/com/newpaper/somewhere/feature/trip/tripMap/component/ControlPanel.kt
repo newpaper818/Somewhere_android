@@ -190,7 +190,8 @@ internal fun ControlPanel(
         spotTypeGroupWithBooleanList = spotTypeGroupWithShownMarkerList,
         onSpotTypeItemClicked = { spotTypeGroup ->
             tripMapViewModel.toggleSpotTypeGroupWithShownMarkerList(spotTypeGroup)
-        }
+        },
+        notSelectedButtonColor = Color.Transparent
     )
 
     AnimatedVisibility(
@@ -389,7 +390,8 @@ internal fun SpotTypeFilterChipButton(
 
     modifier: Modifier = Modifier,
     spacerValue: Dp = 16.dp,
-    selectedButtonColor: Color = MaterialTheme.colorScheme.primary
+    selectedButtonColor: Color = MaterialTheme.colorScheme.primary,
+    notSelectedButtonColor: Color = MaterialTheme.colorScheme.background
 ){
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(0.dp),
@@ -405,7 +407,7 @@ internal fun SpotTypeFilterChipButton(
                     onClick = { onSpotTypeItemClicked(it.spotTypeGroup) },
 
                     selectedButtonColor = selectedButtonColor,
-                    notSelectedButtonColor = MaterialTheme.colorScheme.background,
+                    notSelectedButtonColor = notSelectedButtonColor,
                     selectedTextColor = MaterialTheme.colorScheme.onPrimary,
                     notSelectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
