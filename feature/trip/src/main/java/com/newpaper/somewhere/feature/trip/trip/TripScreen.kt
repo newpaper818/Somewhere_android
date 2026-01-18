@@ -153,20 +153,26 @@ fun TripRoute(
     val tempTrip = commonTripUiState.tripInfo.tempTrip!!
     val isEditMode = commonTripUiState.isEditMode
 
-    //get trip data from firestore
-    //on first load
+    //user enter trip screen from existing trip in trips screen
+    //or change theme mode(light/dark)
+    //or rotate screen
     LaunchedEffect(Unit){
         if (!isNewTrip) {
-            coroutineScope.launch(Dispatchers.IO) {
-                commonTripViewModel.updateTrip(
-                    internetEnabled = internetEnabled,
-                    appUserId = appUserData.userId,
-                    tripWithEmptyDateList = originalTrip
-                )
-                delay(150)
-                tripViewModel.setLoadingTrip(false)
+            if (!isEditMode) {
+                coroutineScope.launch(Dispatchers.IO) {
+                    //get trip data from remote (firestore)
+                    commonTripViewModel.updateTrip(
+                        internetEnabled = internetEnabled,
+                        appUserId = appUserData.userId,
+                        tripWithEmptyDateList = originalTrip
+                    )
+                    delay(150)
+                    tripViewModel.setLoadingTrip(false)
+                }
             }
+            else { }
         }
+        //user create new trip
         else {
             tripViewModel.setLoadingTrip(false)
 
