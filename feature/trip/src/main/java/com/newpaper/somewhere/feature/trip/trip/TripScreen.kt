@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,13 +37,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
@@ -658,6 +662,21 @@ private fun TripScreen(
 
         val spacerValueModifier = Modifier.padding(start = spacerValue, end = if (use2Panes) spacerValue / 2 else spacerValue)
 
+        val density = LocalDensity.current
+        val spacer16DpToPx = with(density) { 16.dp.toPx() }
+
+        val stickyOffsetPx by remember(paddingValues.calculateTopPadding(), tripData.spotTypeGroupWithShownList) {
+            derivedStateOf {
+                val stickyItem = scrollState.layoutInfo.visibleItemsInfo.firstOrNull { it.contentType == "sticky" }
+
+                val itemOffset = stickyItem?.offset?.toFloat()
+
+                if (itemOffset == null || itemOffset > -spacer16DpToPx) { 0 }
+                else { (-itemOffset - spacer16DpToPx).toInt() }
+            }
+        }
+
+
 
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -829,13 +848,19 @@ private fun TripScreen(
 
 
                 //spot type filter chips
-                item {
+                stickyHeader(
+                    contentType = "sticky"
+                ) {
                     SpotTypeFilterChipButton(
                         spotTypeGroupWithBooleanList = tripData.spotTypeGroupWithShownList,
                         onSpotTypeItemClicked = { spotTypeGroup ->
                             tripData.onClickSpotTypeGroupChipButton(spotTypeGroup)
                         },
-                        spacerValue = spacerValue
+                        spacerValue = spacerValue,
+                        modifier = Modifier
+                            // why "stickyOffsetPx - stickyOffsetPx" ??????????????????
+                            .offset{ IntOffset(stickyOffsetPx - stickyOffsetPx, stickyOffsetPx) }
+                            .zIndex(1f)
                     )
                 }
 
