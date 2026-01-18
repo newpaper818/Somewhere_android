@@ -485,7 +485,7 @@ private fun TripScreen(
     LaunchedEffect(currentDateIndex) {
         if (use2Panes && currentDateIndex != null && prevDateIndex != null){
             coroutineScope.launch {
-                scrollState.animateScrollToItem(6 + currentDateIndex)
+                scrollState.animateScrollToItem(7 + currentDateIndex)
             }
         }
         if (currentDateIndex != null)
