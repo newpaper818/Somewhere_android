@@ -1,10 +1,13 @@
 ### AI 여행 생성과 지도 시각화를 통해 효율적인 여행 계획을 돕는 여행 계획 앱
 #### 개인 프로젝트 | Android 앱
 #### 2023.04 - current
+</br>
 
+<img width="100" height="100" alt="play_store_qr" src="https://github.com/user-attachments/assets/f5908933-3b11-4cea-b01b-8d3edf9d30da" />
+</br>
 Google Play: https://play.google.com/store/apps/details?id=com.newpaper.somewhere
-</br></br>
 
+</br></br>
 
 ### 기술 스택
 
