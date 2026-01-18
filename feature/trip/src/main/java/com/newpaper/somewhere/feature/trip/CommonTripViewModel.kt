@@ -123,7 +123,7 @@ class CommonTripViewModel @Inject constructor(
         }
     }
 
-    /** get trip's all data(include date list and spot list)
+    /** get trip's all data(include date list and spot list, from remote(firestore))
      *  and update trip to commonTripUiState
      * */
     suspend fun updateTrip(
