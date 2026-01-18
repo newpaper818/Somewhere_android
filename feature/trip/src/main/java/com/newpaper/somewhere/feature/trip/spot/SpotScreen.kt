@@ -248,6 +248,10 @@ fun SpotRoute(
 
     LaunchedEffect(userDragTouching){
         if (userDragTouching) userSwiping = true
+        else {
+            delay(400)
+            userSwiping = false
+        }
     }
 
     //when user swipe page
