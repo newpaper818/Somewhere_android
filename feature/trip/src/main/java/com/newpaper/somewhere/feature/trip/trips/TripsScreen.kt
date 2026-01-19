@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.trip.trips
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -159,31 +160,34 @@ fun TripsRoute(
 
     //get trips
     LaunchedEffect(Unit) {
-        tripsViewModel.setLoadingTrips(true)
+        if (!isEditMode) {
+            tripsViewModel.setLoadingTrips(true)
 
-        //update trips
-        tripsViewModel.updateTrips(
-            internetEnabled = internetEnabled,
-            appUserId = appUserData.userId,
-            orderByLatest = tripsUiState.isTripsSortOrderByLatest
-        )
-        tripsViewModel.setLoadingTrips(false)
-
-        //update glance
-        val glanceTripWithEmptyDateList = tripsViewModel.findCurrentDateTripAndUpdateGlanceTrip()
-
-        if (glanceTripWithEmptyDateList != null){
-
-            val glanceTrip = commonTripViewModel.updateTrip(
+            //update trips
+            tripsViewModel.updateTrips(
                 internetEnabled = internetEnabled,
                 appUserId = appUserData.userId,
-                tripWithEmptyDateList = glanceTripWithEmptyDateList
+                orderByLatest = tripsUiState.isTripsSortOrderByLatest
             )
+            tripsViewModel.setLoadingTrips(false)
 
-            tripsViewModel.updateGlanceSpotInfo(
-                //update trip info (only at empty date list - load once)
-                glanceTrip = glanceTrip
-            )
+            //update glance
+            val glanceTripWithEmptyDateList =
+                tripsViewModel.findCurrentDateTripAndUpdateGlanceTrip()
+
+            if (glanceTripWithEmptyDateList != null) {
+
+                val glanceTrip = commonTripViewModel.updateTrip(
+                    internetEnabled = internetEnabled,
+                    appUserId = appUserData.userId,
+                    tripWithEmptyDateList = glanceTripWithEmptyDateList
+                )
+
+                tripsViewModel.updateGlanceSpotInfo(
+                    //update trip info (only at empty date list - load once)
+                    glanceTrip = glanceTrip
+                )
+            }
         }
     }
 
