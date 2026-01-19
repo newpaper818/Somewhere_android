@@ -61,7 +61,7 @@ class TripFirestoreApi @Inject constructor(
                             dateList = newDateList,
                             editable = editable
                         )
-                        Log.d(FIREBASE_FIRESTORE_TRIP_TAG, "get trip data - tripId: $tripId")
+                        Log.d(FIREBASE_FIRESTORE_TRIP_TAG, "get trip data done - tripId: $tripId")
                         trip.complete(newTrip)
                     }
                     .addOnFailureListener {e ->

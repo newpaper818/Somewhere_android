@@ -1,7 +1,10 @@
 package com.newpaper.somewhere.feature.more.about
 
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,6 +29,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.play.core.review.testing.FakeReviewManager
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
@@ -43,6 +48,7 @@ import com.newpaper.somewhere.core.utils.GITHUB_URL
 import com.newpaper.somewhere.core.utils.SOMEWHERE_PLAY_STORE_URL
 import com.newpaper.somewhere.core.utils.itemMaxWidthSmall
 import com.newpaper.somewhere.core.utils.onClickPrivacyPolicy
+import com.newpaper.somewhere.feature.more.BuildConfig
 import com.newpaper.somewhere.feature.more.R
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -103,7 +109,12 @@ fun AboutRoute(
             val intent = Intent(Intent.ACTION_SENDTO, uri)
             context.startActivity(intent)
         },
-        onClickReviewTheApp = { uriHandler.openUri(SOMEWHERE_PLAY_STORE_URL) },
+        onClickReviewTheApp = {
+            uriHandler.openUri(SOMEWHERE_PLAY_STORE_URL)
+//            showAppReviewDialog(context) {
+//                uriHandler.openUri(SOMEWHERE_PLAY_STORE_URL)
+//            }
+        },
         onClickSendFeedback = { uriHandler.openUri(FEEDBACK_URL) },
         onClickReportBugs = { uriHandler.openUri(BUG_REPORT_URL) },
         onClickPrivacyPolicy = { onClickPrivacyPolicy(uriHandler) },
@@ -120,6 +131,44 @@ fun AboutRoute(
         modifier = modifier
     )
 }
+
+
+
+
+
+private fun showAppReviewDialog(
+    context: Context,
+    openPlayStoreUrl: () -> Unit
+) {
+    val reviewManager = if (BuildConfig.DEBUG) { FakeReviewManager(context) }
+                        else { ReviewManagerFactory.create(context) }
+
+
+    val activity = context as? Activity ?: return
+
+    Log.d("review", "start review")
+    reviewManager.requestReviewFlow().addOnCompleteListener { task ->
+        if (task.isSuccessful) {
+            Log.d("review", "get review info success")
+
+            val reviewInfo = task.result
+
+            val flow = reviewManager.launchReviewFlow(activity, reviewInfo)
+
+            flow.addOnCompleteListener {
+                Log.d("review", "review complete")
+            }
+        } else {
+            Log.d("review", "request review fail")
+
+            openPlayStoreUrl()
+        }
+    }
+}
+
+
+
+
 
 @Composable
 private fun AboutScreen(
