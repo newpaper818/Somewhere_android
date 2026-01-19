@@ -16,7 +16,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.LocationServices
-import com.google.android.play.core.review.ReviewManagerFactory
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.enums.AppTheme
 import com.newpaper.somewhere.feature.trip.trips.TripsViewModel
@@ -64,9 +63,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
 
-
-        //in app review
-        showFeedbackDialog()
 
 
 //        Log.d(MAIN_ACTIVITY_TAG, "set connectivity observer")
@@ -124,24 +120,4 @@ class MainActivity : ComponentActivity() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-    private fun showFeedbackDialog() {
-        val reviewManager = ReviewManagerFactory.create(applicationContext)
-        reviewManager.requestReviewFlow().addOnCompleteListener {
-            if (it.isSuccessful) {
-                reviewManager.launchReviewFlow(this, it.result)
-            }
-        }
-    }
 }
