@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
     private val tripsViewModel: TripsViewModel by viewModels()
 
     private lateinit var connectivityObserver: ConnectivityObserver
-
+    private val fusedLocationClient by lazy { LocationServices.getFusedLocationProviderClient(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -98,7 +98,6 @@ class MainActivity : ComponentActivity() {
 
 
             SomewhereTheme(darkTheme = isDarkAppTheme) {
-                val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
