@@ -121,9 +121,10 @@ class AppViewModel @Inject constructor(
 
     //==============================================================================================
     //at app start splash screen ===================================================================
-    fun intiUserAndUpdateStartDestination (
+    fun initUserAndUpdateStartDestination (
 
     ){
+//        val startTime = android.os.SystemClock.elapsedRealtime()
         if (appUiState.value.screenDestination.startScreenDestination != null)
             return
 
@@ -132,6 +133,7 @@ class AppViewModel @Inject constructor(
         initSignedInUser(
             onDone = { userDataIsNull ->
                 updateCurrentScreenDestination(userDataIsNull)
+//                val endTime = android.os.SystemClock.elapsedRealtime()
                 Log.d("MainActivity1", "                              [1] intiUserAndUpdateStartDestination done")
             }
         )

@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
         appViewModel.viewModelScope.launch {
             //get signed user and update start destination
             //this function will get user and set {appViewModel.appUiState.value.screenDestination.startScreenDestination}
-            appViewModel.intiUserAndUpdateStartDestination()
+            appViewModel.initUserAndUpdateStartDestination()
         }
 
 
