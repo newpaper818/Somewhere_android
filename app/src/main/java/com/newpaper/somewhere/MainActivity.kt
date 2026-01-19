@@ -72,14 +72,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val appUiState by appViewModel.appUiState.collectAsStateWithLifecycle()
 
-//            LaunchedEffect(appUiState.screenDestination.startScreenDestination) {
-//                if (appUiState.screenDestination.startScreenDestination != null) {
-//                    val endTime = android.os.SystemClock.elapsedRealtime()
-//                    val duration = endTime - SomewhereApplication.startTime
-//
-//                    Log.d("splashTime", "--- splash time: ${duration}ms")
-//                }
-//            }
 
 //            Log.d(MAIN_ACTIVITY_TAG, "create externalState, appUiState")
             val externalState = rememberExternalState(
