@@ -5,11 +5,9 @@ import android.util.Log
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.firebase.Firebase
-import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.appCheck
 import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
-import com.google.firebase.initialize
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -52,6 +50,7 @@ class SomewhereApplication: Application() {
 
         //initialize google admob
         MobileAds.initialize(applicationContext)
+
         Log.d(MAIN_ACTIVITY_TAG, "                              *init google admob done")
     }
 
@@ -60,19 +59,13 @@ class SomewhereApplication: Application() {
         //firebase
         Log.d(MAIN_ACTIVITY_TAG, "+init firebase start")
 
-        Firebase.initialize(applicationContext)
-//        Log.d(MAIN_ACTIVITY_TAG, "                              init firebase done")
-
-        //firebase app check
-//        Log.d(MAIN_ACTIVITY_TAG, "init firebase app check start")
+        //firebase app check init
         Firebase.appCheck.installAppCheckProviderFactory(
             if (BuildConfig.DEBUG || "alpha" in BuildConfig.VERSION_NAME)
                 DebugAppCheckProviderFactory.getInstance()
             else
                 PlayIntegrityAppCheckProviderFactory.getInstance()
         )
-
-        FirebaseApp.initializeApp(applicationContext)
 
         Log.d(MAIN_ACTIVITY_TAG, "                              +init firebase done")
     }
