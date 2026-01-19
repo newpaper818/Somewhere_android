@@ -18,6 +18,7 @@ import com.newpaper.somewhere.core.firebase_common.model.UserIdWithSharedTrips
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ProviderId
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 private const val FIREBASE_FIRESTORE_COMMON_TAG = "Firebase-Firestore-Common"
@@ -157,33 +158,29 @@ class CommonFirestoreApi @Inject constructor(
         userId: String,
         providerIds: List<ProviderId>,
         isUsingSomewherePro: Boolean
-    ): UserData? {
-        val userData = CompletableDeferred<UserData?>()
+    ): UserData? = try {
+        val document = firestoreDb.collection(USERS).document(userId).get().await()
 
-        firestoreDb.collection(USERS).document(userId).get()
-            .addOnSuccessListener { document ->
-                val userName = document.getString(USER_NAME)
-                val email = document.getString(EMAIL)
-                val profileImagePath = document.getString(PROFILE_IMAGE_URL)
+        if (document.exists()) {
+            val userName = document.getString(USER_NAME)
+            val email = document.getString(EMAIL)
+            val profileImagePath = document.getString(PROFILE_IMAGE_URL)
 
-                Log.d(FIREBASE_FIRESTORE_COMMON_TAG, "getUserInfo - user info: $userId $userName $email")
+            Log.d(FIREBASE_FIRESTORE_COMMON_TAG, "getUserInfo - done")
 
-                userData.complete(
-                    UserData(
-                        userId = userId,
-                        userName = userName,
-                        email = email,
-                        profileImagePath = profileImagePath,
-                        providerIds = providerIds,
-                        isUsingSomewherePro = isUsingSomewherePro
-                    )
-                )
-            }
-            .addOnFailureListener { e ->
-                Log.e(FIREBASE_FIRESTORE_COMMON_TAG, "get user info fail", e)
-                userData.complete(null)
-            }
-
-        return userData.await()
+            UserData(
+                userId = userId,
+                userName = userName,
+                email = email,
+                profileImagePath = profileImagePath,
+                providerIds = providerIds,
+                isUsingSomewherePro = isUsingSomewherePro
+            )
+        } else {
+            null
+        }
+    } catch (e: Exception) {
+        Log.e(FIREBASE_FIRESTORE_COMMON_TAG, "get user info fail", e)
+        null
     }
 }
