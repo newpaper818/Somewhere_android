@@ -73,6 +73,10 @@ class MainActivity : ComponentActivity() {
             val appUiState by appViewModel.appUiState.collectAsStateWithLifecycle()
 
 
+            if (appUiState.screenDestination.startScreenDestination != null) {
+                reportFullyDrawn()
+            }
+
 //            Log.d(MAIN_ACTIVITY_TAG, "create externalState, appUiState")
             val externalState = rememberExternalState(
                 context = applicationContext,
