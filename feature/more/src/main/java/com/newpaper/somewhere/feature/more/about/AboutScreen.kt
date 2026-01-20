@@ -97,6 +97,7 @@ fun AboutRoute(
         endSpacerValue = spacerValue,
         useBlurEffect = useBlurEffect,
 
+        currentAppVersionCode = currentAppVersionCode,
         currentAppVersionName = currentAppVersionName,
         isLatestAppVersion = aboutUiState.isLatestAppVersion,
         isDebugMode = isDebugMode,
@@ -179,6 +180,7 @@ private fun AboutScreen(
     endSpacerValue: Dp = 16.dp,
     useBlurEffect: Boolean = true,
 
+    currentAppVersionCode: Int = 100,
     currentAppVersionName: String = "99.99.999",
     isLatestAppVersion: Boolean? = true,
     isDebugMode: Boolean = false,
@@ -237,6 +239,8 @@ private fun AboutScreen(
             //app version
             item{
                 VersionCard(
+                    isDebugMode = isDebugMode,
+                    currentAppVersionCode = currentAppVersionCode,
                     currentAppVersionName = currentAppVersionName,
                     isLatestAppVersion = isLatestAppVersion,
                     onClickUpdate = onClickUpdate,

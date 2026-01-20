@@ -21,8 +21,8 @@
 
     <!-- VersionCard.kt -->
     <string name="version">버전</string>
-    <string name="latest">(최신)</string>
-    <string name="old_version">(구 버전)</string>
+    <string name="latest">최신</string>
+    <string name="old_version">구 버전</string>
 
     <!--card/trip/ ==============================================================================-->
     <!--DateTimeCard.kt-->
