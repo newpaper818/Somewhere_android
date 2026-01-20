@@ -10,6 +10,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -26,6 +27,7 @@ import com.newpaper.somewhere.util.ConnectivityObserver
 import com.newpaper.somewhere.util.NetworkConnectivityObserver
 import com.newpaper.somewhere.util.calculateWindowSizeClass
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private const val MAIN_ACTIVITY_TAG = "MainActivity1"
@@ -71,11 +73,17 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val appUiState by appViewModel.appUiState.collectAsStateWithLifecycle()
+            val tripsUiState by tripsViewModel.tripsUiState.collectAsStateWithLifecycle()
+            val startDestination = appUiState.screenDestination.startScreenDestination
+            val loadingTrips = tripsUiState.loadingTrips
 
-
-            if (appUiState.screenDestination.startScreenDestination != null) {
-                reportFullyDrawn()
+            LaunchedEffect(startDestination, loadingTrips) {
+                if (startDestination != null && !loadingTrips) {
+                    Log.d("BaselineProfile", "Calling reportFullyDrawn()")
+                    reportFullyDrawn()
+                }
             }
+
 
 //            Log.d(MAIN_ACTIVITY_TAG, "create externalState, appUiState")
             val externalState = rememberExternalState(
