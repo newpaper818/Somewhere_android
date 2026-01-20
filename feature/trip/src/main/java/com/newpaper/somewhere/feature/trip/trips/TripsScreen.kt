@@ -1,6 +1,5 @@
 package com.newpaper.somewhere.feature.trip.trips
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -30,6 +29,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -599,6 +599,7 @@ private fun TripsScreen(
                                     .fillMaxWidth()
                                     .padding(horizontal = 16.dp)
                                     .wrapContentHeight(Alignment.Bottom)
+                                    .testTag("my_trips")
                             )
                         }
                     }
