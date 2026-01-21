@@ -2,6 +2,8 @@ package com.newpaper.somewhere.feature.trip.trip
 
 import androidx.lifecycle.ViewModel
 import com.newpaper.somewhere.core.designsystem.theme.dateColorList
+import com.newpaper.somewhere.core.model.data.SpotTypeGroupWithBoolean
+import com.newpaper.somewhere.core.model.enums.SpotTypeGroup
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
@@ -26,6 +28,8 @@ data class TripUiState(
     val showSetTimeDialog: Boolean = false,
     val showSetSpotTypeDialog: Boolean = false,
 
+    val spotTypeGroupWithShownList: List<SpotTypeGroupWithBoolean> = listOf(),
+
     val selectedDate: Date? = null,
     val selectedSpot: Spot? = null,
 
@@ -45,8 +49,36 @@ class TripViewModel @Inject constructor(
 
     private val commonTripUiState = commonTripUiStateRepository.commonTripUiState
 
+    init {
+        initSpotTypeGroupWithShownMarkerList()
+    }
 
+    private fun initSpotTypeGroupWithShownMarkerList() {
+        val newList: MutableList<SpotTypeGroupWithBoolean> = mutableListOf()
 
+        val spotTypeGroupList = enumValues<SpotTypeGroup>()
+
+        for (spotTypeGroup in spotTypeGroupList) {
+            newList.add(SpotTypeGroupWithBoolean(spotTypeGroup, true))
+        }
+
+        _tripUiState.update {
+            it.copy(spotTypeGroupWithShownList = newList.toList())
+        }
+    }
+
+    fun toggleSpotTypeGroupWithShownList(spotTypeGroup: SpotTypeGroup){
+        val spotTypeGroupWithShownMarkerList = tripUiState.value.spotTypeGroupWithShownList
+
+        val newList = spotTypeGroupWithShownMarkerList.map {
+            if (it.spotTypeGroup == spotTypeGroup) SpotTypeGroupWithBoolean(it.spotTypeGroup, !it.isShown)
+            else it
+        }
+
+        _tripUiState.update {
+            it.copy(spotTypeGroupWithShownList = newList.toList())
+        }
+    }
 
     fun setLoadingTrip(loadingTrip: Boolean) {
         _tripUiState.update {

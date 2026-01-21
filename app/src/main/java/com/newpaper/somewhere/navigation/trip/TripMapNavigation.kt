@@ -1,9 +1,9 @@
 package com.newpaper.somewhere.navigation.trip
 
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -58,8 +58,8 @@ fun NavGraphBuilder.tripMapScreen(
             appViewModel.updateCurrentScreenDestination(ScreenDestination.TRIP_MAP)
         }
 
-        val appUiState by appViewModel.appUiState.collectAsState()
-        val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsState()
+        val appUiState by appViewModel.appUiState.collectAsStateWithLifecycle()
+        val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsStateWithLifecycle()
 
         val currentTrip = commonTripUiState.tripInfo.trip
 

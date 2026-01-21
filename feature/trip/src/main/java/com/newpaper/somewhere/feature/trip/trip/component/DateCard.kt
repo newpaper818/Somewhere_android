@@ -52,7 +52,9 @@ import com.newpaper.somewhere.core.designsystem.icon.MyIcons
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.data.MyColor
+import com.newpaper.somewhere.core.model.data.SpotTypeGroupWithBoolean
 import com.newpaper.somewhere.core.model.enums.SpotType
+import com.newpaper.somewhere.core.model.enums.SpotTypeGroup
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
@@ -78,6 +80,8 @@ internal fun DateCard(
     visible: Boolean,
     trip: Trip,
     dateIndex: Int,
+
+    spotTypeGroupWithShownList: List<SpotTypeGroupWithBoolean>,
 
     isEditMode: Boolean,
 
@@ -134,9 +138,9 @@ internal fun DateCard(
     //item modifier
     val dragModifier =
         //set y offset while dragging or drag end
-        if (isEditMode) Modifier
+        if (isEditMode) modifier
             .offset { IntOffset(0, verticalTranslation.toInt()) }
-        else Modifier
+        else modifier
 
 
     Column(
@@ -276,9 +280,11 @@ internal fun DateCard(
 
                     key(spotList.map { it.id }) {
                         val slideState = spotSlideStates[spot.id] ?: SlideState.NONE
+                        val spotVisible = spotTypeGroupWithShownList.any { it.spotTypeGroup == spot.spotType.group && it.isShown }
+
 
                         AnimatedVisibility(
-                            visible = visible,
+                            visible = visible && spotVisible,
                             enter = expandVertically(tween(500)),
                             exit = shrinkVertically(tween(500))
                         ) {
@@ -480,6 +486,13 @@ private fun DateCardPreview(){
                 )
             ),
             dateIndex = 0,
+            spotTypeGroupWithShownList = listOf(
+                SpotTypeGroupWithBoolean(SpotTypeGroup.TOUR, true),
+                SpotTypeGroupWithBoolean(SpotTypeGroup.MOVE_POINT, true),
+                SpotTypeGroupWithBoolean(SpotTypeGroup.FOOD, true),
+                SpotTypeGroupWithBoolean(SpotTypeGroup.LODGING, true),
+                SpotTypeGroupWithBoolean(SpotTypeGroup.ETC, true),
+            ),
             isEditMode = false,
             dateTimeFormat = DateTimeFormat(),
             focusManager = LocalFocusManager.current,
@@ -540,7 +553,14 @@ private fun DateCardEditPreview(){
                 )
             ),
             dateIndex = 0,
-            isEditMode = false,
+            spotTypeGroupWithShownList = listOf(
+                SpotTypeGroupWithBoolean(SpotTypeGroup.TOUR, true),
+                SpotTypeGroupWithBoolean(SpotTypeGroup.MOVE_POINT, true),
+                SpotTypeGroupWithBoolean(SpotTypeGroup.FOOD, true),
+                SpotTypeGroupWithBoolean(SpotTypeGroup.LODGING, true),
+                SpotTypeGroupWithBoolean(SpotTypeGroup.ETC, true),
+            ),
+            isEditMode = true,
             dateTimeFormat = DateTimeFormat(),
             focusManager = LocalFocusManager.current,
             slideState = SlideState.NONE,

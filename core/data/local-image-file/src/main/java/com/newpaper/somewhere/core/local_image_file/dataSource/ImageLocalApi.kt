@@ -264,6 +264,7 @@ class ImageLocalApi @Inject constructor(
         uri: Uri
     ): Bitmap {
         var imageFileSize: Float = 0f
+        //TODO -------- no runblocking?
         runBlocking {
             imageFileSize = getFileSizeFromUri(uri)
         }

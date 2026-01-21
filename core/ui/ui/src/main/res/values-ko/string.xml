@@ -7,14 +7,6 @@
     <string name="trip_planner_app">여행 계획 앱</string>
 
 
-    <!-- ContactCard.kt -->
-    <string name="contact">문의</string>
-
-
-    <!-- DeveloperCard.kt -->
-    <string name="developer">개발자</string>
-    <string name="developer_info">이세종, 세종대학교 19 컴퓨터공학과</string>
-
     <!-- ShareAppCard.kt -->
     <string name="or">또는</string>
     <string name="scan_this_qr_code_to_share">이 QR코드를 스캔해서 Somewhere 앱을 공유하세요.</string>
@@ -29,8 +21,8 @@
 
     <!-- VersionCard.kt -->
     <string name="version">버전</string>
-    <string name="latest">(최신)</string>
-    <string name="old_version">(구 버전)</string>
+    <string name="latest">최신</string>
+    <string name="old_version">구 버전</string>
 
     <!--card/trip/ ==============================================================================-->
     <!--DateTimeCard.kt-->

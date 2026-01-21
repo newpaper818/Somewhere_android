@@ -1,9 +1,9 @@
 package com.newpaper.somewhere.navigation.profile
 
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -49,7 +49,7 @@ fun NavGraphBuilder.deleteAccountScreen(
             appViewModel.updateCurrentScreenDestination(ScreenDestination.DELETE_ACCOUNT)
         }
 
-        val appUiState by appViewModel.appUiState.collectAsState()
+        val appUiState by appViewModel.appUiState.collectAsStateWithLifecycle()
 
         if (appUiState.appUserData != null) {
             DeleteAccountRoute(

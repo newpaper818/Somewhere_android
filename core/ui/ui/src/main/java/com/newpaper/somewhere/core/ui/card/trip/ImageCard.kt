@@ -2,6 +2,7 @@ package com.newpaper.somewhere.core.ui.card.trip
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -72,6 +73,7 @@ import com.newpaper.somewhere.core.utils.dragAndDropHorizontal
 import com.newpaper.somewhere.core.utils.enterVerticallyScaleIn
 import com.newpaper.somewhere.core.utils.exitVerticallyScaleOut
 import kotlinx.coroutines.launch
+import kotlin.math.max
 
 private const val IMAGE_MAX_COUNT = 6
 
@@ -119,8 +121,51 @@ fun ImageCard(
         isImageCountLimit = imagePathList.size > IMAGE_MAX_COUNT
     }
 
+    val singlePhotoLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        uri?.let {
+            if (imagePathList.size + 1 > IMAGE_MAX_COUNT && !isImageCountLimit){
+                isImageCountLimit = true
+                isOverImage(true)
+            }
+
+            val fileList: MutableList<String> = mutableListOf()
+
+            coroutineScope.launch {
+                //save to internal storage
+                val file = saveImageToInternalStorage(0, uri)
+                if (file != null)
+                    fileList.add(file)
+
+                onAddImages(fileList)
+            }
+        }
+    }
+
+    val multiplePhotoLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickMultipleVisualMedia(max(IMAGE_MAX_COUNT - imagePathList.size, 2))
+    ) { uris ->
+        if (imagePathList.size + uris.size > IMAGE_MAX_COUNT && !isImageCountLimit){
+            isImageCountLimit = true
+            isOverImage(true)
+        }
+
+        val fileList: MutableList<String> = mutableListOf()
+
+        coroutineScope.launch {
+            //save to internal storage
+            uris.forEachIndexed { index, uri ->
+                val file = saveImageToInternalStorage(index, uri)
+                if (file != null)
+                    fileList.add(file)
+            }
+            onAddImages(fileList)
+        }
+    }
+
     val galleryLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetMultipleContents()
+        ActivityResultContracts.PickMultipleVisualMedia(maxItems = max(IMAGE_MAX_COUNT - imagePathList.size, 2))
     ){ uriList ->
         var addUriList = uriList
 
@@ -152,9 +197,7 @@ fun ImageCard(
         exit = exitVerticallyScaleOut
     ) {
 
-        Column(
-            modifier = modifier
-        ) {
+        Column {
             MyCard(
                 modifier = modifier1
                     .fillMaxWidth()
@@ -197,7 +240,16 @@ fun ImageCard(
                                             .clickable(
                                                 enabled = !isImageCountLimit && imagePathList.size < IMAGE_MAX_COUNT,
                                                 onClick = {
-                                                    galleryLauncher.launch("image/*")
+                                                    val currentRemaining = IMAGE_MAX_COUNT - imagePathList.size
+                                                    when {
+                                                        currentRemaining <= 0 -> { }
+                                                        currentRemaining == 1 -> {
+                                                            singlePhotoLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                                        }
+                                                        else -> {
+                                                            multiplePhotoLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                                        }
+                                                    }
                                                 }
                                             )
                                             .padding(16.dp, 8.dp, 16.dp, 8.dp)

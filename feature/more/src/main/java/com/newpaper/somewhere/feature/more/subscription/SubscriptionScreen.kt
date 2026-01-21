@@ -26,7 +26,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -38,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.newpaper.somewhere.core.designsystem.component.button.ManageSubscriptionButton
 import com.newpaper.somewhere.core.designsystem.component.button.RestorePurchasesButton
 import com.newpaper.somewhere.core.designsystem.component.button.SubscribeButton
@@ -79,7 +79,7 @@ fun SubscriptionRoute(
     val activity = context as Activity
     val coroutineScope = rememberCoroutineScope()
 
-    val subscriptionUiState by subscriptionViewModel.subscriptionUiState.collectAsState()
+    val subscriptionUiState by subscriptionViewModel.subscriptionUiState.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
 
     val snackbarTextError = stringResource(id = R.string.snackbar_error_do_it_later)

@@ -10,21 +10,13 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.gms.location.LocationServices
-import com.google.android.play.core.review.ReviewManagerFactory
-import com.google.firebase.Firebase
-import com.google.firebase.FirebaseApp
-import com.google.firebase.appcheck.appCheck
-import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
-import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
-import com.google.firebase.initialize
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.enums.AppTheme
 import com.newpaper.somewhere.feature.trip.trips.TripsViewModel
@@ -35,8 +27,7 @@ import com.newpaper.somewhere.util.ConnectivityObserver
 import com.newpaper.somewhere.util.NetworkConnectivityObserver
 import com.newpaper.somewhere.util.calculateWindowSizeClass
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private const val MAIN_ACTIVITY_TAG = "MainActivity1"
@@ -48,50 +39,32 @@ class MainActivity : ComponentActivity() {
     private val tripsViewModel: TripsViewModel by viewModels()
 
     private lateinit var connectivityObserver: ConnectivityObserver
-
+    private val fusedLocationClient by lazy { LocationServices.getFusedLocationProviderClient(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         //splash screen
-        Log.d(MAIN_ACTIVITY_TAG, "--- splash screen")
+        Log.d(MAIN_ACTIVITY_TAG, "--- on create")
         val splashScreen = installSplashScreen()
 
         super.onCreate(savedInstanceState)
-
-
 
         splashScreen.setKeepOnScreenCondition {
             appViewModel.appUiState.value.screenDestination.startScreenDestination == null
         }
 
-        val backgroundScope = CoroutineScope(Dispatchers.IO)
-
-        backgroundScope.launch {
-            //init firebase
-            initializeFirebase()
-        }
-
         //get signed user and update start destination
         appViewModel.viewModelScope.launch {
             //get signed user and update start destination
-            Log.d(MAIN_ACTIVITY_TAG, "- init user and update start destination start")
-
             //this function will get user and set {appViewModel.appUiState.value.screenDestination.startScreenDestination}
-            appViewModel.intiUserAndUpdateStartDestination()
+            appViewModel.initUserAndUpdateStartDestination()
         }
 
-        backgroundScope.launch {
-            //register admob test device and initialize google admob
-            initializeAdmob()
-        }
 
 
         enableEdgeToEdge()
 
 
-
-        //in app review
-        showFeedbackDialog()
 
 
 //        Log.d(MAIN_ACTIVITY_TAG, "set connectivity observer")
@@ -99,12 +72,18 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
-            val appUiState by appViewModel.appUiState.collectAsState()
+            val appUiState by appViewModel.appUiState.collectAsStateWithLifecycle()
+            val tripsUiState by tripsViewModel.tripsUiState.collectAsStateWithLifecycle()
+            val startDestination = appUiState.screenDestination.startScreenDestination
+            val loadingTrips = tripsUiState.loadingTrips
 
-//            LaunchedEffect(appUiState.screenDestination.startScreenDestination) {
-//                if (appUiState.screenDestination.startScreenDestination != null)
-//                    Log.d(MAIN_ACTIVITY_TAG, "--- splash done")
-//            }
+            LaunchedEffect(startDestination, loadingTrips) {
+                if (startDestination != null && !loadingTrips) {
+                    Log.d("BaselineProfile", "Calling reportFullyDrawn()")
+                    reportFullyDrawn()
+                }
+            }
+
 
 //            Log.d(MAIN_ACTIVITY_TAG, "create externalState, appUiState")
             val externalState = rememberExternalState(
@@ -123,7 +102,6 @@ class MainActivity : ComponentActivity() {
 
 
             SomewhereTheme(darkTheme = isDarkAppTheme) {
-                val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -145,64 +123,4 @@ class MainActivity : ComponentActivity() {
 
 
 
-
-
-
-
-
-
-
-
-
-    private fun initializeAdmob(){
-        Log.d(MAIN_ACTIVITY_TAG, "*init google admob start - register test device, init")
-        //register admob test device
-        if (BuildConfig.DEBUG) {
-            MobileAds.setRequestConfiguration(
-                RequestConfiguration.Builder()
-                    //SM-N976N as admob test device
-                    .setTestDeviceIds(listOf("CB0B799A397825135B612701F65D8B09"))
-                    .build()
-            )
-        }
-
-        //initialize google admob
-        MobileAds.initialize(applicationContext)
-        Log.d(MAIN_ACTIVITY_TAG, "                              *init google admob done")
-    }
-
-    private fun initializeFirebase(){
-        //firebase
-        Log.d(MAIN_ACTIVITY_TAG, "+init firebase start")
-
-        Firebase.initialize(applicationContext)
-//        Log.d(MAIN_ACTIVITY_TAG, "                              init firebase done")
-
-        //firebase app check
-//        Log.d(MAIN_ACTIVITY_TAG, "init firebase app check start")
-        Firebase.appCheck.installAppCheckProviderFactory(
-            if (BuildConfig.DEBUG || "alpha" in BuildConfig.VERSION_NAME)
-                DebugAppCheckProviderFactory.getInstance()
-            else
-                PlayIntegrityAppCheckProviderFactory.getInstance()
-        )
-
-        FirebaseApp.initializeApp(applicationContext)
-
-        Log.d(MAIN_ACTIVITY_TAG, "                              +init firebase app check done")
-    }
-
-
-
-
-
-
-    private fun showFeedbackDialog() {
-        val reviewManager = ReviewManagerFactory.create(applicationContext)
-        reviewManager.requestReviewFlow().addOnCompleteListener {
-            if (it.isSuccessful) {
-                reviewManager.launchReviewFlow(this, it.result)
-            }
-        }
-    }
 }

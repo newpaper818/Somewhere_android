@@ -127,6 +127,7 @@ class TripsFirestoreApi @Inject constructor(
         }
 
         deletedTripsIdList.forEach { tripId ->
+            //TODO --- coroutine scope x?
             CoroutineScope(Dispatchers.IO).launch {
                 val deleteFriendResult = commonApi.deleteInvitedFriendsFromTrip(
                     tripId = tripId,

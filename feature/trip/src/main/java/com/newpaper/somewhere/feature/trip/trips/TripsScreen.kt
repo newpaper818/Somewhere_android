@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -21,26 +22,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
@@ -61,7 +59,6 @@ import com.newpaper.somewhere.core.model.tripData.TripsGroup
 import com.newpaper.somewhere.core.ui.GoogleBannerAd
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
-import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.convert.getAllImagesPath
 import com.newpaper.somewhere.core.utils.convert.getMaxTrips
 import com.newpaper.somewhere.core.utils.enterVerticallyDelayForMaxTrips
@@ -116,8 +113,8 @@ fun TripsRoute(
 ){
     val context = LocalContext.current
 
-    val tripsUiState by tripsViewModel.tripsUiState.collectAsState()
-    val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsState()
+    val tripsUiState by tripsViewModel.tripsUiState.collectAsStateWithLifecycle()
+    val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsStateWithLifecycle()
 
     val isEditMode = commonTripUiState.isEditMode
 
@@ -163,31 +160,34 @@ fun TripsRoute(
 
     //get trips
     LaunchedEffect(Unit) {
-        tripsViewModel.setLoadingTrips(true)
+        if (!isEditMode) {
+            tripsViewModel.setLoadingTrips(true)
 
-        //update trips
-        tripsViewModel.updateTrips(
-            internetEnabled = internetEnabled,
-            appUserId = appUserData.userId,
-            orderByLatest = tripsUiState.isTripsSortOrderByLatest
-        )
-        tripsViewModel.setLoadingTrips(false)
-
-        //update glance
-        val glanceTripWithEmptyDateList = tripsViewModel.findCurrentDateTripAndUpdateGlanceTrip()
-
-        if (glanceTripWithEmptyDateList != null){
-
-            val glanceTrip = commonTripViewModel.updateTrip(
+            //update trips
+            tripsViewModel.updateTrips(
                 internetEnabled = internetEnabled,
                 appUserId = appUserData.userId,
-                tripWithEmptyDateList = glanceTripWithEmptyDateList
+                orderByLatest = tripsUiState.isTripsSortOrderByLatest
             )
+            tripsViewModel.setLoadingTrips(false)
 
-            tripsViewModel.updateGlanceSpotInfo(
-                //update trip info (only at empty date list - load once)
-                glanceTrip = glanceTrip
-            )
+            //update glance
+            val glanceTripWithEmptyDateList =
+                tripsViewModel.findCurrentDateTripAndUpdateGlanceTrip()
+
+            if (glanceTripWithEmptyDateList != null) {
+
+                val glanceTrip = commonTripViewModel.updateTrip(
+                    internetEnabled = internetEnabled,
+                    appUserId = appUserData.userId,
+                    tripWithEmptyDateList = glanceTripWithEmptyDateList
+                )
+
+                tripsViewModel.updateGlanceSpotInfo(
+                    //update trip info (only at empty date list - load once)
+                    glanceTrip = glanceTrip
+                )
+            }
         }
     }
 
@@ -499,6 +499,16 @@ private fun TripsScreen(
 
 
 
+        val stickyOffsetPx by remember(paddingValues.calculateTopPadding(), tripsUiInfo.tripsDisplayMode, tripsUiInfo.isTripsSortOrderByLatest) {
+            derivedStateOf {
+                val stickyItem = lazyListState.layoutInfo.visibleItemsInfo.firstOrNull { it.contentType == "sticky" }
+
+                val itemOffset = stickyItem?.offset?.toFloat()
+
+                if (itemOffset == null || itemOffset > 0) { 0 }
+                else { (-itemOffset).toInt() }
+            }
+        }
 
 
 
@@ -556,14 +566,19 @@ private fun TripsScreen(
                     }
                 }
 
-                item {
+                stickyHeader(
+                    contentType = "sticky"
+                ){
                     TripFilterChipsWithSortOrderButton(
                         spacerValue = spacerValue,
                         tripsDisplayMode = tripsUiInfo.tripsDisplayMode,
                         onClickTripsDisplayMode = tripsUiInfo::setTripsDisplayMode,
                         isOrderByLatest = tripsUiInfo.isTripsSortOrderByLatest,
                         onClickSortOrder = { tripsUiInfo.setIsTripsSortOrderByLatest(!tripsUiInfo.isTripsSortOrderByLatest) },
-                        modifier = Modifier.widthIn(max = itemMaxWidth)
+                        modifier = Modifier
+                            .widthIn(max = itemMaxWidth)
+                            .offset{ IntOffset(0, stickyOffsetPx) }
+                            .zIndex(1f)
                     )
                 }
 
@@ -584,6 +599,7 @@ private fun TripsScreen(
                                     .fillMaxWidth()
                                     .padding(horizontal = 16.dp)
                                     .wrapContentHeight(Alignment.Bottom)
+                                    .testTag("my_trips")
                             )
                         }
                     }

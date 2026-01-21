@@ -8,4 +8,6 @@ plugins {
     alias(libs.plugins.googleDevToolsKsp) apply false
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.googleMapsPlatformGraglePlugin) apply false
+    alias(libs.plugins.android.test) apply false
+    alias(libs.plugins.baselineprofile) apply false
 }
