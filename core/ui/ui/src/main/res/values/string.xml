@@ -113,6 +113,7 @@
     <string name="on">On</string>
     <string name="off">Off</string>
     <string name="toggle">toggle</string>
+    <string name="toggle_disabled">Toggle disabled</string>
 
 
     <!--selectSwitch/ ===========================================================================-->
