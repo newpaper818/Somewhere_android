@@ -53,4 +53,13 @@ data class Trip(
             sharingTo = sharingTo
         )
     }
+
+    override fun toString(): String {
+        return  "Somewhere: Trip planner app" +
+                "\n[$titleText] $startDate - $endDate" +
+                "\nunit of currency type: $unitOfCurrencyType" +
+                "\ntrip memo: $memoText" +
+                "\n\n" +
+                dateList.joinToString("\n\n\n")
+    }
 }

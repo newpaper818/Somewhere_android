@@ -34,6 +34,7 @@
     <string name="change_image">Change image</string>
     <string name="share_to_ig_story">Share to\nIG stories</string>
     <string name="save_as_image">Save as\nimage</string>
+    <string name="share">Share\n</string>
 
     <!-- FABs.kt -->
     <string name="see_on_map">See on Map</string>

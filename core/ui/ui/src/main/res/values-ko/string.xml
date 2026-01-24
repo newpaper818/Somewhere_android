@@ -21,8 +21,8 @@
 
     <!-- VersionCard.kt -->
     <string name="version">버전</string>
-    <string name="latest">최신</string>
-    <string name="old_version">구 버전</string>
+    <string name="latest">(최신)</string>
+    <string name="old_version">(구 버전)</string>
 
     <!--card/trip/ ==============================================================================-->
     <!--DateTimeCard.kt-->
@@ -113,6 +113,7 @@
     <string name="on">사용 중</string>
     <string name="off">사용 안 함</string>
     <string name="toggle">전환</string>
+    <string name="toggle_disabled">전환 비활성화</string>
 
 
     <!--selectSwitch/ ===========================================================================-->
