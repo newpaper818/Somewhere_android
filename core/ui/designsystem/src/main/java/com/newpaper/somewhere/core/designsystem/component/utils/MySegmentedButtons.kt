@@ -222,7 +222,7 @@ private fun MySegmentedButtonItem(
 
 @Composable
 @PreviewLightDark
-private fun NavigationDrawerPreview(){
+private fun MySegmentedButtonsPreview(){
     SomewhereTheme {
         Box(
             modifier = Modifier
@@ -239,6 +239,33 @@ private fun NavigationDrawerPreview(){
                     ),
                     SegmentedButtonItem(
                         icon = SelectSwitchIcon.viewOnly,
+                        text = "is weired",
+                        onClick = { }
+                    )
+                )
+            )
+        }
+    }
+}
+
+
+@Composable
+@PreviewLightDark
+private fun MySegmentedButtonsTextPreview(){
+    SomewhereTheme {
+        Box(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            MySegmentedButtons(
+                modifier = Modifier.padding(16.dp),
+                initSelectedItemIndex = 0,
+                itemList = listOf(
+                    SegmentedButtonItem(
+                        text = "Preview",
+                        onClick = { }
+                    ),
+                    SegmentedButtonItem(
                         text = "is weired",
                         onClick = { }
                     )
