@@ -472,12 +472,17 @@ fun SpotRoute(
             coroutineScope.launch {
                 if (originalTrip != tempTrip) {
                     //save tripUiState trip
-                    commonTripViewModel.saveTrip(appUserId = appUserId)
+                    val lastDateIndex = commonTripViewModel.saveTrip(appUserId = appUserId)
 
                     commonTripViewModel.setIsEditMode(false)
 
+                    val updatedTrip = commonTripUiState.tripInfo.trip ?: tempTrip
+
                     //save to firestore
-                    commonTripViewModel.saveTripAndAllDates(trip = tempTrip)
+                    commonTripViewModel.saveTripAndAllDates(
+                        trip = updatedTrip,
+                        tempTripDateListLastIndex = lastDateIndex
+                    )
                 }
                 else
                     commonTripViewModel.setIsEditMode(false)
