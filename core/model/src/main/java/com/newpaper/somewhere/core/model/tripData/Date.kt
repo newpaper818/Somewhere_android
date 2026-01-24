@@ -31,4 +31,10 @@ data class Date(
             memoText = memoText
         )
     }
+
+    override fun toString(): String {
+        return  "(D${index+1}) $date [$titleText]" +
+                "\n" +
+                spotList.joinToString("\n\n")
+    }
 }
