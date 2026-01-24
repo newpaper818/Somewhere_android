@@ -18,7 +18,7 @@ interface TripRemoteDataSource {
 
     /**
      * Save [Trip] (include all dateList, spotList) to remote db.
-     * Use when click save button on TripScreen, DateScreen.
+     * Use when click save button on TripScreen, SpotScreen.
      *
      * @param trip [Trip] that will saved to remote
      * @param tempTripDateListLastIndex temp [Trip] dateList's last index. use to delete un enabled [Date]s
