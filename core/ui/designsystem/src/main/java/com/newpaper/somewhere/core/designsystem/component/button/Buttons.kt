@@ -427,7 +427,20 @@ fun ShareMoreButton(
     )
 }
 
-
+@Composable
+fun ShareButton(
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier
+){
+    IconCircleButtonWithText(
+        icon = MyIcons.share,
+        text = stringResource(id = R.string.share),
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier
+    )
+}
 
 
 

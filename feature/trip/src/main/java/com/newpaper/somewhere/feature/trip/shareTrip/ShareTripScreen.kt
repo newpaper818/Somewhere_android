@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.trip.shareTrip
 
+import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -24,8 +25,10 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,6 +37,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -49,10 +53,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.newpaper.somewhere.core.designsystem.component.ImageFromFile
 import com.newpaper.somewhere.core.designsystem.component.ImageFromUri
 import com.newpaper.somewhere.core.designsystem.component.button.SaveAsImageButton
+import com.newpaper.somewhere.core.designsystem.component.button.ShareButton
 import com.newpaper.somewhere.core.designsystem.component.button.ShareMoreButton
 import com.newpaper.somewhere.core.designsystem.component.button.ShareToInstagramStoryButton
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.DotsIndicator
+import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
@@ -97,19 +103,41 @@ fun ShareTripRoute(
         val tripStartDate = trip.getStartDateText(dateTimeFormat.copy(includeDayOfWeek = false), true)
         val tripEndDate = trip.getEndDateText(dateTimeFormat.copy(includeDayOfWeek = false), true)
 
-        shareTripViewModel.createAsset(context, tripImagePath, tripTitle, tripStartDate, tripEndDate)
+        shareTripViewModel.createStickerAsset(context, tripImagePath, tripTitle, tripStartDate, tripEndDate)
     }
+
+    LaunchedEffect(Unit) {
+        val tripTextData = trip.toString()
+        shareTripViewModel.setTripTextData(tripTextData)
+    }
+
+
+
 
     ShareTripScreen(
         isDarkAppTheme = isDarkAppTheme,
         spacerValue = spacerValue,
         useBackground = shareTripUiState.useBackground,
 
+        tripTextData = shareTripUiState.tripTextData,
         tripImagePath = tripImagePath,
         backgroundAssetUris = shareTripUiState.backgroundAssetUris,
         stickerAssetUris = shareTripUiState.stickerAssetUris,
         onUseBackgroundChanged = shareTripViewModel::setUseBackground,
 
+        onClickShareTripText = {
+            val tripString = trip.toString()
+
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, tripString)
+                type = "text/plain"
+            }
+            val shareIntent = Intent.createChooser(sendIntent, null)
+
+            context.startActivity(shareIntent)
+
+        },
         onClickShareToInstagramStory = { backgroundAssetUri, stickerAssetUri ->
             shareTripViewModel.setSelectedAssets(backgroundAssetUri, stickerAssetUri)
             shareTripViewModel.onClickShareToInstagramStory(context, instagramLauncher)
@@ -140,12 +168,14 @@ private fun ShareTripScreen(
 
     useBackground: Boolean,
 
+    tripTextData: String,
     tripImagePath: String?,
     backgroundAssetUris: List<Uri?>,
     stickerAssetUris: List<Uri?>,
 
     onUseBackgroundChanged: (useBackground: Boolean) -> Unit,
 
+    onClickShareTripText: () -> Unit,
     onClickShareToInstagramStory: (backgroundAssetUri: Uri?, stickerAssetUri: Uri?) -> Unit,
     onClickSaveAsImage: (backgroundAssetUri: Uri?, stickerAssetUri: Uri?) -> Unit,
     onClickShareMore: (backgroundAssetUri: Uri?, stickerAssetUri: Uri?) -> Unit,
@@ -174,7 +204,7 @@ private fun ShareTripScreen(
         }
     ) { paddingValues ->
 
-        val pageState = rememberPagerState { stickerAssetUris.size }
+        val pageState = rememberPagerState { stickerAssetUris.size + 1 }
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -223,21 +253,40 @@ private fun ShareTripScreen(
                 }
 
 
-                //stickers
+                //text with stickers
                 HorizontalPager(
                     state = pageState,
                     pageSize = PageSize.Fixed((boxWidth / density).toInt().dp - 100.dp),
                     contentPadding = PaddingValues(50.dp, 0.dp),
                     beyondViewportPageCount = 2,
                     pageContent = { it ->
-                        ImageFromUri(
-                            imageUri = stickerAssetUris[it],
-                            contentDescription = stringResource(R.string.sticker_image),
-                            contentScale = ContentScale.Fit,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(24.dp, 64.dp)
-                        )
+                        if (it < stickerAssetUris.size){
+                            ImageFromUri(
+                                imageUri = stickerAssetUris[it],
+                                contentDescription = stringResource(R.string.sticker_image),
+                                contentScale = ContentScale.Fit,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(24.dp, 64.dp)
+                            )
+                        }
+                        else {
+                            MyCard(
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
+                                ),
+                                shape = MaterialTheme.shapes.small,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(24.dp, 64.dp)
+                            ) {
+                                Text(
+                                    text = tripTextData,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    modifier = Modifier.padding(12.dp)
+                                )
+                            }
+                        }
                     }
                 )
 
@@ -297,6 +346,7 @@ private fun ShareTripScreen(
                     ItemWithSwitch(
                         text = stringResource(id = R.string.use_background),
                         checked = useBackground,
+                        enabled = pageState.currentPage != pageState.pageCount - 1,
                         onCheckedChange = onUseBackgroundChanged
                     )
                 }
@@ -307,24 +357,37 @@ private fun ShareTripScreen(
 
             //buttons
             // save to image / share to IG story / other
-            ShareButtons(
-                enabled = stickerAssetUris.filterNotNull().isNotEmpty(),
-                onClickShareToInstagramStory = {
-                    onClickShareToInstagramStory(
-                        if (useBackground) backgroundAssetUris[pageState.currentPage] else null,
-                        stickerAssetUris[pageState.currentPage])
-                },
-                onClickSaveAsImage = {
-                    onClickSaveAsImage(
-                        if (useBackground) backgroundAssetUris[pageState.currentPage] else null,
-                        stickerAssetUris[pageState.currentPage])
-                },
-                onClickShareMore = {
-                    onClickShareMore(
-                        if (useBackground) backgroundAssetUris[pageState.currentPage] else null,
-                        stickerAssetUris[pageState.currentPage])
-                }
-            )
+            if (pageState.currentPage != pageState.pageCount - 1) {
+                ShareButtons(
+                    enabled = stickerAssetUris.filterNotNull().isNotEmpty(),
+                    onClickShareToInstagramStory = {
+                        onClickShareToInstagramStory(
+                            if (useBackground) backgroundAssetUris[pageState.currentPage] else null,
+                            stickerAssetUris[pageState.currentPage]
+                        )
+                    },
+                    onClickSaveAsImage = {
+                        onClickSaveAsImage(
+                            if (useBackground) backgroundAssetUris[pageState.currentPage] else null,
+                            stickerAssetUris[pageState.currentPage]
+                        )
+                    },
+                    onClickShareMore = {
+                        onClickShareMore(
+                            if (useBackground) backgroundAssetUris[pageState.currentPage] else null,
+                            stickerAssetUris[pageState.currentPage]
+                        )
+                    }
+                )
+            }
+            else {
+                OneShareButton(
+                    enabled = tripTextData != "",
+                    onClickShare = {
+                        onClickShareTripText()
+                    }
+                )
+            }
 
             MySpacerColumn(12.dp)
         }
@@ -380,6 +443,30 @@ private fun ShareButtons(
     }
 }
 
+@Composable
+private fun OneShareButton(
+    enabled: Boolean,
+    onClickShare: () -> Unit,
+){
+    Row(
+        modifier = Modifier.widthIn(max = 400.dp)
+    ) {
+        MySpacerRow(16.dp)
+
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.weight(1f)
+        ){
+            ShareButton(
+                enabled = enabled,
+                onClick = onClickShare
+            )
+        }
+
+        MySpacerRow(16.dp)
+    }
+}
+
 
 private fun getBlur(
     currentPageOffsetFraction: Float,
@@ -388,13 +475,21 @@ private fun getBlur(
 ): Float{
     val absPageOffsetFraction = abs(currentPageOffsetFraction)
 
-    // y = -blurRadius * x(absPageOffsetFraction) + blurRadius
-    return if(currentPage == 0){
-        blurRadius - blurRadius * absPageOffsetFraction
-    }
-    // y = blurRadius * x(absPageOffsetFraction)
-    else{
-        absPageOffsetFraction * blurRadius
+    return when {
+        // CASE 1: 현재 0 page
+        // y = -blurRadius * x(absPageOffsetFraction) + blurRadius
+        currentPage == 0 -> {
+            blurRadius - (blurRadius * absPageOffsetFraction)
+        }
+
+        // CASE 2: current 1 page, scroll to 0 page
+        // y = blurRadius * x(absPageOffsetFraction)
+        currentPage == 1 && currentPageOffsetFraction < 0 -> {
+            blurRadius * absPageOffsetFraction
+        }
+
+        // CASE 3: else (1->2, 2->3 ...)
+        else -> 0f
     }
 }
 

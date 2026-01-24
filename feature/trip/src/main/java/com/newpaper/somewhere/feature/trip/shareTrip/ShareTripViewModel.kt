@@ -19,6 +19,9 @@ import java.io.File
 import javax.inject.Inject
 
 data class ShareTripUiState(
+
+    val tripTextData: String = "",
+
     /**
      * 0: blur / 1: not blur
      */
@@ -97,10 +100,16 @@ class ShareTripViewModel @Inject constructor(
 
 
 
+    fun setTripTextData(
+        tripTextData: String
+    ){
+        _shareTripUiState.update {
+            it.copy(tripTextData = tripTextData)
+        }
+    }
 
 
-
-    suspend fun createAsset(
+    suspend fun createStickerAsset(
         context: Context,
         tripImagePath: String?,
         tripTitle: String?,

@@ -34,6 +34,7 @@
     <string name="change_image">사진 변경</string>
     <string name="share_to_ig_story">Instagram\n스토리에 공유</string>
     <string name="save_as_image">이미지로 저장</string>
+    <string name="share">공유\n</string>
 
     <!-- FABs.kt -->
     <string name="see_on_map">지도</string>
