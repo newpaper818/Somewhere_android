@@ -21,8 +21,8 @@
 
     <!-- VersionCard.kt -->
     <string name="version">Version</string>
-    <string name="latest">latest</string>
-    <string name="old_version">old ver</string>
+    <string name="latest">(latest)</string>
+    <string name="old_version">(old ver)</string>
 
     <!--card/trip/ ==============================================================================-->
     <!--DateTimeCard.kt-->
