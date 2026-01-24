@@ -37,14 +37,23 @@ import com.newpaper.somewhere.core.utils.listItemHeight
 fun ItemWithSwitch(
     text: String,
     checked: Boolean,
-    onCheckedChange: (checked: Boolean) -> Unit
+    onCheckedChange: (checked: Boolean) -> Unit,
+    enabled: Boolean = true,
 ){
     val haptic = LocalHapticFeedback.current
     val toggle = stringResource(id = R.string.toggle)
     val on = stringResource(id = R.string.on)
     val off = stringResource(id = R.string.off)
+    val toggleDisabled = stringResource(id = R.string.toggle_disabled)
+
+    val stateDescriptionText = if (enabled)
+        if (checked) on else off
+    else
+        if (checked) "$on, $toggleDisabled" else "$off, $toggleDisabled"
+
 
     ClickableBox(
+        enabled = enabled,
         onClick = {
             if (!checked) haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
             else haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
@@ -55,7 +64,7 @@ fun ItemWithSwitch(
             .height(listItemHeight)
             .semantics {
                 role = Role.Switch
-                stateDescription = if (checked) on else off
+                stateDescription = stateDescriptionText
                 onClick(
                     label = toggle,
                     action = {
@@ -73,13 +82,16 @@ fun ItemWithSwitch(
         ) {
             Text(
                 text = text,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                color = if (enabled) MaterialTheme.colorScheme.onSurface
+                        else MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
             MySwitch(
                 checked = checked,
+                enabled = enabled,
                 onCheckedChange = {
                     if (it) haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
                     else haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
@@ -95,11 +107,13 @@ fun ItemWithSwitch(
 private fun MySwitch(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     Switch(
         modifier = modifier,
         checked = checked,
+        enabled = enabled,
         onCheckedChange = onCheckedChange,
         colors = SwitchDefaults.colors(
 //            checkedThumbColor = MaterialTheme.colorScheme.onTertiaryContainer,
@@ -151,6 +165,20 @@ private fun Preview(){
                 ItemWithSwitch(
                     text = "unchecked item",
                     checked = false,
+                    onCheckedChange = {}
+                )
+
+                ItemWithSwitch(
+                    text = "checked disabled",
+                    checked = true,
+                    enabled = false,
+                    onCheckedChange = {}
+                )
+
+                ItemWithSwitch(
+                    text = "unchecked disabled",
+                    checked = false,
+                    enabled = false,
                     onCheckedChange = {}
                 )
             }
