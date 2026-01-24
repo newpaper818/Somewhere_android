@@ -15,7 +15,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 
-
 private const val MAIN_ACTIVITY_TAG = "MainActivity1"
 
 @HiltAndroidApp
