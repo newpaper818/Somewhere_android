@@ -214,10 +214,11 @@ object MyIcons {
     val deleteProfileImage = MyIcon(Icons.Rounded.Delete,   24.dp, false, null, null)
 
     //share
-    val shareTrip = MyIcon(Icons.Rounded.Share,             22.dp, false, null, null)
-    val shareToInstagram = MyIcon(R.drawable.instagram_logo,       24.dp, false, null, null)
-    val saveAsImage = MyIcon(Icons.Rounded.CropOriginal,           24.dp, false, null, null)
-    val shareMore = MyIcon(Icons.Rounded.MoreHoriz,         24.dp, false, null, null)
+    val shareTrip = MyIcon(Icons.Rounded.Share,              22.dp, false, null, null)
+    val shareToInstagram = MyIcon(R.drawable.instagram_logo, 24.dp, false, null, null)
+    val saveAsImage = MyIcon(Icons.Rounded.CropOriginal,     24.dp, false, null, null)
+    val shareMore = MyIcon(Icons.Rounded.MoreHoriz,          24.dp, false, null, null)
+    val share = MyIcon(Icons.Rounded.Share,                  24.dp, false, null, null)
 
     //image card
     val deleteImage = MyIcon(Icons.Rounded.Close,       16.dp, false, null, R.string.delete_image)
