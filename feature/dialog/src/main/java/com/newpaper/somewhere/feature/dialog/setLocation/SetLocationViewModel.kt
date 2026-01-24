@@ -42,10 +42,13 @@ class SetLocationViewModel @Inject constructor(
 
     private var job: Job? = null
 
-    fun init(){
+    fun init(
+        initialGoogleMapsPlaceId: String?
+    ){
         _setLocationUiState.update {
             it.copy(
-                searchLocation = SearchLocation()
+                searchLocation = SearchLocation(),
+                googleMapsPlacesId = initialGoogleMapsPlaceId
             )
         }
     }

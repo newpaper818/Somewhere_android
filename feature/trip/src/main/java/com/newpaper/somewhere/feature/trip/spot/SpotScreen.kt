@@ -625,6 +625,7 @@ private fun SpotScreen(
             spotList = spotList,
             dateIndex = currentDateIndex,
             spotIndex = currentSpotIndex,
+            initialGoogleMapsPlaceId = spotList[currentSpotIndex].googleMapsPlacesId,
             isDarkMapTheme = spotUiInfo.isDarkMapTheme,
             onClickCloseButton = spotNavigate::onClickBackButton,
             updateTripState = updateTripState,

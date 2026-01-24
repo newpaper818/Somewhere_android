@@ -126,6 +126,7 @@ fun SetLocationDialog(
     spotList: List<Spot>,
     dateIndex: Int,
     spotIndex: Int,
+    initialGoogleMapsPlaceId: String?,
 
     isDarkMapTheme: Boolean,
     fusedLocationClient: FusedLocationProviderClient,
@@ -138,7 +139,9 @@ fun SetLocationDialog(
     setLocationViewModel: SetLocationViewModel = hiltViewModel()
 ){
     LaunchedEffect(Unit) {
-        setLocationViewModel.init()
+        setLocationViewModel.init(
+            initialGoogleMapsPlaceId = initialGoogleMapsPlaceId
+        )
     }
 
     val coroutineScope = rememberCoroutineScope()
