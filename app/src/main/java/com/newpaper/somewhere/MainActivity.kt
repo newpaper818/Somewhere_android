@@ -70,7 +70,6 @@ class MainActivity : ComponentActivity() {
 
 
 
-
         setContent {
             val appUiState by appViewModel.appUiState.collectAsStateWithLifecycle()
             val tripsUiState by tripsViewModel.tripsUiState.collectAsStateWithLifecycle()
