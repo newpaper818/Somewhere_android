@@ -268,7 +268,7 @@ private fun MapSpotMapButtons(
 
         ToGoogleMapButton(
             enabled = openInGoogleMapEnabled,
-            googleMapsPlacesId = spot?.googleMapsPlacesId ?: "",
+            googleMapsUrl = spot?.getGoogleMapsUrl() ?: "",
             hazeState = hazeState
         )
     }
@@ -394,13 +394,13 @@ private fun SpotNavigateWithFitBoundsToMarkersButtons(
 @Composable
 private fun ToGoogleMapButton(
     enabled: Boolean,
-    googleMapsPlacesId: String,
+    googleMapsUrl: String,
     hazeState: HazeState?,
 ){
     MapButtonsRow(hazeState = hazeState) {
         ToGoogleMapsButton(
             enabled = enabled,
-            googleMapsPlacesId = googleMapsPlacesId
+            googleMapsUrl = googleMapsUrl,
         )
     }
 }

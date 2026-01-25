@@ -1052,7 +1052,9 @@ private fun Spot1Pane(
                 setMapSize = {
                     spotMap.setMapSize(it)
                 },
-                openInGoogleMapEnabled = currentSpot?.googleMapsPlacesId != null && currentSpot.googleMapsPlacesId != "",
+                openInGoogleMapEnabled = currentSpot != null &&
+                        !((currentSpot.titleText == null || currentSpot.titleText == "")
+                        && (currentSpot.googleMapsPlacesId == null || currentSpot.googleMapsPlacesId == "")),
                 showSnackBar = { text, actionLabel, duration, onActionClick ->
                     coroutineScope.launch {
                         snackBarHostState.showSnackbar(
