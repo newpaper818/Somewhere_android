@@ -22,15 +22,20 @@ import javax.inject.Inject
 
 private const val TRIPS_VIEWMODEL_TAG = "Trips-ViewModel"
 
-data class Glance(
+
+data class GlanceSpot(
+    val trip: Trip,
+    val date: Date,
+    val spot: Spot
+)
+
+data class GlanceSpots(
     val visible: Boolean = false,
-    val trip: Trip? = null,
-    val date: Date? = null,
-    val spot: Spot? = null
+    val spots: List<GlanceSpot> = listOf()
 )
 
 data class TripsUiState(
-    val glance: Glance = Glance(),
+    val glanceSpots: GlanceSpots = GlanceSpots(),
 
     val loadingTrips: Boolean = true,
 
@@ -158,11 +163,9 @@ class TripsViewModel @Inject constructor(
     ){
         _tripsUiState.update {
             it.copy(
-                glance = Glance(
+                glanceSpots = GlanceSpots(
                     visible = false,
-                    trip = null,
-                    date = null,
-                    spot = null
+                    spots = listOf()
                 )
             )
         }
@@ -260,8 +263,8 @@ class TripsViewModel @Inject constructor(
             if (currentDate in tripStartDate..tripEndDate) {
                 _tripsUiState.update {
                     it.copy(
-                        glance = it.glance.copy(
-                            trip = trip
+                        glanceSpots = it.glanceSpots.copy(
+                            spots = listOf(GlanceSpot(trip, Date(date = LocalDate.now()), Spot(date = LocalDate.now())))
                         )
                     )
                 }
@@ -271,152 +274,136 @@ class TripsViewModel @Inject constructor(
         return null
     }
 
+    /**
+     * Find the current and upcoming Spot, as well as the next Spot,
+     * compared to the current time, and updates the state
+     *
+     * @param targetTrip
+     */
     fun updateGlanceSpotInfo(
-        glanceTrip: Trip?
+        targetTrip: Trip
     ){
-        //get current date time
         val currentDateTime = LocalDateTime.now()
         val currentDate = currentDateTime.toLocalDate()
         val currentTime = currentDateTime.toLocalTime()
 
-        if (_tripsUiState.value.glance.trip != null) {
-            if (glanceTrip != null) {
-                _tripsUiState.update {
-                    it.copy(
-                        glance = it.glance.copy(
-                            trip = glanceTrip
-                        )
-                    )
-                }
+        // 2. find today date's Date
+        val targetDate = targetTrip.dateList.find { it.date == currentDate }
 
-                //find date
-                for (date in glanceTrip.dateList){
-                    if (date.date == currentDate){
-                        _tripsUiState.update {
-                            it.copy(
-                                glance = it.glance.copy(
-                                    date = date
-                                )
-                            )
-                        }
-                        break
-                    }
-                }
+        // not found today date' Date or Spot is empty
+        if (targetDate == null || targetDate.spotList.isEmpty()) {
+            updateGlanceState(visible = false, spots = emptyList())
+            return
+        }
+
+        // 3. find Spot that include current time
+        val targetSpotIndex = findTargetSpotIndex(targetDate.spotList, currentTime)
+
+        // 4. Based on the index, construct a list containing the current Spot and (if present) the next Spot.
+        if (targetSpotIndex != -1) {
+            val resultSpots = mutableListOf<GlanceSpot>()
+
+            // current/upcoming Spots
+            val currentSpot = targetDate.spotList[targetSpotIndex]
+            resultSpots.add(GlanceSpot(targetTrip, targetDate, currentSpot))
+
+            // next Spot (if existed)
+            val nextSpot = targetDate.spotList.getOrNull(targetSpotIndex + 1)
+            if (nextSpot != null) {
+                resultSpots.add(GlanceSpot(targetTrip, targetDate, nextSpot))
+            }
+
+            // update state
+            updateGlanceState(visible = true, spots = resultSpots)
+        } else {
+            // not found Spot
+            updateGlanceState(visible = false, spots = emptyList())
+        }
+    }
+
+    /**
+     * find target spot(which in [currentTime]) index in [spotList]
+     *
+     * @param spotList
+     * @param currentTime
+     * @return found spot's index / if not exist -1
+     */
+    private fun findTargetSpotIndex(
+        spotList: List<Spot>,
+        currentTime: java.time.LocalTime
+    ): Int {
+        for (index in spotList.indices) {
+            val spot = spotList[index]
+            val startTime = spot.startTime
+            val endTime = spot.endTime
+
+            val isFirstSpot = (index == 0)
+            val isLastSpot = (index == spotList.lastIndex)
+
+            val nextSpotStartTime = spotList.getOrNull(index + 1)?.startTime
+
+            // current time < Spot start (first spot) -> Spot1 index
+            // 1. Before the first Spot begins (not yet started) -> Display the first Spot
+            if (isFirstSpot && startTime != null && currentTime < startTime) {
+                return index
+            }
+
+            // Spot1 start < current time < Spot1 end -> Spot1 index
+            // 2. Spot in progress (between start and end)
+            if (startTime != null && endTime != null && currentTime in startTime..endTime) {
+                return index
+            }
+
+            // Spot1 end < current time < Spot2 start -> Spot2 index
+            // 3. After the current Spot ends - before the next Spot begins (break time) -> Preview the next Spot
+            if (endTime != null && nextSpotStartTime != null && currentTime in endTime..nextSpotStartTime) {
+                return index + 1
+            }
+
+            // 4. Handling cases with no time information (null)
+
+            // 4-1. Only a start time exists, no end time (current time is after the start time)
+            // If it's the last Spot, keep the current Spot; otherwise, keep it only until the next Spot starts
+            if (startTime != null && endTime == null && startTime <= currentTime) {
+
+                // Spot1(last spot) start < current time -> Spot1 index
+                if (isLastSpot) return index
+
+                // Spot1 start < current time < Spot2 start -> Spot1 index
+                if (nextSpotStartTime != null && currentTime < nextSpotStartTime) return index
+            }
+
+            // current time < Spot1 end -> Spot1 index
+            // 4-2. No start time, only an end time (before the end time)
+            if (startTime == null && endTime != null && currentTime < endTime) {
+                return index
+            }
+
+            // 4-3 No start/end time
+            // If it's the last Spot, keep it; otherwise, keep it only until the next Spot starts
+            if (startTime == null && endTime == null) {
+                // Spot1(last spot) -> Spot1 index
+                if (isLastSpot) return index
+
+                // current time < Spot2 start -> Spot1 index
+                if (nextSpotStartTime != null && currentTime < nextSpotStartTime) return index
             }
         }
 
-        if (_tripsUiState.value.glance.date != null) {
-            val spotList = _tripsUiState.value.glance.date!!.spotList
+        return -1
+    }
 
-            if (spotList.isEmpty()){
-                _tripsUiState.update {
-                    it.copy(
-                        glance = it.glance.copy(
-                            visible = false,
-                            spot = null
-                        )
-                    )
-                }
-            }
-
-            //find spot
-            for (spot in _tripsUiState.value.glance.date!!.spotList) {
-                var glanceSpot: Spot? = null
-
-                val startTime = spot.startTime
-                val endTime = spot.endTime
-
-                val isFirstSpot = spot == _tripsUiState.value.glance.date!!.spotList.first()
-                val isLastSpot = spot == _tripsUiState.value.glance.date!!.spotList.last()
-
-                val nextSpot = _tripsUiState.value.glance.date!!.spotList.getOrNull(spot.index + 1)
-                val nextSpotStartTime = nextSpot?.startTime
-
-                // current < start(first spot)
-                if (isFirstSpot && startTime != null && currentTime < startTime) {
-                    glanceSpot = spot
-                }
-
-                // start < current < end  (time)
-                else if (startTime != null && endTime != null && currentTime in startTime..endTime) {
-                    glanceSpot = spot
-                }
-
-                // end < current < start(next spot)
-                if (
-                    endTime != null && nextSpotStartTime != null &&
-                    currentTime in endTime .. nextSpotStartTime
-                ){
-                    glanceSpot = nextSpot
-                }
-
-                // start < current < null && last spot of the day
-                else if (
-                    startTime != null && endTime == null && startTime <= currentTime &&
-                    isLastSpot
-                ){
-                    glanceSpot = spot
-                }
-
-                // start < current < null (not last spot of day)
-                else if (
-                    startTime != null && endTime == null && startTime <= currentTime &&
-                    !isLastSpot &&
-                    nextSpotStartTime != null && currentTime < nextSpotStartTime
-                ){
-                    glanceSpot = spot
-                }
-
-                // null < current < end
-                else if (
-                    startTime == null && endTime != null && currentTime < endTime
-                ){
-                    glanceSpot = spot
-                }
-
-                // null < current < null && last spot of the day
-                else if (
-                    startTime == null && endTime == null &&
-                    isLastSpot
-                ){
-                    glanceSpot = spot
-                }
-
-                // null < current < null (not last spot of day)
-                else if (
-                    startTime == null && endTime == null &&
-                    !isLastSpot &&
-                    nextSpotStartTime != null && currentTime < nextSpotStartTime
-                ){
-                    glanceSpot = spot
-                }
-
-
-
-                //update glance spot
-                if (glanceSpot != null) {
-                    _tripsUiState.update {
-                        it.copy(
-                            glance = it.glance.copy(
-                                visible = true,
-                                spot = glanceSpot
-                            )
-                        )
-                    }
-                    break
-                }
-
-
-                if (spot == _tripsUiState.value.glance.date!!.spotList.last()){
-                    _tripsUiState.update {
-                        it.copy(
-                            glance = it.glance.copy(
-                                visible = false
-                            )
-                        )
-                    }
-                }
-            }
+    private fun updateGlanceState(
+        visible: Boolean,
+        spots: List<GlanceSpot>
+    ) {
+        _tripsUiState.update {
+            it.copy(
+                glanceSpots = GlanceSpots(
+                    visible = visible,
+                    spots = spots
+                )
+            )
         }
     }
 

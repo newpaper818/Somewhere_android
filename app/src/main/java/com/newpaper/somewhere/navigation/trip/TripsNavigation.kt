@@ -18,7 +18,7 @@ import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.ui.ErrorScreen
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
-import com.newpaper.somewhere.feature.trip.trips.Glance
+import com.newpaper.somewhere.feature.trip.trips.GlanceSpot
 import com.newpaper.somewhere.feature.trip.trips.TripsRoute
 import com.newpaper.somewhere.feature.trip.trips.TripsViewModel
 import com.newpaper.somewhere.navigation.TopEnterTransition
@@ -49,7 +49,7 @@ fun NavGraphBuilder.tripsScreen(
 
     navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
     navigateToTripAi: () -> Unit,
-    navigateToGlanceSpot: (glance: Glance) -> Unit,
+    navigateToGlanceSpot: (glanceSpot: GlanceSpot) -> Unit,
     navigateToSubscription: () -> Unit,
 
     hazeState: HazeState?

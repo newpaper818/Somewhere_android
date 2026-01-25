@@ -67,7 +67,9 @@ import com.newpaper.somewhere.core.utils.fitBoundsToMarkersForTripMap
 import com.newpaper.somewhere.feature.trip.tripMap.component.BottomSheetHandel
 import com.newpaper.somewhere.feature.trip.tripMap.component.ControlPanel
 import com.newpaper.somewhere.feature.trip.tripMap.component.MapButtons
-import com.newpaper.somewhere.feature.trip.trips.component.GlanceSpot
+import com.newpaper.somewhere.feature.trip.trips.GlanceSpot
+import com.newpaper.somewhere.feature.trip.trips.GlanceSpots
+import com.newpaper.somewhere.feature.trip.trips.component.GlanceSpotGroup
 import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInputScale
 import dev.chrisbanes.haze.HazeState
@@ -418,15 +420,21 @@ private fun TripMapScreenVertical(
                     }
 
                     //glance spot
-                    GlanceSpot(
+                    GlanceSpotGroup(
+                        showTopTripTitleWithDate = false,
                         modifier = Modifier.padding(top = 16.dp),
                         uesLongWidth = true,
                         visible = tripMapUiState.showGlanceSpot,
                         dateTimeFormat = dateTimeFormat,
-                        trip = tripMapUiState.glanceTrip,
-                        date = tripMapUiState.glanceDate,
-                        spot = tripMapUiState.glanceSpot,
-                        onClick = {
+                        glanceSpots = GlanceSpots(
+                            visible = true,
+                            spots = listOf(
+                                GlanceSpot(tripMapUiState.glanceTrip,
+                                    tripMapUiState.glanceDate,
+                                    tripMapUiState.glanceSpot)
+                            )
+                        ),
+                        onClickGlanceSpot = {
                             navigateToSpot(tripMapUiState.glanceDate.index, tripMapUiState.glanceSpot.index)
                         },
                         hazeState = hazeState,
@@ -653,14 +661,20 @@ private fun TripMapScreenHorizontal(
 
                     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                         //glance spot
-                        GlanceSpot(
+                        GlanceSpotGroup(
+                            showTopTripTitleWithDate = false,
                             uesLongWidth = true,
                             visible = tripMapUiState.showGlanceSpot,
                             dateTimeFormat = dateTimeFormat,
-                            trip = tripMapUiState.glanceTrip,
-                            date = tripMapUiState.glanceDate,
-                            spot = tripMapUiState.glanceSpot,
-                            onClick = {
+                            glanceSpots = GlanceSpots(
+                                visible = true,
+                                spots = listOf(
+                                    GlanceSpot(tripMapUiState.glanceTrip,
+                                        tripMapUiState.glanceDate,
+                                        tripMapUiState.glanceSpot)
+                                )
+                            ),
+                            onClickGlanceSpot = {
                                 navigateToSpot(tripMapUiState.glanceDate.index, tripMapUiState.glanceSpot.index)
                             },
                             hazeState = hazeState
