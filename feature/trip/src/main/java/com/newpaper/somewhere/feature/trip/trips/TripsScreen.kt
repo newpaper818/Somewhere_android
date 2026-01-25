@@ -52,8 +52,6 @@ import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.TripsDisplayMode
-import com.newpaper.somewhere.core.model.tripData.Date
-import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.model.tripData.TripsGroup
 import com.newpaper.somewhere.core.ui.GoogleBannerAd
@@ -70,7 +68,7 @@ import com.newpaper.somewhere.feature.dialog.newTripType.TripCreationOptionsDial
 import com.newpaper.somewhere.feature.trip.BuildConfig
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.R
-import com.newpaper.somewhere.feature.trip.trips.component.GlanceSpot
+import com.newpaper.somewhere.feature.trip.trips.component.GlanceSpotGroup
 import com.newpaper.somewhere.feature.trip.trips.component.LoadingTripsItem
 import com.newpaper.somewhere.feature.trip.trips.component.NoTripCard
 import com.newpaper.somewhere.feature.trip.trips.component.TripFilterChipsWithSortOrderButton
@@ -80,7 +78,6 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 internal val tripCardHeightDp = 120.dp
 
@@ -104,7 +101,7 @@ fun TripsRoute(
 
     navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
     navigateToTripAi: () -> Unit,
-    navigateToGlanceSpot: (glance: Glance) -> Unit,
+    navigateToGlanceSpot: (glanceSpot: GlanceSpot) -> Unit,
     navigateToSubscription: () -> Unit,
 
     hazeState: HazeState?,
@@ -149,10 +146,11 @@ fun TripsRoute(
                         tripWithEmptyDateList = glanceTripWithEmptyDateList
                     )
 
-                    tripsViewModel.updateGlanceSpotInfo(
-                        //update trip info (only at empty date list - load once)
-                        glanceTrip = glanceTrip
-                    )
+                    if (glanceTrip != null)
+                        tripsViewModel.updateGlanceSpotInfo(
+                            //update trip info (only at empty date list - load once)
+                            targetTrip = glanceTrip
+                        )
                 }
             }
         }
@@ -183,10 +181,11 @@ fun TripsRoute(
                     tripWithEmptyDateList = glanceTripWithEmptyDateList
                 )
 
-                tripsViewModel.updateGlanceSpotInfo(
-                    //update trip info (only at empty date list - load once)
-                    glanceTrip = glanceTrip
-                )
+                if (glanceTrip != null)
+                    tripsViewModel.updateGlanceSpotInfo(
+                        //update trip info (only at empty date list - load once)
+                        targetTrip = glanceTrip
+                    )
             }
         }
     }
@@ -266,7 +265,7 @@ fun TripsRoute(
         tripsData = TripsData(
             showingTrips = showingTrips,
             showingSharedTrips = showingSharedTrips,
-            glance = tripsUiState.glance,
+            glanceSpots = tripsUiState.glanceSpots,
         ),
         dialog = TripsDialog(
             isShowingDialog = tripsUiState.isShowingDialog,
@@ -315,7 +314,7 @@ fun TripsRoute(
                     navigateToTrip(isNewTrip, trip!!)
             },
             _navigateToTripAi = { navigateToTripAi() },
-            _navigateToGlanceSpot = { navigateToGlanceSpot(tripsUiState.glance) },
+            _navigateToGlanceSpot = { glanceSpot -> navigateToGlanceSpot(glanceSpot) },
             _navigateToSubscription = { navigateToSubscription() }
         ),
 
@@ -364,7 +363,7 @@ private fun TripsScreen(
 
     val showingTrips = tripsData.showingTrips
     val showingSharedTrips = tripsData.showingSharedTrips
-    val glance = tripsData.glance
+    val glanceSpots = tripsData.glanceSpots
 
 
     val tripsIsEmpty = showingTrips.isEmpty() && showingSharedTrips.isEmpty()
@@ -405,21 +404,20 @@ private fun TripsScreen(
                 },
                 expanded = firstItemVisible,
                 useBottomNavBar = useBottomNavBar,
-                glanceSpotShown = glance.visible,
-                use2Panes = tripsUiInfo.use2Panes
+                glanceSpotShown = glanceSpots.visible && tripsUiInfo.tripsDisplayMode == TripsDisplayMode.ACTIVE,
+                glanceSpotHeight = 70.dp * glanceSpots.spots.size + 20.dp + 16.dp,
             )
         },
         glanceSpot = {
-            GlanceSpot(
+            GlanceSpotGroup(
+                showTopTripTitleWithDate = true,
                 uesLongWidth = useBottomNavBar,
-                visible = glance.visible && !isEditMode && !loadingTrips,
+                visible = glanceSpots.visible && !isEditMode && !loadingTrips && tripsUiInfo.tripsDisplayMode == TripsDisplayMode.ACTIVE,
                 dateTimeFormat = dateTimeFormat,
-                trip = glance.trip ?: Trip(id = 0, managerId = ""), //if glanceVisible is true, glanceTrip, Date, Spot is not null
-                date = glance.date ?: Date(date = LocalDate.now()),
-                spot = glance.spot ?: Spot(id= 0, date = LocalDate.now()),
-                onClick = {
+                glanceSpots = glanceSpots,
+                onClickGlanceSpot = { glanceSpot ->
                     //go to spot screen
-                    navigate.navigateToGlanceSpot()
+                    navigate.navigateToGlanceSpot(glanceSpot)
                 },
                 hazeState = hazeState
             )
@@ -770,7 +768,7 @@ private fun TripsScreenPreview_Default(){
                         titleText = "shared trip"
                     )
                 ),
-                glance = Glance(visible = true),
+                glanceSpots = GlanceSpots(visible = true),
             ),
             dialog = TripsDialog(),
             image = TripsImage(),
