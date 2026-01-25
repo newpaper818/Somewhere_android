@@ -84,7 +84,7 @@ fun UserLocationButtonUi(
 @Composable
 fun ToGoogleMapsButton(
     enabled: Boolean,
-    googleMapsPlacesId: String,
+    googleMapsUrl: String,
     modifier: Modifier = Modifier
 ){
     val uriHandler = LocalUriHandler.current
@@ -93,10 +93,7 @@ fun ToGoogleMapsButton(
         IconButton(
             modifier = modifier,
             enabled = enabled,
-            onClick = {
-                val url = "https://www.google.com/maps/search/?api=1&query=<address>&query_place_id=${googleMapsPlacesId}"
-                uriHandler.openUri(url)
-            }
+            onClick = { uriHandler.openUri(googleMapsUrl) }
         ) {
             DisplayIcon(
                 icon = MapButtonIcon.openInGoogleMaps,

@@ -287,10 +287,11 @@ internal fun GlanceSpot(
                         .padding(0.dp, 0.dp, 16.dp, 0.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (spot.googleMapsPlacesId != null){
+                    if (!((spot.titleText == null || spot.titleText == "")
+                           && (spot.googleMapsPlacesId == null || spot.googleMapsPlacesId == ""))){
                         ToGoogleMapsButton(
                             enabled = true,
-                            googleMapsPlacesId = spot.googleMapsPlacesId!!,
+                            googleMapsUrl = spot.getGoogleMapsUrl(),
                             modifier = Modifier
                                 .clip(CircleShape)
                                 .background(MaterialTheme.colorScheme.surfaceBright)
