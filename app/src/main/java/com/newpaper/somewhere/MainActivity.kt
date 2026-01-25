@@ -24,11 +24,10 @@ import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.SomewhereApp
 import com.newpaper.somewhere.ui.rememberExternalState
 import com.newpaper.somewhere.util.ConnectivityObserver
-import com.newpaper.somewhere.util.NetworkConnectivityObserver
 import com.newpaper.somewhere.util.calculateWindowSizeClass
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 private const val MAIN_ACTIVITY_TAG = "MainActivity1"
 
@@ -39,8 +38,11 @@ class MainActivity : ComponentActivity() {
     private val appViewModel: AppViewModel by viewModels()
     private val tripsViewModel: TripsViewModel by viewModels()
 
-    private lateinit var connectivityObserver: ConnectivityObserver
     private val fusedLocationClient by lazy { LocationServices.getFusedLocationProviderClient(this) }
+
+    @Inject
+    lateinit var connectivityObserver: ConnectivityObserver
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -67,9 +69,6 @@ class MainActivity : ComponentActivity() {
 
 
 
-
-//        Log.d(MAIN_ACTIVITY_TAG, "set connectivity observer")
-        connectivityObserver = NetworkConnectivityObserver(applicationContext)
 
 
         setContent {
