@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 
 private const val MAIN_ACTIVITY_TAG = "MainActivity1"
 
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
