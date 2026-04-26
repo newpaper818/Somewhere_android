@@ -1,13 +1,36 @@
-*.iml
-.gradle
-/local.properties
-/.idea/
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+
+
 app/build.gradle.kts
 app/google-services.json
 app/keystore
 core/utils/src/main/java/com/newpaper/somewhere/core/utils/value.kt
+
+.kotlin/
+
+# cache & build result
+.gradle
+build/
+/*/build/
+captures/
+
+# IDE config (Android studio/IntelliJ)
+*.iml
+.idea/
+
+# local config
+local.properties
+.externalNativeBuild
+.cxx
+
+# log
+*.log
+*.hprof
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# test & lint
+/test-results/
+/lint-results/
+/lint-report.html
