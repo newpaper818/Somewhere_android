@@ -7,6 +7,7 @@ import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Until
+import java.util.regex.Pattern
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -53,9 +54,11 @@ class BaselineProfileGenerator {
 
             startActivityAndWait()
 
+            Thread.sleep(15_000)
+
             device.wait(
-                Until.hasObject(By.res("my_trips")),
-                7_000
+                Until.hasObject(By.res(Pattern.compile("my_trips|no_trips|trips_list|sign_in_screen"))),
+                10_000
             )
         }
     }

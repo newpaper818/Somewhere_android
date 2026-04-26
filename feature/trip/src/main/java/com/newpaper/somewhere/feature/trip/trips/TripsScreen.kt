@@ -517,7 +517,7 @@ private fun TripsScreen(
             contentAlignment = Alignment.TopCenter
         ) {
 
-            val lazyColumnModifier = modifier.fillMaxSize()
+            val lazyColumnModifier = modifier.fillMaxSize().testTag("trips_list")
 
 
             //display trips list (my trips + shared trips)

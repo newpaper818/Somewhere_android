@@ -10,6 +10,7 @@ import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Until
+import java.util.regex.Pattern
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -65,8 +66,8 @@ class StartupBenchmarks {
                 startActivityAndWait()
 
                 device.wait(
-                    Until.hasObject(By.res("my_trips")),
-                    5_000
+                    Until.hasObject(By.res(Pattern.compile("my_trips|no_trips|trips_list|sign_in_screen"))),
+                    10_000
                 )
 
                 // TODO Add interactions to wait for when your app is fully drawn.

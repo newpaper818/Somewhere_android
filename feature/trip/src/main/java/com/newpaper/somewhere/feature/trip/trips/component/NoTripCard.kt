@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -30,7 +31,8 @@ internal fun NoTripCard(
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp, 50.dp, 16.dp, 16.dp),
+                .padding(16.dp, 50.dp, 16.dp, 16.dp)
+                .testTag("no_trips"),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             //icon
