@@ -19,7 +19,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Duration
+import java.time.Instant
 import javax.inject.Inject
+import kotlin.time.measureTime
 
 private const val APP_VIEWMODEL_TAG = "App-ViewModel"
 
@@ -44,6 +47,12 @@ data class AppUiState(
     val firstLaunch: Boolean = true,
 //    val isEditMode: Boolean = false
 )
+
+sealed class RemoteFetchResult {
+    data class Success(val userData: UserData) : RemoteFetchResult()
+    object SessionExpired : RemoteFetchResult()
+    object Error : RemoteFetchResult()
+}
 
 
 
@@ -145,26 +154,108 @@ class AppViewModel @Inject constructor(
         Log.d("MainActivity1", "[2] initSignedInUser start")
 
         viewModelScope.launch {
-//            val time = measureNanoTime {
-            var userData = userRepository.getSignedInUser()
+//            val time = measureTime {
+            // 1. Get cached user and last updated time
+            val (cachedUserData, lastUpdatedTime) = userRepository.getCachedUser()
+            val now = Instant.now()
 
-            //get user is using somewhere pro
-            if (userData != null) {
-                val isUsingSomewherePro = getIsUsingSomewherePro()
-                userData = userData.copy(isUsingSomewherePro = isUsingSomewherePro)
+            val isCacheValid = if (cachedUserData != null && lastUpdatedTime != null) {
+                try {
+                    val lastUpdatedDateTime = Instant.parse(lastUpdatedTime)
+                    val diffInDays = Duration.between(lastUpdatedDateTime, now).toDays()
+                    diffInDays <= 15 // about 15 days (15 days 23h 59s -> return 15)
+                } catch (_: Exception) {
+                    false
+                }
+            } else {
+                false
             }
 
-            _appUiState.update {
-                it.copy(appUserData = userData)
+            if (isCacheValid) {
+                Log.d("MainActivity1", "                              [2] initSignedInUser - using valid cache")
+                // Use cache and dismiss splash immediately
+                _appUiState.update { it.copy(appUserData = cachedUserData) }
+                onDone(false)
+
+                // Then update in background
+                launch(Dispatchers.IO) {
+                    refreshUserData()
+                }
+            } else {
+                Log.d("MainActivity1", "                              [2] initSignedInUser - cache invalid or missing, fetching remote")
+                // Perform full remote fetch
+                when (val result = performFullRemoteFetch()) {
+                    is RemoteFetchResult.Success -> {
+                        _appUiState.update { it.copy(appUserData = result.userData) }
+                        Log.d("MainActivity1", "                              [2] initSignedInUser - user: ${result.userData.userId}")
+                        onDone(false)
+                    }
+                    is RemoteFetchResult.SessionExpired -> {
+                        _appUiState.update { it.copy(appUserData = null) }
+                        Log.d("MainActivity1", "                              [2] initSignedInUser - session expired")
+                        onDone(true)
+                    }
+                    is RemoteFetchResult.Error -> {
+                        // In case of error during initial fetch without cache, we might need to stay on sign-in or retry
+                        _appUiState.update { it.copy(appUserData = null) }
+                        Log.d("MainActivity1", "                              [2] initSignedInUser - fetch error")
+                        onDone(true)
+                    }
+                }
             }
-
-            Log.d("MainActivity1", "                              [2] initSignedInUser - user: ${userData?.userId}")
-
-            onDone(userData == null || userData.userId == "")
 //            }
-//            Log.d("MainActivity1", "[2] ${time*0.000000001} - initSignedInUser")
+//            Log.d("MainActivity1", "[2] $time - initSignedInUser")
         }
     }
+
+    private suspend fun performFullRemoteFetch(): RemoteFetchResult {
+        return try {
+            val userData = userRepository.getSignedInUser()
+
+            if (userData != null) {
+                val isUsingSomewherePro = getIsUsingSomewherePro()
+                val updatedUserData = userData.copy(isUsingSomewherePro = isUsingSomewherePro)
+
+                // Save to cache
+                userRepository.saveUserToCache(updatedUserData, Instant.now().toString())
+                RemoteFetchResult.Success(updatedUserData)
+            }
+            else {
+                RemoteFetchResult.SessionExpired
+            }
+        }
+        catch (e: Exception) {
+            Log.e("MainActivity1", "performFullRemoteFetch error", e)
+            RemoteFetchResult.Error
+        }
+    }
+
+    private suspend fun refreshUserData() {
+        when (val result = performFullRemoteFetch()) {
+            is RemoteFetchResult.Success -> {
+                Log.d("MainActivity1", "refreshUserData - user updated from remote / appUiState update")
+                _appUiState.update { it.copy(appUserData = result.userData) }
+            }
+            is RemoteFetchResult.SessionExpired -> {
+                Log.d("MainActivity1", "refreshUserData - user not found on remote (session expired), signing out")
+                // Clear cache and logout
+                userRepository.clearUserCache()
+                _appUiState.update {
+                    it.copy(
+                        appUserData = null,
+                        screenDestination = it.screenDestination.copy(
+                            startScreenDestination = ScreenDestination.SIGN_IN
+                        )
+                    )
+                }
+            }
+            is RemoteFetchResult.Error -> {
+                Log.d("MainActivity1", "refreshUserData - network error or firestore fetch failed, keeping cache")
+                // Keep existing cached data
+            }
+        }
+    }
+
 
     private suspend fun getIsUsingSomewherePro(
 
@@ -297,6 +388,15 @@ class AppViewModel @Inject constructor(
             it.copy(
                 appUserData = userData
             )
+        }
+
+        // Update cache
+        viewModelScope.launch(Dispatchers.IO) {
+            if (userData != null) {
+                userRepository.saveUserToCache(userData, Instant.now().toString())
+            } else {
+                userRepository.clearUserCache()
+            }
         }
     }
 }

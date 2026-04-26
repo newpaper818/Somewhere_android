@@ -175,6 +175,18 @@ fun SomewhereNavHost(
         appViewModel.updateCurrentTopLevelDestination(TopLevelDestination.TRIPS)
     }
 
+    // Handle auto logout when session expired in background
+    LaunchedEffect(appUiState.appUserData, appUiState.screenDestination.startScreenDestination) {
+        if (appUiState.appUserData == null &&
+            appUiState.screenDestination.startScreenDestination == ScreenDestination.SIGN_IN
+        ) {
+            val currentRoute = mainNavController.currentDestination?.route
+            if (currentRoute != ScreenDestination.SIGN_IN.route) {
+                onSignOutDone()
+            }
+        }
+    }
+
     mainNavController.addOnDestinationChangedListener { controller, _, _ ->
         val routes = controller
             .currentBackStack.value
