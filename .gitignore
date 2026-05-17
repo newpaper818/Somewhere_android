@@ -1,28 +1,27 @@
-
-
-app/build.gradle.kts
-app/google-services.json
-app/keystore
-core/utils/src/main/java/com/newpaper/somewhere/core/utils/value.kt
-
+# IDE config (Android Studio/IntelliJ)
+*.iml
+.idea/
 .kotlin/
+*.ipr
+*.iws
 
-# cache & build result
-.gradle
+# Build & Cache
+.gradle/
 build/
 /*/build/
 captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aar
 
-# IDE config (Android studio/IntelliJ)
-*.iml
-.idea/
-
-# local config
+# Local Config & Secrets (NEVER CHECK IN)
 local.properties
-.externalNativeBuild
-.cxx
+app/google-services.json
+app/keystore/
+core/utils/src/main/java/com/newpaper/somewhere/core/utils/value.kt
 
-# log
+# Log files
 *.log
 *.hprof
 
@@ -30,7 +29,8 @@ local.properties
 .DS_Store
 Thumbs.db
 
-# test & lint
+# Test & Lint reports
 /test-results/
 /lint-results/
 /lint-report.html
+obj/
