@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace = "com.newpaper.somewhere.core.data.gemini_ai"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     val localProperties = Properties()
     val localPropertiesFile = rootProject.file("local.properties")
@@ -19,7 +19,7 @@ android {
     }
 
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.minSdk.get().toInt()
 
         buildConfigField("String", "GEMINI_AI_API_KEY", localProperties.getProperty("GEMINI_AI_API_KEY") ?: "\"\"")
     }

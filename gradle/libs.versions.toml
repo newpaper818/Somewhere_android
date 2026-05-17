@@ -1,4 +1,9 @@
 [versions]
+# SDK Versions
+compileSdk = "36"
+minSdk = "26"
+targetSdk = "36"
+
 #my libs
 smoothCorner = "0.9.5"
 

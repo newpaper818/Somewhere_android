@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.newpaper.somewhere.core.data.google_map_places"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     val localProperties = Properties()
     val localPropertiesFile = rootProject.file("local.properties")
@@ -17,7 +17,7 @@ android {
     }
 
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.minSdk.get().toInt()
 
         buildConfigField("String", "GOOGLE_MAPS_API_KEY", localProperties.getProperty("GOOGLE_MAPS_API_KEY") ?: "\"\"")
     }

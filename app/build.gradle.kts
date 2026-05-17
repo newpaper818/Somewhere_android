@@ -14,7 +14,7 @@ plugins {
 
 android {
     namespace = "com.newpaper.somewhere"
-    compileSdk = 36
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     val localProperties = Properties()
     val localPropertiesFile = rootProject.file("local.properties")
@@ -24,8 +24,8 @@ android {
 
     defaultConfig {
         applicationId = "com.newpaper.somewhere"
-        minSdk = 26
-        targetSdk = 36
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 75
         versionName = "2.3.1"
 

@@ -8,10 +8,10 @@ plugins {
 
 android {
     namespace = "com.newpaper.somewhere.feature.signin"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.minSdk.get().toInt()
     }
     buildFeatures {
         compose = true

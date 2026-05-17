@@ -11,7 +11,7 @@ plugins {
 
 android {
     namespace = "com.newpaper.somewhere.feature.trip"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     val localProperties = Properties()
     val localPropertiesFile = rootProject.file("local.properties")
@@ -20,7 +20,7 @@ android {
     }
 
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.minSdk.get().toInt()
 
         buildConfigField("String", "FACEBOOK_APP_ID", localProperties.getProperty("FACEBOOK_APP_ID") ?: "\"\"")
     }

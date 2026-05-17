@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.newpaper.somewhere.core.utils"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     val localProperties = Properties()
     val localPropertiesFile = rootProject.file("local.properties")
@@ -17,7 +17,7 @@ android {
     }
 
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.minSdk.get().toInt()
 
         buildConfigField("String", "BANNER_AD_UNIT_ID", localProperties.getProperty("BANNER_AD_UNIT_ID") ?: "\"\"")
         buildConfigField("String", "BANNER_AD_UNIT_ID_TEST", localProperties.getProperty("BANNER_AD_UNIT_ID_TEST") ?: "\"\"")

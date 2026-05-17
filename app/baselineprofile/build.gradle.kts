@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.newpaper.somewhere.baselineprofile"
-    compileSdk = 36
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -18,8 +18,8 @@ android {
     }
 
     defaultConfig {
-        minSdk = 28
-        targetSdk = 36
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
