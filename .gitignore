@@ -20,7 +20,6 @@ captures/
 local.properties
 app/google-services.json
 app/keystore/
-core/utils/src/main/java/com/newpaper/somewhere/core/utils/value.kt
 
 # Log files
 *.log
