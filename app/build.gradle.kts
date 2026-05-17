@@ -1,6 +1,4 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import java.util.Properties
-import kotlin.apply
 
 plugins {
     alias(libs.plugins.androidApplication)
@@ -18,6 +16,12 @@ android {
     namespace = "com.newpaper.somewhere"
     compileSdk = 36
 
+    val localProperties = Properties()
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localProperties.load(localPropertiesFile.inputStream())
+    }
+
     defaultConfig {
         applicationId = "com.newpaper.somewhere"
         minSdk = 26
@@ -30,8 +34,8 @@ android {
             useSupportLibrary = true
         }
 
-        buildConfigField("String", "GOOGLE_MAPS_API_KEY", getApiKey("GOOGLE_MAPS_API_KEY"))
-        buildConfigField("String", "GEMINI_AI_API_KEY", getApiKey("GEMINI_AI_API_KEY"))
+        buildConfigField("String", "GOOGLE_MAPS_API_KEY", localProperties.getProperty("GOOGLE_MAPS_API_KEY") ?: "\"\"")
+        buildConfigField("String", "GEMINI_AI_API_KEY", localProperties.getProperty("GEMINI_AI_API_KEY") ?: "\"\"")
     }
 
     sourceSets {
@@ -43,7 +47,9 @@ android {
     signingConfigs {
         val keyStorePropertiesFile = rootProject.file("app/keystore/keystore.properties")
         val keyStoreProperties = Properties().apply {
-            load(keyStorePropertiesFile.reader())
+            if (keyStorePropertiesFile.exists()) {
+                load(keyStorePropertiesFile.inputStream())
+            }
         }
 
         getByName("debug") {
@@ -95,10 +101,6 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-}
-
-fun getApiKey(propertyKey: String): String {
-    return gradleLocalProperties(rootDir, providers).getProperty(propertyKey)
 }
 
 dependencies {
