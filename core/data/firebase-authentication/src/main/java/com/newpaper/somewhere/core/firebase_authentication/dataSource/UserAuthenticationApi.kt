@@ -12,7 +12,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ProviderId
 import com.newpaper.somewhere.core.model.enums.getProviderIdFromString
-import com.newpaper.somewhere.core.utils.OAUTH_WEB_CLIENT_ID
+import com.newpaper.somewhere.core.utils.BuildConfig
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.tasks.await
 import java.util.concurrent.CancellationException
@@ -244,7 +244,7 @@ class UserAuthenticationApi @Inject constructor(
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
                     .setFilterByAuthorizedAccounts(false)
-                    .setServerClientId(OAUTH_WEB_CLIENT_ID)
+                    .setServerClientId(BuildConfig.OAUTH_WEB_CLIENT_ID)
                     .build()
             )
             .setAutoSelectEnabled(true)
