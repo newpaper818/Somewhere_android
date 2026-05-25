@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.signin.signIn
 
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -44,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
+import com.newpaper.somewhere.core.designsystem.component.button.CloseButton
 import com.newpaper.somewhere.core.designsystem.component.button.PrivacyPolicyButton
 import com.newpaper.somewhere.core.designsystem.component.button.SignInWithButton
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
@@ -69,6 +71,7 @@ fun SignInRoute(
 
     updateUserData: (userData: UserData) -> Unit,
     navigateToMain: () -> Unit,
+    navigateUp: () -> Unit,
 
     signInViewModel: SignInViewModel = hiltViewModel(),
 ) {
@@ -78,6 +81,10 @@ fun SignInRoute(
     val signInUiState by signInViewModel.signInUiState.collectAsStateWithLifecycle()
     val isSigningIn = signInUiState.isSigningIn
     val signInButtonEnabled = signInUiState.signInButtonEnabled
+
+    BackHandler {
+        navigateUp()
+    }
 
     //snackbar
     val snackBarHostState = remember { SnackbarHostState() }
@@ -189,6 +196,7 @@ fun SignInRoute(
             }
         },
         onClickPrivacyPolicy = { onClickPrivacyPolicy(uriHandler) },
+        onClickBack = navigateUp,
         setSignInButtonEnabled = signInViewModel::setSignInButtonEnabled,
         snackBarHostState = snackBarHostState
     )
@@ -207,13 +215,17 @@ private fun SignInScreen(
 
     onSignInClick: (providerId: ProviderId) -> Unit,
     onClickPrivacyPolicy: () -> Unit,
+    onClickBack: () -> Unit,
     setSignInButtonEnabled: (signInButtonEnabled: Boolean) -> Unit,
     snackBarHostState: SnackbarHostState,
 
     modifier: Modifier = Modifier
 ) {
     MyScaffold(
-        modifier = modifier.testTag("sign_in_screen"),
+        modifier = modifier
+            .statusBarsPadding()
+            .displayCutoutPadding()
+            .testTag("sign_in_screen"),
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarHostState,
@@ -228,33 +240,44 @@ private fun SignInScreen(
                 }
             )
         }
-    ) { _ ->
+    ) { paddingValues ->
 
-        //vertical
-        if (useVerticalLayout) {
-            SignInVertical(
-                isDarkAppTheme = isDarkAppTheme,
-                internetEnabled = internetEnabled,
-                appVersionName = appVersionName,
-                isSigningIn = isSigningIn,
-                signInButtonEnabled = signInButtonEnabled,
-                onSignInClick = onSignInClick,
-                onClickPrivacyPolicy = onClickPrivacyPolicy,
-                setSignInButtonEnabled = setSignInButtonEnabled
-            )
-        }
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
+            //vertical
+            if (useVerticalLayout) {
+                SignInVertical(
+                    isDarkAppTheme = isDarkAppTheme,
+                    internetEnabled = internetEnabled,
+                    appVersionName = appVersionName,
+                    isSigningIn = isSigningIn,
+                    signInButtonEnabled = signInButtonEnabled,
+                    onSignInClick = onSignInClick,
+                    onClickPrivacyPolicy = onClickPrivacyPolicy,
+                    setSignInButtonEnabled = setSignInButtonEnabled
+                )
+            }
 
-        //horizontal
-        else {
-            SignInHorizontal(
-                isDarkAppTheme = isDarkAppTheme,
-                internetEnabled = internetEnabled,
-                appVersionName = appVersionName,
-                isSigningIn = isSigningIn,
-                signInButtonEnabled = signInButtonEnabled,
-                onSignInClick = onSignInClick,
-                onClickPrivacyPolicy = onClickPrivacyPolicy,
-                setSignInButtonEnabled = setSignInButtonEnabled
+            //horizontal
+            else {
+                SignInHorizontal(
+                    isDarkAppTheme = isDarkAppTheme,
+                    internetEnabled = internetEnabled,
+                    appVersionName = appVersionName,
+                    isSigningIn = isSigningIn,
+                    signInButtonEnabled = signInButtonEnabled,
+                    onSignInClick = onSignInClick,
+                    onClickPrivacyPolicy = onClickPrivacyPolicy,
+                    setSignInButtonEnabled = setSignInButtonEnabled
+                )
+            }
+
+            CloseButton(
+                onClick = onClickBack,
+                modifier = Modifier.padding(16.dp)
             )
         }
     }
@@ -572,6 +595,7 @@ private fun SignInScreenPreview_Default(){
             signInButtonEnabled = true,
             onSignInClick = {},
             onClickPrivacyPolicy = {},
+            onClickBack = {},
             setSignInButtonEnabled = {},
             snackBarHostState = SnackbarHostState()
         )
@@ -591,6 +615,7 @@ private fun SignInScreenPreview_NoInternet(){
             signInButtonEnabled = true,
             onSignInClick = {},
             onClickPrivacyPolicy = {},
+            onClickBack = {},
             setSignInButtonEnabled = {},
             snackBarHostState = SnackbarHostState()
         )
@@ -610,6 +635,7 @@ private fun SignInScreenPreview_SigningIn(){
             signInButtonEnabled = false,
             onSignInClick = {},
             onClickPrivacyPolicy = {},
+            onClickBack = {},
             setSignInButtonEnabled = {},
             snackBarHostState = SnackbarHostState()
         )

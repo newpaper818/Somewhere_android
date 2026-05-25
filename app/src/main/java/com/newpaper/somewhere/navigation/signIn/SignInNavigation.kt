@@ -28,7 +28,8 @@ fun NavGraphBuilder.signInScreen(
     externalState: ExternalState,
     isDarkAppTheme: Boolean,
 
-    navigateToMain: () -> Unit
+    navigateToMain: () -> Unit,
+    navigateUp: () -> Unit
 ){
     composable(
         route = ScreenDestination.SIGN_IN.route,
@@ -54,7 +55,8 @@ fun NavGraphBuilder.signInScreen(
             updateUserData = {userData ->
                 appViewModel.updateUserData(userData = userData)
             },
-            navigateToMain = navigateToMain
+            navigateToMain = navigateToMain,
+            navigateUp = navigateUp
         )
     }
 }

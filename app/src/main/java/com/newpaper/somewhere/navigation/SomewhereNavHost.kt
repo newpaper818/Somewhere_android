@@ -258,7 +258,8 @@ fun SomewhereNavHost(
                             launchSingleTop = true
                         }
                     )
-                }
+                },
+                navigateUp = navigateUp
             )
 
 
