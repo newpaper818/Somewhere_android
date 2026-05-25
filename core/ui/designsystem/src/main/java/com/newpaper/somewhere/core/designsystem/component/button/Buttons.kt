@@ -7,15 +7,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RippleConfiguration
@@ -26,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -40,12 +44,14 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.newpaper.smooth_corner.SmoothRoundedCornerShape
+import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.IconTextButtonIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
+import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.designsystem.R
 import com.newpaper.somewhere.core.utils.enterVerticallyScaleIn
@@ -452,6 +458,36 @@ fun ShareButton(
 
 
 
+
+
+@Composable
+fun CloseButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    val close = stringResource(id = R.string.close)
+
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        MyPlainTooltipBox(
+            tooltipText = close,
+            modifier = modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.8f))
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                IconButton(onClick = onClick) {
+                    DisplayIcon(icon = TopAppBarIcon.close)
+                }
+            }
+        }
+    }
+}
 
 
 @Composable
