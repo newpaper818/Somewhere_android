@@ -196,7 +196,7 @@ fun SignInRoute(
             }
         },
         onClickPrivacyPolicy = { onClickPrivacyPolicy(uriHandler) },
-        onClickBack = navigateUp,
+        onClickClose = navigateUp,
         setSignInButtonEnabled = signInViewModel::setSignInButtonEnabled,
         snackBarHostState = snackBarHostState
     )
@@ -215,7 +215,7 @@ private fun SignInScreen(
 
     onSignInClick: (providerId: ProviderId) -> Unit,
     onClickPrivacyPolicy: () -> Unit,
-    onClickBack: () -> Unit,
+    onClickClose: () -> Unit,
     setSignInButtonEnabled: (signInButtonEnabled: Boolean) -> Unit,
     snackBarHostState: SnackbarHostState,
 
@@ -276,7 +276,7 @@ private fun SignInScreen(
             }
 
             CloseButton(
-                onClick = onClickBack,
+                onClick = onClickClose,
                 modifier = Modifier.padding(16.dp)
             )
         }
@@ -595,7 +595,7 @@ private fun SignInScreenPreview_Default(){
             signInButtonEnabled = true,
             onSignInClick = {},
             onClickPrivacyPolicy = {},
-            onClickBack = {},
+            onClickClose = {},
             setSignInButtonEnabled = {},
             snackBarHostState = SnackbarHostState()
         )
@@ -615,7 +615,7 @@ private fun SignInScreenPreview_NoInternet(){
             signInButtonEnabled = true,
             onSignInClick = {},
             onClickPrivacyPolicy = {},
-            onClickBack = {},
+            onClickClose = {},
             setSignInButtonEnabled = {},
             snackBarHostState = SnackbarHostState()
         )
@@ -635,7 +635,7 @@ private fun SignInScreenPreview_SigningIn(){
             signInButtonEnabled = false,
             onSignInClick = {},
             onClickPrivacyPolicy = {},
-            onClickBack = {},
+            onClickClose = {},
             setSignInButtonEnabled = {},
             snackBarHostState = SnackbarHostState()
         )
