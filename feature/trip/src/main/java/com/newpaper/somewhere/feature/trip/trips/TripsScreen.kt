@@ -693,7 +693,10 @@ private fun TripsScreen(
                         Box(
                             contentAlignment = Alignment.Center
                         ) {
-                            NoTripCard(!loadingTrips || !firstLaunch)
+                            NoTripCard(
+                                isGuestMode = appUserData.isGuest,
+                                shown = !loadingTrips || !firstLaunch
+                            )
                         }
                     }
                 }
@@ -701,7 +704,15 @@ private fun TripsScreen(
                 //sign in button when guest mode
                 if (!loadingTrips) {
                     item {
-                        MySpacerColumn(16.dp)
+                        MySpacerColumn(24.dp)
+
+                        Text(
+                            text = stringResource(id = R.string.sign_in_and_plan_next_trip),
+                            style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                            textAlign = TextAlign.Center
+                        )
+
+                        MySpacerColumn(12.dp)
 
                         SignInButton(
                             onClick = navigate::navigateToSignIn

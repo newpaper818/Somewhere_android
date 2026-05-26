@@ -159,6 +159,8 @@
     <string name="dialog_button_delete">Delete</string>
 
     <string name="no_trip">No Trip…\nLet\'s create a new trip!</string>
+    <string name="guest_no_trip">No Trip…</string>
+    <string name="sign_in_and_plan_next_trip">Sign in and plan your next trip!</string>
 
     <string name="delete">delete</string>
 

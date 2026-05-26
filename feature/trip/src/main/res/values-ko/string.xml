@@ -159,6 +159,8 @@
     <string name="dialog_button_delete">삭제</string>
 
     <string name="no_trip">여행이 없어요…\n새 여행을 추가해 보세요!</string>
+    <string name="guest_no_trip">여행이 없어요…</string>
+    <string name="sign_in_and_plan_next_trip">로그인하고 다음 여행을 계획해 보세요!</string>
 
     <string name="delete">삭제</string>
 
