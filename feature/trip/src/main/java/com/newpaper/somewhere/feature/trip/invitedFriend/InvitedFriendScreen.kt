@@ -362,7 +362,7 @@ private fun InvitedFriendsScreen(
                                 isLoading = loading,
                                 appUserData = appUserData,
                                 isManager = appUserIsTripManager,
-                                internetEnabled = internetEnabled,
+                                internetEnabled = if (appUserData.isGuest) false else internetEnabled,
                                 downloadImage = downloadImage,
                                 onClickGetOut = {
                                     setShowGetOutSharedTripDialog(true)
