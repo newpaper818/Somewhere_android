@@ -8,6 +8,7 @@ import com.newpaper.somewhere.core.data.repository.PreferencesRepository
 import com.newpaper.somewhere.core.data.repository.more.SubscriptionRepository
 import com.newpaper.somewhere.core.data.repository.signIn.UserRepository
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
+import com.newpaper.somewhere.core.model.data.GUEST_USERDATA
 import com.newpaper.somewhere.core.model.data.Theme
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
@@ -174,7 +175,7 @@ class AppViewModel @Inject constructor(
             if (isCacheValid) {
                 Log.d("MainActivity1", "                              [2] initSignedInUser - using valid cache")
                 // Use cache and dismiss splash immediately
-                _appUiState.update { it.copy(appUserData = cachedUserData) }
+                _appUiState.update { it.copy(appUserData = cachedUserData ?: GUEST_USERDATA) }
                 onDone(false)
 
                 // Then update in background
@@ -191,13 +192,13 @@ class AppViewModel @Inject constructor(
                         onDone(false)
                     }
                     is RemoteFetchResult.SessionExpired -> {
-                        _appUiState.update { it.copy(appUserData = null) }
+                        _appUiState.update { it.copy(appUserData = GUEST_USERDATA) }
                         Log.d("MainActivity1", "                              [2] initSignedInUser - session expired")
                         onDone(true)
                     }
                     is RemoteFetchResult.Error -> {
                         // In case of error during initial fetch without cache, we might need to stay on sign-in or retry
-                        _appUiState.update { it.copy(appUserData = null) }
+                        _appUiState.update { it.copy(appUserData = GUEST_USERDATA) }
                         Log.d("MainActivity1", "                              [2] initSignedInUser - fetch error")
                         onDone(true)
                     }
@@ -242,7 +243,7 @@ class AppViewModel @Inject constructor(
                 userRepository.clearUserCache()
                 _appUiState.update {
                     it.copy(
-                        appUserData = null,
+                        appUserData = GUEST_USERDATA,
                         screenDestination = it.screenDestination.copy(
                             startScreenDestination = ScreenDestination.SIGN_IN
                         )
@@ -293,9 +294,7 @@ class AppViewModel @Inject constructor(
     fun updateCurrentScreenDestination(
         userDataIsNull: Boolean
     ){
-        val startScreenDestination =
-            if (userDataIsNull) ScreenDestination.SIGN_IN
-            else ScreenDestination.TRIPS
+        val startScreenDestination = ScreenDestination.TRIPS
 
         _appUiState.update {
             it.copy(
