@@ -215,7 +215,7 @@ fun TripRoute(
 
     TripScreen(
         isDarkAppTheme = isDarkAppTheme,
-        appUserId = appUserData.userId,
+        appUserData = appUserData,
         isUsingSomewherePro = appUserData.isUsingSomewherePro,
         tripUiInfo = TripUiInfo(
             use2Panes = use2Panes,
@@ -376,7 +376,7 @@ fun TripRoute(
 @Composable
 private fun TripScreen(
     isDarkAppTheme: Boolean,
-    appUserId: String,
+    appUserData: UserData,
     isUsingSomewherePro: Boolean,
     tripUiInfo: TripUiInfo,
     tripData: TripData,
@@ -529,7 +529,7 @@ private fun TripScreen(
 
                 actionIcon1 = TopAppBarIcon.edit,
                 actionIcon1Onclick = { tripUiInfo.setIsEditMode(true) },
-                actionIcon1Visible = !loadingTrip && !isEditMode && !use2Panes && showingTrip.editable,
+                actionIcon1Visible = !appUserData.isGuest && !loadingTrip && !isEditMode && !use2Panes && showingTrip.editable,
                 hazeState = topAppBarHazeState
             )
         },
@@ -708,7 +708,7 @@ private fun TripScreen(
                     ShareTripCards(
                         trip = showingTrip,
                         maxInviteFriends = getMaxInviteFriends(isUsingSomewherePro),
-                        userIsManager = appUserId == showingTrip.managerId,
+                        userIsManager = appUserData.userId == showingTrip.managerId,
                         internetEnabled = internetEnabled,
                         isEditMode = isEditMode,
                         onClickInvitedFriends = tripNavigate::navigateToInvitedFriends,
@@ -989,7 +989,7 @@ private fun TripScreen(
 
 
 
-                if (appUserId == tripData.originalTrip.managerId) {
+                if (appUserData.userId == tripData.originalTrip.managerId) {
                     item {
                         MySpacerColumn(height = 100.dp)
 
