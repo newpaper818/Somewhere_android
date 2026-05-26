@@ -131,7 +131,7 @@ fun NavGraphBuilder.moreScreen(
                     lazyListState = lazyListState,
                     navigateTo = {
                         if (it != appUiState.screenDestination.currentScreenDestination) {
-                            if (!externalState.windowSizeClass.use2Panes || it == ScreenDestination.SUBSCRIPTION)
+                            if (!externalState.windowSizeClass.use2Panes || it == ScreenDestination.SUBSCRIPTION || it == ScreenDestination.SIGN_IN)
                                 navigateTo(it)
                             else {
                                 moreNavController.navigate(
