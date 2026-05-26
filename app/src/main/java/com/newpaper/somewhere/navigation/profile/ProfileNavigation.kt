@@ -40,6 +40,7 @@ fun NavGraphBuilder.profileScreen(
     externalState: ExternalState,
 
     lazyListState: LazyListState,
+    navigateToSignIn: () -> Unit,
     navigateToAccount: () -> Unit,
     navigateToSubscription: () -> Unit,
     navigateUp: () -> Unit,
@@ -87,6 +88,7 @@ fun NavGraphBuilder.profileScreen(
                     lazyListState = lazyListState,
                     use2Panes = externalState.windowSizeClass.use2Panes,
                     userData = appUiState.appUserData!!,
+                    navigateToSignIn = navigateToSignIn,
                     navigateToAccount = navigateToAccount,
                     navigateToSubscription = navigateToSubscription,
 

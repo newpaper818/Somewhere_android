@@ -84,6 +84,17 @@ fun PrivacyPolicyButton(
 }
 
 @Composable
+fun SignInButton(
+    onClick: () -> Unit
+){
+    IconTextButton(
+        icon = IconTextButtonIcon.signIn,
+        text = stringResource(id = R.string.sign_in),
+        onClick = onClick
+    )
+}
+
+@Composable
 fun UpgradeToSomewhereProButton(
     onClick: () -> Unit,
 ){

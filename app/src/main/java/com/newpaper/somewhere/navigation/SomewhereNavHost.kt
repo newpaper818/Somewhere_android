@@ -317,6 +317,11 @@ fun SomewhereNavHost(
                 appViewModel = appViewModel,
                 externalState = externalState,
                 lazyListState = profileLazyListState,
+                navigateToSignIn = {
+                    mainNavController.navigateToSignIn(
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
+                },
                 navigateToAccount = {
                     if (externalState.windowSizeClass.use2Panes) {
                         appViewModel.updateMoreDetailCurrentScreenDestination(ScreenDestination.ACCOUNT)
