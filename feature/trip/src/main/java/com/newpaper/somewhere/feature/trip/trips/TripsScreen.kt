@@ -44,6 +44,7 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.button.NewTripExtendedFAB
+import com.newpaper.somewhere.core.designsystem.component.button.SignInButton
 import com.newpaper.somewhere.core.designsystem.component.button.UpgradeToSomewhereProButton
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
@@ -99,6 +100,7 @@ fun TripsRoute(
 
     lazyListState: LazyListState,
 
+    navigateToSignIn: () -> Unit,
     navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
     navigateToTripAi: () -> Unit,
     navigateToGlanceSpot: (glanceSpot: GlanceSpot) -> Unit,
@@ -314,6 +316,7 @@ fun TripsRoute(
         ),
         navigate = TripsNavigate(
             _onClickBackButton = onClickBackButton,
+            _navigateToSignIn = navigateToSignIn,
             _navigateToTrip = { isNewTrip, trip ->
                 if (isNewTrip && trip == null) {
                     val newTrip = tripsViewModel.addAndGetNewTrip(appUserData.userId)
@@ -693,10 +696,19 @@ private fun TripsScreen(
                         }
                     }
                 }
+
+                //sign in button when guest mode
+                if (!loadingTrips) {
+                    item {
+                        SignInButton(
+                            onClick = navigate::navigateToSignIn
+                        )
+                    }
+                }
             }
 
             LoadingTripsItem(
-                shown = loadingTrips && firstLaunch,
+                shown = loadingTrips && firstLaunch && !appUserData.isGuest,
                 showAds = adView != null,
                 use2Panes = tripsUiInfo.use2Panes,
                 modifier = Modifier

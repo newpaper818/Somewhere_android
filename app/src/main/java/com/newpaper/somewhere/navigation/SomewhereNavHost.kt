@@ -271,6 +271,11 @@ fun SomewhereNavHost(
                 tripsViewModel = tripsViewModel,
                 externalState = externalState,
                 lazyListState = tripsLazyListState,
+                navigateToSignIn = {
+                    mainNavController.navigateToSignIn(
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
+                },
                 navigateToTrip = { isNewTrip, trip ->
                     commonTripViewModel.setTrip(trip)
                     commonTripViewModel.setIsEditMode(isNewTrip)
