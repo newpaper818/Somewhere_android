@@ -630,7 +630,7 @@ private fun TripsScreen(
                             showDeleteIcon = isEditMode,
                             firstLaunch = firstLaunch,
                             onClick = if (!isEditMode) { {
-                                    tripsUiInfo.setIsLoadingTrips(true)
+                                    if (!appUserData.isGuest) tripsUiInfo.setIsLoadingTrips(true)
                                     navigate.navigateToTrip(false, trip)
                                 } }
                                 else null,
@@ -674,7 +674,7 @@ private fun TripsScreen(
                             showDeleteIcon = isEditMode,
                             firstLaunch = firstLaunch,
                             onClick = if (!isEditMode) { {
-                                    tripsUiInfo.setIsLoadingTrips(true)
+                                    if (!appUserData.isGuest) tripsUiInfo.setIsLoadingTrips(true)
                                     navigate.navigateToTrip(false, sharedTrip)
                                 } }
                                 else null,

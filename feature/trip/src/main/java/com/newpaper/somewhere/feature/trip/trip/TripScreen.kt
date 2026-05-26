@@ -157,27 +157,29 @@ fun TripRoute(
     //or change theme mode(light/dark)
     //or rotate screen
     LaunchedEffect(Unit){
-        if (!isNewTrip) {
-            if (!isEditMode) {
-                coroutineScope.launch(Dispatchers.IO) {
-                    //get trip data from remote (firestore)
-                    commonTripViewModel.updateTrip(
-                        internetEnabled = internetEnabled,
-                        appUserId = appUserData.userId,
-                        tripWithEmptyDateList = originalTrip
-                    )
-                    delay(150)
-                    tripViewModel.setLoadingTrip(false)
+        if (!appUserData.isGuest) {
+            if (!isNewTrip) {
+                if (!isEditMode) {
+                    coroutineScope.launch(Dispatchers.IO) {
+                        //get trip data from remote (firestore)
+                        commonTripViewModel.updateTrip(
+                            internetEnabled = internetEnabled,
+                            appUserId = appUserData.userId,
+                            tripWithEmptyDateList = originalTrip
+                        )
+                        delay(150)
+                        tripViewModel.setLoadingTrip(false)
+                    }
+                } else {
                 }
             }
-            else { }
-        }
-        //user create new trip
-        else {
-            tripViewModel.setLoadingTrip(false)
+            //user create new trip
+            else {
+                tripViewModel.setLoadingTrip(false)
 
-            if (tempTrip.dateList.isEmpty())
-                tripViewModel.setShowDateRangeDialog(true)
+                if (tempTrip.dateList.isEmpty())
+                    tripViewModel.setShowDateRangeDialog(true)
+            }
         }
     }
 
