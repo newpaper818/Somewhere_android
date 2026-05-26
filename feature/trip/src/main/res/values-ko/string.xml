@@ -151,6 +151,7 @@
 
     <string name="maximum_number_of_trips_reached">여행 개수 한도에 도달했어요</string>
     <string name="my_trips">내 여행</string>
+    <string name="sample_trips">샘플 여행</string>
     <string name="shared_trips">공유받은 여행</string>
 
     <string name="dialog_body_are_you_sure_to_exit">정말로 나갈까요?\n저장하지 않은 데이터는 삭제돼요.</string>

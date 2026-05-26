@@ -599,7 +599,8 @@ private fun TripsScreen(
                     if (showingTrips.isNotEmpty()) {
                         item {
                             Text(
-                                text = stringResource(id = R.string.my_trips),
+                                text = if (appUserData.isGuest) stringResource(R.string.sample_trips)
+                                        else stringResource(id = R.string.my_trips),
                                 style = MaterialTheme.typography.labelMedium.copy(
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -700,6 +701,8 @@ private fun TripsScreen(
                 //sign in button when guest mode
                 if (!loadingTrips) {
                     item {
+                        MySpacerColumn(16.dp)
+
                         SignInButton(
                             onClick = navigate::navigateToSignIn
                         )

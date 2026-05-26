@@ -151,6 +151,7 @@
 
     <string name="maximum_number_of_trips_reached">Maximum trips reached</string>
     <string name="my_trips">My trips</string>
+    <string name="sample_trips">Sample trips</string>
     <string name="shared_trips">Shared trips</string>
 
     <string name="dialog_body_are_you_sure_to_exit">Are you sure to exit?\nUnsaved data will be delete.</string>

@@ -31,7 +31,7 @@ internal fun NoTripCard(
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp, 50.dp, 16.dp, 16.dp)
+                .padding(16.dp, 54.dp, 16.dp, 16.dp)
                 .testTag("no_trips"),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
