@@ -396,7 +396,7 @@ private fun TripsScreen(
 
                 actionIcon1 = TopAppBarIcon.edit,
                 actionIcon1Onclick = { tripsUiInfo.setIsEditMode(true) },
-                actionIcon1Visible = !isEditMode && !loadingTrips && !tripsIsEmpty,
+                actionIcon1Visible = !appUserData.isGuest && !isEditMode && !loadingTrips && !tripsIsEmpty,
                 startPadding = spacerValue,
                 hazeState = hazeState
             )
