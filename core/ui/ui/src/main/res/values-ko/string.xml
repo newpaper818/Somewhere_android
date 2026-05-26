@@ -13,6 +13,7 @@
 
     <!-- UserProfileCard.kt -->
     <string name="user_info">사용자 정보</string>
+    <string name="guest_user">게스트 사용자</string>
     <string name="no_name">이름 없음</string>
     <string name="no_email">이메일 없음</string>
     <string name="connected_with">연결된 계정</string>

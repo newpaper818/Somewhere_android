@@ -81,7 +81,9 @@ fun UserProfileCard(
 
             Column {
                 //user name
-                val nameText = userData.userName ?: stringResource(id = R.string.no_name)
+                val nameText =
+                    if (userData.isGuest) stringResource(R.string.guest_user)
+                    else userData.userName ?: stringResource(id = R.string.no_name)
 
                 val textStyle = if (userData.userName != null) MaterialTheme.typography.bodyLarge
                                 else MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
