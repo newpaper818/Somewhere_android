@@ -164,7 +164,7 @@
 
     <string name="delete">delete</string>
 
-    <!--TripsMockData-->
+    <!--TripsMockData - jeju-->
     <string name="mock_trip_title">Jeju Island Healing Trip</string>
     <string name="mock_trip_day1_title">Jeju Arrival &amp; Aewol</string>
     <string name="mock_trip_jeju_airport">Jeju International Airport</string>
@@ -195,6 +195,79 @@
     <string name="mock_trip_day5_title">Heading Home</string>
     <string name="mock_trip_day5_spot1_title">Jeju Souvenir Shop</string>
     <string name="mock_trip_day5_spot2_title">Lunch: Haejangguk near Airport</string>
+
+    <!--TripsMockData - New York Detailed-->
+    <string name="mock_trip_ny_title">New York Trip</string>
+    <string name="mock_trip_ny_memo">NY Toilet Map: https://maps.app.goo.gl/RN8K4EhyuA11DZpZ9</string>
+
+    <string name="mock_trip_ny_day1_title">DAY 1 - to NY</string>
+    <string name="mock_trip_ny_day2_title">DAY 2 - Statue of Liberty &amp; DOWNTOWN</string>
+    <string name="mock_trip_ny_day3_title">DAY 3 - MIDTOWN</string>
+    <string name="mock_trip_ny_day4_title">DAY 4 - Niagara Falls</string>
+    <string name="mock_trip_ny_day5_title">DAY 5 - DOWNTOWN &amp; CHELSEA</string>
+    <string name="mock_trip_ny_day6_title">DAY 6 - UP/MIDTOWN</string>
+    <string name="mock_trip_ny_day7_title">DAY 7 - MIDTOWN</string>
+    <string name="mock_trip_ny_day8_title">DAY 8 - Brooklyn</string>
+    <string name="mock_trip_ny_day9_title">DAY 9 - UP/MIDTOWN</string>
+    <string name="mock_trip_ny_day10_title">DAY 10 - Last Day</string>
+    <string name="mock_trip_ny_day11_title">DAY 11</string>
+    <string name="mock_trip_ny_day12_title">DAY 12</string>
+
+    <string name="mock_trip_ny_icn_airport">Incheon Intl Airport T1</string>
+    <string name="mock_trip_ny_ewr_airport">Newark Liberty Intl Airport TB</string>
+    <string name="mock_trip_ny_hotel">Hotel</string>
+    <string name="mock_trip_ny_breakfast_hotel">Breakfast at Hotel</string>
+    <string name="mock_trip_ny_departure">Departure</string>
+    <string name="mock_trip_ny_battery_park">Battery Park terminal</string>
+    <string name="mock_trip_ny_statue_of_liberty">Statue of Liberty (Ferry)</string>
+    <string name="mock_trip_ny_wall_street_bull">Wall Street Bull</string>
+    <string name="mock_trip_ny_fast_food">Fast Food</string>
+    <string name="mock_trip_ny_ground_zero">Ground Zero</string>
+    <string name="mock_trip_ny_camera_shop">Camera Shop</string>
+    <string name="mock_trip_ny_dessert_shop">Dessert Shop</string>
+    <string name="mock_trip_ny_chinatown">Chinatown</string>
+    <string name="mock_trip_ny_restaurant">Restaurant</string>
+    <string name="mock_trip_ny_museum_met">The Metropolitan Museum of Art</string>
+    <string name="mock_trip_ny_museum_food">Museum Restaurant</string>
+    <string name="mock_trip_ny_trump_tower">Trump Tower</string>
+    <string name="mock_trip_ny_top_of_the_rock">Top of the Rock</string>
+    <string name="mock_trip_ny_times_square">Times Square</string>
+    <string name="mock_trip_ny_subway_station">Subway Station</string>
+    <string name="mock_trip_ny_niagara_falls">Niagara Falls</string>
+    <string name="mock_trip_ny_meeting_point">Meeting Point</string>
+    <string name="mock_trip_ny_observation_deck">Observation Deck</string>
+    <string name="mock_trip_ny_flatiron_building">Flatiron Building</string>
+    <string name="mock_trip_ny_bus_tour">Bus Tour Stop</string>
+    <string name="mock_trip_ny_high_line">The High Line</string>
+    <string name="mock_trip_ny_little_island">Little Island</string>
+    <string name="mock_trip_ny_chelsea_market">Chelsea Market</string>
+    <string name="mock_trip_ny_museum_guggenheim">Guggenheim Museum</string>
+    <string name="mock_trip_ny_central_park">Central Park</string>
+    <string name="mock_trip_ny_edge">Edge Observation Deck</string>
+    <string name="mock_trip_ny_electronics_store">Electronics Store</string>
+    <string name="mock_trip_ny_korean_restaurant">Korean Restaurant</string>
+    <string name="mock_trip_ny_public_library">New York Public Library</string>
+    <string name="mock_trip_ny_bryant_park">Bryant Park</string>
+    <string name="mock_trip_ny_shoe_store">Shoe Store</string>
+    <string name="mock_trip_ny_empire_state">Empire State Building</string>
+    <string name="mock_trip_ny_grand_central">Grand Central Terminal</string>
+    <string name="mock_trip_ny_dumbo">Dumbo Brooklyn Bridge</string>
+    <string name="mock_trip_ny_music_store">Music Store</string>
+    <string name="mock_trip_ny_cafe">Cafe</string>
+    <string name="mock_trip_ny_domino_park">Domino Park</string>
+    <string name="mock_trip_ny_steak_house">Steak House</string>
+    <string name="mock_trip_ny_museum_natural_history">American Museum of Natural History</string>
+    <string name="mock_trip_ny_macys">Macy\'s</string>
+    <string name="mock_trip_ny_gantry_park">Gantry Plaza State Park</string>
+    <string name="mock_trip_ny_museum_moma">Museum of Modern Art (MoMA)</string>
+    <string name="mock_trip_ny_washington_sq_park">Washington Square Park</string>
+    <string name="mock_trip_ny_soho">Soho</string>
+    <string name="mock_trip_ny_airport_express">Airport Express Bus</string>
+    <string name="mock_trip_ny_flight_icn_ewr">ICN - EWR / YP131</string>
+    <string name="mock_trip_ny_airport_departure">Airport Departure</string>
+    <string name="mock_trip_ny_taxi">Taxi</string>
+    <string name="mock_trip_ny_subway">Subway</string>
+    <string name="mock_trip_ny_food">Food</string>
 
 
 </resources>

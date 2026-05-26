@@ -185,7 +185,7 @@ class TripsViewModel @Inject constructor(
         val now = LocalDate.now()
         val nowDateTime = ZonedDateTime.now(ZoneOffset.UTC)
 
-        val myTripsGroup = classifyAndConvertToTripsGroup(listOf(TripsMockData.getMockTrip(context)))
+        val myTripsGroup = classifyAndConvertToTripsGroup(TripsMockData.getMockTrips(context))
 
         commonTripUiStateRepository._commonTripUiState.update {
             it.copy(
