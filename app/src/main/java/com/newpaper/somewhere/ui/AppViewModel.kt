@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.billingclient.api.PurchasesUpdatedListener
 import com.newpaper.somewhere.core.data.repository.PreferencesRepository
+import com.newpaper.somewhere.core.data.repository.image.CommonImageRepository
 import com.newpaper.somewhere.core.data.repository.more.SubscriptionRepository
 import com.newpaper.somewhere.core.data.repository.signIn.UserRepository
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
@@ -61,7 +62,8 @@ sealed class RemoteFetchResult {
 class AppViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val userRepository: UserRepository,
-    private val subscriptionRepository: SubscriptionRepository
+    private val subscriptionRepository: SubscriptionRepository,
+    private val commonImageRepository: CommonImageRepository
 ): ViewModel() {
     private val _appUiState = MutableStateFlow(AppUiState())
     val appUiState = _appUiState.asStateFlow()
@@ -397,5 +399,11 @@ class AppViewModel @Inject constructor(
                 userRepository.clearUserCache()
             }
         }
+    }
+
+
+    //
+    fun deleteAllLocalImages(){
+        commonImageRepository.deleteAllImagesFromInternalStorage()
     }
 }

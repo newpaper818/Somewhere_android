@@ -173,6 +173,7 @@ fun SomewhereNavHost(
             }
         )
         appViewModel.updateCurrentTopLevelDestination(TopLevelDestination.TRIPS)
+        appViewModel.deleteAllLocalImages()
     }
 
     // Handle auto logout when session expired in background

@@ -100,7 +100,6 @@ fun SignInRoute(
 
     LaunchedEffect(Unit) {
         signInViewModel.setIsSigningIn(false)
-        signInViewModel.deleteAllLocalImages()
     }
 
     //set signInButtonEnabled
