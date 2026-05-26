@@ -212,6 +212,7 @@ private fun MoreScreen(
 
                     GoogleMediumRectangleAd(
                         adView = adView,
+                        showRemoveAdsButton = !(appUserData?.isGuest ?: true),
                         onClickRemoveAds = {
                             navigateTo(ScreenDestination.SUBSCRIPTION)
                         }

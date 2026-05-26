@@ -171,6 +171,7 @@ fun ProfileScreen(
 
                     GoogleMediumRectangleAd(
                         adView = adView,
+                        showRemoveAdsButton = !userData.isGuest,
                         onClickRemoveAds = onClickRemoveAds
                     )
                 }
