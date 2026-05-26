@@ -408,7 +408,7 @@ private fun TripsScreen(
         //fab
         floatingActionButton = {
             NewTripExtendedFAB(
-                visible = !loadingTrips && !isEditMode
+                visible = !appUserData.isGuest && !loadingTrips && !isEditMode
                         && showingTrips.size < getMaxTrips(appUserData.isUsingSomewherePro),
                 onClick = {
                     //to trip creation options dialog
