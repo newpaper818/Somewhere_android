@@ -43,7 +43,6 @@ fun NavGraphBuilder.signInScreen(
     ) {
         LaunchedEffect(Unit) {
             appViewModel.updateCurrentScreenDestination(ScreenDestination.SIGN_IN)
-            appViewModel.initAppUiState()
         }
 
         SignInRoute(

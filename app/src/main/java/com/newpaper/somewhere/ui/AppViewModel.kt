@@ -110,18 +110,6 @@ class AppViewModel @Inject constructor(
 
 
 
-    //==============================================================================================
-    //at sign in screen ============================================================================
-    fun initAppUiState(
-
-    ){
-        _appUiState.update {
-            it.copy(
-                appUserData = null,
-                firstLaunch = true
-            )
-        }
-    }
 
 
 
