@@ -161,4 +161,37 @@
 
     <string name="delete">delete</string>
 
+    <!--TripsMockData-->
+    <string name="mock_trip_title">Jeju Island Healing Trip</string>
+    <string name="mock_trip_day1_title">Jeju Arrival &amp; Aewol</string>
+    <string name="mock_trip_jeju_airport">Jeju International Airport</string>
+    <string name="mock_trip_day1_spot2_title">Lunch: Meat Noodle Restaurant</string>
+    <string name="mock_trip_day1_spot3_title">Aewol Handam Coastal Trail</string>
+    <string name="mock_trip_day1_spot4_title">Aewol Cafe Street</string>
+    <string name="mock_trip_day1_spot5_title">Aewol Accommodation Check-in</string>
+    <string name="mock_trip_day1_spot6_title">Dinner: Aewol Seafood Course</string>
+    <string name="mock_trip_day2_title">West Coast Tour</string>
+    <string name="mock_trip_day2_spot1_title">Osulloc Tea Museum</string>
+    <string name="mock_trip_day2_spot2_title">Lunch: Local Pasta</string>
+    <string name="mock_trip_day2_spot3_title">Camellia Hill</string>
+    <string name="mock_trip_day2_spot4_title">Dinner: Jeju Black Pork BBQ</string>
+    <string name="mock_trip_day2_spot5_title">Seogwipo Accommodation</string>
+    <string name="mock_trip_day3_title">Hallasan &amp; Southern Area</string>
+    <string name="mock_trip_day3_spot1_title">Hallasan Yeongsil Trail</string>
+    <string name="mock_trip_day3_spot2_title">Lunch: Sea Urchin Kalguksu after Hiking</string>
+    <string name="mock_trip_day3_spot3_title">Seogwipo Maeil Olle Market</string>
+    <string name="mock_trip_day3_spot4_title">Cheonjiyeon Waterfall</string>
+    <string name="mock_trip_day3_spot5_title">Dinner: Sashimi Restaurant near Market</string>
+    <string name="mock_trip_day4_title">East Coast Tour</string>
+    <string name="mock_trip_day4_spot1_title">Seongsan Ilchulbong</string>
+    <string name="mock_trip_day4_spot2_title">Seopjikoji</string>
+    <string name="mock_trip_day4_spot3_title">Lunch: Abalone Porridge Course</string>
+    <string name="mock_trip_day4_spot4_title">Hamdeok Beach</string>
+    <string name="mock_trip_day4_spot5_title">Jeju City Hotel Check-in</string>
+    <string name="mock_trip_day4_spot6_title">Dinner: Jeju Braised Cutlassfish</string>
+    <string name="mock_trip_day5_title">Heading Home</string>
+    <string name="mock_trip_day5_spot1_title">Jeju Souvenir Shop</string>
+    <string name="mock_trip_day5_spot2_title">Lunch: Haejangguk near Airport</string>
+
+
 </resources>

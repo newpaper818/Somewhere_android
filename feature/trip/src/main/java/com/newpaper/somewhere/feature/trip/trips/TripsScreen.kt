@@ -158,7 +158,16 @@ fun TripsRoute(
 
     //get trips
     LaunchedEffect(Unit) {
-        if (!isEditMode) {
+        if (appUserData.isGuest){
+            if (myTripsGroup.all.isEmpty()) {
+                tripsViewModel.setLoadingTrips(true)
+
+                //update trips
+                tripsViewModel.updateMockTrips()
+                tripsViewModel.setLoadingTrips(false)
+            }
+        }
+        else if (!isEditMode) {
             tripsViewModel.setLoadingTrips(true)
 
             //update trips

@@ -161,4 +161,37 @@
 
     <string name="delete">삭제</string>
 
+    <!--TripsMockData-->
+    <string name="mock_trip_title">제주도 힐링 여행</string>
+    <string name="mock_trip_day1_title">제주 도착 &amp; 애월</string>
+    <string name="mock_trip_jeju_airport">제주 국제공항</string>
+    <string name="mock_trip_day1_spot2_title">점심: 고기국수 맛집</string>
+    <string name="mock_trip_day1_spot3_title">애월 한담해안산책로</string>
+    <string name="mock_trip_day1_spot4_title">애월 카페거리</string>
+    <string name="mock_trip_day1_spot5_title">애월 숙소 체크인</string>
+    <string name="mock_trip_day1_spot6_title">저녁: 애월 해산물 정식</string>
+    <string name="mock_trip_day2_title">서쪽 투어</string>
+    <string name="mock_trip_day2_spot1_title">오설록 티 뮤지엄</string>
+    <string name="mock_trip_day2_spot2_title">점심: 로컬 파스타</string>
+    <string name="mock_trip_day2_spot3_title">카멜리아 힐</string>
+    <string name="mock_trip_day2_spot4_title">저녁: 제주 흑돼지 구이</string>
+    <string name="mock_trip_day2_spot5_title">서귀포 숙소</string>
+    <string name="mock_trip_day3_title">한라산 &amp; 남부</string>
+    <string name="mock_trip_day3_spot1_title">한라산 영실코스</string>
+    <string name="mock_trip_day3_spot2_title">점심: 하산 후 성게칼국수</string>
+    <string name="mock_trip_day3_spot3_title">서귀포 매일 올레시장</string>
+    <string name="mock_trip_day3_spot4_title">천지연 폭포</string>
+    <string name="mock_trip_day3_spot5_title">저녁: 시장 근처 횟집</string>
+    <string name="mock_trip_day4_title">동쪽 투어</string>
+    <string name="mock_trip_day4_spot1_title">성산 일출봉</string>
+    <string name="mock_trip_day4_spot2_title">섭지코지</string>
+    <string name="mock_trip_day4_spot3_title">점심: 전복죽 정식</string>
+    <string name="mock_trip_day4_spot4_title">함덕 해수욕장</string>
+    <string name="mock_trip_day4_spot5_title">제주시 호텔 체크인</string>
+    <string name="mock_trip_day4_spot6_title">저녁: 제주 갈치조림</string>
+    <string name="mock_trip_day5_title">귀가</string>
+    <string name="mock_trip_day5_spot1_title">제주 기념품샵</string>
+    <string name="mock_trip_day5_spot2_title">점심: 공항 근처 해장국</string>
+
+
 </resources>
