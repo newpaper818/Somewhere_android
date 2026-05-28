@@ -24,6 +24,7 @@ fun NavController.navigateToSignIn(navOptions: NavOptions? = null) =
     navigate(ScreenDestination.SIGN_IN.route, navOptions)
 
 fun NavGraphBuilder.signInScreen(
+    navController: NavController,
     appViewModel: AppViewModel,
     externalState: ExternalState,
     isDarkAppTheme: Boolean,
@@ -41,6 +42,8 @@ fun NavGraphBuilder.signInScreen(
         popEnterTransition = { popEnterTransitionVertical },
         popExitTransition = { popExitTransitionVertical }
     ) {
+        val backHandlerEnabled = navController.previousBackStackEntry != null
+
         LaunchedEffect(Unit) {
             appViewModel.updateCurrentScreenDestination(ScreenDestination.SIGN_IN)
         }
@@ -51,6 +54,7 @@ fun NavGraphBuilder.signInScreen(
             useVerticalLayout = externalState.windowSizeClass.isVertical
                     || externalState.windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact,
             appVersionName = BuildConfig.VERSION_NAME,
+            backHandlerEnabled = backHandlerEnabled,
             updateUserData = {userData ->
                 appViewModel.updateUserData(userData = userData)
             },

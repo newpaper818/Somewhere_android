@@ -68,6 +68,7 @@ fun SignInRoute(
     internetEnabled: Boolean,
     useVerticalLayout: Boolean,
     appVersionName: String,
+    backHandlerEnabled: Boolean,
 
     updateUserData: (userData: UserData) -> Unit,
     navigateToMain: () -> Unit,
@@ -82,7 +83,7 @@ fun SignInRoute(
     val isSigningIn = signInUiState.isSigningIn
     val signInButtonEnabled = signInUiState.signInButtonEnabled
 
-    BackHandler {
+    BackHandler(enabled = backHandlerEnabled) {
         navigateUp()
     }
 

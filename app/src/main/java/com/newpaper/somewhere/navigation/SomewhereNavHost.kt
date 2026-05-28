@@ -249,7 +249,21 @@ fun SomewhereNavHost(
 
 
             //signIn ===============================================================================
+            val signInNavigateUp: () -> Unit = {
+                if (mainNavController.previousBackStackEntry != null) {
+                    mainNavController.navigateUp()
+                } else {
+                    mainNavController.navigate(
+                        route = ScreenDestination.TRIPS.route,
+                        navOptions = navOptions {
+                            popUpTo(0) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    )
+                }
+            }
             signInScreen(
+                navController = mainNavController,
                 appViewModel = appViewModel,
                 externalState = externalState,
                 isDarkAppTheme = isDarkAppTheme,
@@ -262,7 +276,7 @@ fun SomewhereNavHost(
                         }
                     )
                 },
-                navigateUp = navigateUp
+                navigateUp = signInNavigateUp
             )
 
 
