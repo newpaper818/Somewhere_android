@@ -7,6 +7,7 @@ import com.newpaper.somewhere.core.model.enums.SpotType
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
+import com.newpaper.somewhere.core.designsystem.theme.dateColorList
 import com.newpaper.somewhere.feature.trip.R
 import java.time.LocalDate
 import java.time.LocalTime
@@ -21,6 +22,7 @@ object TripsMockData {
         val jejuStartDate = LocalDate.now()
         val jejuDay1 = Date(
             id = 1, index = 0, date = jejuStartDate,
+            color = dateColorList[0],
             titleText = context.getString(R.string.mock_trip_day1_title),
             spotList = listOf(
                 Spot(id = 101, index = 0, iconText = 1, date = jejuStartDate, spotType = SpotType.AIRPORT, titleText = context.getString(R.string.mock_trip_jeju_airport), startTime = LocalTime.of(10, 0), endTime = LocalTime.of(11, 0), budget = 0.0, location = LatLng(33.5113, 126.4930)),
@@ -33,6 +35,7 @@ object TripsMockData {
         )
         val jejuDay2 = Date(
             id = 2, index = 1, date = jejuStartDate.plusDays(1),
+            color = dateColorList[1],
             titleText = context.getString(R.string.mock_trip_day2_title),
             spotList = listOf(
                 Spot(id = 201, index = 0, iconText = 1, date = jejuStartDate.plusDays(1), spotType = SpotType.MUSEUM, titleText = context.getString(R.string.mock_trip_day2_spot1_title), startTime = LocalTime.of(10, 0), endTime = LocalTime.of(11, 30), budget = 25000.0, location = LatLng(33.3059, 126.2894)),
@@ -44,6 +47,7 @@ object TripsMockData {
         )
         val jejuDay3 = Date(
             id = 3, index = 2, date = jejuStartDate.plusDays(2),
+            color = dateColorList[2],
             titleText = context.getString(R.string.mock_trip_day3_title),
             spotList = listOf(
                 Spot(id = 301, index = 0, iconText = 1, date = jejuStartDate.plusDays(2), spotType = SpotType.HIKING, titleText = context.getString(R.string.mock_trip_day3_spot1_title), startTime = LocalTime.of(8, 0), endTime = LocalTime.of(14, 0), budget = 0.0, location = LatLng(33.3414, 126.4770)),
@@ -55,6 +59,7 @@ object TripsMockData {
         )
         val jejuDay4 = Date(
             id = 4, index = 3, date = jejuStartDate.plusDays(3),
+            color = dateColorList[3],
             titleText = context.getString(R.string.mock_trip_day4_title),
             spotList = listOf(
                 Spot(id = 401, index = 0, iconText = 1, date = jejuStartDate.plusDays(3), spotType = SpotType.LANDMARK, titleText = context.getString(R.string.mock_trip_day4_spot1_title), startTime = LocalTime.of(9, 0), endTime = LocalTime.of(11, 0), budget = 5000.0, location = LatLng(33.4586, 126.9424)),
@@ -67,6 +72,7 @@ object TripsMockData {
         )
         val jejuDay5 = Date(
             id = 5, index = 4, date = jejuStartDate.plusDays(4),
+            color = dateColorList[4],
             titleText = context.getString(R.string.mock_trip_day5_title),
             spotList = listOf(
                 Spot(id = 501, index = 0, iconText = 1, date = jejuStartDate.plusDays(4), spotType = SpotType.GIFT_SHOP, titleText = context.getString(R.string.mock_trip_day5_spot1_title), startTime = LocalTime.of(10, 0), endTime = LocalTime.of(11, 0), budget = 50000.0, location = LatLng(33.5050, 126.4950)),
@@ -86,6 +92,7 @@ object TripsMockData {
         val nyStartDate = LocalDate.now().plusDays(15)
         val nyDay1 = Date(
             id = 11, index = 0, date = nyStartDate,
+            color = dateColorList[0],
             titleText = context.getString(R.string.mock_trip_ny_day1_title),
             spotList = listOf(
                 Spot(id = 1101, index = 0, iconText = 1, date = nyStartDate, spotType = SpotType.AIRPORT, titleText = context.getString(R.string.mock_trip_ny_icn_airport), startTime = LocalTime.of(18, 50), googleMapsPlacesId = "ChIJA-F312OaezURGNV_89NW7Ys", location = LatLng(37.4485, 126.4512)),
@@ -97,6 +104,7 @@ object TripsMockData {
         )
         val nyDay2 = Date(
             id = 12, index = 1, date = nyStartDate.plusDays(1),
+            color = dateColorList[1],
             titleText = context.getString(R.string.mock_trip_ny_day2_title),
             spotList = listOf(
                 Spot(id = 1201, index = 0, iconText = 1, date = nyStartDate.plusDays(1), spotType = SpotType.HOTEL, titleText = context.getString(R.string.mock_trip_ny_breakfast_hotel), startTime = LocalTime.of(8, 0), googleMapsPlacesId = "ChIJEYl7DyhZwokR8OBIl2a6NwI", location = LatLng(40.7513, -73.9430)),
@@ -115,6 +123,7 @@ object TripsMockData {
         )
         val nyDay3 = Date(
             id = 13, index = 2, date = nyStartDate.plusDays(2),
+            color = dateColorList[2],
             titleText = context.getString(R.string.mock_trip_ny_day3_title),
             spotList = listOf(
                 Spot(id = 1301, index = 0, iconText = 1, date = nyStartDate.plusDays(2), spotType = SpotType.HOTEL, titleText = context.getString(R.string.mock_trip_ny_breakfast_hotel), startTime = LocalTime.of(8, 0), googleMapsPlacesId = "ChIJEYl7DyhZwokR8OBIl2a6NwI", location = LatLng(40.7513, -73.9430)),
@@ -132,6 +141,7 @@ object TripsMockData {
         )
         val nyDay4 = Date(
             id = 14, index = 3, date = nyStartDate.plusDays(3),
+            color = dateColorList[3],
             titleText = context.getString(R.string.mock_trip_ny_day4_title),
             spotList = listOf(
                 Spot(id = 1401, index = 0, iconText = 1, date = nyStartDate.plusDays(3), spotType = SpotType.HOTEL, titleText = context.getString(R.string.mock_trip_ny_hotel), startTime = LocalTime.of(3, 5), googleMapsPlacesId = "ChIJEYl7DyhZwokR8OBIl2a6NwI", location = LatLng(40.7513, -73.9430), memoText = "Carry ESTA, No guide tip"),
@@ -149,6 +159,7 @@ object TripsMockData {
         )
         val nyDay5 = Date(
             id = 15, index = 4, date = nyStartDate.plusDays(4),
+            color = dateColorList[4],
             titleText = context.getString(R.string.mock_trip_ny_day5_title),
             spotList = listOf(
                 Spot(id = 1501, index = 0, iconText = 1, date = nyStartDate.plusDays(4), spotType = SpotType.HOTEL, titleText = context.getString(R.string.mock_trip_ny_breakfast_hotel), startTime = LocalTime.of(9, 0), googleMapsPlacesId = "ChIJEYl7DyhZwokR8OBIl2a6NwI", location = LatLng(40.7513, -73.9430)),
@@ -165,6 +176,7 @@ object TripsMockData {
         )
         val nyDay6 = Date(
             id = 16, index = 5, date = nyStartDate.plusDays(5),
+            color = dateColorList[5],
             titleText = context.getString(R.string.mock_trip_ny_day6_title),
             spotList = listOf(
                 Spot(id = 1601, index = 0, iconText = 1, date = nyStartDate.plusDays(5), spotType = SpotType.HOTEL, titleText = context.getString(R.string.mock_trip_ny_breakfast_hotel), startTime = LocalTime.of(8, 0), googleMapsPlacesId = "ChIJEYl7DyhZwokR8OBIl2a6NwI", location = LatLng(40.7513, -73.9430)),
@@ -182,6 +194,7 @@ object TripsMockData {
         )
         val nyDay7 = Date(
             id = 17, index = 6, date = nyStartDate.plusDays(6),
+            color = dateColorList[6],
             titleText = context.getString(R.string.mock_trip_ny_day7_title),
             spotList = listOf(
                 Spot(id = 1701, index = 0, iconText = 1, date = nyStartDate.plusDays(6), spotType = SpotType.HOTEL, titleText = context.getString(R.string.mock_trip_ny_breakfast_hotel), startTime = LocalTime.of(8, 0), googleMapsPlacesId = "ChIJEYl7DyhZwokR8OBIl2a6NwI", location = LatLng(40.7513, -73.9430)),
@@ -200,6 +213,7 @@ object TripsMockData {
         )
         val nyDay8 = Date(
             id = 18, index = 7, date = nyStartDate.plusDays(7),
+            color = dateColorList[7],
             titleText = context.getString(R.string.mock_trip_ny_day8_title),
             spotList = listOf(
                 Spot(id = 1801, index = 0, iconText = 1, date = nyStartDate.plusDays(7), spotType = SpotType.HOTEL, titleText = context.getString(R.string.mock_trip_ny_breakfast_hotel), startTime = LocalTime.of(8, 0), googleMapsPlacesId = "ChIJEYl7DyhZwokR8OBIl2a6NwI", location = LatLng(40.7513, -73.9430)),
@@ -215,6 +229,7 @@ object TripsMockData {
         )
         val nyDay9 = Date(
             id = 19, index = 8, date = nyStartDate.plusDays(8),
+            color = dateColorList[8],
             titleText = context.getString(R.string.mock_trip_ny_day9_title),
             spotList = listOf(
                 Spot(id = 1901, index = 0, iconText = 1, date = nyStartDate.plusDays(8), spotType = SpotType.HOTEL, titleText = context.getString(R.string.mock_trip_ny_breakfast_hotel), startTime = LocalTime.of(8, 0), googleMapsPlacesId = "ChIJEYl7DyhZwokR8OBIl2a6NwI", location = LatLng(40.7513, -73.9430)),
@@ -228,6 +243,7 @@ object TripsMockData {
         )
         val nyDay10 = Date(
             id = 20, index = 9, date = nyStartDate.plusDays(9),
+            color = dateColorList[9],
             titleText = context.getString(R.string.mock_trip_ny_day10_title),
             spotList = listOf(
                 Spot(id = 2001, index = 0, iconText = 1, date = nyStartDate.plusDays(9), spotType = SpotType.HOTEL, titleText = context.getString(R.string.mock_trip_ny_hotel), startTime = LocalTime.of(8, 0), googleMapsPlacesId = "ChIJEYl7DyhZwokR8OBIl2a6NwI", location = LatLng(40.7513, -73.9430), memoText = "Checkout by 11:00, store luggage"),
@@ -244,6 +260,7 @@ object TripsMockData {
         )
         val nyDay11 = Date(
             id = 21, index = 10, date = nyStartDate.plusDays(10),
+            color = dateColorList[10],
             titleText = context.getString(R.string.mock_trip_ny_day11_title),
             spotList = listOf(
                 Spot(id = 2101, index = 0, iconText = 0, date = nyStartDate.plusDays(10), spotType = SpotType.AIRPLANE, titleText = context.getString(R.string.mock_trip_ny_flight_icn_ewr), startTime = LocalTime.of(0, 1), travelDistance = 11100.283f, memoText = "EWR - ICN / YP132")
@@ -251,6 +268,7 @@ object TripsMockData {
         )
         val nyDay12 = Date(
             id = 22, index = 11, date = nyStartDate.plusDays(11),
+            color = dateColorList[11],
             titleText = context.getString(R.string.mock_trip_ny_day12_title),
             spotList = listOf(
                 Spot(id = 2201, index = 0, iconText = 1, date = nyStartDate.plusDays(11), spotType = SpotType.AIRPORT, titleText = context.getString(R.string.mock_trip_ny_icn_airport), startTime = LocalTime.of(5, 40), googleMapsPlacesId = "ChIJWfpeOoOaezUR1L5cy5agS40", location = LatLng(37.4485, 126.4512))
