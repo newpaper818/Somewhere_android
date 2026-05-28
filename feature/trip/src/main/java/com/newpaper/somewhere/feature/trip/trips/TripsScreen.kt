@@ -166,8 +166,8 @@ fun TripsRoute(
 
                 //update trips
                 tripsViewModel.updateMockTrips()
-                tripsViewModel.setLoadingTrips(false)
             }
+            tripsViewModel.setLoadingTrips(false)
         }
         else if (!isEditMode) {
             tripsViewModel.setLoadingTrips(true)
