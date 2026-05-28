@@ -702,7 +702,7 @@ private fun TripsScreen(
                 }
 
                 //sign in button when guest mode
-                if (!loadingTrips) {
+                if (!loadingTrips && appUserData.isGuest) {
                     item {
                         MySpacerColumn(24.dp)
 

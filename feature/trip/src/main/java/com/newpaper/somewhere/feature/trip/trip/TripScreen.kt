@@ -180,6 +180,8 @@ fun TripRoute(
                 if (tempTrip.dateList.isEmpty())
                     tripViewModel.setShowDateRangeDialog(true)
             }
+        } else {
+            tripViewModel.setLoadingTrip(false)
         }
     }
 
