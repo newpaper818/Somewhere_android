@@ -46,6 +46,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.button.CloseButton
+import com.newpaper.somewhere.core.designsystem.component.button.ExploreWithoutSignInButton
 import com.newpaper.somewhere.core.designsystem.component.button.PrivacyPolicyButton
 import com.newpaper.somewhere.core.designsystem.component.button.SignInWithButton
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
@@ -195,6 +196,7 @@ fun SignInRoute(
 //                }
             }
         },
+        onClickExploreWithoutSignIn = navigateUp,
         onClickPrivacyPolicy = { onClickPrivacyPolicy(uriHandler) },
         onClickClose = navigateUp,
         setSignInButtonEnabled = signInViewModel::setSignInButtonEnabled,
@@ -214,6 +216,7 @@ private fun SignInScreen(
     signInButtonEnabled: Boolean,
 
     onSignInClick: (providerId: ProviderId) -> Unit,
+    onClickExploreWithoutSignIn: () -> Unit,
     onClickPrivacyPolicy: () -> Unit,
     onClickClose: () -> Unit,
     setSignInButtonEnabled: (signInButtonEnabled: Boolean) -> Unit,
@@ -256,6 +259,7 @@ private fun SignInScreen(
                     isSigningIn = isSigningIn,
                     signInButtonEnabled = signInButtonEnabled,
                     onSignInClick = onSignInClick,
+                    onClickExploreWithoutSignIn = onClickExploreWithoutSignIn,
                     onClickPrivacyPolicy = onClickPrivacyPolicy,
                     setSignInButtonEnabled = setSignInButtonEnabled
                 )
@@ -270,6 +274,7 @@ private fun SignInScreen(
                     isSigningIn = isSigningIn,
                     signInButtonEnabled = signInButtonEnabled,
                     onSignInClick = onSignInClick,
+                    onClickExploreWithoutSignIn = onClickExploreWithoutSignIn,
                     onClickPrivacyPolicy = onClickPrivacyPolicy,
                     setSignInButtonEnabled = setSignInButtonEnabled
                 )
@@ -293,6 +298,7 @@ private fun SignInVertical(
     signInButtonEnabled: Boolean,
 
     onSignInClick: (providerId: ProviderId) -> Unit,
+    onClickExploreWithoutSignIn: () -> Unit,
     onClickPrivacyPolicy: () -> Unit,
     setSignInButtonEnabled: (signInButtonEnabled: Boolean) -> Unit,
 ){
@@ -360,6 +366,12 @@ private fun SignInVertical(
         }
 
         item {
+            ExploreWithoutSignInButton(onClick = onClickExploreWithoutSignIn)
+
+            MySpacerColumn(height = 64.dp)
+        }
+
+        item {
             //App version with privacy policy button
             AppVersionTextWithPrivacyPolicy(
                 appVersionName = appVersionName,
@@ -381,6 +393,7 @@ private fun SignInHorizontal(
     signInButtonEnabled: Boolean,
 
     onSignInClick: (providerId: ProviderId) -> Unit,
+    onClickExploreWithoutSignIn: () -> Unit,
     onClickPrivacyPolicy: () -> Unit,
     setSignInButtonEnabled: (signInButtonEnabled: Boolean) -> Unit,
 ){
@@ -398,9 +411,19 @@ private fun SignInHorizontal(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            MySpacerColumn(height = 32.dp)
+
             AppIconWithAppNameCard(
                 modifier = Modifier.padding(16.dp, 0.dp)
             )
+
+            MySpacerColumn(height = 32.dp)
+
+            AppVersionTextWithPrivacyPolicy(
+                appVersionName = appVersionName,
+                onClickPrivacyPolicy = onClickPrivacyPolicy
+            )
+            MySpacerColumn(height = 16.dp)
         }
 
         LazyColumn(
@@ -454,12 +477,9 @@ private fun SignInHorizontal(
 
                 MySpacerColumn(height = 16.dp)
             }
+
             item {
-                AppVersionTextWithPrivacyPolicy(
-                    appVersionName = appVersionName,
-                    onClickPrivacyPolicy = onClickPrivacyPolicy
-                )
-                MySpacerColumn(height = 16.dp)
+                ExploreWithoutSignInButton(onClick = onClickExploreWithoutSignIn)
             }
         }
     }
@@ -594,6 +614,7 @@ private fun SignInScreenPreview_Default(){
             isSigningIn = false,
             signInButtonEnabled = true,
             onSignInClick = {},
+            onClickExploreWithoutSignIn = {},
             onClickPrivacyPolicy = {},
             onClickClose = {},
             setSignInButtonEnabled = {},
@@ -614,6 +635,7 @@ private fun SignInScreenPreview_NoInternet(){
             isSigningIn = false,
             signInButtonEnabled = true,
             onSignInClick = {},
+            onClickExploreWithoutSignIn = {},
             onClickPrivacyPolicy = {},
             onClickClose = {},
             setSignInButtonEnabled = {},
@@ -634,6 +656,7 @@ private fun SignInScreenPreview_SigningIn(){
             isSigningIn = true,
             signInButtonEnabled = false,
             onSignInClick = {},
+            onClickExploreWithoutSignIn = {},
             onClickPrivacyPolicy = {},
             onClickClose = {},
             setSignInButtonEnabled = {},

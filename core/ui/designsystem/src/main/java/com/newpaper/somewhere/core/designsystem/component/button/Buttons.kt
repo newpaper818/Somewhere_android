@@ -84,6 +84,20 @@ fun PrivacyPolicyButton(
 }
 
 @Composable
+fun ExploreWithoutSignInButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    MyTextButton(
+        text = stringResource(id = R.string.explore_app_without_signin),
+        onClick = onClick,
+        containerColor = MaterialTheme.colorScheme.surfaceBright,
+        textStyle = MaterialTheme.typography.labelLarge,
+        modifier = modifier
+    )
+}
+
+@Composable
 fun SignInButton(
     onClick: () -> Unit
 ){
@@ -509,7 +523,7 @@ private fun MyTextButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     containerColor: Color = MaterialTheme.colorScheme.primary,
-    textStyle: TextStyle = MaterialTheme.typography.labelLarge
+    textStyle: TextStyle = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold)
 ){
     if (containerColor == Color.Transparent){
         TextButton(
@@ -520,8 +534,7 @@ private fun MyTextButton(
         ) {
             Text(
                 text = text,
-                style = textStyle,
-                fontWeight = FontWeight.SemiBold
+                style = textStyle
             )
         }
     }
@@ -540,8 +553,7 @@ private fun MyTextButton(
         ) {
             Text(
                 text = text,
-                style = textStyle,
-                fontWeight = FontWeight.SemiBold
+                style = textStyle
             )
         }
     }
