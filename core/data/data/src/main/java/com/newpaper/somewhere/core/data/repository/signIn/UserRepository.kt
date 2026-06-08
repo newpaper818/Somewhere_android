@@ -11,10 +11,15 @@ import com.google.firebase.auth.FirebaseUser
 import com.newpaper.somewhere.core.firebase_authentication.dataSource.UserRemoteDataSource
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.common.CommonRemoteDataSource
 import com.newpaper.somewhere.core.firebase_firestore.dataSource.signIn.SignInRemoteDataSource
+import com.newpaper.somewhere.core.datastore.dataSource.UserLocalDataSource
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ProviderId
 import com.newpaper.somewhere.core.model.enums.getProviderIdFromString
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val USER_REPOSITORY_TAG = "User-Repository"
@@ -22,7 +27,8 @@ private const val USER_REPOSITORY_TAG = "User-Repository"
 class UserRepository @Inject constructor(
     private val commonRemoteDataSource: CommonRemoteDataSource, //firebase-firestore
     private val signInRemoteDataSource: SignInRemoteDataSource, //firebase-firestore
-    private val userRemoteDatasource: UserRemoteDataSource      //firebase-authentication
+    private val userRemoteDatasource: UserRemoteDataSource,     //firebase-authentication
+    private val userLocalDataSource: UserLocalDataSource        //datastore
 ) {
 
     //sign in ======================================================================================
@@ -286,7 +292,15 @@ class UserRepository @Inject constructor(
         deleteSuccess: (Boolean) -> Unit
     ){
         userRemoteDatasource.deleteAuthUser(
-            deleteSuccess = deleteSuccess
+            deleteSuccess = { success ->
+                if (success) {
+                    // clear user cache
+                    CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+                        clearUserCache()
+                    }
+                }
+                deleteSuccess(success)
+            }
         )
     }
 
@@ -304,7 +318,22 @@ class UserRepository @Inject constructor(
         userRemoteDatasource.signOut(
             providerIdList = providerIdList,
             signOutResult = signOutResult
-
         )
+
+        //clear user cache
+        clearUserCache()
+    }
+
+    // cache ======================================================================================
+    suspend fun getCachedUser(): Pair<UserData?, String?> {
+        return userLocalDataSource.getCachedUserData()
+    }
+
+    suspend fun saveUserToCache(userData: UserData, lastUpdatedTime: String) {
+        userLocalDataSource.saveUserData(userData, lastUpdatedTime)
+    }
+
+    suspend fun clearUserCache() {
+        userLocalDataSource.clearUserData()
     }
 }

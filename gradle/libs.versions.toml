@@ -1,4 +1,12 @@
 [versions]
+# SDK Versions
+compileSdk = "36"
+minSdk = "26"
+targetSdk = "36"
+
+#my libs
+smoothCorner = "0.9.5"
+
 composeBom = "2024.09.00"
 firebaseBom = "33.2.0"
 
@@ -47,6 +55,10 @@ moshi = "1.15.1"
 billing = "7.1.1"
 haze = "1.6.10"
 icu4j = "77.1"
+uiautomator = "2.2.0"
+benchmarkMacroJunit4 = "1.4.1"
+baselineprofile = "1.2.4"
+profileinstaller = "1.3.1"
 
 
 
@@ -56,6 +68,9 @@ icu4j = "77.1"
 
 
 [libraries]
+#my libs
+smoothCorner = { group = "com.github.newpaper818.smooth-corner", name = "smooth-corner", version.ref = "smoothCorner" }
+
 #compose bom
 compose-bom =                       { group = "androidx.compose",    name = "compose-bom", version.ref = "composeBom" }
 compose-ui =                        { group = "androidx.compose.ui", name = "ui" }
@@ -177,6 +192,9 @@ androidx-espresso-core =    { group = "androidx.test.espresso", name = "espresso
 androidx-appcompat =        { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material =                  { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
+androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
+androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
+androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
 
 
 
@@ -198,3 +216,5 @@ aboutlibraries =            { id = "com.mikepenz.aboutlibraries.plugin", version
 jetbrainsKotlinJvm =        { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 hilt =                      { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-serialization =      { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+android-test = { id = "com.android.test", version.ref = "agp" }
+baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }

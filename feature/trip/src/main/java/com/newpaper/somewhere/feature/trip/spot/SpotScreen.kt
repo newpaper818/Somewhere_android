@@ -29,7 +29,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -38,7 +37,6 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -59,15 +57,18 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
+import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
@@ -114,7 +115,7 @@ fun SpotRoute(
     use2Panes: Boolean,
     spacerValue: Dp,
     useBlurEffect: Boolean,
-    appUserId: String,
+    appUserData: UserData,
     dateTimeFormat: DateTimeFormat,
     internetEnabled: Boolean,
     isErrorExitOnTripScreen: Boolean, //TODO
@@ -137,8 +138,8 @@ fun SpotRoute(
     spotViewModel: SpotViewModel = hiltViewModel()
 ){
 
-    val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsState()
-    val spotUiState by spotViewModel.spotUiState.collectAsState()
+    val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsStateWithLifecycle()
+    val spotUiState by spotViewModel.spotUiState.collectAsStateWithLifecycle()
 
     if (commonTripUiState.tripInfo.trip == null
         || commonTripUiState.tripInfo.tempTrip == null
@@ -248,6 +249,10 @@ fun SpotRoute(
 
     LaunchedEffect(userDragTouching){
         if (userDragTouching) userSwiping = true
+        else {
+            delay(400)
+            userSwiping = false
+        }
     }
 
     //when user swipe page
@@ -362,6 +367,7 @@ fun SpotRoute(
 
     SpotScreen(
         isDarkAppTheme = isDarkAppTheme,
+        appUserData = appUserData,
         spotUiInfo = SpotUiInfo(
             use2Panes = use2Panes,
             spacerValue = spacerValue,
@@ -468,7 +474,7 @@ fun SpotRoute(
             coroutineScope.launch {
                 if (originalTrip != tempTrip) {
                     //save tripUiState trip
-                    commonTripViewModel.saveTrip(appUserId = appUserId)
+                    commonTripViewModel.saveTrip(appUserId = appUserData.userId)
 
                     commonTripViewModel.setIsEditMode(false)
 
@@ -496,6 +502,7 @@ fun SpotRoute(
 @Composable
 private fun SpotScreen(
     isDarkAppTheme: Boolean,
+    appUserData: UserData,
     spotUiInfo: SpotUiInfo,
     spotData: SpotData,
     spotState: SpotState,
@@ -579,13 +586,20 @@ private fun SpotScreen(
 
 
     val bottomSnackBarPadding by animateFloatAsState(
-        targetValue = if (spotUiInfo.use2Panes) 88f
-                        else if (spotMap.isMapExpand) 66f
-                        else if (spotUiInfo.isEditMode) 56f
-                        else 0f,
+        targetValue = if (spotUiInfo.use2Panes) {
+                            if (spotMap.isMapExpand) 66f + 24f
+                            else if (spotUiInfo.isEditMode) 56f
+                            else 0f
+                        }
+                        else {
+                            if (spotMap.isMapExpand) 66f
+                            else if (spotUiInfo.isEditMode) 56f
+                            else 0f
+                        },
         animationSpec = tween(300),
         label = "snackbar padding"
     )
+
 
 
     LaunchedEffect(spotDialog.isShowingDialog) {
@@ -609,6 +623,7 @@ private fun SpotScreen(
             spotList = spotList,
             dateIndex = currentDateIndex,
             spotIndex = currentSpotIndex,
+            initialGoogleMapsPlaceId = spotList[currentSpotIndex].googleMapsPlacesId,
             isDarkMapTheme = spotUiInfo.isDarkMapTheme,
             onClickCloseButton = spotNavigate::onClickBackButton,
             updateTripState = updateTripState,
@@ -618,25 +633,21 @@ private fun SpotScreen(
         )
     }
 
-    val snackbarModifier =
-        if (!spotUiInfo.use2Panes) Modifier
+    val snackbarModifier = Modifier
             .width(500.dp)
             .padding(bottom = bottomSnackBarPadding.dp)
             .navigationBarsPadding()
             .imePadding()
-        else Modifier
-            .width(500.dp)
-            .padding(bottom = bottomSnackBarPadding.dp)
-            .padding(start = 20.dp, end = 8.dp)
-            .imePadding()
+
 
     MyScaffold(
         modifier = modifier.imePadding(),
         snackbarHost = {
             Row {
                 Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.BottomCenter
+                    contentAlignment = Alignment.BottomCenter,
+                    modifier = if (spotUiInfo.use2Panes) Modifier.padding(start = spotUiInfo.spacerValue / 2, end = spotUiInfo.spacerValue)
+                                else Modifier
                 ){
                     SnackbarHost(
                         hostState = snackBarHostState,
@@ -644,13 +655,11 @@ private fun SpotScreen(
                         snackbar = {
                             Snackbar(
                                 snackbarData = it,
-                                shape = MaterialTheme.shapes.medium
+                                shape = MaterialTheme.shapes.small
                             )
                         }
                     )
                 }
-                if (spotUiInfo.use2Panes)
-                    Box(modifier = Modifier.weight(1f))
             }
         },
         //top bar
@@ -674,7 +683,7 @@ private fun SpotScreen(
                         spotMap.setIsMapExpanded(false)
                     spotUiInfo.setIsEditMode(true)
                 },
-                actionIcon1Visible = !spotUiInfo.isEditMode && showingTrip.editable,
+                actionIcon1Visible = !appUserData.isGuest && !spotUiInfo.isEditMode && showingTrip.editable,
                 hazeState = topAppBarHazeState
             )
         },
@@ -961,8 +970,8 @@ private fun Spot1Pane(
     LazyColumn(
         state = spotState.scrollState,
         modifier = if (topAppBarHazeState != null) lazyColumnModifier
-                .hazeSource(state = topAppBarHazeState)
-                .background(MaterialTheme.colorScheme.background)
+            .hazeSource(state = topAppBarHazeState)
+            .background(MaterialTheme.colorScheme.background)
             else lazyColumnModifier,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -974,8 +983,13 @@ private fun Spot1Pane(
             //map
             SpotMapCard(
                 modifier = if (spotUiInfo.use2Panes) Modifier
-                        .padding(spotUiInfo.spacerValue/2, 0.dp, spotUiInfo.spacerValue, spotUiInfo.spacerValue)
-                        .clip(RoundedCornerShape(16.dp))
+                    .padding(
+                        spotUiInfo.spacerValue / 2,
+                        0.dp,
+                        spotUiInfo.spacerValue,
+                        spotUiInfo.spacerValue
+                    )
+                    .clip(SmoothRoundedCornerShape(16.dp))
                     else Modifier,
                 useBlurEffect = useBlurEffect,
                 isEditMode = spotUiInfo.isEditMode,
@@ -1041,7 +1055,9 @@ private fun Spot1Pane(
                 setMapSize = {
                     spotMap.setMapSize(it)
                 },
-                openInGoogleMapEnabled = currentSpot?.googleMapsPlacesId != null && currentSpot.googleMapsPlacesId != "",
+                openInGoogleMapEnabled = currentSpot != null &&
+                        !((currentSpot.titleText == null || currentSpot.titleText == "")
+                        && (currentSpot.googleMapsPlacesId == null || currentSpot.googleMapsPlacesId == "")),
                 showSnackBar = { text, actionLabel, duration, onActionClick ->
                     coroutineScope.launch {
                         snackBarHostState.showSnackbar(

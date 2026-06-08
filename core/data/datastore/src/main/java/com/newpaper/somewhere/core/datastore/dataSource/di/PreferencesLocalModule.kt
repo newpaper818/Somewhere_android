@@ -6,6 +6,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.newpaper.somewhere.core.datastore.dataSource.PreferencesDataStoreApi
 import com.newpaper.somewhere.core.datastore.dataSource.PreferencesLocalDataSource
+import com.newpaper.somewhere.core.datastore.dataSource.UserDataStoreApi
+import com.newpaper.somewhere.core.datastore.dataSource.UserLocalDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -22,6 +24,11 @@ abstract class PreferencesLocalModule {
     internal abstract fun bindSettingDataSource(
         settingDataStoreApi: PreferencesDataStoreApi
     ): PreferencesLocalDataSource
+
+    @Binds
+    internal abstract fun bindUserLocalDataSource(
+        userDataStoreApi: UserDataStoreApi
+    ): UserLocalDataSource
 }
 
 @Module

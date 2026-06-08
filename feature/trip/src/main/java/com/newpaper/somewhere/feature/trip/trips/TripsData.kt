@@ -44,7 +44,7 @@ internal data class TripsUiInfo(
 internal data class TripsData(
     val showingTrips: List<Trip> = listOf(),
     val showingSharedTrips: List<Trip> = listOf(),
-    val glance: Glance = Glance(),
+    val glanceSpots: GlanceSpots = GlanceSpots(),
 )
 
 internal data class TripsDialog(
@@ -98,19 +98,23 @@ internal data class TripsEdit(
 
 internal data class TripsNavigate(
     private val _onClickBackButton: () -> Unit = {},
+    private val _navigateToSignIn: () -> Unit = {},
     private val _navigateToTrip: (isNewTrip: Boolean, trip: Trip?) -> Unit = { _, _ ->},
     private val _navigateToTripAi: () -> Unit = {},
-    private val _navigateToGlanceSpot: () -> Unit = {},
+    private val _navigateToGlanceSpot: (GlanceSpot) -> Unit = {},
     private val _navigateToSubscription: () -> Unit = {},
 ){
     fun onClickBackButton(){
         _onClickBackButton() }
+
+    fun navigateToSignIn(){
+        _navigateToSignIn() }
     fun navigateToTrip(isNewTrip: Boolean, trip: Trip?){
         _navigateToTrip(isNewTrip, trip) }
     fun navigateToTripAi(){
         _navigateToTripAi() }
-    fun navigateToGlanceSpot(){
-        _navigateToGlanceSpot() }
+    fun navigateToGlanceSpot(glanceSpot: GlanceSpot){
+        _navigateToGlanceSpot(glanceSpot) }
     fun navigateToSubscription(){
         _navigateToSubscription() }
 }

@@ -6,10 +6,10 @@ plugins {
 
 android {
     namespace = "com.newpaper.somewhere.core.ui.ui"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.minSdk.get().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -49,6 +49,9 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons.extended)
     implementation(libs.compose.ui.tooling.preview)
+
+    //smooth corner
+    implementation(libs.smoothCorner)
 
     //
     implementation(libs.activity.compose)

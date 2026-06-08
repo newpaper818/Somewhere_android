@@ -26,7 +26,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -38,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.newpaper.somewhere.core.designsystem.component.button.ManageSubscriptionButton
 import com.newpaper.somewhere.core.designsystem.component.button.RestorePurchasesButton
 import com.newpaper.somewhere.core.designsystem.component.button.SubscribeButton
@@ -45,6 +45,7 @@ import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTo
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
+import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.ui.InternetUnavailableText
 import com.newpaper.somewhere.core.ui.card.AppIconWithAppNameProCard
 import com.newpaper.somewhere.core.utils.FREE_MAX_INVITE_FRIENDS
@@ -66,6 +67,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SubscriptionRoute(
     use2Panes: Boolean,
+    appUserData: UserData,
     spacerValue: Dp,
     useBlurEffect: Boolean,
     internetEnabled: Boolean,
@@ -79,7 +81,7 @@ fun SubscriptionRoute(
     val activity = context as Activity
     val coroutineScope = rememberCoroutineScope()
 
-    val subscriptionUiState by subscriptionViewModel.subscriptionUiState.collectAsState()
+    val subscriptionUiState by subscriptionViewModel.subscriptionUiState.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
 
     val snackbarTextError = stringResource(id = R.string.snackbar_error_do_it_later)
@@ -112,6 +114,7 @@ fun SubscriptionRoute(
 
     SubscriptionScreen(
         use2Panes = use2Panes,
+        isGuestMode = appUserData.isGuest,
         startSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
         endSpacerValue = spacerValue,
         useBlurEffect = useBlurEffect,
@@ -170,6 +173,7 @@ fun SubscriptionRoute(
 @Composable
 private fun SubscriptionScreen(
     use2Panes: Boolean,
+    isGuestMode: Boolean,
     startSpacerValue: Dp,
     endSpacerValue: Dp,
     useBlurEffect: Boolean,
@@ -215,7 +219,7 @@ private fun SubscriptionScreen(
                 snackbar = {
                     Snackbar(
                         snackbarData = it,
-                        shape = MaterialTheme.shapes.medium
+                        shape = MaterialTheme.shapes.small
                     )
                 }
             )
@@ -290,7 +294,7 @@ private fun SubscriptionScreen(
                 SubscribeButton(
                     formattedPrice = formattedPrice ?: "",
                     onClick = onClickSubscription,
-                    enabled = buttonEnabled && internetEnabled,
+                    enabled = !isGuestMode && buttonEnabled && internetEnabled,
                     isUsingSomewherePro = isUsingSomewherePro
                 )
             }

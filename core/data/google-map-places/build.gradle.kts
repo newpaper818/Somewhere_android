@@ -1,4 +1,4 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.androidLibrary)
@@ -8,12 +8,18 @@ plugins {
 
 android {
     namespace = "com.newpaper.somewhere.core.data.google_map_places"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
+
+    val localProperties = Properties()
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localProperties.load(localPropertiesFile.inputStream())
+    }
 
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.minSdk.get().toInt()
 
-        buildConfigField("String", "GOOGLE_MAPS_API_KEY", getApiKey("GOOGLE_MAPS_API_KEY"))
+        buildConfigField("String", "GOOGLE_MAPS_API_KEY", localProperties.getProperty("GOOGLE_MAPS_API_KEY") ?: "\"\"")
     }
 
     compileOptions {
@@ -27,10 +33,6 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-}
-
-fun getApiKey(propertyKey: String): String {
-    return gradleLocalProperties(rootDir, providers).getProperty(propertyKey)
 }
 
 dependencies {

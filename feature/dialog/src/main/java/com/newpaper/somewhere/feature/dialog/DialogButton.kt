@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.utils.CircularLoadingIndicatorSmall
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
@@ -113,7 +113,7 @@ private fun DialogButton(
         Button(
             onClick = onClick,
             enabled = enabled,
-            shape = CircleShape,
+            shape = SmoothRoundedCornerShape(999.dp, 1f),
             colors = ButtonDefaults.buttonColors(
                 containerColor = containerColor,
                 contentColor = contentColor
@@ -148,7 +148,7 @@ fun DialogButtonLoading(
         Button(
             onClick = { },
             enabled = false,
-            shape = CircleShape,
+            shape = SmoothRoundedCornerShape(999.dp, 1f),
             colors = ButtonDefaults.buttonColors(
                 containerColor = buttonColor,
                 contentColor = contentColor,

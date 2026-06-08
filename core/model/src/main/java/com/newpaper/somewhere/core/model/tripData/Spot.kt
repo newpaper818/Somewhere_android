@@ -4,7 +4,10 @@ import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import com.google.android.gms.maps.model.LatLng
 import com.newpaper.somewhere.core.model.enums.SpotType
+import com.newpaper.somewhere.core.model.enums.SpotTypeGroup
 import com.squareup.moshi.JsonClass
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -59,5 +62,44 @@ data class Spot(
             travelDistance = travelDistance,
             memoText = memoText
         )
+    }
+
+    private fun encodeTitleTextToUrlString(): String {
+        if (titleText != null && titleText != "") {
+            // encode
+            val encodedTitle = URLEncoder.encode(titleText, StandardCharsets.UTF_8.toString())
+
+            // + -> %20
+            return encodedTitle.replace("+", "%20")
+        }
+        else
+            return "1"
+    }
+
+    fun getGoogleMapsUrl(): String {
+        val encodedTitleText = encodeTitleTextToUrlString()
+        return "https://www.google.com/maps/search/?api=1&query=${encodedTitleText}&query_place_id=${googleMapsPlacesId}"
+    }
+
+    override fun toString(): String {
+
+        val memoTextShare = if (memoText != null && memoText != "")
+                "\n  memo: $memoText"
+            else ""
+
+        val googleMapsTextShare = if (!(googleMapsPlacesId == null || googleMapsPlacesId == ""))
+            "\n  google maps: ${getGoogleMapsUrl()}"
+        else ""
+
+        val prefix = if (spotType.group == SpotTypeGroup.MOVE) "m"
+                        else "s"
+
+        return  " ($prefix$iconText) [$titleText]" +
+                "\n  time: $startTime - $endTime" +
+                "\n  spot type: ${spotType.group} - ${spotType.name}" +
+                "\n  budget: $budget" +
+                "\n  distance: ${travelDistance}km" +
+                memoTextShare +
+                googleMapsTextShare
     }
 }

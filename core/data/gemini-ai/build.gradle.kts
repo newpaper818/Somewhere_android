@@ -1,4 +1,4 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.androidLibrary)
@@ -10,12 +10,18 @@ plugins {
 
 android {
     namespace = "com.newpaper.somewhere.core.data.gemini_ai"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
+
+    val localProperties = Properties()
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localProperties.load(localPropertiesFile.inputStream())
+    }
 
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.minSdk.get().toInt()
 
-        buildConfigField("String", "GEMINI_AI_API_KEY", getApiKey("GEMINI_AI_API_KEY"))
+        buildConfigField("String", "GEMINI_AI_API_KEY", localProperties.getProperty("GEMINI_AI_API_KEY") ?: "\"\"")
     }
 
     compileOptions {
@@ -28,10 +34,6 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-}
-
-fun getApiKey(propertyKey: String): String {
-    return gradleLocalProperties(rootDir, providers).getProperty(propertyKey)
 }
 
 dependencies {

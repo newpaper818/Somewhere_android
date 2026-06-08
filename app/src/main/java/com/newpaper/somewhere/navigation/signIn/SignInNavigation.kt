@@ -9,10 +9,10 @@ import androidx.navigation.navDeepLink
 import com.newpaper.somewhere.BuildConfig
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.feature.signin.signIn.SignInRoute
-import com.newpaper.somewhere.navigation.enterTransitionHorizontal
-import com.newpaper.somewhere.navigation.exitTransitionHorizontal
-import com.newpaper.somewhere.navigation.popEnterTransitionHorizontal
-import com.newpaper.somewhere.navigation.popExitTransitionHorizontal
+import com.newpaper.somewhere.navigation.enterTransitionVertical
+import com.newpaper.somewhere.navigation.exitTransitionVertical
+import com.newpaper.somewhere.navigation.popEnterTransitionVertical
+import com.newpaper.somewhere.navigation.popExitTransitionVertical
 import com.newpaper.somewhere.ui.AppViewModel
 import com.newpaper.somewhere.ui.ExternalState
 import com.newpaper.somewhere.util.WindowWidthSizeClass
@@ -24,25 +24,28 @@ fun NavController.navigateToSignIn(navOptions: NavOptions? = null) =
     navigate(ScreenDestination.SIGN_IN.route, navOptions)
 
 fun NavGraphBuilder.signInScreen(
+    navController: NavController,
     appViewModel: AppViewModel,
     externalState: ExternalState,
     isDarkAppTheme: Boolean,
 
-    navigateToMain: () -> Unit
+    navigateToMain: () -> Unit,
+    navigateUp: () -> Unit
 ){
     composable(
         route = ScreenDestination.SIGN_IN.route,
         deepLinks = listOf(
             navDeepLink { uriPattern = DEEP_LINK_URI_PATTERN }
         ),
-        enterTransition = { enterTransitionHorizontal },
-        exitTransition = { exitTransitionHorizontal },
-        popEnterTransition = { popEnterTransitionHorizontal },
-        popExitTransition = { popExitTransitionHorizontal }
+        enterTransition = { enterTransitionVertical },
+        exitTransition = { exitTransitionVertical },
+        popEnterTransition = { popEnterTransitionVertical },
+        popExitTransition = { popExitTransitionVertical }
     ) {
+        val backHandlerEnabled = navController.previousBackStackEntry != null
+
         LaunchedEffect(Unit) {
             appViewModel.updateCurrentScreenDestination(ScreenDestination.SIGN_IN)
-            appViewModel.initAppUiState()
         }
 
         SignInRoute(
@@ -51,10 +54,12 @@ fun NavGraphBuilder.signInScreen(
             useVerticalLayout = externalState.windowSizeClass.isVertical
                     || externalState.windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact,
             appVersionName = BuildConfig.VERSION_NAME,
+            backHandlerEnabled = backHandlerEnabled,
             updateUserData = {userData ->
                 appViewModel.updateUserData(userData = userData)
             },
-            navigateToMain = navigateToMain
+            navigateToMain = navigateToMain,
+            navigateUp = navigateUp
         )
     }
 }

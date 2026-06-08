@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -6,10 +8,22 @@ plugins {
 
 android {
     namespace = "com.newpaper.somewhere.core.utils"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
+
+    val localProperties = Properties()
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localProperties.load(localPropertiesFile.inputStream())
+    }
 
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.minSdk.get().toInt()
+
+        buildConfigField("String", "BANNER_AD_UNIT_ID", localProperties.getProperty("BANNER_AD_UNIT_ID") ?: "\"\"")
+        buildConfigField("String", "BANNER_AD_UNIT_ID_TEST", localProperties.getProperty("BANNER_AD_UNIT_ID_TEST") ?: "\"\"")
+        buildConfigField("String", "REWARDED_AD_UNIT_ID", localProperties.getProperty("REWARDED_AD_UNIT_ID") ?: "\"\"")
+        buildConfigField("String", "REWARDED_AD_UNIT_ID_TEST", localProperties.getProperty("REWARDED_AD_UNIT_ID_TEST") ?: "\"\"")
+        buildConfigField("String", "OAUTH_WEB_CLIENT_ID", localProperties.getProperty("OAUTH_WEB_CLIENT_ID") ?: "\"\"")
     }
 
     compileOptions {
@@ -20,6 +34,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     kotlinOptions {
         jvmTarget = "1.8"

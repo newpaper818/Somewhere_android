@@ -20,6 +20,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.utils.MyCard
 import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
@@ -83,7 +84,7 @@ fun UserLocationButtonUi(
 @Composable
 fun ToGoogleMapsButton(
     enabled: Boolean,
-    googleMapsPlacesId: String,
+    googleMapsUrl: String,
     modifier: Modifier = Modifier
 ){
     val uriHandler = LocalUriHandler.current
@@ -92,10 +93,7 @@ fun ToGoogleMapsButton(
         IconButton(
             modifier = modifier,
             enabled = enabled,
-            onClick = {
-                val url = "https://www.google.com/maps/search/?api=1&query=<address>&query_place_id=${googleMapsPlacesId}"
-                uriHandler.openUri(url)
-            }
+            onClick = { uriHandler.openUri(googleMapsUrl) }
         ) {
             DisplayIcon(
                 icon = MapButtonIcon.openInGoogleMaps,
@@ -117,7 +115,7 @@ fun ZoomButtonsUi(
     val zoomLevelText = DecimalFormat("0.0").format(zoomLevel)
 
     MyCard(
-        shape = CircleShape
+        shape = SmoothRoundedCornerShape(999.dp, 1f)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             MyPlainTooltipBox(tooltipText = stringResource(id = MapButtonIcon.zoomOut.descriptionTextId!!)) {
@@ -274,7 +272,7 @@ private fun ZoomButtonsPreview(){
                 .width(300.dp)
         ) {
             MyCard(
-                shape = CircleShape
+                shape = SmoothRoundedCornerShape(999.dp, 1f)
             ) {
                 ZoomButtonsUi(
                     zoomLevel = 10.5f,

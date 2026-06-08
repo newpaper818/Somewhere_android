@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -13,6 +12,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -25,6 +25,7 @@ import com.newpaper.somewhere.BuildConfig
 import com.newpaper.somewhere.core.designsystem.component.NAVIGATION_DRAWER_BAR_WIDTH
 import com.newpaper.somewhere.core.designsystem.component.NAVIGATION_RAIL_BAR_WIDTH
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
+import com.newpaper.somewhere.core.model.data.GUEST_USERDATA
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.feature.more.more.MoreRoute
@@ -80,7 +81,7 @@ fun NavGraphBuilder.moreScreen(
             appViewModel.updateCurrentTopLevelDestination(TopLevelDestination.MORE)
         }
 
-        val appUiState by appViewModel.appUiState.collectAsState()
+        val appUiState by appViewModel.appUiState.collectAsStateWithLifecycle()
 
         val widthSizeClass = externalState.windowSizeClass.widthSizeClass
         val heightSizeClass = externalState.windowSizeClass.heightSizeClass
@@ -123,14 +124,14 @@ fun NavGraphBuilder.moreScreen(
 
                 MoreRoute(
                     isDebugMode = BuildConfig.DEBUG,
-                    appUserData = userData,
+                    appUserData = userData ?: GUEST_USERDATA,
                     isUsingSomewherePro = userData?.isUsingSomewherePro ?: false,
 
                     spacerValue = externalState.windowSizeClass.spacerValue,
                     lazyListState = lazyListState,
                     navigateTo = {
                         if (it != appUiState.screenDestination.currentScreenDestination) {
-                            if (!externalState.windowSizeClass.use2Panes || it == ScreenDestination.SUBSCRIPTION)
+                            if (!externalState.windowSizeClass.use2Panes || it == ScreenDestination.SUBSCRIPTION || it == ScreenDestination.SIGN_IN)
                                 navigateTo(it)
                             else {
                                 moreNavController.navigate(

@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 private const val GEMINI_AI_TAG = "Gemini-Ai"
 
-private const val GEMINI_MODEL_NAME = "gemini-2.0-flash"
+private const val GEMINI_MODEL_NAME = "gemini-3-flash-preview"
 
 class GeminiAiApi @Inject constructor(
 

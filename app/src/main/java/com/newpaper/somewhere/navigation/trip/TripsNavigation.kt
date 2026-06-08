@@ -3,9 +3,9 @@ package com.newpaper.somewhere.navigation.trip
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -18,7 +18,7 @@ import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.ui.ErrorScreen
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
-import com.newpaper.somewhere.feature.trip.trips.Glance
+import com.newpaper.somewhere.feature.trip.trips.GlanceSpot
 import com.newpaper.somewhere.feature.trip.trips.TripsRoute
 import com.newpaper.somewhere.feature.trip.trips.TripsViewModel
 import com.newpaper.somewhere.navigation.TopEnterTransition
@@ -47,9 +47,10 @@ fun NavGraphBuilder.tripsScreen(
 
     lazyListState: LazyListState,
 
+    navigateToSignIn: () -> Unit,
     navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
     navigateToTripAi: () -> Unit,
-    navigateToGlanceSpot: (glance: Glance) -> Unit,
+    navigateToGlanceSpot: (glanceSpot: GlanceSpot) -> Unit,
     navigateToSubscription: () -> Unit,
 
     hazeState: HazeState?
@@ -70,7 +71,7 @@ fun NavGraphBuilder.tripsScreen(
             appViewModel.updateCurrentScreenDestination(ScreenDestination.TRIPS)
         }
 
-        val appUiState by appViewModel.appUiState.collectAsState()
+        val appUiState by appViewModel.appUiState.collectAsStateWithLifecycle()
 
         val widthSizeClass = externalState.windowSizeClass.widthSizeClass
         val heightSizeClass = externalState.windowSizeClass.heightSizeClass
@@ -105,6 +106,7 @@ fun NavGraphBuilder.tripsScreen(
 
                     lazyListState = lazyListState,
 
+                    navigateToSignIn = navigateToSignIn,
                     navigateToTrip = navigateToTrip,
                     navigateToTripAi = navigateToTripAi,
                     navigateToGlanceSpot = navigateToGlanceSpot,

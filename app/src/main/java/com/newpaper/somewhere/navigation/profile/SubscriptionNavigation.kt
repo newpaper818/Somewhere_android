@@ -1,9 +1,9 @@
 package com.newpaper.somewhere.navigation.profile
 
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -47,11 +47,12 @@ fun NavGraphBuilder.subscriptionScreen(
             appViewModel.updateCurrentScreenDestination(ScreenDestination.SUBSCRIPTION)
         }
 
-        val appUiState by appViewModel.appUiState.collectAsState()
+        val appUiState by appViewModel.appUiState.collectAsStateWithLifecycle()
 
         if (appUiState.appUserData != null) {
             SubscriptionRoute(
                 use2Panes = externalState.windowSizeClass.use2Panes,
+                appUserData = appUiState.appUserData!!,
                 spacerValue = externalState.windowSizeClass.spacerValue,
                 useBlurEffect = appUiState.appPreferences.theme.useBlurEffect,
                 internetEnabled = externalState.internetEnabled,

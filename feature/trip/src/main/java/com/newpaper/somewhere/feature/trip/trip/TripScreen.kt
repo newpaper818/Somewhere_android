@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,7 +26,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -37,14 +37,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.button.SeeOnMapExtendedFAB
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
@@ -92,6 +96,7 @@ import com.newpaper.somewhere.feature.trip.R
 import com.newpaper.somewhere.feature.trip.trip.component.DateCard
 import com.newpaper.somewhere.feature.trip.trip.component.ShareTripCards
 import com.newpaper.somewhere.feature.trip.trip.component.TripDurationCard
+import com.newpaper.somewhere.feature.trip.tripMap.component.SpotTypeFilterChipButton
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
@@ -132,8 +137,8 @@ fun TripRoute(
 ){
     val coroutineScope = rememberCoroutineScope()
 
-    val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsState()
-    val tripUiState by tripViewModel.tripUiState.collectAsState()
+    val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsStateWithLifecycle()
+    val tripUiState by tripViewModel.tripUiState.collectAsStateWithLifecycle()
 
     val isNewTrip = commonTripUiState.isNewTrip
 
@@ -148,25 +153,35 @@ fun TripRoute(
     val tempTrip = commonTripUiState.tripInfo.tempTrip!!
     val isEditMode = commonTripUiState.isEditMode
 
-    //get trip data from firestore
-    //on first load
+    //user enter trip screen from existing trip in trips screen
+    //or change theme mode(light/dark)
+    //or rotate screen
     LaunchedEffect(Unit){
-        if (!isNewTrip) {
-            coroutineScope.launch(Dispatchers.IO) {
-                commonTripViewModel.updateTrip(
-                    internetEnabled = internetEnabled,
-                    appUserId = appUserData.userId,
-                    tripWithEmptyDateList = originalTrip
-                )
-                delay(150)
-                tripViewModel.setLoadingTrip(false)
+        if (!appUserData.isGuest) {
+            if (!isNewTrip) {
+                if (!isEditMode) {
+                    coroutineScope.launch(Dispatchers.IO) {
+                        //get trip data from remote (firestore)
+                        commonTripViewModel.updateTrip(
+                            internetEnabled = internetEnabled,
+                            appUserId = appUserData.userId,
+                            tripWithEmptyDateList = originalTrip
+                        )
+                        delay(150)
+                        tripViewModel.setLoadingTrip(false)
+                    }
+                } else {
+                }
             }
-        }
-        else {
-            tripViewModel.setLoadingTrip(false)
+            //user create new trip
+            else {
+                tripViewModel.setLoadingTrip(false)
 
-            if (tempTrip.dateList.isEmpty())
-                tripViewModel.setShowDateRangeDialog(true)
+                if (tempTrip.dateList.isEmpty())
+                    tripViewModel.setShowDateRangeDialog(true)
+            }
+        } else {
+            tripViewModel.setLoadingTrip(false)
         }
     }
 
@@ -202,7 +217,7 @@ fun TripRoute(
 
     TripScreen(
         isDarkAppTheme = isDarkAppTheme,
-        appUserId = appUserData.userId,
+        appUserData = appUserData,
         isUsingSomewherePro = appUserData.isUsingSomewherePro,
         tripUiInfo = TripUiInfo(
             use2Panes = use2Panes,
@@ -217,7 +232,10 @@ fun TripRoute(
         tripData = TripData(
             originalTrip = originalTrip,
             tempTrip = tempTrip,
-            isNewTrip = isNewTrip
+            isNewTrip = isNewTrip,
+
+            spotTypeGroupWithShownList = tripUiState.spotTypeGroupWithShownList,
+            _onClickSpotTypeGroupChipButton = tripViewModel::toggleSpotTypeGroupWithShownList
         ),
         tripErrorCount = TripErrorCount(
             totalErrorCount = tripUiState.totalErrorCount,
@@ -360,7 +378,7 @@ fun TripRoute(
 @Composable
 private fun TripScreen(
     isDarkAppTheme: Boolean,
-    appUserId: String,
+    appUserData: UserData,
     isUsingSomewherePro: Boolean,
     tripUiInfo: TripUiInfo,
     tripData: TripData,
@@ -471,7 +489,7 @@ private fun TripScreen(
     LaunchedEffect(currentDateIndex) {
         if (use2Panes && currentDateIndex != null && prevDateIndex != null){
             coroutineScope.launch {
-                scrollState.animateScrollToItem(6 + currentDateIndex)
+                scrollState.animateScrollToItem(7 + currentDateIndex)
             }
         }
         if (currentDateIndex != null)
@@ -497,7 +515,7 @@ private fun TripScreen(
                 snackbar = {
                     Snackbar(
                         snackbarData = it,
-                        shape = MaterialTheme.shapes.medium
+                        shape = MaterialTheme.shapes.small
                     )
                 }
             )
@@ -513,7 +531,7 @@ private fun TripScreen(
 
                 actionIcon1 = TopAppBarIcon.edit,
                 actionIcon1Onclick = { tripUiInfo.setIsEditMode(true) },
-                actionIcon1Visible = !loadingTrip && !isEditMode && !use2Panes && showingTrip.editable,
+                actionIcon1Visible = !appUserData.isGuest && !loadingTrip && !isEditMode && !use2Panes && showingTrip.editable,
                 hazeState = topAppBarHazeState
             )
         },
@@ -652,6 +670,21 @@ private fun TripScreen(
         }
 
 
+        val spacerValueModifier = Modifier.padding(start = spacerValue, end = if (use2Panes) spacerValue / 2 else spacerValue)
+
+        val density = LocalDensity.current
+        val spacer16DpToPx = with(density) { 16.dp.toPx() }
+
+        val stickyOffsetPx by remember(paddingValues.calculateTopPadding(), tripData.spotTypeGroupWithShownList) {
+            derivedStateOf {
+                val stickyItem = scrollState.layoutInfo.visibleItemsInfo.firstOrNull { it.contentType == "sticky" }
+
+                val itemOffset = stickyItem?.offset?.toFloat()
+
+                if (itemOffset == null || itemOffset > -spacer16DpToPx) { 0 }
+                else { (-itemOffset - spacer16DpToPx).toInt() }
+            }
+        }
 
 
 
@@ -663,7 +696,7 @@ private fun TripScreen(
                 state = scrollState,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 contentPadding = PaddingValues(
-                    spacerValue, 16.dp + paddingValues.calculateTopPadding(), if (use2Panes) spacerValue / 2 else spacerValue, 200.dp
+                    0.dp, 16.dp + paddingValues.calculateTopPadding(), 0.dp, 200.dp
                 ),
                 modifier = if (topAppBarHazeState != null) Modifier
                     .fillMaxSize()
@@ -677,12 +710,13 @@ private fun TripScreen(
                     ShareTripCards(
                         trip = showingTrip,
                         maxInviteFriends = getMaxInviteFriends(isUsingSomewherePro),
-                        userIsManager = appUserId == showingTrip.managerId,
+                        userIsManager = appUserData.userId == showingTrip.managerId,
                         internetEnabled = internetEnabled,
                         isEditMode = isEditMode,
                         onClickInvitedFriends = tripNavigate::navigateToInvitedFriends,
                         onClickAddFriend = tripNavigate::navigateToInviteFriend,
-                        onClickShareTrip = { tripNavigate.navigateToShareTrip(showingTrip.imagePathList, imagesPagerState.currentPage) }
+                        onClickShareTrip = { tripNavigate.navigateToShareTrip(showingTrip.imagePathList, imagesPagerState.currentPage) },
+                        modifier = spacerValueModifier
                     )
                 }
 
@@ -704,7 +738,8 @@ private fun TripScreen(
                         isLongText = {
                             if (it) tripErrorCount.increaseTotalErrorCount()
                             else tripErrorCount.decreaseTotalErrorCount()
-                        }
+                        },
+                        modifier = spacerValueModifier
                     )
                 }
 
@@ -747,7 +782,8 @@ private fun TripScreen(
                         reorderImageList = tripImage::reorderTripImageList,
                         downloadImage = tripImage::downloadImage,
                         saveImageToInternalStorage = tripImage::saveImageToInternalStorage,
-                        pagerState = imagesPagerState
+                        pagerState = imagesPagerState,
+                        modifier = spacerValueModifier
                     )
                 }
 
@@ -769,6 +805,7 @@ private fun TripScreen(
                         durationText = showingTrip.getDurationText(),
                         isEditMode = isEditMode,
                         onClick = { tripDialog.setShowDateRangeDialog(true) },
+                        modifier = spacerValueModifier
                     )
                 }
 
@@ -787,7 +824,8 @@ private fun TripScreen(
                                     tripDialog.setShowSetCurrencyDialog(true)
                                 }),
                             travelDistanceItem.copy(text =  showingTrip.getTotalTravelDistanceText())
-                        )
+                        ),
+                        modifier = spacerValueModifier
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -811,14 +849,30 @@ private fun TripScreen(
                         },
                         showMemoDialog = {
                             tripDialog.setShowMemoDialog(true)
-                        }
+                        },
+                        modifier = spacerValueModifier
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
 
-
+                //spot type filter chips
+                stickyHeader(
+                    contentType = "sticky"
+                ) {
+                    SpotTypeFilterChipButton(
+                        spotTypeGroupWithBooleanList = tripData.spotTypeGroupWithShownList,
+                        onSpotTypeItemClicked = { spotTypeGroup ->
+                            tripData.onClickSpotTypeGroupChipButton(spotTypeGroup)
+                        },
+                        spacerValue = spacerValue,
+                        modifier = Modifier
+                            // why "stickyOffsetPx - stickyOffsetPx" ??????????????????
+                            .offset{ IntOffset(stickyOffsetPx - stickyOffsetPx, stickyOffsetPx) }
+                            .zIndex(1f)
+                    )
+                }
 
 
                 // all dates
@@ -828,11 +882,13 @@ private fun TripScreen(
                         val slideState = slideStates[date.id] ?: SlideState.NONE
 
                         DateCard(
+                            modifier = spacerValueModifier,
                             currentDateIndex = currentDateIndex,
                             currentSpotIndex = currentSpotIndex,
                             visible = !loadingTrip || !enabledDateListIsEmpty,
                             trip = showingTrip,
                             dateIndex = dateIndex,
+                            spotTypeGroupWithShownList = tripData.spotTypeGroupWithShownList,
                             isEditMode = isEditMode,
                             dateTimeFormat = dateTimeFormat,
                             focusManager = focusManager,
@@ -935,7 +991,7 @@ private fun TripScreen(
 
 
 
-                if (appUserId == tripData.originalTrip.managerId) {
+                if (appUserData.userId == tripData.originalTrip.managerId) {
                     item {
                         MySpacerColumn(height = 100.dp)
 

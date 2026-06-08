@@ -17,7 +17,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -30,6 +29,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
@@ -61,7 +61,7 @@ fun SetDateTimeFormatRoute(
 
     setDateTimeFormatViewModel: SetDateTimeFormatViewModel = hiltViewModel()
 ){
-    val setDateTimeFormatUiState by setDateTimeFormatViewModel.setDateTimeFormatUiState.collectAsState()
+    val setDateTimeFormatUiState by setDateTimeFormatViewModel.setDateTimeFormatUiState.collectAsStateWithLifecycle()
 
     val coroutineScope = rememberCoroutineScope()
 

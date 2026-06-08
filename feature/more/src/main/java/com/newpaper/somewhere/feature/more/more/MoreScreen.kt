@@ -43,7 +43,7 @@ import dev.chrisbanes.haze.rememberHazeState
 @Composable
 fun MoreRoute(
     isDebugMode: Boolean,
-    appUserData: UserData?,
+    appUserData: UserData,
     isUsingSomewherePro: Boolean,
 
     use2Panes: Boolean,
@@ -89,7 +89,7 @@ fun MoreRoute(
 @Composable
 private fun MoreScreen(
     isDebugMode: Boolean,
-    appUserData: UserData?,
+    appUserData: UserData,
 
     startSpacerValue: Dp,
     endSpacerValue: Dp,
@@ -162,7 +162,7 @@ private fun MoreScreen(
                                 || currentScreenRoute == ScreenDestination.SIGN_IN.route,
                         text = stringResource(id = R.string.account),
                         onItemClick = {
-                            if (appUserData != null)
+                            if (!appUserData.isGuest)
                                 navigateTo(ScreenDestination.ACCOUNT)
                             else
                                 navigateTo(ScreenDestination.SIGN_IN)
@@ -178,12 +178,7 @@ private fun MoreScreen(
                     //somewhere pro
                     ItemWithText(
                         text = stringResource(id = R.string.somewhere_pro),
-                        onItemClick = {
-                            if (appUserData != null)
-                                navigateTo(ScreenDestination.SUBSCRIPTION)
-                            else
-                                navigateTo(ScreenDestination.SIGN_IN)
-                        }
+                        onItemClick = { navigateTo(ScreenDestination.SUBSCRIPTION) }
                     )
 
                     ItemDivider()
@@ -212,6 +207,7 @@ private fun MoreScreen(
 
                     GoogleMediumRectangleAd(
                         adView = adView,
+                        showRemoveAdsButton = !appUserData.isGuest,
                         onClickRemoveAds = {
                             navigateTo(ScreenDestination.SUBSCRIPTION)
                         }

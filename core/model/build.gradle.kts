@@ -6,10 +6,10 @@ plugins {
 
 android {
     namespace = "com.newpaper.somewhere.core.model"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.minSdk.get().toInt()
     }
 
     compileOptions {

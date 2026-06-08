@@ -39,7 +39,7 @@ internal data class SpotFirestore(
             iconText = iconText,
             spotType = stringToSpotType(spotType),
             date = LocalDate.parse(date),
-            location = location?.let { LatLng(it.latitude, location.longitude) },
+            location = location?.let { LatLng(it.latitude, it.longitude) },
             zoomLevel = zoomLevel,
             titleText = titleText,
             imagePathList = imagePathList,

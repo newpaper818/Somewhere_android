@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -17,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RippleConfiguration
@@ -27,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -40,12 +43,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
+import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
 import com.newpaper.somewhere.core.designsystem.icon.IconTextButtonIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcon
 import com.newpaper.somewhere.core.designsystem.icon.MyIcons
+import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.designsystem.R
 import com.newpaper.somewhere.core.utils.enterVerticallyScaleIn
@@ -63,7 +69,8 @@ fun PrivacyPolicyButton(
 
     CompositionLocalProvider(LocalRippleConfiguration provides grayRippleConfiguration) {
         TextButton(
-            onClick = onClick
+            onClick = onClick,
+            shape = SmoothRoundedCornerShape(999.dp)
         ) {
             Text(
                 text = stringResource(id = R.string.privacy_policy),
@@ -74,6 +81,31 @@ fun PrivacyPolicyButton(
             )
         }
     }
+}
+
+@Composable
+fun ExploreWithoutSignInButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    MyTextButton(
+        text = stringResource(id = R.string.explore_app_without_signin),
+        onClick = onClick,
+        containerColor = MaterialTheme.colorScheme.surfaceBright,
+        textStyle = MaterialTheme.typography.labelLarge,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun SignInButton(
+    onClick: () -> Unit
+){
+    IconTextButton(
+        icon = IconTextButtonIcon.signIn,
+        text = stringResource(id = R.string.sign_in),
+        onClick = onClick
+    )
 }
 
 @Composable
@@ -329,7 +361,8 @@ fun ToPrevDateButton(
     Button(
         contentPadding = PaddingValues(8.dp, 0.dp, 20.dp, 0.dp),
         onClick = onClick,
-        modifier = modifier.offset(1.dp)
+        modifier = modifier.offset(1.dp),
+        shape = SmoothRoundedCornerShape(999.dp, 1f),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -359,7 +392,8 @@ fun ToNextDateButton(
     Button(
         contentPadding = PaddingValues(20.dp, 0.dp, 8.dp, 0.dp),
         onClick = onClick,
-        modifier = modifier.offset((-1).dp)
+        modifier = modifier.offset((-1).dp),
+        shape = SmoothRoundedCornerShape(999.dp, 1f),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -424,7 +458,20 @@ fun ShareMoreButton(
     )
 }
 
-
+@Composable
+fun ShareButton(
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier
+){
+    IconCircleButtonWithText(
+        icon = MyIcons.share,
+        text = stringResource(id = R.string.share),
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier
+    )
+}
 
 
 
@@ -439,6 +486,36 @@ fun ShareMoreButton(
 
 
 @Composable
+fun CloseButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    val close = stringResource(id = R.string.close)
+
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        MyPlainTooltipBox(
+            tooltipText = close,
+            modifier = modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.8f))
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                IconButton(onClick = onClick) {
+                    DisplayIcon(icon = TopAppBarIcon.close)
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
 private fun MyTextButton(
     text: String,
     onClick: () -> Unit,
@@ -446,18 +523,18 @@ private fun MyTextButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     containerColor: Color = MaterialTheme.colorScheme.primary,
-    textStyle: TextStyle = MaterialTheme.typography.labelLarge
+    textStyle: TextStyle = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold)
 ){
     if (containerColor == Color.Transparent){
         TextButton(
             enabled = enabled,
             onClick = onClick,
-            modifier = modifier
+            modifier = modifier,
+            shape = SmoothRoundedCornerShape(999.dp, 1f),
         ) {
             Text(
                 text = text,
-                style = textStyle,
-                fontWeight = FontWeight.SemiBold
+                style = textStyle
             )
         }
     }
@@ -466,6 +543,7 @@ private fun MyTextButton(
             enabled = enabled,
             onClick = onClick,
             modifier = modifier,
+            shape = SmoothRoundedCornerShape(999.dp, 1f),
             colors = ButtonDefaults.buttonColors(
                 containerColor = containerColor,
                 contentColor = MaterialTheme.colorScheme.contentColorFor(containerColor),
@@ -475,8 +553,7 @@ private fun MyTextButton(
         ) {
             Text(
                 text = text,
-                style = textStyle,
-                fontWeight = FontWeight.SemiBold
+                style = textStyle
             )
         }
     }
@@ -505,7 +582,8 @@ internal fun MyTextRippleButton(
         TextButton(
             onClick = onClick,
             enabled = enabled,
-            modifier = modifier
+            modifier = modifier,
+            shape = SmoothRoundedCornerShape(999.dp, 1f),
         ) {
             Text(
                 text = text,
@@ -536,7 +614,8 @@ private fun IconTextButton(
         contentPadding = PaddingValues(16.dp, 0.dp, 20.dp, 0.dp),
         enabled = enabled,
         onClick = onClick,
-        modifier = modifier
+        modifier = modifier,
+        shape = SmoothRoundedCornerShape(999.dp, 1f),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -575,7 +654,7 @@ private fun IconTextButtonColumn(
             disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
             disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
-        shape = MaterialTheme.shapes.medium,
+        shape = SmoothRoundedCornerShape(24.dp),
         contentPadding = PaddingValues(14.dp, 8.dp),
         enabled = enabled,
         onClick = onClick,
@@ -624,7 +703,7 @@ private fun IconCircleButtonWithText(
                 disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
                 disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
             ),
-            shape = CircleShape,
+            shape = SmoothRoundedCornerShape(999.dp, 1f),
             contentPadding = PaddingValues(8.dp),
             enabled = enabled,
             onClick = onClick,

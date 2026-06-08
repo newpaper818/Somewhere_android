@@ -16,6 +16,7 @@
 
     <!-- buttons.kt -->
     <string name="privacy_policy">Privacy policy</string>
+    <string name="explore_app_without_signin">Explore app without sign in</string>
     <string name="remove_ads">Remove Ads</string>
     <string name="my_qr_code">My QR code</string>
     <string name="try_again">Try again</string>
@@ -34,6 +35,7 @@
     <string name="change_image">Change image</string>
     <string name="share_to_ig_story">Share to\nIG stories</string>
     <string name="save_as_image">Save as\nimage</string>
+    <string name="share">Share\n</string>
 
     <!-- FABs.kt -->
     <string name="see_on_map">See on Map</string>

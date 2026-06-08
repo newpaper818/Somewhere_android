@@ -9,10 +9,10 @@ plugins {
 
 android {
     namespace = "com.newpaper.somewhere.feature.more"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.minSdk.get().toInt()
     }
 
     buildFeatures {
@@ -40,6 +40,9 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons.extended)
     implementation(libs.compose.ui.tooling.preview)
+
+    //smooth corner
+    implementation(libs.smoothCorner)
 
 //    implementation(libs.androidx.compose.material3.adaptive.navigation)
 

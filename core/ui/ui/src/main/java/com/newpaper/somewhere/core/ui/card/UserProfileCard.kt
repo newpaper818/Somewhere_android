@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.ImageFromDrawable
 import com.newpaper.somewhere.core.designsystem.component.ImageFromFile
 import com.newpaper.somewhere.core.designsystem.component.ImageFromUrl
@@ -48,7 +49,7 @@ fun UserProfileCard(
 ) {
     val boxModifier =
         if (enabled) modifier
-            .clip(CircleShape)
+            .clip(SmoothRoundedCornerShape(999.dp, 1f))
             .background(MaterialTheme.colorScheme.surfaceBright)
             .clickable { onProfileClick() }
         else modifier
@@ -80,7 +81,9 @@ fun UserProfileCard(
 
             Column {
                 //user name
-                val nameText = userData.userName ?: stringResource(id = R.string.no_name)
+                val nameText =
+                    if (userData.isGuest) stringResource(R.string.guest_user)
+                    else userData.userName ?: stringResource(id = R.string.no_name)
 
                 val textStyle = if (userData.userName != null) MaterialTheme.typography.bodyLarge
                                 else MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -241,7 +244,7 @@ private fun UserProfileCardWithProviderIdPreview(){
                 ),
                 internetEnabled = true,
                 showSignInWithInfo = true,
-                enabled = false,
+                enabled = true,
                 downloadImage = {_,_,_-> }
             )
         }

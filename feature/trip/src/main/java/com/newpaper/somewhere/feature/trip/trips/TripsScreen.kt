@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -21,31 +22,29 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.button.NewTripExtendedFAB
+import com.newpaper.somewhere.core.designsystem.component.button.SignInButton
 import com.newpaper.somewhere.core.designsystem.component.button.UpgradeToSomewhereProButton
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
@@ -54,14 +53,11 @@ import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.TripsDisplayMode
-import com.newpaper.somewhere.core.model.tripData.Date
-import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
 import com.newpaper.somewhere.core.model.tripData.TripsGroup
 import com.newpaper.somewhere.core.ui.GoogleBannerAd
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID
 import com.newpaper.somewhere.core.utils.BANNER_AD_UNIT_ID_TEST
-import com.newpaper.somewhere.core.utils.SlideState
 import com.newpaper.somewhere.core.utils.convert.getAllImagesPath
 import com.newpaper.somewhere.core.utils.convert.getMaxTrips
 import com.newpaper.somewhere.core.utils.enterVerticallyDelayForMaxTrips
@@ -73,7 +69,7 @@ import com.newpaper.somewhere.feature.dialog.newTripType.TripCreationOptionsDial
 import com.newpaper.somewhere.feature.trip.BuildConfig
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.R
-import com.newpaper.somewhere.feature.trip.trips.component.GlanceSpot
+import com.newpaper.somewhere.feature.trip.trips.component.GlanceSpotGroup
 import com.newpaper.somewhere.feature.trip.trips.component.LoadingTripsItem
 import com.newpaper.somewhere.feature.trip.trips.component.NoTripCard
 import com.newpaper.somewhere.feature.trip.trips.component.TripFilterChipsWithSortOrderButton
@@ -83,7 +79,6 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 internal val tripCardHeightDp = 120.dp
 
@@ -105,9 +100,10 @@ fun TripsRoute(
 
     lazyListState: LazyListState,
 
+    navigateToSignIn: () -> Unit,
     navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
     navigateToTripAi: () -> Unit,
-    navigateToGlanceSpot: (glance: Glance) -> Unit,
+    navigateToGlanceSpot: (glanceSpot: GlanceSpot) -> Unit,
     navigateToSubscription: () -> Unit,
 
     hazeState: HazeState?,
@@ -116,8 +112,8 @@ fun TripsRoute(
 ){
     val context = LocalContext.current
 
-    val tripsUiState by tripsViewModel.tripsUiState.collectAsState()
-    val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsState()
+    val tripsUiState by tripsViewModel.tripsUiState.collectAsStateWithLifecycle()
+    val commonTripUiState by commonTripViewModel.commonTripUiState.collectAsStateWithLifecycle()
 
     val isEditMode = commonTripUiState.isEditMode
 
@@ -152,10 +148,11 @@ fun TripsRoute(
                         tripWithEmptyDateList = glanceTripWithEmptyDateList
                     )
 
-                    tripsViewModel.updateGlanceSpotInfo(
-                        //update trip info (only at empty date list - load once)
-                        glanceTrip = glanceTrip
-                    )
+                    if (glanceTrip != null)
+                        tripsViewModel.updateGlanceSpotInfo(
+                            //update trip info (only at empty date list - load once)
+                            targetTrip = glanceTrip
+                        )
                 }
             }
         }
@@ -163,31 +160,44 @@ fun TripsRoute(
 
     //get trips
     LaunchedEffect(Unit) {
-        tripsViewModel.setLoadingTrips(true)
+        if (appUserData.isGuest){
+            if (myTripsGroup.all.isEmpty()) {
+                tripsViewModel.setLoadingTrips(true)
 
-        //update trips
-        tripsViewModel.updateTrips(
-            internetEnabled = internetEnabled,
-            appUserId = appUserData.userId,
-            orderByLatest = tripsUiState.isTripsSortOrderByLatest
-        )
-        tripsViewModel.setLoadingTrips(false)
+                //update trips
+                tripsViewModel.updateMockTrips()
+            }
+            tripsViewModel.setLoadingTrips(false)
+        }
+        else if (!isEditMode) {
+            tripsViewModel.setLoadingTrips(true)
 
-        //update glance
-        val glanceTripWithEmptyDateList = tripsViewModel.findCurrentDateTripAndUpdateGlanceTrip()
-
-        if (glanceTripWithEmptyDateList != null){
-
-            val glanceTrip = commonTripViewModel.updateTrip(
+            //update trips
+            tripsViewModel.updateTrips(
                 internetEnabled = internetEnabled,
                 appUserId = appUserData.userId,
-                tripWithEmptyDateList = glanceTripWithEmptyDateList
+                orderByLatest = tripsUiState.isTripsSortOrderByLatest
             )
+            tripsViewModel.setLoadingTrips(false)
 
-            tripsViewModel.updateGlanceSpotInfo(
-                //update trip info (only at empty date list - load once)
-                glanceTrip = glanceTrip
-            )
+            //update glance
+            val glanceTripWithEmptyDateList =
+                tripsViewModel.findCurrentDateTripAndUpdateGlanceTrip()
+
+            if (glanceTripWithEmptyDateList != null) {
+
+                val glanceTrip = commonTripViewModel.updateTrip(
+                    internetEnabled = internetEnabled,
+                    appUserId = appUserData.userId,
+                    tripWithEmptyDateList = glanceTripWithEmptyDateList
+                )
+
+                if (glanceTrip != null)
+                    tripsViewModel.updateGlanceSpotInfo(
+                        //update trip info (only at empty date list - load once)
+                        targetTrip = glanceTrip
+                    )
+            }
         }
     }
 
@@ -266,7 +276,7 @@ fun TripsRoute(
         tripsData = TripsData(
             showingTrips = showingTrips,
             showingSharedTrips = showingSharedTrips,
-            glance = tripsUiState.glance,
+            glanceSpots = tripsUiState.glanceSpots,
         ),
         dialog = TripsDialog(
             isShowingDialog = tripsUiState.isShowingDialog,
@@ -306,6 +316,7 @@ fun TripsRoute(
         ),
         navigate = TripsNavigate(
             _onClickBackButton = onClickBackButton,
+            _navigateToSignIn = navigateToSignIn,
             _navigateToTrip = { isNewTrip, trip ->
                 if (isNewTrip && trip == null) {
                     val newTrip = tripsViewModel.addAndGetNewTrip(appUserData.userId)
@@ -315,7 +326,7 @@ fun TripsRoute(
                     navigateToTrip(isNewTrip, trip!!)
             },
             _navigateToTripAi = { navigateToTripAi() },
-            _navigateToGlanceSpot = { navigateToGlanceSpot(tripsUiState.glance) },
+            _navigateToGlanceSpot = { glanceSpot -> navigateToGlanceSpot(glanceSpot) },
             _navigateToSubscription = { navigateToSubscription() }
         ),
 
@@ -364,7 +375,7 @@ private fun TripsScreen(
 
     val showingTrips = tripsData.showingTrips
     val showingSharedTrips = tripsData.showingSharedTrips
-    val glance = tripsData.glance
+    val glanceSpots = tripsData.glanceSpots
 
 
     val tripsIsEmpty = showingTrips.isEmpty() && showingSharedTrips.isEmpty()
@@ -388,7 +399,7 @@ private fun TripsScreen(
 
                 actionIcon1 = TopAppBarIcon.edit,
                 actionIcon1Onclick = { tripsUiInfo.setIsEditMode(true) },
-                actionIcon1Visible = !isEditMode && !loadingTrips && !tripsIsEmpty,
+                actionIcon1Visible = !appUserData.isGuest && !isEditMode && !loadingTrips && !tripsIsEmpty,
                 startPadding = spacerValue,
                 hazeState = hazeState
             )
@@ -397,7 +408,7 @@ private fun TripsScreen(
         //fab
         floatingActionButton = {
             NewTripExtendedFAB(
-                visible = !loadingTrips && !isEditMode
+                visible = !appUserData.isGuest && !loadingTrips && !isEditMode
                         && showingTrips.size < getMaxTrips(appUserData.isUsingSomewherePro),
                 onClick = {
                     //to trip creation options dialog
@@ -405,21 +416,20 @@ private fun TripsScreen(
                 },
                 expanded = firstItemVisible,
                 useBottomNavBar = useBottomNavBar,
-                glanceSpotShown = glance.visible,
-                use2Panes = tripsUiInfo.use2Panes
+                glanceSpotShown = glanceSpots.visible && tripsUiInfo.tripsDisplayMode == TripsDisplayMode.ACTIVE,
+                glanceSpotHeight = 70.dp * glanceSpots.spots.size + 20.dp + 16.dp,
             )
         },
         glanceSpot = {
-            GlanceSpot(
+            GlanceSpotGroup(
+                showTopTripTitleWithDate = true,
                 uesLongWidth = useBottomNavBar,
-                visible = glance.visible && !isEditMode && !loadingTrips,
+                visible = glanceSpots.visible && !isEditMode && !loadingTrips && tripsUiInfo.tripsDisplayMode == TripsDisplayMode.ACTIVE,
                 dateTimeFormat = dateTimeFormat,
-                trip = glance.trip ?: Trip(id = 0, managerId = ""), //if glanceVisible is true, glanceTrip, Date, Spot is not null
-                date = glance.date ?: Date(date = LocalDate.now()),
-                spot = glance.spot ?: Spot(id= 0, date = LocalDate.now()),
-                onClick = {
+                glanceSpots = glanceSpots,
+                onClickGlanceSpot = { glanceSpot ->
                     //go to spot screen
-                    navigate.navigateToGlanceSpot()
+                    navigate.navigateToGlanceSpot(glanceSpot)
                 },
                 hazeState = hazeState
             )
@@ -499,6 +509,16 @@ private fun TripsScreen(
 
 
 
+        val stickyOffsetPx by remember(paddingValues.calculateTopPadding(), tripsUiInfo.tripsDisplayMode, tripsUiInfo.isTripsSortOrderByLatest) {
+            derivedStateOf {
+                val stickyItem = lazyListState.layoutInfo.visibleItemsInfo.firstOrNull { it.contentType == "sticky" }
+
+                val itemOffset = stickyItem?.offset?.toFloat()
+
+                if (itemOffset == null || itemOffset > 0) { 0 }
+                else { (-itemOffset).toInt() }
+            }
+        }
 
 
 
@@ -509,7 +529,7 @@ private fun TripsScreen(
             contentAlignment = Alignment.TopCenter
         ) {
 
-            val lazyColumnModifier = modifier.fillMaxSize()
+            val lazyColumnModifier = modifier.fillMaxSize().testTag("trips_list")
 
 
             //display trips list (my trips + shared trips)
@@ -556,14 +576,19 @@ private fun TripsScreen(
                     }
                 }
 
-                item {
+                stickyHeader(
+                    contentType = "sticky"
+                ){
                     TripFilterChipsWithSortOrderButton(
                         spacerValue = spacerValue,
                         tripsDisplayMode = tripsUiInfo.tripsDisplayMode,
                         onClickTripsDisplayMode = tripsUiInfo::setTripsDisplayMode,
                         isOrderByLatest = tripsUiInfo.isTripsSortOrderByLatest,
                         onClickSortOrder = { tripsUiInfo.setIsTripsSortOrderByLatest(!tripsUiInfo.isTripsSortOrderByLatest) },
-                        modifier = Modifier.widthIn(max = itemMaxWidth)
+                        modifier = Modifier
+                            .widthIn(max = itemMaxWidth)
+                            .offset{ IntOffset(0, stickyOffsetPx) }
+                            .zIndex(1f)
                     )
                 }
 
@@ -574,7 +599,8 @@ private fun TripsScreen(
                     if (showingTrips.isNotEmpty()) {
                         item {
                             Text(
-                                text = stringResource(id = R.string.my_trips),
+                                text = if (appUserData.isGuest) stringResource(R.string.sample_trips)
+                                        else stringResource(id = R.string.my_trips),
                                 style = MaterialTheme.typography.labelMedium.copy(
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -584,6 +610,7 @@ private fun TripsScreen(
                                     .fillMaxWidth()
                                     .padding(horizontal = 16.dp)
                                     .wrapContentHeight(Alignment.Bottom)
+                                    .testTag("my_trips")
                             )
                         }
                     }
@@ -604,7 +631,7 @@ private fun TripsScreen(
                             showDeleteIcon = isEditMode,
                             firstLaunch = firstLaunch,
                             onClick = if (!isEditMode) { {
-                                    tripsUiInfo.setIsLoadingTrips(true)
+                                    if (!appUserData.isGuest) tripsUiInfo.setIsLoadingTrips(true)
                                     navigate.navigateToTrip(false, trip)
                                 } }
                                 else null,
@@ -648,7 +675,7 @@ private fun TripsScreen(
                             showDeleteIcon = isEditMode,
                             firstLaunch = firstLaunch,
                             onClick = if (!isEditMode) { {
-                                    tripsUiInfo.setIsLoadingTrips(true)
+                                    if (!appUserData.isGuest) tripsUiInfo.setIsLoadingTrips(true)
                                     navigate.navigateToTrip(false, sharedTrip)
                                 } }
                                 else null,
@@ -666,14 +693,36 @@ private fun TripsScreen(
                         Box(
                             contentAlignment = Alignment.Center
                         ) {
-                            NoTripCard(!loadingTrips || !firstLaunch)
+                            NoTripCard(
+                                isGuestMode = appUserData.isGuest,
+                                shown = !loadingTrips || !firstLaunch
+                            )
                         }
+                    }
+                }
+
+                //sign in button when guest mode
+                if (!loadingTrips && appUserData.isGuest) {
+                    item {
+                        MySpacerColumn(24.dp)
+
+                        Text(
+                            text = stringResource(id = R.string.sign_in_and_plan_next_trip),
+                            style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                            textAlign = TextAlign.Center
+                        )
+
+                        MySpacerColumn(12.dp)
+
+                        SignInButton(
+                            onClick = navigate::navigateToSignIn
+                        )
                     }
                 }
             }
 
             LoadingTripsItem(
-                shown = loadingTrips && firstLaunch,
+                shown = loadingTrips && firstLaunch && !appUserData.isGuest,
                 showAds = adView != null,
                 use2Panes = tripsUiInfo.use2Panes,
                 modifier = Modifier
@@ -754,7 +803,7 @@ private fun TripsScreenPreview_Default(){
                         titleText = "shared trip"
                     )
                 ),
-                glance = Glance(visible = true),
+                glanceSpots = GlanceSpots(visible = true),
             ),
             dialog = TripsDialog(),
             image = TripsImage(),

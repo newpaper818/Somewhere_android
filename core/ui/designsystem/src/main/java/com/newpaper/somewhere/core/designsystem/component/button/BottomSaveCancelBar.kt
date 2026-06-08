@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
 import com.newpaper.somewhere.core.ui.designsystem.R
 
@@ -139,7 +139,7 @@ private fun BigNegativeButton(
             disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
             disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
-        shape = CircleShape,
+        shape = SmoothRoundedCornerShape(999.dp, 1f),
         enabled = enabled,
         onClick = onClick
     ) {
@@ -164,7 +164,7 @@ private fun BigPositiveButton(
             disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
             disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
-        shape = CircleShape,
+        shape = SmoothRoundedCornerShape(999.dp, 1f),
         enabled = enabled,
         onClick = onClick
     ) {

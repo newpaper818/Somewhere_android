@@ -16,6 +16,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("https://jitpack.io") }
     }
 }
 
@@ -46,3 +47,4 @@ include(":feature:dialog")
 include(":core:utils")
 include(":core:data:gemini-ai")
 include(":core:data:moshi")
+include(":app:baselineprofile")

@@ -28,7 +28,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -39,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.newpaper.somewhere.core.designsystem.component.button.AddFriendButton
 import com.newpaper.somewhere.core.designsystem.component.button.UpgradeToSomewhereProButton
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
@@ -81,7 +81,7 @@ fun InvitedFriendsRoute(
     modifier: Modifier = Modifier,
     invitedFriendViewModel: InvitedFriendViewModel = hiltViewModel()
 ){
-    val invitedFriendUiState by invitedFriendViewModel.invitedFriendUiState.collectAsState()
+    val invitedFriendUiState by invitedFriendViewModel.invitedFriendUiState.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
 
     val deleteFriendErrorText = stringResource(id = R.string.snackbar_delete_friend_error)
@@ -92,28 +92,34 @@ fun InvitedFriendsRoute(
 
     //get friends data
     LaunchedEffect(Unit){
-        invitedFriendViewModel.getInvitedFriends(
-            internetEnabled = internetEnabled,
-            tripManagerId = trip.managerId,
-            tripId = trip.id,
-            onSuccess = { invitedFriendList ->
-                //exclude app user
-                val newInvitedFriendList = invitedFriendList.filter { it.userId != appUserData.userId }
+        if (!appUserData.isGuest) {
+            invitedFriendViewModel.getInvitedFriends(
+                internetEnabled = internetEnabled,
+                tripManagerId = trip.managerId,
+                tripId = trip.id,
+                onSuccess = { invitedFriendList ->
+                    //exclude app user
+                    val newInvitedFriendList =
+                        invitedFriendList.filter { it.userId != appUserData.userId }
 
-                //update trip state
-                trip.setSharingTo(
-                    updateTripState = updateTripState,
-                    userDataList = newInvitedFriendList
-                )
+                    //update trip state
+                    trip.setSharingTo(
+                        updateTripState = updateTripState,
+                        userDataList = newInvitedFriendList
+                    )
 
-                invitedFriendViewModel.setFriendList(newInvitedFriendList)
-                invitedFriendViewModel.setLoading(false)
-            },
-            onError = {
-                //show snackbar message
-                invitedFriendViewModel.setLoading(false)
-            }
-        )
+                    invitedFriendViewModel.setFriendList(newInvitedFriendList)
+                    invitedFriendViewModel.setLoading(false)
+                },
+                onError = {
+                    //show snackbar message
+                    invitedFriendViewModel.setLoading(false)
+                }
+            )
+        }
+        else {
+            invitedFriendViewModel.setLoading(false)
+        }
     }
 
 
@@ -319,7 +325,7 @@ private fun InvitedFriendsScreen(
                 snackbar = {
                     Snackbar(
                         snackbarData = it,
-                        shape = MaterialTheme.shapes.medium
+                        shape = MaterialTheme.shapes.small
                     )
                 }
             )
@@ -362,7 +368,7 @@ private fun InvitedFriendsScreen(
                                 isLoading = loading,
                                 appUserData = appUserData,
                                 isManager = appUserIsTripManager,
-                                internetEnabled = internetEnabled,
+                                internetEnabled = if (appUserData.isGuest) false else internetEnabled,
                                 downloadImage = downloadImage,
                                 onClickGetOut = {
                                     setShowGetOutSharedTripDialog(true)

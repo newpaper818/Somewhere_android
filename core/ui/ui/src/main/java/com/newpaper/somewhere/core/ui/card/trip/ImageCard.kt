@@ -2,6 +2,7 @@ package com.newpaper.somewhere.core.ui.card.trip
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -31,7 +32,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -56,6 +56,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.newpaper.smooth_corner.SmoothRoundedCornerShape
 import com.newpaper.somewhere.core.designsystem.component.ImageFromFile
 import com.newpaper.somewhere.core.designsystem.component.utils.ClickableBox
 import com.newpaper.somewhere.core.designsystem.component.utils.DotsIndicator
@@ -72,6 +73,7 @@ import com.newpaper.somewhere.core.utils.dragAndDropHorizontal
 import com.newpaper.somewhere.core.utils.enterVerticallyScaleIn
 import com.newpaper.somewhere.core.utils.exitVerticallyScaleOut
 import kotlinx.coroutines.launch
+import kotlin.math.max
 
 private const val IMAGE_MAX_COUNT = 6
 
@@ -119,8 +121,51 @@ fun ImageCard(
         isImageCountLimit = imagePathList.size > IMAGE_MAX_COUNT
     }
 
+    val singlePhotoLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        uri?.let {
+            if (imagePathList.size + 1 > IMAGE_MAX_COUNT && !isImageCountLimit){
+                isImageCountLimit = true
+                isOverImage(true)
+            }
+
+            val fileList: MutableList<String> = mutableListOf()
+
+            coroutineScope.launch {
+                //save to internal storage
+                val file = saveImageToInternalStorage(0, uri)
+                if (file != null)
+                    fileList.add(file)
+
+                onAddImages(fileList)
+            }
+        }
+    }
+
+    val multiplePhotoLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickMultipleVisualMedia(max(IMAGE_MAX_COUNT - imagePathList.size, 2))
+    ) { uris ->
+        if (imagePathList.size + uris.size > IMAGE_MAX_COUNT && !isImageCountLimit){
+            isImageCountLimit = true
+            isOverImage(true)
+        }
+
+        val fileList: MutableList<String> = mutableListOf()
+
+        coroutineScope.launch {
+            //save to internal storage
+            uris.forEachIndexed { index, uri ->
+                val file = saveImageToInternalStorage(index, uri)
+                if (file != null)
+                    fileList.add(file)
+            }
+            onAddImages(fileList)
+        }
+    }
+
     val galleryLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetMultipleContents()
+        ActivityResultContracts.PickMultipleVisualMedia(maxItems = max(IMAGE_MAX_COUNT - imagePathList.size, 2))
     ){ uriList ->
         var addUriList = uriList
 
@@ -152,13 +197,11 @@ fun ImageCard(
         exit = exitVerticallyScaleOut
     ) {
 
-        Column(
-            modifier = modifier
-        ) {
+        Column {
             MyCard(
                 modifier = modifier1
                     .fillMaxWidth()
-                    .border(1.dp, borderColor, RoundedCornerShape(16.dp))
+                    .border(1.dp, borderColor, SmoothRoundedCornerShape(16.dp))
             ) {
                 Box {
                     Column {
@@ -193,11 +236,20 @@ fun ImageCard(
                                         text = stringResource(id = R.string.image_card_subtitle_add_images),
                                         style = addImageTextStyle,
                                         modifier = Modifier
-                                            .clip(CircleShape)
+                                            .clip(SmoothRoundedCornerShape(999.dp, 1f))
                                             .clickable(
                                                 enabled = !isImageCountLimit && imagePathList.size < IMAGE_MAX_COUNT,
                                                 onClick = {
-                                                    galleryLauncher.launch("image/*")
+                                                    val currentRemaining = IMAGE_MAX_COUNT - imagePathList.size
+                                                    when {
+                                                        currentRemaining <= 0 -> { }
+                                                        currentRemaining == 1 -> {
+                                                            singlePhotoLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                                        }
+                                                        else -> {
+                                                            multiplePhotoLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                                        }
+                                                    }
                                                 }
                                             )
                                             .padding(16.dp, 8.dp, 16.dp, 8.dp)
@@ -373,7 +425,7 @@ private fun ImageWithDeleteIcon(
         .zIndex(zIndex)
 
     MyCard(
-        shape = MaterialTheme.shapes.medium,
+        shape = SmoothRoundedCornerShape(16.dp),
         onClick = onClickImage,
         modifier = dragModifier
             .size(cardWidthDp)

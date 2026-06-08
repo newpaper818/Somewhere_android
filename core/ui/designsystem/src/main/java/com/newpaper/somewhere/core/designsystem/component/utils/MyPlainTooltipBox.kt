@@ -24,6 +24,7 @@ fun MyPlainTooltipBox(
 
     TooltipBox(
         modifier = modifier,
+        focusable = false,
         state = tooltipState,
         positionProvider = tooltipPosition,
         tooltip = {

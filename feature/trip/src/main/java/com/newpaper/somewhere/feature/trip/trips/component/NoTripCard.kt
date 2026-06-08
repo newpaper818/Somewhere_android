@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -21,6 +22,7 @@ import com.newpaper.somewhere.feature.trip.R
 
 @Composable
 internal fun NoTripCard(
+    isGuestMode: Boolean,
     shown: Boolean
 ){
     AnimatedVisibility(
@@ -30,7 +32,8 @@ internal fun NoTripCard(
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp, 50.dp, 16.dp, 16.dp),
+                .padding(16.dp, 50.dp, 16.dp, 16.dp)
+                .testTag("no_trips"),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             //icon
@@ -43,7 +46,8 @@ internal fun NoTripCard(
 
             //text
             Text(
-                text = stringResource(id = R.string.no_trip),
+                text = if(isGuestMode) stringResource(id = R.string.guest_no_trip)
+                        else stringResource(id = R.string.no_trip),
                 style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
                 textAlign = TextAlign.Center
             )

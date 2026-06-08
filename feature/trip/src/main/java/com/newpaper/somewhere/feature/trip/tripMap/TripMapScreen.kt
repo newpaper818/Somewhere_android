@@ -32,7 +32,6 @@ import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +50,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.CameraPositionState
@@ -67,7 +67,9 @@ import com.newpaper.somewhere.core.utils.fitBoundsToMarkersForTripMap
 import com.newpaper.somewhere.feature.trip.tripMap.component.BottomSheetHandel
 import com.newpaper.somewhere.feature.trip.tripMap.component.ControlPanel
 import com.newpaper.somewhere.feature.trip.tripMap.component.MapButtons
-import com.newpaper.somewhere.feature.trip.trips.component.GlanceSpot
+import com.newpaper.somewhere.feature.trip.trips.GlanceSpot
+import com.newpaper.somewhere.feature.trip.trips.GlanceSpots
+import com.newpaper.somewhere.feature.trip.trips.component.GlanceSpotGroup
 import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInputScale
 import dev.chrisbanes.haze.HazeState
@@ -98,7 +100,7 @@ fun TripMapRoute(
     tripMapViewModel: TripMapViewModel = hiltViewModel()
 ){
 
-    val tripMapUiState by tripMapViewModel.tripMapUiState.collectAsState()
+    val tripMapUiState by tripMapViewModel.tripMapUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         if (tripMapUiState.dateWithShownMarkerList.isEmpty())
@@ -231,7 +233,7 @@ private fun TripMapScreenVertical(
 
     modifier: Modifier = Modifier
 ){
-    val tripMapUiState by tripMapViewModel.tripMapUiState.collectAsState()
+    val tripMapUiState by tripMapViewModel.tripMapUiState.collectAsStateWithLifecycle()
     val dateWithShownMarkerList = tripMapUiState.dateWithShownMarkerList
     val spotTypeGroupWithShownMarkerList = tripMapUiState.spotTypeGroupWithShownMarkerList
     val currentDateIndex = tripMapUiState.currentDateIndex
@@ -276,7 +278,7 @@ private fun TripMapScreenVertical(
                     snackbar = {
                         Snackbar(
                             snackbarData = it,
-                            shape = MaterialTheme.shapes.medium
+                            shape = MaterialTheme.shapes.small
                         )
                     }
                 )
@@ -418,15 +420,21 @@ private fun TripMapScreenVertical(
                     }
 
                     //glance spot
-                    GlanceSpot(
+                    GlanceSpotGroup(
+                        showTopTripTitleWithDate = false,
                         modifier = Modifier.padding(top = 16.dp),
                         uesLongWidth = true,
                         visible = tripMapUiState.showGlanceSpot,
                         dateTimeFormat = dateTimeFormat,
-                        trip = tripMapUiState.glanceTrip,
-                        date = tripMapUiState.glanceDate,
-                        spot = tripMapUiState.glanceSpot,
-                        onClick = {
+                        glanceSpots = GlanceSpots(
+                            visible = true,
+                            spots = listOf(
+                                GlanceSpot(tripMapUiState.glanceTrip,
+                                    tripMapUiState.glanceDate,
+                                    tripMapUiState.glanceSpot)
+                            )
+                        ),
+                        onClickGlanceSpot = {
                             navigateToSpot(tripMapUiState.glanceDate.index, tripMapUiState.glanceSpot.index)
                         },
                         hazeState = hazeState,
@@ -462,7 +470,7 @@ private fun TripMapScreenHorizontal(
 
     modifier: Modifier = Modifier
 ){
-    val tripMapUiState by tripMapViewModel.tripMapUiState.collectAsState()
+    val tripMapUiState by tripMapViewModel.tripMapUiState.collectAsStateWithLifecycle()
     val dateWithShownMarkerList = tripMapUiState.dateWithShownMarkerList
     val spotTypeGroupWithShownMarkerList = tripMapUiState.spotTypeGroupWithShownMarkerList
     val currentDateIndex = tripMapUiState.currentDateIndex
@@ -491,7 +499,7 @@ private fun TripMapScreenHorizontal(
                     snackbar = {
                         Snackbar(
                             snackbarData = it,
-                            shape = MaterialTheme.shapes.medium
+                            shape = MaterialTheme.shapes.small
                         )
                     }
                 )
@@ -653,14 +661,20 @@ private fun TripMapScreenHorizontal(
 
                     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                         //glance spot
-                        GlanceSpot(
+                        GlanceSpotGroup(
+                            showTopTripTitleWithDate = false,
                             uesLongWidth = true,
                             visible = tripMapUiState.showGlanceSpot,
                             dateTimeFormat = dateTimeFormat,
-                            trip = tripMapUiState.glanceTrip,
-                            date = tripMapUiState.glanceDate,
-                            spot = tripMapUiState.glanceSpot,
-                            onClick = {
+                            glanceSpots = GlanceSpots(
+                                visible = true,
+                                spots = listOf(
+                                    GlanceSpot(tripMapUiState.glanceTrip,
+                                        tripMapUiState.glanceDate,
+                                        tripMapUiState.glanceSpot)
+                                )
+                            ),
+                            onClickGlanceSpot = {
                                 navigateToSpot(tripMapUiState.glanceDate.index, tripMapUiState.glanceSpot.index)
                             },
                             hazeState = hazeState

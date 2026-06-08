@@ -26,6 +26,7 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.button.MyQrCodeButton
+import com.newpaper.somewhere.core.designsystem.component.button.SignInButton
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.theme.SomewhereTheme
@@ -50,6 +51,7 @@ fun ProfileRoute(
     lazyListState: LazyListState,
     use2Panes: Boolean,
     userData: UserData,
+    navigateToSignIn: () -> Unit,
     navigateToAccount: () -> Unit,
     navigateToSubscription: () -> Unit,
     hazeState: HazeState?,
@@ -76,7 +78,8 @@ fun ProfileRoute(
         spacerValue = spacerValue,
         lazyListState = lazyListState,
         userData = userData,
-        onProfileClick = navigateToAccount,
+        onProfileClick = if (userData.isGuest) navigateToSignIn else navigateToAccount,
+        onClickSignIn =  navigateToSignIn,
         onClickRemoveAds = navigateToSubscription,
         downloadImage = imageViewModel::getImage,
         adView = adView,
@@ -92,6 +95,7 @@ fun ProfileScreen(
     lazyListState: LazyListState,
     userData: UserData,
     onProfileClick: () -> Unit,
+    onClickSignIn: () -> Unit,
     onClickRemoveAds: () -> Unit,
     downloadImage: (imagePath: String, tripManagerId: String, (Boolean) -> Unit) -> Unit,
     adView: AdView?,
@@ -146,12 +150,19 @@ fun ProfileScreen(
                 )
             }
 
-            //user QR code
+            //user QR code or sign in button
             item{
-                //see my qr code
-                MyQrCodeButton(
-                    onClick = { showMyQrCodeDialog = true }
-                )
+                if (userData.isGuest) {
+                    SignInButton(
+                        onClick = onClickSignIn
+                    )
+                }
+                else {
+                    //see my qr code
+                    MyQrCodeButton(
+                        onClick = { showMyQrCodeDialog = true }
+                    )
+                }
             }
 
             if (adView != null) {
@@ -160,6 +171,7 @@ fun ProfileScreen(
 
                     GoogleMediumRectangleAd(
                         adView = adView,
+                        showRemoveAdsButton = !userData.isGuest,
                         onClickRemoveAds = onClickRemoveAds
                     )
                 }
@@ -214,6 +226,7 @@ private fun ProfileScreenPreview(){
                     providerIds = listOf(),
                 ),
                 onProfileClick = { },
+                onClickSignIn = { },
                 onClickRemoveAds = { },
                 downloadImage = { _,_,_ ->},
                 adView = AdView(context).apply {},

@@ -1,13 +1,36 @@
+# IDE config (Android Studio/IntelliJ)
 *.iml
-.gradle
-/local.properties
-/.idea/
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
-app/build.gradle.kts
+.idea/
+.kotlin/
+*.ipr
+*.iws
+
+# Build & Cache
+.gradle/
+**/.gradle/
+build/
+/*/build/
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aar
+
+# Local Config & Secrets (NEVER CHECK IN)
+local.properties
 app/google-services.json
-app/keystore
-core/utils/src/main/java/com/newpaper/somewhere/core/utils/value.kt
+app/keystore/
+
+# Log files
+*.log
+*.hprof
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test & Lint reports
+/test-results/
+/lint-results/
+/lint-report.html
+obj/

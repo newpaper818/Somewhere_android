@@ -45,7 +45,8 @@ fun UserInfo(
 
         Column {
             //user name
-            val nameText = userData.userName ?: stringResource(id = R.string.unknown)
+            val nameText = if (userData.isGuest) stringResource(id = R.string.guest_user)
+                            else userData.userName ?: stringResource(id = R.string.unknown)
 
             val textStyle = if (userData.userName != null) MaterialTheme.typography.bodyLarge
             else MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)

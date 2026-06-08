@@ -584,7 +584,7 @@ private fun applyRenderScriptBlur(
     bitmap: Bitmap,
     radius: Float
 ): Bitmap {
-    val outputBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, bitmap.config)
+    val outputBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, bitmap.config ?: Bitmap.Config.ARGB_8888)
     var rs: RenderScript? = null
     var input: Allocation? = null
     var output: Allocation? = null

@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -15,12 +14,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.newpaper.somewhere.core.model.data.GUEST_USERDATA
 import com.newpaper.somewhere.core.model.enums.MapTheme
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.core.utils.checkUserLocationPermission
@@ -89,7 +90,7 @@ fun SomewhereNavHost(
         rememberNavController()
     }
 
-    val appUiState by appViewModel.appUiState.collectAsState()
+    val appUiState by appViewModel.appUiState.collectAsStateWithLifecycle()
 
     val useBlurEffect = appUiState.appPreferences.theme.useBlurEffect
     val isDarkMapTheme = appUiState.appPreferences.theme.mapTheme == MapTheme.DARK
@@ -172,7 +173,21 @@ fun SomewhereNavHost(
                 launchSingleTop = true
             }
         )
+        appViewModel.updateUserData(GUEST_USERDATA)
         appViewModel.updateCurrentTopLevelDestination(TopLevelDestination.TRIPS)
+        appViewModel.deleteAllLocalImages()
+    }
+
+    // Handle auto logout when session expired in background
+    LaunchedEffect(appUiState.appUserData, appUiState.screenDestination.startScreenDestination) {
+        if ((appUiState.appUserData == null || appUiState.appUserData?.isGuest == true) &&
+            appUiState.screenDestination.startScreenDestination == ScreenDestination.SIGN_IN
+        ) {
+            val currentRoute = mainNavController.currentDestination?.route
+            if (currentRoute != ScreenDestination.SIGN_IN.route) {
+                onSignOutDone()
+            }
+        }
     }
 
     mainNavController.addOnDestinationChangedListener { controller, _, _ ->
@@ -234,7 +249,21 @@ fun SomewhereNavHost(
 
 
             //signIn ===============================================================================
+            val signInNavigateUp: () -> Unit = {
+                if (mainNavController.previousBackStackEntry != null) {
+                    mainNavController.navigateUp()
+                } else {
+                    mainNavController.navigate(
+                        route = ScreenDestination.TRIPS.route,
+                        navOptions = navOptions {
+                            popUpTo(0) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    )
+                }
+            }
             signInScreen(
+                navController = mainNavController,
                 appViewModel = appViewModel,
                 externalState = externalState,
                 isDarkAppTheme = isDarkAppTheme,
@@ -246,7 +275,8 @@ fun SomewhereNavHost(
                             launchSingleTop = true
                         }
                     )
-                }
+                },
+                navigateUp = signInNavigateUp
             )
 
 
@@ -257,6 +287,11 @@ fun SomewhereNavHost(
                 tripsViewModel = tripsViewModel,
                 externalState = externalState,
                 lazyListState = tripsLazyListState,
+                navigateToSignIn = {
+                    mainNavController.navigateToSignIn(
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
+                },
                 navigateToTrip = { isNewTrip, trip ->
                     commonTripViewModel.setTrip(trip)
                     commonTripViewModel.setIsEditMode(isNewTrip)
@@ -303,6 +338,11 @@ fun SomewhereNavHost(
                 appViewModel = appViewModel,
                 externalState = externalState,
                 lazyListState = profileLazyListState,
+                navigateToSignIn = {
+                    mainNavController.navigateToSignIn(
+                        navOptions = navOptions { launchSingleTop = true }
+                    )
+                },
                 navigateToAccount = {
                     if (externalState.windowSizeClass.use2Panes) {
                         appViewModel.updateMoreDetailCurrentScreenDestination(ScreenDestination.ACCOUNT)

@@ -13,4 +13,20 @@ data class UserData(
     val isUsingSomewherePro: Boolean = false,
 
     val allowEdit: Boolean = false
+){
+    val isGuest: Boolean
+        get() = userId == GUEST_USERDATA.userId
+}
+
+
+
+
+val GUEST_USERDATA = UserData(
+    userId = "guest-052615",
+    userName = "Guest",
+    email = "npsomewhere@gmail.com",
+    profileImagePath = null,
+    providerIds = listOf(),
+    isUsingSomewherePro = false,
+    allowEdit = false
 )

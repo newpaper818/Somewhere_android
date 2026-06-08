@@ -1,9 +1,9 @@
 package com.newpaper.somewhere.navigation.more
 
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -49,7 +49,7 @@ fun NavGraphBuilder.setScreenStyleScreen(
 
         val coroutineScope = rememberCoroutineScope()
 
-        val appUiState by appViewModel.appUiState.collectAsState()
+        val appUiState by appViewModel.appUiState.collectAsStateWithLifecycle()
 
         SetScreenStyleRoute(
             use2Panes = externalState.windowSizeClass.use2Panes,

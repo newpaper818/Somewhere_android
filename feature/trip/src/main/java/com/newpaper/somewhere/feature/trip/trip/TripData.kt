@@ -4,6 +4,8 @@ import android.net.Uri
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
+import com.newpaper.somewhere.core.model.data.SpotTypeGroupWithBoolean
+import com.newpaper.somewhere.core.model.enums.SpotTypeGroup
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
@@ -26,8 +28,15 @@ internal data class TripUiInfo(
 internal data class TripData(
     val originalTrip: Trip = Trip(id = 0, managerId = ""),
     val tempTrip: Trip = Trip(id = 0, managerId = ""),
-    val isNewTrip: Boolean = false
-)
+    val isNewTrip: Boolean = false,
+
+    val spotTypeGroupWithShownList: List<SpotTypeGroupWithBoolean> = listOf(),
+    private val _onClickSpotTypeGroupChipButton: (spotTypeGroup: SpotTypeGroup) -> Unit = {}
+){
+    fun onClickSpotTypeGroupChipButton(spotTypeGroup: SpotTypeGroup){
+        _onClickSpotTypeGroupChipButton(spotTypeGroup) }
+}
+
 
 internal data class TripErrorCount(
     val totalErrorCount: Int = 0,
