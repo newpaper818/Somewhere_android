@@ -52,6 +52,7 @@ fun NavGraphBuilder.subscriptionScreen(
         if (appUiState.appUserData != null) {
             SubscriptionRoute(
                 use2Panes = externalState.windowSizeClass.use2Panes,
+                appUserData = appUiState.appUserData!!,
                 spacerValue = externalState.windowSizeClass.spacerValue,
                 useBlurEffect = appUiState.appPreferences.theme.useBlurEffect,
                 internetEnabled = externalState.internetEnabled,

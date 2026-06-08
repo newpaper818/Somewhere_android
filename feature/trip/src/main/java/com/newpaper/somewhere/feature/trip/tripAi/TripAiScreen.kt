@@ -3,7 +3,6 @@ package com.newpaper.somewhere.feature.trip.tripAi
 import android.app.Activity
 import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,12 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,7 +22,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -41,9 +35,6 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
-import com.newpaper.somewhere.core.designsystem.component.utils.MyPlainTooltipBox
-import com.newpaper.somewhere.core.designsystem.icon.DisplayIcon
-import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.tripData.Trip
@@ -56,6 +47,7 @@ import com.newpaper.somewhere.feature.dialog.tripAiDialog.CautionFreePlanDialog
 import com.newpaper.somewhere.feature.trip.BuildConfig
 import com.newpaper.somewhere.feature.trip.CommonTripViewModel
 import com.newpaper.somewhere.feature.trip.R
+import com.newpaper.somewhere.core.designsystem.component.button.CloseButton
 import com.newpaper.somewhere.feature.trip.tripAi.component.PrevNextButtons
 import com.newpaper.somewhere.feature.trip.tripAi.model.TripType
 import com.newpaper.somewhere.feature.trip.tripAi.model.TripWith
@@ -80,7 +72,6 @@ fun TripAiRoute(
     navigateToAiCreatedTrip: (Trip) -> Unit,
     tripAiViewModel: TripAiViewModel = hiltViewModel()
 ){
-    val context = LocalContext.current
 
     val tripAiUiState by tripAiViewModel.tripAiUiState.collectAsStateWithLifecycle()
 
@@ -412,61 +403,61 @@ fun TripAiScreen(
             }
 
             if (tripAiUiState.tripAiPhase != TripAiPhase.CREATE_TRIP) {
-                    PrevNextButtons(
-                        errorVisible =
-                            when(tripAiUiState.tripAiPhase) {
-                                TripAiPhase.TRIP_DATE -> showDateErrorText
-                                TripAiPhase.TRIP_TYPE -> !internetEnabled
-                                else -> false
-                            },
-                        errorText =
-                            when(tripAiUiState.tripAiPhase) {
-                                TripAiPhase.TRIP_DATE -> stringResource(id = R.string.date_range_error)
-                                TripAiPhase.TRIP_TYPE -> stringResource(id = R.string.internet_unavailable)
-                                else -> ""
-                            },
+                PrevNextButtons(
+                    errorVisible =
+                        when(tripAiUiState.tripAiPhase) {
+                            TripAiPhase.TRIP_DATE -> showDateErrorText
+                            TripAiPhase.TRIP_TYPE -> !internetEnabled
+                            else -> false
+                        },
+                    errorText =
+                        when(tripAiUiState.tripAiPhase) {
+                            TripAiPhase.TRIP_DATE -> stringResource(id = R.string.date_range_error)
+                            TripAiPhase.TRIP_TYPE -> stringResource(id = R.string.internet_unavailable)
+                            else -> ""
+                        },
 
-                        prevButtonVisible = pagerState.currentPage != 0,
-                        onClickPrev = {
+                    prevButtonVisible = pagerState.currentPage != 0,
+                    onClickPrev = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(
+                                pagerState.currentPage - 1
+                            )
+                        }
+                    },
+                    nextIsCreateTrip = tripAiUiState.tripAiPhase == TripAiPhase.TRIP_TYPE,
+                    nextButtonEnabled =
+                    when (tripAiUiState.tripAiPhase) {
+                        TripAiPhase.TRIP_TO ->
+                            tripAiUiState.tripTo != null && tripAiUiState.tripTo != ""
+
+                        TripAiPhase.TRIP_DATE ->
+                            tripAiUiState.startDate != null
+                                    && tripAiUiState.endDate != null
+                                    && tripAiUiState.startDate.plusDays(15) > tripAiUiState.endDate
+
+                        TripAiPhase.TRIP_WITH ->
+                            tripAiUiState.tripWith != null
+
+                        TripAiPhase.TRIP_TYPE ->
+                            tripAiUiState.tripTypes.isNotEmpty() && internetEnabled
+
+                        TripAiPhase.CREATE_TRIP -> false
+                    },
+                    onClickNext = {
+                        if (tripAiUiState.tripAiPhase == TripAiPhase.TRIP_TYPE) {
+                            setShowCautionDialog(true)
+                        } else {
+                            focusManager.clearFocus()
                             coroutineScope.launch {
                                 pagerState.animateScrollToPage(
-                                    pagerState.currentPage - 1
+                                    pagerState.currentPage + 1
                                 )
                             }
-                        },
-                        nextIsCreateTrip = tripAiUiState.tripAiPhase == TripAiPhase.TRIP_TYPE,
-                        nextButtonEnabled =
-                        when (tripAiUiState.tripAiPhase) {
-                            TripAiPhase.TRIP_TO ->
-                                tripAiUiState.tripTo != null && tripAiUiState.tripTo != ""
-
-                            TripAiPhase.TRIP_DATE ->
-                                tripAiUiState.startDate != null
-                                        && tripAiUiState.endDate != null
-                                        && tripAiUiState.startDate.plusDays(15) > tripAiUiState.endDate
-
-                            TripAiPhase.TRIP_WITH ->
-                                tripAiUiState.tripWith != null
-
-                            TripAiPhase.TRIP_TYPE ->
-                                tripAiUiState.tripTypes.isNotEmpty() && internetEnabled
-
-                            TripAiPhase.CREATE_TRIP -> false
-                        },
-                        onClickNext = {
-                            if (tripAiUiState.tripAiPhase == TripAiPhase.TRIP_TYPE) {
-                                setShowCautionDialog(true)
-                            } else {
-                                focusManager.clearFocus()
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(
-                                        pagerState.currentPage + 1
-                                    )
-                                }
-                            }
                         }
-                    )
-                }
+                    }
+                )
+            }
 
             CloseButton(
                 onClick = onClickBack,
@@ -476,33 +467,3 @@ fun TripAiScreen(
     }
 }
 
-@Composable
-private fun CloseButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-){
-    val close = stringResource(id = R.string.close)
-
-
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        MyPlainTooltipBox(
-            tooltipText = close,
-            modifier = modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.8f))
-        ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                IconButton(onClick = onClick) {
-                    DisplayIcon(icon = TopAppBarIcon.close)
-                }
-            }
-        }
-    }
-}

@@ -1,5 +1,6 @@
 package com.newpaper.somewhere.feature.trip.trips
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.newpaper.somewhere.core.data.repository.image.CommonImageRepository
 import com.newpaper.somewhere.core.data.repository.trip.TripsRepository
@@ -11,6 +12,7 @@ import com.newpaper.somewhere.core.utils.getTripId
 import com.newpaper.somewhere.feature.trip.CommonTripUiStateRepository
 import com.newpaper.somewhere.feature.trip.classifyAndConvertToTripsGroup
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -55,6 +57,7 @@ data class TripsUiState(
 
 @HiltViewModel
 class TripsViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val commonTripUiStateRepository: CommonTripUiStateRepository,
     private val tripsRepository: TripsRepository,
     private val commonImageRepository: CommonImageRepository,
@@ -176,6 +179,23 @@ class TripsViewModel @Inject constructor(
 
     //==============================================================================================
     // ============================================================================
+    /** update mock trips for guest */
+    fun updateMockTrips(
+    ){
+        val now = LocalDate.now()
+        val nowDateTime = ZonedDateTime.now(ZoneOffset.UTC)
+
+        val myTripsGroup = classifyAndConvertToTripsGroup(TripsMockData.getMockTrips(context))
+
+        commonTripUiStateRepository._commonTripUiState.update {
+            it.copy(
+                tripInfo = it.tripInfo.copy(
+                    myTripsGroup = myTripsGroup,
+                    tempMyTripsGroup = myTripsGroup
+                )
+            )
+        }
+    }
 
     /** update trips from remote db*/
     suspend fun updateTrips(

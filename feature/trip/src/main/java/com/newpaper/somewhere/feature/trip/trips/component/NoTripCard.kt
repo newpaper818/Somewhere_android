@@ -22,6 +22,7 @@ import com.newpaper.somewhere.feature.trip.R
 
 @Composable
 internal fun NoTripCard(
+    isGuestMode: Boolean,
     shown: Boolean
 ){
     AnimatedVisibility(
@@ -45,7 +46,8 @@ internal fun NoTripCard(
 
             //text
             Text(
-                text = stringResource(id = R.string.no_trip),
+                text = if(isGuestMode) stringResource(id = R.string.guest_no_trip)
+                        else stringResource(id = R.string.no_trip),
                 style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
                 textAlign = TextAlign.Center
             )

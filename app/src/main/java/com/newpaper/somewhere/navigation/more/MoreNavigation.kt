@@ -25,6 +25,7 @@ import com.newpaper.somewhere.BuildConfig
 import com.newpaper.somewhere.core.designsystem.component.NAVIGATION_DRAWER_BAR_WIDTH
 import com.newpaper.somewhere.core.designsystem.component.NAVIGATION_RAIL_BAR_WIDTH
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
+import com.newpaper.somewhere.core.model.data.GUEST_USERDATA
 import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.enums.ScreenDestination
 import com.newpaper.somewhere.feature.more.more.MoreRoute
@@ -123,14 +124,14 @@ fun NavGraphBuilder.moreScreen(
 
                 MoreRoute(
                     isDebugMode = BuildConfig.DEBUG,
-                    appUserData = userData,
+                    appUserData = userData ?: GUEST_USERDATA,
                     isUsingSomewherePro = userData?.isUsingSomewherePro ?: false,
 
                     spacerValue = externalState.windowSizeClass.spacerValue,
                     lazyListState = lazyListState,
                     navigateTo = {
                         if (it != appUiState.screenDestination.currentScreenDestination) {
-                            if (!externalState.windowSizeClass.use2Panes || it == ScreenDestination.SUBSCRIPTION)
+                            if (!externalState.windowSizeClass.use2Panes || it == ScreenDestination.SUBSCRIPTION || it == ScreenDestination.SIGN_IN)
                                 navigateTo(it)
                             else {
                                 moreNavController.navigate(

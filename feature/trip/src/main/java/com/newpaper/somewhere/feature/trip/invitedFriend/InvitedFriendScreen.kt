@@ -92,28 +92,34 @@ fun InvitedFriendsRoute(
 
     //get friends data
     LaunchedEffect(Unit){
-        invitedFriendViewModel.getInvitedFriends(
-            internetEnabled = internetEnabled,
-            tripManagerId = trip.managerId,
-            tripId = trip.id,
-            onSuccess = { invitedFriendList ->
-                //exclude app user
-                val newInvitedFriendList = invitedFriendList.filter { it.userId != appUserData.userId }
+        if (!appUserData.isGuest) {
+            invitedFriendViewModel.getInvitedFriends(
+                internetEnabled = internetEnabled,
+                tripManagerId = trip.managerId,
+                tripId = trip.id,
+                onSuccess = { invitedFriendList ->
+                    //exclude app user
+                    val newInvitedFriendList =
+                        invitedFriendList.filter { it.userId != appUserData.userId }
 
-                //update trip state
-                trip.setSharingTo(
-                    updateTripState = updateTripState,
-                    userDataList = newInvitedFriendList
-                )
+                    //update trip state
+                    trip.setSharingTo(
+                        updateTripState = updateTripState,
+                        userDataList = newInvitedFriendList
+                    )
 
-                invitedFriendViewModel.setFriendList(newInvitedFriendList)
-                invitedFriendViewModel.setLoading(false)
-            },
-            onError = {
-                //show snackbar message
-                invitedFriendViewModel.setLoading(false)
-            }
-        )
+                    invitedFriendViewModel.setFriendList(newInvitedFriendList)
+                    invitedFriendViewModel.setLoading(false)
+                },
+                onError = {
+                    //show snackbar message
+                    invitedFriendViewModel.setLoading(false)
+                }
+            )
+        }
+        else {
+            invitedFriendViewModel.setLoading(false)
+        }
     }
 
 
@@ -362,7 +368,7 @@ private fun InvitedFriendsScreen(
                                 isLoading = loading,
                                 appUserData = appUserData,
                                 isManager = appUserIsTripManager,
-                                internetEnabled = internetEnabled,
+                                internetEnabled = if (appUserData.isGuest) false else internetEnabled,
                                 downloadImage = downloadImage,
                                 onClickGetOut = {
                                     setShowGetOutSharedTripDialog(true)

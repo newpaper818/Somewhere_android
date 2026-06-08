@@ -47,6 +47,7 @@ fun NavGraphBuilder.tripsScreen(
 
     lazyListState: LazyListState,
 
+    navigateToSignIn: () -> Unit,
     navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
     navigateToTripAi: () -> Unit,
     navigateToGlanceSpot: (glanceSpot: GlanceSpot) -> Unit,
@@ -105,6 +106,7 @@ fun NavGraphBuilder.tripsScreen(
 
                     lazyListState = lazyListState,
 
+                    navigateToSignIn = navigateToSignIn,
                     navigateToTrip = navigateToTrip,
                     navigateToTripAi = navigateToTripAi,
                     navigateToGlanceSpot = navigateToGlanceSpot,

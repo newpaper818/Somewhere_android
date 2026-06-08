@@ -116,7 +116,6 @@
     <string name="it_may_took_a_while">시간이 약간 걸릴 수 있어요.</string>
     <string name="it_may_contain_incorrect_information">잘못된 정보가 포함되어 있을 수 있어요.</string>
     <string name="something_went_wrong">뭔가 잘못되었어요…</string>
-    <string name="close">닫기</string>
 
     <!--TripType.kt-->
     <string name="trip_type_cultural_experiences">문화 체험</string>
@@ -152,6 +151,7 @@
 
     <string name="maximum_number_of_trips_reached">여행 개수 한도에 도달했어요</string>
     <string name="my_trips">내 여행</string>
+    <string name="sample_trips">샘플 여행</string>
     <string name="shared_trips">공유받은 여행</string>
 
     <string name="dialog_body_are_you_sure_to_exit">정말로 나갈까요?\n저장하지 않은 데이터는 삭제돼요.</string>
@@ -159,7 +159,115 @@
     <string name="dialog_button_delete">삭제</string>
 
     <string name="no_trip">여행이 없어요…\n새 여행을 추가해 보세요!</string>
+    <string name="guest_no_trip">여행이 없어요…</string>
+    <string name="sign_in_and_plan_next_trip">로그인하고 다음 여행을 계획해 보세요!</string>
 
     <string name="delete">삭제</string>
+
+    <!--TripsMockData-->
+    <string name="mock_trip_title">제주도 힐링 여행</string>
+    <string name="mock_trip_day1_title">제주 도착 &amp; 애월</string>
+    <string name="mock_trip_jeju_airport">제주 국제공항</string>
+    <string name="mock_trip_day1_spot2_title">점심: 고기국수 맛집</string>
+    <string name="mock_trip_day1_spot3_title">애월 한담해안산책로</string>
+    <string name="mock_trip_day1_spot4_title">애월 카페거리</string>
+    <string name="mock_trip_day1_spot5_title">애월 숙소 체크인</string>
+    <string name="mock_trip_day1_spot6_title">저녁: 애월 해산물 정식</string>
+    <string name="mock_trip_day2_title">서쪽 투어</string>
+    <string name="mock_trip_day2_spot1_title">오설록 티 뮤지엄</string>
+    <string name="mock_trip_day2_spot2_title">점심: 로컬 파스타</string>
+    <string name="mock_trip_day2_spot3_title">카멜리아 힐</string>
+    <string name="mock_trip_day2_spot4_title">저녁: 제주 흑돼지 구이</string>
+    <string name="mock_trip_day2_spot5_title">서귀포 숙소</string>
+    <string name="mock_trip_day3_title">한라산 &amp; 남부</string>
+    <string name="mock_trip_day3_spot1_title">한라산 영실코스</string>
+    <string name="mock_trip_day3_spot2_title">점심: 하산 후 성게칼국수</string>
+    <string name="mock_trip_day3_spot3_title">서귀포 매일 올레시장</string>
+    <string name="mock_trip_day3_spot4_title">천지연 폭포</string>
+    <string name="mock_trip_day3_spot5_title">저녁: 시장 근처 횟집</string>
+    <string name="mock_trip_day4_title">동쪽 투어</string>
+    <string name="mock_trip_day4_spot1_title">성산 일출봉</string>
+    <string name="mock_trip_day4_spot2_title">섭지코지</string>
+    <string name="mock_trip_day4_spot3_title">점심: 전복죽 정식</string>
+    <string name="mock_trip_day4_spot4_title">함덕 해수욕장</string>
+    <string name="mock_trip_day4_spot5_title">제주시 호텔 체크인</string>
+    <string name="mock_trip_day4_spot6_title">저녁: 제주 갈치조림</string>
+    <string name="mock_trip_day5_title">귀가</string>
+    <string name="mock_trip_day5_spot1_title">제주 기념품샵</string>
+    <string name="mock_trip_day5_spot2_title">점심: 공항 근처 해장국</string>
+
+    <!--TripsMockData - New York Detailed-->
+    <string name="mock_trip_ny_title">뉴욕 여행</string>
+    <string name="mock_trip_ny_memo">NY 화장실 지도: https://maps.app.goo.gl/RN8K4EhyuA11DZpZ9</string>
+
+    <string name="mock_trip_ny_day1_title">DAY 1 - 뉴욕으로 출발</string>
+    <string name="mock_trip_ny_day2_title">DAY 2 - 자유의 여신상 &amp; 다운타운</string>
+    <string name="mock_trip_ny_day3_title">DAY 3 - 미드타운</string>
+    <string name="mock_trip_ny_day4_title">DAY 4 - 나이아가라 폭포</string>
+    <string name="mock_trip_ny_day5_title">DAY 5 - 다운타운 &amp; 첼시</string>
+    <string name="mock_trip_ny_day6_title">DAY 6 - 업/미드타운</string>
+    <string name="mock_trip_ny_day7_title">DAY 7 - 미드타운</string>
+    <string name="mock_trip_ny_day8_title">DAY 8 - 브루클린</string>
+    <string name="mock_trip_ny_day9_title">DAY 9 - 업/미드타운</string>
+    <string name="mock_trip_ny_day10_title">DAY 10 - 마지막 날</string>
+    <string name="mock_trip_ny_day11_title">DAY 11</string>
+    <string name="mock_trip_ny_day12_title">DAY 12</string>
+
+    <string name="mock_trip_ny_icn_airport">인천 국제공항 T1</string>
+    <string name="mock_trip_ny_ewr_airport">뉴어크 리버티 국제공항 TB</string>
+    <string name="mock_trip_ny_hotel">호텔</string>
+    <string name="mock_trip_ny_breakfast_hotel">호텔 조식</string>
+    <string name="mock_trip_ny_departure">출발</string>
+    <string name="mock_trip_ny_battery_park">배터리 파크 터미널</string>
+    <string name="mock_trip_ny_statue_of_liberty">자유의 여신상 (페리)</string>
+    <string name="mock_trip_ny_wall_street_bull">월 스트리트 황소상</string>
+    <string name="mock_trip_ny_fast_food">패스트 푸드</string>
+    <string name="mock_trip_ny_ground_zero">그라운드 제로</string>
+    <string name="mock_trip_ny_camera_shop">카메라 샵</string>
+    <string name="mock_trip_ny_dessert_shop">디저트 샵</string>
+    <string name="mock_trip_ny_chinatown">차이나타운</string>
+    <string name="mock_trip_ny_restaurant">레스토랑</string>
+    <string name="mock_trip_ny_museum_met">메트로폴리탄 미술관</string>
+    <string name="mock_trip_ny_museum_food">미술관 내 식당</string>
+    <string name="mock_trip_ny_trump_tower">트럼프 타워</string>
+    <string name="mock_trip_ny_top_of_the_rock">탑 오브 더 락 전망대</string>
+    <string name="mock_trip_ny_times_square">타임 스퀘어</string>
+    <string name="mock_trip_ny_subway_station">지하철역</string>
+    <string name="mock_trip_ny_niagara_falls">나이아가라 폭포</string>
+    <string name="mock_trip_ny_meeting_point">미팅 포인트</string>
+    <string name="mock_trip_ny_observation_deck">전망대</string>
+    <string name="mock_trip_ny_flatiron_building">플랫아이언 빌딩</string>
+    <string name="mock_trip_ny_bus_tour">버스 투어 정류장</string>
+    <string name="mock_trip_ny_high_line">하이라인 파크</string>
+    <string name="mock_trip_ny_little_island">리틀 아일랜드</string>
+    <string name="mock_trip_ny_chelsea_market">첼시 마켓</string>
+    <string name="mock_trip_ny_museum_guggenheim">구겐하임 미술관</string>
+    <string name="mock_trip_ny_central_park">센트럴 파크</string>
+    <string name="mock_trip_ny_edge">엣지 전망대</string>
+    <string name="mock_trip_ny_electronics_store">전자제품 매장</string>
+    <string name="mock_trip_ny_korean_restaurant">한국 식당</string>
+    <string name="mock_trip_ny_public_library">뉴욕 공립 도서관</string>
+    <string name="mock_trip_ny_bryant_park">브라이언트 공원</string>
+    <string name="mock_trip_ny_shoe_store">신발 매장</string>
+    <string name="mock_trip_ny_empire_state">엠파이어 스테이트 빌딩</string>
+    <string name="mock_trip_ny_grand_central">그랜드 센트럴 터미널</string>
+    <string name="mock_trip_ny_dumbo">덤보 브루클린 브릿지</string>
+    <string name="mock_trip_ny_music_store">악기 매장</string>
+    <string name="mock_trip_ny_cafe">카페</string>
+    <string name="mock_trip_ny_domino_park">도미노 파크</string>
+    <string name="mock_trip_ny_steak_house">스테이크 하우스</string>
+    <string name="mock_trip_ny_museum_natural_history">미국 자연사 박물관</string>
+    <string name="mock_trip_ny_macys">메이시스 백화점</string>
+    <string name="mock_trip_ny_gantry_park">갠트리 플라자 주립공원</string>
+    <string name="mock_trip_ny_museum_moma">뉴욕 현대 미술관 (MoMA)</string>
+    <string name="mock_trip_ny_washington_sq_park">워싱턴 스퀘어 파크</string>
+    <string name="mock_trip_ny_soho">소호</string>
+    <string name="mock_trip_ny_airport_express">공항 익스프레스 버스</string>
+    <string name="mock_trip_ny_flight_icn_ewr">ICN - EWR / YP131</string>
+    <string name="mock_trip_ny_airport_departure">공항 출발</string>
+    <string name="mock_trip_ny_taxi">택시</string>
+    <string name="mock_trip_ny_subway">지하철</string>
+    <string name="mock_trip_ny_food">식사</string>
+
 
 </resources>

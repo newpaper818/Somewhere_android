@@ -32,7 +32,6 @@ data class SignInUiState(
 class SignInViewModel @Inject constructor(
     private val commonTripUiStateRepository: CommonTripUiStateRepository,
     private val userRepository: UserRepository,
-    private val commonImageRepository: CommonImageRepository,
     private val subscriptionRepository: SubscriptionRepository
 ): ViewModel() {
     private val _signInUiState: MutableStateFlow<SignInUiState> =
@@ -167,9 +166,6 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    fun deleteAllLocalImages(){
-        commonImageRepository.deleteAllImagesFromInternalStorage()
-    }
 
     private suspend fun getIsUsingSomewherePro(
 

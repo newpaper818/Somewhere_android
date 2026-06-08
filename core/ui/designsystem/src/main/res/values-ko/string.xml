@@ -16,6 +16,7 @@
 
     <!-- buttons.kt -->
     <string name="privacy_policy">개인정보 처리방침</string>
+    <string name="explore_app_without_signin">로그인 없이 앱 둘러보기</string>
     <string name="remove_ads">광고 제거</string>
     <string name="my_qr_code">내 QR 코드</string>
     <string name="try_again">다시 시도</string>

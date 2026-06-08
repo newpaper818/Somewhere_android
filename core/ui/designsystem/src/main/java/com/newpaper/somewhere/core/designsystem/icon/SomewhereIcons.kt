@@ -50,6 +50,7 @@ import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.LocationDisabled
 import androidx.compose.material.icons.rounded.LocationOff
+import androidx.compose.material.icons.rounded.Login
 import androidx.compose.material.icons.rounded.Logout
 import androidx.compose.material.icons.rounded.Luggage
 import androidx.compose.material.icons.rounded.LunchDining
@@ -119,6 +120,7 @@ object TopAppBarIcon {
 }
 
 object IconTextButtonIcon {
+    val signIn = MyIcon(Icons.Rounded.Login,                 24.dp, false, null, null)
     val qrCode = MyIcon(Icons.Rounded.QrCode,                 24.dp, false, null, null)
     val add = MyIcon(Icons.Rounded.Add,                       24.dp, false, null, null)
     val inviteFriend = MyIcon(Icons.Rounded.PersonAdd,        24.dp, false, null, null)

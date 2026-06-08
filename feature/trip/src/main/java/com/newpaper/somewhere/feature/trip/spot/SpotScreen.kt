@@ -68,6 +68,7 @@ import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTo
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
 import com.newpaper.somewhere.core.model.data.DateTimeFormat
+import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.model.tripData.Date
 import com.newpaper.somewhere.core.model.tripData.Spot
 import com.newpaper.somewhere.core.model.tripData.Trip
@@ -114,7 +115,7 @@ fun SpotRoute(
     use2Panes: Boolean,
     spacerValue: Dp,
     useBlurEffect: Boolean,
-    appUserId: String,
+    appUserData: UserData,
     dateTimeFormat: DateTimeFormat,
     internetEnabled: Boolean,
     isErrorExitOnTripScreen: Boolean, //TODO
@@ -366,6 +367,7 @@ fun SpotRoute(
 
     SpotScreen(
         isDarkAppTheme = isDarkAppTheme,
+        appUserData = appUserData,
         spotUiInfo = SpotUiInfo(
             use2Panes = use2Panes,
             spacerValue = spacerValue,
@@ -472,7 +474,7 @@ fun SpotRoute(
             coroutineScope.launch {
                 if (originalTrip != tempTrip) {
                     //save tripUiState trip
-                    commonTripViewModel.saveTrip(appUserId = appUserId)
+                    commonTripViewModel.saveTrip(appUserId = appUserData.userId)
 
                     commonTripViewModel.setIsEditMode(false)
 
@@ -500,6 +502,7 @@ fun SpotRoute(
 @Composable
 private fun SpotScreen(
     isDarkAppTheme: Boolean,
+    appUserData: UserData,
     spotUiInfo: SpotUiInfo,
     spotData: SpotData,
     spotState: SpotState,
@@ -680,7 +683,7 @@ private fun SpotScreen(
                         spotMap.setIsMapExpanded(false)
                     spotUiInfo.setIsEditMode(true)
                 },
-                actionIcon1Visible = !spotUiInfo.isEditMode && showingTrip.editable,
+                actionIcon1Visible = !appUserData.isGuest && !spotUiInfo.isEditMode && showingTrip.editable,
                 hazeState = topAppBarHazeState
             )
         },

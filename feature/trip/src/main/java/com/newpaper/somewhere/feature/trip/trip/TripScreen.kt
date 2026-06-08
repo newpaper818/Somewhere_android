@@ -157,27 +157,31 @@ fun TripRoute(
     //or change theme mode(light/dark)
     //or rotate screen
     LaunchedEffect(Unit){
-        if (!isNewTrip) {
-            if (!isEditMode) {
-                coroutineScope.launch(Dispatchers.IO) {
-                    //get trip data from remote (firestore)
-                    commonTripViewModel.updateTrip(
-                        internetEnabled = internetEnabled,
-                        appUserId = appUserData.userId,
-                        tripWithEmptyDateList = originalTrip
-                    )
-                    delay(150)
-                    tripViewModel.setLoadingTrip(false)
+        if (!appUserData.isGuest) {
+            if (!isNewTrip) {
+                if (!isEditMode) {
+                    coroutineScope.launch(Dispatchers.IO) {
+                        //get trip data from remote (firestore)
+                        commonTripViewModel.updateTrip(
+                            internetEnabled = internetEnabled,
+                            appUserId = appUserData.userId,
+                            tripWithEmptyDateList = originalTrip
+                        )
+                        delay(150)
+                        tripViewModel.setLoadingTrip(false)
+                    }
+                } else {
                 }
             }
-            else { }
-        }
-        //user create new trip
-        else {
-            tripViewModel.setLoadingTrip(false)
+            //user create new trip
+            else {
+                tripViewModel.setLoadingTrip(false)
 
-            if (tempTrip.dateList.isEmpty())
-                tripViewModel.setShowDateRangeDialog(true)
+                if (tempTrip.dateList.isEmpty())
+                    tripViewModel.setShowDateRangeDialog(true)
+            }
+        } else {
+            tripViewModel.setLoadingTrip(false)
         }
     }
 
@@ -213,7 +217,7 @@ fun TripRoute(
 
     TripScreen(
         isDarkAppTheme = isDarkAppTheme,
-        appUserId = appUserData.userId,
+        appUserData = appUserData,
         isUsingSomewherePro = appUserData.isUsingSomewherePro,
         tripUiInfo = TripUiInfo(
             use2Panes = use2Panes,
@@ -374,7 +378,7 @@ fun TripRoute(
 @Composable
 private fun TripScreen(
     isDarkAppTheme: Boolean,
-    appUserId: String,
+    appUserData: UserData,
     isUsingSomewherePro: Boolean,
     tripUiInfo: TripUiInfo,
     tripData: TripData,
@@ -527,7 +531,7 @@ private fun TripScreen(
 
                 actionIcon1 = TopAppBarIcon.edit,
                 actionIcon1Onclick = { tripUiInfo.setIsEditMode(true) },
-                actionIcon1Visible = !loadingTrip && !isEditMode && !use2Panes && showingTrip.editable,
+                actionIcon1Visible = !appUserData.isGuest && !loadingTrip && !isEditMode && !use2Panes && showingTrip.editable,
                 hazeState = topAppBarHazeState
             )
         },
@@ -706,7 +710,7 @@ private fun TripScreen(
                     ShareTripCards(
                         trip = showingTrip,
                         maxInviteFriends = getMaxInviteFriends(isUsingSomewherePro),
-                        userIsManager = appUserId == showingTrip.managerId,
+                        userIsManager = appUserData.userId == showingTrip.managerId,
                         internetEnabled = internetEnabled,
                         isEditMode = isEditMode,
                         onClickInvitedFriends = tripNavigate::navigateToInvitedFriends,
@@ -987,7 +991,7 @@ private fun TripScreen(
 
 
 
-                if (appUserId == tripData.originalTrip.managerId) {
+                if (appUserData.userId == tripData.originalTrip.managerId) {
                     item {
                         MySpacerColumn(height = 100.dp)
 

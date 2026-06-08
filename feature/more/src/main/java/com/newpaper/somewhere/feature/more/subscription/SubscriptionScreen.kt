@@ -45,6 +45,7 @@ import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTo
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerRow
 import com.newpaper.somewhere.core.designsystem.icon.TopAppBarIcon
+import com.newpaper.somewhere.core.model.data.UserData
 import com.newpaper.somewhere.core.ui.InternetUnavailableText
 import com.newpaper.somewhere.core.ui.card.AppIconWithAppNameProCard
 import com.newpaper.somewhere.core.utils.FREE_MAX_INVITE_FRIENDS
@@ -66,6 +67,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SubscriptionRoute(
     use2Panes: Boolean,
+    appUserData: UserData,
     spacerValue: Dp,
     useBlurEffect: Boolean,
     internetEnabled: Boolean,
@@ -112,6 +114,7 @@ fun SubscriptionRoute(
 
     SubscriptionScreen(
         use2Panes = use2Panes,
+        isGuestMode = appUserData.isGuest,
         startSpacerValue = if (use2Panes) spacerValue / 2 else spacerValue,
         endSpacerValue = spacerValue,
         useBlurEffect = useBlurEffect,
@@ -170,6 +173,7 @@ fun SubscriptionRoute(
 @Composable
 private fun SubscriptionScreen(
     use2Panes: Boolean,
+    isGuestMode: Boolean,
     startSpacerValue: Dp,
     endSpacerValue: Dp,
     useBlurEffect: Boolean,
@@ -290,7 +294,7 @@ private fun SubscriptionScreen(
                 SubscribeButton(
                     formattedPrice = formattedPrice ?: "",
                     onClick = onClickSubscription,
-                    enabled = buttonEnabled && internetEnabled,
+                    enabled = !isGuestMode && buttonEnabled && internetEnabled,
                     isUsingSomewherePro = isUsingSomewherePro
                 )
             }

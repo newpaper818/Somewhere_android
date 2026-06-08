@@ -44,6 +44,7 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.newpaper.somewhere.core.designsystem.component.MyScaffold
 import com.newpaper.somewhere.core.designsystem.component.button.NewTripExtendedFAB
+import com.newpaper.somewhere.core.designsystem.component.button.SignInButton
 import com.newpaper.somewhere.core.designsystem.component.button.UpgradeToSomewhereProButton
 import com.newpaper.somewhere.core.designsystem.component.topAppBars.SomewhereTopAppBar
 import com.newpaper.somewhere.core.designsystem.component.utils.MySpacerColumn
@@ -99,6 +100,7 @@ fun TripsRoute(
 
     lazyListState: LazyListState,
 
+    navigateToSignIn: () -> Unit,
     navigateToTrip: (isNewTrip: Boolean, trip: Trip) -> Unit,
     navigateToTripAi: () -> Unit,
     navigateToGlanceSpot: (glanceSpot: GlanceSpot) -> Unit,
@@ -158,7 +160,16 @@ fun TripsRoute(
 
     //get trips
     LaunchedEffect(Unit) {
-        if (!isEditMode) {
+        if (appUserData.isGuest){
+            if (myTripsGroup.all.isEmpty()) {
+                tripsViewModel.setLoadingTrips(true)
+
+                //update trips
+                tripsViewModel.updateMockTrips()
+            }
+            tripsViewModel.setLoadingTrips(false)
+        }
+        else if (!isEditMode) {
             tripsViewModel.setLoadingTrips(true)
 
             //update trips
@@ -305,6 +316,7 @@ fun TripsRoute(
         ),
         navigate = TripsNavigate(
             _onClickBackButton = onClickBackButton,
+            _navigateToSignIn = navigateToSignIn,
             _navigateToTrip = { isNewTrip, trip ->
                 if (isNewTrip && trip == null) {
                     val newTrip = tripsViewModel.addAndGetNewTrip(appUserData.userId)
@@ -387,7 +399,7 @@ private fun TripsScreen(
 
                 actionIcon1 = TopAppBarIcon.edit,
                 actionIcon1Onclick = { tripsUiInfo.setIsEditMode(true) },
-                actionIcon1Visible = !isEditMode && !loadingTrips && !tripsIsEmpty,
+                actionIcon1Visible = !appUserData.isGuest && !isEditMode && !loadingTrips && !tripsIsEmpty,
                 startPadding = spacerValue,
                 hazeState = hazeState
             )
@@ -396,7 +408,7 @@ private fun TripsScreen(
         //fab
         floatingActionButton = {
             NewTripExtendedFAB(
-                visible = !loadingTrips && !isEditMode
+                visible = !appUserData.isGuest && !loadingTrips && !isEditMode
                         && showingTrips.size < getMaxTrips(appUserData.isUsingSomewherePro),
                 onClick = {
                     //to trip creation options dialog
@@ -587,7 +599,8 @@ private fun TripsScreen(
                     if (showingTrips.isNotEmpty()) {
                         item {
                             Text(
-                                text = stringResource(id = R.string.my_trips),
+                                text = if (appUserData.isGuest) stringResource(R.string.sample_trips)
+                                        else stringResource(id = R.string.my_trips),
                                 style = MaterialTheme.typography.labelMedium.copy(
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -618,7 +631,7 @@ private fun TripsScreen(
                             showDeleteIcon = isEditMode,
                             firstLaunch = firstLaunch,
                             onClick = if (!isEditMode) { {
-                                    tripsUiInfo.setIsLoadingTrips(true)
+                                    if (!appUserData.isGuest) tripsUiInfo.setIsLoadingTrips(true)
                                     navigate.navigateToTrip(false, trip)
                                 } }
                                 else null,
@@ -662,7 +675,7 @@ private fun TripsScreen(
                             showDeleteIcon = isEditMode,
                             firstLaunch = firstLaunch,
                             onClick = if (!isEditMode) { {
-                                    tripsUiInfo.setIsLoadingTrips(true)
+                                    if (!appUserData.isGuest) tripsUiInfo.setIsLoadingTrips(true)
                                     navigate.navigateToTrip(false, sharedTrip)
                                 } }
                                 else null,
@@ -680,14 +693,36 @@ private fun TripsScreen(
                         Box(
                             contentAlignment = Alignment.Center
                         ) {
-                            NoTripCard(!loadingTrips || !firstLaunch)
+                            NoTripCard(
+                                isGuestMode = appUserData.isGuest,
+                                shown = !loadingTrips || !firstLaunch
+                            )
                         }
+                    }
+                }
+
+                //sign in button when guest mode
+                if (!loadingTrips && appUserData.isGuest) {
+                    item {
+                        MySpacerColumn(24.dp)
+
+                        Text(
+                            text = stringResource(id = R.string.sign_in_and_plan_next_trip),
+                            style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                            textAlign = TextAlign.Center
+                        )
+
+                        MySpacerColumn(12.dp)
+
+                        SignInButton(
+                            onClick = navigate::navigateToSignIn
+                        )
                     }
                 }
             }
 
             LoadingTripsItem(
-                shown = loadingTrips && firstLaunch,
+                shown = loadingTrips && firstLaunch && !appUserData.isGuest,
                 showAds = adView != null,
                 use2Panes = tripsUiInfo.use2Panes,
                 modifier = Modifier

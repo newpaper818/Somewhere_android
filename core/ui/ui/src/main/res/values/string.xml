@@ -13,6 +13,7 @@
 
     <!-- UserProfileCard.kt -->
     <string name="user_info">User information</string>
+    <string name="guest_user">Guest user</string>
     <string name="no_name">No name</string>
     <string name="no_email">No email</string>
     <string name="connected_with">Connected with</string>
