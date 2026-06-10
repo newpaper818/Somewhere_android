@@ -26,7 +26,7 @@ android {
         applicationId = "com.newpaper.somewhere"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 78
+        versionCode = 79
         versionName = "2.4.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
