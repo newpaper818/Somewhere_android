@@ -2,6 +2,7 @@
 ### 2023.04 - now 개인 프로젝트
 
 Google Play: https://play.google.com/store/apps/details?id=com.newpaper.somewhere
+
 App Store: https://apps.apple.com/kr/app/somewhere-ai-trip-planner-app/id6780403625?l
 </br></br>
 
